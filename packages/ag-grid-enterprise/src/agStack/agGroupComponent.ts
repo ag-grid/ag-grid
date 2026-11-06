@@ -87,7 +87,7 @@ export class AgGroupComponent<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgComponentStub<
     TBeanCollection,
@@ -509,7 +509,7 @@ class DefaultTitleBar<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgComponentStub<
     TBeanCollection,

@@ -16,7 +16,7 @@ export class AgCheckbox<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TConfig extends AgCheckboxParams<TComponentSelectorType> = AgCheckboxParams<TComponentSelectorType>,
 > extends AgAbstractInputField<

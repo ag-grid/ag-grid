@@ -1,10 +1,8 @@
 import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { AgSingletonBean } from '../interfaces/agCoreBean';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import type { BaseEvents } from '../interfaces/baseEvents';
-import type { BaseProperties } from '../interfaces/baseProperties';
+import type { AgDomFreeBeanCollection } from '../interfaces/agDomFreeBeanCollection';
 import type { IContext } from '../interfaces/iContext';
-import type { IPropertiesService } from '../interfaces/iProperties';
+import type { IDomFreePropertiesService } from '../interfaces/iDomFreeProperties';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
@@ -13,11 +11,11 @@ type BeanComparator<TBeanCollection> = (
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgContextParams<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
+    TBeanCollection extends AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TProperties,
+    TGlobalEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IDomFreePropertiesService<TProperties>,
 > {
     providedBeanInstances: Partial<TBeanCollection>;
     beanClasses: AgSingletonBeanClass<TBeanCollection>[];
@@ -43,11 +41,11 @@ let contextId = 1;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgContext<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
+    TBeanCollection extends AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TProperties,
+    TGlobalEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IDomFreePropertiesService<TProperties>,
 > implements IContext<TBeanCollection> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];

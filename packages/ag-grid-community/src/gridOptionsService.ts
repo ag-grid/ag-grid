@@ -4,6 +4,7 @@ import type {
     AgPropertyChangedSource,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
+    ICommonSource,
     IPropertiesService,
 } from 'ag-stack';
 import { LocalEventService, _exists } from 'ag-stack';
@@ -83,7 +84,7 @@ const ASYNC_PUBLIC_EVENTS: ReadonlySet<AgEventType> = new Set(
 
 export class GridOptionsService
     extends BeanStub
-    implements NamedBean, IPropertiesService<GridOptionsWithDefaults, AgGridCommon<any, any>>
+    implements NamedBean, IPropertiesService<GridOptionsWithDefaults>, ICommonSource<AgGridCommon<any, any>>
 {
     beanName = 'gos' as const;
 

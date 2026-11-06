@@ -62,7 +62,7 @@ export class AgVirtualList<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     C extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> = AgComponent<
         TBeanCollection,

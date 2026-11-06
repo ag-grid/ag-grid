@@ -2,6 +2,7 @@ import { AgBeanStub } from '../core/agBeanStub';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
+import type { ICommonSource } from '../interfaces/iDomFreeEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { ITooltipFeature, TooltipCtrl } from '../interfaces/iTooltip';
 import type { BaseTooltipParams, BaseTooltipStateManager } from './baseTooltipStateManager';
@@ -12,7 +13,7 @@ export class AgTooltipFeature<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TTooltipCtrlParams,
     TLocation extends string,

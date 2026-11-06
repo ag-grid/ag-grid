@@ -3,9 +3,9 @@ import type { AgEvent } from './agEvent';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
 import type { AgEventHandlers } from './iContext';
+import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iDomFreeProperties';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
-import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iProperties';
 
 /** Includes bean event and property handling logic */
 export interface AgBean<

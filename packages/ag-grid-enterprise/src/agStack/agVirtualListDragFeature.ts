@@ -22,7 +22,7 @@ export class AgVirtualListDragFeature<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TDragSourceType extends number,
     TParentComponent extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
     TChildComponent extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
