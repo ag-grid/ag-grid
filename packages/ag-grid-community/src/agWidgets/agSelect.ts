@@ -9,7 +9,13 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy, _setAriaReadOnly } from 'ag-stack';
+import {
+    KeyCode,
+    _isElementOverflowingCallback,
+    _isEventFromPrintableCharacter,
+    _setAriaLabelledBy,
+    _setAriaReadOnly,
+} from 'ag-stack';
 
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -191,6 +197,7 @@ export class AgSelect<
 
     protected override beforeHidePicker(): void {
         this.listComponent?.hideItemTooltip();
+        this.listComponent?.clearTypedText();
         super.beforeHidePicker();
     }
 
@@ -251,11 +258,31 @@ export class AgSelect<
             case KeyCode.SPACE:
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
+                    if (_isEventFromPrintableCharacter(e) && this.listComponent?.hasActiveTypeAhead()) {
+                        this.typeCharacter(key);
+                    }
                 } else {
                     super.onKeyDown(e);
                 }
                 break;
+            default:
+                if (_isEventFromPrintableCharacter(e)) {
+                    e.preventDefault();
+                    this.typeCharacter(key);
+                }
+                break;
         }
+    }
+
+    public typeCharacter(char: string): void {
+        if (this.readOnly || this.isDisabled()) {
+            return;
+        }
+        // The list ignores highlights on hidden items, so it must be open first.
+        if (!this.isPickerDisplayed) {
+            this.showPicker();
+        }
+        this.listComponent?.typeCharacter(char);
     }
 
     public override showPicker() {
