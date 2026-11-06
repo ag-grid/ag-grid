@@ -303,4 +303,21 @@ describe('Select cell editor', () => {
             expect(combobox.hasAttribute('aria-labelledby')).toBe(false);
         });
     });
+
+    test('combobox aria-activedescendant follows the highlighted option while the list is open', async () => {
+        const api = await createGrid({ columnDefs: [baseColDef()], rowData: [{ a: 'Alpha' }] });
+        await openEditor(api, 0, 'a');
+        const combobox = getGridElement(api)!.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+        const activeOptionText = () =>
+            document.getElementById(combobox.getAttribute('aria-activedescendant')!)?.textContent?.trim();
+
+        expect(activeOptionText()).toBe('Alpha');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Beta');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Gamma');
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+    });
 });
