@@ -1066,6 +1066,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to `false` to turn locale-specific sorting off for this column.
      *
      * When set, overrides the `accentedSort` grid option for this column. Set it on `defaultColDef` to apply it to all columns.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
      * Not used when a `comparator` is provided.
      */
     accentedSort?: boolean | AccentedSortOptions;

@@ -809,6 +809,28 @@ describe('Column Spanning Keyboard Navigation', () => {
         });
     });
 
+    test('Ctrl+Down from a full-width row onto a spanning cell preserves the covered column', () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { colId: 'a', field: 'a', colSpan: (params) => (params.data?.a === 'a2' ? 2 : 1) },
+                { colId: 'b', field: 'b' },
+            ],
+            isFullWidthRow: ({ rowNode }) => rowNode.data?.a === 'a1',
+            fullWidthCellRenderer: () => 'full width',
+        });
+
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(focusState(api)).toBe('full width row 1');
+
+        dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+        expect(focusState(api)).toBe('cell a, focused cell 2 a');
+
+        dispatchKeyDown(KeyCode.UP);
+        dispatchKeyDown(KeyCode.UP);
+        expect(focusState(api)).toBe('cell b, focused cell 0 b');
+    });
+
     test('Arrow Down between rendered rows, or onto a full-width row, runs no colSpan callback', () => {
         const colSpanRows: number[] = [];
         const columnDefs = makeColumnDefs();

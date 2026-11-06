@@ -159,6 +159,25 @@ describe('accentedSort locale and collator options', () => {
         ]);
     });
 
+    test('a string and a non-string compare the same whichever comes first', () => {
+        // Strings are compared with the collator only against other strings; a string and a number are equal both
+        // ways, so each grid keeps its own row data order, whatever accentedSort is set to.
+        for (const accentedSort of [true, { locales: 'sv' }] as const) {
+            for (const values of [
+                ['b', 5],
+                [5, 'b'],
+            ]) {
+                const api = createGrid(`accented-mixed-${values.join()}-${JSON.stringify(accentedSort)}`, {
+                    columnDefs: [{ field: 'value' }],
+                    rowData: values.map((value) => ({ value })),
+                    accentedSort,
+                });
+                expect(sortedValues(api, 'value')).toEqual(values);
+                expect(sortedValues(api, 'value', 'desc')).toEqual(values);
+            }
+        }
+    });
+
     test('changing the grid option at runtime sorts again', () => {
         const api = createGrid('accented-runtime', {
             columnDefs: [{ field: 'name', sort: 'asc' }],
@@ -285,6 +304,35 @@ describe('accentedSort locale and collator options', () => {
             columnDefs: [{ field: 'name' }],
             rowData: ['b', 'à', 'a'].map((name) => ({ name })),
             accentedSort: { locales: 'not a locale!' },
+        });
+
+        expect(sortedValues(api, 'name')).toEqual(['a', 'à', 'b']);
+    });
+
+    test('an invalid locale tag keeps the collator options', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createGrid('accented-invalid-options', {
+            columnDefs: [{ field: 'name' }],
+            rowData: ['item10', 'item2', 'item1'].map((name) => ({ name })),
+            accentedSort: { locales: 'not a locale!', options: { numeric: true } },
+        });
+
+        expect(sortedValues(api, 'name')).toEqual(['item1', 'item2', 'item10']);
+    });
+
+    test('invalid collator options fall back to the default locale comparison', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createGrid('accented-invalid-option-value', {
+            columnDefs: [{ field: 'name' }],
+            rowData: ['b', 'à', 'a'].map((name) => ({ name })),
+            accentedSort: {
+                locales: 'sv',
+                options: { sensitivity: 'not a sensitivity' as Intl.CollatorOptions['sensitivity'] },
+            },
         });
 
         expect(sortedValues(api, 'name')).toEqual(['a', 'à', 'b']);

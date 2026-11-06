@@ -1,10 +1,9 @@
 .bold-row {
     font-weight: bold;
 }
+
 .example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    gap: 0;
 }
 
 .top {

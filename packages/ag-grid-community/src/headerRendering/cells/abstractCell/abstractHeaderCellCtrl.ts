@@ -75,7 +75,6 @@ export abstract class AbstractHeaderCellCtrl<
     public lastFocusEvent: KeyboardEvent | null = null;
 
     protected dragSource: GridDragSource | null = null;
-    protected reAttemptToFocus: boolean = false;
 
     // what was last written to the comp, so a layout that leaves it costs no write; `-1` or null for a new one
     private drawnWidth = -1;
@@ -121,11 +120,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         // Post SetComp
         // Actions that need to be done after the component is setup and all the features and listeners are wired
-        if (this.reAttemptToFocus) {
-            this.reAttemptToFocus = false;
-            if (this.beans.focusSvc.isDeferredFocusCurrent(this)) {
-                this.focus(this.lastFocusEvent ?? undefined);
-            }
+        if (this.beans.focusSvc.takeOwedHeaderFocus(this)) {
+            this.focus(this.lastFocusEvent ?? undefined);
         }
     }
 
@@ -471,7 +467,6 @@ export abstract class AbstractHeaderCellCtrl<
         const { eGui } = this;
 
         if (!eGui) {
-            this.reAttemptToFocus = true;
             this.beans.focusSvc.deferFocus(this);
         } else {
             this.lastFocusEvent = event ?? null;
@@ -630,6 +625,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public override destroy(): void {
+        this.beans.focusSvc.dropOwedHeaderFocus(this);
         destroyCompBean(this);
         super.destroy();
 

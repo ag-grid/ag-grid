@@ -19,7 +19,6 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -34,14 +33,14 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div>
-                <span class="button-group">
+            <div class="example-controls">
+                <div class="controls-row">
                     <button (click)="recreateWithCurrentState()">Recreate with State</button>
                     <button (click)="saveState()">Save State</button>
                     <button (click)="recreateWithNoState()">Recreate without State</button>
                     <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print State</button>
-                </span>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular

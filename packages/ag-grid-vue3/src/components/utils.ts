@@ -1331,6 +1331,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom',
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+         * for example when the row data is empty or all rows are filtered out.
+         * @default false
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+         */
+    alwaysShowGrandTotalRow?: boolean,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
@@ -1712,7 +1718,7 @@ export interface Props<TData> {
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
          *
          * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
-         * Only applies when both values are strings.
+         * Only applies when both values are strings. Also orders the values in the Set Filter list.
          *
          * Can be overridden per column with `colDef.accentedSort`.
          * @default false
@@ -2437,6 +2443,7 @@ export function getProps() {
         groupAggFiltering: undefined,
         groupTotalRow: undefined,
         grandTotalRow: undefined,
+        alwaysShowGrandTotalRow: undefined,
         suppressStickyTotalRow: undefined,
         groupSuppressBlankHeader: undefined,
         groupSelectsFiltered: undefined,

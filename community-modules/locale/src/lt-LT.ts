@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaPageSizeSelectorLabel: 'Puslapio dydis',
     ariaChartMenuClose: 'Uždaryti diagramos redagavimo meniu',
     ariaChartSelected: 'Pasirinkta',
+    ariaChartPalettePrevious: 'Ankstesnė paletė',
+    ariaChartPaletteNext: 'Kita paletė',
+    ariaChartPalettePage: 'Paletė ${variable} iš ${variable}',
     ariaSparklineChartDescription:
         'Mini diagrama - ${chartType} rodanti ${count} reikšmes tarp ${min} ir ${max}. Pradedama ${start} ir baigiama ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini diagrama - ${chartType} rodanti 1 reikšmę, ${value}.',
@@ -827,6 +830,11 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelMaximize: 'Padidinti',
 
     ariaLabelRestore: 'Atkurti',
+    ariaLabelColorPickerSpectrum: 'Sodrumas ir ryškumas',
+    ariaValueColorPickerSpectrum: 'Sodrumas ${variable} %, ryškumas ${variable} %',
+    ariaLabelColorPickerHue: 'Atspalvis',
+    ariaLabelColorPickerAlpha: 'Nepermatomumas',
+    ariaLabelColorPickerHex: 'Šešioliktainė spalva',
 
     ariaLabelColumnMenu: 'Stulpelio meniu',
     ariaLabelColumnFilter: 'Stulpelio filtras',

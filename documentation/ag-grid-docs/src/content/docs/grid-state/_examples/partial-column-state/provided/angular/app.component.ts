@@ -7,7 +7,6 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -29,14 +28,14 @@ const columnOrderState: GridState = {
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div>
-                <span class="button-group">
+            <div class="example-controls">
+                <div class="controls-row">
                     <button (click)="recreateWithNoState()">No State</button>
                     <button (click)="recreateWithColumnOrder()">Column Order (overrides defaults)</button>
                     <button (click)="recreateWithPartialColumnOrder()">
                         Column Order + partialColumnState (keeps defaults)
                     </button>
-                </span>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular

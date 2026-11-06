@@ -10,7 +10,13 @@ import {
 } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GRAND_TOTAL_ROW_ID,
+    NumberFilterModule,
+    TextFilterModule,
+    getGridElement,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping with pivot', () => {
@@ -1482,5 +1488,46 @@ describe('ag-grid grouping with pivot', () => {
             ├── pivot_sales "Pivot_sales" width:200
             └── country "Country" width:200
         `);
+    });
+
+    test('pivot mode without row groups draws its total row only while it has rows and values, and no grand total row even with alwaysShowGrandTotalRow', async () => {
+        const rowData = [
+            { country: 'Ireland', sales: 10 },
+            { country: 'Italy', sales: 20 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country' }, { field: 'sales', aggFunc: 'sum' }],
+            rowData,
+            pivotMode: true,
+            grandTotalRow: 'bottom',
+            alwaysShowGrandTotalRow: true,
+        });
+        const renderedRowIds = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-id]'), (row) => row.getAttribute('row-id'));
+        await waitFor(() => expect(renderedRowIds()).toEqual(['ROOT_NODE_ID']));
+
+        api.setGridOption('rowData', []);
+        await waitFor(() => expect(getGridElement(api)!.querySelector('.ag-overlay-no-rows-center')).not.toBeNull());
+        expect(renderedRowIds()).toEqual([]);
+
+        api.setGridOption('rowData', rowData);
+        await waitFor(() => expect(renderedRowIds()).toEqual(['ROOT_NODE_ID']));
+        api.setGridOption('columnDefs', [{ field: 'country' }, { field: 'sales', aggFunc: null }]);
+        await waitFor(() => expect(renderedRowIds()).toEqual([]));
+        expect(api.getDisplayedRowCount()).toBe(0);
+
+        api.setGridOption('pivotMode', false);
+        await waitFor(() => expect(renderedRowIds()).toEqual(['0', '1', 'rowGroupFooter_ROOT_NODE_ID']));
+        api.setGridOption('rowData', []);
+        await waitFor(() => expect(renderedRowIds()).toEqual(['rowGroupFooter_ROOT_NODE_ID']));
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.id).toBe(GRAND_TOTAL_ROW_ID);
+
+        api.updateGridOptions({
+            rowData,
+            columnDefs: [{ field: 'country' }, { field: 'sales', aggFunc: 'sum' }],
+            pivotMode: true,
+        });
+        await waitFor(() => expect(renderedRowIds()).toEqual(['ROOT_NODE_ID']));
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined();
     });
 });

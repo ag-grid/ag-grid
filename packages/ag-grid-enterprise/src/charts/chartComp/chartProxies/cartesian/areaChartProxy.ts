@@ -1,10 +1,13 @@
-import type { AgAreaSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
+import type { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-types';
 
 import type { UpdateParams } from '../chartProxy';
-import { CartesianChartProxy, formatNormalisedValueAxisLabel } from './cartesianChartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class AreaChartProxy extends CartesianChartProxy<'area'> {
-    protected override getAxes(params: UpdateParams): Record<string, AgCartesianAxisOptions> {
+    protected override getAxes(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): Record<string, AgCartesianAxisOptions> {
         const axes: Record<string, AgCartesianAxisOptions> = {
             x: {
                 type: this.getXAxisType(params),
@@ -17,7 +20,7 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
         };
 
         if (this.isNormalised()) {
-            axes.y.label = { ...axes.y.label, formatter: formatNormalisedValueAxisLabel };
+            this.formatNormalisedValueAxis(axes.y, commonChartOptions);
         }
 
         return axes;

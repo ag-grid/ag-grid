@@ -790,6 +790,9 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaPageSizeSelectorLabel: 'ขนาดหน้า',
     ariaChartMenuClose: 'ปิดเมนูแก้ไขชาร์ต',
     ariaChartSelected: 'ถูกเลือก',
+    ariaChartPalettePrevious: 'จานสีก่อนหน้า',
+    ariaChartPaletteNext: 'จานสีถัดไป',
+    ariaChartPalettePage: 'จานสี ${variable} จาก ${variable}',
     ariaSparklineChartDescription:
         'สปาร์กไลน์ - ${chartType} แสดงค่า ${count} ค่าระหว่าง ${min} และ ${max} เริ่มต้นที่ ${start} และสิ้นสุดที่ ${end}',
     ariaSparklineChartDescriptionSingleValue: 'สปาร์กไลน์ - ${chartType} แสดง 1 ค่า คือ ${value}',
@@ -822,6 +825,11 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelMaximize: 'ขยายใหญ่สุด',
 
     ariaLabelRestore: 'คืนค่า',
+    ariaLabelColorPickerSpectrum: 'ความอิ่มตัวและความสว่าง',
+    ariaValueColorPickerSpectrum: 'ความอิ่มตัว ${variable}%, ความสว่าง ${variable}%',
+    ariaLabelColorPickerHue: 'เฉดสี',
+    ariaLabelColorPickerAlpha: 'ความทึบแสง',
+    ariaLabelColorPickerHex: 'สีฐานสิบหก',
 
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',

@@ -364,7 +364,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 const gridOptions: GridOptions = {};
                 for (const key of Object.keys(changes)) {
                     const value = changes[key];
-                    gridOptions[key as keyof GridOptions] = value.currentValue;
+                    gridOptions[key as keyof GridOptions] = getValueOrCoercedValue(key, value.currentValue);
                 }
                 _processOnChange(gridOptions, this.api);
             });
@@ -1500,6 +1500,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+     * for example when the row data is empty or all rows are filtered out.
+     * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     */
+    @Input({ transform: booleanAttribute }) public alwaysShowGrandTotalRow: boolean | undefined = undefined;
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
@@ -1883,7 +1889,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      *
      * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
-     * Only applies when both values are strings.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
      * Can be overridden per column with `colDef.accentedSort`.
      * @default false
@@ -2271,6 +2277,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input() public isRowValidDropPosition: IsRowValidDropPositionCallback<TData> | undefined = undefined;
+
+    static readonly ngAcceptInputType_autoGenerateColumnDefs:
+        boolean | AutoGenerateColumnDefsOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_cellSelection:
+        boolean | CellSelectionOptions<any> | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_sideBar: SideBarDef | string | string[] | boolean | null | undefined;
+    static readonly ngAcceptInputType_rowNumbers: boolean | RowNumbersOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_loadingRows: boolean | LoadingRowsOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_suppressGroupChangesColumnVisibility:
+        boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_groupAggFiltering:
+        boolean | IsRowFilterable<any> | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_suppressStickyTotalRow:
+        boolean | 'grand' | 'group' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_groupHideParentOfSingleChild:
+        boolean | 'leafGroupsOnly' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_enableRowPinning: boolean | 'top' | 'bottom' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_accentedSort: boolean | AccentedSortOptions | undefined | '' | 'true' | 'false';
 
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */
@@ -2826,8 +2850,11 @@ const booleanMixedGridOptions = new Set<string>(_BOOLEAN_MIXED_GRID_OPTIONS);
 function getValueOrCoercedValue(key: string, valueToUse: any): any {
     if (booleanMixedGridOptions.has(key)) {
         // Handle plain HTML boolean attributes and convert them to boolean values
-        // Also handle the false string case to match Angular boolean attributes
-        return valueToUse === '' ? true : valueToUse === 'false' ? false : valueToUse;
+        // Also handle the 'true' / 'false' strings to match Angular boolean attributes
+        if (valueToUse === '' || valueToUse === 'true') {
+            return true;
+        }
+        return valueToUse === 'false' ? false : valueToUse;
     }
     return valueToUse;
 }

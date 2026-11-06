@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartPalettePrevious: 'Prethodna paleta',
+    ariaChartPaletteNext: 'Sljedeća paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost, ${value}.',
@@ -827,6 +830,11 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaLabelMaximize: 'Maksimiziraj',
 
     ariaLabelRestore: 'Vrati',
+    ariaLabelColorPickerSpectrum: 'Zasićenost i svjetlina',
+    ariaValueColorPickerSpectrum: 'Zasićenost ${variable}%, svjetlina ${variable}%',
+    ariaLabelColorPickerHue: 'Nijansa',
+    ariaLabelColorPickerAlpha: 'Neprozirnost',
+    ariaLabelColorPickerHex: 'Heksadecimalna boja',
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',

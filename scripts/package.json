@@ -49,7 +49,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^4.0.0",
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.20.5",
     "command-line-args": "^6.0.2",
     "fs-extra": "11.4.1",
     "glob": "^11.1.0",

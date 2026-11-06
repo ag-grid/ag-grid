@@ -4,7 +4,7 @@ import { _normalizeSortType } from '../entities/agColumn';
 import type { SortComparatorFn } from '../entities/colDef';
 import type { SortType } from '../interfaces/iSort';
 import type { SortOption } from '../interfaces/iSortOption';
-import type { RowNodeSorter } from './rowNodeSorter';
+import { _getStringComparator } from './accentedSort';
 
 /** Pick the comparator for the sort type: a bare function applies to all types; a dict selects by type. */
 const resolveComparator = (
@@ -28,11 +28,7 @@ const resolveComparator = (
  * comparator here, so each collator is built once. Call once after building an option array, before sorting.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export const _resolveSortOptions = (
-    options: SortOption[],
-    colModel: ColumnModel,
-    rowNodeSorter: RowNodeSorter | undefined
-): void => {
+export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel): void => {
     for (let i = 0, len = options.length; i < len; ++i) {
         const sortOption = options[i];
         const column = sortOption.column as AgColumn;
@@ -55,6 +51,6 @@ export const _resolveSortOptions = (
         sortOption.absolute = type === 'absolute';
         const accentedSort = column.colDef.accentedSort;
         sortOption.stringComparator =
-            accentedSort === undefined ? undefined : (rowNodeSorter?.getStringComparator(accentedSort) ?? null);
+            accentedSort === undefined ? undefined : (_getStringComparator(accentedSort) ?? null);
     }
 };

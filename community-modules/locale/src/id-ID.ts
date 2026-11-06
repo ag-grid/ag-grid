@@ -794,6 +794,9 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaPageSizeSelectorLabel: 'Ukuran Halaman',
     ariaChartMenuClose: 'Tutup Menu Edit Grafik',
     ariaChartSelected: 'Dipilih',
+    ariaChartPalettePrevious: 'Palet sebelumnya',
+    ariaChartPaletteNext: 'Palet berikutnya',
+    ariaChartPalettePage: 'Palet ${variable} dari ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} menampilkan ${count} nilai antara ${min} dan ${max}. Dimulai pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} menampilkan 1 nilai, ${value}.',
@@ -826,6 +829,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelMaximize: 'Maksimalkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelColorPickerSpectrum: 'Saturasi dan Kecerahan',
+    ariaValueColorPickerSpectrum: 'Saturasi ${variable}%, Kecerahan ${variable}%',
+    ariaLabelColorPickerHue: 'Rona',
+    ariaLabelColorPickerAlpha: 'Opasitas',
+    ariaLabelColorPickerHex: 'Warna Heksadesimal',
 
     ariaLabelColumnMenu: 'Menu Kolom',
     ariaLabelColumnFilter: 'Filter Kolom',

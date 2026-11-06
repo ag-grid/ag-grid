@@ -794,6 +794,9 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaPageSizeSelectorLabel: 'Размер страницы',
     ariaChartMenuClose: 'Закрыть меню редактирования диаграммы',
     ariaChartSelected: 'Выбрано',
+    ariaChartPalettePrevious: 'Предыдущая палитра',
+    ariaChartPaletteNext: 'Следующая палитра',
+    ariaChartPalettePage: 'Палитра ${variable} из ${variable}',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, отображающий ${count} значений между ${min} и ${max}. Начинается с ${start} и заканчивается на ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, отображающий 1 значение, ${value}.',
@@ -826,6 +829,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelMaximize: 'Развернуть',
 
     ariaLabelRestore: 'Восстановить',
+    ariaLabelColorPickerSpectrum: 'Насыщенность и яркость',
+    ariaValueColorPickerSpectrum: 'Насыщенность ${variable}%, яркость ${variable}%',
+    ariaLabelColorPickerHue: 'Оттенок',
+    ariaLabelColorPickerAlpha: 'Непрозрачность',
+    ariaLabelColorPickerHex: 'Шестнадцатеричный цвет',
 
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',

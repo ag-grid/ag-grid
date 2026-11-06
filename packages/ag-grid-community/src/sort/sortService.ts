@@ -288,7 +288,7 @@ export class SortService extends BeanStub implements NamedBean {
                     });
                 }
             }
-            _resolveSortOptions(opts, this.beans.colModel, this.beans.rowNodeSorter);
+            _resolveSortOptions(opts, this.beans.colModel);
             this.opts = opts;
         }
         return opts;
