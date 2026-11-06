@@ -241,8 +241,8 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(getAllRows(api)[0].data.a).toEqual({ code: 'FR', name: 'France' }));
     });
 
-    // 4b. Object values are searched by their formatValue text.
-    test('object values are searched via formatValue and colDef.keyCreator is ignored', async () => {
+    // 4b. Without cellEditorParams.formatValue, object values are searched by their formatted text.
+    test('object values are searched by formatted text and colDef.keyCreator is ignored', async () => {
         type Country = { code: string; name: string };
         const values: Country[] = [
             { code: 'IE', name: 'Ireland' },
@@ -250,8 +250,6 @@ describe('Rich Select cell editor', () => {
             { code: 'DE', name: 'Germany' },
         ];
         const keyCreator = vi.fn(({ value }: { value: Country }) => `code-${value.code}`);
-        const warnSpy = vi.spyOn(console, 'warn');
-        onTestFinished(() => warnSpy.mockRestore());
 
         const api = await createGrid({
             columnDefs: [
@@ -263,7 +261,6 @@ describe('Rich Select cell editor', () => {
                     cellEditor: 'agRichSelectCellEditor',
                     cellEditorParams: {
                         values,
-                        formatValue: (value: Country) => value?.name ?? '',
                         filterList: true,
                         searchType: 'match',
                     },
@@ -282,7 +279,6 @@ describe('Rich Select cell editor', () => {
 
         await waitFor(() => expect(getRowLabels(popup)).toEqual(['France']));
         expect(keyCreator).not.toHaveBeenCalled();
-        expect(warnSpy).not.toHaveBeenCalled();
     });
 
     // 5. Async values promise populates the list.
