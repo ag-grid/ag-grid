@@ -9,9 +9,15 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy, _setAriaReadOnly } from 'ag-stack';
+import {
+    KeyCode,
+    _isElementOverflowingCallback,
+    _setAriaActiveDescendant,
+    _setAriaLabelledBy,
+    _setAriaReadOnly,
+} from 'ag-stack';
 
-import type { ListOption } from './agList';
+import type { AgListActiveItemChangedEvent, ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import type { AgPickerFieldParams } from './agPickerFieldParams';
@@ -30,7 +36,7 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
     readOnly?: boolean;
 }
-type AgSelectEvent = 'selectedItem';
+type AgSelectEvent = 'selectedItem' | 'activeItemChanged';
 export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
     /** The keydown that committed the value, when committed via keyboard. Absent for mouse commits. */
     keyboardEvent?: KeyboardEvent;
@@ -181,6 +187,9 @@ export class AgSelect<
                 this.setValue(this.listComponent.getValue()!, false, true);
                 this.hidePicker();
             },
+            activeItemChanged: ({ activeId }: AgListActiveItemChangedEvent) => {
+                _setAriaActiveDescendant(this.getAriaElement(), this.isPickerDisplayed ? activeId : null);
+            },
         });
     }
 
@@ -191,6 +200,7 @@ export class AgSelect<
 
     protected override beforeHidePicker(): void {
         this.listComponent?.hideItemTooltip();
+        _setAriaActiveDescendant(this.getAriaElement(), null);
         super.beforeHidePicker();
     }
 

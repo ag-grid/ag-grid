@@ -1084,6 +1084,36 @@ describe('ag-grid calculated columns', () => {
         });
     });
 
+    test('type picker combobox aria-activedescendant follows the highlighted option', async () => {
+        const api = createGrid('calculated-dialog-type-activedescendant', {
+            rowData: [{ id: 'r1', age: 23 }],
+            columnDefs: [{ field: 'age' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getExpressionInput());
+
+        const combobox = getCalculatedColumnDialog().querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!;
+        const activeOption = () => document.getElementById(combobox.getAttribute('aria-activedescendant') ?? '');
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await waitFor(() => expect(combobox).toHaveAttribute('aria-expanded', 'true'));
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        const first = activeOption();
+        expect(first).toHaveAttribute('role', 'option');
+        expect(first).toHaveClass('ag-active-item');
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        const second = activeOption();
+        expect(second).toHaveClass('ag-active-item');
+        expect(second).not.toBe(first);
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await waitFor(() => expect(combobox).not.toHaveAttribute('aria-activedescendant'));
+    });
+
     test('in a grid inside a shadow root, moving focus within the calculated column form keeps the suggestions open', async () => {
         const host = document.body.appendChild(document.createElement('div'));
         onTestFinished(() => host.remove());
