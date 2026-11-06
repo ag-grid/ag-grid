@@ -4,7 +4,11 @@ description: "Configure full-width and skeleton loading rows for the Server-Side
 enterprise: true
 ---
 
-The Server-Side Row Model displays loading rows while it requests data from the datasource, including when scrolling or expanding groups. Full-width loading rows are displayed by default; skeleton loading displays an indicator in each cell instead.
+The Server-Side Row Model displays loading rows while it requests data from the datasource, including when scrolling or expanding groups. Set `serverSideLoadingRowType` to choose how these rows are displayed:
+
+- `'fullWidth'` (default): a single [Full Width Loading Row](#full-width-loading-row) spanning all columns.
+- `'cell'`: [Skeleton Loading](#skeleton-loading), which displays a loading indicator in each cell.
+- `'none'`: [No Loading Rows](#no-loading-rows), which displays no loading indicator.
 
 These loading rows are managed by the row model, not by the `loading` or `loadingRows` grid options. For application-controlled loading with the Client-Side Row Model, see [Loading Rows](./loading-rows/).
 
@@ -37,13 +41,13 @@ For retrying failed datasource requests, see [Load Retry](./server-side-model-re
 
 ## Skeleton Loading
 
-The Server-Side Row Model can display loading indicators in cells by enabling `suppressServerSideFullWidthLoadingRow`.
+The Server-Side Row Model can display loading indicators in cells by setting `serverSideLoadingRowType` to `'cell'`.
 
 {% gridExampleRunner title="Skeleton Loading Cell Renderer" name="skeleton-loading-cell-renderer" /%}
 
 ```
 const gridOptions = {
-    suppressServerSideFullWidthLoadingRow: true,
+    serverSideLoadingRowType: 'cell',
 };
 ```
 
@@ -55,7 +59,7 @@ Set `loadingCellRenderer` on a column definition to customise its loading cells.
 
 ```
 const gridOptions = {
-    suppressServerSideFullWidthLoadingRow: true,
+    serverSideLoadingRowType: 'cell',
     columnDefs: [
         { field: 'country', loadingCellRenderer: CustomLoadingCellRenderer },
         // More columns, with no load renderer...
@@ -68,8 +72,28 @@ const gridOptions = {
 
 The above example demonstrates the following:
 
-- `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
+- `serverSideLoadingRowType` is set to `'cell'`, preventing the grid from defaulting to full width loading.
 - `loadingCellRenderer` is configured on the _Country_ column, allowing a loading spinner to be displayed for just this column.
 - `loadingCellRenderer` is configured on `defaultColDef` to leave loading cells empty in the other columns.
 
 See [Loading Cell Component](./component-loading-cell-renderer/) for the shared component API.
+
+## No Loading Rows
+
+Set `serverSideLoadingRowType` to `'none'` to display no loading indicator, for example when data loads quickly enough that a loading row would only flash on screen.
+
+```
+const gridOptions = {
+    serverSideLoadingRowType: 'none',
+};
+```
+
+When `'none'` is set:
+
+- Rows that are still loading, such as rows scrolled into view before their block loads, are displayed as empty rows. They keep their row height, so the scroll position and scrollbar do not move when the data arrives.
+- An expanded group displays no rows until its children load, rather than a placeholder row. The children are requested as soon as the group row is in view.
+- If the request for a group's children fails, the group displays an empty row in their place, which [Load Retry](./server-side-model-retry/) reloads.
+- The top level still displays `serverSideInitialRowCount` empty rows until its first block loads.
+- With `groupHideOpenParents` or `groupAllowUnbalanced`, an expanded group keeps an empty placeholder row, as the group is displayed through its first child row.
+
+Hiding loading rows with CSS leaves a blank row in place; use `'none'` instead to avoid an empty gap below an expanded group.

@@ -200,6 +200,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 continue;
             }
 
+            // a level awaiting its first block displays no rows, so load it from its expanded parent row
+            const childCache = row.expanded ? (row.childStore as LazyStore | undefined)?.getCache() : undefined;
+            if (childCache?.isFirstBlockPending() && !this.cacheLoadingNodesMap.get(childCache)?.has(0)) {
+                return { cache: childCache, index: 0 };
+            }
+
             const store = row.parent?.childStore as LazyStore | undefined;
             if (!store) {
                 continue;

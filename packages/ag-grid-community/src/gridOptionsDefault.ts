@@ -186,6 +186,7 @@ export const GRID_OPTION_DEFAULTS = {
     enableGroupEdit: false,
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
+    serverSideLoadingRowType: 'fullWidth',
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',

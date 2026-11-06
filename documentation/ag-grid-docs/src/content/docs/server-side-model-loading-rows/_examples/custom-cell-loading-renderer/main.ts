@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowBuffer: 0,
     maxConcurrentDatasourceRequests: 1,
     blockLoadDebounceMillis: 200,
-    suppressServerSideFullWidthLoadingRow: true,
+    serverSideLoadingRowType: 'cell',
 };
 
 // setup the grid after the page has finished loading

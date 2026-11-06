@@ -16,6 +16,7 @@ import type {
     RowSelectionMode,
     RowSelectionOptions,
     SelectAllMode,
+    ServerSideLoadingRowType,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -416,6 +417,14 @@ export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): nu
     const res = gos.get('maxConcurrentDatasourceRequests');
     // negative number, eg -1, means no max restriction
     return res > 0 ? res : undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getServerSideLoadingRowType(gos: GridOptionsService): ServerSideLoadingRowType {
+    if (!gos.exists('serverSideLoadingRowType') && gos.get('suppressServerSideFullWidthLoadingRow')) {
+        return 'cell';
+    }
+    return gos.get('serverSideLoadingRowType');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
