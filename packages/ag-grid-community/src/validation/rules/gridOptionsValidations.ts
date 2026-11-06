@@ -140,6 +140,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
     findSearchValue: 'Find',
+    formulaDataSource: 'Formula',
+    formulaFuncs: 'Formula',
     getFullRowEditValidationErrors: 'EditCore',
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
@@ -158,8 +160,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDefaultExpanded: 'MasterDetail',
-    masterDetail: (_options, gridOptions) =>
-        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
+    masterDetail: 'MasterDetail',
     notesDataSource: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
