@@ -147,7 +147,12 @@ export class AgPositionableFeature<
     }
 
     public center(postProcessCallback?: () => void) {
-        const { clientHeight, clientWidth } = this.offsetParent;
+        const offsetParent = this.offsetParent;
+        if (!offsetParent) {
+            return;
+        }
+
+        const { clientHeight, clientWidth } = offsetParent;
 
         const x = clientWidth / 2 - this.getWidth()! / 2;
         const y = clientHeight / 2 - this.getHeight()! / 2;
@@ -227,6 +232,20 @@ export class AgPositionableFeature<
         }
 
         this.positioned = !!this.offsetParent;
+    }
+
+    /** Sizes and centres an element whose initial position was taken while it had no layout. */
+    public resizeAndCenter(width: number, height: number): void {
+        this.setOffsetParent();
+        if (!this.offsetParent) {
+            return;
+        }
+
+        // positioned must be set first so setWidth / setHeight apply the min size and parent cap
+        this.positioned = true;
+        this.setWidth(width);
+        this.setHeight(height);
+        this.center();
     }
 
     public isPositioned(): boolean {
