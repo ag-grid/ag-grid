@@ -413,6 +413,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'paginationNumberFormatter',
     'processDataFromClipboard',
     'getServerSideGroupKey',
+    'getServerSideRowGroupKey',
     'isServerSideGroup',
     'createChartContainer',
     'getChartToolbarItems',
