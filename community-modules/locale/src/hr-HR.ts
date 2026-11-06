@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     advancedFilterCancel: 'Otkaži',
     advancedFilterClear: 'Očisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Nedostaje stupac',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
     advancedFilterValidationMissingValue: 'Nedostaje vrijednost',

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     advancedFilterCancel: 'İptal',
     advancedFilterClear: 'Temizle',
     advancedFilterBuilder: 'Oluşturucu',
+    advancedFilterPlaceholder: 'Gelişmiş Filtre',
     advancedFilterValidationMissingColumn: 'Sütun eksik',
     advancedFilterValidationMissingOption: 'Seçenek eksik',
     advancedFilterValidationMissingValue: 'Değer eksik',

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     advancedFilterCancel: 'Peruuta',
     advancedFilterClear: 'Tyhjennä',
     advancedFilterBuilder: 'Rakentaja',
+    advancedFilterPlaceholder: 'Tarkennettu suodatin',
     advancedFilterValidationMissingColumn: 'Sarake puuttuu',
     advancedFilterValidationMissingOption: 'Valinta puuttuu',
     advancedFilterValidationMissingValue: 'Arvo puuttuu',

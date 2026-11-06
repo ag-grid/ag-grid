@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     advancedFilterCancel: '취소',
     advancedFilterClear: '지우기',
     advancedFilterBuilder: '생성기',
+    advancedFilterPlaceholder: '고급 필터',
     advancedFilterValidationMissingColumn: '열이 누락되었습니다',
     advancedFilterValidationMissingOption: '옵션이 누락되었습니다',
     advancedFilterValidationMissingValue: '값이 누락되었습니다',

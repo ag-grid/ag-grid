@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     advancedFilterCancel: 'Hủy bỏ',
     advancedFilterClear: 'Xóa',
     advancedFilterBuilder: 'Trình tạo',
+    advancedFilterPlaceholder: 'Bộ lọc Nâng cao',
     advancedFilterValidationMissingColumn: 'Thiếu cột',
     advancedFilterValidationMissingOption: 'Thiếu tùy chọn',
     advancedFilterValidationMissingValue: 'Thiếu giá trị',

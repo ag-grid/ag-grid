@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     advancedFilterCancel: 'Loobu',
     advancedFilterClear: 'Tühjenda',
     advancedFilterBuilder: 'Koostaja',
+    advancedFilterPlaceholder: 'Täpsem filter',
     advancedFilterValidationMissingColumn: 'Veerg on puudu',
     advancedFilterValidationMissingOption: 'Valik on puudu',
     advancedFilterValidationMissingValue: 'Väärtus on puudu',

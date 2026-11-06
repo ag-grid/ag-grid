@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '构建器',
+    advancedFilterPlaceholder: '高级过滤器',
     advancedFilterValidationMissingColumn: '缺少列',
     advancedFilterValidationMissingOption: '缺少选项',
     advancedFilterValidationMissingValue: '缺少值',

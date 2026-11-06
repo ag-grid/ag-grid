@@ -164,6 +164,7 @@ export const AG_GRID_LOCALE_EN_US = {
     advancedFilterCancel: 'Cancel',
     advancedFilterClear: 'Clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',

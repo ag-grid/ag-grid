@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Rensa',
     advancedFilterBuilder: 'Byggare',
+    advancedFilterPlaceholder: 'Avancerat filter',
     advancedFilterValidationMissingColumn: 'Kolumn saknas',
     advancedFilterValidationMissingOption: 'Alternativ saknas',
     advancedFilterValidationMissingValue: 'Värde saknas',

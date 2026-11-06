@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     advancedFilterCancel: 'Откажи',
     advancedFilterClear: 'Обриши',
     advancedFilterBuilder: 'Градитељ',
+    advancedFilterPlaceholder: 'Напредни филтер',
     advancedFilterValidationMissingColumn: 'Недостаје колона',
     advancedFilterValidationMissingOption: 'Недостаје опција',
     advancedFilterValidationMissingValue: 'Недостаје вредност',

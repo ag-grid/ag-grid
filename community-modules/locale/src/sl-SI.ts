@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     advancedFilterCancel: 'Prekliči',
     advancedFilterClear: 'Počisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Manjka stolpec',
     advancedFilterValidationMissingOption: 'Manjka možnost',
     advancedFilterValidationMissingValue: 'Manjka vrednost',
