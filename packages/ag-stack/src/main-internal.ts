@@ -2,6 +2,10 @@ export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
 export { AgAbstractBean } from './core/agAbstractBean';
+export { createBeanGraph } from './core/agBeanGraph';
+export { createBeanList } from './core/agBeanList';
+export type { AgBeanSource } from './core/agBeanList';
+export type { AgBeanGraph, AgBeansFor, AgBeanView, AgDeclaredDeps, AgGraphBean } from './core/agBeanGraph';
 export { AgAbstractUiBean } from './core/agAbstractUiBean';
 /** @deprecated Use `AgAbstractUiBean`. */
 export { AgAbstractUiBean as AgBeanStub } from './core/agAbstractUiBean';

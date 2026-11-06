@@ -3,6 +3,10 @@
 export { AgAbstractBean } from './core/agAbstractBean';
 export type { AgBeanStubEvent } from './core/agAbstractBean';
 export { _debounce } from './utils/debounce';
+export { createBeanGraph } from './core/agBeanGraph';
+export type { AgBeanGraph, AgBeansFor, AgBeanView, AgDeclaredDeps, AgGraphBean } from './core/agBeanGraph';
+export { createBeanList } from './core/agBeanList';
+export type { AgBeanSource } from './core/agBeanList';
 export { BaseInternalEventService } from './events/baseInternalEventService';
 export { LocalEventService } from './events/localEventService';
 export type { AgInternalEventService, ICommonSource, WithoutCommon } from './interfaces/iDomFreeEvent';
