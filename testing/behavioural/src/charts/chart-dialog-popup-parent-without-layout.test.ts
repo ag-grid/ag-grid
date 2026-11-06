@@ -3,7 +3,7 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager, canvasPolyfill, mockGridLayout } from 'ag-test-utils';
 import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
-import type { ChartCreated, GridApi } from 'ag-grid-community';
+import type { ChartCreated, GridApi, PostProcessPopupParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
@@ -60,7 +60,10 @@ describe('chart dialog when the popup parent has no layout', () => {
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', offsetParentDescriptor);
     }
 
-    async function createChart(onChartCreated?: (event: ChartCreated) => void): Promise<GridApi> {
+    async function createChart(
+        onChartCreated?: (event: ChartCreated) => void,
+        postProcessPopup?: (params: PostProcessPopupParams) => void
+    ): Promise<GridApi> {
         const api = await gridsManager.createGridAndWait('chartDialogGrid', {
             popupParent,
             cellSelection: true,
@@ -73,6 +76,7 @@ describe('chart dialog when the popup parent has no layout', () => {
                 { month: 'Feb', sunshine: 2 },
             ],
             onChartCreated,
+            postProcessPopup,
         });
         api.createRangeChart({
             cellRange: { rowStartIndex: 0, rowEndIndex: 1, columns: ['month', 'sunshine'] },
@@ -114,6 +118,22 @@ describe('chart dialog when the popup parent has no layout', () => {
         document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 140, clientY: 130 }));
 
         expect(dialogSize()).toEqual({ width: '850px', height: '470px' });
+    });
+
+    test('postProcessPopup runs for the chart dialog once a dialog created in a hidden document is centred', async () => {
+        setPopupParentSize(0, 0);
+        hideDocument();
+        const postProcessPopup = vi.fn();
+
+        await createChart(undefined, postProcessPopup);
+
+        showDocument();
+        setPopupParentSize(1200, 800);
+        deliverResize();
+
+        await waitFor(() => expect(dialogSize()).toEqual({ width: '850px', height: '470px' }));
+        const dialog = popupParent.querySelector<HTMLElement>('.ag-dialog');
+        expect(postProcessPopup).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'chart', ePopup: dialog }));
     });
 
     test('a padded popup parent with an empty content box sizes the dialog once its content box has room', async () => {

@@ -142,6 +142,7 @@ export class AgPositionableFeature<
     private movable = false;
     private currentResizer: { isTop: boolean; isRight: boolean; isBottom: boolean; isLeft: boolean } | null = null;
     private resizeObserverSubscriber: (() => void) | undefined;
+    private initialPostProcessCallback: (() => void) | undefined;
 
     constructor(
         private readonly element: HTMLElement,
@@ -170,6 +171,8 @@ export class AgPositionableFeature<
             return;
         }
 
+        // internal re-entries (move / resize start, height checks) pass no callback and must not drop the caller's
+        this.initialPostProcessCallback ??= postProcessCallback;
         const { centered, forcePopupParentAsOffsetParent, minWidth, width, minHeight, height, x, y } = this.config;
 
         if (!this.offsetParent) {
@@ -250,7 +253,7 @@ export class AgPositionableFeature<
         this.positioned = true;
         this.setWidth(width);
         this.setHeight(height);
-        this.center();
+        this.center(this.initialPostProcessCallback);
     }
 
     public isPositioned(): boolean {
