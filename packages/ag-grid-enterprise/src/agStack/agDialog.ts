@@ -74,6 +74,7 @@ export class AgDialog<
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
+    private centerOnRestore = false;
 
     private readonly lastPosition = {
         x: 0,
@@ -174,13 +175,28 @@ export class AgDialog<
         }
     }
 
+    public resizeAndCenter(width: number, height: number): void {
+        if (this.isMaximized) {
+            this.lastPosition.width = width;
+            this.lastPosition.height = height;
+            this.centerOnRestore = true;
+        } else {
+            this.positionableFeature.resizeAndCenter(width, height);
+        }
+    }
+
     private toggleMaximize() {
         const position = this.positionableFeature.getPosition();
         if (this.isMaximized) {
             const { x, y, width, height } = this.lastPosition;
-            this.setWidth(width);
-            this.setHeight(height);
-            this.positionableFeature.offsetElement(x, y);
+            if (this.centerOnRestore) {
+                this.centerOnRestore = false;
+                this.positionableFeature.resizeAndCenter(width, height);
+            } else {
+                this.setWidth(width);
+                this.setHeight(height);
+                this.positionableFeature.offsetElement(x, y);
+            }
         } else {
             this.lastPosition.width = this.getWidth()!;
             this.lastPosition.height = this.getHeight()!;

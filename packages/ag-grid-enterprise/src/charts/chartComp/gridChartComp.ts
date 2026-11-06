@@ -10,6 +10,7 @@ import {
     _focusInto,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
+    _observeResize,
     _removeFromParent,
     _setDisplayed,
 } from 'ag-stack';
@@ -321,6 +322,11 @@ export class GridChartComp extends Component {
 
         this.createBean(this.chartDialog);
 
+        const popupParent = this.popupSvc.getPopupParent();
+        if (!this.hasLayout(this.chartDialog, popupParent)) {
+            this.sizeDialogOnceLaidOut(this.chartDialog, popupParent);
+        }
+
         this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuSvc.hideAdvancedSettings();
@@ -336,6 +342,33 @@ export class GridChartComp extends Component {
                 }
             });
         });
+    }
+
+    private hasLayout(dialog: Dialog, popupParent: HTMLElement): boolean {
+        if (!dialog.getGui().offsetParent) {
+            return false;
+        }
+
+        const { clientWidth, clientHeight } = popupParent;
+        const style = window.getComputedStyle(popupParent);
+        const contentWidth = clientWidth - Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight);
+        const contentHeight =
+            clientHeight - Number.parseFloat(style.paddingTop) - Number.parseFloat(style.paddingBottom);
+
+        return contentWidth > 0 && contentHeight > 0;
+    }
+
+    private sizeDialogOnceLaidOut(dialog: Dialog, popupParent: HTMLElement): void {
+        const stopObserving = _observeResize(this.beans, popupParent, () => {
+            if (!this.isAlive() || !this.hasLayout(dialog, popupParent)) {
+                return;
+            }
+
+            stopObserving();
+            const { width, height } = this.getBestDialogSize();
+            dialog.resizeAndCenter(width, height);
+        });
+        this.addDestroyFunc(stopObserving);
     }
 
     private getBestDialogSize(): { width: number; height: number } {
