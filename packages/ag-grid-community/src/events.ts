@@ -362,8 +362,6 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 /**
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
- * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
- * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -380,8 +378,6 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 export type SelectionEventSourceType =
     | 'api'
     | 'apiSelectAll'
-    | 'apiSelectAllFiltered'
-    | 'apiSelectAllCurrentPage'
     | 'checkboxSelected'
     | 'rowClicked'
     | 'rowDataChanged'

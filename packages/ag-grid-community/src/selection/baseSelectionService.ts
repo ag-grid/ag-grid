@@ -304,9 +304,9 @@ export abstract class BaseSelectionService extends BeanStub {
         if (so && typeof so !== 'string') {
             const checkbox = isColumnSelectionCol(column) && _getCheckboxes(so);
             return column.isColumnFunc(rowNode, checkbox);
-        } else {
-            return column.isColumnFunc(rowNode, column.colDef.checkboxSelection);
         }
+
+        return false;
     }
 
     protected inferNodeSelections(

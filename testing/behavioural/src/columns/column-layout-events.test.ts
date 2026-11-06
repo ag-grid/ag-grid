@@ -1005,7 +1005,7 @@ describe('the column events of one call', () => {
         await waitFor(() => expect(seen).toEqual([true]));
     });
 
-    test('a group column redefined by a row group move is told once the columns hold the new order', () => {
+    test('a group column a row group move only reorders is not told its colDef changed', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a', rowGroup: true }, { field: 'b', rowGroup: true }, { field: 'c' }],
             groupDisplayType: 'multipleColumns',
@@ -1018,7 +1018,7 @@ describe('the column events of one call', () => {
 
         api.moveRowGroupColumn(0, 1);
 
-        expect(seen).toEqual([ids(api.getAllGridColumns())]);
+        expect(seen).toEqual([]);
     });
 
     test("a column a listener changes again before being told is told once, by the listener's update", () => {

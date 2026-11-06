@@ -151,38 +151,6 @@ export interface _RowSelectionGridApi<TData = any> {
     deselectAll(mode?: SelectAllMode, source?: SelectionEventSourceType): void;
 
     /**
-     * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
-     *
-     * @deprecated as of v33. Use `selectAll('filtered')` instead
-     */
-    selectAllFiltered(source?: SelectionEventSourceType): void;
-
-    /**
-     * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
-     *
-     * @deprecated as of v33. Use `deselectAll('filtered')` instead
-     */
-    deselectAllFiltered(source?: SelectionEventSourceType): void;
-
-    /**
-     * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
-     *
-     * @deprecated as of v33. Use `selectAll('currentPage')` instead
-     */
-    selectAllOnCurrentPage(source?: SelectionEventSourceType): void;
-
-    /**
-     * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
-     *
-     * @deprecated as of v33. Use `deselectAll('currentPage')` instead
-     */
-    deselectAllOnCurrentPage(source?: SelectionEventSourceType): void;
-
-    /**
      * Returns an unsorted list of selected nodes.
      * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,
      * as the node can be traversed.
