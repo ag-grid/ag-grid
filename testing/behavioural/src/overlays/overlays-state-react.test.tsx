@@ -3,7 +3,7 @@ import { isAgHtmlElementVisible } from 'ag-test-utils';
 import React from 'react';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, QuickFilterModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 describe('ag-grid overlays state (react)', () => {
@@ -18,7 +18,7 @@ describe('ag-grid overlays state (react)', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, QuickFilterModule]);
     });
 
     beforeEach(() => {
@@ -155,6 +155,30 @@ describe('ag-grid overlays state (react)', () => {
         rerender(<AgGridReact {...baseProps} activeOverlayParams={{ fromTest: 'active-updated' }} />);
 
         await waitFor(() => expect(getOverlayText()).toBe('active-updated'));
+    });
+
+    test('react option prop dropped on re-render is reset', async () => {
+        let gridRef: AgGridReact | null = null;
+        const ref = (r: AgGridReact | null) => {
+            gridRef = r;
+        };
+
+        const { rerender } = render(
+            <AgGridReact
+                ref={ref}
+                columnDefs={columnDefs}
+                rowData={[{}]}
+                activeOverlay="agNoRowsOverlay"
+                quickFilterText="T"
+            />
+        );
+        await waitFor(() => expect(hasNoRowsOverlay()).toBe(true));
+
+        rerender(<AgGridReact ref={ref} columnDefs={columnDefs} rowData={[{}]} />);
+
+        await waitFor(() => expect(hasNoRowsOverlay()).toBe(false));
+        expect(gridRef!.api.getGridOption('activeOverlay')).toBeUndefined();
+        expect(gridRef!.api.getGridOption('quickFilterText')).toBeUndefined();
     });
 
     // AG-18512: an overlay supplied via overlayComponentSelector / overlayComponent was wrapped by
