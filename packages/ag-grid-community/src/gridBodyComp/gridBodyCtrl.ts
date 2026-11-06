@@ -17,6 +17,7 @@ import type { PopupService } from '../widgets/popupService';
 import { INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { ROW_CONTAINER_NAMES } from './rowContainer/rowContainerCtrl';
+import { ScrollGestureFeature } from './scrollGestureFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
@@ -85,6 +86,7 @@ export class GridBodyCtrl extends BeanStub {
     private pinnedRightWidth = -1;
 
     public scrollFeature: GridBodyScrollFeature;
+    private scrollGestureFeature?: ScrollGestureFeature;
 
     private columnWidthAnimationDepth = 0;
     private columnWidthAnimationTimeout: number | undefined;
@@ -121,6 +123,11 @@ export class GridBodyCtrl extends BeanStub {
         this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
+        if (this.gos.get('scrollGestureMode') === 'axisLocked') {
+            this.scrollGestureFeature = this.createManagedBean(
+                new ScrollGestureFeature(eGridBody, eGridViewport, this.scrollFeature)
+            );
+        }
         // Mount before setPinnedRowsHeights: the top section has to reserve vertical space for the
         // advanced filter bar, so its height must be known by the time the section is measured.
         this.filterManager?.mountAdvFilterTopSectionComp({
@@ -620,6 +627,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onStickyWheel(e: WheelEvent): void {
+        if (this.scrollGestureFeature) {
+            return;
+        }
         const { deltaY } = e;
 
         const scrolled = this.scrollVertically(deltaY);
