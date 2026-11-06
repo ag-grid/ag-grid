@@ -112,8 +112,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         for (let i = 0, len = pendingModels.length; i < len; ++i) {
             const { model, source } = pendingModels[i];
             // each queued model is a call the app made, so one a later call supersedes still warns
-            this.warnUnavailableColumns(model);
-            this.applyModel(model);
+            this.applyModel(model, true);
             this.filterManager?.onFilterChanged({ source });
         }
         // Until data types are inferred, columns default to text, so a number/date expression built while
@@ -172,11 +171,21 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     /** The expression a model is written as, recording whether any set value had to fall back to its key. */
-    private writeExpression(model: AdvancedFilterModel | null): string | null {
+    private writeExpression(model: AdvancedFilterModel | null, warnUnavailable?: boolean): string | null {
         const advFilterExpSvc = this.advFilterExpSvc;
         advFilterExpSvc.wroteUnresolvedSetValue = false;
+        const unavailableColIds = warnUnavailable ? new Set<string>() : null;
+        advFilterExpSvc.unavailableColIds = unavailableColIds;
         const expression = model ? this.modelToExpression(model, true) : null;
+        advFilterExpSvc.unavailableColIds = null;
         this.appliedTextUnresolved = advFilterExpSvc.wroteUnresolvedSetValue;
+        unavailableColIds?.forEach((colId) => {
+            if (this.colModel.getNonPivotColById(colId)) {
+                this.warn(342, { colId });
+            } else {
+                this.warn(341, { colId });
+            }
+        });
         return expression;
     }
 
@@ -211,27 +220,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             this.pendingModels.push({ model: cloneModel(model), source });
             return;
         }
-        this.warnUnavailableColumns(model);
-        this.setModel(model);
+        this.pendingModels.length = 0;
+        this.applyModel(model, true);
         this.filterManager?.onFilterChanged({ source });
-    }
-
-    private warnUnavailableColumns(model: AdvancedFilterModel | null): void {
-        if (!model) {
-            return;
-        }
-        const colIds = new Set<string>();
-        collectColIds(model, colIds);
-        const available = new Set(this.advFilterExpSvc.getColumnAutocompleteEntries().map(({ key }) => key));
-        for (const colId of colIds) {
-            if (!available.has(colId)) {
-                if (this.colModel.getNonPivotColById(colId)) {
-                    this.warn(342, { colId });
-                } else {
-                    this.warn(341, { colId });
-                }
-            }
-        }
     }
 
     public setModel(model: AdvancedFilterModel | null): void {
@@ -244,8 +235,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.applyModel(this.appliedModel);
     }
 
-    private applyModel(model: AdvancedFilterModel | null): void {
-        const expression = this.writeExpression(model);
+    private applyModel(model: AdvancedFilterModel | null, warnUnavailable?: boolean): void {
+        const expression = this.writeExpression(model, warnUnavailable);
         const unresolved = this.appliedTextUnresolved;
 
         this.setExpressionDisplayValue(expression);
@@ -443,16 +434,6 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 /** A date operand is parsed into a new instance each time, so it compares by time. */
 const isSameOperand = (a: unknown, b: unknown): boolean =>
     a === b || (a instanceof Date && b instanceof Date && a.getTime() === b.getTime());
-
-const collectColIds = (model: AdvancedFilterModel, colIds: Set<string>): void => {
-    if (model.filterType === 'join') {
-        for (const condition of model.conditions) {
-            collectColIds(condition, colIds);
-        }
-    } else {
-        colIds.add(model.colId);
-    }
-};
 
 /** The applied model is held rather than re-parsed per read, so a reader must not get the live instance. */
 const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | null => {
