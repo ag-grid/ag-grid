@@ -2,13 +2,13 @@
 version: v1.25.1
 ignore:
   SNYK-JS-DOMPURIFY-21460653:
-    - '@mobileaction/action-kit@1.60.1 > dompurify@3.4.15':
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T12:58:56.000Z
   SNYK-JS-DOMPURIFY-21460657:
-    - '@mobileaction/action-kit@1.60.1 > dompurify@3.4.15':
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'

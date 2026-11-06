@@ -40,7 +40,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-FFLATE-20883305:
-    - '@vitest/ui@4.1.11 > fflate@0.8.2':
+    - '@vitest/ui@4.1.12 > fflate@0.8.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -101,7 +101,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.20.0 > follow-redirects@1.16.0':
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.7.21 > pipenet@1.4.0 > axios@1.20.0 > follow-redirects@1.16.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -477,12 +477,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -503,12 +503,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -529,12 +529,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -560,12 +560,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -591,12 +591,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -617,12 +617,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -648,12 +648,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -679,12 +679,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vite@7.3.6 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -695,7 +695,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'vitest@4.1.11 > vite@8.2.1':
+    - 'vitest@4.1.12 > vite@8.2.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -753,32 +753,32 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:40:49.439Z
   SNYK-JS-POSTCSSSELECTORPARSER-20510276:
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-merge-longhand@7.0.6 > stylehacks@7.0.10 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-merge-longhand@7.0.7 > stylehacks@7.0.11 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:38:39.123Z
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-unique-selectors@7.0.6 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-unique-selectors@7.0.7 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:38:39.118Z
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-minify-selectors@7.1.0 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-minify-selectors@7.1.2 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:38:39.112Z
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-merge-rules@7.0.10 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-merge-rules@7.0.11 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:38:39.103Z
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-discard-comments@7.0.7 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-discard-comments@7.0.8 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:38:39.098Z
-    - cssnano@7.1.7 > cssnano-preset-default@7.0.15 > postcss-calc@10.1.1 > postcss-selector-parser@7.1.5:
+    - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-calc@10.1.1 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1272,27 +1272,27 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.736Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.723Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.689Z
-    - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+    - '@typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.668Z
-    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.648Z
-    - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+    - '@typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1638,27 +1638,27 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.548Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.538Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.533Z
-    - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+    - '@typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.525Z
-    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.516Z
-    - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+    - '@typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1725,7 +1725,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-24T11:08:32.147Z
-    - eslint@10.11.0 > ajv@6.15.0 > uri-js@4.4.1:
+    - 'eslint@10.13.0 > ajv@6.15.0 > uri-js@4.4.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1779,7 +1779,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-24T09:36:23.471Z
-    - stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3:
+    - 'stylelint@17.16.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -2195,7 +2195,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:06.805Z
-    - 'stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
+    - 'stylelint@17.16.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:06.789Z
@@ -2897,7 +2897,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-AJV-15274295:
-    - 'stylelint@17.15.0 > table@6.9.0 > ajv@8.17.1':
+    - 'stylelint@17.16.0 > table@6.9.0 > ajv@8.17.1':
         reason: Used in linting - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T10:53:07.358Z
@@ -3366,7 +3366,7 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > koa@3.1.1:
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.7.21 > pipenet@1.4.0 > koa@3.1.1':
         reason: MCP dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -3383,7 +3383,7 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > koa-router@14.0.0 > path-to-regexp@8.3.0:
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.7.21 > pipenet@1.4.0 > koa-router@14.0.0 > path-to-regexp@8.3.0':
         reason: MCP dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -3404,7 +3404,7 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > koa-router@14.0.0 > path-to-regexp@8.3.0:
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.7.21 > pipenet@1.4.0 > koa-router@14.0.0 > path-to-regexp@8.3.0':
         reason: MCP dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z

@@ -48,7 +48,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -64,7 +64,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -80,7 +80,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -96,7 +96,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -112,7 +112,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -128,7 +128,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -144,7 +144,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -160,7 +160,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -228,7 +228,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-24T09:38:20.442Z
   SNYK-JS-BRACES-19963945:
-    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > braces@3.0.3:
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > braces@3.0.3':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -238,7 +238,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-24T09:36:23.484Z
-    - stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3:
+    - 'stylelint@17.16.0 > fast-glob@3.3.3 > micromatch@4.0.8 > braces@3.0.3':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -269,7 +269,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-31T13:30:25.082Z
   SNYK-JS-PICOMATCH-15765511:
-    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1:
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -282,7 +282,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:21.732Z
-    - 'stylelint@17.15.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
+    - 'stylelint@17.16.0 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-27T11:42:21.717Z
@@ -319,7 +319,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T11:14:48.488Z
   SNYK-JS-AJV-15274295:
-    - 'stylelint@17.15.0 > table@6.9.0 > ajv@8.17.1':
+    - 'stylelint@17.16.0 > table@6.9.0 > ajv@8.17.1':
         reason: Lint dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T10:59:56.832Z
