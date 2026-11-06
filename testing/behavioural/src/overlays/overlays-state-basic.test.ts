@@ -909,7 +909,6 @@ describe('ag-grid overlays state', () => {
             `);
             expect(hasLoadingOverlay()).toBeFalsy();
         });
-
     });
 
     // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
