@@ -1,4 +1,11 @@
-import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaLabel, _setAriaRole } from 'ag-stack';
+import {
+    _focusInto,
+    _getActiveDomElement,
+    _getAriaLabel,
+    _isNothingFocused,
+    _setAriaLabel,
+    _setAriaRole,
+} from 'ag-stack';
 
 import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
 import { AgPromise, KeyCode, TabGuardComp, _createElement } from 'ag-grid-community';
@@ -22,6 +29,8 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     private lastOpenedInContainer?: ContainerType;
     private lastActivatedMenuItem: MenuItemComponent | null = null;
     private hidePopup?: () => void;
+    // a sub-menu child's own role and aria-label, displaced while its gui is the sub-menu dialog
+    private readonly displacedChildAria = new WeakMap<HTMLElement, { role: string | null; label: string | null }>();
 
     constructor() {
         super({ tag: 'div', cls: 'ag-multi-filter ag-menu-list-compact' });
@@ -65,7 +74,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                     // sub-menus should appear as groups in the tool panel
                     if (filterDef.display === 'subMenu') {
-                        this.clearSubMenuDialogAria(comp.getGui());
+                        this.restoreChildAria(comp.getGui());
                     }
                     const group = this.insertFilterGroup(filter, comp, filterTitle);
 
@@ -115,6 +124,9 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         name: string
     ): AgPromise<MenuItemComponent> {
         const eGui = comp.getGui();
+        if (!this.displacedChildAria.has(eGui)) {
+            this.displacedChildAria.set(eGui, { role: eGui.getAttribute('role'), label: _getAriaLabel(eGui) });
+        }
         _setAriaRole(eGui, 'dialog');
         _setAriaLabel(eGui, name);
         const menuItem = this.createBean(new MenuItemComponent());
@@ -196,9 +208,13 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             });
     }
 
-    private clearSubMenuDialogAria(eGui: HTMLElement): void {
-        _setAriaRole(eGui, null);
-        _setAriaLabel(eGui, null);
+    private restoreChildAria(eGui: HTMLElement): void {
+        const aria = this.displacedChildAria.get(eGui);
+        if (aria) {
+            _setAriaRole(eGui, aria.role);
+            _setAriaLabel(eGui, aria.label);
+            this.displacedChildAria.delete(eGui);
+        }
     }
 
     private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): GroupComponent {
