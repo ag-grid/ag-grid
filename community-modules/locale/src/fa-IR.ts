@@ -849,6 +849,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
+    ariaLabelFilterCardType: 'نوع فیلتر',
     ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)

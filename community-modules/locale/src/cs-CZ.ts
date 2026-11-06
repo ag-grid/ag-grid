@@ -848,6 +848,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtru',
     ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

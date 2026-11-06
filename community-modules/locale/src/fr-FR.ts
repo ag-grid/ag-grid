@@ -858,6 +858,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelAddFilterField: 'Ajouter un champ de filtre',
     ariaLabelFilterCardDelete: 'Supprimer le filtre',
     ariaLabelFilterCardHasEdits: 'A des modifications',
+    ariaLabelFilterCardType: 'Type de filtre',
     ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)

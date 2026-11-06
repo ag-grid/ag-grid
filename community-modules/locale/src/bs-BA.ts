@@ -875,6 +875,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Obriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaLabelFilterCardType: 'Vrsta filtera',
     ariaHasNote: 'Ova ćelija ima napomenu.',
 
     // Number Format (Status Bar, Pagination Panel)

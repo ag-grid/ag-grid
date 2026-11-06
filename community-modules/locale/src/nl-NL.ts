@@ -850,6 +850,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -871,6 +871,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelAddFilterField: 'Filtrivälja lisamine',
     ariaLabelFilterCardDelete: 'Kustuta filter',
     ariaLabelFilterCardHasEdits: 'Sisaldab muudatusi',
+    ariaLabelFilterCardType: 'Filtri tüüp',
     ariaHasNote: 'Sellel lahtril on märkus.',
 
     // Number Format (Status Bar, Pagination Panel)

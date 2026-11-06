@@ -848,6 +848,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaLabelAddFilterField: 'Legg til filterfelt',
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)

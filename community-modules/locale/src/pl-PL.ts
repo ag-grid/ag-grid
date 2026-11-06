@@ -852,6 +852,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaLabelAddFilterField: 'Dodaj pole filtru',
     ariaLabelFilterCardDelete: 'Usuń filtr',
     ariaLabelFilterCardHasEdits: 'Ma edycje',
+    ariaLabelFilterCardType: 'Typ Filtra',
     ariaHasNote: 'Ta komórka ma notatkę.',
 
     // Number Format (Status Bar, Pagination Panel)

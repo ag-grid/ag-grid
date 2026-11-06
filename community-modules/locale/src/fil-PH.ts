@@ -879,6 +879,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelAddFilterField: 'Magdagdag ng Field ng Filter',
     ariaLabelFilterCardDelete: 'Tanggalin ang Filter',
     ariaLabelFilterCardHasEdits: 'May mga Pagbabago',
+    ariaLabelFilterCardType: 'Uri ng Filter',
     ariaHasNote: 'May tala ang cell na ito.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaLabelFilterCardType: 'フィルタータイプ',
     ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
