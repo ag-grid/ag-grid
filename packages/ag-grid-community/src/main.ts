@@ -615,6 +615,18 @@ export type {
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 export type {
+    ViewportGroupRow,
+    ViewportGroupRowRef,
+    ViewportLeafRow,
+    ViewportLeafRowRef,
+    ViewportRow,
+    ViewportRowRef,
+    ViewportSubscriptionOptions,
+    ViewportSubscriptionParams,
+    ViewportTreeRow,
+    ViewportTreeRowRef,
+} from './interfaces/iViewportSubscription';
+export type {
     IServerSideStore,
     ServerSideGroupLevelState,
     StoreRefreshAfterParams,
@@ -1178,6 +1190,7 @@ export type { AgModuleName, Module } from './interfaces/iModule';
 export { EventApiModule } from './misc/apiEvents/apiEventModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { GridStateModule } from './misc/state/stateModule';
+export { ViewportSubscriptionModule } from './viewportSubscription/viewportSubscriptionModule';
 export { ModuleRegistry } from './modules/moduleRegistry';
 export { PaginationModule } from './pagination/paginationModule';
 export { PaginationPageNumbersModule } from './pagination/paginationPageNumbersModule';

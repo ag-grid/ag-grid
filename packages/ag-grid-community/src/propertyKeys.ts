@@ -118,6 +118,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'findOptions',
     'filterHandlers',
     'groupHierarchyConfig',
+    'viewportSubscription',
 ];
 
 // only used internally

@@ -224,6 +224,18 @@
         "meta": {
             "displayName": "Row Displayed"
         },
+        "subscribeToViewport": {
+            "more": {
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
+            }
+        },
+        "unsubscribeFromViewport": {
+            "more": {
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
+            }
+        },
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",

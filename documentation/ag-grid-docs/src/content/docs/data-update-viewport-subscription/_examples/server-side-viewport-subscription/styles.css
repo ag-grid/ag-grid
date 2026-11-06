@@ -1,0 +1,16 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+}

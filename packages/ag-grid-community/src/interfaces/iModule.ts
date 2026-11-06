@@ -210,7 +210,8 @@ export type CommunityModuleName =
     | 'UndoRedoEdit'
     | 'Validation'
     | 'ValueCache'
-    | 'CellSpan';
+    | 'CellSpan'
+    | 'ViewportSubscription';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -306,6 +307,7 @@ export type AgModuleName =
     | 'ValidationModule'
     | 'ValueCacheModule'
     | 'CellSpanModule'
+    | 'ViewportSubscriptionModule'
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'

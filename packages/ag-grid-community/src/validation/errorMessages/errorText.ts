@@ -609,8 +609,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: (props?: { feature?: string }) =>
-        `\`getRowId\` callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
+    188: ({ feature }: { feature: string }) =>
+        `\`getRowId\` callback must be provided for ${feature} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -972,6 +972,7 @@ export const AG_GRID_ERRORS = {
         `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
     340: ({ field }: { field: string }) =>
         `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
+    342: () => '`api.subscribeToViewport` needs the `viewportSubscription` grid option to be set.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -987,7 +988,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 340;
+export const MAX_ERROR_ID = 342;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

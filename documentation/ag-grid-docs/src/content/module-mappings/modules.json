@@ -557,6 +557,11 @@
                     "path": "grid-api/#reference-data"
                 },
                 {
+                    "moduleName": "ViewportSubscriptionModule",
+                    "name": "Viewport Subscription",
+                    "path": "data-update-viewport-subscription"
+                },
+                {
                     "moduleName": "ServerSideRowModelApiModule",
                     "name": "Server-Side Row Model API",
                     "path": "grid-api/#reference-serverSideRowModel",
