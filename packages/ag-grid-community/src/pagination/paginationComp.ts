@@ -63,7 +63,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
 
         this.addManagedPropertyListeners(['pagination', 'suppressPaginationPanel'], () => this.onPaginationChanged());
         this.addManagedPropertyListeners(
-            ['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
+            ['pagination', 'paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
             () => this.onPageSizeRelatedOptionsChange()
         );
         this.addManagedPropertyListener('paginationPanels', () => this.rebuildComponents(idPrefix));
