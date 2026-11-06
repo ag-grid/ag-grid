@@ -193,14 +193,15 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             '01',
         ]);
         // The label follows the value in the name, as it is shown.
-        expect(ariaLabels()).toEqual(
-            expect.arrayContaining([
-                '2024, (not in rows) Filter Value',
-                'January, (not in rows) Filter Value',
-                '01, (not in rows) Filter Value',
-                '2025 Filter Value',
-            ])
-        );
+        expect(ariaLabels()).toEqual([
+            '(Select All) Filter Value',
+            '2024, (not in rows) Filter Value',
+            'January, (not in rows) Filter Value',
+            '01, (not in rows) Filter Value',
+            '2025 Filter Value',
+            'February Filter Value',
+            '01 Filter Value',
+        ]);
     });
 
     test('preservePreviousValuesLabel is shown as given after a cell renderer, until the value returns', async () => {
@@ -603,7 +604,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         await ColumnFilterHarness.open(api, 'value');
 
         await setRowData(api, rows('A'));
-        expect(ariaLabels()).toContain('B, not in rows Filter Value');
+        expect(ariaLabels()).toEqual([null, null, 'B, not in rows Filter Value']);
     });
 
     test('a tree list model value never seen in the data is a root leaf, not handed to the formatter or renderer', async () => {

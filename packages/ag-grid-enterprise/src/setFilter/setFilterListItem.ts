@@ -332,7 +332,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
         const missingLabel = this.getMissingLabel();
-        // A label follows the value, as it is shown, rather than the item label.
+        // The label goes right after the value, as it is shown, before the item label.
         const ariaLabel = missingLabel
             ? `${value}, ${missingLabel} ${itemLabel}`
             : `${value} ${itemLabel}${this.getMissingSuffix()}`;
