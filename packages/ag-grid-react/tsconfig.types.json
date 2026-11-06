@@ -4,7 +4,12 @@
     "strict": false,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "types": ["node"]
+    "noEmitOnError": true,
+    "rootDir": ".",
+    "outDir": "dist/types",
+    "types": ["node"],
+    "paths": {},
+    "noEmit": false
   },
   "include": ["src/*.ts"]
 }

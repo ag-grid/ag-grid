@@ -25,7 +25,7 @@ import { _getLocaleTextFunc } from '../utils/locale';
 export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
-type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
+type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event: TEvent) => void };
 
 const DESTROYED_EVENT = { type: 'destroyed' as AgBeanStubEvent };
 

@@ -43,7 +43,11 @@ function getColumnOperatorKeysByOperands(
     return byOperands;
 }
 
-export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFilterExpSvc }: BeanCollection) => {
+export const buildAdvancedFilterFeatureSchema = ({
+    colModel,
+    dataTypeSvc,
+    advFilterExpSvc,
+}: BeanCollection): SchemaBuilder | undefined => {
     if (!dataTypeSvc || !advFilterExpSvc) {
         return;
     }

@@ -170,12 +170,25 @@ export const sonarjsConfig = [
 ];
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     { plugins: { 'import-x': eslintImportX, unicorn } },
     {
-        ignores: ['node_modules/', 'dist/', '.astro/', '**/env.d.ts', 'coverage', '**/.dependency-cruiser.js'],
+        ignores: [
+            'node_modules/',
+            'dist/',
+            '**/.build-staging-*/',
+            '.astro/',
+            '**/env.d.ts',
+            'coverage',
+            '**/.dependency-cruiser.js',
+        ],
     },
     {
         rules: {
