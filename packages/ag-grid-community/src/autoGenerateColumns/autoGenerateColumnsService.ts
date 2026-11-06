@@ -50,9 +50,8 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
 
     /** As with `rowData` under the Client-Side Row Model, columns are generated from the root-level rows already loaded. */
     private onServerSideOptionChanged(): void {
-        const gos = this.gos;
-        if (!gos.get('autoGenerateColumnDefs')) {
-            this.serverSidePending = false;
+        this.serverSidePending = !!this.gos.get('autoGenerateColumnDefs');
+        if (!this.serverSidePending) {
             return;
         }
         const loadedRows: any[] = [];
@@ -61,46 +60,40 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
                 loadedRows.push(node.data);
             }
         });
-        this.serverSidePending = true;
         this.generateServerSideColumns(loadedRows);
-        if (this.serverSidePending && !gos.get('columnDefs')) {
+        if (this.serverSidePending && !this.gos.get('columnDefs')) {
             // the grid has not started yet, as it had no columns; start it without any to request the rows
-            gos.updateGridOptions({ options: { columnDefs: [] }, source: 'optionsUpdated' });
+            this.setColumnDefs([]);
         }
     }
 
+    /** Only called while `serverSidePending`, which implies `autoGenerateColumnDefs` is enabled. */
     private generateServerSideColumns(rowData: any[]): void {
-        const optionValue = this.gos.get('autoGenerateColumnDefs');
-        if (!optionValue) {
-            return;
-        }
-        const columnDefs = this.createColumnDefs(rowData, optionValue);
+        const columnDefs = this.createColumnDefs(rowData);
         if (columnDefs) {
             this.serverSidePending = false;
-            this.gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
+            this.setColumnDefs(columnDefs);
         }
     }
 
     private generateColumns(isInitial: boolean): void {
-        const gos = this.gos;
-        const optionValue = gos.get('autoGenerateColumnDefs');
-        if (!optionValue) {
+        if (!this.gos.get('autoGenerateColumnDefs')) {
             return;
         }
+        const columnDefs = this.createColumnDefs(this.gos.get('rowData') ?? []);
+        if (columnDefs || !isInitial) {
+            this.setColumnDefs(columnDefs ?? []);
+        }
+    }
 
-        const columnDefs = this.createColumnDefs(gos.get('rowData') ?? [], optionValue);
-        if (!columnDefs && isInitial) {
-            return;
-        }
-        gos.updateGridOptions({ options: { columnDefs: columnDefs ?? [] }, source: 'optionsUpdated' });
+    private setColumnDefs(columnDefs: (ColDef | ColGroupDef)[]): void {
+        this.gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
     }
 
     /** Builds column definitions from the first plain-object row, or returns `undefined` when there is none. */
-    private createColumnDefs(
-        rowData: any[],
-        optionValue: true | AutoGenerateColumnDefsOptions
-    ): (ColDef | ColGroupDef)[] | undefined {
+    private createColumnDefs(rowData: any[]): (ColDef | ColGroupDef)[] | undefined {
         const gos = this.gos;
+        const optionValue = gos.get('autoGenerateColumnDefs');
         const config: AutoGenerateColumnDefsOptions = typeof optionValue === 'object' ? optionValue : {};
         let firstRow: Record<string, unknown> | undefined;
         for (let i = 0, len = rowData.length; i < len; ++i) {
