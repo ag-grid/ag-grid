@@ -148,7 +148,7 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
             const pageSizesSet = this.getPageSizeSelectorOption() !== true;
 
-            // Re-run when the panel becomes visible, so a hidden selector warns at that point.
+            // PaginationComp re-runs this when the panel is shown, so the warning is deferred rather than lost.
             if (this.isPanelDisplayed()) {
                 this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
                 if (!pageSizesSet) {
