@@ -1,4 +1,4 @@
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractUiBean } from '../core/agAbstractUiBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -82,7 +82,7 @@ export class AgPositionableFeature<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<
+> extends AgAbstractUiBean<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

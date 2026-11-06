@@ -1,6 +1,6 @@
 import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractUiBean } from '../core/agAbstractUiBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -59,7 +59,7 @@ export abstract class BasePopupService<
     TPropertiesService extends IPropertiesService<TProperties>,
     TPopupPositionParams,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
 {
     beanName = 'popupSvc' as const;

@@ -1,4 +1,4 @@
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractUiBean } from '../core/agAbstractUiBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -18,7 +18,7 @@ export class AgTooltipFeature<
     TTooltipCtrlParams,
     TLocation extends string,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements ITooltipFeature
 {
     private tooltip: any;

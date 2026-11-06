@@ -1,7 +1,7 @@
-import type { AgBeanStubEvent } from '../core/agBeanStub';
+import type { AgBeanStubEvent } from '../core/agAbstractBean';
 import type { AgBaseBean } from './agBaseBean';
-import type { AgBean } from './agBean';
 import type { AgEvent } from './agEvent';
+import type { AgUiBean } from './agUiBean';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
 
@@ -17,7 +17,7 @@ export interface AgComponent<
     TGlobalEvents extends BaseEvents,
     TLocalEventType extends string = AgComponentEvent,
 >
-    extends AgBaseComponent<TBeanCollection>, AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
+    extends AgBaseComponent<TBeanCollection>, AgUiBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
     getCompId(): number;
 
     getFocusableElement(): HTMLElement;
