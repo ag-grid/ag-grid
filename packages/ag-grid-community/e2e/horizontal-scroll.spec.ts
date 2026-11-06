@@ -3,7 +3,8 @@ import path from 'node:path';
 
 declare const agGrid: typeof import('../src/main');
 
-test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
+// Replaces the project's launchOptions rather than merging, so the sandbox setting has to be repeated here.
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'], chromiumSandbox: !process.env.CI } });
 
 for (const enableRtl of [false, true]) {
     for (const rowCount of [1, 50]) {

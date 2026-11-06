@@ -9,8 +9,8 @@ update=false
 production=false
 it_opts=
 passthrough_opts=
-playwright_version=1.60.0
-playwright_docker_image=mcr.microsoft.com/playwright:v1.60.0-noble
+playwright_version=1.64.1
+playwright_docker_image=mcr.microsoft.com/playwright:v1.64.1-noble
 
 function sed_inplace {
     if [[ $(uname) == "Darwin" ]] ; then
@@ -119,7 +119,7 @@ if [[ ${mode} == "docker" ]] ; then
         port_spec="-p ${dev_port}:${dev_port}"
     fi
     mkdir -p ./npm-cache
-    docker run ${it_opts} --rm --ipc=host \
+    docker run ${it_opts} --rm --ipc=host -e HOSTNAME=docker-desktop \
         -v $(pwd):/project \
         $port_spec \
         ${playwright_docker_image} \
