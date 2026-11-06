@@ -2529,6 +2529,21 @@ export interface GridOptions<TData = any> {
      * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
+    /**
+     * Compares two data versions returned in `LoadSuccessParams.dataVersion`.
+     * Return a negative number when `a` is older than `b`, a positive number when `a` is newer, and `0` when they are the same version.
+     * When not provided, two numbers are compared numerically, and any other versions are only checked for equality.
+     * @agModule `ServerSideRowModelModule`
+     */
+    compareServerSideDataVersions?: CompareServerSideDataVersions;
+    /**
+     * How the grid treats the data versions returned in `LoadSuccessParams.dataVersion` and sent in `ServerSideTransaction.version`.
+     * - `'snapshot'`: each level reads every block from the first version returned for it. A block read from an older version is loaded again, and a block read from another version reloads the level once; if that happens again, the grid logs a warning.
+     * - `'stream'`: the level's version moves forward to a newer version returned with a block, or to the version of a newer transaction applied to the level, so later blocks are read from the latest version the grid has. A block read from an older version is loaded again. Versions must be numbers, or be ordered by `compareServerSideDataVersions`.
+     * @default 'snapshot'
+     * @agModule `ServerSideRowModelModule`
+     */
+    serverSideDataVersionMode?: ServerSideDataVersionMode;
 
     // *** Rows *** //
     /**
@@ -3198,6 +3213,8 @@ export type IsApplyServerSideTransaction<TData = any, TContext = any> = (
     params: IsApplyServerSideTransactionParams<TData, TContext>
 ) => boolean;
 export type GetServerSideGroupKey = (dataItem: any) => string;
+export type CompareServerSideDataVersions = (a: string | number, b: string | number) => number;
+export type ServerSideDataVersionMode = 'snapshot' | 'stream';
 
 export type IsRowMaster<TData = any> = (dataItem: TData) => boolean;
 

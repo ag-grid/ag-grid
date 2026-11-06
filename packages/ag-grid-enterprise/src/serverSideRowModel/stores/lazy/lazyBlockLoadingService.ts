@@ -141,6 +141,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             filterModel: ssrmParams.filterModel,
             sortModel: ssrmParams.sortModel,
         };
+        const dataVersion = cache.getDataVersion();
+        if (dataVersion != null) {
+            request.dataVersion = dataVersion;
+        }
+        const dataVersionRequest = { dataVersion, generation: cache.getDataVersionGeneration() };
 
         const loadingNodes = this.cacheLoadingNodesMap.get(cache)!;
         const removeNodesFromLoadingMap = () => {
@@ -169,7 +174,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         };
 
         const success = (params: LoadSuccessParams) =>
-            settle(() => cache.onLoadSuccess(startRow, endRow - startRow, params));
+            settle(() => cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionRequest));
         const fail = () => settle(() => cache.onLoadFailed(startRow, endRow - startRow));
 
         const isRootStore = parentNode.level === -1;
