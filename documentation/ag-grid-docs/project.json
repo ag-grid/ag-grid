@@ -106,6 +106,20 @@
       }
     },
     "lint": {},
+    "lint:styles": {
+      "command": "stylelint --config stylelint.config.mjs 'src/**/*.module.scss' '../../external/ag-website-shared/src/**/*.module.scss'",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{scss,css}",
+        "{projectRoot}/stylelint.config.mjs",
+        "{workspaceRoot}/external/ag-website-shared/src/**/*.{scss,css}",
+        "{workspaceRoot}/external/ag-website-shared/stylelint/**",
+        { "externalDependencies": ["stylelint", "postcss-scss"] }
+      ],
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "generate-csp": {
       "command": "tsx scripts/csp/generate-csp.ts",
       "options": {
