@@ -8,6 +8,7 @@ import { _requestAnimationFrame } from '../utils/dom';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { EventHandlers, ListenerTarget } from './agAbstractBean';
 import { AgAbstractBean } from './agAbstractBean';
+import type { AgBeansFor, AgDeclaredDeps } from './agBeanGraph';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgAbstractUiBean<
@@ -17,11 +18,29 @@ export abstract class AgAbstractUiBean<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TLocalEventType extends string = 'destroyed',
+    TDeps extends AgDeclaredDeps<TBeanCollection> = readonly [],
+    TOptional extends AgDeclaredDeps<TBeanCollection> = readonly [],
 >
-    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService, TLocalEventType>
+    extends AgAbstractBean<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TPropertiesService,
+        TLocalEventType,
+        TDeps,
+        TOptional
+    >
     implements AgUiBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>
 {
     declare protected eventSvc: AgEventService<TGlobalEvents, TCommon>;
+
+    // The UI kernel is wider: `throttleToFrame` and the element helpers read `eRootDiv` from it.
+    declare protected beans: AgBeansFor<TBeanCollection, TDeps, TOptional> &
+        Pick<
+            TBeanCollection,
+            Exclude<keyof AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>, 'context'>
+        > &
+        Pick<AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>, 'context'>;
 
     /** Also accepts `BaseEvents` handlers, which hosts register alongside their own events. */
     public override addManagedEventListeners(
