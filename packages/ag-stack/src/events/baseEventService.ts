@@ -1,18 +1,15 @@
-import { AgBeanStub } from '../core/agBeanStub';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type {
-    AgEventServiceGlobalListener,
-    AgEventServiceListener,
-    AgRawEvents,
-    ICommonSource,
-} from '../interfaces/iDomFreeEvent';
+import type { AgRawEvents, ICommonSource } from '../interfaces/iDomFreeEvent';
 import type { AgEventService } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { LocalEventService } from './localEventService';
+import { BaseInternalEventService } from './baseInternalEventService';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * The global event service, which adds the common fields to every event it dispatches.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export class BaseEventService<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -20,54 +17,14 @@ export class BaseEventService<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
 >
-    extends AgBeanStub<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService,
-        keyof TGlobalEvents & string
-    >
+    extends BaseInternalEventService<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements AgEventService<TGlobalEvents, TCommon>
 {
-    public beanName = 'eventSvc' as const;
-    public eventServiceType = 'global' as const;
-
-    private readonly globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();
-
-    public addListener<TEventType extends keyof TGlobalEvents & string>(
-        eventType: TEventType,
-        listener: AgEventServiceListener<TGlobalEvents, TEventType>,
-        async?: boolean
-    ): void {
-        this.globalSvc.addEventListener(eventType, listener as any, async);
+    protected override dispatchToListeners(event: any): void {
+        super.dispatchToListeners(this.gos.addCommon<any>(event));
     }
 
-    public removeListener<TEventType extends keyof TGlobalEvents & string>(
-        eventType: TEventType,
-        listener: AgEventServiceListener<TGlobalEvents, TEventType>,
-        async?: boolean
-    ): void {
-        this.globalSvc.removeEventListener(eventType, listener as any, async);
-    }
-
-    public addGlobalListener(
-        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async = false,
-        eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
-        exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
-    ): void {
-        this.globalSvc.addGlobalListener(listener, async, eventTypes, exceptEventTypes);
-    }
-
-    public removeGlobalListener(
-        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async = false
-    ): void {
-        this.globalSvc.removeGlobalListener(listener, async);
-    }
-
-    public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
-        this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event as any));
+    public override dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
+        this.dispatchToListeners(event);
     }
 }

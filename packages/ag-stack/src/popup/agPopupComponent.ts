@@ -1,4 +1,4 @@
-import { AgComponentStub } from '../core/agComponentStub';
+import { AgAbstractComponent } from '../core/agAbstractComponent';
 import type { AgComponent } from '../interfaces/agComponent';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
@@ -15,7 +15,7 @@ export class AgPopupComponent<
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 >
-    extends AgComponentStub<
+    extends AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,

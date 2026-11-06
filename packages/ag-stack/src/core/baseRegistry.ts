@@ -4,7 +4,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { ClassImp } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { IRegistry } from '../interfaces/iRegistry';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseRegistry<
@@ -15,7 +15,7 @@ export abstract class BaseRegistry<
     TPropertiesService extends IPropertiesService<TProperties>,
     TDynamicBeanName extends string,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IRegistry<TBeanCollection, TDynamicBeanName>
 {
     beanName = 'registry' as const;

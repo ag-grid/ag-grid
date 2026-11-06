@@ -15,7 +15,7 @@ import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _observeResize } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     changeKey: 'listItemHeight',
@@ -32,7 +32,7 @@ export abstract class BaseEnvironment<
     TPropertiesService extends IPropertiesService<TProperties>,
     TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IEnvironment
 {
     beanName = 'environment' as const;
