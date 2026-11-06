@@ -134,6 +134,11 @@ export class PageSizeSelectorComp extends Component {
         this.setDisplayed(show);
     }
 
+    private isPanelDisplayed(): boolean {
+        const { gos } = this;
+        return gos.get('pagination') && !gos.get('suppressPaginationPanel');
+    }
+
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
         const paginationPageSizeOption: number = this.pagination.getPageSize();
@@ -143,9 +148,12 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
             const pageSizesSet = this.getPageSizeSelectorOption() !== true;
 
-            this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
-            if (!pageSizesSet) {
-                this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+            // Re-run when the panel becomes visible, so a hidden selector warns at that point.
+            if (this.isPanelDisplayed()) {
+                this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
+                if (!pageSizesSet) {
+                    this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+                }
             }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
