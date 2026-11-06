@@ -916,6 +916,38 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             `);
         });
 
+        test('a sub-menu child is a button that opens a dialog named after its filter', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: displayStyleCols,
+                rowData: ROWS,
+            });
+            await ColumnFilterHarness.open(api, 'name');
+            const multiFilter = multiFilterIn(api, '.ag-filter-menu');
+            const menuItem = multiFilter.querySelector<HTMLElement>('.ag-multi-filter-menu-item')!;
+            const itemAria = () => ({
+                role: menuItem.getAttribute('role'),
+                hasPopup: menuItem.getAttribute('aria-haspopup'),
+                expanded: menuItem.getAttribute('aria-expanded'),
+            });
+            expect({
+                ...itemAria(),
+                menuItems: multiFilter.querySelectorAll('[role="menuitem"]').length,
+            }).toEqual({ role: 'button', hasPopup: 'dialog', expanded: 'false', menuItems: 0 });
+
+            menuItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            const dialog = await waitFor(() => {
+                const subMenu = getGridElement(api)!.querySelector('.ag-menu.ag-popup-child:not(.ag-filter-menu)')!;
+                return subMenu.querySelector<HTMLElement>('[role="dialog"]')!;
+            });
+            expect({ ...itemAria(), dialogName: dialog.getAttribute('aria-label') }).toEqual({
+                role: 'button',
+                hasPopup: 'dialog',
+                expanded: 'true',
+                dialogName: 'Text Filter',
+            });
+        });
+
         test('an accordion child shows collapsed under its title until expanded', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
@@ -938,13 +970,23 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             ).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
         });
 
-        test('in the filters tool panel, a sub-menu child shows as an accordion', async () => {
+        test('in the filters tool panel, a sub-menu child shows as an accordion, not as the dialog it was in the popup', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: displayStyleCols,
                 rowData: ROWS,
                 sideBar: FILTERS_SIDEBAR,
             });
+            await ColumnFilterHarness.open(api, 'name');
+            const popupItem = multiFilterIn(api, '.ag-filter-menu').querySelector<HTMLElement>(
+                '.ag-multi-filter-menu-item'
+            )!;
+            popupItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            await waitFor(() =>
+                expect(getGridElement(api)!.querySelector('.ag-popup-child [role="dialog"]')).not.toBeNull()
+            );
+            api.hidePopupMenu();
+
             const panel = await openFiltersPanel(api);
             await panel.expandGroup('Name');
             const multiFilter = multiFilterIn(api, '.ag-filter-toolpanel');
@@ -953,7 +995,75 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
                 groups: Array.from(multiFilter.querySelectorAll('.ag-multi-filter-group-title')).map(
                     (e) => e.textContent
                 ),
-            }).toEqual({ menuItems: 0, groups: ['Text Filter', 'Pick names'] });
+                dialogs: multiFilter.querySelectorAll('[role="dialog"], [aria-label="Text Filter"]').length,
+            }).toEqual({ menuItems: 0, groups: ['Text Filter', 'Pick names'], dialogs: 0 });
+        });
+
+        test("in the filters tool panel, a custom sub-menu child gets back the role and label it had before the popup's dialog", async () => {
+            class OwnAriaFilter implements IFilterComp {
+                private readonly eGui = document.createElement('div');
+                public init(): void {
+                    this.eGui.className = 'own-aria-filter';
+                    this.eGui.setAttribute('role', 'group');
+                    this.eGui.setAttribute('aria-label', 'Own names');
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public isFilterActive(): boolean {
+                    return false;
+                }
+                public doesFilterPass(): boolean {
+                    return true;
+                }
+                public getModel(): null {
+                    return null;
+                }
+                public setModel(): void {}
+            }
+            const api: GridApi = await gridsManager.createGridAndWait(
+                'grid1',
+                {
+                    enableFilterHandlers,
+                    columnDefs: [
+                        {
+                            field: 'name',
+                            filter: 'agMultiColumnFilter',
+                            filterParams: {
+                                filters: [
+                                    {
+                                        filter: enableFilterHandlers
+                                            ? { component: OwnAriaFilter, doesFilterPass: () => true }
+                                            : OwnAriaFilter,
+                                        display: 'subMenu',
+                                        title: 'Own',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                    rowData: ROWS,
+                    sideBar: FILTERS_SIDEBAR,
+                },
+                { modules: [CustomFilterModule] }
+            );
+            const ownAria = (el: Element) => ({ role: el.getAttribute('role'), label: el.getAttribute('aria-label') });
+            await ColumnFilterHarness.open(api, 'name');
+            multiFilterIn(api, '.ag-filter-menu')
+                .querySelector<HTMLElement>('.ag-multi-filter-menu-item')!
+                .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            const inPopup = await waitFor(() =>
+                getGridElement(api)!.querySelector('.ag-popup-child .own-aria-filter')!
+            );
+            expect(ownAria(inPopup)).toEqual({ role: 'dialog', label: 'Own' });
+            api.hidePopupMenu();
+
+            const panel = await openFiltersPanel(api);
+            await panel.expandGroup('Name');
+            expect(ownAria(multiFilterIn(api, '.ag-filter-toolpanel').querySelector('.own-aria-filter')!)).toEqual({
+                role: 'group',
+                label: 'Own names',
+            });
         });
     });
 
