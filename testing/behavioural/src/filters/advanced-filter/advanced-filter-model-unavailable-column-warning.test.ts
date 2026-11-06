@@ -43,30 +43,19 @@ describe('Advanced Filter model naming a column the Advanced Filter does not off
     const ids = (issues: IssueRaisedEvent[]) => issues.map(({ id }) => id);
 
     test('setAdvancedFilterModel warns, naming the column without filtering enabled', async () => {
-        enableDevValidations({ throwOn: [] });
-        onTestFinished(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        onTestFinished(() => warnSpy.mockRestore());
-        const issues: string[] = [];
-        const issueIds: number[] = [];
-        const api = gridsManager.createGrid('grid1', {
+        const { issues, onIssueRaised } = collectIssues();
+        const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'athlete' }],
-            rowData: [{ athlete: 'Anna' }, { athlete: 'Bob' }],
+            rowData: ROW_DATA,
             enableAdvancedFilter: true,
-            onIssueRaised: (event) => {
-                issues.push(`${event.severity}: ${event.message}`);
-                issueIds.push(event.id);
-            },
+            onIssueRaised,
         });
-        await asyncSetTimeout(0);
 
-        const model: AdvancedFilterModel = { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'n' };
-        api.setAdvancedFilterModel(model);
-        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel(containsN('athlete'));
 
         expect(api.getAdvancedFilterModel()).toBeNull();
-        expect(issues.some((issue) => issue.startsWith('warning') && issue.includes('athlete'))).toBe(true);
-        expect(issueIds).toEqual([342]);
+        expect(ids(issues)).toEqual([342]);
+        expect(issues[0].message).toContain('athlete');
     });
 
     test('a colId with no column warns that no column has that id', async () => {

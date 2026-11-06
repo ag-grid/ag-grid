@@ -975,7 +975,7 @@ export const AG_GRID_ERRORS = {
     341: ({ colId }: { colId: string }) =>
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
-        `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+        `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
