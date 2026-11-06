@@ -97,6 +97,38 @@ describe('accentedSort locale and collator options', () => {
         `);
     });
 
+    test("case-insensitive sorting with `sensitivity: 'accent'`: aa sorts before AZ, and AA / aa keep their original order", async () => {
+        const api = createGrid('accented-case-insensitive', {
+            columnDefs: [{ field: 'code' }],
+            rowData: [
+                { id: '1', code: 'AZ' },
+                { id: '2', code: 'aa' },
+                { id: '3', code: 'az' },
+                { id: '4', code: 'AA' },
+            ],
+            getRowId: (params) => params.data.id,
+            accentedSort: { options: { sensitivity: 'accent' } },
+        });
+
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
+        await new GridRows(api, 'case-insensitive ascending').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 code:"aa"
+            ├── LEAF id:4 code:"AA"
+            ├── LEAF id:1 code:"AZ"
+            └── LEAF id:3 code:"az"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'desc' }] });
+        await new GridRows(api, 'case-insensitive descending').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 code:"AZ"
+            ├── LEAF id:3 code:"az"
+            ├── LEAF id:2 code:"aa"
+            └── LEAF id:4 code:"AA"
+        `);
+    });
+
     test('`numeric: true` compares digits by their numeric value', () => {
         const api = createGrid('accented-numeric', {
             columnDefs: [{ field: 'code' }],
