@@ -238,4 +238,48 @@ describe('Select cell editor', () => {
             expect(getAllRows(api)[0].data.a).toBe('x');
         });
     });
+
+    describe('non-string values without a formatter', () => {
+        const getOptionLabels = () =>
+            Array.from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR)).map((el) => el.textContent?.trim());
+
+        test('labels truthy and falsy numeric options with their values', async () => {
+            const api = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'a',
+                        editable: true,
+                        cellDataType: false,
+                        cellEditor: 'agSelectCellEditor',
+                        cellEditorParams: { values: [0, 10, 20] },
+                    },
+                ],
+                rowData: [{ a: 10 }],
+            });
+
+            await openEditor(api, 0, 'a');
+
+            expect(getOptionLabels()).toEqual(['0', '10', '20']);
+        });
+
+        test('labels options with a valueFormatter that returns a number', async () => {
+            const api = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'a',
+                        editable: true,
+                        cellDataType: false,
+                        valueFormatter: (p) => (p.value * 2) as unknown as string,
+                        cellEditor: 'agSelectCellEditor',
+                        cellEditorParams: { values: [0, 10] },
+                    },
+                ],
+                rowData: [{ a: 10 }],
+            });
+
+            await openEditor(api, 0, 'a');
+
+            expect(getOptionLabels()).toEqual(['0', '20']);
+        });
+    });
 });
