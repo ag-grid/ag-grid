@@ -9,6 +9,8 @@ Configure which columns appear in the Advanced Filter including how they are nam
 
 Every column with filtering enabled appears in the Advanced Filter under its header name, with the exceptions and overrides described below.
 
+A condition in a model set through `setAdvancedFilterModel` or [Grid State](./grid-state/) cannot be applied when its column is not available in the Advanced Filter, because filtering is not enabled on it, it is hidden, or no column has that ID. The grid logs a console warning naming the column.
+
 ### Including Hidden Columns
 
 By default, hidden columns do not appear in the Advanced Filter. To make hidden columns appear, set the grid option `includeHiddenColumnsInAdvancedFilter = true`.
