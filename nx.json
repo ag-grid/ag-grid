@@ -201,5 +201,8 @@
     }
   },
   "defaultProject": "all",
-  "useLegacyCache": false
+  "useLegacyCache": false,
+  "affected": {
+    "legacy": true
+  }
 }
