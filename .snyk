@@ -1,6 +1,185 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-OPEN-22112123:
+    - patch-package@8.0.1 > open@7.4.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.265Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.259Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.251Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.245Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.239Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.235Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.227Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.221Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.214Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > open@8.4.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.208Z
+    - nx@20.8.4 > open@8.4.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.189Z
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21756800:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0:
+        reason: >-
+            MCP/dev tooling - not a directly exposed production dependency
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:00.522Z
+    - rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1:
+        reason: >-
+            MCP/dev tooling - not a directly exposed production dependency
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:00.502Z
+  SNYK-JS-FOLLOWREDIRECTS-21762031:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.979Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.971Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.7.21 > pipenet@1.4.0 > axios@1.20.0 > follow-redirects@1.16.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.958Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.952Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.941Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.935Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.927Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.917Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.907Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.897Z
+    - '@axe-core/cli@4.13.0 > chromedriver@154.0.0 > axios@1.20.0 > follow-redirects@1.16.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.888Z
+    - nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.873Z
+  SNYK-JS-FLAT-22148819:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.996Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.992Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.987Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.978Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.973Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.970Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.966Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.962Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > flat@5.0.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.957Z
+    - nx@20.8.4 > flat@5.0.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.939Z
   SNYK-JS-HAPPYDOM-21691240:
     - 'happy-dom@20.11.2':
         reason: >-
