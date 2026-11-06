@@ -476,12 +476,6 @@ export function _getHideDisabledCheckboxes(selection: RowSelectionOptions): bool
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isUsingNewRowSelectionAPI(gos: GridOptionsService): boolean {
-    const rowSelection = gos.get('rowSelection');
-    return typeof rowSelection !== 'string';
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isUsingNewCellSelectionAPI(gos: GridOptionsService): boolean {
     return gos.get('cellSelection') !== undefined;
 }
@@ -530,21 +524,11 @@ export function _getEnableColumnSelection(gos: GridOptionsService): boolean {
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {
-    const selection = gos.get('rowSelection') ?? 'single';
+    const selection = gos.get('rowSelection');
 
-    if (typeof selection === 'string') {
-        const suppressRowClickSelection = gos.get('suppressRowClickSelection');
-        const suppressRowDeselection = gos.get('suppressRowDeselection');
-
-        if (suppressRowClickSelection && suppressRowDeselection) {
-            return false;
-        } else if (suppressRowClickSelection) {
-            return 'enableDeselection';
-        } else if (suppressRowDeselection) {
-            return 'enableSelection';
-        } else {
-            return true;
-        }
+    // unset rowSelection keeps click selection enabled
+    if (selection === undefined) {
+        return true;
     }
 
     return selection.mode === 'singleRow' || selection.mode === 'multiRow'
@@ -564,13 +548,7 @@ export function _getEnableDeselection(gos: GridOptionsService): boolean {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | undefined {
-    const selection = gos.get('rowSelection');
-
-    if (typeof selection === 'string') {
-        return gos.get('isRowSelectable');
-    }
-
-    return selection?.isRowSelectable;
+    return gos.get('rowSelection')?.isRowSelectable;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -581,17 +559,6 @@ export function _getRowSelectionMode(arg: object): RowSelectionMode | undefined 
         'beanName' in arg && arg.beanName === 'gos'
             ? (arg as GridOptionsService).get('rowSelection')
             : (arg as GridOptions).rowSelection;
-
-    if (typeof selection === 'string') {
-        switch (selection) {
-            case 'multiple':
-                return 'multiRow';
-            case 'single':
-                return 'singleRow';
-            default:
-                return;
-        }
-    }
 
     // only permit expected values for selection mode
     switch (selection?.mode) {
@@ -612,32 +579,12 @@ export function _isMultiRowSelection(arg: object): boolean {
 }
 
 export function _getEnableSelectionWithoutKeys(gos: GridOptionsService): boolean {
-    const selection = gos.get('rowSelection');
-
-    if (typeof selection === 'string') {
-        return gos.get('rowMultiSelectWithClick');
-    }
-
-    return selection?.enableSelectionWithoutKeys ?? false;
+    return gos.get('rowSelection')?.enableSelectionWithoutKeys ?? false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode | undefined {
     const selection = gos.get('rowSelection');
-
-    if (typeof selection === 'string') {
-        const groupSelectsChildren = gos.get('groupSelectsChildren');
-        const groupSelectsFiltered = gos.get('groupSelectsFiltered');
-
-        if (groupSelectsChildren && groupSelectsFiltered) {
-            return 'filteredDescendants';
-        } else if (groupSelectsChildren) {
-            return 'descendants';
-        } else {
-            return 'self';
-        }
-    }
-
     return selection?.mode === 'multiRow' ? selection.groupSelects : undefined;
 }
 
@@ -653,9 +600,6 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
 
 export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
     const rowSelection = gos.get('rowSelection');
-    if (typeof rowSelection === 'string') {
-        return false;
-    }
     return rowSelection?.mode === 'multiRow' ? (rowSelection.ctrlASelectsRows ?? false) : false;
 }
 

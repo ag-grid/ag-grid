@@ -46,7 +46,7 @@ describe('Row Selection Grid Options', () => {
                 `);
             });
 
-            test('Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick', async () => {
+            test('Multiple rows can be selected without modifier keys nor enableSelectionWithoutKeys', async () => {
                 const [api, actions] = createGrid({
                     columnDefs,
                     rowData,
@@ -60,7 +60,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([1, 2], api);
                 await new GridRows(
                     api,
-                    `Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick final state`
+                    `Multiple rows can be selected without modifier keys nor enableSelectionWithoutKeys final state`
                 ).check(`
                     ROOT id:ROOT_NODE_ID
                     ├── LEAF id:0 sport:"football"

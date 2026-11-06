@@ -12,7 +12,7 @@ import type {
     ValidationWarning,
     Validations,
 } from '../validationTypes';
-import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
+import { _createValidationWarning, buildAllValidNames } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -38,26 +38,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     },
     fillHandleDirection: { version: '32.2', message: 'Use `cellSelection.handle.direction` instead.' },
     fillOperation: { version: '32.2', message: 'Use `cellSelection.handle.setFillValue` instead.' },
-    suppressRowClickSelection: {
-        version: '32.2',
-        message: 'Use `rowSelection.enableClickSelection` instead.',
-    },
-    suppressRowDeselection: { version: '32.2', message: 'Use `rowSelection.enableClickSelection` instead.' },
-    rowMultiSelectWithClick: {
-        version: '32.2',
-        message: 'Use `rowSelection.enableSelectionWithoutKeys` instead.',
-    },
-    groupSelectsChildren: {
-        version: '32.2',
-        message: 'Use `rowSelection.groupSelects = "descendants"` instead.',
-    },
-    groupSelectsFiltered: {
-        version: '32.2',
-        message: 'Use `rowSelection.groupSelects = "filteredDescendants"` instead.',
-    },
-    isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
-    suppressCopySingleCellRanges: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
-    suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
     onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
     onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
@@ -436,11 +416,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 groupRemoveLowestSingleChildren: { required: [undefined, false] },
             },
         },
-        groupSelectsChildren: {
-            dependencies: {
-                rowSelection: { required: ['multiple'] },
-            },
-        },
         groupHierarchyConfig: {
             validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
                 for (const k of Object.keys(groupHierarchyConfig)) {
@@ -573,15 +548,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         rowSelection: {
             validate({ rowSelection }) {
-                if (rowSelection && typeof rowSelection === 'string') {
-                    return _createDeprecationWarning(306, {
-                        version: '32.2.1',
-                        name: 'using `rowSelection` with the values "single" or "multiple"',
-                        message: 'Use the object value instead.',
-                    });
-                }
                 if (rowSelection && typeof rowSelection !== 'object') {
-                    return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
+                    return 'Expected `RowSelectionOptions` object for the `rowSelection` property. The string values "single" and "multiple" were removed in v37, use `{ mode: "singleRow" }` or `{ mode: "multiRow" }` instead.';
                 }
                 if (rowSelection && rowSelection.mode !== 'multiRow' && rowSelection.mode !== 'singleRow') {
                     return _createValidationWarning(320, {

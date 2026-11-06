@@ -18,7 +18,7 @@ import { createFakeServer, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
  *       Also pins whether the initial-count guess applies to child levels on expand.
  *
  *   (B) SELECTION with `rowSelection: { mode: 'multiRow', groupSelects: 'descendants' }`
- *       (the modern replacement for the old boolean `groupSelectsChildren`) on tree data —
+ *       on tree data —
  *       which nodes become selected when a group is selected, `getSelectedNodes().length`
  *       and their ids, how NOT-yet-loaded descendants behave (select the parent BEFORE
  *       expanding, then load), and selecting a leaf vs a group.
@@ -226,7 +226,7 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
         // which the grid warns (#202) is unreliable — that warning is exactly the behaviour being pinned.
         let warnSpy: ReturnType<typeof vi.spyOn>;
         beforeEach(() => {
-            // These tests deliberately call getSelectedNodes under SSRM + groupSelectsChildren to pin the #202 warning.
+            // These tests deliberately call getSelectedNodes under SSRM + rowSelection.groupSelects to pin the #202 warning.
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [202] });
             warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         });
