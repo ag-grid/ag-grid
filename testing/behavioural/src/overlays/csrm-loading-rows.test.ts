@@ -399,7 +399,7 @@ describe('CSRM loading rows', () => {
         expect(document.querySelector('.ag-row-loading')).not.toBeNull();
     });
 
-    test('api.hideOverlay does not stack a loading overlay over loading rows', async () => {
+    test('api.hideOverlay warns and leaves loading rows in place while loading is true', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [99] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         try {

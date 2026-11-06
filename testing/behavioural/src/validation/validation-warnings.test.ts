@@ -131,7 +131,7 @@ describe('ag-grid validation warnings', () => {
         });
     });
 
-    test('suppressPropertyNamesCheck is itself an invalid gridOptions property', () => {
+    test('suppressPropertyNamesCheck no longer silences unknown-property warnings and is itself reported', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs: [],
             rowData: [],
