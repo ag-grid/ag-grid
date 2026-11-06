@@ -79,12 +79,12 @@ describe('dev validation overlay', () => {
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test('takes priority over an imperative showLoadingOverlay()', () => {
+    test('takes priority over the loading grid option', () => {
         enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
-        api.showLoadingOverlay();
+        api.setGridOption('loading', true);
 
         expect(hasErrorOverlay()).toBe(true);
         expect(isAgHtmlElementVisible('.ag-overlay-loading-wrapper')).toBe(false);
@@ -134,7 +134,7 @@ describe('dev validation overlay', () => {
         expect(isAgHtmlElementVisible('.ag-overlay-loading-wrapper')).toBe(false);
     });
 
-    test('resumes normal overlays after the dev overlay is dismissed', () => {
+    test('resumes the loading overlay after the dev overlay is dismissed', () => {
         enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const api = gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
@@ -142,7 +142,7 @@ describe('dev validation overlay', () => {
         document.querySelector<HTMLButtonElement>('.ag-overlay-error-dismiss')!.click();
         expect(hasErrorOverlay()).toBe(false);
 
-        api.showLoadingOverlay();
+        api.setGridOption('loading', true);
         expect(isAgHtmlElementVisible('.ag-overlay-loading-wrapper')).toBe(true);
     });
 

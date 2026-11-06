@@ -1684,8 +1684,7 @@ describe('ag-grid modern overlays state', () => {
         });
 
         test('suppressOverlays: [loading, noRows] suppresses built-in but not custom overlays', async () => {
-            // Deliberately calls the deprecated `showLoadingOverlay`/`showNoRowsOverlay` APIs to verify suppression.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [308] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES });
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 components: {
@@ -1760,8 +1759,6 @@ describe('ag-grid modern overlays state', () => {
             expect(hasNoRowsOverlayWrapper()).toBeFalsy();
             expect(document.querySelector('.my-suppress-no-rows')).toBeFalsy();
 
-            api.showLoadingOverlay();
-            expect(hasLoadingOverlayWrapper()).toBeFalsy();
             api.showNoRowsOverlay();
             expect(hasNoRowsOverlayWrapper()).toBeFalsy();
 

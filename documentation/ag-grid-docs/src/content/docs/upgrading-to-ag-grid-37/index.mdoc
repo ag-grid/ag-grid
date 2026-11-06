@@ -35,6 +35,10 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
 
+### Validation
+
+- Apps that set `suppressPropertyNamesCheck` now see unknown-property console warnings, both for their custom keys on grid options and column definitions and for `suppressPropertyNamesCheck` itself. Move custom data into `context` and delete the flag.
+
 ### Status Bar
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
@@ -46,5 +50,32 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 - Removing a grid option prop from `AgGridReact` now resets the option, as setting the prop to `undefined` does. Previously the grid kept the last value. To keep a value, including one changed through the grid UI or `api.setGridOption`, keep passing the prop.
 
 {% /if %}
+
+## Removal of Deprecated APIs
+
+These APIs were deprecated before v35 and have now been removed.
+
+{% expandingSection headerText="Removed Deprecated APIs" %}
+
+### Grid API
+
+- `showLoadingOverlay()` - removed, set the `loading` grid option to `true` instead.
+
+### Grid Options
+
+- `groupRemoveSingleChildren` - removed, use `groupHideParentOfSingleChild: true` instead.
+- `groupRemoveLowestSingleChildren` - removed, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
+- `suppressRowGroupHidesColumns` - removed, use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
+- `suppressMakeColumnVisibleAfterUnGroup` - removed, use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+- `sortingOrder` - removed, use `defaultColDef.sortingOrder` instead.
+- `unSortIcon` - removed, use `defaultColDef.unSortIcon` instead.
+- `suppressLoadingOverlay` - removed, use `loading: false` instead. `suppressOverlays: ['loading']` also exists, but unlike the removed option it hides the overlay even when `loading` is `true`.
+- `suppressPropertyNamesCheck` - removed, put custom data in `context` instead.
+
+### Column Definitions
+
+- `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
+
+{% /expandingSection %}
 
 {% changelogSection version=$migrationVersion /%}

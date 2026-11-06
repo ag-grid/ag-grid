@@ -131,49 +131,20 @@ describe('ag-grid validation warnings', () => {
         });
     });
 
-    describe('suppressPropertyNamesCheck', () => {
-        test('suppresses invalid property name warnings', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                ['notARealOption' as any]: true,
-            } as GridOptions);
+    test('suppressPropertyNamesCheck is itself an invalid gridOptions property', () => {
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [],
+            suppressPropertyNamesCheck: true,
+            notARealOption: 1,
+        } as GridOptions);
 
-            const invalidPropWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('Invalid `gridOptions` property `notARealOption`')
+        const invalidPropWarnings = (name: string) =>
+            consoleWarnSpy.mock.calls.filter((args) =>
+                args.join(' ').includes(`Invalid \`gridOptions\` property \`${name}\``)
             );
-            expect(invalidPropWarnings).toHaveLength(0);
-        });
-
-        test('suppresses docs URL warning', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                ['notARealOption' as any]: true,
-            } as GridOptions);
-
-            const docsWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('One or more `gridOptions` properties are not recognised.')
-            );
-            expect(docsWarnings).toHaveLength(0);
-        });
-
-        test('does not suppress deprecation warnings', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                suppressLoadingOverlay: true,
-            } as GridOptions);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #306'),
-                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
-                expect.any(String)
-            );
-        });
+        expect(invalidPropWarnings('notARealOption')).toHaveLength(1);
+        expect(invalidPropWarnings('suppressPropertyNamesCheck')).toHaveLength(1);
     });
 
     describe('deprecation warnings', () => {
@@ -181,12 +152,12 @@ describe('ag-grid validation warnings', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
-                suppressLoadingOverlay: true,
+                onCalculatedColumnExpressionChanged: () => {},
             } as GridOptions);
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #306'),
-                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
+                expect.stringContaining('`onCalculatedColumnExpressionChanged` is deprecated'),
                 expect.any(String)
             );
         });
@@ -195,7 +166,7 @@ describe('ag-grid validation warnings', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
-                suppressLoadingOverlay: true,
+                onCalculatedColumnExpressionChanged: () => {},
             } as GridOptions);
             await new GridColumns(api, `warns only once for same deprecated property setup`).checkColumns(``);
             await new GridRows(api, `warns only once for same deprecated property setup`).check(`
@@ -204,13 +175,13 @@ describe('ag-grid validation warnings', () => {
 
             const deprecationWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes('`suppressLoadingOverlay` is deprecated')
+                    args.join(' ').includes('`onCalculatedColumnExpressionChanged` is deprecated')
                 );
 
             expect(deprecationWarnings()).toHaveLength(1);
 
             // Re-process with same option — should not warn again
-            api.updateGridOptions({ suppressLoadingOverlay: true } as GridOptions);
+            api.updateGridOptions({ onCalculatedColumnExpressionChanged: () => {} } as GridOptions);
 
             expect(deprecationWarnings()).toHaveLength(1);
             await new GridRows(api, `warns only once for same deprecated property final state`).check(`

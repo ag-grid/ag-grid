@@ -113,7 +113,6 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
-    SortDirection,
     StatusBar,
     TabToNextCell,
     TabToNextGridContainer,
@@ -491,16 +490,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup',
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-         */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean,
-    /** If `true`, when you drag a column into a row group panel the column is not hidden.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-         */
-    suppressRowGroupHidesColumns?: boolean,
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
          */
     colResizeDefault?: 'shift',
@@ -880,11 +869,6 @@ export interface Props<TData> {
          * @initial
          */
     suppressBrowserResizeObserver?: boolean,
-    /** @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-         * @default false
-         * @initial
-         */
-    suppressPropertyNamesCheck?: boolean,
     /** Disables change detection.
          * @default false
          */
@@ -923,12 +907,6 @@ export interface Props<TData> {
          * -     **Prefer using `overlayComponentParams`**
          */
     loadingOverlayComponentParams?: any,
-    /** Disables the 'loading' overlay.
-         * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
-         * @default false
-         * @initial
-         */
-    suppressLoadingOverlay?: boolean,
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -1360,16 +1338,6 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly',
-    /** Set to `true` to collapse groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-         */
-    groupRemoveSingleChildren?: boolean,
-    /** Set to `true` to collapse lowest level groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-         */
-    groupRemoveLowestSingleChildren?: boolean,
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1709,20 +1677,10 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
          */
     suppressClearOnFillReduction?: boolean,
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default ['asc', 'desc', null]
-         * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-         */
-    sortingOrder?: SortDirection[],
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
          * @default false
          */
     accentedSort?: boolean,
-    /** Set to `true` to show the 'no sort' icon.
-         * @default false
-         * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-         */
-    unSortIcon?: boolean,
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
          * @default false
          */
@@ -2277,8 +2235,6 @@ export function getProps() {
         suppressMoveWhenColumnDragging: undefined,
         suppressDragLeaveHidesColumns: undefined,
         suppressGroupChangesColumnVisibility: undefined,
-        suppressMakeColumnVisibleAfterUnGroup: undefined,
-        suppressRowGroupHidesColumns: undefined,
         colResizeDefault: undefined,
         suppressAutoSize: undefined,
         autoSizePadding: undefined,
@@ -2355,7 +2311,6 @@ export function getProps() {
         suppressTouch: undefined,
         suppressFocusAfterRefresh: undefined,
         suppressBrowserResizeObserver: undefined,
-        suppressPropertyNamesCheck: undefined,
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
@@ -2363,7 +2318,6 @@ export function getProps() {
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,
-        suppressLoadingOverlay: undefined,
         overlayNoRowsTemplate: undefined,
         noRowsOverlayComponent: undefined,
         noRowsOverlayComponentParams: undefined,
@@ -2443,8 +2397,6 @@ export function getProps() {
         groupSelectsFiltered: undefined,
         showOpenedGroup: undefined,
         groupHideParentOfSingleChild: undefined,
-        groupRemoveSingleChildren: undefined,
-        groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
         groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
@@ -2512,9 +2464,7 @@ export function getProps() {
         enableFillHandle: undefined,
         fillHandleDirection: undefined,
         suppressClearOnFillReduction: undefined,
-        sortingOrder: undefined,
         accentedSort: undefined,
-        unSortIcon: undefined,
         suppressMultiSort: undefined,
         alwaysMultiSort: undefined,
         multiSortKey: undefined,

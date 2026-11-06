@@ -29,10 +29,6 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
         version: '32.2',
         message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
     },
-    rowGroupingHierarchy: {
-        version: '34.3',
-        message: 'Use `colDef.groupHierarchy` instead.',
-    },
     headerTooltipValueGetter: {
         version: '36.2',
         message: 'Use `headerTooltip` with a callback instead.',
@@ -585,7 +581,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponent: undefined,
     dateComponentParams: undefined,
     getFindText: undefined,
-    rowGroupingHierarchy: undefined,
     groupHierarchy: undefined,
     allowFormula: undefined,
     suppressNoteActions: undefined,

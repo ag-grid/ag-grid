@@ -399,8 +399,8 @@ describe('CSRM loading rows', () => {
         expect(document.querySelector('.ag-row-loading')).not.toBeNull();
     });
 
-    test('imperative overlay calls do not stack a loading overlay over loading rows', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [99, 308] });
+    test('api.hideOverlay does not stack a loading overlay over loading rows', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [99] });
         const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         try {
             const api = gridsManager.createGrid('myGrid', {
@@ -409,9 +409,6 @@ describe('CSRM loading rows', () => {
                 columnDefs,
             });
             await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
-
-            api.showLoadingOverlay();
-            expect(hasLoadingOverlay()).toBe(false);
 
             api.hideOverlay();
             expect(consoleWarnSpy).toHaveBeenCalledWith(
