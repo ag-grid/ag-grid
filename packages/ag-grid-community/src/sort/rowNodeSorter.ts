@@ -83,7 +83,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             } else {
                 // The grid's own ordering rules apply to its default comparator and to its built-in ones (e.g. `bigint`).
                 const missingValues = sortOption.missingValues;
-                if (missingValues !== undefined) {
+                if (missingValues) {
                     // Placed the same way in both directions, so not reversed for descending.
                     const missingResult = compareMissingValues(valueA, valueB, missingValues);
                     if (missingResult !== undefined) {
@@ -199,23 +199,16 @@ const isMissingValue = (value: any): boolean =>
     value == null || (typeof value === 'object' && typeof value.toNumber === 'function' && value.toNumber() == null);
 
 /**
- * Places missing values first or last, whatever the sort direction. Missing values are equal to each other, so
- * they keep their original order. Returns `undefined` when neither value is missing, so the values are compared
- * as usual.
+ * Places missing values first (`missingValues` is `-1`) or last (`1`), whatever the sort direction. Missing values
+ * are equal to each other, so they keep their original order. Returns `undefined` when neither value is missing, so
+ * the values are compared as usual.
  */
-const compareMissingValues = (valueA: any, valueB: any, missingValues: 'first' | 'last'): number | undefined => {
-    const missingA = isMissingValue(valueA);
+const compareMissingValues = (valueA: any, valueB: any, missingValues: number): number | undefined => {
     const missingB = isMissingValue(valueB);
-    if (missingA) {
-        if (missingB) {
-            return 0;
-        }
-        return missingValues === 'first' ? -1 : 1;
+    if (isMissingValue(valueA)) {
+        return missingB ? 0 : missingValues;
     }
-    if (missingB) {
-        return missingValues === 'first' ? 1 : -1;
-    }
-    return undefined;
+    return missingB ? -missingValues : undefined;
 };
 
 const absoluteValueTransformer = (value: any): number | bigint | null => {

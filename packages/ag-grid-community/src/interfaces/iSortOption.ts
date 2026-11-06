@@ -20,10 +20,11 @@ export interface SortOption {
     /** The comparator for leaf rows (`colComparator`, else `leafComparator`) is a user's. Filled by `_resolveSortOptions`. */
     userLeafComparator: boolean;
     /**
-     * The column's `sortMissingValues` when it is `'first'` or `'last'`; otherwise `undefined`, so missing values sort
-     * as the smallest values. Not used for rows compared with a user comparator. Filled by `_resolveSortOptions`.
+     * The column's `sortMissingValues` as the result for a missing value against a present one: `-1` for `'first'`,
+     * `1` for `'last'`, otherwise `0`, so missing values sort as the smallest values. Not used for rows compared with
+     * a user comparator. Filled by `_resolveSortOptions`.
      */
-    missingValues: 'first' | 'last' | undefined;
+    missingValues: number;
     /** `true` when the column can hold formula error values, which sort like `NaN`. Filled by `_resolveSortOptions`. */
     formulaErrors: boolean;
 }

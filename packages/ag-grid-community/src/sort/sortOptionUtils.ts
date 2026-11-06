@@ -53,8 +53,7 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         sortOption.userComparator = _isUserComparator(colComparator);
         sortOption.userLeafComparator = _isUserComparator(colComparator ?? leafComparator);
         const sortMissingValues = column.colDef.sortMissingValues;
-        sortOption.missingValues =
-            sortMissingValues === 'first' || sortMissingValues === 'last' ? sortMissingValues : undefined;
+        sortOption.missingValues = sortMissingValues === 'first' ? -1 : sortMissingValues === 'last' ? 1 : 0;
         sortOption.formulaErrors = column.allowFormula || column.isCalculatedCol;
     }
 };

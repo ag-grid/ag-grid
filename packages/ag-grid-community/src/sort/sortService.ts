@@ -286,7 +286,7 @@ export class SortService extends BeanStub implements NamedBean {
                         userLeafComparator: false,
                         descending: false,
                         absolute: false,
-                        missingValues: undefined,
+                        missingValues: 0,
                         formulaErrors: false,
                     });
                 }

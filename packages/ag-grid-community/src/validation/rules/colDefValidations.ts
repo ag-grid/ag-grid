@@ -8,7 +8,7 @@ import type { Deprecations, ModuleValidation, OptionsValidator, Validations } fr
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
-const SORT_MISSING_VALUES = new Set<string>(['first', 'last', 'inOrder'] satisfies SortMissingValues[]);
+const SORT_MISSING_VALUES: SortMissingValues[] = ['first', 'last', 'inOrder'];
 
 function quote(s: string): string {
     return `"${s}"`;
@@ -289,12 +289,14 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             },
         },
         sortMissingValues: {
-            validate: ({ sortMissingValues }) => {
-                if (sortMissingValues == null || SORT_MISSING_VALUES.has(sortMissingValues)) {
-                    return null;
-                }
-                return `sortMissingValues must be one of ${[...SORT_MISSING_VALUES].map(quote).join(', ')}, currently it is ${toStringWithNullUndefined(sortMissingValues)}.`;
-            },
+            validate: ({ sortMissingValues }) =>
+                sortMissingValues == null || SORT_MISSING_VALUES.includes(sortMissingValues)
+                    ? null
+                    : _createValidationWarning(320, {
+                          property: 'sortMissingValues',
+                          allowed: SORT_MISSING_VALUES,
+                          value: sortMissingValues,
+                      }),
         },
         sortingOrder: {
             validate: (_options) => {
