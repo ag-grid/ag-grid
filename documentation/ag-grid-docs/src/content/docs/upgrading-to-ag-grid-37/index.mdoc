@@ -47,4 +47,29 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 {% /if %}
 
+## Removal of Deprecated APIs
+
+The following APIs have been deprecated and have now been removed.
+
+{% expandingSection headerText="Removed Deprecated APIs" %}
+
+### Grid Options
+
+- `rowMultiSelectWithClick` - removed, use `rowSelection.enableSelectionWithoutKeys` instead.
+- `suppressRowDeselection` - removed, use `rowSelection.enableClickSelection` instead (for example `enableClickSelection: 'enableSelection'`).
+- `suppressRowClickSelection` - removed, use `rowSelection.enableClickSelection` instead.
+- `groupSelectsChildren` - removed, use `rowSelection.groupSelects: 'descendants'` instead.
+- `groupSelectsFiltered` - removed, use `rowSelection.groupSelects: 'filteredDescendants'` instead.
+- `isRowSelectable` - removed as a grid option, use `rowSelection.isRowSelectable` instead.
+- `suppressCopyRowsToClipboard` - removed, use `rowSelection.copySelectedRows` instead.
+- `suppressCopySingleCellRanges` - removed, use `rowSelection.copySelectedRows` instead.
+- `rowSelection: 'single'` and `rowSelection: 'multiple'` - removed, use the `rowSelection` object with `mode: 'singleRow'` or `mode: 'multiRow'` instead.
+    - The object form has different defaults (for example, checkboxes are shown and click selection is disabled). To keep the previous behaviour, use:
+        - `'multiple'` - `{ mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true, copySelectedRows: true }`
+        - `'single'` - `{ mode: 'singleRow', checkboxes: false, enableClickSelection: true, copySelectedRows: true }`
+    - In `singleRow` mode, `api.selectAll()` and its filtered and current page variants do nothing, and log a warning.
+    - String values passed at runtime (for example from JavaScript) now disable row selection. When `ValidationModule` is registered, a validation message is reported.
+
+{% /expandingSection %}
+
 {% changelogSection version=$migrationVersion /%}
