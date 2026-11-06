@@ -9,7 +9,6 @@ export type TotalValueGetterFunc<TData = any, TValue = any> = (params: GroupCell
 /**
  * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface IGroupCellRendererParams<TData = any, TValue = any> {
     /** Set to `true` to not include any padding (indentation) in the child rows. */
     suppressPadding?: boolean;
@@ -18,7 +17,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
     /** The value getter for the total row text. Can be a function or expression. */
-    totalValueGetter?: string | TotalValueGetterFunc;
+    totalValueGetter?: string | TotalValueGetterFunc<TData, TValue>;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
     /** The renderer to use for inside the cell (after grouping functions are added) */
