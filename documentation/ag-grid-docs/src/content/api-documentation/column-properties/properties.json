@@ -375,6 +375,12 @@
         "initialSortIndex": {},
         "sortingOrder": {},
         "comparator": {},
+        "accentedSort": {
+            "more": {
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
+            }
+        },
         "unSortIcon": {}
     },
     "filtering": {

@@ -198,6 +198,7 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressStickyTotalRow',
     'groupHideParentOfSingleChild',
     'enableRowPinning',
+    'accentedSort',
 ];
 
 // Used in validations to check type of pure boolean inputs
@@ -281,7 +282,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'cacheQuickFilter',
     'includeHiddenColumnsInQuickFilter',
     'ensureDomOrder',
-    'accentedSort',
     'suppressChangeDetection',
     'valueCache',
     'valueCacheNeverExpires',

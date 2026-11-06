@@ -466,6 +466,11 @@ export class SetFilterHandler<TValue = string>
 
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
+        this.addManagedPropertyListeners(['accentedSort'], () => {
+            if (this.valueModel.refreshOrder()) {
+                this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
+            }
+        });
 
         const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({
