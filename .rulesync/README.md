@@ -27,8 +27,6 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 | Type  | Name                  | Invoke                             | What it does                                       |
 | ----- | --------------------- | ---------------------------------- | -------------------------------------------------- |
-| Skill | 🔵 `code-fixup`       | `/code-fixup <package>` (user)     | Fix build and lint errors across a package         |
-| Skill | 🔵 `code-cleanup`     | `/code-cleanup` (user)             | Remove bloat, duplication; improve clarity         |
 | Skill | 🔵 `pr-create`        | `/pr-create` (user)                | Commit, push, and open a PR                        |
 | Skill | 🔵 `pr-review`        | `/pr-review [--json] <PR#>` (user) | Review a PR (Markdown default, JSON with `--json`) |
 | Skill | 🟢 `dev-server`       | `/dev-server`                      | Start dev server, check build status               |
@@ -43,7 +41,6 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | Skill   | 🔵 `batch-lint-cleanup` | `/batch-lint-cleanup` (user) | Auto-fix ESLint violations by rule                              |
 | Skill   | 🟢 `docs-e2e-tests`     | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples                  |
 | Command | 🟢 `/manual-test`       | `/manual-test <url>`         | Create a manual test project from a docs example or plunker URL |
-| Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging                      |
 
 ## Documentation and Examples
 
@@ -59,9 +56,7 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | ----- | ------------------------------- | ------------------------------------ | ---------------------------------------------------- |
 | Skill | 🔵 `jira`                       | `/jira`                              | Create, estimate, or analyse JIRA tickets            |
 | Skill | 🔵 `nx-performance`             | `/nx-performance`                    | Nx monorepo performance diagnostics and optimization |
-| Skill | 🔵 `plan-implementation-review` | `/plan-implementation-review` (user) | Review plan execution, identify delivery gaps        |
 | Skill | 🔵 `plan-review`                | `/plan-review` (user)                | Review plans for completeness and correctness        |
-| Agent | 🔵 `nx-expert`                  | Auto                                 | Nx monorepo configuration and build optimisation     |
 
 ## Prompt Hygiene
 
@@ -69,7 +64,6 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | ----- | --------------------- | -------------------------- | ------------------------------------------------ |
 | Skill | 🔵 `reflect`          | `/reflect` (user)          | Self-reflection and meta-cognitive analysis      |
 | Skill | 🔵 `rulesync`         | `/rulesync`                | Configure AI/agentic tooling via `.rulesync/`    |
-| Skill | 🔵 `validate-prompts` | `/validate-prompts` (user) | Validate prompt file references for path hygiene |
 
 ## Memory
 
@@ -118,14 +112,14 @@ Rules load automatically when you edit files matching their glob patterns.
 | Rule            | Activates on                                   | Description                                            |
 | --------------- | ---------------------------------------------- | ----------------------------------------------------- |
 | 🟢 `testing`    | `**/*.test.ts`, `**/*.spec.ts`, `testing/**/*` | Testing strategies, Vitest patterns, and verification |
-| 🟢 `benchmarks` | `**/benchmark*`                                | Running and creating performance benchmarks           |
+| 🟢 `benchmarks` | `testing/behavioural/src/benchmarks/**`        | Running and creating performance benchmarks           |
 
 ### Documentation and Examples
 
 | Rule            | Activates on                                        | Description                                  |
 | --------------- | --------------------------------------------------- | -------------------------------------------- |
 | 🟢 `docs-pages` | `documentation/**/*.mdoc`, `documentation/**/*.md`  | Creating and maintaining documentation pages |
-| 🟢 `examples`   | `_examples/**/*`, `documentation/**/_examples/**/*` | Working with examples in AG Grid             |
+| 🟢 `examples`   | `documentation/**/_examples/**/*`                   | Working with examples in AG Grid             |
 
 ---
 
@@ -137,8 +131,6 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | ------------------------------- | ----------------------------------------------------------- |
 | 🔵 `ag-shared-sync-log`         | Generate migration log entries for ag-shared changes        |
 | 🔵 `batch-lint-cleanup`         | Auto-fix ESLint violations by rule                          |
-| 🔵 `code-cleanup`               | Remove bloat, duplication; improve clarity                  |
-| 🔵 `code-fixup`                 | Fix build and lint errors across a package                  |
 | 🟢 `dev-server`                 | Start dev server, check build status                        |
 | 🔵 `example`                    | AG Charts/Grid/Studio example conventions and patterns      |
 | 🔵 `git-bisect`                 | Find the commit that introduced a regression                |
@@ -147,7 +139,6 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | 🔵 `git-worktree-clean`         | Hard-reset worktree to `origin/latest`                      |
 | 🔵 `jira`                       | Create, estimate, or analyse JIRA tickets                   |
 | 🔵 `nx-performance`             | Nx monorepo performance diagnostics and optimization        |
-| 🔵 `plan-implementation-review` | Review plan execution, identify delivery gaps               |
 | 🔵 `plan-review`                | Review plans for completeness and correctness               |
 | 🔵 `pr-create`                  | Commit, push, and open a PR                                 |
 | 🔵 `pr-review`                  | Review a PR (Markdown default, JSON with `--json`)          |
@@ -158,17 +149,6 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | 🔵 `rulesync`                   | Configure AI/agentic tooling via `.rulesync/`               |
 | 🔵 `sync-ag-shared`             | Sync ag-shared subrepo changes across AG repos              |
 | 🟢 `technology-stack`           | Architecture constraints and zero-dependency requirements   |
-| 🔵 `validate-prompts`           | Validate prompt file references for consistency and hygiene |
 | 🔵 `website-astro`              | Astro page patterns, content collections, and components    |
 | 🔵 `website-css`                | CSS architecture, design tokens, and styling patterns       |
 
----
-
-## Sub-Agents Reference
-
-Sub-agents are spawned automatically when the AI determines a task matches their speciality. They cannot be invoked directly.
-
-| Agent                  | Description                                      |
-| ---------------------- | ------------------------------------------------ |
-| 🔵 `nx-expert`         | Nx monorepo configuration and build optimisation |
-| 🔵 `playwright-expert` | Playwright E2E test architecture and debugging   |

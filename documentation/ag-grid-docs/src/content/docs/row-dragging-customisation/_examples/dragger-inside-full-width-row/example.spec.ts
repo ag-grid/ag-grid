@@ -9,6 +9,11 @@ async function centreOf(locator: Locator) {
 
 /** Drags from the centre of `source` to the centre of `target`, past the default 4px drag threshold. */
 async function dragTo(page: Page, source: Locator, target: Locator, duringDrag?: () => Promise<void>) {
+    // Rows can still be sliding into place with a CSS transition after the first render (seen with
+    // React on WebKit), so measure only once it has finished or the press lands on another row.
+    await page.waitForFunction(() =>
+        Array.from(document.querySelectorAll('.ag-row')).every((row) => row.getAnimations().length === 0)
+    );
     const from = await centreOf(source);
     const to = await centreOf(target);
     await page.mouse.move(from.x, from.y);

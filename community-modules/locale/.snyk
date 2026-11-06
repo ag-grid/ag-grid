@@ -13,23 +13,23 @@ ignore:
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-23T10:11:14.000Z
     SNYK-JS-BRACEEXPANSION-20244952:
-        - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        - '@typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T09:31:44.682Z
-        - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        - '@typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T09:31:44.638Z
     SNYK-JS-BRACEEXPANSION-20244948:
-        - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        - '@typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T09:30:45.530Z
-        - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        - '@typescript-eslint/parser@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'

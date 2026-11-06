@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "36.3.0",
+  "version": "36.3.0-beta.20261106.1218",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -83,6 +83,7 @@
     "patch-package": "^8.0.1",
     "postcss-import": "^17.0.1",
     "postcss-rtlcss": "^6.0.0",
+    "postcss-scss": "^4.0.9",
     "postcss-selector-parser": "^7.1.7",
     "postcss-url": "^10.1.4",
     "prettier": "3.9.10",

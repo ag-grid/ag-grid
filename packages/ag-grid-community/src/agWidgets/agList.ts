@@ -99,7 +99,7 @@ export class AgList<
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text ?? (value as any);
+        const valueToRender = String(text ?? value ?? '');
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);

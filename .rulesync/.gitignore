@@ -20,7 +20,6 @@ mcp.json
 # via packages/ag-grid-community/src).
 /commands/*.md
 /commands/docs/
-!/commands/docs-e2e-tests.md
 !/commands/manual-test.md
 
 # Plugin-delivered rules — allowlist local-only rules (ag-grid-specific).
