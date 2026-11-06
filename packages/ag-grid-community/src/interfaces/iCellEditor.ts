@@ -180,18 +180,6 @@ export interface EditingCellPosition extends RowPosition {
     /** Column id */
     colId: string;
 
-    /**
-     * Column instance.
-     * @deprecated Use `colId` instead.
-     */
-    column?: Column;
-
-    /**
-     * Column instance.
-     * @deprecated Use `colId` instead.
-     */
-    colKey?: string | Column;
-
     /** New pending value, use `null` to delete cell content */
     newValue?: any;
 

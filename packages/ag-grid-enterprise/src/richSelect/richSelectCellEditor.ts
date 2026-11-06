@@ -3,12 +3,11 @@ import { _missing } from 'ag-stack';
 import type {
     FieldPickerValueSelectedEvent,
     ICellEditorParams,
-    KeyCreatorParams,
     RichCellEditorParams,
     RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _consoleError } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 import type { RichSelectAsyncValuesSource } from './richSelectAsyncRequestsFeature';
@@ -342,30 +341,8 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             return;
         }
 
-        const params = this.params;
-        const { colDef, formatValue } = params;
+        const { formatValue } = this.params;
         const formatValueFn = formatValue ?? ((value: TValue | null | undefined) => String(value ?? ''));
-
-        if (colDef.cellEditorParams?.formatValue) {
-            return (values: TValue[]) => values.map(formatValueFn);
-        }
-
-        const { keyCreator } = colDef;
-        if (keyCreator) {
-            this.beans.log.warn(266);
-            const { column, node, data } = params;
-            return (values: TValue[]) =>
-                values.map((value: TValue) => {
-                    const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
-                        value,
-                        colDef,
-                        column,
-                        node,
-                        data,
-                    });
-                    return keyCreator(keyParams);
-                });
-        }
 
         return (values: TValue[]) => values.map(formatValueFn);
     }
