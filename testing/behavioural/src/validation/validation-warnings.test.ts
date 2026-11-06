@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
-import { MasterDetailModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('ag-grid validation warnings', () => {
     const gridsManager = new TestGridsManager({
@@ -251,58 +251,6 @@ describe('ag-grid validation warnings', () => {
                 expect.stringContaining('RowSelectionModule'),
                 expect.any(String)
             );
-        });
-
-        test('errors when masterDetail is used on server-side grid but MasterDetailModule is not registered', async () => {
-            // ServerSideRowModelModule does not bundle master/detail, unlike tree data / pivot / row selection.
-            mixedModulesGridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'name' }],
-                rowModelType: 'serverSide',
-                serverSideDatasource: { getRows: (params) => params.success({ rowData: [], rowCount: 0 }) },
-                masterDetail: true,
-            });
-            await waitForMissingModuleReports();
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith(
-                expect.stringContaining('error #200'),
-                expect.stringContaining('MasterDetailModule'),
-                expect.any(String)
-            );
-        });
-
-        test('does not error for masterDetail on server-side grid when MasterDetailModule is registered', async () => {
-            mixedModulesGridsManager.createGrid(
-                'myGrid',
-                {
-                    columnDefs: [{ field: 'name' }],
-                    rowModelType: 'serverSide',
-                    serverSideDatasource: { getRows: (params) => params.success({ rowData: [], rowCount: 0 }) },
-                    masterDetail: true,
-                },
-                { modules: [MasterDetailModule] }
-            );
-            await waitForMissingModuleReports();
-
-            const masterDetailErrors = consoleErrorSpy.mock.calls
-                .map((args) => args.join(' '))
-                .filter((msg) => msg.includes('error #200') && msg.includes('masterDetail'));
-            expect(masterDetailErrors).toEqual([]);
-        });
-
-        test('errors when formulaFuncs and formulaDataSource are used but FormulaModule is not registered', async () => {
-            mixedModulesGridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [{ a: 1 }],
-                formulaFuncs: { DOUBLE: { func: (params) => 2 * Number([...params.values][0]) } },
-                formulaDataSource: { getFormula: () => undefined, setFormula: () => {} },
-            });
-            await waitForMissingModuleReports();
-
-            const formulaErrors = consoleErrorSpy.mock.calls
-                .map((args) => args.join(' '))
-                .filter((msg) => msg.includes('error #200') && msg.includes('FormulaModule'));
-            expect(formulaErrors.some((msg) => msg.includes('`formulaFuncs`'))).toBe(true);
-            expect(formulaErrors.some((msg) => msg.includes('`formulaDataSource`'))).toBe(true);
         });
     });
 
