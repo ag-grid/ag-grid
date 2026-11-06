@@ -16,6 +16,7 @@ import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfac
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 import { _removeFromArray } from '../utils/array';
 import { _getLocaleTextFunc } from '../utils/locale';
+import type { AgBeansFor, AgDeclaredDeps } from './agBeanGraph';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgBeanStubEvent = 'destroyed';
@@ -41,6 +42,8 @@ export abstract class AgAbstractBean<
     TGlobalEvents,
     TPropertiesService extends IDomFreePropertiesService<TProperties>,
     TLocalEventType extends string = AgBeanStubEvent,
+    TDeps extends AgDeclaredDeps<TBeanCollection> = readonly [],
+    TOptional extends AgDeclaredDeps<TBeanCollection> = readonly [],
 >
     implements
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
@@ -50,7 +53,19 @@ export abstract class AgAbstractBean<
     // prototype (see below), not per instance: Vue reads it via a normal property access that walks the chain.
     declare public __v_skip: boolean;
 
-    protected beans: TBeanCollection = null!;
+    /** Read by `createBeanGraph`; a bean that declares none receives the whole collection. */
+    declare readonly deps?: TDeps;
+    declare readonly optionalDeps?: TOptional;
+
+    // The base reads the kernel keys whatever a bean declared, so they are never narrowed away. Picked
+    // from the host's collection, which may type them more narrowly than the stack does.
+    protected beans: AgBeansFor<TBeanCollection, TDeps, TOptional> &
+        // `IContext` is invariant in its collection, so the host's `context` would make `createBean` uncallable here.
+        Pick<
+            TBeanCollection,
+            Exclude<keyof AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>, 'context'>
+        > &
+        Pick<AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>, 'context'> = null!;
     protected gos: TPropertiesService = null!;
     protected eventSvc: TBeanCollection['eventSvc'] = null!;
 

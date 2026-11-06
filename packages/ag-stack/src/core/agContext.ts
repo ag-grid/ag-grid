@@ -3,6 +3,7 @@ import type { AgSingletonBean } from '../interfaces/agCoreBean';
 import type { AgDomFreeBeanCollection } from '../interfaces/agDomFreeBeanCollection';
 import type { IContext } from '../interfaces/iContext';
 import type { IDomFreePropertiesService } from '../interfaces/iDomFreeProperties';
+import { _nextContainerInstanceId } from './containerInstanceId';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
@@ -36,9 +37,6 @@ interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
     bean: TBeanCollection[K] & AgSingletonBean<TBeanCollection>;
 }
 
-/** Instance Id used by React to reset the state of a component tree when the context changes. */
-let contextId = 1;
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgContext<
     TBeanCollection extends AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
@@ -55,7 +53,7 @@ export class AgContext<
 
     private destroyed = false;
 
-    public readonly instanceId: number = contextId++;
+    public readonly instanceId: number = _nextContainerInstanceId();
 
     constructor(params: AgContextParams<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>) {
         if (!params?.beanClasses) {
