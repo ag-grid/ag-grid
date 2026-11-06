@@ -108,6 +108,11 @@ export class AgPositionableFeature<
         y: 0,
     };
 
+    private readonly requestedOffset = {
+        x: 0,
+        y: 0,
+    };
+
     private readonly lastSize = {
         width: -1,
         height: -1,
@@ -483,11 +488,16 @@ export class AgPositionableFeature<
             return;
         }
 
+        const requestedOffset = this.requestedOffset;
+        requestedOffset.x = x;
+        requestedOffset.y = y;
+
         this.popupSvc?.positionPopup({
             ePopup,
             keepWithinBounds: true,
             skipObserver: this.movable || this.isResizable(),
-            updatePosition: () => ({ x, y }),
+            // an observer left by an earlier call must re-apply the latest offset, not its own
+            updatePosition: () => ({ x: requestedOffset.x, y: requestedOffset.y }),
             postProcessCallback,
         });
 
