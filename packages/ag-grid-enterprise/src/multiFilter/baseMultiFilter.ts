@@ -1,4 +1,4 @@
-import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaRole } from 'ag-stack';
+import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaLabel, _setAriaRole } from 'ag-stack';
 
 import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
 import { AgPromise, KeyCode, TabGuardComp, _createElement } from 'ag-grid-community';
@@ -64,6 +64,9 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                     );
                 } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                     // sub-menus should appear as groups in the tool panel
+                    if (filterDef.display === 'subMenu') {
+                        this.clearSubMenuDialogAria(comp.getGui());
+                    }
                     const group = this.insertFilterGroup(filter, comp, filterTitle);
 
                     filterGuiPromise = AgPromise.resolve(group.getGui());
@@ -113,6 +116,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     ): AgPromise<MenuItemComponent> {
         const eGui = comp.getGui();
         _setAriaRole(eGui, 'dialog');
+        _setAriaLabel(eGui, name);
         const menuItem = this.createBean(new MenuItemComponent());
         const childComponent = {
             getGui: () => comp.getGui(),
@@ -149,6 +153,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             })
             .then(() => {
                 menuItem.setParentComponent(this);
+                _setAriaRole(menuItem.getGui(), 'button');
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
@@ -189,6 +194,11 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
 
                 return menuItem;
             });
+    }
+
+    private clearSubMenuDialogAria(eGui: HTMLElement): void {
+        _setAriaRole(eGui, null);
+        _setAriaLabel(eGui, null);
     }
 
     private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): GroupComponent {
