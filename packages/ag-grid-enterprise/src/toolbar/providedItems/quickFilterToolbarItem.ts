@@ -32,7 +32,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
-        let quickFilterTextTimeout: number | undefined;
+        let quickFilterTextTimeout: ReturnType<typeof setTimeout> | undefined;
         const setQuickFilterText = (quickFilterText: string) =>
             this.gos.updateGridOptions({ options: { quickFilterText } });
 

@@ -83,38 +83,6 @@ export function _batchCall(
 }
 
 /**
- * Creates a debounced function, and attach it to a bean for lifecycle
- * @param {Function} func The function to be debounced
- * @param {number} delay The time in ms to debounce
- * @returns {Function} The debounced function
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _debounce<TArgs extends any[], TContext>(
-    bean: { isAlive(): boolean },
-    func: (this: TContext, ...args: TArgs) => void,
-    delay: number
-): (this: TContext, ...args: TArgs) => number {
-    let timeout: number;
-
-    // Calling debounce returns a new anonymous function
-    return function (this: TContext, ...args: TArgs): number {
-        const context = this as any;
-        window.clearTimeout(timeout);
-
-        // Set the new timeout
-        timeout = window.setTimeout(function () {
-            // at the moment we just check if the bean is still alive, in the future the bean stub should
-            // another option is to manage a list of active timers and clear them when the bean is destroyed.
-            if (bean.isAlive()) {
-                func.apply(context, args);
-            }
-        }, delay);
-
-        return timeout;
-    };
-}
-
-/**
  * @param {Function} func The function to be throttled
  * @param {number} wait The time in ms to throttle
  * @returns {Function} The throttled function
