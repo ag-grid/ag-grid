@@ -131,6 +131,25 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 **Bug fix or feature work:** update the implementation (typically `packages/ag-grid-*/src/`), sync dependent docs and examples, then run `./behave.sh` and `./checks.sh`. Docs and example workflows are covered by the docs-pages and examples rules, which load when you touch those trees.
 
+### CI on a draft PR
+
+Draft PRs skip CI. To run it without marking the PR ready, comment on the PR:
+
+- `/ci` – full run (`nx run-many`)
+- `/ci --affected` – `nx affected` only
+
+Without the comment trigger, dispatch it yourself: `gh workflow run ci.yml -R ag-grid/ag-grid --ref <branch> -f nx_command=run-many`.
+
+The result shows on the PR as the `CI (manual)` status, linked to the run, and in `gh pr checks`. When a PR based on `latest`, `next` or a `b*` branch is later marked ready, CI runs again and a failed `CI (manual)` is replaced by a passing one that says the PR run supersedes it. A manual run that finishes after the PR run stays red until the next push or mark-ready.
+
+Limits:
+
+- Your own branch only, never `latest` (the staging deploy gates on the ref alone, so it would deploy). `/ci` refuses forks, `ghabot-*` branches and PRs that aren't open drafts.
+- Jobs and steps that only run on `pull_request` (the PR preview) don't run.
+- `/ci` only sets `nx_command`, and `run_package_tests` defaults to off, so package tests don't run.
+- The run tests the branch head, not the merge ref, so it can pass where the merge would fail.
+- Marking the PR ready re-runs CI only for those bases. On any other base (a stacked PR, say) no PR run starts, so a red `CI (manual)` stays on that commit. A new commit starts without the status.
+
 ### Technical Requirements
 
 - **Node.js**: Check `.nvmrc` for version
