@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { TestGridsManager, asyncSetTimeout, canvasPolyfill, mockGridLayout } from 'ag-test-utils';
+import { TestGridsManager, canvasPolyfill, mockGridLayout } from 'ag-test-utils';
 import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ChartCreated, GridApi } from 'ag-grid-community';
@@ -123,7 +123,6 @@ describe('chart dialog when the popup parent has no layout', () => {
         await createChart();
 
         deliverResize();
-        await asyncSetTimeout(50);
         const collapsed = dialogSize();
 
         setPopupParentSize(1200, 800);
