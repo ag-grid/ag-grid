@@ -48,6 +48,9 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
      * Calls may be nested — flush only occurs when the outermost endDeferred() is reached.
      */
     public beginDeferred(): void {
+        if (this.deferredDepth === 0) {
+            this.beans.selectionSvc?.beginSelectionBatch(); // the edited rows are asked once they are aggregated
+        }
         this.deferredDepth++;
     }
 
@@ -69,11 +72,14 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         this.batchedPath = null;
         this.batchedNodes = null;
 
-        if (path) {
-            this.csrm?.doAggregate(path);
+        const { selectionSvc, rowRenderer } = this.beans;
+        try {
+            if (path) {
+                this.csrm?.doAggregate(path);
+            }
+        } finally {
+            selectionSvc?.endSelectionBatch(); // asks the edited rows, before their cells refresh
         }
-
-        const { rowRenderer } = this.beans;
 
         // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
         if (nodes) {
@@ -97,7 +103,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         // If re-entrant events accumulated during the flush, process them now.
         if (this.batchedPath || this.batchedNodes) {
-            this.deferredDepth = 1;
+            this.beginDeferred();
             this.endDeferred();
         }
     }
@@ -140,7 +146,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         // Guard re-entrance: depth=1 so any cellValueChanged fired during doAggregate/refresh
         // accumulates for a follow-up pass rather than recursing.
         if (this.deferredDepth === 0) {
-            this.deferredDepth = 1;
+            this.beginDeferred();
             this.endDeferred();
         }
     }

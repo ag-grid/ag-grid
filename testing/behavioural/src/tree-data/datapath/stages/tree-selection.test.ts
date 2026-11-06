@@ -7,6 +7,7 @@ import {
     assertSelectedRowsById,
     asyncSetTimeout,
     cachedJSONObjects,
+    clipboardUtils,
     isElementDisplayed,
     waitForEvent,
 } from 'ag-test-utils';
@@ -14,17 +15,30 @@ import {
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    NumberEditorModule,
+    PinnedRowModule,
     RowSelectionModule,
+    TextEditorModule,
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, ClipboardModule, MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
+        modules: [
+            TextFilterModule,
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            TreeDataModule,
+            ClipboardModule,
+            CellSelectionModule,
+            TextEditorModule,
+            NumberEditorModule,
+            PinnedRowModule,
+        ],
     });
 
     beforeEach(() => {
@@ -34,7 +48,22 @@ describe('ag-grid tree selection', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        clipboardUtils.reset();
     });
+
+    async function paste(
+        api: GridApi,
+        rowIndex: number,
+        colId: string,
+        text: string,
+        rowPinned?: 'top'
+    ): Promise<void> {
+        clipboardUtils.setText(text);
+        api.setFocusedCell(rowIndex, colId, rowPinned);
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+    }
 
     test('tree selection and update', async () => {
         const rowData = cachedJSONObjects.array([
@@ -967,5 +996,360 @@ describe('ag-grid tree selection', () => {
             expect(master.isSelected()).toBeUndefined();
             expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['2']);
         });
+    });
+
+    test('a tree parent is asked once per change, with its data and totals as they end up', () => {
+        const asked: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport' }, { field: 'gold', aggFunc: 'sum' }],
+            animateRows: false,
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => {
+                    asked.push(node.id!);
+                    return node.data.sport !== 'none' && (node.aggData?.gold ?? 0) < 10;
+                },
+            },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing', gold: 100 },
+                { id: 'c1', path: ['p', 'c1'], sport: 'Sailing', gold: 1 },
+                { id: 'c2', path: ['p', 'c2'], sport: 'Soccer', gold: 2 },
+            ],
+        });
+        const parent = api.getRowNode('p')!;
+        expect({ asked: asked.sort(), selectable: parent.selectable }).toEqual({
+            asked: ['c1', 'c2', 'p'],
+            selectable: true,
+        });
+
+        asked.length = 0;
+        api.applyTransaction({ update: [{ id: 'c1', path: ['p', 'c1'], sport: 'Sailing', gold: 8 }] });
+        expect({ asked: asked.sort(), selectable: parent.selectable }).toEqual({
+            asked: ['c1', 'p'],
+            selectable: false,
+        });
+
+        asked.length = 0;
+        api.applyTransaction({ update: [{ id: 'c1', path: ['p', 'c1'], sport: 'Sailing', gold: 1 }] });
+        api.applyTransaction({ update: [{ id: 'p', path: ['p'], sport: 'none', gold: 100 }] });
+        expect({ asked: asked.sort(), selectable: parent.selectable }).toEqual({
+            asked: ['c1', 'p', 'p'],
+            selectable: false,
+        });
+
+        asked.length = 0;
+        parent.setDataValue('sport', 'Sailing');
+        expect({ asked, selectable: parent.selectable }).toEqual({ asked: ['p'], selectable: true });
+
+        asked.length = 0;
+        api.getRowNode('c2')!.setDataValue('gold', 9);
+        expect({ asked: asked.sort(), selectable: parent.selectable }).toEqual({
+            asked: ['c2', 'p'],
+            selectable: false,
+        });
+
+        api.setGridOption('suppressChangeDetection', true);
+        asked.length = 0;
+        api.getRowNode('c2')!.setDataValue('gold', 2);
+        parent.setDataValue('sport', 'none');
+        expect({ asked, gold: parent.aggData.gold, selectable: parent.selectable }).toEqual({
+            asked: ['c2', 'p'],
+            gold: 10,
+            selectable: false,
+        });
+    });
+
+    test('without totals, an edited tree parent is asked once, not its ancestors, and a child edited after it only the child', () => {
+        const asked: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport' }],
+            animateRows: false,
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => {
+                    asked.push(node.id!);
+                    return node.data.sport !== 'none';
+                },
+            },
+            rowData: [
+                { id: 'g', path: ['g'], sport: 'Sailing' },
+                { id: 'p', path: ['g', 'p'], sport: 'Sailing' },
+                { id: 'c', path: ['g', 'p', 'c'], sport: 'Sailing' },
+            ],
+        });
+        const parent = api.getRowNode('p')!;
+        asked.length = 0;
+        parent.setDataValue('sport', 'none');
+        expect({ asked, selectable: parent.selectable }).toEqual({ asked: ['p'], selectable: false });
+
+        asked.length = 0;
+        api.getRowNode('c')!.setDataValue('sport', 'Rowing');
+        expect(asked).toEqual(['c']);
+    });
+
+    test('a paste over a tree parent and its child asks each pasted row once, with the totals as they end up', async () => {
+        clipboardUtils.init();
+        const asked: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'sport', editable: true },
+                { field: 'gold', aggFunc: 'sum', editable: true },
+            ],
+            animateRows: false,
+            treeData: true,
+            groupDefaultExpanded: -1,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => {
+                    asked.push(node.id!);
+                    return node.data.sport !== 'none' || node.aggData.gold >= 10;
+                },
+            },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing', gold: 100 },
+                { id: 'c1', path: ['p', 'c1'], sport: 'Sailing', gold: 1 },
+                { id: 'c2', path: ['p', 'c2'], sport: 'Soccer', gold: 2 },
+            ],
+        });
+        const parent = api.getRowNode('p')!;
+        api.setNodesSelected({ nodes: [parent], newValue: true });
+        asked.length = 0;
+
+        await paste(api, 0, 'sport', 'none\t100\nRowing\t9');
+
+        expect({
+            asked: asked.sort(),
+            pasted: [parent.data.sport, api.getRowNode('c1')!.data.gold],
+            gold: parent.aggData.gold,
+            selected: parent.isSelected(),
+        }).toEqual({ asked: ['c1', 'p'], pasted: ['none', 9], gold: 11, selected: true });
+    });
+
+    test('a copy down or range paste asks each pasted row once with its new data, deselecting in one selectionChanged', async () => {
+        clipboardUtils.init();
+        const asked: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport', editable: true }],
+            animateRows: false,
+            treeData: true,
+            groupDefaultExpanded: -1,
+            cellSelection: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => {
+                    asked.push(node.id!);
+                    return node.data.sport !== 'none';
+                },
+            },
+            rowData: [
+                { id: 'a', path: ['a'], sport: 'none' },
+                { id: 'p', path: ['p'], sport: 'Sailing' },
+                { id: 'c', path: ['p', 'c'], sport: 'Sailing' },
+            ],
+        });
+        const parent = api.getRowNode('p')!;
+        expect(parent.selectable).toBe(true);
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['sport'] });
+        api.copySelectedRangeDown();
+        expect({ sport: parent.data.sport, selectable: parent.selectable }).toEqual({
+            sport: 'none',
+            selectable: false,
+        });
+
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 2, columns: ['sport'] });
+        await paste(api, 1, 'sport', 'Sailing\nRowing');
+        expect({ sport: parent.data.sport, selectable: parent.selectable }).toEqual({
+            sport: 'Sailing',
+            selectable: true,
+        });
+
+        api.clearCellSelection();
+        asked.length = 0;
+        await paste(api, 2, 'sport', 'Golf');
+        expect(asked).toEqual(['c']);
+
+        const child = api.getRowNode('c')!;
+        api.setNodesSelected({ nodes: [parent, child], newValue: true });
+        const sources: string[] = [];
+        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 2, columns: ['sport'] });
+        await paste(api, 1, 'sport', 'none\nnone');
+        expect(api.getSelectedNodes()).toEqual([]);
+        api.getRowNode('c')!.setDataValue('sport', 'Golf');
+        api.setNodesSelected({ nodes: [api.getRowNode('c')!], newValue: true, source: 'checkboxSelected' });
+        await waitFor(() => expect(sources).toEqual(['selectableChanged', 'checkboxSelected']));
+    });
+
+    test('a row the application writes with the paste source follows isRowSelectable', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport' }],
+            animateRows: false,
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'none' },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing' },
+                { id: 'c', path: ['p', 'c'], sport: 'Sailing' },
+            ],
+        });
+        const child = api.getRowNode('c')!;
+        api.setNodesSelected({ nodes: [child], newValue: true });
+
+        child.setDataValue('sport', 'none', 'paste');
+
+        expect({ selectable: child.selectable, selected: api.getSelectedNodes() }).toEqual({
+            selectable: false,
+            selected: [],
+        });
+    });
+
+    test("a pasted row is asked with its parent's totals as the paste leaves them, as an edited one is", async () => {
+        clipboardUtils.init();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'gold', aggFunc: 'sum', editable: true }],
+            animateRows: false,
+            treeData: true,
+            groupDefaultExpanded: -1,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => node.id !== 'c1' || (node.parent!.aggData?.gold ?? 0) < 10,
+            },
+            rowData: [
+                { id: 'p', path: ['p'], gold: 100 },
+                { id: 'c1', path: ['p', 'c1'], gold: 1 },
+                { id: 'c2', path: ['p', 'c2'], gold: 2 },
+            ],
+        });
+        const pasted = api.getRowNode('c1')!;
+        api.setNodesSelected({ nodes: [pasted], newValue: true });
+
+        await paste(api, 1, 'gold', '9');
+
+        expect({
+            gold: api.getRowNode('p')!.aggData.gold,
+            selectable: pasted.selectable,
+            selected: pasted.isSelected(),
+        }).toEqual({ gold: 11, selectable: false, selected: false });
+
+        pasted.setDataValue('gold', 1);
+        pasted.setDataValue('gold', 9);
+        expect(pasted.selectable).toBe(false);
+    });
+
+    test('a paste into the pinned copy of a row asks the row itself, deselecting both', async () => {
+        clipboardUtils.init();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport', editable: true }],
+            animateRows: false,
+            treeData: true,
+            groupDefaultExpanded: -1,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.id === 'c' ? 'top' : null),
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'none' },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing' },
+                { id: 'c', path: ['p', 'c'], sport: 'Sailing' },
+            ],
+        });
+        const row = api.getRowNode('c')!;
+        await waitFor(() => expect(api.getPinnedTopRowCount()).toBe(1));
+        const copy = api.getPinnedTopRow(0)!;
+        api.setNodesSelected({ nodes: [row], newValue: true });
+
+        await paste(api, 0, 'sport', 'none', 'top');
+
+        expect({
+            sport: row.data.sport,
+            selectable: [row.selectable, copy.selectable],
+            selected: api.getSelectedNodes(),
+        }).toEqual({ sport: 'none', selectable: [false, false], selected: [] });
+    });
+
+    test('a paste asks only the rows whose cells it changes, each once however many ranges hold it', async () => {
+        clipboardUtils.init();
+        const asked: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport', editable: true }, { field: 'gold' }],
+            animateRows: false,
+            treeData: true,
+            groupDefaultExpanded: -1,
+            cellSelection: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: {
+                mode: 'multiRow',
+                isRowSelectable: (node) => {
+                    asked.push(node.id!);
+                    return true;
+                },
+            },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing', gold: 1 },
+                { id: 'c', path: ['p', 'c'], sport: 'Sailing', gold: 2 },
+            ],
+        });
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['gold'] });
+        asked.length = 0;
+        await paste(api, 0, 'gold', '5');
+        expect({ asked, gold: api.getRowNode('c')!.data.gold }).toEqual({ asked: [], gold: 2 });
+
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['sport'] });
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 1, columns: ['sport'] });
+        await paste(api, 1, 'sport', 'Golf');
+        expect({ asked: asked.sort(), sport: api.getRowNode('c')!.data.sport }).toEqual({
+            asked: ['c', 'p'],
+            sport: 'Golf',
+        });
+    });
+
+    test('with groupSelects descendants, a tree parent stays selectable while a child is, after its own cell is edited, pasted or edited without change detection', async () => {
+        clipboardUtils.init();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'sport', editable: true }],
+            groupDefaultExpanded: -1,
+            animateRows: false,
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants', isRowSelectable: (node) => node.id !== 'p' },
+            rowData: [
+                { id: 'p', path: ['p'], sport: 'Sailing' },
+                { id: 'c', path: ['p', 'c'], sport: 'Sailing' },
+            ],
+        });
+        const parent = api.getRowNode('p')!;
+        expect(parent.selectable).toBe(true);
+
+        parent.setDataValue('sport', 'Rowing');
+        expect(parent.selectable).toBe(true);
+
+        await paste(api, 0, 'sport', 'Polo');
+        expect({ sport: parent.data.sport, selectable: parent.selectable }).toEqual({
+            sport: 'Polo',
+            selectable: true,
+        });
+
+        api.setGridOption('suppressChangeDetection', true);
+        parent.setDataValue('sport', 'Golf');
+        expect(parent.selectable).toBe(true);
     });
 });

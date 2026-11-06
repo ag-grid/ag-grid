@@ -614,7 +614,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        const { eventSvc, focusSvc, rowRenderer, gos, editSvc } = this.beans;
+        const { eventSvc, focusSvc, rowRenderer, gos, editSvc, selectionSvc } = this.beans;
 
         eventSvc.dispatchEvent({
             type: 'pasteStart',
@@ -629,17 +629,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const updatedRowNodes: RowNode[] = [];
         const focusedCell = focusSvc.getFocusedCell();
 
-        editSvc?.beginBulkWrite();
+        selectionSvc?.beginSelectionBatch(); // the pasted rows are asked once they are aggregated
         try {
-            pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            editSvc?.beginBulkWrite();
+            try {
+                pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            } finally {
+                editSvc?.endBulkWrite();
+            }
+            if (changedPath) {
+                clientSideRowModel.doAggregate(changedPath);
+            }
         } finally {
-            editSvc?.endBulkWrite();
+            selectionSvc?.endSelectionBatch();
         }
 
         const nodesToRefresh: RowNode[] = updatedRowNodes.slice();
         if (changedPath) {
-            clientSideRowModel.doAggregate(changedPath);
-
             // add all nodes impacted by aggregation, as they need refreshed also.
             _forEachChangedGroupDepthFirst(rootNode, clientSideRowModel.hierarchical, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);

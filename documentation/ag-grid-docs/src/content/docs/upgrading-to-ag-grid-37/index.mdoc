@@ -29,6 +29,10 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
 
+### Row Selection
+
+- `isRowSelectable` is now called for the grand total row (`footer` is `true`), unless the Client-Side Row Model has `groupSelects` set to `'descendants'` or `'filteredDescendants'`. With the Client-Side Row Model that row has no `data`, so check `node.data` before reading it. See [Selecting Total Rows](./grouping-row-selection/#selecting-total-rows).
+
 ## Behaviour Changes
 
 ### Filtering
@@ -38,6 +42,10 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### Status Bar
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
+
+### Row Selection
+
+- With the Server-Side Row Model, selecting or deselecting all rows (the API, the header checkbox, `Ctrl+A`), a `rowSelection` mode or `groupSelects` change and `api.setServerSideSelectionState(undefined)` raise `selectionChanged` only when the selection changes, as with the Client-Side Row Model.
 
 {% if isFramework("react") %}
 
