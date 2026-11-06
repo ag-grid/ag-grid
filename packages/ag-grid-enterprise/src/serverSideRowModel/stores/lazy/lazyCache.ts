@@ -648,6 +648,8 @@ export class LazyCache extends BeanStub {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
+            // kept rather than destroyed, so the removal is reported here, while the node still has its position
+            this.rowRenderer.onRowNodeRemoved(lazyNode.node);
             // A redraw can happen before the refresh completes (each block response fires one), and
             // RowCtrl repositions a row it destroys while rowTop is set. Clearing it makes that
             // redraw fade the row out instead; setRowTop keeps the old value in oldRowTop, which
