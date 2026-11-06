@@ -331,7 +331,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const translate = this.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _setAriaLabel(ariaEl, `${value} ${itemLabel}${this.getMissingSuffix()}`);
+        const missingLabel = this.getMissingLabel();
+        // A label follows the value, as it is shown, rather than the item label.
+        const ariaLabel = missingLabel
+            ? `${value}, ${missingLabel} ${itemLabel}`
+            : `${value} ${itemLabel}${this.getMissingSuffix()}`;
+        _setAriaLabel(ariaEl, ariaLabel);
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
@@ -347,11 +352,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             _setAriaLabel(ariaEl, null);
             _setAriaDescribedBy(ariaEl);
         } else {
-            _setAriaLabel(
-                ariaEl,
-                isMissing ? this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue) : null
-            );
+            _setAriaLabel(ariaEl, isMissing ? this.getMissingAriaLabel() : null);
         }
+    }
+
+    /** The configured label replaces `ariaNotInCurrentData`, so the name holds the text shown. */
+    private getMissingAriaLabel(): string {
+        const text = this.formattedValue ?? _toStringOrNull(this.cellRendererParams.value) ?? '';
+        const missingLabel = this.getMissingLabel();
+        return missingLabel ? `${text}, ${missingLabel}` : `${text}${this.getMissingSuffix()}`;
+    }
+
+    /** The label shown after a missing value, if any. */
+    private getMissingLabel(): string | undefined {
+        return (this.isMissing && this.params.preservePreviousValuesLabel) || undefined;
     }
 
     private getMissingSuffix(): string {
@@ -570,7 +584,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (content === undefined) {
             return;
         }
-        const missingLabel = this.isMissing ? this.params.preservePreviousValuesLabel : undefined;
+        const missingLabel = this.getMissingLabel();
         if (!missingLabel) {
             this.eCheckbox.setLabel(content);
             return;

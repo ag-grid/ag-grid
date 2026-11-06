@@ -83,6 +83,10 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         Array.from(popup().querySelectorAll<HTMLElement>('.ag-set-filter-item-missing')).map((item) =>
             item.querySelector('.ag-checkbox-label')?.textContent?.trim()
         );
+    const ariaLabels = () =>
+        Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
+            el.getAttribute('aria-label')
+        );
 
     test('retained values keep their sorted place, marked, and announced', async () => {
         const api = createGrid(rows('A', 'B', 'C', 'D'));
@@ -128,9 +132,31 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const labels = () =>
             Array.from(popup().querySelectorAll('.ag-set-filter-item-missing-label')).map((el) => el.textContent);
         expect(labels()).toEqual(['(not in rows)', '(not in rows)']);
+        expect(ariaLabels()).toEqual([null, null, 'B, (not in rows)', null, 'Z, (not in rows)']);
 
         await setRowData(api, rows('A', 'B'));
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'C (not in rows)', 'Z (not in rows)']);
+        expect(ariaLabels()).toEqual([null, null, null, 'C, (not in rows)', 'Z, (not in rows)']);
+    });
+
+    test('preservePreviousValuesLabel takes the place of the not in current data text in the accessible name', async () => {
+        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: 'not in rows' });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B not in rows']);
+        expect(ariaLabels()).toEqual([null, null, 'B, not in rows']);
+    });
+
+    test('an empty preservePreviousValuesLabel shows no label and announces the not in current data text', async () => {
+        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: '' });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B']);
+        expect(ariaLabels()).toEqual([null, null, 'B, not in current data']);
     });
 
     test('preservePreviousValuesLabel labels a tree list group once all of it has left the data', async () => {
@@ -166,6 +192,15 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             'February',
             '01',
         ]);
+        // The label follows the value in the name, as it is shown.
+        expect(ariaLabels()).toEqual(
+            expect.arrayContaining([
+                '2024, (not in rows) Filter Value',
+                'January, (not in rows) Filter Value',
+                '01, (not in rows) Filter Value',
+                '2025 Filter Value',
+            ])
+        );
     });
 
     test('preservePreviousValuesLabel is shown as given after a cell renderer, until the value returns', async () => {
@@ -176,8 +211,10 @@ describe('Set Filter preservePreviousValues - filter list', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'value');
         expect(filter.setFilterItemLabels()).toEqual(['#(Select All)', '#A', '#B - gone']);
+        expect(ariaLabels()).toEqual([null, null, 'B, - gone']);
         await setRowData(api, rows('A', 'B'));
         expect(filter.setFilterItemLabels()).toEqual(['#(Select All)', '#A', '#B']);
+        expect(ariaLabels()).toEqual([null, null, null]);
     });
 
     test('preservePreviousValuesLabel still labels a retained value whose formatter answers an empty string', async () => {
@@ -553,6 +590,20 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             (el) => el.getAttribute('aria-describedby')
         );
         expect(describedBy.filter((id) => id != null)).toEqual([]);
+    });
+
+    test('a tree list item drawn by a cell renderer is announced with preservePreviousValuesLabel after its value', async () => {
+        const api = createGrid(rows('A', 'B'), {
+            treeList: true,
+            treeListPathGetter: (value: string | null) => [value ?? ''],
+            cellRenderer: (params: { value: unknown }) => String(params.value),
+            preservePreviousValuesLabel: 'not in rows',
+        });
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'value');
+
+        await setRowData(api, rows('A'));
+        expect(ariaLabels()).toContain('B, not in rows Filter Value');
     });
 
     test('a tree list model value never seen in the data is a root leaf, not handed to the formatter or renderer', async () => {
