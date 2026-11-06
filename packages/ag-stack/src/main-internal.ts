@@ -84,6 +84,7 @@ export type { SharedThemeParams } from './theming/shared/shared-css';
 export {
     _createStyledRootElements,
     _initDetachedStyledRoot,
+    _initPointerOverlay,
     _initStyledRoot,
     _initStyledRootFromInnerOfThreeElements,
 } from './theming/styledRoot';
