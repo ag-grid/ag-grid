@@ -529,9 +529,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             }
         }
 
-        const checkboxes = typeof rowSelection === 'object' ? _getCheckboxes(rowSelection) : this.params.checkbox;
+        const checkboxes = typeof rowSelection === 'object' ? _getCheckboxes(rowSelection) : false;
 
-        const userWantsCheckboxes = typeof checkboxes === 'function' || checkboxes === true;
+        const userWantsCheckboxes = typeof checkboxes === 'function' || checkboxes;
         if (!userWantsCheckboxes) {
             return;
         }
