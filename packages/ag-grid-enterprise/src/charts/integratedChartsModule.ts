@@ -83,21 +83,6 @@ const dependsOn: Module[] = [
 const moduleName: ModuleName = 'IntegratedCharts';
 
 /**
- * @deprecated v33 Deprecated as of v33, please use `IntegratedChartsModule` instead.
- */
-export const GridChartsModule: _ModuleWithApi<_GridChartsGridApi> = {
-    moduleName: 'GridCharts',
-    version: VERSION,
-    dependsOn, // included to avoid other false positive warnings about missing modules
-    validate: () => {
-        return {
-            isValid: false,
-            errorId: 334,
-        };
-    },
-};
-
-/**
  * @feature Integrated Charts
  * Requires the AG Charts library to be provided to this module via the `with` method.
  * The AG Charts module can be imported from either `ag-charts-community` or `ag-charts-enterprise`.

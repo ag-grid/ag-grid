@@ -207,8 +207,8 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(getRowLabels(popup)).toEqual(['Beta']), { timeout: 2000 });
     });
 
-    // 4. Object values with keyCreator + formatValue: display text and committed value are correct.
-    test('object values with keyCreator + formatValue commit the object and display formatted text', async () => {
+    // 4. Object values with formatValue: display text and committed value are correct.
+    test('object values with formatValue commit the object and display formatted text', async () => {
         type Country = { code: string; name: string };
         const values: Country[] = [
             { code: 'IE', name: 'Ireland' },
@@ -222,7 +222,6 @@ describe('Rich Select cell editor', () => {
                     editable: true,
                     cellDataType: false,
                     cellEditor: 'agRichSelectCellEditor',
-                    keyCreator: (p: { value: Country }) => p.value.code,
                     cellEditorParams: {
                         values,
                         formatValue: (value: Country) => value?.name ?? '',

@@ -69,7 +69,6 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     FiltersToolPanelModule: true,
     FindModule: true,
     FormulaModule: true,
-    GridChartsModule: true,
     GroupFilterModule: true,
     IntegratedChartsModule: true,
     MasterDetailModule: true,

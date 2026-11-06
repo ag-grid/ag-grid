@@ -16,7 +16,7 @@ import { _reportMissingModule, provideValidationServiceLogger } from './logging'
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
@@ -130,9 +130,6 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     private checkIcon(iconName: IconName): void {
-        if (DEPRECATED_ICONS_V33.has(iconName)) {
-            this.warn(43, { iconName });
-        }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
             return;

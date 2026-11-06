@@ -147,14 +147,11 @@ describe('RichSelectCellEditor', () => {
         expect(callback?.([{ id: 1, label: 'one' } as TestValue])).toEqual(['[object Object]']);
     });
 
-    it('supports complex object search via keyCreator', () => {
+    it('ignores colDef.keyCreator and uses formatValue for object search strings', () => {
+        const keyCreator = vi.fn(({ value }: any) => `key-${value.id}`);
         const editor = createEditor({
-            column: { getColId: () => 'value' } as any,
-            node: { id: 'row-1' } as any,
-            data: { key: 'row-data' } as any,
-            colDef: {
-                keyCreator: ({ value }: any) => `key-${value.id}`,
-            } as any,
+            colDef: { keyCreator } as any,
+            formatValue: (value: TestValue | null | undefined) => value?.label ?? '',
         });
 
         const callback = (editor as any).getSearchStringCallback([
@@ -167,7 +164,9 @@ describe('RichSelectCellEditor', () => {
                 { id: 1, label: 'one' },
                 { id: 2, label: 'two' },
             ])
-        ).toEqual(['key-1', 'key-2']);
+        ).toEqual(['one', 'two']);
+        expect(keyCreator).not.toHaveBeenCalled();
+        expect((editor as any).beans.log.warn).not.toHaveBeenCalled();
     });
 
     it('keeps typing enabled for multi-select while preserving full-async search wiring', () => {
