@@ -970,7 +970,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             ).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
         });
 
-        test('in the filters tool panel, a sub-menu child shows as an accordion', async () => {
+        test('in the filters tool panel, a sub-menu child shows as an accordion, not as the dialog it was in the popup', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: displayStyleCols,
