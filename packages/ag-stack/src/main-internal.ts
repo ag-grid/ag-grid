@@ -182,6 +182,7 @@ export {
     _parseDateTimeFromString,
     _parseDateTimeWithOffset,
     _serialiseDate,
+    _serialiseDateUtc,
     MONTHS,
 } from './utils/date';
 export {

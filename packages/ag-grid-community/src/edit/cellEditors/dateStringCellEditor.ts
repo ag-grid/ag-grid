@@ -4,6 +4,8 @@ import { _exists, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
 import { AgInputDateFieldSelector } from '../../agWidgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
+import type { GridOptionsService } from '../../gridOptionsService';
+import { _getDateInputValue, _getDateTimeParser } from '../../gridOptionsUtils';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 import {
@@ -30,7 +32,8 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     constructor(
         private readonly getDataTypeService: () => DataTypeService | undefined,
-        private readonly getLocaleTextFunc: () => LocaleTextFunc
+        private readonly getLocaleTextFunc: () => LocaleTextFunc,
+        private readonly getGos: () => GridOptionsService
     ) {}
 
     public getTemplate(): ElementParams {
@@ -46,17 +49,18 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         this.params = params;
 
         const { browserAutoComplete, min, max, step, colDef } = params;
-        const dataTypeSvc = this.getDataTypeService();
-        const includeTime = params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        const includeTime =
+            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        const gos = this.getGos();
 
         eEditor.setAutoComplete(browserAutoComplete);
 
         if (min != null) {
-            eEditor.setMin(dataTypeSvc?.getDateInputBound(min, includeTime) ?? min);
+            eEditor.setMin(_getDateInputValue(gos, min, includeTime));
         }
 
         if (max != null) {
-            eEditor.setMax(dataTypeSvc?.getDateInputBound(max, includeTime) ?? max);
+            eEditor.setMax(_getDateInputValue(gos, max, includeTime));
         }
 
         if (step != null) {
@@ -124,7 +128,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         const { min, max } = this.params;
         const translate = this.getLocaleTextFunc();
         const errors: string[] = [];
-        const parseBound = this.getDataTypeService()?.getDateTimeParser(!!this.includeTime) ?? _parseDateTimeFromString;
+        const parseBound = _getDateTimeParser(this.getGos(), this.includeTime);
 
         if (min) {
             const minDate = min instanceof Date ? min : parseBound(min);
@@ -165,7 +169,8 @@ export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCe
         super(
             new DateStringCellEditorInput(
                 () => this.beans.dataTypeSvc,
-                () => this.getLocaleTextFunc()
+                () => this.getLocaleTextFunc(),
+                () => this.beans.gos
             )
         );
     }

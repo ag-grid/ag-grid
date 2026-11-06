@@ -3,6 +3,8 @@ import { _exists, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
 
 import { AgInputDateFieldSelector } from '../../agWidgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
+import type { GridOptionsService } from '../../gridOptionsService';
+import { _getDateInputValue, _getDateTimeParser } from '../../gridOptionsUtils';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 import {
@@ -25,7 +27,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
 
     constructor(
         private readonly getDataTypeService: () => DataTypeService | undefined,
-        private readonly getLocaleTextFunc: () => LocaleTextFunc
+        private readonly getLocaleTextFunc: () => LocaleTextFunc,
+        private readonly getGos: () => GridOptionsService
     ) {}
 
     public getTemplate(): ElementParams {
@@ -41,17 +44,18 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         this.params = params;
 
         const { browserAutoComplete, min, max, step, colDef } = params;
-        const dataTypeSvc = this.getDataTypeService();
-        const includeTime = params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        const includeTime =
+            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        const gos = this.getGos();
 
         eEditor.setAutoComplete(browserAutoComplete);
 
         if (min != null) {
-            eEditor.setMin(dataTypeSvc?.getDateInputBound(min, includeTime) ?? min);
+            eEditor.setMin(_getDateInputValue(gos, min, includeTime));
         }
 
         if (max != null) {
-            eEditor.setMax(dataTypeSvc?.getDateInputBound(max, includeTime) ?? max);
+            eEditor.setMax(_getDateInputValue(gos, max, includeTime));
         }
 
         if (step != null) {
@@ -88,7 +92,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         const { min, max } = this.params;
         const translate = this.getLocaleTextFunc();
         const errors: string[] = [];
-        const parseBound = this.getDataTypeService()?.getDateTimeParser(!!this.includeTime) ?? _parseDateTimeFromString;
+        const parseBound = _getDateTimeParser(this.getGos(), this.includeTime);
 
         // Bounds parse with the same parser as the input, or a `yyyy-mm-dd` string would be read as UTC
         // and compared against a local-time entry.
@@ -138,7 +142,8 @@ export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams
         super(
             new DateCellEditorInput(
                 () => this.beans.dataTypeSvc,
-                () => this.getLocaleTextFunc()
+                () => this.getLocaleTextFunc(),
+                () => this.beans.gos
             )
         );
     }

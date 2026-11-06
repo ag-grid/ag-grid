@@ -1,4 +1,4 @@
-import { RefPlaceholder, _debounce, _serialiseDate, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _debounce, _serialiseDate, _serialiseDateUtc, _setDisplayed } from 'ag-stack';
 
 import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -16,7 +16,7 @@ import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import { isUtcDateFilterModel, parseDateFilterModelValue, toUtcDateFilterModelValue } from './dateFilterUtils';
+import { parseDateFilterModelValue, usesUtcDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, DateFilterParams, IDateFilterParams } from './iDateFilter';
 
 const DateFloatingFilterElement: ElementParams = {
@@ -107,8 +107,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
             reactiveParams.onUiChange();
 
             const model = reactiveParams.model;
-            const filterValueText = isUtcDateFilterModel(this.beans, this.params.filterParams as IDateFilterParams)
-                ? toUtcDateFilterModelValue(filterValueDate)
+            const filterValueText = usesUtcDateFilterModel(this.beans, this.params.filterParams as IDateFilterParams)
+                ? _serialiseDateUtc(filterValueDate)
                 : _serialiseDate(filterValueDate);
             const newModel =
                 filterValueText == null

@@ -1,4 +1,4 @@
-import { KeyCode, _isValidDateTime, _parseBigIntOrNull, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import { KeyCode, _parseBigIntOrNull, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -506,18 +506,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return cellDataType === 'dateTime' || cellDataType === 'dateTimeString';
     }
 
-    public getDateTimeParser(includeTime: boolean): ReturnType<typeof _getDateTimeParser> {
-        return _getDateTimeParser(this.gos, includeTime);
-    }
-
-    /** A native input's `min` and `max` only read local datetimes, so a `Z` or offset is resolved to local time. */
-    public getDateInputBound(bound: string | Date, includeTime: boolean | undefined): string | Date {
-        if (typeof bound !== 'string' || !includeTime || this.gos.get('suppressTimezoneConversion')) {
-            return bound;
-        }
-        return _serialiseDate(this.getDateTimeParser(true)(bound)) ?? bound;
-    }
-
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.colDef;
         if (!colDef.cellDataType) {
@@ -801,7 +789,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dateTime: this.getDateObjectTypeDef('dateTime'),
             dateTimeString: {
                 ...this.getDateStringTypeDef('dateTimeString'),
-                dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDateTime(value),
+                dataTypeMatcher: (value: any) =>
+                    typeof value === 'string' && !!_getDateTimeParser(this.gos, true)(value, true),
             },
             object: {
                 baseDataType: 'object',

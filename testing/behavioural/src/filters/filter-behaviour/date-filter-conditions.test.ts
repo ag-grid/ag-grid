@@ -1135,6 +1135,18 @@ describe('Date Filter — conditions coverage', () => {
             expect(onFilterChanged).toHaveBeenCalledTimes(1);
         });
 
+        test.each([
+            ['2020-10-10T12:10:10+02:00', 'dateTimeString'],
+            ['2020-10-10T12:10:10+24:00', 'dateString'],
+        ])('a value of %s is inferred as %s', async (date, expected) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'date' }],
+                rowData: [{ date }],
+            });
+
+            expect(api.getColumn('date')!.getColDef().cellDataType).toBe(expected);
+        });
+
         test('the dateTime value parser honours an offset', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: [dateColumn('dateTime')],

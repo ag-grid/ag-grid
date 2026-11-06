@@ -1,4 +1,11 @@
-import { _doOnce, _missing, _parseDateTimeFromString, _parseDateTimeWithOffset } from 'ag-stack';
+import {
+    _doOnce,
+    _missing,
+    _parseDateTimeFromString,
+    _parseDateTimeWithOffset,
+    _serialiseDate,
+    _serialiseDateUtc,
+} from 'ag-stack';
 
 import type { GridApi } from './api/gridApi';
 import type { BeanStub } from './context/beanStub';
@@ -72,8 +79,46 @@ export function _getClientSideLoadingRowCount(gos: GridOptionsService): number {
  * Offsets only apply to values that include a time: a date-only type keeps the calendar date in its string.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _getDateTimeParser(gos: GridOptionsService, includeTime: boolean): typeof _parseDateTimeFromString {
-    return includeTime && !gos.get('suppressTimezoneConversion') ? _parseDateTimeWithOffset : _parseDateTimeFromString;
+export function _usesUtcDateTime(gos: GridOptionsService, includeTime: boolean | undefined): boolean {
+    return !!includeTime && !gos.get('suppressTimezoneConversion');
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getDateTimeParser(
+    gos: GridOptionsService,
+    includeTime: boolean | undefined
+): typeof _parseDateTimeFromString {
+    return _usesUtcDateTime(gos, includeTime) ? _parseDateTimeWithOffset : _parseDateTimeFromString;
+}
+
+/**
+ * A native date input only reads local datetimes, so a `Z` or offset is resolved to local time.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDateInputValue<T extends string | Date>(
+    gos: GridOptionsService,
+    value: T,
+    includeTime: boolean | undefined
+): T | string {
+    if (typeof value !== 'string' || !_usesUtcDateTime(gos, includeTime)) {
+        return value;
+    }
+    return _serialiseDate(_parseDateTimeWithOffset(value)) ?? value;
+}
+
+/**
+ * The value a datetime model holds for the local datetime a native date input produced.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDateModelValue(
+    gos: GridOptionsService,
+    inputValue: string,
+    includeTime: boolean | undefined
+): string {
+    if (!_usesUtcDateTime(gos, includeTime)) {
+        return inputValue;
+    }
+    return _serialiseDateUtc(_parseDateTimeWithOffset(inputValue)) ?? inputValue;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

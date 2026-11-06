@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../../../context/context';
-import { _getDateTimeParser } from '../../../gridOptionsUtils';
+import { _getDateTimeParser, _usesUtcDateTime } from '../../../gridOptionsUtils';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
 import type { Tuple } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
@@ -15,12 +15,8 @@ export function dateFilterIncludesTime({ dataTypeSvc }: BeanCollection, filterPa
 }
 
 /** Whether this filter's model holds UTC instants rather than local datetimes. */
-export function isUtcDateFilterModel(beans: BeanCollection, filterParams: IDateFilterParams): boolean {
-    return !beans.gos.get('suppressTimezoneConversion') && dateFilterIncludesTime(beans, filterParams);
-}
-
-export function toUtcDateFilterModelValue(date: Date | null | undefined): string | null {
-    return date && !Number.isNaN(date.getTime()) ? date.toISOString() : null;
+export function usesUtcDateFilterModel(beans: BeanCollection, filterParams: IDateFilterParams): boolean {
+    return _usesUtcDateTime(beans.gos, dateFilterIncludesTime(beans, filterParams));
 }
 
 export function parseDateFilterModelValue(

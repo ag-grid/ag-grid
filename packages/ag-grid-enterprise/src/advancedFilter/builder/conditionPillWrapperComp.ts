@@ -8,7 +8,7 @@ import type {
     SetAdvancedFilterModel,
     SetFilterModelValue,
 } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import { Component, _getDateInputValue, _getDateModelValue } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
@@ -123,7 +123,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         const value = this.getOperandModelValue(index);
         const key =
             typeof value === 'string'
-                ? this.advFilterExpSvc.getDateInputValue(value, this.baseCellDataType)
+                ? _getDateInputValue(this.gos, value, this.operandIncludesTime())
                 : (_toStringOrNull(value) ?? '');
         // Read from the model, not from the text handed in: an edit is stored through the column's own
         // parser, and the display is produced by the default one, which need not read the same syntax.
@@ -305,13 +305,16 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     private setOperand(operand: string, index: number): void {
         // Number comes back as string from input, so convert. Datetimes come back in local time.
         // An emptied pill holds nothing to filter on, so the slot goes rather than keeping an empty string.
-        const { advFilterExpSvc, baseCellDataType } = this;
         const value =
-            baseCellDataType === 'number' && operand
-                ? (advFilterExpSvc.getNumberParser(this.column)(operand) ?? '')
-                : advFilterExpSvc.getDateModelValueFromInput(operand, baseCellDataType);
+            this.baseCellDataType === 'number' && operand
+                ? (this.advFilterExpSvc.getNumberParser(this.column)(operand) ?? '')
+                : _getDateModelValue(this.gos, operand, this.operandIncludesTime());
         this.setOperandModelValue(index, value === '' ? undefined : value);
         this.validate();
+    }
+
+    private operandIncludesTime(): boolean {
+        return !!this.beans.dataTypeSvc?.getDateIncludesTimeFlag(this.baseCellDataType);
     }
 
     private getExpressionOperator(operator: string | undefined): FilterExpressionOperator<any> | undefined {

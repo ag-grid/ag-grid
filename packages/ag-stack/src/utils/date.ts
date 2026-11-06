@@ -282,3 +282,11 @@ export function _parseDateTimeWithOffset(
     const offsetMs = (offsetHours * 60 + offsetMinutes) * 60000;
     return new Date(utc.getTime() + (match[7] === '-' ? offsetMs : -offsetMs));
 }
+
+/**
+ * Serialises a Date to a UTC ISO 8601 string, or null if there is no valid date to serialise.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _serialiseDateUtc(date: Date | null | undefined): string | null {
+    return date && !Number.isNaN(date.getTime()) ? date.toISOString() : null;
+}

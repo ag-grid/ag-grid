@@ -1,4 +1,4 @@
-import { _isBrowserFirefox, _serialiseDate } from 'ag-stack';
+import { _isBrowserFirefox, _serialiseDate, _serialiseDateUtc } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
@@ -14,10 +14,9 @@ import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import {
     dateFilterIncludesTime,
-    isUtcDateFilterModel,
     mapValuesFromDateFilterModel,
     parseDateFilterModelValue,
-    toUtcDateFilterModelValue,
+    usesUtcDateFilterModel,
 } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
@@ -294,7 +293,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             return true;
         }
         const { beans, params } = this;
-        if (!isUtcDateFilterModel(beans, params)) {
+        if (!usesUtcDateFilterModel(beans, params)) {
             return false;
         }
         const aDate = parseDateFilterModelValue(beans, params, a, true);
@@ -308,11 +307,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const { params, filterType, beans } = this;
         const values = this.getValues(position);
         const includeDateTime = dateFilterIncludesTime(beans, params);
-        const useUtc = isUtcDateFilterModel(beans, params);
+        const useUtc = usesUtcDateFilterModel(beans, params);
 
         const separator = params.useIsoSeparator ? 'T' : ' ';
         const serialise = (date: Date | null) =>
-            useUtc ? toUtcDateFilterModelValue(date) : _serialiseDate(date, includeDateTime, separator);
+            useUtc ? _serialiseDateUtc(date) : _serialiseDate(date, includeDateTime, separator);
         if (values.length > 0) {
             model.dateFrom = serialise(values[0]);
         }

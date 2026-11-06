@@ -4,6 +4,7 @@ import {
     _classifyFilterOptions,
     _getDisplayHandler,
     _resolveFilter,
+    _usesUtcDateTime,
 } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
@@ -113,7 +114,7 @@ function buildColumnFilterSchema(
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
         const includeTime =
             filterParams?.includeTime ?? beans.dataTypeSvc?.getDateIncludesTimeFlag(column.colDef.cellDataType) ?? true;
-        const useUtcDateTime = includeTime && !beans.gos.get('suppressTimezoneConversion');
+        const useUtcDateTime = _usesUtcDateTime(beans.gos, includeTime);
 
         return buildSimpleFilterSchema(filterKey, { maxConditions, filterOptions, useIsoSeparator, useUtcDateTime });
     } else if (filterKey === SetFilterKey) {

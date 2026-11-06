@@ -225,6 +225,8 @@ export {
     _getGridOption,
     _getGroupAggFiltering,
     _getGroupSelection,
+    _getDateInputValue,
+    _getDateModelValue,
     _getDateTimeParser,
     _getGroupSelectsDescendants,
     _getGroupTotalRowCallback,
@@ -260,6 +262,7 @@ export {
     _isUsingNewRowSelectionAPI,
     _processOnChange,
     _shouldUpdateColVisibilityAfterGroup,
+    _usesUtcDateTime,
 } from './gridOptionsUtils';
 export type {
     AbstractHeaderCellCtrl,

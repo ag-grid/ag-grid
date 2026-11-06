@@ -1,4 +1,4 @@
-import { _getOwn, _parseBigIntOrNull, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import { _getOwn, _parseBigIntOrNull, _serialiseDate, _serialiseDateUtc, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -31,6 +31,7 @@ import {
     _isGridSuppliedFilterParam,
     _resolveFilter,
     _toFiniteNumber,
+    _usesUtcDateTime,
 } from 'ag-grid-community';
 
 import { resolveChildFilters, resolveFilterParams, resolveMultiFilterChildren } from '../multiFilter/multiFilterUtil';
@@ -215,28 +216,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         return _getDateTimeParser(this.gos, includeTime)(_toStringOrNull(value));
     }
 
-    private isUtcDateModelValue(dataType: BaseCellDataType): boolean {
-        return !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType) && !this.gos.get('suppressTimezoneConversion');
-    }
-
     private serialiseDateModelValue(date: Date | null, dataType: BaseCellDataType): string | null {
-        if (this.isUtcDateModelValue(dataType)) {
-            return date && !Number.isNaN(date.getTime()) ? date.toISOString() : null;
-        }
-        return _serialiseDate(date, !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType));
-    }
-
-    /** A native date input only reads local datetimes, so a UTC model value is shown in local time. */
-    public getDateInputValue(modelValue: string, dataType: BaseCellDataType): string {
-        return this.isUtcDateModelValue(dataType)
-            ? (_serialiseDate(this.parseDateModelValue(modelValue, dataType)) ?? modelValue)
-            : modelValue;
-    }
-
-    public getDateModelValueFromInput(inputValue: string, dataType: BaseCellDataType): string {
-        return this.isUtcDateModelValue(dataType)
-            ? (this.serialiseDateModelValue(this.parseDateModelValue(inputValue, dataType), dataType) ?? inputValue)
-            : inputValue;
+        const includeTime = !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType);
+        return _usesUtcDateTime(this.gos, includeTime) ? _serialiseDateUtc(date) : _serialiseDate(date, includeTime);
     }
 
     private getDateOperand(model: { filter?: string | number; colId: string }, dataType: BaseCellDataType) {

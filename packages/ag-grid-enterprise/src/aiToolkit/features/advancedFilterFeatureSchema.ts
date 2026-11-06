@@ -1,6 +1,7 @@
 import { _getOwn } from 'ag-stack';
 
 import type { AgColumn, BaseCellDataType, BeanCollection } from 'ag-grid-community';
+import { _usesUtcDateTime } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../../advancedFilter/advancedFilterExpressionService';
 import type { OperandsKind } from '../../advancedFilter/filterExpressionOperators';
@@ -84,7 +85,7 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFil
         const count = (refCounts[name] ?? 0) + 1;
         refCounts[name] = count;
         const ref = `${name}AdvancedFilterModel${count > 1 ? count : ''}`;
-        defs[ref] = buildFilterSchema(group, !gos.get('suppressTimezoneConversion')).toJSON();
+        defs[ref] = buildFilterSchema(group, _usesUtcDateTime(gos, true)).toJSON();
         columnFilterModels.push({ $ref: `#/$defs/${ref}` });
     }
 
