@@ -143,6 +143,7 @@ const staticGridOptions: GridOptions = {
     enableFilterHandlers: true,
     rowDragManaged: true,
     rowDragMultiRow: true,
+    scrollGestureMode: 'axisLocked',
     loadingOverlayComponent: () => (
         <div className="ag-overlay-loading-center" role="presentation">
             <div aria-live="polite" aria-atomic="true">

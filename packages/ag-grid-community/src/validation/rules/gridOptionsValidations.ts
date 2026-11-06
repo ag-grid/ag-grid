@@ -793,6 +793,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        scrollGestureMode: {
+            validate: ({ scrollGestureMode }) => {
+                const allowed = ['native', 'axisLocked'];
+                return scrollGestureMode != null && !allowed.includes(scrollGestureMode)
+                    ? _createValidationWarning(320, {
+                          property: 'scrollGestureMode',
+                          allowed,
+                          value: scrollGestureMode,
+                      })
+                    : null;
+            },
+        },
         renderingMode: {
             validate: (options) => {
                 const renderingMode = options.renderingMode;
