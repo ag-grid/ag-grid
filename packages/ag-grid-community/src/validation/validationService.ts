@@ -12,11 +12,11 @@ import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _reportMissingModule, provideValidationServiceLogger } from './logging';
+import { provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { DEPRECATED_ICONS_V33, ICON_VALUES } from './rules/iconValidations';
 import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
@@ -135,18 +135,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
-            return;
-        }
-        const moduleName = ICON_MODULES[iconName];
-        if (moduleName) {
-            _reportMissingModule({
-                // Same context source as GridOptionsService so a batch's combined message keeps the right
-                // registration form (AgGridProvider / UMD) regardless of which report leads the batch.
-                ...this.gos.getModuleErrorParams(),
-                reasonOrId: `icon \`${iconName}\``,
-                moduleName,
-                additionalText: 'Alternatively, use the CSS icon name directly.',
-            });
             return;
         }
         this.warn(134, { iconName });
