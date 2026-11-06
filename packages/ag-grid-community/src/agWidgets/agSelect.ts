@@ -37,7 +37,7 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
     readOnly?: boolean;
 }
-type AgSelectEvent = 'selectedItem';
+type AgSelectEvent = 'selectedItem' | 'activeItemChanged';
 export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
     /** The keydown that committed the value, when committed via keyboard. Absent for mouse commits. */
     keyboardEvent?: KeyboardEvent;
