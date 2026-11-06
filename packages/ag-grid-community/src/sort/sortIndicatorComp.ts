@@ -92,7 +92,6 @@ export class SortIndicatorComp extends Component {
 
         const updateIcons = this.updateIcons.bind(this);
         const sortUpdated = this.onSortChanged.bind(this);
-        this.addManagedPropertyListener('unSortIcon', updateIcons);
         this.addManagedEventListeners({
             newColumnsLoaded: updateIcons,
             // Watch global events, as row group columns can effect their display column.
@@ -123,7 +122,7 @@ export class SortIndicatorComp extends Component {
     }
 
     private updateIcons(): void {
-        const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
+        const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, beans } = this;
 
         const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = _getDisplaySortForColumn(
             column,
@@ -140,7 +139,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortNone) {
-            const alwaysHideNoSort = !column.colDef.unSortIcon && !gos.get('unSortIcon');
+            const alwaysHideNoSort = !column.colDef.unSortIcon;
             _setDisplayed(eSortNone, !alwaysHideNoSort && !direction, { skipAriaHidden: true });
         }
 

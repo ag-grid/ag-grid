@@ -994,16 +994,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This can be used to group/pivot by values derived from a source column. The grid provides hierarchy types related to date components.
      * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
      * @agModule `RowGroupingModule` / `PivotModule`
-     *
-     * @deprecated
-     */
-    rowGroupingHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
-    /**
-     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
-     *
-     * This can be used to group/pivot by values derived from a source column. The grid provides hierarchy types related to date components.
-     * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
-     * @agModule `RowGroupingModule` / `PivotModule`
      */
     groupHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
 
