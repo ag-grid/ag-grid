@@ -157,7 +157,6 @@ import type {
     IsRowMaster,
     IsRowPinnable,
     IsRowPinned,
-    IsRowSelectable,
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
@@ -536,16 +535,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ClipboardModule`
      */
     @Input() public clipboardDelimiter: string | undefined = undefined;
-    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
-     */
-    @Input({ transform: booleanAttribute }) public suppressCopyRowsToClipboard: boolean | undefined = undefined;
-    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
-     */
-    @Input({ transform: booleanAttribute }) public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to always remove a trailing empty line from pasted data.
      * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
      * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
@@ -1472,11 +1461,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupMaintainOrder: boolean | undefined = undefined;
-    /** When `true`, if you select a group, the children of the group will also be selected.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
-     */
-    @Input({ transform: booleanAttribute }) public groupSelectsChildren: boolean | undefined = undefined;
     /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
      * @default 0
      * @initial
@@ -1514,11 +1498,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public groupSuppressBlankHeader: boolean | undefined = undefined;
-    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
-     */
-    @Input({ transform: booleanAttribute }) public groupSelectsFiltered: boolean | undefined = undefined;
     /** Shows the open group in the group column for non-group rows.
      * @default false
      * @agModule `RowGroupingModule`
@@ -1802,29 +1781,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public scrollbarWidth: number | undefined = undefined;
-    /** Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
+    /** Use the `RowSelectionOptions` object to configure row selection.
      * @agModule `RowSelectionModule`
      */
-    @Input() public rowSelection: RowSelectionOptions<TData> | 'single' | 'multiple' | undefined = undefined;
+    @Input() public rowSelection: RowSelectionOptions<TData> | undefined = undefined;
     /** Configure cell selection.
      * @agModule `CellSelectionModule`
      */
     @Input() public cellSelection: boolean | CellSelectionOptions<TData> | undefined = undefined;
-    /** Set to `true` to allow multiple rows to be selected using single click.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.enableSelectionWithoutKeys` instead
-     */
-    @Input({ transform: booleanAttribute }) public rowMultiSelectWithClick: boolean | undefined = undefined;
-    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
-     */
-    @Input({ transform: booleanAttribute }) public suppressRowDeselection: boolean | undefined = undefined;
-    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
-     * @default false
-     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
-     */
-    @Input({ transform: booleanAttribute }) public suppressRowClickSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
      * @default false
      */
@@ -2235,10 +2199,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     @Input() public processRowPostCreate: ProcessRowPostCreate<TData> | undefined = undefined;
-    /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
-     */
-    @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
      * @agModule `MasterDetailModule`
      */
