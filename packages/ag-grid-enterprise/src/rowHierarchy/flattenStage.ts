@@ -63,6 +63,7 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
                     gos.get('alwaysShowGrandTotalRow') &&
                     (beans.rowModel as IClientSideRowModel).rowCountReady));
 
+        const hadGrandTotalRow = !!rootNode.sibling;
         let footerNode: RowNode | undefined;
         if (includeGrandTotalRow) {
             footerNode = _createRowNodeFooter(rootNode, beans);
@@ -72,6 +73,10 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
         } else if (showRootNode || !grandTotalRow) {
             // switched off, or replaced by the root row; an emptied grid keeps it, not displayed
             _destroyRowNodeFooter(rootNode);
+        }
+        if (hadGrandTotalRow !== !!rootNode.sibling) {
+            // the root's selectability comes from its grand total row while it has one
+            beans.selectionSvc?.updateRowSelectable(rootNode);
         }
         beans.pinnedRowModel?.setGrandTotalNode(footerNode);
 

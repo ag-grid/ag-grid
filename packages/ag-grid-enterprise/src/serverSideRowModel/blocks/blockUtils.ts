@@ -149,7 +149,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
-        rowNode.updateData(data);
+        const serverSideRowModel = this.serverSideRowModel;
+        const wasRefreshingData = serverSideRowModel.refreshingData; // restored, so a nested update keeps the outer's
+        serverSideRowModel.refreshingData = true;
+        try {
+            rowNode.updateData(data);
+        } finally {
+            serverSideRowModel.refreshingData = wasRefreshingData;
+        }
 
         if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
@@ -166,6 +173,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
         }
+
+        // asked once its group info is set, which can turn a group into a leaf and back
+        this.beans.selectionSvc?.refreshRowSelection?.(rowNode);
     }
 
     private updateRowFooter(rowNode: RowNode): void {
@@ -217,7 +227,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setChildCountIntoRowNode(rowNode);
         }
 
-        this.beans.selectionSvc?.updateRowSelectable(rowNode);
+        // `setDataAndId` synced the row's selection before the row was asked, so a rejected row is synced again
+        const selectionSvc = this.beans.selectionSvc;
+        if (selectionSvc?.updateRowSelectable(rowNode, true) === false) {
+            selectionSvc.syncInRowNode(rowNode);
+        }
 
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true

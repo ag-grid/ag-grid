@@ -116,8 +116,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     }
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
-    public execute(changedPath: ChangedPath | undefined): void {
-        this.aggregate(changedPath, false);
+    public execute(changedPath: ChangedPath | undefined): boolean {
+        return this.aggregate(changedPath, false);
     }
 
     /** Re-aggregates only the root node, leaving every group aggregate untouched. Used when a Show Values As
@@ -127,7 +127,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         this.aggregate(undefined, true);
     }
 
-    private aggregate(changedPath: ChangedPath | undefined, rootOnly: boolean): void {
+    private aggregate(changedPath: ChangedPath | undefined, rootOnly: boolean): boolean {
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
@@ -145,8 +145,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
                     setAggDataWithSiblings(rowNode, null, colModel);
                 });
+                return true;
             }
-            return;
+            return false;
         }
 
         this.hadAgg = true;
@@ -246,9 +247,10 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             if (rootNode) {
                 aggregateNode(rootNode);
             }
-            return;
+            return true;
         }
         _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, aggregateNode);
+        return true;
     }
 }
 

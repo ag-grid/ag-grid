@@ -1,7 +1,10 @@
-import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, assertSelectedRowsByIndex, clipboardUtils, waitForEvent } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
-import type { RowSelectedEvent } from 'ag-grid-community';
-import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
+import type { GridApi, IRowNode, RowSelectedEvent } from 'ag-grid-community';
+import { TextEditorModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
+import { CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import {
     columnDefs,
@@ -65,6 +68,382 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('selecting only un-selectable rows through the API emits no selectionChanged', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'football' },
+                });
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                api.setNodesSelected({ nodes: [api.getRowNode('0')!], newValue: true, source: 'api' });
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'checkboxSelected' });
+
+                await waitFor(() => expect(sources).toEqual(['checkboxSelected']));
+                assertSelectedRowsByIndex([1], api);
+                api.deselectAll();
+                await waitFor(() => expect(sources).toEqual(['checkboxSelected', 'apiSelectAll']));
+            });
+
+            test.each(['self', 'descendants'] as const)(
+                'with groupSelects %s, select all and deselect all emit selectionChanged only when they change the selection',
+                async (groupSelects) => {
+                    const [api] = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', groupSelects },
+                    });
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.deselectAll();
+                    api.selectAll();
+                    api.selectAll();
+                    api.deselectAll();
+                    api.deselectAll();
+                    api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'checkboxSelected' });
+
+                    await waitFor(() => expect(sources).toEqual(['apiSelectAll', 'apiSelectAll', 'checkboxSelected']));
+                }
+            );
+
+            const turnsUnselectable = [
+                'an isRowSelectable change',
+                'a cell edit',
+                'a transaction',
+                'a reload',
+            ] as const;
+            describe.each(['self', 'descendants'] as const)('groupSelects %s', (groupSelects) => {
+                async function createSportsGrid(isRowSelectable: (node: IRowNode) => boolean) {
+                    const serverRows = [
+                        { id: 'a', sport: 'rugby' },
+                        { id: 'b', sport: 'tennis' },
+                        { id: 'c', sport: 'golf' },
+                    ];
+                    const [api] = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        getRowId: (params) => params.data.id,
+                        serverSideDatasource: {
+                            getRows(params) {
+                                const rows = serverRows.map((row) => ({ ...row }));
+                                setTimeout(() => params.success({ rowData: rows, rowCount: rows.length }), 0);
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', groupSelects, isRowSelectable },
+                    });
+                    await waitForNoLoadingRows(api);
+                    return { api, serverRows };
+                }
+
+                async function makeRugbyUnselectable(
+                    path: (typeof turnsUnselectable)[number],
+                    api: GridApi,
+                    serverRows: { id: string; sport: string }[]
+                ) {
+                    if (path === 'an isRowSelectable change') {
+                        api.setGridOption('rowSelection', {
+                            mode: 'multiRow',
+                            groupSelects,
+                            isRowSelectable: (node) => node.data.sport !== 'rugby',
+                        });
+                    } else if (path === 'a cell edit') {
+                        api.getRowNode('a')!.setDataValue('sport', 'football');
+                    } else if (path === 'a transaction') {
+                        api.applyServerSideTransaction({ update: [{ id: 'a', sport: 'football' }] });
+                    } else {
+                        serverRows[0].sport = 'football';
+                        api.refreshServerSide({ purge: true });
+                        await waitFor(() => expect(api.getRowNode('a')?.data.sport).toBe('football'));
+                    }
+                }
+
+                test.each(turnsUnselectable)(
+                    'a selected row is deselected when %s makes it un-selectable',
+                    async (path) => {
+                        const { api, serverRows } = await createSportsGrid((node) => node.data.sport !== 'football');
+                        api.setNodesSelected({ nodes: [api.getRowNode('a')!, api.getRowNode('b')!], newValue: true });
+                        const sources: string[] = [];
+                        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                        await makeRugbyUnselectable(path, api, serverRows);
+
+                        await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                        expect(api.getRowNode('a')!.isSelected()).toBe(false);
+                        expect(api.getRowNode('b')!.isSelected()).toBe(true);
+                        api.deselectAll();
+                        await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+                    }
+                );
+
+                test('a reload that makes a selected row un-selectable emits no rowSelected for the reloaded rows', async () => {
+                    const grid = await createSportsGrid((node) => node.data.sport !== 'football');
+                    const api = grid.api;
+                    api.setNodesSelected({ nodes: [api.getRowNode('a')!, api.getRowNode('b')!], newValue: true });
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+                    const rowSelectedIds: (string | undefined)[] = [];
+                    api.addEventListener('rowSelected', (event) => rowSelectedIds.push(event.node.id));
+
+                    await makeRugbyUnselectable('a reload', api, grid.serverRows);
+
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                    expect(rowSelectedIds).toEqual([]);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+                });
+
+                test('an isRowSelectable change that makes two selected rows un-selectable deselects both and emits one selectionChanged', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.setNodesSelected({ nodes: [api.getRowNode('c')!], newValue: true });
+                    const stateWithOnlyGolf = api.getServerSideSelectionState();
+                    api.setNodesSelected({ nodes: ['a', 'b'].map((id) => api.getRowNode(id)!), newValue: true });
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.setGridOption('rowSelection', {
+                        mode: 'multiRow',
+                        groupSelects,
+                        isRowSelectable: (node) => node.data.sport === 'golf',
+                    });
+
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                    expect(['a', 'b', 'c'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([false, false, true]);
+                    expect(api.getServerSideSelectionState()).toEqual(stateWithOnlyGolf);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+                });
+
+                test('after select all, a row an edit makes un-selectable is deselected', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.selectAll();
+                    const selectionState = api.getServerSideSelectionState();
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.getRowNode('a')!.setDataValue('sport', 'football');
+
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                    expect(['a', 'b', 'c'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([false, true, true]);
+                    expect(api.getServerSideSelectionState()).toEqual(selectionState);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+                });
+
+                test('after select all, a row an edit makes selectable again shows selected again', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.selectAll();
+                    api.getRowNode('a')!.setDataValue('sport', 'football');
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.getRowNode('a')!.setDataValue('sport', 'rugby');
+
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                    expect(['a', 'b', 'c'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([true, true, true]);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+                });
+
+                test('after select all, deselecting a row again once it is un-selectable keeps it deselected', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.selectAll();
+                    api.setNodesSelected({ nodes: [api.getRowNode('a')!], newValue: false });
+                    api.getRowNode('a')!.setDataValue('sport', 'football');
+                    const selectionState = api.getServerSideSelectionState();
+
+                    api.setNodesSelected({ nodes: [api.getRowNode('a')!], newValue: false });
+
+                    expect(api.getServerSideSelectionState()).toEqual(selectionState);
+                    api.getRowNode('a')!.setDataValue('sport', 'rugby');
+                    expect(api.getRowNode('a')!.isSelected()).toBe(false);
+                });
+
+                test('a selection state naming a loaded row isRowSelectable rejects does not select it', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.setNodesSelected({ nodes: [api.getRowNode('a')!, api.getRowNode('b')!], newValue: true });
+                    const stateWithRugby = api.getServerSideSelectionState()!;
+                    api.setNodesSelected({ nodes: [api.getRowNode('a')!], newValue: false });
+                    const stateWithoutRugby = api.getServerSideSelectionState();
+                    api.deselectAll();
+                    api.getRowNode('a')!.setDataValue('sport', 'football');
+
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.setServerSideSelectionState(stateWithRugby);
+
+                    await waitFor(() => expect(sources).toEqual(['api']));
+                    expect(api.getServerSideSelectionState()).toEqual(stateWithoutRugby);
+                    expect(api.getRowNode('a')!.isSelected()).toBe(false);
+                    expect(api.getRowNode('b')!.isSelected()).toBe(true);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['api', 'apiSelectAll']));
+                });
+
+                test('a paste whose first cell rejects a selected row and whose last accepts it again keeps it selected', async () => {
+                    const [api] = await createGridAndWait(
+                        {
+                            columnDefs: [
+                                { field: 'sport', editable: true },
+                                { field: 'country', editable: true },
+                            ],
+                            cellSelection: true,
+                            rowModelType: 'serverSide',
+                            getRowId: (params) => params.data.id,
+                            serverSideDatasource: {
+                                getRows(params) {
+                                    const rows = [
+                                        { id: 'a', sport: 'rugby', country: 'Wales' },
+                                        { id: 'b', sport: 'tennis', country: 'Spain' },
+                                    ];
+                                    setTimeout(() => params.success({ rowData: rows, rowCount: rows.length }), 0);
+                                },
+                            },
+                            rowSelection: {
+                                mode: 'multiRow',
+                                groupSelects,
+                                isRowSelectable: (node) =>
+                                    (node.data.sport === 'none') === (node.data.country === 'none'),
+                            },
+                        },
+                        { modules: [ClipboardModule, CellSelectionModule, TextEditorModule] }
+                    );
+                    await waitForNoLoadingRows(api);
+                    const rowA = api.getRowNode('a')!;
+                    api.setNodesSelected({ nodes: [rowA], newValue: true });
+                    const selectionState = api.getServerSideSelectionState();
+
+                    clipboardUtils.init();
+                    clipboardUtils.setText('none\tnone');
+                    api.setFocusedCell(0, 'sport');
+                    const pasteEnd = waitForEvent('pasteEnd', api);
+                    api.pasteFromClipboard();
+                    await pasteEnd;
+                    clipboardUtils.reset();
+
+                    expect(rowA.data).toEqual({ id: 'a', sport: 'none', country: 'none' });
+                    expect(rowA.isSelected()).toBe(true);
+                    expect(api.getServerSideSelectionState()).toEqual(selectionState);
+                });
+
+                test.each(['applyServerSideTransaction', 'applyServerSideTransactionAsync'] as const)(
+                    'a %s removing a row after select all fires one selectionChanged with source rowDataChanged',
+                    async (apply) => {
+                        const api = (await createSportsGrid(() => true)).api;
+                        api.selectAll();
+                        const sources: string[] = [];
+                        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                        api[apply]({ remove: [{ id: 'c' }] });
+                        api.flushServerSideAsyncTransactions();
+
+                        await waitFor(() => expect(sources).toEqual(['rowDataChanged']));
+                        expect(api.getServerSideSelectionState()).toEqual(
+                            groupSelects === 'self'
+                                ? { selectAll: true, toggledNodes: [] }
+                                : { selectAllChildren: true }
+                        );
+                        api.deselectAll();
+                        await waitFor(() => expect(sources).toEqual(['rowDataChanged', 'apiSelectAll']));
+                    }
+                );
+
+                test('a transaction removing a row deselected after select all drops it from the selection state with one selectionChanged', async () => {
+                    const api = (await createSportsGrid(() => true)).api;
+                    api.selectAll();
+                    api.setNodesSelected({ nodes: [api.getRowNode('c')!], newValue: false });
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.applyServerSideTransaction({ remove: [{ id: 'c' }] });
+
+                    await waitFor(() => expect(sources).toEqual(['rowDataChanged']));
+                    expect(api.getServerSideSelectionState()).toEqual(
+                        groupSelects === 'self' ? { selectAll: true, toggledNodes: [] } : { selectAllChildren: true }
+                    );
+                });
+
+                test('a transaction removing a selected row and making another un-selectable fires one selectionChanged with source rowDataChanged', async () => {
+                    const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
+                    api.setNodesSelected({ nodes: ['a', 'b', 'c'].map((id) => api.getRowNode(id)!), newValue: true });
+                    const sources: string[] = [];
+                    api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                    api.applyServerSideTransaction({ update: [{ id: 'a', sport: 'football' }], remove: [{ id: 'c' }] });
+
+                    await waitFor(() => expect(sources).toEqual(['rowDataChanged']));
+                    expect(['a', 'b'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([false, true]);
+                    api.deselectAll();
+                    await waitFor(() => expect(sources).toEqual(['rowDataChanged', 'apiSelectAll']));
+                });
+            });
+
+            test('one rowSelection change switching groupSelects and isRowSelectable clears the selection in one selectionChanged', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    getRowId: (params) => params.data.id,
+                    serverSideDatasource: {
+                        getRows(params) {
+                            const rows = [
+                                { id: 'a', sport: 'rugby' },
+                                { id: 'b', sport: 'tennis' },
+                            ];
+                            return params.success({ rowData: rows, rowCount: rows.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow' },
+                });
+                api.setNodesSelected({ nodes: [api.getRowNode('a')!, api.getRowNode('b')!], newValue: true });
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                api.setGridOption('rowSelection', {
+                    mode: 'multiRow',
+                    groupSelects: 'descendants',
+                    isRowSelectable: (node) => node.data.sport !== 'rugby',
+                });
+
+                await waitFor(() => expect(sources).toEqual(['api']));
+                expect(['a', 'b'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([false, false]);
+                api.selectAll();
+                await waitFor(() => expect(sources).toEqual(['api', 'apiSelectAll']));
+            });
+
+            test('switching groupSelects with nothing selected fires no selectionChanged', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    getRowId: (params) => params.data.id,
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData: [{ id: 'a', sport: 'rugby' }], rowCount: 1 });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow' },
+                });
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                api.setGridOption('rowSelection', { mode: 'multiRow', groupSelects: 'descendants' });
+                api.setGridOption('rowSelection', { mode: 'multiRow', groupSelects: 'self' });
+                api.setNodesSelected({ nodes: [api.getRowNode('a')!], newValue: true, source: 'checkboxSelected' });
+
+                await waitFor(() => expect(sources).toEqual(['checkboxSelected']));
             });
 
             test('row-clicks are ignored by default', async () => {
