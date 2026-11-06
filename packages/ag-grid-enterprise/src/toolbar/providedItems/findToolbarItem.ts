@@ -46,7 +46,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();
-        let findSearchValueTimeout: number | undefined;
+        let findSearchValueTimeout: ReturnType<typeof setTimeout> | undefined;
         const flushFindSearchValue = () =>
             this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
 
