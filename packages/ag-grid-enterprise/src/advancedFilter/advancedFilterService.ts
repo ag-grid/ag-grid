@@ -111,7 +111,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.pendingModels = [];
         for (let i = 0, len = pendingModels.length; i < len; ++i) {
             const { model, source } = pendingModels[i];
-            this.applyModel(model);
+            // each queued model is a call the app made, so one a later call supersedes still warns
+            this.applyModel(model, true);
             this.filterManager?.onFilterChanged({ source });
         }
         // Until data types are inferred, columns default to text, so a number/date expression built while
@@ -170,11 +171,21 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     /** The expression a model is written as, recording whether any set value had to fall back to its key. */
-    private writeExpression(model: AdvancedFilterModel | null): string | null {
+    private writeExpression(model: AdvancedFilterModel | null, warnUnavailable?: boolean): string | null {
         const advFilterExpSvc = this.advFilterExpSvc;
         advFilterExpSvc.wroteUnresolvedSetValue = false;
+        const unavailableColIds = warnUnavailable ? new Set<string>() : null;
+        advFilterExpSvc.unavailableColIds = unavailableColIds;
         const expression = model ? this.modelToExpression(model, true) : null;
+        advFilterExpSvc.unavailableColIds = null;
         this.appliedTextUnresolved = advFilterExpSvc.wroteUnresolvedSetValue;
+        unavailableColIds?.forEach((colId) => {
+            if (this.colModel.getNonPivotColById(colId)) {
+                this.warn(342, { colId });
+            } else {
+                this.warn(341, { colId });
+            }
+        });
         return expression;
     }
 
@@ -209,7 +220,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             this.pendingModels.push({ model: cloneModel(model), source });
             return;
         }
-        this.setModel(model);
+        this.pendingModels.length = 0;
+        this.applyModel(model, true);
         this.filterManager?.onFilterChanged({ source });
     }
 
@@ -223,8 +235,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.applyModel(this.appliedModel);
     }
 
-    private applyModel(model: AdvancedFilterModel | null): void {
-        const expression = this.writeExpression(model);
+    private applyModel(model: AdvancedFilterModel | null, warnUnavailable?: boolean): void {
+        const expression = this.writeExpression(model, warnUnavailable);
         const unresolved = this.appliedTextUnresolved;
 
         this.setExpressionDisplayValue(expression);
