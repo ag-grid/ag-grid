@@ -842,6 +842,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelSelectField: 'Pilih Bidang',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Validasi Editor Sel',
     ariaFullRowValidationError: 'Validasi Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan penyuntingan baris. ${variable}',

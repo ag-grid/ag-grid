@@ -819,6 +819,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaLabelSelectField: 'Velg Felt',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celle redigerer',
     ariaValidationErrorPrefix: 'Celle redigerer validering',
     ariaFullRowValidationError: 'Validering av hele raden: ${variable}',
     ariaFullRowEditValidationFailed: 'Kan ikke fullføre radredigeringen. ${variable}',

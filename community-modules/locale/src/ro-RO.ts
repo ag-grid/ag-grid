@@ -823,6 +823,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelSelectField: 'Selectează Câmp',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de celule',
     ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaFullRowValidationError: 'Validarea întregului rând: ${variable}',
     ariaFullRowEditValidationFailed: 'Editarea rândului nu poate fi finalizată. ${variable}',

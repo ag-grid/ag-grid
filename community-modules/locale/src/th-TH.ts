@@ -838,6 +838,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelSelectField: 'เลือกฟิลด์',
 
     // Cell Editor
+    ariaLabelCellEditor: 'ตัวแก้ไขเซลล์',
     ariaValidationErrorPrefix: 'การตรวจสอบตัวแก้ไขเซลล์',
     ariaFullRowValidationError: 'การตรวจสอบทั้งแถว: ${variable}',
     ariaFullRowEditValidationFailed: 'ไม่สามารถแก้ไขแถวให้สมบูรณ์ได้ ${variable}',

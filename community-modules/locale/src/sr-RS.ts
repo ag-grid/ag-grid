@@ -839,6 +839,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelSelectField: 'Изаберите поље',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Едитор ћелије',
     ariaValidationErrorPrefix: 'Валидација едитора ћелије',
     ariaFullRowValidationError: 'Валидација целог реда: ${variable}',
     ariaFullRowEditValidationFailed: 'Није могуће завршити измену реда. ${variable}',

@@ -817,6 +817,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelSelectField: 'اختيار الحقل',
 
     // Cell Editor
+    ariaLabelCellEditor: 'محرر الخلية',
     ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
     ariaFullRowValidationError: 'التحقق من الصف الكامل: ${variable}',
     ariaFullRowEditValidationFailed: 'تعذر إكمال تحرير الصف. ${variable}',

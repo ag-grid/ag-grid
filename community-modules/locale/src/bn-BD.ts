@@ -837,6 +837,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaLabelSelectField: 'ফিল্ড নির্বাচন করুন',
 
     // Cell Editor
+    ariaLabelCellEditor: 'সেল সম্পাদক',
     ariaValidationErrorPrefix: 'সেল সম্পাদক যাচাইকরণ',
     ariaFullRowValidationError: 'সম্পূর্ণ সারি যাচাইকরণ: ${variable}',
     ariaFullRowEditValidationFailed: 'সারি সম্পাদনা সম্পূর্ণ করা যাচ্ছে না। ${variable}',

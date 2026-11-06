@@ -823,6 +823,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelSelectField: 'Valitse kenttä',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Solumuokkain',
     ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
     ariaFullRowValidationError: 'Koko rivin validointi: ${variable}',
     ariaFullRowEditValidationFailed: 'Rivin muokkausta ei voi viimeistellä. ${variable}',

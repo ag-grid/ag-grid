@@ -822,6 +822,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelSelectField: 'Välj fält',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering av hela raden: ${variable}',
     ariaFullRowEditValidationFailed: 'Det går inte att slutföra radredigeringen. ${variable}',

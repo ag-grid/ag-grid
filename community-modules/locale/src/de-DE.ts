@@ -826,6 +826,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelSelectField: 'Feld auswählen',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Zelleneditor',
     ariaValidationErrorPrefix: 'Zelleneditor-Validierung',
     ariaFullRowValidationError: 'Validierung der gesamten Zeile: ${variable}',
     ariaFullRowEditValidationFailed: 'Zeilenbearbeitung kann nicht abgeschlossen werden. ${variable}',

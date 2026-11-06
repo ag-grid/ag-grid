@@ -839,6 +839,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelSelectField: 'Väljavalik',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Lahtriredaktor',
     ariaValidationErrorPrefix: 'Lahtriredaktori valideerimine',
     ariaFullRowValidationError: 'Täisrea valideerimine: ${variable}',
     ariaFullRowEditValidationFailed: 'Rea muutmist ei saa lõpetada. ${variable}',

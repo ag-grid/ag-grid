@@ -819,6 +819,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor buňky',
     ariaValidationErrorPrefix: 'Ověření editoru buňky',
     ariaFullRowValidationError: 'Validace celého řádku: ${variable}',
     ariaFullRowEditValidationFailed: 'Úpravu řádku nelze dokončit. ${variable}',
