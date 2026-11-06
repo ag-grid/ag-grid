@@ -107,30 +107,29 @@ const App = () => {
 
 ## Callbacks
 
-For [Grid Options](./grid-options/) that accept functions, or objects containing functions, i.e `rowSelection.isRowSelectable` we strongly recommend you use `useCallback` or `useMemo` to avoid resetting grid state on every render. For example, if you do not memoise `rowSelection` then on every render the grid will receive a new object and function and have to re-run selection logic.
+For [Grid Options](./grid-options/) that accept functions, i.e `doesExternalFilterPass` we strongly recommend you use `useCallback` to avoid resetting grid state on every render. For example, if you do not use a callback for `doesExternalFilterPass` then on every render the grid will receive a new function and have to re-run filtering.
 
-When using `useMemo()` or `useCallback()`, make sure you set correct dependencies in order to avoid stale closures.
+When using `useCallback()`, make sure you set correct dependencies in order to avoid stale closures.
 
 ```jsx
 const App = () => {
-    const [count, setCount] = useState(0);
+    const [minValue, setMinValue] = useState(0);
 
-    // BAD will re-run selection logic on every render
-    const rowSelection = {
-        mode: 'multiRow',
-        isRowSelectable: (node) => node.data.value > count,
-    };
+    // GOOD no dependencies, so the same function is kept across renders
+    const isExternalFilterPresent = useCallback(() => true, []);
 
-    // GOOD will only re-run selection logic when count changes
-    const rowSelection = useMemo(
-        () => ({
-            mode: 'multiRow',
-            isRowSelectable: (node) => node.data.value > count,
-        }),
-        [count]
+    // BAD will re-run filtering on every render
+    const doesExternalFilterPass = (node) => node.data.value > minValue;
+
+    // GOOD will only re-run filtering when minValue changes
+    const doesExternalFilterPass = useCallback((node) => node.data.value > minValue, [minValue]);
+
+    return (
+        <AgGridReact
+            isExternalFilterPresent={isExternalFilterPresent}
+            doesExternalFilterPass={doesExternalFilterPass}
+        />
     );
-
-    return <AgGridReact rowSelection={rowSelection} />;
 };
 ```
 
