@@ -147,28 +147,6 @@ describe('RichSelectCellEditor', () => {
         expect(callback?.([{ id: 1, label: 'one' } as TestValue])).toEqual(['[object Object]']);
     });
 
-    it('ignores colDef.keyCreator and uses formatValue for object search strings', () => {
-        const keyCreator = vi.fn(({ value }: any) => `key-${value.id}`);
-        const editor = createEditor({
-            colDef: { keyCreator } as any,
-            formatValue: (value: TestValue | null | undefined) => value?.label ?? '',
-        });
-
-        const callback = (editor as any).getSearchStringCallback([
-            { id: 1, label: 'one' },
-            { id: 2, label: 'two' },
-        ]);
-
-        expect(
-            callback?.([
-                { id: 1, label: 'one' },
-                { id: 2, label: 'two' },
-            ])
-        ).toEqual(['one', 'two']);
-        expect(keyCreator).not.toHaveBeenCalled();
-        expect((editor as any).beans.log.warn).not.toHaveBeenCalled();
-    });
-
     it('keeps typing enabled for multi-select while preserving full-async search wiring', () => {
         const valuesFn = vi.fn(() => Promise.resolve([] as TestValue[]));
         const editor = createEditor({

@@ -241,6 +241,50 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(getAllRows(api)[0].data.a).toEqual({ code: 'FR', name: 'France' }));
     });
 
+    // 4b. Object values are searched by their formatValue text.
+    test('object values are searched via formatValue and colDef.keyCreator is ignored', async () => {
+        type Country = { code: string; name: string };
+        const values: Country[] = [
+            { code: 'IE', name: 'Ireland' },
+            { code: 'FR', name: 'France' },
+            { code: 'DE', name: 'Germany' },
+        ];
+        const keyCreator = vi.fn(({ value }: { value: Country }) => `code-${value.code}`);
+        const warnSpy = vi.spyOn(console, 'warn');
+        onTestFinished(() => warnSpy.mockRestore());
+
+        const api = await createGrid({
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellDataType: false,
+                    keyCreator,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values,
+                        formatValue: (value: Country) => value?.name ?? '',
+                        filterList: true,
+                        searchType: 'match',
+                    },
+                    valueFormatter: (p: { value?: Country }) => p.value?.name ?? '',
+                },
+            ],
+            rowData: [{ id: '0', a: values[0] }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const popup = await openEditor(api, gridDiv, 0, 'a');
+
+        pressKey(gridDiv, 'F');
+        pressKey(gridDiv, 'r');
+        pressKey(gridDiv, 'a');
+
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['France']));
+        expect(keyCreator).not.toHaveBeenCalled();
+        expect(warnSpy).not.toHaveBeenCalled();
+    });
+
     // 5. Async values promise populates the list.
     test('async values promise populates the list once resolved', async () => {
         const api = await createGrid({
