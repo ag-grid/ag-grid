@@ -7,10 +7,16 @@
   "module": "./dist/package/main.esm.mjs",
   "exports": {
     ".": {
-      "import": "./dist/package/main.esm.mjs",
       "types": "./dist/types/src/main.d.ts",
+      "import": "./dist/package/main.esm.mjs",
       "require": "./dist/package/main.cjs.js",
       "default": "./dist/package/main.cjs.js"
+    },
+    "./core": {
+      "types": "./dist/types/src/main-core.d.ts",
+      "import": "./dist/core/main-core.esm.mjs",
+      "require": "./dist/core/main-core.cjs.js",
+      "default": "./dist/core/main-core.cjs.js"
     }
   },
   "repository": {

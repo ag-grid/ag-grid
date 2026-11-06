@@ -6,6 +6,7 @@ import type { ILocaleService } from './iLocaleService';
 
 /**
  * The beans available without a DOM. `AgCoreBeanCollection` adds the root element and the services that drive it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface AgDomFreeBeanCollection<
     TProperties,
