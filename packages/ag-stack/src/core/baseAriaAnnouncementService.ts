@@ -6,7 +6,7 @@ import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementSe
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _debounce } from '../utils/function';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 /** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
 const ANNOUNCE_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 200;
@@ -27,7 +27,7 @@ export class BaseAriaAnnouncementService<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IAriaAnnouncementService
 {
     beanName = 'ariaAnnounce' as const;

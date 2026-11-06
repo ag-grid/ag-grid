@@ -18,7 +18,7 @@ import {
     clearTempEventHandlers,
     preventEventDefault,
 } from '../utils/event';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 /**
  * We keep a map document - Dragging to keep only one active drag also if multiple instances
@@ -53,7 +53,7 @@ export class BaseDragService<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IDragService
 {
     beanName = 'dragSvc' as const;

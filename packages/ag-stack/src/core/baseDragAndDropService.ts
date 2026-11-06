@@ -15,7 +15,7 @@ import { _initStyledRoot } from '../theming/styledRoot';
 import { _getPageBody, _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 interface DragSourceAndParams<
     TDragSourceType extends number,
@@ -40,7 +40,7 @@ export abstract class BaseDragAndDropService<
     TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
     TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
 {
     beanName = 'dragAndDrop' as const;

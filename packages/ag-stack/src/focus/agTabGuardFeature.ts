@@ -1,4 +1,4 @@
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractUiBean } from '../core/agAbstractUiBean';
 import type { AgComponent } from '../interfaces/agComponent';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
@@ -48,7 +48,7 @@ export class AgTabGuardFeature<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;

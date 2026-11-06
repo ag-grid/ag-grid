@@ -1,9 +1,14 @@
 export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
-export { AgBeanStub } from './core/agBeanStub';
-export type { AgBeanStubEvent } from './core/agBeanStub';
-export { AgComponentStub } from './core/agComponentStub';
+export { AgAbstractBean } from './core/agAbstractBean';
+export { AgAbstractUiBean } from './core/agAbstractUiBean';
+/** @deprecated Use `AgAbstractUiBean`. */
+export { AgAbstractUiBean as AgBeanStub } from './core/agAbstractUiBean';
+export type { AgBeanStubEvent } from './core/agAbstractBean';
+export { AgAbstractComponent } from './core/agAbstractComponent';
+/** @deprecated Use `AgAbstractComponent`. */
+export { AgAbstractComponent as AgComponentStub } from './core/agAbstractComponent';
 export { AgContext } from './core/agContext';
 export type { AgContextParams, AgSingletonBeanClass } from './core/agContext';
 export { BaseAriaAnnouncementService } from './core/baseAriaAnnouncementService';
@@ -13,6 +18,7 @@ export { BaseEnvironment } from './core/baseEnvironment';
 export type { BaseCssChangeKeys, CssVariable } from './core/baseEnvironment';
 export { BaseRegistry } from './core/baseRegistry';
 export { BaseEventService } from './events/baseEventService';
+export { BaseInternalEventService } from './events/baseInternalEventService';
 export { LocalEventService } from './events/localEventService';
 export { FAST_TEST_TIMINGS } from './fastTestTimings';
 export { AgManagedFocusFeature } from './focus/agManagedFocusFeature';

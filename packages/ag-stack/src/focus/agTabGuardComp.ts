@@ -1,4 +1,4 @@
-import { AgComponentStub } from '../core/agComponentStub';
+import { AgAbstractComponent } from '../core/agAbstractComponent';
 import type { AgComponent, AgComponentEvent } from '../interfaces/agComponent';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
@@ -17,7 +17,7 @@ export class AgTabGuardComp<
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TLocalEventType extends string = AgComponentEvent,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

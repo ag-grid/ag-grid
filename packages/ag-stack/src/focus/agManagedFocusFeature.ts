@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractUiBean } from '../core/agAbstractUiBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -28,7 +28,7 @@ export class AgManagedFocusFeature<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractUiBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     constructor(
         private readonly eFocusable: HTMLElement,
         private readonly stopPropagationCallbacks: StopPropagationCallbacks = {

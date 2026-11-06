@@ -20,12 +20,12 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractUiBean } from './agAbstractUiBean';
 
 let compIdSequence = 0;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgComponentStub<
+export class AgAbstractComponent<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
@@ -34,7 +34,7 @@ export class AgComponentStub<
     TComponentSelectorType extends string,
     TLocalEventType extends string = AgComponentEvent,
 >
-    extends AgBeanStub<
+    extends AgAbstractUiBean<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
@@ -222,11 +222,10 @@ export class AgComponentStub<
     private swapComponentForNode(
         newComponent: AgBaseComponent<TBeanCollection>,
         parentNode: Element,
-        childNode: Node
+        childNode: ChildNode
     ): void {
         const eComponent = newComponent.getGui();
-        // eslint-disable-next-line unicorn/prefer-modern-dom-apis
-        parentNode.replaceChild(eComponent, childNode);
+        childNode.replaceWith(eComponent);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
