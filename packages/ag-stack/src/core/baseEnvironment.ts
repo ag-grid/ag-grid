@@ -29,7 +29,7 @@ export abstract class BaseEnvironment<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
 >
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>

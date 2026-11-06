@@ -13,7 +13,7 @@ export class AgTooltipComponent<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TLocation extends string,

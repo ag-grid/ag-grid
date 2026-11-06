@@ -6,16 +6,16 @@ import type { AgEvent } from '../interfaces/agEvent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IContext } from '../interfaces/iContext';
-import type { AgEventService } from '../interfaces/iEvent';
-import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
-import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 import type {
     AgPropertyChangedEvent,
     AgPropertyChangedListener,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
-    IPropertiesService,
-} from '../interfaces/iProperties';
+} from '../interfaces/iDomFreeProperties';
+import type { AgEventService } from '../interfaces/iEvent';
+import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
+import type { LocaleTextFunc } from '../interfaces/iLocaleService';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
 import { _requestAnimationFrame } from '../utils/dom';
 import { _addSafePassiveEventListener } from '../utils/event';
@@ -35,7 +35,7 @@ export abstract class AgBeanStub<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TLocalEventType extends string = AgBeanStubEvent,
 >
     implements

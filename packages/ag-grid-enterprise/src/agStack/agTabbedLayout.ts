@@ -56,7 +56,7 @@ export class AgTabbedLayout<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TContainerType extends string = string,
 > extends AgTabGuardComp<

@@ -4,6 +4,7 @@ import type {
     AgCoreBeanCollection,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     ITooltipFeature,
     StopPropagationCallbacks,
@@ -101,7 +102,7 @@ export interface AgMenuItemActivatedEvent<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgEvent<'menuItemActivated'> {
@@ -174,7 +175,7 @@ export class AgMenuItemComponent<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgBeanStub<

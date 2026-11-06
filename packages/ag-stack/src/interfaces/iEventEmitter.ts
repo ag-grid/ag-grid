@@ -1,5 +1,16 @@
 import type { AgEvent } from './agEvent';
 
+/**
+ * Mirrors the DOM's `AddEventListenerOptions`, so a DOM element still satisfies `IEventEmitter`.
+ * @knipIgnore Re-exported for consumers.
+ */
+export interface AgAddEventListenerOptions {
+    capture?: boolean;
+    once?: boolean;
+    passive?: boolean;
+    signal?: AbortSignal;
+}
+
 export type IEventListener<TEventType extends string> = (params: AgEvent<TEventType>) => void;
 export type IGlobalEventListener<TEventType extends string> = (
     eventType: TEventType,
@@ -10,13 +21,13 @@ export interface IEventEmitter<TEventType extends string> {
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
     removeEventListener(
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
 }
 
@@ -29,12 +40,12 @@ export interface IAgEventEmitter<TEventType extends string> {
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
     __removeEventListener(
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
 }

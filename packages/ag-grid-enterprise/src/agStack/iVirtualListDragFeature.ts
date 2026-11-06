@@ -13,7 +13,7 @@ export interface AgVirtualListDragParams<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TDragSourceType extends number,
     TParentComponent,
     TChildComponent,
