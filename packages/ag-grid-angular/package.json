@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "module": "./dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs",
-  "typings": "./dist/ag-grid-angular/index.d.ts",
+  "typings": "./dist/ag-grid-angular/types/ag-grid-angular.d.ts",
   "dependencies": {
     "@angular/animations": "^21.2.25",
     "@angular/common": "^21.2.25",
