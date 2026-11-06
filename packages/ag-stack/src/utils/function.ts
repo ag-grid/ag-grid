@@ -93,16 +93,16 @@ export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
     func: (this: TContext, ...args: TArgs) => void,
     delay: number
-): (this: TContext, ...args: TArgs) => number {
-    let timeout: number;
+): (this: TContext, ...args: TArgs) => ReturnType<typeof setTimeout> {
+    let timeout: ReturnType<typeof setTimeout>;
 
     // Calling debounce returns a new anonymous function
-    return function (this: TContext, ...args: TArgs): number {
+    return function (this: TContext, ...args: TArgs): ReturnType<typeof setTimeout> {
         const context = this as any;
-        window.clearTimeout(timeout);
+        clearTimeout(timeout);
 
         // Set the new timeout
-        timeout = window.setTimeout(function () {
+        timeout = setTimeout(function () {
             // at the moment we just check if the bean is still alive, in the future the bean stub should
             // another option is to manage a list of active timers and clear them when the bean is destroyed.
             if (bean.isAlive()) {
