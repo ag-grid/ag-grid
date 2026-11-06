@@ -12,7 +12,7 @@ import type {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import { AgPromise, BeanStub, _addGridCommonParams, _getColumnStringComparator } from 'ag-grid-community';
+import { AgPromise, BeanStub, _addGridCommonParams, _getStringComparator } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
 import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } from './setFilterUtils';
@@ -75,7 +75,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** The column's effective `accentedSort`, used when the values are sorted without a user comparator. */
     private stringComparator: StringComparator | undefined;
     /** The grid's default comparator, using the column's `accentedSort`. */
-    private defaultComparator: (a: any, b: any) => number = _defaultComparator;
+    private defaultComparator: (a: any, b: any) => number;
     private valueComparator: (a: TValue | null, b: TValue | null) => number;
     private compareByValue: boolean;
 
@@ -163,7 +163,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     public refreshOrder(): boolean {
         const oldStringComparator = this.stringComparator;
         this.updateParams(this.params);
-        return this.stringComparator !== oldStringComparator && this.sortLoadedValues();
+        if (this.stringComparator === oldStringComparator) {
+            return false;
+        }
+        return this.sortLoadedValues();
     }
 
     /** The loaded values, the API's included, are sorted again; a load still pending sorts when it answers. */
@@ -230,7 +233,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             csrmValuesExtractor.getValue = getValue;
         }
 
-        const stringComparator = _getColumnStringComparator(this.gos, colDef);
+        const stringComparator = _getStringComparator(colDef.accentedSort ?? this.gos.get('accentedSort'));
         const defaultComparator = stringComparator
             ? (a: any, b: any) => _defaultComparator(a, b, stringComparator)
             : _defaultComparator;

@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
+import { _last, _toStringOrNull, _translate } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -139,7 +139,7 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
 export function treeDataOrGroupingComparator(
     aValue: string[] | null,
     bValue: string[] | null,
-    compare: (a: string, b: string) => number = _defaultComparator
+    compare: (a: string, b: string) => number
 ): number {
     if (aValue == null) {
         return bValue == null ? 0 : -1;
