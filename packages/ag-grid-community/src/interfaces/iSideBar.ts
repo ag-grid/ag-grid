@@ -1,3 +1,4 @@
+import type { IconKey } from '../utils/icon';
 import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
@@ -47,8 +48,8 @@ export interface ToolPanelDef {
      * @default $side-bar-panel-width (theme variable)
      */
     width?: number;
-    /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
-    iconKey: string;
+    /** Icon shown beside the label in the side bar: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. */
+    iconKey: IconKey;
 
     /**
      * The tool panel component to use as the panel.

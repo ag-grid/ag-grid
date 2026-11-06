@@ -30,6 +30,7 @@ export type IconValue =
     | 'menu-alt'
     | 'filter'
     | 'filter-add'
+    | 'filter-remove'
     | 'columns'
     | 'maximize'
     | 'minimize'

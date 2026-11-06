@@ -149,7 +149,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             });
             return;
         }
-        this.warn(134, { iconName });
+        this.warn(134, { iconName, suggestions: suggestCssIconNames(iconName) });
     }
 
     public isProvidedUserComp(compName: string): boolean {
@@ -320,3 +320,16 @@ const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
     'lastChildChanged',
     'childIndexChanged',
 ]);
+
+function suggestCssIconNames(iconName: string): string[] {
+    const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    if (ICON_VALUES[hyphenatedName as IconValue]) {
+        return [hyphenatedName];
+    }
+    return _fuzzySuggestions({
+        inputValue: hyphenatedName,
+        allSuggestions: Object.keys(ICON_VALUES),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+}
