@@ -18,18 +18,17 @@
     "experimentalDecorators": true,
 
     // Import aliases
-    "baseUrl": ".",
     "paths": {
-      "@astro/*": ["src/astro/*"],
-      "@components/*": ["src/components/*"],
+      "@astro/*": ["./src/astro/*"],
+      "@components/*": ["./src/components/*"],
       "@design-system/*": ["../../external/ag-website-shared/src/design-system/*"],
-      "@images/*": ["src/images/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@stores/*": ["src/stores/*"],
-      "@pages-styles/*": ["src/pages-styles/*"],
-      "@ag-grid-types": ["src/types/ag-grid.d.ts"],
-      "@utils/*": ["src/utils/*"],
-      "@constants": ["src/constants.ts"],
+      "@images/*": ["./src/images/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@pages-styles/*": ["./src/pages-styles/*"],
+      "@ag-grid-types": ["./src/types/ag-grid.d.ts"],
+      "@utils/*": ["./src/utils/*"],
+      "@constants": ["./src/constants.ts"],
       "@ag-website-shared/*": ["../../external/ag-website-shared/src/*"],
       "@generated-reference/*": ["../../dist/documentation/reference/*"]
     },

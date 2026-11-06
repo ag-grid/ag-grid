@@ -121,11 +121,5 @@
   "dependencies": {
     "ag-charts-types": "14.3.0",
     "ag-stack": "36.3.0-beta.20261106.1218"
-  },
-  "devDependencies": {
-    "blob-polyfill": "^9.0.20240710",
-    "compression-streams-polyfill": "^0.1.7",
-    "text-encoding-polyfill": "^0.6.7",
-    "web-streams-polyfill": "^4.3.0"
   }
 }

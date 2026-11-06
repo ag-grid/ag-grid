@@ -39,4 +39,12 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
 
+{% if isFramework("react") %}
+
+### Grid Options
+
+- Removing a grid option prop from `AgGridReact` now resets the option, as setting the prop to `undefined` does. Previously the grid kept the last value. To keep a value, including one changed through the grid UI or `api.setGridOption`, keep passing the prop.
+
+{% /if %}
+
 {% changelogSection version=$migrationVersion /%}

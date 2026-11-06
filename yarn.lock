@@ -31,7 +31,6 @@ __metadata:
     chokidar-cli: "npm:3.0.0"
     css-tree: "npm:^3.2.1"
     csso: "npm:5.0.5"
-    glob: "npm:^11.1.0"
     npm-run-all: "npm:4.1.5"
     postcss-scss: "npm:4.0.9"
     sass: "npm:1.106.1"
@@ -12193,7 +12192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.7, @types/react-dom@npm:~18.3.7":
+"@types/react-dom@npm:^18.3.7":
   version: 18.3.7
   resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
@@ -12209,16 +12208,6 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
   checksum: 10c0/44180549dd045f536ececd39e39aacdf828e76adc1c4a90b132f453e23cc370c4648d9102ae401172ebd8fd8b1977a901a39e214e53ec77171b27514b588c179
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:~18.3.26":
-  version: 18.3.26
-  resolution: "@types/react@npm:18.3.26"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/7b62d91c33758f14637311921c92db6045b6328e2300666a35ef8130d06385e39acada005eaf317eee93228edc10ea5f0cd34a0385654d2014d24699a65bfeef
   languageName: node
   linkType: hard
 
@@ -14448,10 +14437,6 @@ __metadata:
   dependencies:
     ag-charts-types: "npm:14.3.0"
     ag-stack: "npm:36.3.0-beta.20261106.1218"
-    blob-polyfill: "npm:^9.0.20240710"
-    compression-streams-polyfill: "npm:^0.1.7"
-    text-encoding-polyfill: "npm:^0.6.7"
-    web-streams-polyfill: "npm:^4.3.0"
   languageName: unknown
   linkType: soft
 
@@ -14526,10 +14511,10 @@ __metadata:
     playwright: "npm:^1.64.1"
     playwright-ctrf-json-reporter: "npm:0.2.0"
     prettier-plugin-astro: "npm:^1.1.2"
-    react: "npm:~18.2.0"
+    react: "npm:^18.3.1"
     react-animate-height: "npm:^3.2.4"
     react-colorful: "npm:^5.8.1"
-    react-dom: "npm:~18.2.0"
+    react-dom: "npm:^18.3.1"
     react-hook-form: "npm:^7.91.0"
     react-instantsearch: "npm:^7.52.0"
     react-markdown: "npm:5.0.3"
@@ -14567,7 +14552,6 @@ __metadata:
     "@nx/devkit": "npm:20.8.4"
     "@swc/helpers": "npm:0.5.23"
     ag-shared: "npm:0.0.1"
-    glob: "npm:^11.1.0"
     typescript: "npm:~5.8.3"
   languageName: unknown
   linkType: soft
@@ -14581,7 +14565,6 @@ __metadata:
     ag-grid-community: "npm:36.3.0-beta.20261106.1218"
     ag-shared: "npm:0.0.1"
     cheerio: "npm:^1.2.0"
-    glob: "npm:^11.1.0"
     json5: "npm:2.2.3"
     prettier: "npm:3.9.10"
     sucrase: "npm:^3.35.1"
@@ -14631,7 +14614,6 @@ __metadata:
     ag-grid-enterprise: "npm:36.3.0-beta.20261106.1218"
     ag-grid-react: "npm:36.3.0-beta.20261106.1218"
     eslint: "npm:^10.13.0"
-    glob: "npm:^11.1.0"
     globals: "npm:^17.13.0"
     npm-run-all: "npm:4.1.5"
     react: "npm:^18.3.1"
@@ -14662,8 +14644,8 @@ __metadata:
     "@babel/plugin-proposal-throw-expressions": "npm:^8.0.1"
     "@babel/preset-typescript": "npm:^8.0.7"
     "@babel/runtime": "npm:^8.0.7"
-    "@types/react": "npm:~18.3.26"
-    "@types/react-dom": "npm:~18.3.7"
+    "@types/react": "npm:^18.3.31"
+    "@types/react-dom": "npm:^18.3.7"
     ag-grid-community: "npm:36.3.0-beta.20261106.1218"
     babel-preset-react-app: "npm:^10.1.0"
     prop-types: "npm:^15.6.2"
@@ -14838,11 +14820,6 @@ __metadata:
 "ag-stack@npm:36.3.0-beta.20261106.1218, ag-stack@workspace:packages/ag-stack":
   version: 0.0.0-use.local
   resolution: "ag-stack@workspace:packages/ag-stack"
-  dependencies:
-    blob-polyfill: "npm:^9.0.20240710"
-    compression-streams-polyfill: "npm:^0.1.7"
-    text-encoding-polyfill: "npm:^0.6.7"
-    web-streams-polyfill: "npm:^4.3.0"
   languageName: unknown
   linkType: soft
 
@@ -16049,13 +16026,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"blob-polyfill@npm:^9.0.20240710":
-  version: 9.0.20240710
-  resolution: "blob-polyfill@npm:9.0.20240710"
-  checksum: 10c0/eb28a475aa43c62bb855ec5404e3382772d1778852b827d6f21a73e499e3eafb3a4f81e9add68f87df336bc23db857ac357767fbb2b4a373f23dc9da872bcfda
-  languageName: node
-  linkType: hard
-
 "body-parser@npm:1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
@@ -17170,15 +17140,6 @@ __metadata:
   version: 6.1.1
   resolution: "compare-versions@npm:6.1.1"
   checksum: 10c0/415205c7627f9e4f358f571266422980c9fe2d99086be0c9a48008ef7c771f32b0fbe8e97a441ffedc3910872f917a0675fe0fe3c3b6d331cda6d8690be06338
-  languageName: node
-  linkType: hard
-
-"compression-streams-polyfill@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "compression-streams-polyfill@npm:0.1.7"
-  dependencies:
-    fflate: "npm:^0.8.2"
-  checksum: 10c0/d169b511e43c32c7617ead8ada9e94560b87f4a867e63485b1cdd686bc555f41d23ee084e704db9a51bc4fa9f3fb2d499d1d793c29904b0500cf688fb2e3b378
   languageName: node
   linkType: hard
 
@@ -29780,18 +29741,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:~18.2.0":
-  version: 18.2.0
-  resolution: "react-dom@npm:18.2.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.0"
-  peerDependencies:
-    react: ^18.2.0
-  checksum: 10c0/66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
-  languageName: node
-  linkType: hard
-
 "react-hook-form@npm:^7.91.0":
   version: 7.91.0
   resolution: "react-hook-form@npm:7.91.0"
@@ -29985,15 +29934,6 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
-  languageName: node
-  linkType: hard
-
-"react@npm:~18.2.0":
-  version: 18.2.0
-  resolution: "react@npm:18.2.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/b562d9b569b0cb315e44b48099f7712283d93df36b19a39a67c254c6686479d3980b7f013dc931f4a5a3ae7645eae6386b4aa5eea933baa54ecd0f9acb0902b8
   languageName: node
   linkType: hard
 
@@ -31485,7 +31425,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.23.0, scheduler@npm:^0.23.2":
+"scheduler@npm:^0.23.2":
   version: 0.23.2
   resolution: "scheduler@npm:0.23.2"
   dependencies:
@@ -33476,13 +33416,6 @@ __metadata:
   dependencies:
     b4a: "npm:^1.6.4"
   checksum: 10c0/929938ed154fbadb660a7f3d1aca30b7e53649a731af7583168fcfba0c158046325d35d945926e2a512bb62d1a49a7818151c987ea38b48853f01e1615722fc5
-  languageName: node
-  linkType: hard
-
-"text-encoding-polyfill@npm:^0.6.7":
-  version: 0.6.7
-  resolution: "text-encoding-polyfill@npm:0.6.7"
-  checksum: 10c0/5486a2320e2384b0153d2835a8e6e3a643ff28fcd05c2e9fa5d69c7879a2b8fdb7faa44708792a9205f074f10606ee3b6470c8f3f4da1be90a014b79057008d0
   languageName: node
   linkType: hard
 
@@ -36138,13 +36071,6 @@ __metadata:
   version: 1.2.2
   resolution: "weak-lru-cache@npm:1.2.2"
   checksum: 10c0/744847bd5b96ca86db1cb40d0aea7e92c02bbdb05f501181bf9c581e82fa2afbda32a327ffbe75749302b8492ab449f1c657ca02410d725f5d412d1e6c607d72
-  languageName: node
-  linkType: hard
-
-"web-streams-polyfill@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "web-streams-polyfill@npm:4.3.0"
-  checksum: 10c0/b00df8bc814e2a9dcb4b7e80972ff7b0a18415bc3ba58eb1fb94aacc912df936a8f2465ab1e8c548e37ea4e5c9ce1898b407f962e9782ee7ae2dca2396cccd6e
   languageName: node
   linkType: hard
 
