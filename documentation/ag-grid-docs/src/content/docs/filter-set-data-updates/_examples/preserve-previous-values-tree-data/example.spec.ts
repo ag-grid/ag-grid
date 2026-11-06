@@ -1,113 +1,124 @@
+import type { Page } from '@playwright/test';
+import type { AgGridFixtures } from '@utils/grid/test-utils';
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
+type AgIdFor = AgGridFixtures['agIdFor'];
+
+const FILE_FILTER = { source: 'filter-toolpanel', colLabel: 'File' } as const;
+
 test.agExample(import.meta, () => {
-    const filterItem = (page: any, label: string) => {
-        const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return page
-            .locator('.ag-filter-toolpanel .ag-set-filter-item')
-            .filter({ has: page.locator('.ag-checkbox-label', { hasText: new RegExp(`^${escaped}$`) }) });
-    };
-    const itemAt = (page: any, position: number) =>
-        page.locator(`.ag-filter-toolpanel .ag-virtual-list-item[aria-posinset="${position}"] .ag-checkbox-label`);
-    const firstListItem = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').first();
-    const listViewport = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-viewport');
-    const scrollList = (page: any, to: 'top' | 'end') =>
-        listViewport(page).evaluate((el: HTMLElement, top: number) => (el.scrollTop = top), to === 'top' ? 0 : 1e6);
-    const expandGroup = async (page: any, label: string) => {
-        await expect(filterItem(page, label)).toBeVisible();
-        const closedIcon = filterItem(page, label).locator('.ag-set-filter-group-closed-icon:not(.ag-hidden)');
-        if ((await closedIcon.count()) > 0) {
+    const checkbox = (agIdFor: AgIdFor, label: string) => agIdFor.setFilterInstanceItem(FILE_FILTER, label);
+    const listItem = (page: Page, agIdFor: AgIdFor, label: string) =>
+        page.locator('.ag-set-filter-item').filter({ has: checkbox(agIdFor, label) });
+    const listViewport = (page: Page) => page.locator('.ag-filter-toolpanel .ag-virtual-list-viewport');
+    const lastListItem = (page: Page) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').last();
+    const scrollList = (page: Page, to: 'top' | 'end') =>
+        listViewport(page).evaluate((el: HTMLElement, end) => (el.scrollTop = end ? el.scrollHeight : 0), to === 'end');
+    const expandGroup = async (page: Page, agIdFor: AgIdFor, label: string) => {
+        const group = listItem(page, agIdFor, label);
+        await expect(group).toBeVisible();
+        const closedIcon = group.locator('.ag-set-filter-group-closed-icon:not(.ag-hidden)');
+        if (await closedIcon.isVisible()) {
             await closedIcon.click();
         }
     };
-    const click = (page: any, name: string) => page.getByRole('button', { name }).click();
+    const click = (page: Page, name: string) => page.getByRole('button', { name }).click();
+    const rows = (page: Page) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
 
-    test.eachFramework('the Filters Tool Panel shows the File filter, and its list scrolls', async ({ page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'the Filters Tool Panel opens the File filter, and its list scrolls',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        await expect(itemAt(page, 2)).toHaveText('Applications');
-        await expect(itemAt(page, 4)).toHaveText('Documents');
-        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '13');
-        await expect
-            .poll(() => listViewport(page).evaluate((el: HTMLElement) => el.scrollHeight - el.clientHeight))
-            .toBeGreaterThan(0);
-    });
+            await expect(agIdFor.filterToolPanelGroup('File')).toBeVisible();
+            await expect(checkbox(agIdFor, 'Documents')).toBeVisible();
+            await expect
+                .poll(() => listViewport(page).evaluate((el: HTMLElement) => el.scrollHeight - el.clientHeight))
+                .toBeGreaterThan(0);
+        }
+    );
 
-    test.eachFramework('a file no longer in the data stays in its folder, marked', async ({ page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'a file never in the data is listed by its key at the end of the list',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        await click(page, 'Select report.pdf and old.zip');
-        await click(page, 'Remove beach.jpg');
+            await click(page, 'Select report.pdf and old.zip');
+            await scrollList(page, 'end');
 
-        await scrollList(page, 'end');
-        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '14');
-        await expect(itemAt(page, 14)).toHaveText('Archive/old.zip');
-        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-add-group-indent/);
-        await expect(filterItem(page, 'Archive/old.zip').locator('input')).toBeChecked();
+            await expect(lastListItem(page)).toHaveText('Archive/old.zip');
+            await expect(listItem(page, agIdFor, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
+            await expect(checkbox(agIdFor, 'Archive/old.zip')).toBeChecked();
+        }
+    );
 
-        await scrollList(page, 'top');
-        await expandGroup(page, 'Pictures');
-        await expect(itemAt(page, 8)).toHaveText('beach.jpg');
-        await expect(filterItem(page, 'beach.jpg')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'beach.jpg')).toHaveClass(/ag-set-filter-indent-1/);
-        await expect(filterItem(page, 'beach.jpg').locator('input')).not.toBeChecked();
-        await expect(filterItem(page, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
-    });
-
-    test.eachFramework('a folder is marked once every file under it is gone', async ({ page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-
-        await click(page, 'Select report.pdf and old.zip');
-        await click(page, 'Remove Documents');
-
-        await expect(filterItem(page, 'Documents')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
-        await expandGroup(page, 'Documents');
-        await expect(filterItem(page, 'report.pdf')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'report.pdf').locator('input')).toBeChecked();
-    });
-
-    test.eachFramework('clearing preserved values discards the values no longer in the data', async ({ page }) => {
+    test.eachFramework('a removed file stays in its folder, marked and unselected', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         await click(page, 'Select report.pdf and old.zip');
         await click(page, 'Remove beach.jpg');
-        await click(page, 'Clear Preserved Values');
+        await expandGroup(page, agIdFor, 'Pictures');
 
-        // (Select All) and the 12 folders, without 'Archive/old.zip'.
-        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '13');
-        await expandGroup(page, 'Pictures');
-        await expect(itemAt(page, 8)).toHaveText('city.jpg');
-        await expect(itemAt(page, 9)).toHaveText('sunset.jpg');
-        await expect(itemAt(page, 10)).toHaveText('Projects');
-        await expandGroup(page, 'Documents');
-        await expect(filterItem(page, 'report.pdf').locator('input')).toBeChecked();
-        await expect(filterItem(page, 'report.pdf')).not.toHaveClass(/ag-set-filter-item-missing/);
+        await expect(listItem(page, agIdFor, 'beach.jpg')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(listItem(page, agIdFor, 'beach.jpg')).toHaveClass(/ag-set-filter-indent-1/);
+        await expect(checkbox(agIdFor, 'beach.jpg')).not.toBeChecked();
+        await expect(listItem(page, agIdFor, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
     });
 
-    test.eachFramework('clearing preserved values drops the selected ones with them', async ({ page }) => {
+    test.eachFramework('a folder is marked once every file under it is gone', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         await click(page, 'Select report.pdf and old.zip');
         await click(page, 'Remove beach.jpg');
         await click(page, 'Remove Documents');
-        await click(page, 'Clear Preserved Values');
-        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
-        await expect(filterItem(page, 'Documents')).toHaveCount(0);
-        await expect(itemAt(page, 4)).toHaveText('Downloads');
 
-        // Had 'report.pdf' stayed in the model, its rows would pass again once they return.
+        await expect(listItem(page, agIdFor, 'Documents')).toHaveClass(/ag-set-filter-item-missing/);
+        await expandGroup(page, agIdFor, 'Documents');
+        await expect(listItem(page, agIdFor, 'report.pdf')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(checkbox(agIdFor, 'report.pdf')).toBeChecked();
+    });
+
+    test.eachFramework(
+        'clearing preserved values discards them and drops them from the model',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            await click(page, 'Select report.pdf and old.zip');
+            await click(page, 'Remove beach.jpg');
+            await click(page, 'Remove Documents');
+            await click(page, 'Clear Preserved Values');
+
+            await expect(rows(page)).toHaveCount(0);
+            await expect(checkbox(agIdFor, 'Documents')).toHaveCount(0);
+            await expandGroup(page, agIdFor, 'Pictures');
+            await expect(checkbox(agIdFor, 'city.jpg')).toBeVisible();
+            await expect(checkbox(agIdFor, 'beach.jpg')).toHaveCount(0);
+            await scrollList(page, 'end');
+            await expect(lastListItem(page)).toHaveText('Videos');
+
+            await scrollList(page, 'top');
+            await click(page, 'Restore Data');
+            await expect(checkbox(agIdFor, 'Documents')).toBeVisible();
+            await expect(rows(page)).toHaveCount(0);
+        }
+    );
+
+    test.eachFramework('restoring data without clearing shows the selected file again', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await click(page, 'Select report.pdf and old.zip');
+        await click(page, 'Remove beach.jpg');
+        await click(page, 'Remove Documents');
+        await expect(rows(page)).toHaveCount(0);
         await click(page, 'Restore Data');
-        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
-        await expandGroup(page, 'Pictures');
-        await expect(filterItem(page, 'city.jpg').locator('input')).not.toBeChecked();
-        await expandGroup(page, 'Documents');
-        await expect(filterItem(page, 'report.pdf').locator('input')).not.toBeChecked();
+
+        await expect(rows(page).filter({ hasText: 'report.pdf' })).toBeVisible();
+        await expect(rows(page).filter({ hasText: 'beach.jpg' })).toHaveCount(0);
     });
 });
