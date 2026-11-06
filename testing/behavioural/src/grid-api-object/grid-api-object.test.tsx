@@ -481,7 +481,7 @@ describe('grid api object', () => {
         api.destroy();
     });
 
-    test('an event handler prop dropped on re-render is no longer called, other dropped props keep their value (React)', async () => {
+    test('an event handler prop dropped on re-render is no longer called, other dropped props are reset (React)', async () => {
         cleanup();
         let gridRef: AgGridReact | null = null;
         let handlerCalls = 0;
@@ -520,8 +520,7 @@ describe('grid api object', () => {
         rerender(<AgGridReact ref={ref} columnDefs={columnDefs} rowData={[{ a: 3 }]} />);
         await waitFor(() => expect(apiListenerCalls).toBe(2));
         expect(handlerCalls).toBe(2);
-        // only handlers are cleared: a dropped option keeps its value
-        expect(gridRef!.api.getGridOption('rowHeight')).toBe(40);
+        expect(gridRef!.api.getGridOption('rowHeight')).toBeUndefined();
     });
 
     test('can get gridApi reference from DOM node (React)', () => {
