@@ -41,6 +41,7 @@ export type AgPropertyValueChangedListener<TProperties, K extends AgPropertyKey<
 
 /**
  * Reading properties and listening for changes. `IPropertiesService` adds the DOM-ownership members.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface IDomFreePropertiesService<TProperties> {
     readonly beanName: 'gos';
@@ -57,3 +58,20 @@ export interface IDomFreePropertiesService<TProperties> {
 
     get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
 }
+
+/**
+ * Listening for a whole change set. Separate from {@link IDomFreePropertiesService} because not every store offers it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface IPropertiesChangedSource<TProperties> {
+    addPropertiesChangedListener(listener: AgPropertyChangedListener<TProperties>): void;
+
+    removePropertiesChangedListener(listener: AgPropertyChangedListener<TProperties>): void;
+}
+
+/**
+ * A properties store that also emits change sets.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export type IObservablePropertiesService<TProperties> = IDomFreePropertiesService<TProperties> &
+    IPropertiesChangedSource<TProperties>;
