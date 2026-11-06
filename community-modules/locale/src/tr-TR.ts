@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolon Listesi',
     ariaFilterPanelList: 'Filtre Listesi',
+    ariaFilterPanelExpandAll: 'Tüm Filtre Gruplarını Genişlet',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',

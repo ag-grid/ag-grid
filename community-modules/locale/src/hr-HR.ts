@@ -845,6 +845,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Popis stupaca',
     ariaFilterPanelList: 'Popis filtara',
+    ariaFilterPanelExpandAll: 'Proširi sve grupe filtara',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj polje filtera',

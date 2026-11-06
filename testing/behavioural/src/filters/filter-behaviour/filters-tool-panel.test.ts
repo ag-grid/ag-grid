@@ -8,6 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
+import type { ColDef, ColGroupDef, IFiltersToolPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 import type { ISetFilter } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -320,6 +321,88 @@ describe('Filters Tool Panel', () => {
         // Second click expands again (back to the initial state, hence no duplicate snapshot).
         await panel.clickExpandAll();
         expect(panel.isGroupExpandedByTitle('Person')).toBe(true);
+    });
+
+    test('expand-all is a named button that reports whether every group is expanded', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { headerName: 'Person', groupId: 'person', children: [{ field: 'name', filter: true }] },
+                { headerName: 'Place', groupId: 'place', children: [{ field: 'city', filter: true }] },
+            ],
+            rowData: [{ name: 'Alice', age: 30, city: 'Cork' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        const button = panel.expandAllButton()!;
+
+        expect(button.tagName).toBe('BUTTON');
+        expect(button.getAttribute('aria-label')).toBe('Expand All Filter Groups');
+        expect(button.getAttribute('aria-expanded')).toBe('true');
+
+        api.getToolPanelInstance<IFiltersToolPanel>('filters')!.collapseFilterGroups(['place']);
+        expect(button.getAttribute('aria-expanded')).toBe('false');
+
+        await panel.clickExpandAll();
+        expect(panel.isGroupExpandedByTitle('Place')).toBe(true);
+        expect(button.getAttribute('aria-expanded')).toBe('true');
+
+        await panel.clickExpandAll();
+        expect(button.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    test.each<[string, (ColDef | ColGroupDef)[]]>([
+        [
+            'its group is suppressed',
+            [
+                { headerName: 'Hidden', suppressFiltersToolPanel: true, children: [{ field: 'name', filter: true }] },
+                { field: 'age', filter: true },
+            ],
+        ],
+        [
+            'its only child is suppressed',
+            [
+                { headerName: 'Hidden', children: [{ field: 'name', filter: true, suppressFiltersToolPanel: true }] },
+                { field: 'age', filter: true },
+            ],
+        ],
+        [
+            'its only child has no filter',
+            [
+                { headerName: 'Hidden', children: [{ field: 'name', filter: false }] },
+                { field: 'age', filter: true },
+            ],
+        ],
+    ])('expand-all is absent when a column group is not shown because %s', async (_, columnDefs) => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs,
+            rowData: [{ name: 'Alice', age: 30, city: 'Cork' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+
+        expect(panel.columnTitles()).toEqual(['Age']);
+        expect(panel.isExpandAllPresent()).toBe(false);
+    });
+
+    test('expand-all follows the groups a custom layout shows, not the grid columns', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: true },
+                { field: 'age', filter: true },
+            ],
+            rowData: [{ name: 'Alice', age: 30, city: 'Cork' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        const toolPanel = api.getToolPanelInstance<IFiltersToolPanel>('filters')!;
+        expect(panel.isExpandAllPresent()).toBe(false);
+
+        const groupedLayout = [{ headerName: 'Person', children: [{ field: 'name' }, { field: 'age' }] }];
+        toolPanel.setFilterLayout(groupedLayout);
+        expect(panel.isExpandAllPresent()).toBe(true);
+
+        toolPanel.setFilterLayout([{ field: 'name' }, { field: 'age' }]);
+        expect(panel.isExpandAllPresent()).toBe(false);
     });
 
     test('a group shows the active-filter indicator while any of its columns is filtered', async () => {

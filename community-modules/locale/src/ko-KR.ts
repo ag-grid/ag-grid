@@ -842,6 +842,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '열 목록',
     ariaFilterPanelList: '필터 목록',
+    ariaFilterPanelExpandAll: '모든 필터 그룹 확장',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: '필터 필드 추가',

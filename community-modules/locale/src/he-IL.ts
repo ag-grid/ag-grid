@@ -841,6 +841,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'רשימת עמודות',
     ariaFilterPanelList: 'רשימת מסננים',
+    ariaFilterPanelExpandAll: 'הרחב את כל קבוצות המסננים',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'הוסף שדה סינון',

@@ -845,6 +845,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolom Lijst',
     ariaFilterPanelList: 'Filterlijst',
+    ariaFilterPanelExpandAll: 'Alle filtergroepen uitvouwen',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filterveld toevoegen',
