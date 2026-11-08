@@ -27,6 +27,8 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     totalValueGetter?: string | TotalValueGetterFunc;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
+    /** If `true`, expansion is not permitted, even if it normally would be. */
+    suppressExpansion?: boolean;
     /**
      * Set to `true`, or a function that returns `true`, if a checkbox should be included.
      *
