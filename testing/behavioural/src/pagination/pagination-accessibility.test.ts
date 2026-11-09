@@ -36,8 +36,27 @@ const getLiveRegionText = (api: GridApi): string =>
 const waitForAnnouncement = (api: GridApi, expected: string) =>
     waitFor(() => expect(getLiveRegionText(api)).toContain(expected));
 
-/** `beans` is private on `RowNode`; reaching the announcement bean through it is the only route from a test. */
-const getAriaAnnounce = (api: GridApi) => (api.getDisplayedRowAtIndex(0) as any).beans.ariaAnnounce;
+/** Records every non-empty text the live region is given, so repeated announcements can be counted. */
+const recordAnnouncements = (api: GridApi) => {
+    const liveRegion = getGridElement(api)!.querySelector<HTMLElement>(
+        '.ag-root-wrapper > .ag-aria-description-container'
+    )!;
+    const announcements: string[] = [];
+    const observer = new MutationObserver(() => {
+        const text = getLiveRegionText(api);
+        if (text) {
+            announcements.push(text);
+        }
+    });
+    observer.observe(liveRegion, { childList: true, characterData: true, subtree: true });
+    return { announcements, stop: () => observer.disconnect() };
+};
+
+/** Flushes the announcement debounce and its delayed write, both zero-delay under test timings. */
+const flushAnnouncements = async () => {
+    await asyncSetTimeout(0);
+    await asyncSetTimeout(0);
+};
 
 describe('pagination accessibility', () => {
     const gridsManager = new TestGridsManager({
@@ -50,7 +69,6 @@ describe('pagination accessibility', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        vi.restoreAllMocks();
     });
 
     describe('navigation landmark', () => {
@@ -121,17 +139,22 @@ describe('pagination accessibility', () => {
             const api = createPaginationGrid(gridsManager);
             await waitForAnnouncement(api, 'Showing records 1 to 10 of 50');
 
-            const spy = vi.spyOn(getAriaAnnounce(api), 'announceValue');
-            const rowCalls = () => spy.mock.calls.filter(([, key]) => key === 'paginationRow');
+            const { announcements, stop } = recordAnnouncements(api);
+            const rowAnnouncements = () => announcements.filter((text) => text.includes('Showing records'));
 
-            api.refreshCells({ force: true });
-            api.setGridOption('columnDefs', [{ field: 'name', headerName: 'Name' }]);
-            await asyncSetTimeout(0);
-            expect(rowCalls()).toHaveLength(0);
+            try {
+                api.refreshCells({ force: true });
+                api.setGridOption('columnDefs', [{ field: 'name', headerName: 'Name' }]);
+                await flushAnnouncements();
+                expect(rowAnnouncements()).toHaveLength(0);
 
-            api.paginationGoToNextPage();
-            await asyncSetTimeout(0);
-            expect(rowCalls()).toEqual([['Showing records 11 to 20 of 50', 'paginationRow']]);
+                api.paginationGoToNextPage();
+                await flushAnnouncements();
+                expect(rowAnnouncements()).toHaveLength(1);
+                expect(rowAnnouncements()[0]).toContain('Showing records 11 to 20 of 50');
+            } finally {
+                stop();
+            }
         });
     });
 
