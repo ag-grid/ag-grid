@@ -139,25 +139,26 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(ariaLabels()).toEqual([null, null, null, 'C, (not in rows)', 'Z, (not in rows)']);
     });
 
-    test('preservePreviousValuesLabel takes the place of the not in current data text in the accessible name', async () => {
-        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: 'not in rows' });
-        await asyncSetTimeout(0);
-        await setRowData(api, rows('A'));
+    test.each([
+        {
+            case: 'a plain label takes the place of',
+            label: 'not in rows',
+            shown: 'B not in rows',
+            name: 'B, not in rows',
+        },
+        { case: 'an empty label falls back to', label: '', shown: 'B', name: 'B, not in current data' },
+    ])(
+        'preservePreviousValuesLabel: $case the not in current data text in the accessible name',
+        async ({ label, shown, name }) => {
+            const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: label });
+            await asyncSetTimeout(0);
+            await setRowData(api, rows('A'));
 
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B not in rows']);
-        expect(ariaLabels()).toEqual([null, null, 'B, not in rows']);
-    });
-
-    test('an empty preservePreviousValuesLabel shows no label and announces the not in current data text', async () => {
-        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: '' });
-        await asyncSetTimeout(0);
-        await setRowData(api, rows('A'));
-
-        const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B']);
-        expect(ariaLabels()).toEqual([null, null, 'B, not in current data']);
-    });
+            const filter = await ColumnFilterHarness.open(api, 'value');
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', shown]);
+            expect(ariaLabels()).toEqual([null, null, name]);
+        }
+    );
 
     test('preservePreviousValuesLabel labels a tree list group once all of it has left the data', async () => {
         const row = (value: string): Row => ({ id: String(nextId++), value });
