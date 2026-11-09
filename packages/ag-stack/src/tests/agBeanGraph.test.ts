@@ -248,6 +248,16 @@ describe('a bean already owned by another graph', () => {
         expect(log).toEqual(['construct:a']);
     });
 
+    it('is refused by destroyBean from a graph sharing its id', () => {
+        const log: string[] = [];
+        const a = bean('a', [], [], log);
+        createBeanGraph({ id: 'test', beans: [a] });
+        const other = createBeanGraph({ id: 'test', beans: [] });
+
+        expect(() => other.destroyBean(a)).toThrow(/'a' belongs to the test graph and cannot be destroyed/);
+        expect(log).toEqual(['construct:a']);
+    });
+
     it('is refused by destroyBean, and left running', () => {
         const log: string[] = [];
         const a = bean('a', [], [], log);

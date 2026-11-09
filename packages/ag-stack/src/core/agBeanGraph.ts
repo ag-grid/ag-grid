@@ -3,7 +3,12 @@ import type { IContext } from '../interfaces/iContext';
 import { _nextContainerInstanceId } from './containerInstanceId';
 
 /** The graph that built each registered or kernel bean, so no other graph builds or destroys it. */
-const owningGraph = new WeakMap<object, string>();
+/** Compared by identity, since two graphs may share an `id`. */
+interface GraphOwner {
+    readonly id: string;
+}
+
+const owningGraph = new WeakMap<object, GraphOwner>();
 
 /**
  * Exactly the declared dependencies: required ones guaranteed, optional ones possibly absent.
@@ -123,6 +128,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
     kernel = {},
     destroyCallback,
 }: AgBeanGraphParams<TBeans>): AgBeanGraph<TBeans> {
+    const self: GraphOwner = { id };
     const built: Record<string, unknown> = { ...kernel };
 
     const kernelBeans = new Map<string, AgGraphBean<TBeans>>();
@@ -184,7 +190,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         const owner = owningGraph.get(bean);
         if (owner !== undefined) {
             throw new Error(
-                `AG Stack: '${name}' already belongs to the ${owner} graph and cannot also be built by the ${id} graph.`
+                `AG Stack: '${name}' already belongs to the ${owner.id} graph and cannot also be built by the ${id} graph.`
             );
         }
     };
@@ -192,7 +198,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         assertUnowned(name, bean);
     }
     for (const bean of all.values()) {
-        owningGraph.set(bean, id);
+        owningGraph.set(bean, self);
     }
 
     let destroyed = false;
@@ -271,10 +277,10 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
             return;
         }
         const owner = owningGraph.get(bean);
-        if (owner !== undefined && owner !== id) {
+        if (owner !== undefined && owner !== self) {
             const { beanName = '(runtime bean)' } = bean as Partial<AgDeclaredBean<TBeans>>;
             throw new Error(
-                `AG Stack: '${beanName}' belongs to the ${owner} graph and cannot be destroyed by the ${id} graph.`
+                `AG Stack: '${beanName}' belongs to the ${owner.id} graph and cannot be destroyed by the ${id} graph.`
             );
         }
         bean.destroy?.();
