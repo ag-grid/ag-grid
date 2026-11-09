@@ -112,7 +112,7 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            gos.isElementInThisInstance(elementWithFocus);
+            beans.environment.isElementInThisInstance(elementWithFocus);
 
         if (!clickInsideGrid) {
             clickInsideGrid =

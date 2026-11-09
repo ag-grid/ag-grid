@@ -18,4 +18,9 @@ export interface IEnvironment {
 
     /** Subscribes to theme-change events. Returns an unsubscribe fn. */
     onThemeChanged(handler: () => void): () => void;
+
+    /** Tags `element` as belonging to this instance. */
+    setInstanceDomData(element: HTMLElement): void;
+
+    isElementInThisInstance(element: Element): boolean;
 }

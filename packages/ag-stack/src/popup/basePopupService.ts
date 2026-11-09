@@ -59,7 +59,7 @@ export abstract class BasePopupService<
     TPropertiesService extends IPropertiesService<TProperties>,
     TPopupPositionParams,
 >
-    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
 {
     beanName = 'popupSvc' as const;

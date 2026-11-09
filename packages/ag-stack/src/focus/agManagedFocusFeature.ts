@@ -29,7 +29,7 @@ export class AgManagedFocusFeature<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     constructor(
         private readonly eFocusable: HTMLElement,
         private readonly stopPropagationCallbacks: StopPropagationCallbacks = {

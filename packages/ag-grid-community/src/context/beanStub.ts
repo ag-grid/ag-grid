@@ -1,10 +1,9 @@
 import type { AgBeanStubEvent } from 'ag-stack';
-import { AgAbstractBean } from 'ag-stack';
+import { AgAbstractBean, _throttleToFrame } from 'ag-stack';
 
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { AgGridCommon } from '../interfaces/iCommon';
 import type { ErrorId, LogArgs } from '../validation/errorMessages/errorText';
 import type { BeanCollection } from './context';
 
@@ -18,7 +17,6 @@ export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> exte
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AgGridCommon<any, any>,
     GridOptionsService,
     TEventType
 > {
@@ -32,5 +30,10 @@ export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> exte
 
     public deprecated<TId extends ErrorId>(...args: LogArgs<TId>): void {
         this.beans.log.deprecated<TId>(...args);
+    }
+
+    /** Wraps `callback` so calls within one animation frame run it once, and never after destroy. */
+    protected throttleToFrame(callback: () => void): () => void {
+        return _throttleToFrame(this, () => this.beans, callback);
     }
 }

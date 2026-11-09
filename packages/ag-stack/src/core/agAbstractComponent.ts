@@ -19,6 +19,7 @@ import {
     _loadTemplate,
     _setDisplayed,
     _setVisible,
+    _throttleToFrame,
 } from '../utils/dom';
 import { AgAbstractBean } from './agAbstractBean';
 
@@ -38,7 +39,6 @@ export class AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
-        TCommon,
         TPropertiesService,
         TLocalEventType | AgComponentEvent
     >
@@ -85,6 +85,15 @@ export class AgAbstractComponent<
     public preConstruct(): void {
         this.wireTemplate(this.getGui());
         this.addGlobalCss();
+    }
+
+    /** Also accepts `BaseEvents` handlers, which a generic component cannot name through `TGlobalEvents`. */
+    public override addManagedEventListeners(
+        handlers:
+            | { [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void }
+            | { [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void }
+    ) {
+        return super.addManagedEventListeners(handlers as { [K in keyof TGlobalEvents]?: (event: any) => void });
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -222,11 +231,10 @@ export class AgAbstractComponent<
     private swapComponentForNode(
         newComponent: AgBaseComponent<TBeanCollection>,
         parentNode: Element,
-        childNode: Node
+        childNode: ChildNode
     ): void {
         const eComponent = newComponent.getGui();
-        // eslint-disable-next-line unicorn/prefer-modern-dom-apis
-        parentNode.replaceChild(eComponent, childNode);
+        childNode.replaceWith(eComponent);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
@@ -407,6 +415,11 @@ export class AgAbstractComponent<
 
     public toggleCss(className: string, addOrRemove: boolean): void {
         this.cssManager.toggleCss(className, addOrRemove);
+    }
+
+    /** Wraps `callback` so calls within one animation frame run it once, and never after destroy. */
+    protected throttleToFrame(callback: () => void): () => void {
+        return _throttleToFrame(this, () => this.beans, callback);
     }
 
     protected registerCSS(css: string): void {

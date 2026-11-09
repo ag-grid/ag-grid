@@ -4,7 +4,7 @@ import type { BeanStub } from '../../context/beanStub';
 import type { PopupToggleResult } from '../../misc/menu/menuService';
 import { TouchListener } from '../../widgets/touchListener';
 
-type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedElementListeners' | 'addDestroyFunc'>;
+type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedListeners' | 'addDestroyFunc'>;
 
 export function _addPopupToggleButtonListeners(
     owner: PopupToggleListenerOwner,

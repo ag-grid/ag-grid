@@ -15,7 +15,7 @@ export abstract class BaseRegistry<
     TPropertiesService extends IPropertiesService<TProperties>,
     TDynamicBeanName extends string,
 >
-    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IRegistry<TBeanCollection, TDynamicBeanName>
 {
     beanName = 'registry' as const;

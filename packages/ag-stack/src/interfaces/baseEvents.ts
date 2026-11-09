@@ -43,7 +43,7 @@ export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
 }
 
 /**
- * Events required by AG Stack. All are DOM-driven, so the DOM-free interfaces do not require them.
+ * Events required by AG Stack. All are DOM-driven, so the core interfaces do not require them.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface BaseEvents {

@@ -455,6 +455,31 @@ export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any)
     }
 }
 
+/**
+ * Returns a function that runs `callback` at most once per animation frame while `bean` is alive.
+ * `_requestAnimationFrame` has no cancellation, so a destroyed bean leaves the flag set and queues nothing more.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _throttleToFrame(
+    bean: { isAlive(): boolean },
+    getBeans: () => UtilBeanCollection,
+    callback: () => void
+): () => void {
+    let queued = false;
+    const run = () => {
+        if (bean.isAlive()) {
+            queued = false;
+            callback();
+        }
+    };
+    return () => {
+        if (!queued) {
+            queued = true;
+            _requestAnimationFrame(getBeans(), run);
+        }
+    };
+}
+
 type Attributes = { [key: string]: string };
 type TagName<SelectorType extends string> = keyof HTMLElementTagNameMap | Lowercase<SelectorType>;
 /** Type to help avoid typos, add new roles as required. */

@@ -62,7 +62,7 @@ export class AgContextMenuService<
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
     TDefaultMenuItem extends string,
-> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private destroyLoadingSpinner: (() => void) | null = null;
     private lastPromise: number = 0;
 

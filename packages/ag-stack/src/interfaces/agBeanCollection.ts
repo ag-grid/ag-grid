@@ -6,7 +6,7 @@ import type { IContext } from './iContext';
 import type { IDragService } from './iDrag';
 import type { IDragAndDropService } from './iDragAndDrop';
 import type { IEnvironment } from './iEnvironment';
-import type { AgEventService } from './iEvent';
+import type { AgEventService, AgRawEvents } from './iEvent';
 import type { IIconService } from './iIconService';
 import type { IPopupService } from './iPopupService';
 import type { IPropertiesService } from './iProperties';
@@ -21,7 +21,7 @@ export interface AgBeanCollection<
 >
     extends UtilBeanCollection, AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService> {
     context: IContext<this>;
-    eventSvc: AgEventService<TGlobalEvents, TCommon>;
+    eventSvc: AgEventService<TGlobalEvents, AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]>;
     // Redeclared to resolve the two inherited declarations to the full service.
     gos: TPropertiesService;
     environment: IEnvironment;
@@ -40,7 +40,6 @@ export interface UtilBeanCollection {
     eRootDiv: HTMLElement;
     gos: {
         get<K extends keyof BaseProperties>(prop: K): BaseProperties[K];
-
-        isElementInThisInstance(element: Element): boolean;
     };
+    environment: Pick<IEnvironment, 'isElementInThisInstance'>;
 }

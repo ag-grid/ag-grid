@@ -29,7 +29,7 @@ export class AgVirtualListDragFeature<
     TDragValue,
     TDragStartEvent extends AgEvent,
     TDragEndEvent extends AgEvent,
-> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private currentDragValue: TDragValue | null = null;
     private lastHoveredListItem: VirtualListDragItem<TChildComponent> | null = null;
     private autoScrollService: AutoScrollService;

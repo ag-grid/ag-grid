@@ -40,7 +40,7 @@ export abstract class BaseDragAndDropService<
     TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
     TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
 >
-    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
 {
     beanName = 'dragAndDrop' as const;
@@ -491,7 +491,7 @@ export abstract class BaseDragAndDropService<
             style.pointerEvents = 'none'; // stops the ghost image from interfering with scrolling
         }
 
-        this.gos.setInstanceDomData(eGui);
+        this.beans.environment.setInstanceDomData(eGui);
 
         style.top = '20px';
         style.left = '20px';

@@ -49,3 +49,9 @@ export interface IAgEventEmitter<TEventType extends string> {
         options?: AgAddEventListenerOptions
     ): void;
 }
+
+/** Structural so that describing an element needs no DOM types. */
+export interface ListenerTarget {
+    addEventListener(type: string, listener: (event?: any) => void): void;
+    removeEventListener(type: string, listener: (event?: any) => void): void;
+}
