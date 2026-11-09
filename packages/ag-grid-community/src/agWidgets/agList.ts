@@ -141,9 +141,10 @@ export class AgList<
         return this.typedText !== '' && Date.now() - this.lastTypedTime <= TYPE_AHEAD_TIMEOUT_MS;
     }
 
-    /** The typed text and pointer position only apply while the list is open. */
+    /** The typed text and hover state only apply while the list is open. */
     public resetInputTracking(): void {
         this.typedText = '';
+        this.isHoverPaused = false;
         this.lastPointerPosition = null;
     }
 
