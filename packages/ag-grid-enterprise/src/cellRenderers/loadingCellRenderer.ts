@@ -48,8 +48,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     /** Lines the spinner up with the expand/collapse chevron of the rows being loaded. */
     private setupIndent({ node }: ILoadingCellRendererParams): void {
         const setIndent = () => {
-            const { gos, beans } = this;
-            const { showRowGroupCols, rowGroupColsSvc, visibleCols, environment } = beans;
+            const { showRowGroupCols, rowGroupColsSvc, visibleCols, environment } = this.beans;
             // select by level, as uiLevel skips unbalanced groups; leaf rows and tree data fall back to the last group column
             const groupCols = showRowGroupCols?.columns ?? [];
             const groupCol = rowGroupColsSvc?.columns[node.level]?.showRowGroupCol ?? groupCols[groupCols.length - 1];
@@ -58,8 +57,8 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
 
             let level = node.uiLevel;
             let offset = 0;
-            if (groupColIndex >= 0) {
-                const colDef = groupCol!.getColDef();
+            if (groupCol && groupColIndex >= 0) {
+                const colDef = groupCol.getColDef();
                 // as with the group cell renderer, only a single group column without suppressPadding indents by level
                 if (colDef.showRowGroup !== true || colDef.cellRendererParams?.suppressPadding) {
                     level = 0;
@@ -74,7 +73,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
                 const widgets =
                     (colDef.rowDrag ? 1 : 0) + (colDef.checkboxSelection ? 1 : 0) + (colDef.dndSource ? 1 : 0);
                 offset += widgets * (environment.getDefaultIconSize() + environment.getDefaultCellWidgetSpacing());
-            } else if (!groupCol && gos.get('groupRowRendererParams')?.suppressPadding) {
+            } else if (!groupCol && this.gos.get('groupRowRendererParams')?.suppressPadding) {
                 level = 0;
             }
 
