@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import type { ColDef, GridApi, IViewportDatasourceParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     GRAND_TOTAL_ROW_ID,
     InfiniteRowModelModule,
     NumberFilterModule,
@@ -30,6 +31,7 @@ describe('cellDataType inference under non-client-side row models', () => {
             RowApiModule,
             TextFilterModule,
             NumberFilterModule,
+            CustomFilterModule,
         ],
     });
 
@@ -360,6 +362,47 @@ describe('cellDataType inference under non-client-side row models', () => {
             await asyncSetTimeout(0);
 
             expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe('text');
+        });
+
+        test('a filter given as `{ component: true }` follows the data type, so it is protected like `filter: true`', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', filter: { component: true } },
+                { field: 'done' },
+            ]);
+
+            const textModel = { filterType: 'text', type: 'contains', filter: '20' };
+            api.setFilterModel({ year: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: textModel });
+        });
+
+        test('a kept-untyped column is typed from the rows already received once its filter is cleared', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', filter: true },
+            ]);
+
+            api.setFilterModel({ year: { filterType: 'text', type: 'contains', filter: '20' } });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+            expect(inferredType(api, 'year')).toBe(false);
+
+            api.setFilterModel(null);
+            await waitForNoLoadingRows(api);
+            api.setGridOption('defaultColDef', { minWidth: 50 });
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe('number');
         });
 
         test('a kept-untyped column given an explicitly named filter is typed, as typing no longer swaps it', async () => {
