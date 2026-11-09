@@ -797,6 +797,13 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaVisible: 'nakikita',
     ariaSearchFilterValues: 'Maghanap ng mga halaga ng filter',
     ariaPageSizeSelectorLabel: 'Laki ng Pahina',
+    ariaPageSizeSelectorDescription:
+        'Ang pagbabago ng laki ng pahina ay nag-a-update sa mga row na ipinapakita sa grid',
+    ariaPaginationRowSummary: 'Ipinapakita ang mga record ${variable} hanggang ${variable} ng ${variable}',
+    ariaPaginationRowSummaryUnknownTotal:
+        'Ipinapakita ang mga record ${variable} hanggang ${variable}, hindi alam ang kabuuan',
+    ariaPaginationRowSummaryLoading: 'Nilo-load ang mga record mula sa ${variable}',
+    ariaPaginationPanelLabel: 'Pagination ng grid',
     ariaChartMenuClose: 'Isara ang Menu ng Pag-edit ng Chart',
     ariaChartSelected: 'Napili',
     ariaChartSeriesChartType: 'Uri ng Chart ng ${variable}',

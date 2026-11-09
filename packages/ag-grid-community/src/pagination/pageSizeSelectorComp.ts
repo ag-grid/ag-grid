@@ -203,7 +203,7 @@ export class PageSizeSelectorComp extends Component {
     private appendPageSizeDescription(selectComp: GridSelect): void {
         const description = _createElement({
             tag: 'span',
-            cls: 'ag-aria-description-container',
+            cls: 'ag-paging-page-size-description ag-hidden',
             attrs: { id: `ag-${this.getCompId()}-page-size-description` },
             children: this.getLocaleTextFunc()(
                 'ariaPageSizeSelectorDescription',

@@ -781,6 +781,13 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaVisible: 'sichtbar',
     ariaSearchFilterValues: 'Filterwerte suchen',
     ariaPageSizeSelectorLabel: 'Seitengröße',
+    ariaPageSizeSelectorDescription:
+        'Durch Ändern der Seitengröße werden die im Raster angezeigten Zeilen aktualisiert',
+    ariaPaginationRowSummary: 'Datensätze ${variable} bis ${variable} von ${variable} werden angezeigt',
+    ariaPaginationRowSummaryUnknownTotal:
+        'Datensätze ${variable} bis ${variable} werden angezeigt, Gesamtzahl unbekannt',
+    ariaPaginationRowSummaryLoading: 'Datensätze ab ${variable} werden geladen',
+    ariaPaginationPanelLabel: 'Raster-Paginierung',
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
     ariaChartSeriesChartType: 'Diagrammtyp für ${variable}',

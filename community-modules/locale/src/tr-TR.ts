@@ -778,6 +778,12 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaVisible: 'görünür',
     ariaSearchFilterValues: 'Filtre değerlerini ara',
     ariaPageSizeSelectorLabel: 'Sayfa Boyutu',
+    ariaPageSizeSelectorDescription: 'Sayfa boyutunu değiştirmek tabloda gösterilen satırları günceller',
+    ariaPaginationRowSummary: '${variable} ile ${variable} arasındaki kayıtlar gösteriliyor, toplam ${variable}',
+    ariaPaginationRowSummaryUnknownTotal:
+        '${variable} ile ${variable} arasındaki kayıtlar gösteriliyor, toplam bilinmiyor',
+    ariaPaginationRowSummaryLoading: '${variable} numaralı kayıttan itibaren kayıtlar yükleniyor',
+    ariaPaginationPanelLabel: 'Tablo sayfalama',
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
     ariaChartSeriesChartType: '${variable} Grafik Tipi',

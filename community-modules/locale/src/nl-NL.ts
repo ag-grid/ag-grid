@@ -776,6 +776,12 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaVisible: 'zichtbaar',
     ariaSearchFilterValues: 'Zoek filterwaarden',
     ariaPageSizeSelectorLabel: 'Pagina Grootte',
+    ariaPageSizeSelectorDescription:
+        'Het wijzigen van de paginagrootte werkt de rijen bij die in het raster worden getoond',
+    ariaPaginationRowSummary: 'Records ${variable} tot en met ${variable} van ${variable} worden getoond',
+    ariaPaginationRowSummaryUnknownTotal: 'Records ${variable} tot en met ${variable} worden getoond, totaal onbekend',
+    ariaPaginationRowSummaryLoading: 'Records laden vanaf ${variable}',
+    ariaPaginationPanelLabel: 'Paginering van raster',
     ariaChartMenuClose: 'Sluit Grafiek Bewerkmenu',
     ariaChartSelected: 'Geselecteerd',
     ariaChartSeriesChartType: 'Grafiektype voor ${variable}',

@@ -791,6 +791,12 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaVisible: 'दृश्यमान',
     ariaSearchFilterValues: 'फ़िल्टर मान खोजें',
     ariaPageSizeSelectorLabel: 'पेज आकार',
+    ariaPageSizeSelectorDescription: 'पेज आकार बदलने से ग्रिड में दिखाई गई रो अपडेट हो जाती हैं',
+    ariaPaginationRowSummary: '${variable} से ${variable} तक के रिकॉर्ड दिखाए जा रहे हैं, कुल ${variable}',
+    ariaPaginationRowSummaryUnknownTotal:
+        '${variable} से ${variable} तक के रिकॉर्ड दिखाए जा रहे हैं, कुल संख्या अज्ञात',
+    ariaPaginationRowSummaryLoading: '${variable} से रिकॉर्ड लोड हो रहे हैं',
+    ariaPaginationPanelLabel: 'ग्रिड पेजिनेशन',
     ariaChartMenuClose: 'चार्ट संपादन मेनू बंद करें',
     ariaChartSelected: 'चयनित',
     ariaChartSeriesChartType: '${variable} चार्ट प्रकार',
