@@ -783,7 +783,8 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaPageSizeSelectorLabel: 'Oldal méret',
     ariaPageSizeSelectorDescription: 'Az oldalméret módosítása frissíti a rácsban megjelenített sorokat',
     ariaPaginationRowSummary: '${variable}–${variable}. rekord megjelenítése, összesen ${variable}',
-    ariaPaginationRowSummaryUnknownTotal: '${variable}–${variable}. rekord megjelenítése, a teljes darabszám ismeretlen',
+    ariaPaginationRowSummaryUnknownTotal:
+        '${variable}–${variable}. rekord megjelenítése, a teljes darabszám ismeretlen',
     ariaPaginationRowSummaryLoading: 'Rekordok betöltése a(z) ${variable}. rekordtól kezdve',
     ariaPaginationPanelLabel: 'Rács lapozása',
     ariaChartMenuClose: 'Diagram szerkesztési menü bezárása',
