@@ -350,6 +350,45 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(api.getColumn('yearPlain')!.getColDef().cellDataType).toBe('number');
         });
 
+        test('column state the user sets while awaiting leaf rows survives the inferred column types', async () => {
+            const rootBlockServed = batchServed();
+            const leafBlockServed = batchServed();
+            const api = gridsManager.createGrid('grid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                columnTypes: { wide: { width: 222 } },
+                dataTypeDefinitions: {
+                    wideNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['wide'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const { groupKeys } = params.request;
+                        const rows = groupKeys.length
+                            ? LEAF_ROWS.filter(({ country }) => country === groupKeys[0])
+                            : LEAF_ROWS.map(({ country }) => ({ country }));
+                        params.success({ rowData: rows, rowCount: rows.length });
+                        (groupKeys.length ? leafBlockServed : rootBlockServed).serve();
+                    },
+                },
+            });
+            await rootBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            api.setColumnWidths([{ key: 'year', newWidth: 150 }]);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('year')!.getColDef().type).toEqual(['wide']);
+            expect(api.getColumn('year')!.getActualWidth()).toBe(150);
+        });
+
         test('a column filtered through an explicitly named filter is still typed, as typing keeps that filter', async () => {
             const { api, leafBlockServed } = await createGroupedGrid([
                 { field: 'country', rowGroup: true, hide: true },

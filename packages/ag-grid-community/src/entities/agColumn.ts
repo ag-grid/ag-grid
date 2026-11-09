@@ -1033,10 +1033,9 @@ export class AgColumn<TValue = any>
 
     /** `key` names the `ColumnState` property updated. */
     public dispatchStateUpdatedEvent(key: keyof ColumnStateParams, source: ColumnEventType): void {
-        const dataTypeSvc = this.beans.dataTypeSvc;
-        if (dataTypeSvc?.isPendingInference) {
-            dataTypeSvc.columnStateUpdated(this, key);
-        }
+        // recorded for as long as the column awaits inference, which under the row models other than the
+        // Client-Side one outlasts `isPendingInference`
+        this.beans.dataTypeSvc?.columnStateUpdated(this, key);
         const localEventService = this.localEventService;
         if (localEventService?.hasListeners('columnStateUpdated')) {
             this.raise(

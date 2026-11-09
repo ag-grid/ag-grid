@@ -80,6 +80,9 @@ export const DATA_TYPE_DERIVED_COL_DEF_PROPERTIES = [
     'valueParser',
 ] as const satisfies readonly (keyof ColDef)[];
 
+/** The column state keys set on each column parked awaiting inference, which inference then keeps. */
+type PendingColumnStateUpdates = { [colId: string]: Set<keyof ColumnStateParams> };
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
@@ -127,7 +130,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // columns left untyped because they were filtered through their untyped filter before they resolved
     private readonly colIdsKeptUntyped: Set<string> = new Set();
     // keep track of any column state updates whilst waiting for data types to be inferred
-    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
+    private columnStateUpdatesPendingInference: PendingColumnStateUpdates = Object.create(null);
 
     public postConstruct(): void {
         this.processDataTypeDefinitions();
@@ -452,8 +455,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const columnTypeOverridesExist = this.columnTypeOverridesExistPendingInference;
         let hasResolved = false;
         if (canInferFrom && hasColumnsPending) {
-            this.processColumnsPendingInference(rowData, columnTypeOverridesExist, !wasPendingFirstRows);
+            const pending = this.columnStateUpdatesPendingInference;
+            // detached first, so the state applied by inference is not recorded as a change the user made
             this.columnStateUpdatesPendingInference = Object.create(null);
+            this.processColumnsPendingInference(rowData, pending, columnTypeOverridesExist, !wasPendingFirstRows);
             hasResolved = true;
         }
         // queued resize operations are released on the first rows either way, as columns awaiting leaf
@@ -474,6 +479,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
      */
     private processColumnsPendingInference(
         rowData: any[],
+        pending: PendingColumnStateUpdates,
         columnTypeOverridesExist: boolean,
         isAfterFirstRows: boolean
     ): void {
@@ -482,23 +488,31 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const colModel = this.colModel;
         colModel.beginColUpdate();
         try {
-            this.applyInferredColDefs(columnTypeOverridesExist, isAfterFirstRows);
+            this.applyInferredColDefs(pending, columnTypeOverridesExist, isAfterFirstRows);
         } finally {
             colModel.endColUpdate();
         }
         this.initialData = null;
     }
 
-    private applyInferredColDefs(columnTypeOverridesExist: boolean, isAfterFirstRows: boolean): void {
+    private applyInferredColDefs(
+        pending: PendingColumnStateUpdates,
+        columnTypeOverridesExist: boolean,
+        isAfterFirstRows: boolean
+    ): void {
         const beans = this.beans;
         const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
-        for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
+        for (const colId of Object.keys(pending)) {
             if (isAfterFirstRows && this.keepColumnWithActiveFilter(colId)) {
                 continue;
             }
-            const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
+            const updatedColumnState = this.resetColDefAndGetColumnState(
+                colId,
+                pending[colId],
+                columnTypeOverridesExist
+            );
             if (!updatedColumnState) {
                 continue;
             }
@@ -539,7 +553,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
+    private resetColDefAndGetColumnState(
+        colId: string,
+        columnStateUpdates: Set<keyof ColumnStateParams>,
+        columnTypeOverridesExist: boolean
+    ): ColumnState | null {
         const column = this.colModel.colsById[colId];
         if (!column) {
             return null;
@@ -552,7 +570,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnTypeOverridesExist || !newColDef.type || newColDef.type === oldColDef.type) {
             return null;
         }
-        return getUpdatedColumnState(this.beans, column, this.columnStateUpdatesPendingInference[colId]);
+        return getUpdatedColumnState(this.beans, column, columnStateUpdates);
     }
 
     private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
