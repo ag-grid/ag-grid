@@ -1,6 +1,6 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import type { AgBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     KeyCode,
     _addManagedElementListeners,
     _clearElement,
@@ -21,7 +21,7 @@ export interface ListOption<TValue = string> {
 export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
 export class AgList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -29,7 +29,7 @@ export class AgList<
     TComponentSelectorType extends string,
     TEventType extends string = AgListEvent,
     TValue = string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

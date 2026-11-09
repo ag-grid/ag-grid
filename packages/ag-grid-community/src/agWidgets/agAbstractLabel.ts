@@ -1,13 +1,20 @@
 import type {
+    AgBeanCollection,
     AgComponentEvent,
     AgComponentSelector,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { AgComponentStub, _clearElement, _setAriaRole, _setDisabled, _setDisplayed, _setElementWidth } from 'ag-stack';
+import {
+    AgAbstractComponent,
+    _clearElement,
+    _setAriaRole,
+    _setDisabled,
+    _setDisplayed,
+    _setElementWidth,
+} from 'ag-stack';
 
 import agAbstractLabelCSS from './agAbstractLabel.css';
 import type { AgLabelParams, LabelAlignment } from './agFieldParams';
@@ -15,7 +22,7 @@ import type { AgLabelParams, LabelAlignment } from './agFieldParams';
 type AgAbstractLabelEvent = AgComponentEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgAbstractLabel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -23,7 +30,7 @@ export abstract class AgAbstractLabel<
     TComponentSelectorType extends string,
     TConfig extends AgLabelParams = AgLabelParams,
     TEventType extends string = AgAbstractLabelEvent,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

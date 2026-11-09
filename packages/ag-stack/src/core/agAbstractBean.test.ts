@@ -1,8 +1,8 @@
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 /** Exposes the protected scheduler. The fake `gos` returns no document override, so `_getWindow` falls
  *  back to the global one, whose `requestAnimationFrame` the tests capture. */
-class ThrottledBean extends AgBeanStub<any, any, any, any, any> {
+class ThrottledBean extends AgAbstractBean<any, any, any, any, any> {
     public runs = 0;
     public readonly schedule = this.throttleToFrame(() => ++this.runs);
 
@@ -14,7 +14,7 @@ class ThrottledBean extends AgBeanStub<any, any, any, any, any> {
 
 /** Reschedules itself from inside its own frame, which is the case that separates clearing the flag
  *  before the callback from clearing it after. */
-class ReschedulingBean extends AgBeanStub<any, any, any, any, any> {
+class ReschedulingBean extends AgAbstractBean<any, any, any, any, any> {
     public runs = 0;
     private rescheduled = false;
     public readonly schedule = this.throttleToFrame(() => {
@@ -31,7 +31,7 @@ class ReschedulingBean extends AgBeanStub<any, any, any, any, any> {
     }
 }
 
-describe('AgBeanStub.throttleToFrame', () => {
+describe('AgAbstractBean.throttleToFrame', () => {
     let frames: (() => void)[];
     let requestAnimationFrame: ReturnType<typeof vi.spyOn>;
 

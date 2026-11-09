@@ -1,5 +1,5 @@
 import type { AgBean } from '../interfaces/agBean';
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgEventHandlers } from '../interfaces/iContext';

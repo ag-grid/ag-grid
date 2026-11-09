@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection, AgElementParams, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import type { AgBeanCollection, AgElementParams, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
@@ -45,7 +45,7 @@ function buildTemplate<TComponentSelectorType extends string>(
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgAbstractInputField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

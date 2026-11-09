@@ -1,7 +1,7 @@
 import type {
     AddPopupParams,
-    AgComponentStub,
-    AgCoreBeanCollection,
+    AgAbstractComponent,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -48,7 +48,7 @@ const AgPickerFieldElement: AgElementParams<any> = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgPickerField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -57,7 +57,7 @@ export abstract class AgPickerField<
     TValue,
     TConfig extends AgPickerFieldParams<TComponentSelectorType> = AgPickerFieldParams<TComponentSelectorType>,
     TEventType extends string = AgPickerFieldEvent,
-    TComponent extends AgComponentStub<
+    TComponent extends AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
@@ -65,7 +65,7 @@ export abstract class AgPickerField<
         TPropertiesService,
         TComponentSelectorType,
         TEventType | AgPickerFieldEvent
-    > = AgComponentStub<
+    > = AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,

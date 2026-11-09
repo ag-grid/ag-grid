@@ -3,7 +3,7 @@ import type { Theme } from '../theming/theme';
 /**
  * Properties required by AG Stack that name no DOM type.
  */
-export interface BaseDomFreeProperties {
+export interface BaseCoreProperties {
     tabIndex?: number;
     suppressScrollWhenPopupsAreOpen?: boolean;
     enableRtl?: boolean;

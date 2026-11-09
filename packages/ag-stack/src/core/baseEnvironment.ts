@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgStylesChangedEvent, BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IEnvironment } from '../interfaces/iEnvironment';
@@ -15,7 +15,7 @@ import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _observeResize } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     changeKey: 'listItemHeight',
@@ -25,14 +25,14 @@ const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseEnvironment<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IEnvironment
 {
     beanName = 'environment' as const;

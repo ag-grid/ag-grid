@@ -1,13 +1,13 @@
 import type {
+    AgBeanCollection,
     AgComponent,
-    AgCoreBeanCollection,
     AgDraggingEvent,
     AgDropTarget,
     BaseEvents,
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { AgBeanStub, AutoScrollService, _radioCssClass } from 'ag-stack';
+import { AgAbstractBean, AutoScrollService, _radioCssClass } from 'ag-stack';
 
 import type { AgEvent } from 'ag-grid-community';
 
@@ -18,7 +18,7 @@ import type { AgVirtualListDragParams, VirtualListDragItem } from './iVirtualLis
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
 export class AgVirtualListDragFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -29,7 +29,7 @@ export class AgVirtualListDragFeature<
     TDragValue,
     TDragStartEvent extends AgEvent,
     TDragEndEvent extends AgEvent,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private currentDragValue: TDragValue | null = null;
     private lastHoveredListItem: VirtualListDragItem<TChildComponent> | null = null;
     private autoScrollService: AutoScrollService;

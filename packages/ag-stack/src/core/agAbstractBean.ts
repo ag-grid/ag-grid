@@ -1,7 +1,7 @@
 import { LocalEventService } from '../events/localEventService';
 import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { AgBean } from '../interfaces/agBean';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgEvent } from '../interfaces/agEvent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -30,8 +30,8 @@ type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?
 const DESTROYED_EVENT = { type: 'destroyed' as AgBeanStubEvent };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export abstract class AgBeanStub<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+export abstract class AgAbstractBean<
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -396,7 +396,7 @@ export abstract class AgBeanStub<
 }
 
 // Single shared value on the prototype — Vue's reactive() reads `__v_skip` through the prototype chain.
-AgBeanStub.prototype.__v_skip = true;
+AgAbstractBean.prototype.__v_skip = true;
 
 // type guard for IAgEventEmitter
 function isAgEventEmitter<TEvent extends string>(

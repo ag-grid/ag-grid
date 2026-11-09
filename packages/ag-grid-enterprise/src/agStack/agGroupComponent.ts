@@ -1,14 +1,14 @@
 import type {
     AgBaseComponent,
+    AgBeanCollection,
     AgComponentSelector,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     RefPlaceholder,
     _addManagedElementListeners,
     _isComponent,
@@ -84,13 +84,13 @@ function getAgGroupComponentTemplate<TBeanCollection>(
 }
 
 export class AgGroupComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -506,13 +506,13 @@ function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType exte
     };
 }
 class DefaultTitleBar<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

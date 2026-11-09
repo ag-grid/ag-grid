@@ -1,11 +1,5 @@
 import { _addManagedElementListeners } from 'ag-stack';
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 
 import type { AgInputFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgAbstractInputField } from 'ag-grid-community';
@@ -19,7 +13,7 @@ export interface AgInputRangeParams<
 }
 
 export class AgInputRange<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

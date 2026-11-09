@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import { _getDocument, _setAriaHasPopup } from 'ag-stack';
 
 import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
@@ -27,7 +21,7 @@ export interface AgColorPickerParams<TComponentSelectorType extends string> exte
 }
 
 export class AgColorPicker<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

@@ -1,6 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { AgBeanStub } from 'ag-stack';
+import { AgAbstractBean } from 'ag-stack';
 import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
 
@@ -118,7 +118,7 @@ describe('Rich Select cell editor', () => {
             getRowId: (p) => p.data.id,
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
-        const addDestroyFunc = vi.spyOn(AgBeanStub.prototype, 'addDestroyFunc');
+        const addDestroyFunc = vi.spyOn(AgAbstractBean.prototype, 'addDestroyFunc');
         try {
             const popup = await openEditor(api, gridDiv, 0, 'a');
             await waitFor(() => expect(getRowLabels(popup)).toEqual(['Alpha', 'Beta', 'Gamma', 'Gadget']));
