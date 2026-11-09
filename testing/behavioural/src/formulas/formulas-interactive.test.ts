@@ -6,6 +6,7 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clipboardUtils,
+    fakeElementAttribute,
     initPointerEventPolyfill,
     waitForEvent,
 } from 'ag-test-utils';
@@ -1211,7 +1212,7 @@ describe('ag-grid formulas interactive workflows', () => {
         const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
 
         expect(editor.value).toBe('=A1');
-        expect(editor.getAttribute('aria-label')).toBe('Input Editor');
+        expect(editor.getAttribute('aria-label')).toBe('B');
         expect(editor.getAttribute('role')).toBe('combobox');
         expect(editor.getAttribute('aria-autocomplete')).toBe('list');
         expect(editor.getAttribute('aria-haspopup')).toBe('listbox');
@@ -1241,9 +1242,10 @@ describe('ag-grid formulas interactive workflows', () => {
         expect(activeOption()?.getAttribute('role')).toBe('option');
         expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
 
-        const firstOptionId = activeOption()!.id;
+        const firstOption = activeOption()!;
         await userEvent.keyboard('{ArrowDown}');
-        await waitFor(() => expect(activeOption()?.id).toBe(firstOptionId.replace(/-0$/, '-1')));
+        await waitFor(() => expect(activeOption()?.getAttribute('aria-posinset')).toBe('2'));
+        expect(activeOption()).not.toBe(firstOption);
         expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
 
         await userEvent.keyboard('{Escape}');
@@ -1257,6 +1259,56 @@ describe('ag-grid formulas interactive workflows', () => {
         expect(editor.value).toBe('=SUM(');
         expect(editor.getAttribute('aria-expanded')).toBe('false');
         expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor falls back to the localised "Input Editor" name when the column has no display name', async () => {
+        const api = await createGrid('fx-editor-aria-name-fallback', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b', headerName: '' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.getAttribute('aria-label')).toBe('Input Editor');
+    });
+
+    test('the formula editor references a function suggestion that only renders once scrolled into view', async () => {
+        const viewportHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight')!;
+        onTestFinished(() => {
+            Object.defineProperty(HTMLElement.prototype, 'offsetHeight', viewportHeight);
+        });
+        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+
+        const formulaFuncs: GridOptions['formulaFuncs'] = {};
+        for (let i = 0; i < 30; ++i) {
+            formulaFuncs[`ZTEST${String(i).padStart(2, '0')}`] = { func: () => i };
+        }
+        const api = await createGrid('fx-editor-aria-scrolled-suggestion', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            formulaFuncs,
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOptionLabel = () =>
+            document.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim();
+
+        await userEvent.type(editor, '=ZTEST');
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST00'));
+        expect(document.querySelector('[aria-posinset="12"]')).toBeNull();
+
+        for (let i = 0; i < 11; ++i) {
+            await userEvent.keyboard('{ArrowDown}');
+        }
+        document.querySelector('.ag-autocomplete-virtual-list-viewport')!.dispatchEvent(new Event('scroll'));
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST11'));
     });
 
     test('returning to a formula editor in a grid inside a shadow root after picking a reference puts the caret at the end', async () => {

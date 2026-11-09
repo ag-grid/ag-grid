@@ -127,6 +127,8 @@ export class AgAutocompleteList extends AgPopupComponent<
             click: () => this.params.onConfirmed(),
             mousemove: selectRowUnderMouse,
             mousedown: selectRowUnderMouse,
+            // Rows scrolled into view render on scroll, after the selection that scrolled to them was announced.
+            scroll: () => this.refreshActiveDescendant(),
         });
 
         this.setSelectedValue(0);

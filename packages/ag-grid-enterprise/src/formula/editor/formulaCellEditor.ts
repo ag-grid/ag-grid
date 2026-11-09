@@ -1,6 +1,6 @@
 import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
-import type { IFormulaCellEditorParams } from 'ag-grid-community';
+import type { AgColumn, IFormulaCellEditorParams } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
@@ -29,7 +29,10 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
 
         this.eEditor = formulaInputField;
         formulaInputField.addCss('ag-cell-editor');
-        formulaInputField.setInputAriaLabel(this.getLocaleTextFunc()('ariaInputEditor', 'Input Editor'));
+        formulaInputField.setInputAriaLabel(
+            this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true) ||
+                this.getLocaleTextFunc()('ariaInputEditor', 'Input Editor')
+        );
         this.appendChild(formulaInputField);
         _addManagedElementListeners(this, formulaInputField.getContentElement(), {
             keydown: (event: KeyboardEvent) => this.onFormulaInputKeyDown(event, params.onKeyDown),
