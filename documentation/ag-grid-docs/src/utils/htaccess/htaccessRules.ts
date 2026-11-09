@@ -60,10 +60,14 @@ Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markd
 `;
 
 // Production only, after documentNoCacheRules so it wins for the same responses: CloudFront keeps
-// current pages and their markdown variants for a day (s-maxage), while browsers still revalidate
-// every time (max-age=0). Each live docs deploy invalidates them through docsCacheTagRules, so the
-// day is only a bound for a missed invalidation. stale-while-revalidate serves the cached copy while
-// CloudFront refetches it; stale-if-error serves it instead of a 5xx when the origin is overloaded.
+// current pages and their markdown variants for a day (s-maxage). Each live docs deploy invalidates
+// them through docsCacheTagRules, so the day is only a bound for a missed invalidation.
+// stale-while-revalidate serves the cached copy while CloudFront refetches it; stale-if-error serves
+// it instead of a 5xx when the origin is overloaded. Both stale directives would apply to browser
+// caches too, so CloudFront's viewer-cache-headers function (terraform/www in ag-devops) rewrites
+// this header to no-cache on the way to browsers - keyed on stale-if-error, which only this rule
+// sends - and they keep revalidating every page as before. The origin is reachable only through
+// CloudFront (the ALB blocks direct requests); staging keeps plain no-cache.
 // Status below 400: 200, and the 304 CloudFront gets when it revalidates (no-cache on that 304 would
 // make the copy it already holds uncacheable). Error pages - the 404 ErrorDocument is text/html too -
 // keep no-cache. The rules emitted later (runtime-fetched files, Studio archives, in-flight archives)
