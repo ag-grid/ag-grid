@@ -117,8 +117,6 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         filter: SharedFilterUi,
         name: string
     ): AgPromise<MenuItemComponent> {
-        const eGui = comp.getGui();
-        _setAriaRole(eGui, 'dialog');
         const menuItem = this.createBean(new MenuItemComponent());
         const childComponent = {
             getGui: () => comp.getGui(),
@@ -155,6 +153,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             })
             .then(() => {
                 menuItem.setParentComponent(this);
+                _setAriaRole(menuItem.getGui(), 'button');
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
