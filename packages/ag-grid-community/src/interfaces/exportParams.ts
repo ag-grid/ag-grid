@@ -170,7 +170,7 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
      * Applies to cell values, including the results of `processCellCallback`, header names and `CsvCell` custom content.
      * Numbers such as `-5` and number cells formatted with a leading sign such as `-1,000.50` are left unchanged.
      * String custom content from `prependContent`, `appendContent` and `getCustomContentBelowRow` is written as given.
-     * With `suppressQuotes`, a separator or line break inside a value can still start a new cell with a formula character.
+     * Only the start of each value is checked. With `suppressQuotes`, a value containing the column separator or a line break is split into several cells when opened, and the later cells are not checked.
      * @default false
      */
     sanitizeFormulas?: boolean;

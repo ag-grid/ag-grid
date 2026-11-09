@@ -12,59 +12,46 @@ describe('CSV export sanitizeFormulas', () => {
         gridsManager.reset();
     });
 
-    const VALUES = [
-        '=1+1',
-        '+A1',
-        '-A1',
-        '@SUM(A1)',
-        '\tvalue',
-        '\rvalue',
-        '\nvalue',
-        '＝1+1',
-        '＋1',
-        '－1',
-        '＠A1',
-        '-',
-        'plain',
-        '',
-        'a=b',
+    // [cell value, exported value with sanitizeFormulas]
+    const CASES: [string, string][] = [
+        ['=1+1', "'=1+1"],
+        ['+A1', "'+A1"],
+        ['-A1', "'-A1"],
+        ['@SUM(A1)', "'@SUM(A1)"],
+        ['\tvalue', "'\tvalue"],
+        ['\rvalue', "'\rvalue"],
+        ['\nvalue', "'\nvalue"],
+        ['＝1+1', "'＝1+1"],
+        ['＋1', "'＋1"],
+        ['－1', "'－1"],
+        ['＠A1', "'＠A1"],
+        ['-', "'-"],
+        ['plain', 'plain'],
+        ['', ''],
+        ['a=b', 'a=b'],
     ];
+    const INPUTS = CASES.map(([input]) => input);
+    const SANITIZED = CASES.map(([, sanitized]) => sanitized);
+
+    const toQuotedCsv = (values: string[]) => values.map((v) => `"${v}"`).join('\r\n');
 
     function createGrid() {
         return gridsManager.createGrid('csv-sanitize-formulas', {
             columnDefs: [{ field: 'value' }],
-            rowData: VALUES.map((value) => ({ value })),
+            rowData: INPUTS.map((value) => ({ value })),
         });
     }
 
     test('leaves values unchanged by default', () => {
         const api = createGrid();
 
-        expect(api.getDataAsCsv({ skipColumnHeaders: true })).toBe(VALUES.map((v) => `"${v}"`).join('\r\n'));
+        expect(api.getDataAsCsv({ skipColumnHeaders: true })).toBe(toQuotedCsv(INPUTS));
     });
 
     test('prefixes values that start with a formula character', () => {
         const api = createGrid();
 
-        expect(api.getDataAsCsv({ skipColumnHeaders: true, sanitizeFormulas: true })).toBe(
-            [
-                `"'=1+1"`,
-                `"'+A1"`,
-                `"'-A1"`,
-                `"'@SUM(A1)"`,
-                `"'\tvalue"`,
-                `"'\rvalue"`,
-                `"'\nvalue"`,
-                `"'＝1+1"`,
-                `"'＋1"`,
-                `"'－1"`,
-                `"'＠A1"`,
-                `"'-"`,
-                '"plain"',
-                '""',
-                '"a=b"',
-            ].join('\r\n')
-        );
+        expect(api.getDataAsCsv({ skipColumnHeaders: true, sanitizeFormulas: true })).toBe(toQuotedCsv(SANITIZED));
     });
 
     test('leaves plain numbers unchanged', () => {
@@ -163,23 +150,7 @@ describe('CSV export sanitizeFormulas', () => {
         const api = createGrid();
 
         expect(api.getDataAsCsv({ skipColumnHeaders: true, suppressQuotes: true, sanitizeFormulas: true })).toBe(
-            [
-                `'=1+1`,
-                `'+A1`,
-                `'-A1`,
-                `'@SUM(A1)`,
-                `'\tvalue`,
-                `'\rvalue`,
-                `'\nvalue`,
-                `'＝1+1`,
-                `'＋1`,
-                `'－1`,
-                `'＠A1`,
-                `'-`,
-                'plain',
-                '',
-                'a=b',
-            ].join('\r\n')
+            SANITIZED.join('\r\n')
         );
     });
 
