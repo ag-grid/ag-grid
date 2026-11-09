@@ -1,5 +1,5 @@
 import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { _addOrRemoveAttribute, _exists, _getActiveDomElement } from 'ag-stack';
+import { _addManagedElementListeners, _addOrRemoveAttribute, _exists, _getActiveDomElement } from 'ag-stack';
 
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
@@ -44,7 +44,7 @@ export class AgInputNumberField<
     public override postConstruct() {
         super.postConstruct();
         const eInput = this.eInput;
-        this.addManagedListeners(eInput, {
+        _addManagedElementListeners(this, eInput, {
             blur: () => {
                 const floatedValue = Number.parseFloat(eInput.value);
                 const value = Number.isNaN(floatedValue) ? '' : this.normalizeBlurValue(floatedValue.toString());

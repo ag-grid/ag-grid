@@ -1,7 +1,13 @@
 import type { AgCoreBean } from './agCoreBean';
 import type { AgEvent } from './agEvent';
 import type { AgEventHandlers } from './iContext';
-import type { IAgEventEmitter, IEventEmitter, IEventListener, ListenerTarget } from './iEventEmitter';
+import type {
+    AgListenerOptionsForEvent,
+    IAgEventEmitter,
+    IEventEmitter,
+    IEventListener,
+    ListenerTarget,
+} from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iProperties';
 
@@ -31,7 +37,8 @@ export interface AgBean<
 
     addManagedListeners<TEvent extends string>(
         object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
-        handlers: AgEventHandlers<TEvent>
+        handlers: AgEventHandlers<TEvent>,
+        optionsForEvent?: AgListenerOptionsForEvent
     ): (() => null)[];
 
     /**
