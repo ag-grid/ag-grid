@@ -36,7 +36,7 @@ export class ShadowPanel extends Component {
                 useToggle: true,
             }
         );
-        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
+        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.fill`);
         this.setTemplate(
             /* html */ `<div>
             <ag-group-component data-ref="shadowGroup">
