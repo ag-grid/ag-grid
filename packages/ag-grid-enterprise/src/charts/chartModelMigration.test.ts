@@ -97,7 +97,7 @@ describe('chartModelMigration', () => {
                 modelType: 'range',
                 chartId: 'id-1',
                 chartType: 'groupedColumn',
-                cellRange: { columns: [] },
+                cellRange: { rowStartIndex: null, rowEndIndex: null, columns: [] },
                 chartOptions: { bar: { series: { shadow } } },
             };
 
