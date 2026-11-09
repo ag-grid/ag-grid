@@ -527,7 +527,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
      */
     private keepColumnWithActiveFilter(colId: string): boolean {
         const column = this.colModel.colsById[colId];
-        if (!column || column.getColDef().filter !== true || !this.beans.colFilter?.isFilterActive(column)) {
+        if (column?.getColDef().filter !== true || !this.beans.colFilter?.isFilterActive(column)) {
             return false;
         }
         this.colIdsKeptUntyped.add(colId);
