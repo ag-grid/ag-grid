@@ -2,7 +2,7 @@ import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { IContext } from '../interfaces/iContext';
 import { _nextContainerInstanceId } from './containerInstanceId';
 
-/** The graph each bean was built by, so no bean is built, or destroyed, by two. */
+/** The graph that built each registered or kernel bean, so no other graph builds or destroys it. */
 const owningGraph = new WeakMap<object, string>();
 
 /**
@@ -170,21 +170,26 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         }
     };
 
+    // The graph installs itself as `context` once built, if the kernel supplies none.
+    const isAvailable = (dep: string): boolean => dep === 'context' || owned.has(dep) || built[dep] !== undefined;
     for (const bean of owned.values()) {
-        requireDeps(bean.beanName!, bean.deps, (dep) => owned.has(dep) || built[dep] !== undefined);
+        requireDeps(bean.beanName!, bean.deps, isAvailable);
     }
 
     // Kernel first, so destruction (which walks this in reverse) tears it down last.
     const order = [...kernelBeans.keys(), ...sortTopologically(owned, id)];
     const all = new Map<string, AgGraphBean<TBeans>>([...kernelBeans, ...owned]);
 
-    for (const [name, bean] of all) {
+    const assertUnowned = (name: string, bean: object): void => {
         const owner = owningGraph.get(bean);
         if (owner !== undefined) {
             throw new Error(
                 `AG Stack: '${name}' already belongs to the ${owner} graph and cannot also be built by the ${id} graph.`
             );
         }
+    };
+    for (const [name, bean] of all) {
+        assertUnowned(name, bean);
     }
     for (const bean of all.values()) {
         owningGraph.set(bean, id);
@@ -198,6 +203,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         afterPreCreateCallback?: (bean: AgBaseBean<TBeans>) => void
     ): T => {
         const { beanName = '(runtime bean)', deps, optionalDeps } = bean as Partial<AgDeclaredBean<TBeans>>;
+        assertUnowned(beanName, bean);
         requireDeps(beanName, deps, (dep) => source[dep] !== undefined);
         initBeans([bean], () => viewFor({ deps, optionalDeps }, source) as TBeans, afterPreCreateCallback);
         return bean;
@@ -254,7 +260,24 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         for (const key of Object.keys(built)) {
             delete built[key];
         }
+        all.clear();
+        owned.clear();
+        kernelBeans.clear();
         destroyCallback?.();
+    };
+
+    const destroyOne = (bean: AgBaseBean<TBeans> | null | undefined): void => {
+        if (bean == null) {
+            return;
+        }
+        const owner = owningGraph.get(bean);
+        if (owner !== undefined && owner !== id) {
+            const { beanName = '(runtime bean)' } = bean as Partial<AgDeclaredBean<TBeans>>;
+            throw new Error(
+                `AG Stack: '${beanName}' belongs to the ${owner} graph and cannot be destroyed by the ${id} graph.`
+            );
+        }
+        bean.destroy?.();
     };
 
     const graph: AgBeanGraph<TBeans> = {
@@ -267,12 +290,12 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         isDestroyed: () => destroyed,
         createBean: (bean, afterPreCreateCallback) => createIn(built, bean, afterPreCreateCallback),
         destroyBean(bean) {
-            bean?.destroy?.();
+            destroyOne(bean);
             return undefined;
         },
         destroyBeans(list) {
             for (const bean of list ?? []) {
-                bean?.destroy?.();
+                destroyOne(bean);
             }
             return [];
         },

@@ -237,6 +237,26 @@ describe('a bean already owned by another graph', () => {
 
         expect(() => createBeanGraph({ id: 'second', beans: [a] })).toThrow(/'a' already belongs to the first graph/);
     });
+
+    it('is refused by createBean, without being constructed again', () => {
+        const log: string[] = [];
+        const a = bean('a', [], [], log);
+        createBeanGraph({ id: 'first', beans: [a] });
+        const second = createBeanGraph({ id: 'second', beans: [] });
+
+        expect(() => second.createBean(a)).toThrow(/'a' already belongs to the first graph/);
+        expect(log).toEqual(['construct:a']);
+    });
+
+    it('is refused by destroyBean, and left running', () => {
+        const log: string[] = [];
+        const a = bean('a', [], [], log);
+        createBeanGraph({ id: 'first', beans: [a] });
+        const second = createBeanGraph({ id: 'second', beans: [] });
+
+        expect(() => second.destroyBean(a)).toThrow(/'a' belongs to the first graph and cannot be destroyed/);
+        expect(log).toEqual(['construct:a']);
+    });
 });
 
 describe('instance ids', () => {
@@ -330,6 +350,14 @@ describe('the kernel', () => {
 
         expect(declared.wiredWith!.gos).toBe(gos);
         expect(declared.wiredWith!.a).toBeDefined();
+    });
+
+    it('satisfies a declared dependency on the container it installs', () => {
+        const a = bean('a', ['context']);
+
+        createBeanGraph({ id: 'test', beans: [a] });
+
+        expect(a.wiredWith!.context).toBeDefined();
     });
 
     it('installs itself as the container, which is not a bean', () => {
