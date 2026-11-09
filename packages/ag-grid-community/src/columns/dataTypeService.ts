@@ -92,7 +92,9 @@ function filterFollowsDataType({ filter, filterParams }: FilterDef): boolean {
     if (component === true) {
         return true;
     }
-    return component === 'agMultiColumnFilter' && (typeof filterParams === 'function' || !filterParams?.filters?.length);
+    return (
+        component === 'agMultiColumnFilter' && (typeof filterParams === 'function' || !filterParams?.filters?.length)
+    );
 }
 
 /** The column state keys set on each column parked awaiting inference, which inference then keeps. */
