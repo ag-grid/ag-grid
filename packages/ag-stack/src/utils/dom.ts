@@ -461,6 +461,7 @@ type TagName<SelectorType extends string> = keyof HTMLElementTagNameMap | Lowerc
 type RoleType =
     | 'button'
     | 'columnheader'
+    | 'dialog'
     | 'gridcell'
     | 'heading'
     | 'listbox'
