@@ -71,7 +71,7 @@ export class AgList<
     private lastTypedTime = 0;
 
     private isHoverPaused = false;
-    private pausedPointerPosition: string | null = null;
+    private lastPointerPosition: string | null = null;
 
     constructor(private readonly cssIdentifier = 'default') {
         super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
@@ -123,13 +123,11 @@ export class AgList<
         >,
         e: MouseEvent
     ): void {
+        const position = `${e.clientX},${e.clientY}`;
+        const lastPosition = this.lastPointerPosition;
+        this.lastPointerPosition = position;
         if (this.isHoverPaused) {
-            const position = `${e.clientX},${e.clientY}`;
-            if (this.pausedPointerPosition == null) {
-                this.pausedPointerPosition = position;
-                return;
-            }
-            if (position === this.pausedPointerPosition) {
+            if (lastPosition == null || position === lastPosition) {
                 return;
             }
             this.isHoverPaused = false;
@@ -143,8 +141,10 @@ export class AgList<
         return this.typedText !== '' && Date.now() - this.lastTypedTime <= TYPE_AHEAD_TIMEOUT_MS;
     }
 
-    public clearTypedText(): void {
+    /** The typed text and pointer position only apply while the list is open. */
+    public resetInputTracking(): void {
         this.typedText = '';
+        this.lastPointerPosition = null;
     }
 
     /** A repeated character cycles through the options starting with it; other text matches the first option starting with it. */
@@ -310,10 +310,9 @@ export class AgList<
     }
 
     // WebKit reports a `mousemove` at the unchanged position when the list scrolls under a still pointer,
-    // so hover only resumes once the position differs between two moves.
+    // so hover only resumes once the pointer is somewhere other than its last known position.
     private pauseHover(): void {
         this.isHoverPaused = true;
-        this.pausedPointerPosition = null;
     }
 
     private clearHighlighted(): void {

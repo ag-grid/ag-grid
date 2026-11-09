@@ -204,6 +204,30 @@ describe('Typing to move to an option in grid dropdowns', () => {
             expect(highlighted()).toBe('Lion');
         });
 
+        test('one pointer move after typing moves the highlight once the pointer position is known', async () => {
+            const { wrapper } = await startEditing(ANIMALS, 'Ant');
+            fireEvent.mouseMove(options()[0], { clientX: 10, clientY: 10 });
+            type(wrapper, 'l');
+            expect(highlighted()).toBe('Lemur');
+
+            fireEvent.mouseMove(options()[2], { clientX: 10, clientY: 50 });
+
+            expect(highlighted()).toBe('Lion');
+        });
+
+        test('the pointer position does not survive closing the list', async () => {
+            const { wrapper } = await startEditing(ANIMALS, 'Ant');
+            fireEvent.mouseMove(options()[0], { clientX: 10, clientY: 10 });
+            type(wrapper, 'l');
+            fireEvent.keyDown(wrapper, { key: 'Escape' });
+            fireEvent.keyDown(wrapper, { key: 'Enter' });
+            await waitFor(() => expect(options().length).toBeGreaterThan(0));
+
+            fireEvent.mouseMove(options()[2], { clientX: 10, clientY: 50 });
+
+            expect(highlighted()).toBe('Ant');
+        });
+
         test('typing with the list closed opens it on the match', async () => {
             const api = await createGrid({ columnDefs: [editorColDef(ANIMALS)], rowData: [{ a: 'Ant' }] });
             api.setFocusedCell(0, 'a');

@@ -25,9 +25,9 @@ const openLongList = async (page: Page) => {
     return page.locator('.ag-list-item.ag-active-item');
 };
 
-const movePointerOver = async (page: Page, target: Locator) => {
+const movePointerOver = async (page: Page, target: Locator, steps = 3) => {
     const box = (await target.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 3 });
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps });
 };
 
 test.describe('select list under a still pointer', () => {
@@ -56,7 +56,7 @@ test.describe('select list under a still pointer', () => {
         await page.keyboard.press('z');
         await expect(highlighted).toHaveText('Z country');
 
-        await movePointerOver(page, page.locator('.ag-list-item').nth(24));
+        await movePointerOver(page, page.locator('.ag-list-item').nth(24), 1);
         await expect(highlighted).toHaveText('Y country');
     });
 

@@ -198,7 +198,7 @@ export class AgSelect<
 
     protected override beforeHidePicker(): void {
         this.listComponent?.hideItemTooltip();
-        this.listComponent?.clearTypedText();
+        this.listComponent?.resetInputTracking();
         super.beforeHidePicker();
     }
 
