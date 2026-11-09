@@ -287,7 +287,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const { field } = userColDef;
 
         if (cellDataType == null || cellDataType === true) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
+            cellDataType = this.canInferCellDataType(colDef, userColDef)
+                ? // the user's own definition is merged in later, so its filter is read from it directly
+                  this.inferCellDataType(field, colId, userColDef.filter ?? colDef.filter)
+                : false;
         }
 
         this.addFormulaCellEditorToColDef(colDef, userColDef);
@@ -351,8 +354,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return !doColDefPropsPreventInference(colDef, propsToCheckForInference);
     }
 
-    private inferCellDataType(field: string | undefined, colId: string): string | undefined {
-        if (!field || this.isKeptUntyped(field, colId)) {
+    private inferCellDataType(field: string | undefined, colId: string, filter: ColDef['filter']): string | undefined {
+        if (!field || this.isKeptUntyped(field, colId, filter)) {
             return undefined;
         }
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
@@ -552,14 +555,15 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private isKeptUntyped(field: string, colId: string): boolean {
+    private isKeptUntyped(field: string, colId: string, filter: ColDef['filter']): boolean {
         const keptField = this.fieldsKeptUntypedByColId.get(colId);
         if (keptField == null) {
             return false;
         }
-        // a column removed and given back, or one that no longer filters, has nothing left to protect
+        // a column removed and given back, one that no longer filters, or one whose filter no longer follows
+        // the data type (anything but `filter: true`) has nothing left to protect
         const column = this.colModel.colsById[colId];
-        if (keptField === field && column && this.beans.colFilter?.isFilterActive(column)) {
+        if (keptField === field && filter === true && column && this.beans.colFilter?.isFilterActive(column)) {
             return true;
         }
         this.fieldsKeptUntypedByColId.delete(colId);

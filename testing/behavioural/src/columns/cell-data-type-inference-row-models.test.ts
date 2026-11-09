@@ -362,6 +362,32 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe('text');
         });
 
+        test('a kept-untyped column given an explicitly named filter is typed, as typing no longer swaps it', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { colId: 'yearFiltered', field: 'year', filter: true },
+                { colId: 'yearPlain', field: 'year' },
+            ]);
+
+            api.setFilterModel({ yearFiltered: { filterType: 'text', type: 'contains', filter: '20' } });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe(false);
+
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { colId: 'yearFiltered', field: 'year', filter: 'agTextColumnFilter' },
+                { colId: 'yearPlain', field: 'year' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe('number');
+        });
+
         test('column state the user sets while awaiting leaf rows survives the inferred column types', async () => {
             const rootBlockServed = batchServed();
             const leafBlockServed = batchServed();
