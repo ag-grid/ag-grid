@@ -1,51 +1,8 @@
-import type { AgEvent } from './agEvent';
 import type { BaseEvents } from './baseEvents';
-
-export type AgEventServiceGlobalListener<
-    TEventType extends keyof TGlobalEvents & string,
-    TGlobalEvents extends BaseEvents,
-> = (eventType: TEventType, event: TGlobalEvents[TEventType] & AgEvent<TEventType>) => void;
-
-export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlobalEvents & string> = (
-    params: TGlobalEvents[TEventType]
-) => void;
+import type { AgInternalEventService, AgRawEvents } from './iDomFreeEvent';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type WithoutCommon<TCommon, T> = Omit<T, keyof TCommon>;
-
-export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {
-    [K in keyof TGlobalEvents]: WithoutCommon<TCommon, TGlobalEvents[K]>;
-}[keyof TGlobalEvents];
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
-    readonly eventServiceType: 'global';
-    readonly beanName: 'eventSvc';
-
-    addListener<TEventType extends keyof TGlobalEvents & string>(
-        eventType: TEventType,
-        listener: AgEventServiceListener<TGlobalEvents, TEventType>,
-        async?: boolean
-    ): void;
-
-    removeListener<TEventType extends keyof TGlobalEvents & string>(
-        eventType: TEventType,
-        listener: AgEventServiceListener<TGlobalEvents, TEventType>,
-        async?: boolean
-    ): void;
-
-    /** `eventTypes` limits the listener to those types, `exceptEventTypes` keeps those from it. */
-    addGlobalListener(
-        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async?: boolean,
-        eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
-        exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
-    ): void;
-
-    removeGlobalListener(
-        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async?: boolean
-    ): void;
-
-    dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
-}
+export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> extends AgInternalEventService<
+    TGlobalEvents,
+    AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]
+> {}

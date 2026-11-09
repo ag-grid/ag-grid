@@ -1,4 +1,4 @@
-import type { AgFrameworkOverrides } from './agFrameworkOverrides';
+import type { AgDomFreeBeanCollection } from './agDomFreeBeanCollection';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
 import type { IAriaAnnouncementService } from './iAriaAnnouncementService';
@@ -8,7 +8,6 @@ import type { IDragAndDropService } from './iDragAndDrop';
 import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
-import type { ILocaleService } from './iLocaleService';
 import type { IPopupService } from './iPopupService';
 import type { IPropertiesService } from './iProperties';
 import type { IRegistry } from './iRegistry';
@@ -18,13 +17,13 @@ export interface AgCoreBeanCollection<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-> extends UtilBeanCollection {
+    TPropertiesService extends IPropertiesService<TProperties>,
+>
+    extends UtilBeanCollection, AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService> {
     context: IContext<this>;
     eventSvc: AgEventService<TGlobalEvents, TCommon>;
-    frameworkOverrides: AgFrameworkOverrides;
+    // Redeclared to resolve the two inherited declarations to the full service.
     gos: TPropertiesService;
-    localeSvc?: ILocaleService;
     environment: IEnvironment;
     eRootDiv: HTMLElement;
     hasAncestorStyledRoot?: boolean;
@@ -33,7 +32,6 @@ export interface AgCoreBeanCollection<
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;
     dragAndDrop?: IDragAndDropService<any, any, any, any, any>;
-    agChartsExports?: unknown; // this is intentionally left untyped
     ariaAnnounce: IAriaAnnouncementService;
 }
 

@@ -18,7 +18,7 @@ if (library === 'grid') {
         'ag-grid-react': 'react',
         'ag-grid-vue3': 'vue',
     };
-    affectedProjectsCmd = 'yarn nx show projects --affected -t pack';
+    affectedProjectsCmd = 'yarn nx show projects --affected -t pack --json=false';
 } else if (library === 'charts') {
     matches = {
         'ag-charts-angular': 'angular',
@@ -30,7 +30,7 @@ if (library === 'grid') {
         'vue-package-tests': 'vue',
         'server-side-package-tests': 'server-side',
     };
-    affectedProjectsCmd = 'yarn nx show projects --affected -t pack -t test:package';
+    affectedProjectsCmd = 'yarn nx show projects --affected -t pack -t test:package --json=false';
 }
 
 const result = { framework: new Set() };

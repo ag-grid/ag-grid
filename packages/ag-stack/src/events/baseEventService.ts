@@ -3,11 +3,12 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type {
-    AgEventService,
     AgEventServiceGlobalListener,
     AgEventServiceListener,
     AgRawEvents,
-} from '../interfaces/iEvent';
+    ICommonSource,
+} from '../interfaces/iDomFreeEvent';
+import type { AgEventService } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { LocalEventService } from './localEventService';
 
@@ -17,7 +18,7 @@ export class BaseEventService<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
 >
     extends AgBeanStub<
         TBeanCollection,

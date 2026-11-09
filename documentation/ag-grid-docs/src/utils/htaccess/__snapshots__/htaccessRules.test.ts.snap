@@ -27,6 +27,15 @@ Header set Cache-Control "public, max-age=86400"
 Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 
 
+# Current pages and markdown variants: CloudFront caches a day, browsers revalidate. Invalidated by
+# cache tag on every live docs deploy. Excludes /archive/<v>/ and error responses.
+Header set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -lt 400 && %{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Cache tag for the deploy-time CloudFront invalidation (#ag-docs). Not on archives or hashed assets.
+Header set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -lt 400 && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# ) && !( %{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$# )"
+
+
 # Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
 Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 
@@ -638,6 +647,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule ^/?(rss|(?:tag|author)/[^/]+/rss)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+    # SE-89 / SE-4: robots.txt goes to the root robots.txt, as it does on the apex host. The
+    # catch-all would send it to /blog/robots.txt, which is a 404.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?robots\\.txt$ https://www.ag-grid.com/robots.txt [R=301,NC,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]

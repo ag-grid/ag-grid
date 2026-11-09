@@ -37,8 +37,8 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private eExpandUnchecked: Element;
     private eExpandIndeterminate: Element;
 
-    private onSearchTextChangedDebounced: () => number;
-    private searchTextChangedTimeout: number | undefined;
+    private onSearchTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private searchTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private currentExpandState: EXPAND_STATE;
 

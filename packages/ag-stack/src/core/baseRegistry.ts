@@ -12,7 +12,7 @@ export abstract class BaseRegistry<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TDynamicBeanName extends string,
 >
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>

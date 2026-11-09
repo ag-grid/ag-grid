@@ -1,28 +1,11 @@
-import type { Theme } from '../theming/theme';
+import type { BaseDomFreeProperties } from './baseDomFreeProperties';
 
 /**
- * Properties required by AG Stack
+ * Properties required by AG Stack, including those that name a DOM type.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export interface BaseProperties {
-    tabIndex?: number;
-    suppressScrollWhenPopupsAreOpen?: boolean;
-    enableRtl?: boolean;
+export interface BaseProperties extends BaseDomFreeProperties {
     popupParent?: HTMLElement | null;
-    theme?: Theme | 'legacy';
-    loadThemeGoogleFonts?: boolean;
-    themeCssLayer?: string;
-    styleNonce?: string;
     themeStyleContainer?: HTMLElement | (() => HTMLElement | void);
-    enableBrowserTooltips?: boolean;
-    tooltipTrigger?: 'hover' | 'focus';
-    tooltipShowDelay?: number;
-    tooltipSwitchShowDelay?: number;
-    tooltipHideDelay?: number;
-    tooltipMouseTrack?: boolean;
-    tooltipInteraction?: boolean;
     getDocument?: () => Document;
-    suppressTouch?: boolean;
-    suppressInputClearButton?: boolean;
-    enableInputAutoComplete?: boolean;
 }

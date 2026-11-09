@@ -818,6 +818,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelSelectField: '필드 선택',
 
     // Cell Editor
+    ariaLabelCellEditor: '셀 편집기',
     ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
     ariaFullRowValidationError: '전체 행 유효성 검사: ${variable}',
     ariaFullRowEditValidationFailed: '행 편집을 완료할 수 없습니다. ${variable}',

@@ -820,6 +820,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaLabelSelectField: 'انتخاب فیلد',
 
     // Cell Editor
+    ariaLabelCellEditor: 'ویرایشگر سلول',
     ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
     ariaFullRowValidationError: 'اعتبارسنجی کل سطر: ${variable}',
     ariaFullRowEditValidationFailed: 'ویرایش سطر را نمی‌توان تکمیل کرد. ${variable}',

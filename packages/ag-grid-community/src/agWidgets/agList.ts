@@ -17,7 +17,7 @@ export class AgList<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TEventType extends string = AgListEvent,
     TValue = string,
@@ -99,7 +99,7 @@ export class AgList<
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text ?? (value as any);
+        const valueToRender = String(text ?? value ?? '');
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);

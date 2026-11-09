@@ -81,7 +81,7 @@ export class AgPositionableFeature<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
 > extends AgBeanStub<
     TBeanCollection,
     TProperties,

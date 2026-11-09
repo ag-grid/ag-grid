@@ -824,6 +824,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelSelectField: 'Επιλογή Πεδίου',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
     ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
     ariaFullRowValidationError: 'Επικύρωση ολόκληρης της γραμμής: ${variable}',
     ariaFullRowEditValidationFailed: 'Δεν είναι δυνατή η ολοκλήρωση της επεξεργασίας γραμμής. ${variable}',

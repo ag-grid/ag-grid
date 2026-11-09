@@ -843,6 +843,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelSelectField: 'Pasirinkimo laukas',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Langelio redaktorius',
     ariaValidationErrorPrefix: 'Langelio redaktoriaus patikra',
     ariaFullRowValidationError: 'Visos eilutės patikra: ${variable}',
     ariaFullRowEditValidationFailed: 'Nepavyksta užbaigti eilutės redagavimo. ${variable}',

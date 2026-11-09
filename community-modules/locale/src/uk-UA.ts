@@ -821,6 +821,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaLabelSelectField: 'Виберіть поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор комірки',
     ariaValidationErrorPrefix: 'Валідація редактора комірки',
     ariaFullRowValidationError: 'Перевірка всього рядка: ${variable}',
     ariaFullRowEditValidationFailed: 'Не вдалося завершити редагування рядка. ${variable}',

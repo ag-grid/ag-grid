@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import type { AgCoreBeanCollection, BaseEvents, BaseProperties, ICommonSource, IPropertiesService } from 'ag-stack';
 import { AgTabGuardComp } from 'ag-stack';
 
 import type { IComponent } from 'ag-grid-community';
@@ -11,7 +11,7 @@ export class AgMenuPanel<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
 > extends AgTabGuardComp<
     TBeanCollection,

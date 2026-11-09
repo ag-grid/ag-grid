@@ -36,8 +36,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private expandState: ExpandState;
     private selectState?: boolean;
 
-    private onFilterTextChangedDebounced: () => number;
-    private filterTextChangedTimeout: number | undefined;
+    private onFilterTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private filterTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private params: ToolPanelColumnCompParams;
 

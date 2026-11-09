@@ -84,7 +84,7 @@ export class AgPanel<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TConfig extends AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams> =
         AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,

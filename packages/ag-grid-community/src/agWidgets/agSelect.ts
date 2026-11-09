@@ -41,7 +41,7 @@ export class AgSelect<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TValue = string | null,
 > extends AgPickerField<

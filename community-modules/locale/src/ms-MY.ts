@@ -843,6 +843,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelSelectField: 'Pilih Medan',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Pengesahan Editor Sel',
     ariaFullRowValidationError: 'Pengesahan Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan suntingan baris. ${variable}',

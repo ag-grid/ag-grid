@@ -3,6 +3,7 @@ import type {
     AgElementParams,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     WithoutCommon,
 } from 'ag-stack';
@@ -28,7 +29,7 @@ export class AgMenuList<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgTabGuardComp<

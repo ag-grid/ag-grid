@@ -1,6 +1,24 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-OPEN-22112123:
+    - nx@20.8.4 > open@8.4.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.204Z
+  SNYK-JS-FOLLOWREDIRECTS-21762031:
+    - nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:43:44.884Z
+  SNYK-JS-FLAT-22148819:
+    - nx@20.8.4 > flat@5.0.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:41.953Z
   SNYK-JS-FOLLOWREDIRECTS-21280747:
     - 'nx@20.8.4 > axios@1.20.0 > follow-redirects@1.16.0':
         reason: >-
