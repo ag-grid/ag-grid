@@ -32,7 +32,7 @@ export class PopupEditorWrapper extends AgPopupComponent<
     }
 
     private setAriaLabel(): void {
-        const columnName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header');
+        const columnName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true);
         const label = columnName || this.getLocaleTextFunc()('ariaLabelCellEditor', 'Cell Editor');
         _setAriaLabel(this.getGui(), label);
     }

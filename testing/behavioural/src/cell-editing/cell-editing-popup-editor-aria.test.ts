@@ -4,12 +4,12 @@ import { TestGridsManager, waitForPopup } from 'ag-test-utils';
 
 import { LargeTextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
-import { RichSelectModule } from 'ag-grid-enterprise';
+import { RichSelectModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Popup cell editor accessible name', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [LargeTextEditorModule, RichSelectModule],
+        modules: [LargeTextEditorModule, RichSelectModule, RowGroupingModule],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -39,6 +39,30 @@ describe('Popup cell editor accessible name', () => {
         const popup = await openPopupEditor({ field: 'notes', headerName: '' });
 
         expect(within(popup).getByRole('dialog', { name: 'Cell Editor' })).toBeTruthy();
+    });
+
+    test('includes the aggregation function in the name, matching the visible header', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    field: 'gold',
+                    aggFunc: 'sum',
+                    editable: true,
+                    cellEditor: 'agLargeTextCellEditor',
+                    cellEditorPopup: true,
+                },
+            ],
+            rowData: [{ country: 'Norway', gold: 3 }],
+            getRowId: (p) => p.data.country,
+            groupDefaultExpanded: -1,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('Norway', 'gold')));
+        await userEvent.dblClick(cell);
+        const popup = await waitForPopup(gridDiv);
+
+        expect(within(popup).getByRole('dialog', { name: 'sum(Gold)' })).toBeTruthy();
     });
 
     test('names a rich select popup editor dialog after the column being edited', async () => {
