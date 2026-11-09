@@ -24,26 +24,28 @@ export const handledByDocroot = (url: URL) =>
     url.hostname !== 'charts.ag-grid.com' &&
     !isOwnedElsewhere(url.pathname);
 
+let compiledHtaccess: CompiledHtaccess[] | undefined;
+
 /**
  * Where the production `.htaccess` finally sends a request for `pathname` on the canonical host, or
  * undefined when it is served directly. For the link checker, to name the address a link to a legacy
  * path should use. The rules are compiled on first use, so a build that does not check links does
  * not pay for it.
  */
-export function createLinkRedirectResolver() {
-    let files: CompiledHtaccess[] | undefined;
-
-    return ({
-        pathname,
-        fileExists,
-        dirExists,
-    }: {
-        pathname: string;
-        fileExists: (urlPath: string) => boolean;
-        dirExists: (urlPath: string) => boolean;
-    }): string | undefined => {
-        files ??= [compileHtaccess(getHtaccessContent({ env: 'production' }))];
-        const { hops } = followRedirects(files, { url: `${WWW}${pathname}`, fileExists, dirExists }, handledByDocroot);
-        return hops.at(-1)?.location;
-    };
+export function resolveLinkRedirect({
+    pathname,
+    fileExists,
+    dirExists,
+}: {
+    pathname: string;
+    fileExists: (urlPath: string) => boolean;
+    dirExists: (urlPath: string) => boolean;
+}): string | undefined {
+    compiledHtaccess ??= [compileHtaccess(getHtaccessContent({ env: 'production' }))];
+    const { hops } = followRedirects(
+        compiledHtaccess,
+        { url: `${WWW}${pathname}`, fileExists, dirExists },
+        handledByDocroot
+    );
+    return hops.at(-1)?.location;
 }
