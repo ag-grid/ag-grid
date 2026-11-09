@@ -91,6 +91,10 @@ export class AgPrimaryCols extends Component {
         this.primaryColsListPanel.setColumnLayout(colDefs);
     }
 
+    public focusList(): void {
+        this.primaryColsListPanel.focusList();
+    }
+
     public syncLayoutWithGrid(): void {
         this.primaryColsListPanel.onColumnsChanged();
     }

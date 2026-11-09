@@ -1,4 +1,4 @@
-import { _areEqual, _clearElement, _last } from 'ag-stack';
+import { _areEqual, _clearElement, _getActiveDomElement, _last } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -216,6 +216,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private readonly onDeferredApply = (): void => {
+        const applyHadFocus = _getActiveDomElement(this.beans) === this.buttonsComp?.getApplyButton();
         this.isCommitting = true;
         try {
             this.beans.columnStateUpdateStrategy.commit(this.isDeferModeEnabled);
@@ -223,8 +224,26 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.isCommitting = false;
         }
         this.buttonsComp?.updateValidity(false);
+        if (applyHadFocus) {
+            this.focusAfterApply();
+        }
         this.lastKnownGridState = this.captureGridState();
     };
+
+    /** Disabling the focused Apply button drops focus to the page body. */
+    private focusAfterApply(): void {
+        const buttons = this.params.buttons ?? [];
+        const eButtons = this.buttonsComp?.getGui().children;
+        for (const type of ['cancel', 'reset'] as const) {
+            const index = buttons.indexOf(type);
+            const eButton = index >= 0 ? (eButtons?.[index] as HTMLElement | undefined) : undefined;
+            if (eButton) {
+                eButton.focus();
+                return;
+            }
+        }
+        this.primaryColsPanel.focusList();
+    }
 
     private readonly onDeferredCancel = (): void => {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);

@@ -1,4 +1,4 @@
-import { _exists, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+import { _exists, _getActiveDomElement, _getDocument, _setAriaLabel, _setAriaLevel } from 'ag-stack';
 
 import type {
     AbstractColDef,
@@ -241,16 +241,40 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.eventType
         );
         refreshDeferredToolPanelUi(this.beans, this.params);
-        const nextIndex = this.displayedColsList.findIndex((next) =>
+        void this.focusRowIfAlive(this.indexOfItem(item, move.columns[0])).then(() => {
+            this.skipRefocus = false;
+        });
+    }
+
+    private indexOfItem(item: ColumnModelItem, leafColumn?: AgColumn): number {
+        return this.displayedColsList.findIndex((next) =>
             item.group
                 ? next.group &&
                   next.columnGroup.groupId === item.columnGroup.groupId &&
-                  next.columnGroup.getLeafColumns().includes(move.columns[0])
+                  (!leafColumn || next.columnGroup.getLeafColumns().includes(leafColumn))
                 : !next.group && next.column === item.column
         );
-        void this.focusRowIfAlive(nextIndex).then(() => {
-            this.skipRefocus = false;
-        });
+    }
+
+    /** Only refocuses when the rebuild dropped focus, so focus an action moved on purpose (e.g. to an editor) stays put. */
+    private refocusItemIfLost(item: ColumnModelItem, eOldRow: HTMLElement): void {
+        // After the redraw `refresh` queued, and after the closing menu has restored focus.
+        this.virtualList.awaitStable(() =>
+            window.setTimeout(() => {
+                if (eOldRow.isConnected || !this.isAlive()) {
+                    return;
+                }
+                const activeEl = _getActiveDomElement(this.beans);
+                const focusLost = !activeEl || activeEl === eOldRow || activeEl === _getDocument(this.beans).body;
+                if (focusLost) {
+                    void this.focusRowIfAlive(this.indexOfItem(item));
+                }
+            }, 0)
+        );
+    }
+
+    public focusList(): void {
+        void this.focusRowIfAlive(this.virtualList.getLastFocusedRow() ?? 0);
     }
 
     private createComponentFromItem(
@@ -264,6 +288,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                   canMove: (isUp: boolean) => !!this.getMoveTarget(item, isUp),
                   move: (isUp: boolean) => this.moveItems(item, isUp),
               };
+        const refocusIfLost = (eOldRow: HTMLElement) => this.refocusItemIfLost(item, eOldRow);
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(
                 item,
@@ -272,7 +297,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 listItemElement,
                 params,
                 source,
-                columnMove
+                columnMove,
+                refocusIfLost
             );
             this.createBean(renderedGroup);
 
@@ -287,7 +313,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             params,
             eventType,
             source,
-            columnMove
+            columnMove,
+            refocusIfLost
         );
         this.createBean(columnComp);
 

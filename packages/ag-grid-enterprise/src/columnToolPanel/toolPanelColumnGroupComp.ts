@@ -86,7 +86,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
         private readonly source: ColumnSelectionPanelSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super();
         const { columnGroup, depth } = modelItem;
@@ -261,7 +262,8 @@ export class ToolPanelColumnGroupComp extends Component {
                 this.params,
                 this.eventType,
                 this.source,
-                this.columnMove
+                this.columnMove,
+                this.refocusIfLost
             )
         );
         this.addDestroyFunc(() => {
