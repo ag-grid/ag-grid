@@ -53,6 +53,11 @@ function asDate(value: any): number | null {
 }
 
 function matchesFilter(value: any, model: any): boolean {
+    // a filter given two conditions combines them with its operator
+    if (model.operator) {
+        const results = model.conditions.map((condition: any) => matchesFilter(value, condition));
+        return model.operator === 'OR' ? results.some(Boolean) : results.every(Boolean);
+    }
     const { filterType, type, filter, filterTo, dateFrom, dateTo } = model;
     const isBlank = value == null || value === '';
 

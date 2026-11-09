@@ -123,8 +123,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
     // `null` records a field the rows held no value for
     private readonly inferredValueByField: Map<string, any> = new Map();
-    // columns left untyped because they were filtered through their untyped filter before they resolved
-    private readonly colIdsKeptUntyped: Set<string> = new Set();
+    // the field of each column left untyped because it was filtered through its untyped filter before it
+    // resolved. The decision holds only while that column still shows that field and is still filtered
+    private readonly fieldsKeptUntypedByColId: Map<string, string> = new Map();
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: PendingColumnStateUpdates = Object.create(null);
 
@@ -351,7 +352,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private inferCellDataType(field: string | undefined, colId: string): string | undefined {
-        if (!field || this.colIdsKeptUntyped.has(colId)) {
+        if (!field || this.isKeptUntyped(field, colId)) {
             return undefined;
         }
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
@@ -544,8 +545,25 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (column?.getColDef().filter !== true || !this.beans.colFilter?.isFilterActive(column)) {
             return false;
         }
-        this.colIdsKeptUntyped.add(colId);
+        const field = column.getColDef().field;
+        if (field) {
+            this.fieldsKeptUntypedByColId.set(colId, field);
+        }
         return true;
+    }
+
+    private isKeptUntyped(field: string, colId: string): boolean {
+        const keptField = this.fieldsKeptUntypedByColId.get(colId);
+        if (keptField == null) {
+            return false;
+        }
+        // a column removed and given back, or one that no longer filters, has nothing left to protect
+        const column = this.colModel.colsById[colId];
+        if (keptField === field && column && this.beans.colFilter?.isFilterActive(column)) {
+            return true;
+        }
+        this.fieldsKeptUntypedByColId.delete(colId);
+        return false;
     }
 
     private resetColDefAndGetColumnState(
@@ -894,7 +912,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = Object.create(null);
         this.inferredValueByField.clear();
-        this.colIdsKeptUntyped.clear();
+        this.fieldsKeptUntypedByColId.clear();
         super.destroy();
     }
 }

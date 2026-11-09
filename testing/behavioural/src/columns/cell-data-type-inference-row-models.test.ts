@@ -350,6 +350,16 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe(false);
             expect(api.getColumn('yearPlain')!.getColDef().cellDataType).toBe('number');
+
+            // pointed at another field, the column has no filtered values left to protect
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { colId: 'yearFiltered', field: 'country', filter: true },
+                { colId: 'yearPlain', field: 'year' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe('text');
         });
 
         test('column state the user sets while awaiting leaf rows survives the inferred column types', async () => {
