@@ -324,6 +324,49 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(inferredType(api, 'year')).toBe(false);
             expect(inferredType(api, 'done')).toBe('boolean');
         });
+
+        test('only the filtered column is kept untyped, not another column showing the same field', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { colId: 'yearFiltered', field: 'year', filter: true },
+                { colId: 'yearPlain', field: 'year' },
+            ]);
+
+            api.setFilterModel({ yearFiltered: { filterType: 'text', type: 'contains', filter: '20' } });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe(false);
+            expect(api.getColumn('yearPlain')!.getColDef().cellDataType).toBe('number');
+
+            // a rebuild keeps both decisions
+            api.setGridOption('defaultColDef', { minWidth: 50 });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe(false);
+            expect(api.getColumn('yearPlain')!.getColDef().cellDataType).toBe('number');
+        });
+
+        test('a column filtered through an explicitly named filter is still typed, as typing keeps that filter', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', filter: 'agNumberColumnFilter' },
+            ]);
+
+            const numberModel = { filterType: 'number', type: 'greaterThan', filter: 1990 };
+            api.setFilterModel({ year: numberModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe('number');
+            expect(api.getFilterModel()).toEqual({ year: numberModel });
+        });
     });
 
     test('a grand total record extracted from the response is not inferred from', async () => {

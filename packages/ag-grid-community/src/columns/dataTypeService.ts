@@ -124,6 +124,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
     // `null` records a field the rows held no value for
     private readonly inferredValueByField: Map<string, any> = new Map();
+    // columns left untyped because they were filtered through their untyped filter before they resolved
+    private readonly colIdsKeptUntyped: Set<string> = new Set();
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
 
@@ -350,7 +352,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private inferCellDataType(field: string | undefined, colId: string): string | undefined {
-        if (!field) {
+        if (!field || this.colIdsKeptUntyped.has(colId)) {
             return undefined;
         }
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
@@ -445,7 +447,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const columnTypeOverridesExist = this.columnTypeOverridesExistPendingInference;
         let hasResolved = false;
         if (canInferFrom && hasColumnsPending) {
-            this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
+            this.processColumnsPendingInference(rowData, columnTypeOverridesExist, !wasPendingFirstRows);
             this.columnStateUpdatesPendingInference = Object.create(null);
             hasResolved = true;
         }
@@ -461,26 +463,34 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
-    private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
+    /**
+     * `isAfterFirstRows` marks columns resolving after the grid already had rows — the Server-Side Row
+     * Model's leaf columns while every group was collapsed — whose untyped filter could be in use.
+     */
+    private processColumnsPendingInference(
+        rowData: any[],
+        columnTypeOverridesExist: boolean,
+        isAfterFirstRows: boolean
+    ): void {
         this.initialData = rowData;
         // one update, so a column redefined here is told once every inferred column holds its new definition
         const colModel = this.colModel;
         colModel.beginColUpdate();
         try {
-            this.applyInferredColDefs(columnTypeOverridesExist);
+            this.applyInferredColDefs(columnTypeOverridesExist, isAfterFirstRows);
         } finally {
             colModel.endColUpdate();
         }
         this.initialData = null;
     }
 
-    private applyInferredColDefs(columnTypeOverridesExist: boolean): void {
+    private applyInferredColDefs(columnTypeOverridesExist: boolean, isAfterFirstRows: boolean): void {
         const beans = this.beans;
         const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
-            if (this.keepColumnWithActiveFilter(colId)) {
+            if (isAfterFirstRows && this.keepColumnWithActiveFilter(colId)) {
                 continue;
             }
             const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
@@ -511,19 +521,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     /**
-     * A column still parked once the grid has rows — the Server-Side Row Model's leaf columns while every
-     * group is collapsed — can already be filtered through its untyped filter. Typing it now could swap
-     * that filter for another, discarding the active model, so it keeps the definition it is filtered by.
+     * A column still parked once the grid has rows can already be filtered through its untyped filter.
+     * With `filter: true` the filter follows the data type, so typing the column could swap that filter
+     * for another and discard the active model: the column keeps the definition it is filtered by.
      */
     private keepColumnWithActiveFilter(colId: string): boolean {
         const column = this.colModel.colsById[colId];
-        if (!column || !this.beans.colFilter?.isFilterActive(column)) {
+        if (!column || column.getColDef().filter !== true || !this.beans.colFilter?.isFilterActive(column)) {
             return false;
         }
-        const field = column.getColDef().field;
-        if (field) {
-            this.inferredValueByField.set(field, null);
-        }
+        this.colIdsKeptUntyped.add(colId);
         return true;
     }
 
@@ -869,6 +876,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = Object.create(null);
         this.inferredValueByField.clear();
+        this.colIdsKeptUntyped.clear();
         super.destroy();
     }
 }
