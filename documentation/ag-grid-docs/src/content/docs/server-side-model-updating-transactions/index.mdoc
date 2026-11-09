@@ -19,10 +19,6 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 When the server-side store has a known last row index, remove transactions only delete rows that are currently in cache. If a delete is repeated or targets a row outside the loaded range, the grid ignores it and keeps the current store size. To explicitly set the new store size, provide `rowCount` on the transaction.
 {% /note %}
 
-{% note %}
-Rows to add that the grid cannot place are skipped: when no `addIndex` is provided while the store's row count is unknown, when `addIndex` is past the end of the store, when a row with the same ID is already loaded, or when an earlier row in `add` shares its ID with a later one. These rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`.
-{% /note %}
-
 These operations are shown in the snippet below:
 
 ```{% frameworkTransform=true %}
@@ -47,6 +43,17 @@ The following example demonstrates add / update and remove operations via the Se
 - **Removed Selected** - removes the selected row.
 
 {% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
+
+### Rows That Cannot Be Added
+
+The grid skips a row to add when it cannot work out where the row belongs, or when the row would duplicate one already loaded:
+
+- No `addIndex` is provided while the store's row count is unknown.
+- `addIndex` is past the end of the store.
+- A row with the same ID is already loaded.
+- A later row in `add` has the same ID. Only the last of these rows is added.
+
+Skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`. Applying the same transaction again skips them again. If a skipped row exists on the server, it is shown once the block containing it is loaded, for example after a [refresh](./server-side-model-updating-refresh/). To show it straight away, apply it again with a valid `addIndex`, or with `update` if a row with that ID is already loaded.
 
 ## Row Grouping
 
