@@ -119,10 +119,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
     // captured when inference is first deferred, as the definitions can change before it resolves
     private columnTypeOverridesExistPendingInference: boolean = false;
-    // set once any rows have arrived. `isPendingInference` holds back work that needs the types to be
-    // settled — filter model updates queue on it — so it covers only the Client-Side Row Model's wait
-    // for its first rows, not a column still parked because those rows were not ones to infer from
-    private hasReceivedRows: boolean = false;
     // outside the Client-Side Row Model the rows inferred from are not kept, so the value each field was
     // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
     // `null` records a field the rows held no value for
@@ -412,7 +408,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private initWaitForRowData(colId: string): void {
         this.columnStateUpdatesPendingInference[colId] = new Set();
-        if (this.isPendingInference || this.hasReceivedRows) {
+        if (this.isPendingInference) {
             return;
         }
         this.columnTypeOverridesExistPendingInference = this.isColumnTypeOverrideInDataTypeDefinitions;
@@ -449,7 +445,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return;
         }
         this.isPendingInference = false;
-        this.hasReceivedRows = true;
 
         const { colAutosize, eventSvc } = this.beans;
         const columnTypeOverridesExist = this.columnTypeOverridesExistPendingInference;

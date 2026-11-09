@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, IViewportDatasourceParams } from 'ag-grid-community';
 import {
+    ClientSideRowModelModule,
     GRAND_TOTAL_ROW_ID,
     InfiniteRowModelModule,
     NumberFilterModule,
@@ -20,6 +21,7 @@ import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } f
 describe('cellDataType inference under non-client-side row models', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            ClientSideRowModelModule,
             InfiniteRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,
@@ -525,6 +527,23 @@ describe('cellDataType inference under non-client-side row models', () => {
         await asyncSetTimeout(0);
 
         expect(inferredType(api, 'year')).toBe('number');
+    });
+
+    test('with the Client-Side Row Model, a column added once the rows are cleared holds its filter model back until rows return', async () => {
+        // created without rows, so the first inference is deferred until rows arrive
+        const api = gridsManager.createGrid('grid', { columnDefs: [{ field: 'name' }] });
+        api.setGridOption('rowData', [{ name: 'Michael' }]);
+        expect(inferredType(api, 'name')).toBe('text');
+        api.setGridOption('rowData', []);
+        api.setGridOption('columnDefs', [{ field: 'name' }, { field: 'year', filter: true }]);
+
+        const numberModel = { filterType: 'number', type: 'greaterThan', filter: 1990 };
+        api.setFilterModel({ year: numberModel });
+        api.setGridOption('rowData', [{ name: 'Michael', year: 2000 }]);
+        await asyncSetTimeout(0);
+
+        expect(inferredType(api, 'year')).toBe('number');
+        expect(api.getFilterModel()).toEqual({ year: numberModel });
     });
 
     test('re-binding the datasource does not re-infer a column that has already resolved', async () => {
