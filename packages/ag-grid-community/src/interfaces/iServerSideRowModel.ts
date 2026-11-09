@@ -70,4 +70,13 @@ export interface LoadSuccessParams<TData = any> {
      * Only the fields you want to display need to be provided; the grid assigns the row ID automatically.
      */
     grandTotalData?: Partial<TData> | null;
+    /**
+     * The version of the data this block was read from, such as a snapshot ID or a cursor.
+     * Use it to page through a snapshot: a dataset that does not change underneath the reader.
+     * The first version returned for a level is pinned and passed back in `request.dataVersion` on every later
+     * `getRows` request for that level, until the level is refreshed or reset.
+     * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
+     * For data that changes continuously, set `serverSideDataVersionMode` to `'stream'` and send each change as a transaction with a `version`, so the grid can reconcile them.
+     */
+    dataVersion?: string | number;
 }
