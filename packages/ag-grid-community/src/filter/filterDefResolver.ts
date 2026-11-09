@@ -7,7 +7,11 @@ import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc 
 import { _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { FilterValueGetter, IFilterDef } from '../interfaces/iFilter';
 import { isColumnFilterComp } from '../interfaces/iFilter';
-import { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filterDataTypeUtils';
+import {
+    _getDefaultSimpleFilter,
+    _getFilterParamsForDataType,
+    _hasFilterParamsForDataType,
+} from './filterDataTypeUtils';
 
 /** A column, Multi Filter or Selectable Filter definition, each of which can name its own filter value getter. */
 export type FilterDefWithGetter = IFilterDef & { filterValueGetter?: FilterValueGetter };
@@ -183,6 +187,34 @@ export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFil
         return defaultFilter;
     }
     return typeof named === 'string' ? named : undefined;
+}
+
+/**
+ * Whether changing the base data type of `column` from `from` to `to` changes the filter `filterDef` builds on it:
+ * a different filter, or params of either data type's, which can invalidate the filter's model. A Selectable Filter
+ * is judged by its active choice, a Multi Filter by its children.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isFilterChangedByDataType(
+    beans: BeanCollection,
+    column: AgColumn,
+    filterDef: IFilterDef,
+    from: BaseCellDataType | undefined,
+    to: BaseCellDataType | undefined
+): boolean {
+    if (from === to) {
+        return false;
+    }
+    const { filter, filterParams } = beans.selectableFilter?.getFilterDef(column, filterDef) ?? filterDef;
+    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
+    if (key !== _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, to))) {
+        return true;
+    }
+    if (key === 'agMultiColumnFilter') {
+        return !!beans.multiFilter?.areChildFiltersChangedByDataType(filterParams, from, to);
+    }
+    // a filter of the author's own takes no params from the data type
+    return key !== undefined && (_hasFilterParamsForDataType(key, from) || _hasFilterParamsForDataType(key, to));
 }
 
 export function _setColDefPropsForDataType(

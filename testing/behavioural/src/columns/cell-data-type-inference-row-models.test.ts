@@ -1,7 +1,7 @@
 import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import type { ColDef, GridApi, IViewportDatasourceParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -243,10 +243,11 @@ describe('cellDataType inference under non-client-side row models', () => {
          * A grouped datasource: the root block holds group rows, which carry only the group key, and
          * expanding a group serves the leaf rows under it.
          */
-        const createGroupedGrid = async (columnDefs?: ColDef[]) => {
+        const createGroupedGrid = async (columnDefs?: ColDef[], gridOptions?: GridOptions) => {
             const rootBlockServed = batchServed();
             const leafBlockServed = batchServed();
             const api = gridsManager.createGrid('grid', {
+                ...gridOptions,
                 columnDefs: columnDefs ?? [
                     { field: 'country', rowGroup: true, hide: true },
                     { field: 'year' },
@@ -377,6 +378,69 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             expandFirstGroup(api);
             await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: textModel });
+        });
+
+        test('a filtered column whose filter typing leaves unchanged is typed, keeping its model', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { colId: 'countryName', field: 'country', filter: true },
+            ]);
+
+            // a text column keeps the Text Filter it offered untyped, with the same options
+            const textModel = { filterType: 'text', type: 'contains', filter: 'U' };
+            api.setFilterModel({ countryName: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'countryName')).toBe('text');
+            expect(api.getFilterModel()).toEqual({ countryName: textModel });
+        });
+
+        test('a filtered column whose filter options typing would change is kept untyped', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'done', filter: 'agTextColumnFilter' },
+            ]);
+
+            // a boolean column keeps the Text Filter, but offers only true and false, which drops a "contains" model
+            const textModel = { filterType: 'text', type: 'contains', filter: 'tr' };
+            api.setFilterModel({ done: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'done')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ done: textModel });
+        });
+
+        test('`filter: true` from a column type is protected through a rebuild of the column definitions', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', type: 'filtered' },
+                ],
+                { columnTypes: { filtered: { filter: true } } }
+            );
+
+            const textModel = { filterType: 'text', type: 'contains', filter: '20' };
+            api.setFilterModel({ year: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+            expect(inferredType(api, 'year')).toBe(false);
+
+            api.setGridOption('defaultColDef', { minWidth: 50 });
             await asyncSetTimeout(0);
 
             expect(inferredType(api, 'year')).toBe(false);

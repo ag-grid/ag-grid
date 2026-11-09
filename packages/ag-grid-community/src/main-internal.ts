@@ -150,6 +150,7 @@ export { FilterComp } from './filter/filterComp';
 export {
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
+    _hasFilterParamsForDataType,
     _isGridSuppliedFilterOptions,
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';

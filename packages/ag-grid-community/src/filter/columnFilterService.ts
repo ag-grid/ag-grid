@@ -12,7 +12,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
-import type { CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
+import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -64,7 +64,7 @@ import {
 } from './columnFilterUtils';
 import type { FilterComp } from './filterComp';
 import type { ResolvedFilter } from './filterDefResolver';
-import { _resolveFilter, _setColDefPropsForDataType } from './filterDefResolver';
+import { _isFilterChangedByDataType, _resolveFilter, _setColDefPropsForDataType } from './filterDefResolver';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
@@ -1805,6 +1805,16 @@ export class ColumnFilterService
         const column = this.beans.colModel.getNonPivotCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
+    }
+
+    /** Whether giving `column` the base data type `to` would change the filter `filterDef` builds on it. */
+    public isFilterChangedByDataType(
+        column: AgColumn,
+        filterDef: IFilterDef,
+        to: BaseCellDataType | undefined
+    ): boolean {
+        const beans = this.beans;
+        return _isFilterChangedByDataType(beans, column, filterDef, beans.dataTypeSvc?.getBaseDataType(column), to);
     }
 
     public setColDefPropsForDataType(

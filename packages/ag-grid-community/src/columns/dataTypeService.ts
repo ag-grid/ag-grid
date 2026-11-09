@@ -14,6 +14,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
+    ColTypeDef,
     SuppressKeyboardEventParams,
     ValueFormatterFunc,
     ValueFormatterParams,
@@ -32,6 +33,8 @@ import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IFilterDef } from '../interfaces/iFilter';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _getValueUsingDotPath, _isProtoField } from '../utils/value';
 import type { LogService } from '../validation/logService';
 import { _addColumnDefaultAndTypes } from './colDefUtils';
@@ -79,23 +82,6 @@ export const DATA_TYPE_DERIVED_COL_DEF_PROPERTIES = [
     'valueFormatter',
     'valueParser',
 ] as const satisfies readonly (keyof ColDef)[];
-
-type FilterDef = Pick<ColDef, 'filter' | 'filterParams'>;
-
-/**
- * Whether the filter a definition builds is chosen by the column's data type, so typing the column could swap it:
- * `true` and `{ component: true }` resolve to the data type's default filter, and a Multi Filter with no filters
- * of its own (an empty list included) derives its first one from it.
- */
-function filterFollowsDataType({ filter, filterParams }: FilterDef): boolean {
-    const component = typeof filter === 'object' && filter != null ? filter.component : filter;
-    if (component === true) {
-        return true;
-    }
-    return (
-        component === 'agMultiColumnFilter' && (typeof filterParams === 'function' || !filterParams?.filters?.length)
-    );
-}
 
 /** The column state keys set on each column parked awaiting inference, which inference then keeps. */
 type PendingColumnStateUpdates = { [colId: string]: Set<keyof ColumnStateParams> };
@@ -305,11 +291,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef)
-                ? // the user's own definition is merged in later, so its filter is read from it directly
-                  this.inferCellDataType(field, colId, {
-                      filter: userColDef.filter ?? colDef.filter,
-                      filterParams: userColDef.filterParams ?? colDef.filterParams,
-                  })
+                ? this.inferCellDataType(field, colId, this.getFilterDef(colDef, userColDef))
                 : false;
         }
 
@@ -355,29 +337,51 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
-        const { gos } = this;
         const propsToCheckForInference = { cellRenderer: true, valueGetter: true, valueParser: true, refData: true };
         if (doColDefPropsPreventInference(userColDef, propsToCheckForInference)) {
             return false;
         }
-        const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
-        if (columnTypes) {
-            const columnTypeDefs = gos.get('columnTypes') ?? {};
-            const hasPropsPreventingInference = convertColumnTypes(columnTypes).some((columnType) => {
-                const columnTypeDef = columnTypeDefs[columnType.trim()];
-                return columnTypeDef && doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
-            });
-            if (hasPropsPreventingInference) {
-                return false;
-            }
+        const hasPropsPreventingInference = this.getColumnTypeDefs(colDef, userColDef).some((columnTypeDef) =>
+            doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference)
+        );
+        if (hasPropsPreventingInference) {
+            return false;
         }
         return !doColDefPropsPreventInference(colDef, propsToCheckForInference);
     }
 
-    private inferCellDataType(field: string | undefined, colId: string, filterDef?: FilterDef): string | undefined {
-        if (!field || this.isKeptUntyped(field, colId, filterDef)) {
+    private getColumnTypeDefs(colDef: ColDef, userColDef: ColDef): ColTypeDef[] {
+        const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
+        if (!columnTypes) {
+            return [];
+        }
+        const columnTypeDefs = this.gos.get('columnTypes') ?? {};
+        return convertColumnTypes(columnTypes)
+            .map((columnType) => columnTypeDefs[columnType.trim()])
+            .filter((columnTypeDef): columnTypeDef is ColTypeDef => !!columnTypeDef);
+    }
+
+    /**
+     * The filter the column is built with, merged as its definition is: the default column's, then its column
+     * types', then its own. Read ahead of that merge, so that inference can tell whether typing changes it.
+     */
+    private getFilterDef(colDef: ColDef, userColDef: ColDef): IFilterDef {
+        const filterDef: IFilterDef = {};
+        for (const def of [colDef, ...this.getColumnTypeDefs(colDef, userColDef), userColDef]) {
+            _mergeDeep(filterDef, { filter: def.filter, filterParams: def.filterParams }, false, true);
+        }
+        return filterDef;
+    }
+
+    private inferCellDataType(field: string | undefined, colId: string, filterDef: IFilterDef): string | undefined {
+        if (!field) {
             return undefined;
         }
+        const cellDataType = this.sampleCellDataType(field, colId);
+        return this.isKeptUntyped(field, colId, filterDef, cellDataType) ? undefined : cellDataType;
+    }
+
+    private sampleCellDataType(field: string, colId: string): string | undefined {
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
         if (_isProtoField(field, fieldPath)) {
             return undefined;
@@ -562,44 +566,53 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     /**
-     * A column still parked once the grid has rows can already be filtered through its untyped filter.
-     * With `filter: true` the filter follows the data type, so typing the column could swap that filter
-     * for another and discard the active model: the column keeps the definition it is filtered by.
+     * A column still parked once the grid has rows can already be filtered through its untyped filter. Where
+     * typing it would change that filter, swapping it or its options and so discarding the active model, the
+     * column keeps the definition it is filtered by. Its rows are sampled all the same, so that releasing it
+     * later can type it from them.
      */
     private keepColumnWithActiveFilter(colId: string): boolean {
         const column = this.colModel.colsById[colId];
-        if (!column || !filterFollowsDataType(column.getColDef()) || !this.beans.colFilter?.isFilterActive(column)) {
+        const field = column?.getColDef().field;
+        if (!field) {
             return false;
         }
-        const field = column.getColDef().field;
-        if (field) {
-            // sampled even though the type is not applied, so that releasing the column later can type it
-            // from the rows already received
-            this.inferCellDataType(field, colId);
-            this.fieldsKeptUntypedByColId.set(colId, field);
+        const cellDataType = this.sampleCellDataType(field, colId);
+        if (!this.isActiveFilterChanged(column, column.getColDef(), cellDataType)) {
+            return false;
         }
+        this.fieldsKeptUntypedByColId.set(colId, field);
         return true;
     }
 
-    private isKeptUntyped(field: string, colId: string, filterDef: FilterDef | undefined): boolean {
+    private isKeptUntyped(
+        field: string,
+        colId: string,
+        filterDef: IFilterDef,
+        cellDataType: string | undefined
+    ): boolean {
         const keptField = this.fieldsKeptUntypedByColId.get(colId);
         if (keptField == null) {
             return false;
         }
-        // a column removed and given back, one that no longer filters, or one whose filter no longer follows
-        // the data type has nothing left to protect
+        // a column removed and given back, one that no longer filters, or one whose filter typing no longer
+        // changes has nothing left to protect
         const column = this.colModel.colsById[colId];
-        if (
-            keptField === field &&
-            filterDef &&
-            filterFollowsDataType(filterDef) &&
-            column &&
-            this.beans.colFilter?.isFilterActive(column)
-        ) {
+        if (keptField === field && column && this.isActiveFilterChanged(column, filterDef, cellDataType)) {
             return true;
         }
         this.fieldsKeptUntypedByColId.delete(colId);
         return false;
+    }
+
+    /** Whether typing `column` as `cellDataType` would change its active filter, which `filterDef` builds. */
+    private isActiveFilterChanged(column: AgColumn, filterDef: IFilterDef, cellDataType: string | undefined): boolean {
+        const colFilter = this.beans.colFilter;
+        if (!cellDataType || !colFilter?.isFilterActive(column)) {
+            return false;
+        }
+        const baseDataType = this.dataTypeDefinitions[cellDataType]?.baseDataType;
+        return colFilter.isFilterChangedByDataType(column, filterDef, baseDataType);
     }
 
     private resetColDefAndGetColumnState(

@@ -153,10 +153,13 @@ export function _isGridSuppliedFilterOptions(filterOptions: unknown): boolean {
     return true;
 }
 
+/** A data type that leaves the filter's params as the column gives them. */
+const noFilterParams = (): undefined => undefined;
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
-    number: () => undefined,
-    bigint: () => undefined,
+    number: noFilterParams,
+    bigint: noFilterParams,
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
@@ -183,8 +186,8 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     }),
     dateTime: (args) => filterParamsForEachDataType.date(args),
     dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
-    object: () => undefined,
-    text: () => undefined,
+    object: noFilterParams,
+    text: noFilterParams,
 };
 
 /** The path getter is handed the raw cell value, so anything but a `Date` has no parts. */
@@ -247,7 +250,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     object: ({ formatValue, t }) => ({
         valueFormatter: (params: ValueFormatterParams) => formatValue(params) || t('blanks', '(Blanks)'),
     }),
-    text: () => undefined,
+    text: noFilterParams,
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -281,6 +284,17 @@ export function _getFilterParamsForDataType(
               }
             : newFilterParams;
     return { filterParams, filterValueGetter };
+}
+
+/**
+ * Whether typing a column as `baseDataType` gives `filter` params of the data type's, which can change what the
+ * filter offers (a boolean column's options) and so invalidate its model. An untyped column is given none.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _hasFilterParamsForDataType(filter: string, baseDataType: BaseCellDataType | undefined): boolean {
+    const filterParamsMap =
+        filter === 'agSetColumnFilter' ? setFilterParamsForEachDataType : filterParamsForEachDataType;
+    return !!baseDataType && filterParamsMap[baseDataType] !== noFilterParams;
 }
 
 const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
