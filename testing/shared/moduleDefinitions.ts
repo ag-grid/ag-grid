@@ -63,6 +63,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     CalculatedColumnsModule: true,
     CellSelectionModule: true,
     ClipboardModule: true,
+    ColumnHeaderEditModule: true,
     ColumnMenuModule: true,
     ColumnsToolPanelModule: true,
     ContextMenuModule: true,
