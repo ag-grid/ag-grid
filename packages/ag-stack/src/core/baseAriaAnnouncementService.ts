@@ -27,7 +27,7 @@ export class BaseAriaAnnouncementService<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IAriaAnnouncementService
 {
     beanName = 'ariaAnnounce' as const;

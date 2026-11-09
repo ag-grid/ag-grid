@@ -179,14 +179,7 @@ export class AgMenuItemComponent<
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
-> extends AgAbstractBean<
-    TBeanCollection,
-    TProperties,
-    TGlobalEvents,
-    TCommon,
-    TPropertiesService,
-    AgMenuItemComponentEvent
-> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService, AgMenuItemComponentEvent> {
     private eGui: HTMLElement;
     private params: AgMenuItemDef<TMenuActionParams, TCommon>;
     private isAnotherSubMenuOpen: () => boolean;

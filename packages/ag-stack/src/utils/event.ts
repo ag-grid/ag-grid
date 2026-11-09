@@ -1,8 +1,7 @@
 import type { AgBean } from '../interfaces/agBean';
 import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
-import type { BaseEvents } from '../interfaces/baseEvents';
-import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgEventHandlers } from '../interfaces/iContext';
+import type { ListenerTarget } from '../interfaces/iEventEmitter';
 import { _getBodyHeight, _getBodyWidth, _getDocument } from './document';
 import { _getElementRectWithOffset } from './dom';
 
@@ -35,18 +34,6 @@ export const _isEventSupported = (() => {
 
     return eventChecker;
 })();
-
-/**
- * Listens to DOM events on `element` until `bean` is destroyed, typing each handler's event from the DOM.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
-    bean: Pick<AgBean<unknown, BaseProperties, BaseEvents, string>, 'addManagedElementListeners'>,
-    element: Element | Document | ShadowRoot,
-    handlers: AgEventHandlers<TEvent, HTMLElementEventMap[TEvent]>
-): (() => null)[] {
-    return bean.addManagedElementListeners<TEvent>(element, handlers);
-}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {
@@ -91,7 +78,33 @@ export function _getEventPath(event: Event | { target: EventTarget }): EventTarg
     return _createEventPath(eventNoType);
 }
 
-export function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
+/**
+ * Listens to DOM events on `element` until `bean` is destroyed, typing each handler's event from the DOM.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
+    bean: Pick<AgBean<unknown, unknown, unknown, string>, 'addManagedListeners'>,
+    element: Element | Document | ShadowRoot,
+    handlers: AgEventHandlers<TEvent, HTMLElementEventMap[TEvent]>
+): (() => null)[] {
+    const target = element instanceof HTMLElement ? new PassiveElementTarget(element) : element;
+    return bean.addManagedListeners<TEvent>(target, handlers);
+}
+
+/** Adds an element's listeners with the passive state its event type needs. */
+class PassiveElementTarget implements ListenerTarget {
+    constructor(private readonly element: HTMLElement) {}
+
+    public addEventListener(event: string, listener: (event?: any) => void): void {
+        _addSafePassiveEventListener(this.element, event, listener);
+    }
+
+    public removeEventListener(event: string, listener: (event?: any) => void): void {
+        this.element.removeEventListener(event, listener);
+    }
+}
+
+function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
     const passive = getPassiveStateForEvent(event);
 
     let options: AddEventListenerOptions | undefined;
@@ -160,7 +173,7 @@ export const _getFirstActiveTouch = (touch: Touch, touchList: TouchList): Touch 
 // getting executed on many grids at the same time.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isEventFromThisInstance(beans: UtilBeanCollection, event: UIEvent): boolean {
-    return beans.gos.isElementInThisInstance(event.target as HTMLElement);
+    return beans.environment.isElementInThisInstance(event.target as HTMLElement);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

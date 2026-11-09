@@ -2,7 +2,7 @@ import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { AgSingletonBean } from '../interfaces/agCoreBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { IContext } from '../interfaces/iContext';
-import type { IDomFreePropertiesService } from '../interfaces/iDomFreeProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
@@ -15,7 +15,7 @@ export interface AgContextParams<
     TProperties,
     TGlobalEvents,
     TCommon,
-    TPropertiesService extends IDomFreePropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties>,
 > {
     providedBeanInstances: Partial<TBeanCollection>;
     beanClasses: AgSingletonBeanClass<TBeanCollection>[];
@@ -45,7 +45,7 @@ export class AgContext<
     TProperties,
     TGlobalEvents,
     TCommon,
-    TPropertiesService extends IDomFreePropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties>,
 > implements IContext<TBeanCollection> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];

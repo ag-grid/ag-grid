@@ -47,7 +47,7 @@ export class AgTabGuardCtrl<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private readonly comp: ITabGuard;
     private readonly eTopGuard: HTMLElement;
     private readonly eBottomGuard: HTMLElement;

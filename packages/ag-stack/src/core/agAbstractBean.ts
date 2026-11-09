@@ -1,40 +1,36 @@
 import { LocalEventService } from '../events/localEventService';
 import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { AgBean } from '../interfaces/agBean';
-import type { AgBeanCollection } from '../interfaces/agBeanCollection';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { AgEvent } from '../interfaces/agEvent';
-import type { BaseEvents } from '../interfaces/baseEvents';
-import type { BaseProperties } from '../interfaces/baseProperties';
-import type { IContext } from '../interfaces/iContext';
+import type { AgEventHandlers, IContext } from '../interfaces/iContext';
+import type { AgEventService } from '../interfaces/iEvent';
+import type { IAgEventEmitter, IEventEmitter, IEventListener, ListenerTarget } from '../interfaces/iEventEmitter';
+import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 import type {
     AgPropertyChangedEvent,
     AgPropertyChangedListener,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
-} from '../interfaces/iDomFreeProperties';
-import type { AgEventService } from '../interfaces/iEvent';
-import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
-import type { LocaleTextFunc } from '../interfaces/iLocaleService';
-import type { IPropertiesService } from '../interfaces/iProperties';
+    IPropertiesService,
+} from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
-import { _requestAnimationFrame } from '../utils/dom';
-import { _addSafePassiveEventListener } from '../utils/event';
 import { _getLocaleTextFunc } from '../utils/locale';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
-type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event: TEvent) => void };
-
 const DESTROYED_EVENT = { type: 'destroyed' as AgBeanStubEvent };
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * The base class for every bean. Needs no DOM, so it also runs in workers and on the server.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export abstract class AgAbstractBean<
-    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
-    TCommon,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TProperties,
+    TGlobalEvents,
     TPropertiesService extends IPropertiesService<TProperties>,
     TLocalEventType extends string = AgBeanStubEvent,
 >
@@ -48,14 +44,13 @@ export abstract class AgAbstractBean<
 
     protected beans: TBeanCollection = null!;
     protected gos: TPropertiesService = null!;
-    protected eventSvc: AgEventService<TGlobalEvents, TCommon> = null!;
+    protected eventSvc: TBeanCollection['eventSvc'] = null!;
 
     /** Indicates whether the bean has been destroyed */
     public destroyed = false;
     protected localEventService: LocalEventService<AgEventOrDestroyed<TLocalEventType>> | null = null;
 
     // Cold — touched only on bean creation / destruction.
-    private stubContext: IContext<TBeanCollection> = null!; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] | null = null;
 
     private propertyListenerId = 0;
@@ -69,23 +64,7 @@ export abstract class AgAbstractBean<
         this.beans = beans;
         this.gos = beans.gos;
         this.eventSvc = beans.eventSvc;
-        this.stubContext = beans.context;
     }
-
-    // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
-    // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
-    // points to a bean or component that was not properly disposed of.
-    // constructor() {
-    //     setTimeout(()=> {
-    //         if (this.isAlive()) {
-    //             let prototype: any = Object.getPrototypeOf(this);
-    //             const constructor: any = prototype.constructor;
-    //             const constructorString = constructor.toString();
-    //             const beanName = constructorString.substring(9, constructorString.indexOf("("));
-    //             console.log('is alive ' + beanName);
-    //         }
-    //     }, 5000);
-    // }
 
     public destroy(): void {
         const destroyFunctions = this.destroyFunctions;
@@ -129,29 +108,20 @@ export abstract class AgAbstractBean<
         this.localEventService?.dispatchEvent(event);
     }
 
-    public addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
-        object: Element | Document | ShadowRoot,
-        handlers: EventHandlers<TEvent, HTMLElementEventMap[TEvent]>
-    ) {
-        return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
-    }
-    public addManagedEventListeners(
-        handlers:
-            | { [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void }
-            | { [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void }
-    ) {
+    public addManagedEventListeners(handlers: { [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void }) {
         return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
+
     public addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TCommon>,
-        handlers: EventHandlers<TEvent>
+        object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents>,
+        handlers: AgEventHandlers<TEvent>
     ) {
         return this._setupListeners<TEvent>(object, handlers);
     }
 
     private _setupListeners<TEvent extends string>(
-        object: HTMLElement | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TCommon>,
-        handlers: EventHandlers<TEvent>
+        object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents>,
+        handlers: AgEventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
         const keys = Object.keys(handlers);
@@ -165,8 +135,8 @@ export abstract class AgAbstractBean<
         return destroyFuncs;
     }
 
-    private _setupListener<const T extends string>(
-        object: Window | HTMLElement | IEventEmitter<T> | IAgEventEmitter<T> | AgEventService<TGlobalEvents, TCommon>,
+    protected _setupListener<const T extends string>(
+        object: ListenerTarget | IEventEmitter<T> | IAgEventEmitter<T> | AgEventService<TGlobalEvents>,
         event: T,
         listener: (event?: any) => void
     ): () => null {
@@ -183,13 +153,11 @@ export abstract class AgAbstractBean<
                 return null;
             };
         } else {
-            const objIsEventService = isEventService<TGlobalEvents, TCommon>(object);
-            if (object instanceof HTMLElement) {
-                _addSafePassiveEventListener(object, event, listener);
-            } else if (objIsEventService) {
+            const objIsEventService = isEventService<TGlobalEvents>(object);
+            if (objIsEventService) {
                 object.addListener(event as any, listener);
             } else {
-                object.addEventListener(event, listener);
+                (object as ListenerTarget).addEventListener(event, listener);
             }
 
             destroyFunc = objIsEventService
@@ -198,7 +166,7 @@ export abstract class AgAbstractBean<
                       return null;
                   }
                 : () => {
-                      (object as any).removeEventListener(event, listener);
+                      (object as ListenerTarget).removeEventListener(event, listener);
                       return null;
                   };
         }
@@ -295,24 +263,6 @@ export abstract class AgAbstractBean<
         return !this.destroyed;
     }
 
-    /** Returns a function that runs `callback` at most once per animation frame. `_requestAnimationFrame`
-     *  has no cancellation, so a destroyed bean instead leaves the flag set and queues no further frames. */
-    protected throttleToFrame(callback: () => void): () => void {
-        let queued = false;
-        const run = () => {
-            if (this.isAlive()) {
-                queued = false;
-                callback();
-            }
-        };
-        return () => {
-            if (!queued) {
-                queued = true;
-                _requestAnimationFrame(this.beans, run);
-            }
-        };
-    }
-
     public getLocaleTextFunc(): LocaleTextFunc {
         return _getLocaleTextFunc(this.beans.localeSvc);
     }
@@ -328,7 +278,7 @@ export abstract class AgAbstractBean<
     }
 
     /** Register a destroy func and return an unregister callback that removes it if called before destroy. */
-    private registerDestroyFunc(destroyFunc: () => null): () => null {
+    protected registerDestroyFunc(destroyFunc: () => null): () => null {
         this.pushDestroyFunc(destroyFunc);
         return () => {
             destroyFunc();
@@ -369,7 +319,7 @@ export abstract class AgAbstractBean<
         context?: IContext<TBeanCollection> | null,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T {
-        return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
+        return (context ?? this.beans.context).createBean(bean, afterPreCreateCallback);
     }
 
     /**
@@ -380,7 +330,7 @@ export abstract class AgAbstractBean<
         bean: AgBaseBean<TBeanCollection> | null | undefined,
         context?: IContext<TBeanCollection>
     ): undefined {
-        return (context || this.stubContext).destroyBean(bean);
+        return (context ?? this.beans.context).destroyBean(bean);
     }
 
     /**
@@ -391,7 +341,7 @@ export abstract class AgAbstractBean<
         beans: (T | null | undefined)[],
         context?: IContext<TBeanCollection>
     ): T[] {
-        return (context || this.stubContext).destroyBeans(beans);
+        return (context ?? this.beans.context).destroyBeans(beans);
     }
 }
 
@@ -399,14 +349,10 @@ export abstract class AgAbstractBean<
 AgAbstractBean.prototype.__v_skip = true;
 
 // type guard for IAgEventEmitter
-function isAgEventEmitter<TEvent extends string>(
-    object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<any, any>
-): object is IAgEventEmitter<TEvent> {
+function isAgEventEmitter<TEvent extends string>(object: unknown): object is IAgEventEmitter<TEvent> {
     return (object as IAgEventEmitter<TEvent>).__addEventListener !== undefined;
 }
 
-function isEventService<TGlobalEvents extends BaseEvents, TCommon>(
-    object: any
-): object is AgEventService<TGlobalEvents, TCommon> {
-    return (object as AgEventService<TGlobalEvents, TCommon>).eventServiceType === 'global';
+function isEventService<TGlobalEvents>(object: unknown): object is AgEventService<TGlobalEvents> {
+    return (object as AgEventService<TGlobalEvents>).eventServiceType === 'global';
 }

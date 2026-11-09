@@ -30,7 +30,7 @@ export interface AgVirtualListDragParams<
         lastHoveredListItem: VirtualListDragItem<TChildComponent> | null
     ) => void;
     addListeners: (
-        parent: AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        parent: AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>,
         listItemDragStart: (event: TDragStartEvent) => void,
         listItemDragEnd: (event: TDragEndEvent) => void
     ) => void;

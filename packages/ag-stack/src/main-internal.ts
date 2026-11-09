@@ -45,8 +45,7 @@ export type { IAriaAnnouncementService } from './interfaces/iAriaAnnouncementSer
 export type { ClassImp, IContext } from './interfaces/iContext';
 export type { IDragService } from './interfaces/iDrag';
 export type { AgDraggingEvent, AgDragSource, AgDropTarget, IDragAndDropService } from './interfaces/iDragAndDrop';
-export type { AgEventService } from './interfaces/iEvent';
-export type { AgInternalEventService, ICommonSource, WithoutCommon } from './interfaces/iDomFreeEvent';
+export type { AgEventService, AgRawEvents, ICommonSource, WithoutCommon } from './interfaces/iEvent';
 export type { IAgEventEmitter } from './interfaces/iEventEmitter';
 export type { IconValue } from './interfaces/iIcon';
 export type { IIconService } from './interfaces/iIconService';
@@ -61,8 +60,8 @@ export type {
     AgPropertyKey,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
-} from './interfaces/iDomFreeProperties';
-export type { IPropertiesService } from './interfaces/iProperties';
+    IPropertiesService,
+} from './interfaces/iProperties';
 export type { ITooltipFeature, TooltipCtrl } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
@@ -229,13 +228,14 @@ export {
     _setFixedWidth,
     _setScrollLeft,
     _setVisible,
+    _throttleToFrame,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';
 export {
+    _addManagedElementListeners,
     _anchorElementToMouseMoveEvent,
     _areEventsNear,
-    _addManagedElementListeners,
     _getFirstActiveTouch,
     _isElementInEventPath,
     _isEventFromThisInstance,

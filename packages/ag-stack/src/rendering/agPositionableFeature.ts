@@ -82,14 +82,7 @@ export class AgPositionableFeature<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgAbstractBean<
-    TBeanCollection,
-    TProperties,
-    TGlobalEvents,
-    TCommon,
-    TPropertiesService,
-    PositionableFeatureEvent
-> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService, PositionableFeatureEvent> {
     protected popupSvc?: IPopupService<any>;
     private dragSvc?: IDragService;
 
