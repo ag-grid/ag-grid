@@ -58,3 +58,20 @@ export interface IPropertiesService<TProperties> {
 
     get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
 }
+
+/**
+ * Listening for a whole change set. Separate from {@link IPropertiesService} because not every store offers it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface IPropertiesChangedSource<TProperties> {
+    addPropertiesChangedListener(listener: AgPropertyChangedListener<TProperties>): void;
+
+    removePropertiesChangedListener(listener: AgPropertyChangedListener<TProperties>): void;
+}
+
+/**
+ * A properties store that also emits change sets.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export type IObservablePropertiesService<TProperties> = IPropertiesService<TProperties> &
+    IPropertiesChangedSource<TProperties>;

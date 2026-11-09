@@ -5,7 +5,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
-import { _debounce } from '../utils/function';
+import { _debounce } from '../utils/debounce';
 import { AgAbstractBean } from './agAbstractBean';
 
 /** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
