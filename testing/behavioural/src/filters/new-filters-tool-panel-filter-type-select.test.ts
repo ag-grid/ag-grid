@@ -41,19 +41,18 @@ describe('new filters tool panel filter type select', () => {
         gridsManager.reset();
     });
 
-    test('filter type combobox has an accessible name', async () => {
-        const api = createGrid();
+    test.each<{ name: string; gridOptions: GridOptions; expectedName: string }>([
+        { name: 'default', gridOptions: {}, expectedName: 'Filter Type' },
+        {
+            name: 'localised',
+            gridOptions: { localeText: { ariaLabelFilterCardType: 'Type de filtre' } },
+            expectedName: 'Type de filtre',
+        },
+    ])('filter type combobox has the $name accessible name', async ({ gridOptions, expectedName }) => {
+        const api = createGrid(gridOptions);
         const body = await getFilterCardBody(api);
 
-        const filterTypeSelect = await waitFor(() => getByRole(body, 'combobox', { name: 'Filter Type' }));
-        expect(filterTypeSelect.closest('.ag-filter-type-select')).not.toBeNull();
-    });
-
-    test('filter type combobox accessible name can be localised', async () => {
-        const api = createGrid({ localeText: { ariaLabelFilterCardType: 'Type de filtre' } });
-        const body = await getFilterCardBody(api);
-
-        const filterTypeSelect = await waitFor(() => getByRole(body, 'combobox', { name: 'Type de filtre' }));
+        const filterTypeSelect = await waitFor(() => getByRole(body, 'combobox', { name: expectedName }));
         expect(filterTypeSelect.closest('.ag-filter-type-select')).not.toBeNull();
     });
 });
