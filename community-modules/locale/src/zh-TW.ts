@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '構建器',
+    advancedFilterPlaceholder: '進階篩選',
     advancedFilterValidationMissingColumn: '缺少欄位',
     advancedFilterValidationMissingOption: '缺少選項',
     advancedFilterValidationMissingValue: '缺少值',
@@ -817,6 +818,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
+    ariaLabelCellEditor: '單元格編輯器',
     ariaValidationErrorPrefix: '單元格編輯器驗證',
     ariaFullRowValidationError: '整行驗證：${variable}',
     ariaFullRowEditValidationFailed: '無法完成行編輯。${variable}',
@@ -846,6 +848,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaLabelAddFilterField: '新增篩選欄位',
     ariaLabelFilterCardDelete: '刪除篩選器',
     ariaLabelFilterCardHasEdits: '有編輯',
+    ariaLabelFilterCardType: '篩選類型',
     ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)

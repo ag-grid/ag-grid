@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     advancedFilterCancel: 'Prekliči',
     advancedFilterClear: 'Počisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Manjka stolpec',
     advancedFilterValidationMissingOption: 'Manjka možnost',
     advancedFilterValidationMissingValue: 'Manjka vrednost',
@@ -839,6 +840,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelSelectField: 'Izberi polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Urejevalnik celic',
     ariaValidationErrorPrefix: 'Preverjanje veljavnosti urejevalnika celic',
     ariaFullRowValidationError: 'Preverjanje veljavnosti cele vrstice: ${variable}',
     ariaFullRowEditValidationFailed: 'Urejanja vrstice ni mogoče dokončati. ${variable}',
@@ -871,6 +873,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelAddFilterField: 'Dodaj polje filtra',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima spremembe',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ta celica ima opombo.',
 
     // Number Format (Status Bar, Pagination Panel)

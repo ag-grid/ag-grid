@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     advancedFilterCancel: '취소',
     advancedFilterClear: '지우기',
     advancedFilterBuilder: '생성기',
+    advancedFilterPlaceholder: '고급 필터',
     advancedFilterValidationMissingColumn: '열이 누락되었습니다',
     advancedFilterValidationMissingOption: '옵션이 누락되었습니다',
     advancedFilterValidationMissingValue: '값이 누락되었습니다',
@@ -818,6 +819,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelSelectField: '필드 선택',
 
     // Cell Editor
+    ariaLabelCellEditor: '셀 편집기',
     ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
     ariaFullRowValidationError: '전체 행 유효성 검사: ${variable}',
     ariaFullRowEditValidationFailed: '행 편집을 완료할 수 없습니다. ${variable}',
@@ -847,6 +849,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaLabelFilterCardType: '필터 유형',
     ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)

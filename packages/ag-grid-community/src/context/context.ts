@@ -1,10 +1,4 @@
-import type {
-    AgCoreBeanCollection,
-    AgSingletonBeanClass,
-    ClassImp,
-    IAriaAnnouncementService,
-    IContext,
-} from 'ag-stack';
+import type { AgBeanCollection, AgSingletonBeanClass, ClassImp, IAriaAnnouncementService, IContext } from 'ag-stack';
 
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -281,7 +275,7 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams, beans: BeanCollection) => TParams;
 
-interface CoreBeanCollection extends AgCoreBeanCollection<
+interface CoreBeanCollection extends AgBeanCollection<
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,

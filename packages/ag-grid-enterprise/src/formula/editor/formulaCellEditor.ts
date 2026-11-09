@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
@@ -30,7 +30,7 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
         this.eEditor = formulaInputField;
         formulaInputField.addCss('ag-cell-editor');
         this.appendChild(formulaInputField);
-        this.addManagedElementListeners(formulaInputField.getContentElement(), {
+        _addManagedElementListeners(this, formulaInputField.getContentElement(), {
             keydown: (event: KeyboardEvent) => this.onFormulaInputKeyDown(event, params.onKeyDown),
         });
 

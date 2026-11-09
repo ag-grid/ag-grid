@@ -1,11 +1,12 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import {
+    _addManagedElementListeners,
+    _createAgElement,
+    _exists,
+    _setAriaInvalid,
+    _setAriaLabel,
+    _setDisplayed,
 } from 'ag-stack';
-import { _createAgElement, _exists, _setAriaInvalid, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
@@ -26,7 +27,7 @@ export interface AgInputTextFieldParams<
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent | 'fieldValueCleared';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputTextField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -169,7 +170,7 @@ export class AgInputTextField<
             eClearButton.appendChild(clearIcon);
         }
         _setAriaLabel(eClearButton, this.getLocaleTextFunc()('ariaLabelInputClear', 'Clear'));
-        this.addManagedElementListeners(eClearButton, {
+        _addManagedElementListeners(this, eClearButton, {
             mousedown: (event: MouseEvent) => event.preventDefault(),
             click: () => this.clearInput(),
         });

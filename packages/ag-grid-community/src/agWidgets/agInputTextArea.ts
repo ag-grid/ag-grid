@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgInputFieldParams } from './agFieldParams';
@@ -12,7 +6,7 @@ import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputTextArea<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

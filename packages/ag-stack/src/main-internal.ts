@@ -1,9 +1,13 @@
 export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
-export { AgBeanStub } from './core/agBeanStub';
-export type { AgBeanStubEvent } from './core/agBeanStub';
-export { AgComponentStub } from './core/agComponentStub';
+export { AgAbstractBean } from './core/agAbstractBean';
+export { createBeanGraph } from './core/agBeanGraph';
+export { createBeanList } from './core/agBeanList';
+export type { AgBeanSource } from './core/agBeanList';
+export type { AgBeanGraph, AgBeansFor, AgBeanView, AgDeclaredDeps, AgGraphBean } from './core/agBeanGraph';
+export type { AgBeanStubEvent } from './core/agAbstractBean';
+export { AgAbstractComponent } from './core/agAbstractComponent';
 export { AgContext } from './core/agContext';
 export type { AgContextParams, AgSingletonBeanClass } from './core/agContext';
 export { BaseAriaAnnouncementService } from './core/baseAriaAnnouncementService';
@@ -32,7 +36,7 @@ export type {
     VisibleChangedEvent,
 } from './interfaces/agComponent';
 export type { AgCoreBean, AgSingletonBean } from './interfaces/agCoreBean';
-export type { AgCoreBeanCollection } from './interfaces/agCoreBeanCollection';
+export type { AgBeanCollection } from './interfaces/agBeanCollection';
 export type {
     AgFrameworkOverrides,
     AgListenerWrapper,
@@ -45,8 +49,7 @@ export type { IAriaAnnouncementService } from './interfaces/iAriaAnnouncementSer
 export type { ClassImp, IContext } from './interfaces/iContext';
 export type { IDragService } from './interfaces/iDrag';
 export type { AgDraggingEvent, AgDragSource, AgDropTarget, IDragAndDropService } from './interfaces/iDragAndDrop';
-export type { AgEventService } from './interfaces/iEvent';
-export type { AgInternalEventService, ICommonSource, WithoutCommon } from './interfaces/iDomFreeEvent';
+export type { AgEventService, AgRawEvents, ICommonSource, WithoutCommon } from './interfaces/iEvent';
 export type { IAgEventEmitter } from './interfaces/iEventEmitter';
 export type { IconValue } from './interfaces/iIcon';
 export type { IIconService } from './interfaces/iIconService';
@@ -61,8 +64,8 @@ export type {
     AgPropertyKey,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
-} from './interfaces/iDomFreeProperties';
-export type { IPropertiesService } from './interfaces/iProperties';
+    IPropertiesService,
+} from './interfaces/iProperties';
 export type { ITooltipFeature, TooltipCtrl } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
@@ -229,11 +232,13 @@ export {
     _setFixedWidth,
     _setScrollLeft,
     _setVisible,
+    _throttleToFrame,
     FORM_FIELD_SELECTOR,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';
 export {
+    _addManagedElementListeners,
     _anchorElementToMouseMoveEvent,
     _areEventsNear,
     _getFirstActiveTouch,
@@ -256,7 +261,8 @@ export {
     _registerKeyboardFocusEvents,
     _scrollHorizontallyToShow,
 } from './utils/focus';
-export { _batchCall, _debounce, _doOnce, _throttle } from './utils/function';
+export { _debounce } from './utils/debounce';
+export { _batchCall, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
     _defaultComparator,

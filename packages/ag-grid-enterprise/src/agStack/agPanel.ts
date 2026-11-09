@@ -1,6 +1,6 @@
 import type {
+    AgBeanCollection,
     AgComponent,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -9,9 +9,10 @@ import type {
     ResizableStructure,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     AgPositionableFeature,
     RefPlaceholder,
+    _addManagedElementListeners,
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
@@ -80,7 +81,7 @@ function getTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgPanel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -88,7 +89,7 @@ export class AgPanel<
     TComponentSelectorType extends string,
     TConfig extends AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams> =
         AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -169,7 +170,7 @@ export class AgPanel<
             _setDisplayed(this.eTitleBar, false);
         }
 
-        this.addManagedElementListeners(this.eTitleBar, {
+        _addManagedElementListeners(this, this.eTitleBar, {
             mousedown: (e: MouseEvent) => {
                 if (
                     eGui.contains(e.relatedTarget as HTMLElement) ||
@@ -244,7 +245,7 @@ export class AgPanel<
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({
+            const closeButtonComp = (this.closeButtonComp = new AgAbstractComponent({
                 tag: 'button',
                 cls: 'ag-button',
                 attrs: { type: 'button' },
@@ -258,7 +259,7 @@ export class AgPanel<
             eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
+            _addManagedElementListeners(closeButtonComp, eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.remove();

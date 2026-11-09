@@ -1,15 +1,16 @@
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
-import type { ICommonSource } from '../interfaces/iDomFreeEvent';
+import type { ICommonSource } from '../interfaces/iEvent';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
 import { _setAriaRole } from '../utils/aria';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _addManagedElementListeners } from '../utils/event';
 import { _findFocusableElements } from '../utils/focus';
 import { _exists } from '../utils/generic';
 
@@ -45,7 +46,7 @@ export interface BaseTooltipParams<TLocation extends string, TValue = any> {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseTooltipStateManager<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -53,7 +54,7 @@ export abstract class BaseTooltipStateManager<
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TTooltipCtrlParams,
     TLocation extends string,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private popupSvc?: IPopupService<any>;
 
     public wireBeans(beans: TBeanCollection): void {
@@ -441,12 +442,12 @@ export abstract class BaseTooltipStateManager<
         }
 
         if (this.interactionEnabled) {
-            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(eGui, {
+            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = _addManagedElementListeners(this, eGui, {
                 mouseenter: this.onTooltipMouseEnter.bind(this),
                 mouseleave: this.onTooltipMouseLeave.bind(this),
             });
 
-            [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+            [this.onDocumentKeyDownCallback] = _addManagedElementListeners(this, _getDocument(this.beans), {
                 keydown: (event) => {
                     if (event) {
                         this.onDocumentKeyDown(event, eGui);
@@ -454,13 +455,13 @@ export abstract class BaseTooltipStateManager<
                 },
             });
 
-            [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
+            [this.tooltipFocusInListener, this.tooltipFocusOutListener] = _addManagedElementListeners(this, eGui, {
                 focusin: this.onTooltipFocusIn.bind(this),
                 focusout: this.onTooltipFocusOut.bind(this),
             });
         }
 
-        [this.onDocumentTouchStartCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+        [this.onDocumentTouchStartCallback] = _addManagedElementListeners(this, _getDocument(this.beans), {
             touchstart: (event) => {
                 if (event && !eGui.contains(event.target as Node)) {
                     this.hideTooltip(true);

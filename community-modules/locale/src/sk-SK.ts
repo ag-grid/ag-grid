@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     advancedFilterCancel: 'Zrušiť',
     advancedFilterClear: 'Vymazať',
     advancedFilterBuilder: 'Tvorca',
+    advancedFilterPlaceholder: 'Pokročilý filter',
     advancedFilterValidationMissingColumn: 'Chýba stĺpec',
     advancedFilterValidationMissingOption: 'Chýba možnosť',
     advancedFilterValidationMissingValue: 'Chýba hodnota',
@@ -819,6 +820,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor bunky',
     ariaValidationErrorPrefix: 'Validácia editora bunky',
     ariaFullRowValidationError: 'Validácia celého riadka: ${variable}',
     ariaFullRowEditValidationFailed: 'Úpravu riadka nie je možné dokončiť. ${variable}',
@@ -848,6 +850,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtra',
     ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

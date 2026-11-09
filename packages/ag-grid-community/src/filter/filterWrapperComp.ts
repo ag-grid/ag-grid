@@ -1,5 +1,5 @@
 import type { IEventEmitter, PopupEventParams } from 'ag-stack';
-import { KeyCode, _jsonEquals, _removeFromParent } from 'ag-stack';
+import { KeyCode, _addManagedElementListeners, _jsonEquals, _removeFromParent } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
@@ -48,7 +48,7 @@ export class FilterWrapperComp extends Component {
             cls: 'ag-filter-wrapper',
         });
         if (useForm) {
-            this.addManagedElementListeners(this.getGui(), {
+            _addManagedElementListeners(this, this.getGui(), {
                 submit: (e) => {
                     e?.preventDefault();
                 },

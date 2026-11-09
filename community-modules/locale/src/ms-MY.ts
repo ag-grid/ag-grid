@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Kosongkan',
     advancedFilterBuilder: 'Pembina',
+    advancedFilterPlaceholder: 'Penapis Lanjutan',
     advancedFilterValidationMissingColumn: 'Lajur tiada',
     advancedFilterValidationMissingOption: 'Pilihan tiada',
     advancedFilterValidationMissingValue: 'Nilai tiada',
@@ -843,6 +844,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelSelectField: 'Pilih Medan',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Pengesahan Editor Sel',
     ariaFullRowValidationError: 'Pengesahan Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan suntingan baris. ${variable}',
@@ -875,6 +877,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelAddFilterField: 'Tambah Medan Penapis',
     ariaLabelFilterCardDelete: 'Padam Penapis',
     ariaLabelFilterCardHasEdits: 'Mempunyai Suntingan',
+    ariaLabelFilterCardType: 'Jenis Penapis',
     ariaHasNote: 'Sel ini mempunyai nota.',
 
     // Number Format (Status Bar, Pagination Panel)

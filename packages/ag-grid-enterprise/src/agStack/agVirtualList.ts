@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponent,
     AgComponentEvent,
-    AgCoreBeanCollection,
     AgElementParams,
     AgStylesChangedEvent,
     BaseEvents,
@@ -20,6 +20,7 @@ import {
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
+    _throttleToFrame,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
@@ -58,7 +59,7 @@ function getVirtualListTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgVirtualList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -161,7 +162,11 @@ export class AgVirtualList<
         const destroyObserver = _observeResize(
             this.beans,
             this.getGui(),
-            this.throttleToFrame(() => this.drawVirtualRows())
+            _throttleToFrame(
+                this,
+                () => this.beans,
+                () => this.drawVirtualRows()
+            )
         );
         this.addDestroyFunc(destroyObserver);
     }

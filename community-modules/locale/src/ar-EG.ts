@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     advancedFilterCancel: 'إلغاء',
     advancedFilterClear: 'مسح',
     advancedFilterBuilder: 'المنشئ',
+    advancedFilterPlaceholder: 'الفلترة المتقدمة',
     advancedFilterValidationMissingColumn: 'العمود مفقود',
     advancedFilterValidationMissingOption: 'الخيار مفقود',
     advancedFilterValidationMissingValue: 'القيمة مفقودة',
@@ -817,6 +818,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelSelectField: 'اختيار الحقل',
 
     // Cell Editor
+    ariaLabelCellEditor: 'محرر الخلية',
     ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
     ariaFullRowValidationError: 'التحقق من الصف الكامل: ${variable}',
     ariaFullRowEditValidationFailed: 'تعذر إكمال تحرير الصف. ${variable}',
@@ -846,6 +848,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaLabelFilterCardType: 'نوع الفلتر',
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)

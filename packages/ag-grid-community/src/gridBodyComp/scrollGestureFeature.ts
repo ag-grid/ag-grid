@@ -1,4 +1,4 @@
-import { FORM_FIELD_SELECTOR, _getWindow } from 'ag-stack';
+import { FORM_FIELD_SELECTOR, _addManagedElementListeners, _getWindow } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { GridBodyScrollFeature } from './gridBodyScrollFeature';
@@ -60,11 +60,11 @@ export class ScrollGestureFeature extends BeanStub {
         this.viewport = viewport;
         this.scrollFeature = scrollFeature;
         const stopMomentum = this.stopMomentum.bind(this);
-        this.addManagedElementListeners(viewport, {
+        _addManagedElementListeners(this, viewport, {
             wheel: this.gos.get('suppressPreventDefaultOnMouseWheel') ? undefined : this.onWheel.bind(this),
             touchstart: this.gos.get('suppressTouch') ? undefined : this.onTouchStart.bind(this),
         });
-        this.addManagedElementListeners(gridBody, {
+        _addManagedElementListeners(this, gridBody, {
             pointerdown: stopMomentum,
             keydown: stopMomentum,
         });

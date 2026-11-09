@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     advancedFilterCancel: 'रद्द करें',
     advancedFilterClear: 'साफ़ करें',
     advancedFilterBuilder: 'बिल्डर',
+    advancedFilterPlaceholder: 'उन्नत फ़िल्टर',
     advancedFilterValidationMissingColumn: 'कॉलम गायब है',
     advancedFilterValidationMissingOption: 'विकल्प गायब है',
     advancedFilterValidationMissingValue: 'मान गायब है',
@@ -841,6 +842,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelSelectField: 'फ़ील्ड चुनें',
 
     // Cell Editor
+    ariaLabelCellEditor: 'सेल संपादक',
     ariaValidationErrorPrefix: 'सेल संपादक सत्यापन',
     ariaFullRowValidationError: 'पूर्ण रो सत्यापन: ${variable}',
     ariaFullRowEditValidationFailed: 'रो संपादन पूर्ण नहीं किया जा सकता। ${variable}',
@@ -873,6 +875,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',
     ariaLabelFilterCardDelete: 'फ़िल्टर हटाएं',
     ariaLabelFilterCardHasEdits: 'संपादन हैं',
+    ariaLabelFilterCardType: 'फ़िल्टर प्रकार',
     ariaHasNote: 'इस सेल में एक नोट है।',
 
     // Number Format (Status Bar, Pagination Panel)

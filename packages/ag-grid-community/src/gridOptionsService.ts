@@ -70,14 +70,6 @@ type PropertyValueChangedListener<K extends keyof GridOptions> = AgPropertyValue
 
 let changeSetId = 0;
 
-// this is added to the main DOM element
-let gridInstanceSequence = 0;
-
-// we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
-// so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
-// for where this is used.
-const GRID_DOM_KEY = '__ag_grid_instance';
-
 const ASYNC_PUBLIC_EVENTS: ReadonlySet<AgEventType> = new Set(
     _PUBLIC_EVENTS.filter((eventType) => !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType))
 );
@@ -100,9 +92,6 @@ export class GridOptionsService
         this.gridId = beans.context.getId();
     }
     private readonly domDataKey = '__AG_' + Math.random().toString();
-
-    /** This is only used for the main DOM element */
-    private readonly instanceId = gridInstanceSequence++;
 
     // Used to hold user events until the grid is ready
     // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
@@ -362,22 +351,5 @@ export class GridOptionsService
 
     public isModuleRegistered(moduleName: ModuleName): boolean {
         return _isModuleRegistered(moduleName, this.gridId, this.get('rowModelType'));
-    }
-
-    public setInstanceDomData(element: HTMLElement): void {
-        (element as any)[GRID_DOM_KEY] = this.instanceId;
-    }
-
-    public isElementInThisInstance(element: Element): boolean {
-        let pointer: Element | null = element;
-        while (pointer) {
-            const instanceId = (pointer as any)[GRID_DOM_KEY];
-            if (_exists(instanceId)) {
-                const eventFromThisGrid = instanceId === this.instanceId;
-                return eventFromThisGrid;
-            }
-            pointer = pointer.parentElement;
-        }
-        return false;
     }
 }
