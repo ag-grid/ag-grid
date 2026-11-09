@@ -269,6 +269,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         all.clear();
         owned.clear();
         kernelBeans.clear();
+        instances.length = 0;
         destroyCallback?.();
     };
 
@@ -285,6 +286,8 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         }
         bean.destroy?.();
     };
+
+    const instances = order.map((name) => all.get(name)!);
 
     const graph: AgBeanGraph<TBeans> = {
         beans: built as TBeans,
@@ -308,7 +311,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         destroy() {
             // A bean's own `destroy` can reach back here through `beans.context`.
             if (!destroyed) {
-                teardown(order.map((name) => all.get(name)!));
+                teardown(instances);
             }
         },
     };
@@ -316,28 +319,35 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
     built.context ??= graph;
 
     // Every bean is in the collection before any is wired, so a `wireBeans` finds its siblings whatever the order.
-    for (const name of order) {
-        built[name] = all.get(name);
+    for (const bean of instances) {
+        built[bean.beanName!] = bean;
     }
+
+    // A lifecycle callback can destroy the graph through `beans.context`, which ends construction.
+    const eachLiveBean = (step: (bean: AgGraphBean<TBeans>) => void): void => {
+        for (const bean of instances) {
+            if (destroyed) {
+                return;
+            }
+            step(bean);
+        }
+    };
 
     const started: AgGraphBean<TBeans>[] = [];
     try {
-        for (const name of order) {
-            const bean = all.get(name)!;
+        eachLiveBean((bean) => {
             const view = viewFor(bean, built) as TBeans;
             started.push(bean);
             bean.preWireBeans?.(view);
             bean.wireBeans?.(view);
-        }
-        for (const name of order) {
-            all.get(name)!.preConstruct?.();
-        }
-        for (const name of order) {
-            all.get(name)!.postConstruct?.();
-        }
+        });
+        eachLiveBean((bean) => bean.preConstruct?.());
+        eachLiveBean((bean) => bean.postConstruct?.());
     } catch (e) {
         // The caller never receives the graph, so nothing else can release these beans.
-        teardown(started);
+        if (!destroyed) {
+            teardown(started);
+        }
         throw e;
     }
 

@@ -279,6 +279,61 @@ describe('instance ids', () => {
     });
 });
 
+describe('a bean that destroys the graph while it is built', () => {
+    type Context = IContext<Record<string, unknown>>;
+
+    it('stops construction and tears down once', () => {
+        const log: string[] = [];
+        const destroyCallback = vi.fn();
+        let context: Context;
+        const quitter: AgGraphBean = {
+            beanName: 'quitter',
+            preWireBeans(beans) {
+                context = beans.context as Context;
+            },
+            postConstruct() {
+                log.push('construct:quitter');
+                context.destroy();
+            },
+            destroy() {
+                log.push('destroy:quitter');
+            },
+        };
+
+        const graph = createBeanGraph({
+            id: 'test',
+            beans: [bean('first', [], [], log), quitter, bean('last', [], [], log)],
+            destroyCallback,
+        });
+
+        expect(graph.isDestroyed()).toBe(true);
+        expect(log).toEqual([
+            'construct:first',
+            'construct:quitter',
+            'destroy:last',
+            'destroy:quitter',
+            'destroy:first',
+        ]);
+        expect(destroyCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('wires nothing after it', () => {
+        const destroyCallback = vi.fn();
+        const quitter: AgGraphBean = {
+            beanName: 'quitter',
+            preWireBeans(beans) {
+                (beans.context as Context).destroy();
+            },
+        };
+        const last = bean('last');
+
+        createBeanGraph({ id: 'test', beans: [bean('first'), quitter, last], destroyCallback });
+
+        expect(last.wiredWith).toBeUndefined();
+        expect(destroyCallback).toHaveBeenCalledTimes(1);
+    });
+});
+
 describe('a bean that throws while constructing', () => {
     it('destroys the ones already built', () => {
         const log: string[] = [];
