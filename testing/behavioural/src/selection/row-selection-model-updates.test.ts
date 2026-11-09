@@ -1,7 +1,16 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, assertSelectableByIndex, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import {
+    GridColumns,
+    GridRows,
+    assertSelectableByIndex,
+    asyncSetTimeout,
+    clipboardUtils,
+    nextAnimationFrame,
+    waitForEvent,
+} from 'ag-test-utils';
 
-import { PinnedRowModule, RowSelectionModule } from 'ag-grid-community';
+import { PinnedRowModule, RowSelectionModule, TextEditorModule } from 'ag-grid-community';
+import { CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import {
     columnDefs,
@@ -109,6 +118,28 @@ describe('Row Selection Grid Options', () => {
             expect(api.getSelectedNodes()).toEqual([]);
         });
 
+        test('a transaction removing a selected row and making another un-selectable fires one selectionChanged with source rowDataChanged', async () => {
+            const [api] = createGrid({
+                columnDefs,
+                getRowId: (p) => p.data.id,
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.sport !== 'football' },
+                rowData: [
+                    { id: 'a', sport: 'rugby' },
+                    { id: 'b', sport: 'tennis' },
+                    { id: 'c', sport: 'golf' },
+                ],
+            });
+            api.setNodesSelected({ nodes: ['a', 'b', 'c'].map((id) => api.getRowNode(id)!), newValue: true });
+            await asyncSetTimeout(0);
+            const sources: string[] = [];
+            api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+            api.applyTransaction({ update: [{ id: 'a', sport: 'football' }], remove: [{ id: 'c' }] });
+            api.deselectAll();
+
+            await waitFor(() => expect(sources).toEqual(['rowDataChanged', 'apiSelectAll']));
+        });
+
         // A removal recorded while a refresh is deferred (here, column change events dispatching) must flush
         // its selectionChanged this turn, so an unrelated later change can't emit it with a stale source.
         test('removal during a deferred refresh flushes selectionChanged with its own source', async () => {
@@ -208,7 +239,116 @@ describe('Row Selection Grid Options', () => {
                 expect(groupAtCall[id]).toBe(true);
             }
         });
+
+        test('a row pinned through pinnedTopRowData is asked once when its data is replaced', () => {
+            const asked: string[] = [];
+            const [api] = createGrid(
+                {
+                    columnDefs,
+                    rowData,
+                    getRowId: (p) => p.data.sport,
+                    pinnedTopRowData: [{ sport: 'pinned' }],
+                    rowSelection: {
+                        mode: 'multiRow',
+                        isRowSelectable: (node) => {
+                            asked.push(node.data.sport);
+                            return true;
+                        },
+                    },
+                },
+                { modules: [RowSelectionModule, PinnedRowModule] }
+            );
+            asked.length = 0;
+
+            api.getPinnedTopRow(0)!.setData({ sport: 'pinned again' });
+
+            expect(asked).toEqual(['pinned again']);
+        });
+
+        test('a row whose data a rowSelected listener replaces while another row is deselected is asked too', () => {
+            const [api] = createGrid({
+                columnDefs: [{ field: 'id' }],
+                rowData: [
+                    { id: 'a', ok: true },
+                    { id: 'b', ok: true },
+                ],
+                getRowId: (p) => p.data.id,
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.ok },
+            });
+            const a = api.getRowNode('a')!;
+            const b = api.getRowNode('b')!;
+            api.setNodesSelected({ nodes: [a], newValue: true, source: 'api' });
+            a.addEventListener('rowSelected', () => b.setData({ id: 'b', ok: false }));
+
+            a.setData({ id: 'a', ok: false });
+
+            expect({ a: a.selectable, b: b.selectable, selected: api.getSelectedNodes() }).toEqual({
+                a: false,
+                b: false,
+                selected: [],
+            });
+        });
     });
+
+    test.each(['self', 'descendants'] as const)(
+        'with groupSelects %s, a row a paste edits, then removes, is not asked once removed, and the rows pasted after it are',
+        async (groupSelects) => {
+            const removedRowsAsked: string[] = [];
+            const [api] = createGrid(
+                {
+                    columnDefs: [
+                        {
+                            field: 'sport',
+                            editable: true,
+                            valueSetter: (params) => {
+                                params.data.sport = params.newValue;
+                                if (params.data.id === 'b') {
+                                    params.api.applyTransaction({ remove: [{ id: 'a' }] });
+                                }
+                                return true;
+                            },
+                        },
+                    ],
+                    getRowId: (p) => p.data.id,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects,
+                        isRowSelectable: (node) => {
+                            if (node.destroyed) {
+                                removedRowsAsked.push(node.id!);
+                            }
+                            return node.data?.sport !== 'golf';
+                        },
+                    },
+                    rowData: [
+                        { id: 'a', sport: 'rugby' },
+                        { id: 'b', sport: 'tennis' },
+                    ],
+                },
+                { modules: [ClipboardModule, CellSelectionModule, TextEditorModule] }
+            );
+
+            api.getRowNode('b')!.setSelected(true);
+            clipboardUtils.init();
+            clipboardUtils.setText('golf\ngolf');
+            api.setFocusedCell(0, 'sport');
+            const pasteEnd = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasteEnd;
+            clipboardUtils.reset();
+
+            expect(api.getRowNode('a')).toBeUndefined();
+            expect(api.getRowNode('b')!.data.sport).toBe('golf');
+            expect(removedRowsAsked).toEqual([]);
+            expect({
+                selectable: api.getRowNode('b')!.selectable,
+                selected: api.getRowNode('b')!.isSelected(),
+            }).toEqual({
+                selectable: false,
+                selected: false,
+            });
+        }
+    );
 
     describe('Cell Renderer', () => {
         class CustomCellRenderer {
@@ -342,6 +482,29 @@ describe('Row Selection Grid Options', () => {
             await waitFor(() => assertSelectableByIndex([0, 2, 3, 4, 5, 6], api));
 
             api.forEachPinnedRow('top', (node) => expect(node.selectable).toBe(false));
+        });
+
+        test('a pinned row follows a new isRowSelectable rejecting its row', async () => {
+            const [api] = await createGridAndWait(
+                {
+                    columnDefs: [{ field: 'sport' }],
+                    rowData: structuredClone(rowData),
+                    rowSelection: { mode: 'multiRow' },
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+                },
+                { modules: [RowSelectionModule, PinnedRowModule] }
+            );
+            const pinned = api.getPinnedTopRow(0)!;
+            expect(pinned.selectable).toBe(true);
+
+            api.setGridOption('rowSelection', {
+                mode: 'multiRow',
+                isRowSelectable: (node) => node.data?.sport !== 'rugby',
+            });
+
+            expect(api.getRowNode('1')!.selectable).toBe(false);
+            expect(pinned.selectable).toBe(false);
         });
     });
 });

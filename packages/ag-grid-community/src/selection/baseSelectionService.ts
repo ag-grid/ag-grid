@@ -35,27 +35,37 @@ export abstract class BaseSelectionService extends BeanStub {
     protected selectionCtx: RowRangeSelectionContext;
     /** Rendered selection checkboxes, so Space can tell where it acts as a checkbox click. */
     private readonly checkboxes = new Map<RowNode, Set<CheckboxSelectionComponent>>();
+    protected selectionBatchDepth = 0;
+
+    /** Opens a selection batch, closed by each row model's `endSelectionBatch` in a `finally`. */
+    public beginSelectionBatch(): void {
+        ++this.selectionBatchDepth;
+    }
 
     public postConstruct(): void {
         const { gos, beans } = this;
         this.selectionCtx = new RowRangeSelectionContext(beans.rowModel, beans.pinnedRowModel);
 
-        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => {
-            const callback = _getIsRowSelectable(gos);
-            if (callback !== this.isRowSelectable) {
+        this.addManagedPropertyListeners(
+            ['isRowSelectable', 'rowSelection', 'groupSelectsChildren', 'groupSelectsFiltered'],
+            () => {
+                const callback = _getIsRowSelectable(gos);
+                const callbackChanged = callback !== this.isRowSelectable;
                 this.isRowSelectable = callback;
-                this.updateSelectable();
+                if (this.refreshSelectionOptions() || callbackChanged) {
+                    this.updateSelectable();
+                }
             }
-        });
+        );
 
         this.isRowSelectable = _getIsRowSelectable(gos);
 
         const rowModel = beans.rowModel;
         this.addManagedEventListeners({
-            cellValueChanged: (e) => this.updateRowSelectable(e.node as RowNode),
+            cellValueChanged: (e) => this.updateEditedRowSelectable(e.node as RowNode),
             rowNodeDataChanged: (e) => {
                 if (!rowModel.refreshingData) {
-                    this.updateRowSelectable(e.node);
+                    this.updateEditedRowSelectable(e.node);
                 }
             },
         });
@@ -154,27 +164,50 @@ export abstract class BaseSelectionService extends BeanStub {
     protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     protected isRowSelectionBlocked(rowNode: RowNode): boolean {
-        return (
-            !rowNode.selectable ||
-            (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) ||
-            !_isRowSelection(this.gos) ||
-            (!!rowNode.footer &&
-                rowNode.level === -1 &&
-                _isInternalFeatureFlagEnabled(this.beans, 'grandTotalRowUnselectable'))
-        );
+        return !rowNode.selectable || (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) || !_isRowSelection(this.gos);
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
         const pinnedSibling = rowNode.pinnedSibling;
-        const selectable =
-            rowNode.rowPinned && pinnedSibling
-                ? // If row node is pinned sibling, copy selectable status over from sibling row node
-                  pinnedSibling.selectable
-                : // otherwise calculate selectable state directly
-                  (this.isRowSelectable?.(rowNode) ?? true);
+        let selectable: boolean;
+        if (rowNode.rowPinned && pinnedSibling) {
+            // If row node is pinned sibling, copy selectable status over from sibling row node
+            selectable = pinnedSibling.selectable;
+        } else if (rowNode.footer) {
+            // a total row selects its group or the root, so it takes their selectability
+            const primary = rowNode.sibling;
+            return primary ? this.updateRowSelectable(primary, suppressSelectionUpdate) : rowNode.selectable;
+        } else if (rowNode.group && this.isRolledUpFromChildren()) {
+            return rowNode.selectable; // groups and the root take it from their rows
+        } else if (rowNode.level === -1) {
+            // the grand total row selects the root, so isRowSelectable decides the root through that row
+            const grandTotal = rowNode.sibling;
+            selectable = grandTotal ? (this.isRowSelectable?.(grandTotal) ?? true) : true;
+        } else {
+            selectable = this.isRowSelectable?.(rowNode) ?? true;
+        }
 
         this.setRowSelectable(rowNode, selectable, suppressSelectionUpdate);
         return selectable;
+    }
+
+    protected updateEditedRowSelectable(rowNode: RowNode): void {
+        this.updateRowSelectable(rowNode);
+    }
+
+    /** Whether the row may show selected: a row `isRowSelectable` rejects does not. */
+    protected canShowSelected(rowNode: RowNode): boolean {
+        return rowNode.selectable;
+    }
+
+    /** Whether groups and the root take their selectable and selected state from their children. */
+    protected isRolledUpFromChildren(): boolean {
+        return false;
+    }
+
+    /** Re-reads the selection options after one changed; returns whether every row's selectability must be recomputed. */
+    protected refreshSelectionOptions(): boolean {
+        return false;
     }
 
     protected setRowSelectable(rowNode: RowNode, newVal: boolean, suppressSelectionUpdate?: boolean): void {
@@ -182,14 +215,17 @@ export abstract class BaseSelectionService extends BeanStub {
             rowNode.selectable = newVal;
             rowNode.dispatchRowEvent('selectableChanged');
 
-            if (suppressSelectionUpdate) {
-                return;
+            // the total row and the pinned copies select this row, so they take its selectability
+            const sibling = rowNode.sibling;
+            if (sibling?.footer) {
+                this.setRowSelectable(sibling, newVal, true);
+            }
+            const pinnedSibling = rowNode.pinnedSibling;
+            if (pinnedSibling) {
+                this.setRowSelectable(pinnedSibling, newVal, true);
             }
 
-            const isGroupSelectsChildren = _getGroupSelectsDescendants(this.gos);
-            if (isGroupSelectsChildren) {
-                const selected = this.calculateSelectedFromChildren(rowNode);
-                this.setNodesSelected({ nodes: [rowNode], newValue: selected ?? false, source: 'selectableChanged' });
+            if (suppressSelectionUpdate) {
                 return;
             }
 
@@ -267,7 +303,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
-        const selectionNotAllowed = !rowNode.selectable && newValue;
+        const selectionNotAllowed = newValue && !rowNode.selectable && !this.canShowSelected(rowNode);
         const selectionNotChanged = rowNode.__selected === newValue;
 
         if (selectionNotAllowed || selectionNotChanged) {

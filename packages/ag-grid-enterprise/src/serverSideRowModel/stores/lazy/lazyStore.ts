@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     IColsService,
     IRowNode,
-    ISelectionService,
     IServerSideStore,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
@@ -29,19 +28,20 @@ import {
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams, ServerSideRowModel } from '../../serverSideRowModel';
+import type { ServerSideSelectionService } from '../../services/serverSideSelectionService';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
-    private selectionSvc?: ISelectionService;
+    private selectionSvc?: ServerSideSelectionService;
     private rowGroupColsSvc?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
-        this.selectionSvc = beans.selectionSvc;
+        this.selectionSvc = beans.selectionSvc as ServerSideSelectionService | undefined;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
     }
 
@@ -172,38 +172,44 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
-        if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
-        }
-
         let insertedNodes: RowNode[] | undefined = undefined;
-        if (transaction.add?.length) {
-            let addIndex = transaction.addIndex;
-            if (addIndex != null && addIndex < 0) {
-                addIndex = undefined;
-            }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
-        }
-
         let removedNodes: RowNode[] | undefined = undefined;
-        if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
-            );
-            const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+        const selectionSvc = this.selectionSvc;
+        selectionSvc?.beginSelectionBatch(); // one selectionChanged for the rows the transaction deselects
+        try {
+            if (transaction.update?.length) {
+                updatedNodes = this.cache.updateRowNodes(transaction.update);
+            }
+
+            if (transaction.add?.length) {
+                let addIndex = transaction.addIndex;
+                if (addIndex != null && addIndex < 0) {
+                    addIndex = undefined;
+                }
+                insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            }
+
+            if (transaction.remove?.length) {
+                const allIdsToRemove = transaction.remove.map((data) =>
+                    idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
+                );
+                const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
+                removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+            }
+
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+
+            const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
+            const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (isClientSideSort && isUpdateOrAdd) {
+                // if client side sorting, we need to sort the rows after the transaction
+                this.cache.clientSideSortRows();
+            }
+
+            this.deselectRemovedNodes(removedNodes);
+        } finally {
+            selectionSvc?.endSelectionBatch();
         }
-
-        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
-
-        const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
-        const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
-        if (isClientSideSort && isUpdateOrAdd) {
-            // if client side sorting, we need to sort the rows after the transaction
-            this.cache.clientSideSortRows();
-        }
-
-        this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
             status: ServerSideTransactionResultStatus.Applied,
             update: updatedNodes,
@@ -212,31 +218,30 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         };
     }
 
-    private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
-        if (!this.selectionSvc) {
+    /** Deselects the removed rows, then drops their ids from the selection state, inside the transaction's batch. */
+    private deselectRemovedNodes(removedNodes: RowNode[] | undefined) {
+        const selectionSvc = this.selectionSvc;
+        if (!selectionSvc || !removedNodes?.length) {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
-        for (const node of updatedNodes ?? []) {
-            if (node.isSelected() && !node.selectable) {
-                nodesToDeselect.push(node);
-            }
-        }
-
-        for (const node of removedNodes ?? []) {
+        const removedIds: string[] = [];
+        for (const node of removedNodes) {
+            removedIds.push(node.id!);
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
         }
 
         if (nodesToDeselect.length) {
-            this.selectionSvc.setNodesSelected({
+            selectionSvc.setNodesSelected({
                 newValue: false,
                 clearSelection: false,
                 nodes: nodesToDeselect,
                 source: 'rowDataChanged',
             });
         }
+        selectionSvc.deleteSelectionStateFromParent(removedIds, this.parentRowNode);
     }
 
     /**
@@ -355,9 +360,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 (!this.areRowsLoadedEmpty() || this.gos.get('alwaysShowGrandTotalRow'))
             ) {
                 grandTotalNode ??= this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
-            } else if (grandTotalNode) {
-                this.destroyGrandTotalRow();
-                grandTotalNode = undefined;
+            } else {
+                if (grandTotalNode) {
+                    this.destroyGrandTotalRow();
+                    grandTotalNode = undefined;
+                }
+                const rootNode = this.parentRowNode;
+                if (!rootNode.selectable) {
+                    this.selectionSvc?.updateRowSelectable(rootNode); // with grandTotalRow off, the root is selectable
+                }
             }
 
             this.beans.pinnedRowModel?.setGrandTotalNode(grandTotalNode);

@@ -3,7 +3,6 @@ import type {
     FilterManager,
     IColsService,
     IRowModel,
-    IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
@@ -156,11 +155,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
     }
 
-    public deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean {
+    public deleteSelectionStateFromParent(removedNodeIds: string[], parentNode: RowNode): boolean {
         let parentState: SelectionState | undefined = this.selectedState;
-        const remainingRoute = [...parentRoute];
-        while (parentState && remainingRoute.length) {
-            parentState = parentState.toggledNodes.get(remainingRoute.pop()!);
+        if (parentState.toggledNodes.size === 0) {
+            return false;
+        }
+        const route = this.getRouteToNode(parentNode);
+        for (let i = 0, len = route.length; parentState && i < len; ++i) {
+            parentState = parentState.toggledNodes.get(route[i].id!);
         }
 
         // parent has no explicit state, nothing to remove
@@ -334,7 +336,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         forEachNodeStateDepthFirst();
     }
 
-    private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, newValue: boolean) {
+    private recursivelySelectNode([nextNode, ...nodes]: RowNode[], selectedState: SelectionState, newValue: boolean) {
         if (!nextNode) {
             return;
         }
@@ -342,10 +344,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         // if this is the last node, hard add/remove based on its selectAllChildren state
         const isLastNode = !nodes.length;
         if (isLastNode) {
-            // if the node is not selectable, we should never have it in selection state
-            const isNodeSelectable = nextNode.selectable;
+            // a node isRowSelectable rejects keeps no state of its own, except a group's deselection, which deselects its rows
+            const isNodeKept = nextNode.selectable || (!newValue && nextNode.hasChildren());
             const doesNodeConform = selectedState.selectAllChildren === newValue;
-            if (doesNodeConform || !isNodeSelectable) {
+            if (doesNodeConform || !isNodeKept) {
                 selectedState.toggledNodes.delete(nextNode.id!);
                 return;
             }
@@ -443,17 +445,21 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return !this.selectedState.selectAllChildren && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }
 
-    public selectAllRowNodes(): void {
-        this.reset(true);
+    public selectAllRowNodes(): boolean {
+        return this.reset(true);
     }
 
-    public deselectAllRowNodes(): void {
-        this.reset(false);
+    public deselectAllRowNodes(): boolean {
+        return this.reset(false);
     }
 
-    private reset(selectAllChildren: boolean): void {
+    private reset(selectAllChildren: boolean): boolean {
+        const state = this.selectedState;
+        const changed =
+            this.rootSelected || state.selectAllChildren !== selectAllChildren || state.toggledNodes.size > 0;
         this.selectedState = { selectAllChildren, toggledNodes: new Map() };
         this.rootSelected = false;
+        return changed;
     }
 
     public getSelectAllState(): boolean | null {

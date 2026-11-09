@@ -5,7 +5,6 @@ import type { InternalFeatureFlag, InternalFeatureFlags } from '../interfaces/iI
 const STUDIO_FLAGS: Required<InternalFeatureFlags> = {
     clickToggleSelection: true,
     spaceKeyFollowsClickSelection: true,
-    grandTotalRowUnselectable: true,
 };
 
 export function _isInternalFeatureFlagEnabled(beans: BeanCollection, flag: InternalFeatureFlag): boolean {

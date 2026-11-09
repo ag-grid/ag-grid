@@ -3,7 +3,7 @@ import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout, clipboardUtils, wait
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GetRowIdParams, GridApi } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, IRowNode } from 'ag-grid-community';
 import {
     GRAND_TOTAL_ROW_ID,
     GROUP_TOTAL_ROW_ID_PREFIX,
@@ -18,6 +18,8 @@ import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
+
+import { GridActions, pressSpaceKey } from './utils';
 
 describe('SSRM selection with a destroyed footer row node', () => {
     const gridMgr = new TestGridsManager({
@@ -718,8 +720,6 @@ describe('SSRM selection with a destroyed footer row node', () => {
         }
     );
 
-    // A footer copies `selectable` when it is created and `updateSelectable` never revisits it, so changing
-    // `isRowSelectable` afterwards leaves a selectable footer standing over an unselectable group.
     test('selecting a group total row whose group became unselectable keeps the existing selection', async () => {
         const api = gridMgr.createGrid(null, {
             columnDefs: [
@@ -760,11 +760,469 @@ describe('SSRM selection with a destroyed footer row node', () => {
         const group = api.getRowNode('g-Ireland')!;
         const groupTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!;
         expect(group.selectable).toBe(false);
-        expect(groupTotal.selectable).toBe(true);
+        expect(groupTotal.selectable).toBe(false);
 
         // the request cannot be honoured, so it is dropped rather than emptying the selection
         api.setNodesSelected({ nodes: [groupTotal], newValue: true, source: 'api' });
         expect(group.isSelected()).toBe(false);
         expect(api.getRowNode('ie-1')!.isSelected()).toBe(true);
+    });
+
+    async function createSelectableGrandTotalGrid(
+        isRowSelectable: ((node: IRowNode) => boolean) | undefined,
+        grandTotalRow: 'bottom' | undefined
+    ): Promise<GridApi> {
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true, isRowSelectable },
+            grandTotalRow,
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    setTimeout(
+                        () =>
+                            params.success({
+                                rowData: [...flatRows],
+                                rowCount: flatRows.length,
+                                grandTotalData: { id: 'Total', value: 30 },
+                            }),
+                        0
+                    );
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        return api;
+    }
+
+    const rejectsTotalRows = (node: IRowNode) => !node.footer && node.data != null;
+    const rejectsFooters = (node: IRowNode) => !node.footer;
+
+    test.each([
+        { callbackSet: 'at load', groupSelects: 'self' },
+        { callbackSet: 'later', groupSelects: 'self' },
+        { callbackSet: 'later', groupSelects: 'descendants' },
+    ] as const)(
+        'a grand total row isRowSelectable rejects ($callbackSet, groupSelects $groupSelects) cannot be selected by click, Space or the API',
+        async ({ callbackSet, groupSelects }) => {
+            const api = await createSelectableGrandTotalGrid(
+                callbackSet === 'at load' ? rejectsTotalRows : undefined,
+                'bottom'
+            );
+            if (callbackSet === 'later') {
+                api.setGridOption('rowSelection', {
+                    mode: 'multiRow',
+                    checkboxes: false,
+                    enableClickSelection: true,
+                    groupSelects,
+                    isRowSelectable: rejectsFooters,
+                });
+            }
+            const emptyState = api.getServerSideSelectionState();
+            const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+            expect(grandTotal.selectable).toBe(false);
+
+            const actions = new GridActions(api);
+            actions.clickRowById(GRAND_TOTAL_ROW_ID);
+            pressSpaceKey(actions.getRowById(GRAND_TOTAL_ROW_ID)!.querySelector<HTMLElement>('[col-id="value"]')!);
+            api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+
+            expect({ selected: grandTotal.isSelected(), state: api.getServerSideSelectionState() }).toEqual({
+                selected: false,
+                state: emptyState,
+            });
+            const firstRow = api.getDisplayedRowAtIndex(0)!;
+            pressSpaceKey(actions.getRowById(firstRow.id!)!.querySelector<HTMLElement>('[col-id="value"]')!);
+            expect(firstRow.isSelected()).toBe(true);
+        }
+    );
+
+    test('with groupSelects descendants, select all after selecting only the grand total row raises selectionChanged', async () => {
+        const api = await createSelectableGrandTotalGrid(undefined, 'bottom');
+        api.setGridOption('rowSelection', { mode: 'multiRow', groupSelects: 'descendants' });
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        const stateWithRoot = api.getServerSideSelectionState();
+        const sources: string[] = [];
+        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+        api.selectAll();
+
+        expect(api.getServerSideSelectionState()).not.toEqual(stateWithRoot);
+        api.deselectAll();
+        await waitFor(() => expect(sources).toEqual(['apiSelectAll', 'apiSelectAll']));
+    });
+
+    test('with groupSelects descendants, a root kept selected while its grand total row is rejected shows selected once that row is gone', async () => {
+        const api = await createSelectableGrandTotalGrid(undefined, 'bottom');
+        api.setGridOption('rowSelection', { mode: 'multiRow', groupSelects: 'descendants' });
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            groupSelects: 'descendants',
+            isRowSelectable: rejectsFooters,
+        });
+        const root = api.getRowNode('1')!.parent!;
+        expect(root.isSelected()).toBe(false);
+        const stateWithRoot = api.getServerSideSelectionState();
+
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined());
+
+        expect({ selected: root.isSelected(), state: api.getServerSideSelectionState() }).toEqual({
+            selected: true,
+            state: stateWithRoot,
+        });
+    });
+
+    test('with groupSelects descendants, a grand total row the server removes, then adds back by transaction, never shows the kept root selected', async () => {
+        let sendGrandTotal = true;
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    // after the first load, the grand total is removed and comes back by transaction
+                    const grandTotalData = sendGrandTotal ? { id: 'Total', value: 30 } : null;
+                    setTimeout(
+                        () => params.success({ rowData: [...flatRows], rowCount: flatRows.length, grandTotalData }),
+                        0
+                    );
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            groupSelects: 'descendants',
+            isRowSelectable: rejectsFooters,
+        });
+        const root = api.getRowNode('1')!.parent!;
+        const sources: string[] = [];
+        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+        let rootRowSelectedEvents = 0;
+        api.addEventListener('rowSelected', (event) => {
+            if (event.node.level === -1) {
+                ++rootRowSelectedEvents;
+            }
+        });
+
+        sendGrandTotal = false;
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(api.getRowNode('1')?.data).toEqual(flatRows[0]));
+        expect({ selectable: root.selectable, selected: root.isSelected() }).toEqual({
+            selectable: false,
+            selected: false,
+        });
+        api.applyServerSideTransaction({ remove: [{ id: GRAND_TOTAL_ROW_ID }] });
+        api.applyServerSideTransaction({ add: [{ id: GRAND_TOTAL_ROW_ID, value: 30 }] });
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+
+        api.deselectAll();
+        await waitFor(() => expect(sources).toEqual(['apiSelectAll']));
+        expect(rootRowSelectedEvents).toBe(0);
+    });
+
+    test('with groupSelects descendants a grand total row turning selectable keeps the selection', async () => {
+        let totalValue = 0;
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                isRowSelectable: (node) => !node.footer || node.data.value > 0,
+            },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const grandTotalData = { id: 'Total', value: totalValue };
+                    setTimeout(() => params.success({ rowData: [...flatRows], rowCount: 2, grandTotalData }), 0);
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.selectable).toBe(false);
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        const selectionState = api.getServerSideSelectionState();
+        const selectionChanged = vitest.fn();
+        api.addEventListener('selectionChanged', selectionChanged);
+
+        totalValue = 30;
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.data.value).toBe(30));
+
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.selectable).toBe(true);
+        expect(api.getServerSideSelectionState()).toEqual(selectionState);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(selectionChanged).not.toHaveBeenCalled();
+    });
+
+    test('a grand total row shown after load follows isRowSelectable, and the root can be selected once it is hidden again', async () => {
+        const api = await createSelectableGrandTotalGrid(rejectsFooters, undefined);
+        api.setGridOption('grandTotalRow', 'bottom');
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.footer).toBe(true));
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+
+        expect(grandTotal.selectable).toBe(false);
+        expect(api.getSelectedNodes()).toEqual([]);
+
+        const root = api.getRowNode('1')!.parent!;
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined());
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([root]);
+    });
+
+    test('a root selected before its grand total row appears is deselected when isRowSelectable rejects that row', async () => {
+        const api = await createSelectableGrandTotalGrid(rejectsFooters, undefined);
+        const root = api.getRowNode('1')!.parent!;
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        const sources: string[] = [];
+        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+        const rowSelected: string[] = [];
+        api.addEventListener('rowSelected', (event) =>
+            rowSelected.push(`${event.node.level}:${event.node.isSelected()}`)
+        );
+
+        api.setGridOption('grandTotalRow', 'bottom');
+
+        await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+        expect(rowSelected).toEqual(['-1:false']);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.selectable).toBe(false);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+        expect(api.getSelectedNodes()).toEqual([]);
+        api.selectAll();
+        await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
+    });
+
+    test('with groupSelects descendants, a grand total row isRowSelectable rejects shows unselected while the rows selected through it stay selected', async () => {
+        const api = await createSelectableGrandTotalGrid(rejectsFooters, undefined);
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            checkboxes: false,
+            enableClickSelection: true,
+            isRowSelectable: rejectsFooters,
+            groupSelects: 'descendants',
+        });
+        const root = api.getRowNode('1')!.parent!;
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        const selectionState = api.getServerSideSelectionState();
+
+        api.setGridOption('grandTotalRow', 'bottom');
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.selectable).toBe(false));
+
+        expect(api.getServerSideSelectionState()).toEqual(selectionState);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(api.getRowNode('2')!.isSelected()).toBe(true);
+    });
+
+    test('with groupSelects descendants, a purge that reloads a grand total row isRowSelectable still rejects emits no selectionChanged', async () => {
+        const api = await createSelectableGrandTotalGrid(undefined, 'bottom');
+        const rowSelection = { mode: 'multiRow', checkboxes: false, groupSelects: 'descendants' } as const;
+        api.setGridOption('rowSelection', rowSelection);
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        api.setGridOption('rowSelection', { ...rowSelection, isRowSelectable: rejectsFooters });
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false));
+        const sources: string[] = [];
+        api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+        api.refreshServerSide({ purge: true });
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.selectable).toBe(false));
+        await waitForNoLoadingRows(api);
+        api.deselectAll();
+
+        await waitFor(() => expect(sources).toEqual(['apiSelectAll']));
+    });
+
+    test('with groupSelects descendants, a purge that reloads a grand total row isRowSelectable accepts again shows the root selected', async () => {
+        let footersAccepted = true;
+        const api = await createSelectableGrandTotalGrid(undefined, 'bottom');
+        const rowSelection = { mode: 'multiRow', checkboxes: false, groupSelects: 'descendants' } as const;
+        api.setGridOption('rowSelection', rowSelection);
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        footersAccepted = false;
+        api.setGridOption('rowSelection', {
+            ...rowSelection,
+            isRowSelectable: (node) => footersAccepted || !node.footer,
+        });
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false));
+        footersAccepted = true;
+        const grandTotalBeforePurge = api.getRowNode(GRAND_TOTAL_ROW_ID);
+
+        api.refreshServerSide({ purge: true });
+
+        await waitFor(() => {
+            const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID);
+            expect(grandTotal !== grandTotalBeforePurge && grandTotal?.selectable === true).toBe(true);
+        });
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true);
+    });
+
+    test('with groupSelects descendants, deselecting a grand total row isRowSelectable rejects after select all deselects every row', async () => {
+        const api = await createSelectableGrandTotalGrid(rejectsFooters, 'bottom');
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            checkboxes: false,
+            isRowSelectable: rejectsFooters,
+            groupSelects: 'descendants',
+        });
+        const emptyState = api.getServerSideSelectionState();
+        api.selectAll();
+
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: false, source: 'api' });
+
+        expect(api.getServerSideSelectionState()).toEqual(emptyState);
+        expect(api.getRowNode('1')!.isSelected()).toBe(false);
+    });
+
+    test('a selected root whose grand total row a purge reloads as un-selectable is deselected with its rowSelected', async () => {
+        let footersAccepted = true;
+        const api = await createSelectableGrandTotalGrid((node) => footersAccepted || !node.footer, 'bottom');
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true, source: 'api' });
+        await waitFor(() => expect(api.getSelectedNodes()).toHaveLength(1));
+        const rowSelected: string[] = [];
+        api.addEventListener('rowSelected', (event) =>
+            rowSelected.push(`${event.node.level}:${event.node.isSelected()}`)
+        );
+        footersAccepted = false;
+
+        api.refreshServerSide({ purge: true });
+
+        await waitFor(() => expect(rowSelected).toEqual(['-1:false']));
+        expect(api.getSelectedNodes()).toEqual([]);
+    });
+
+    test('a restored selection state naming the root does not select it while isRowSelectable rejects its grand total row', async () => {
+        const api = await createSelectableGrandTotalGrid(rejectsFooters, 'bottom');
+
+        api.setServerSideSelectionState({ selectAll: false, toggledNodes: [ROOT_NODE_ID, '1'] });
+
+        expect(api.getServerSideSelectionState()).toEqual({ selectAll: false, toggledNodes: ['1'] });
+        expect(api.getSelectedNodes()).toEqual([]);
+        expect(api.getRowNode('1')!.isSelected()).toBe(true);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+    });
+
+    test('a root whose grand total row isRowSelectable rejects stays unselectable while grandTotalRow is set, and can be selected once it is turned off', async () => {
+        let grandTotalData: FlatRow | null = { id: 'Total', value: 30 };
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', isRowSelectable: rejectsFooters },
+            grandTotalRow: 'bottom',
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: {
+                getRows(params) {
+                    const response = { rowData: [...flatRows], rowCount: flatRows.length, grandTotalData };
+                    setTimeout(() => params.success(response), 0);
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.selectable).toBe(false);
+
+        grandTotalData = null;
+        api.refreshServerSide({ purge: true });
+        await waitFor(() => expect(api.getRowNode('1')?.data).toEqual(flatRows[0]));
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined();
+        const root = api.getRowNode('1')!.parent!;
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            isRowSelectable: (node) => !node.footer && node.id !== '2',
+        });
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([]);
+        expect(api.getRowNode('2')!.selectable).toBe(false); // rows are still asked
+
+        api.setGridOption('grandTotalRow', undefined);
+        await waitFor(() => expect(root.selectable).toBe(true));
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([root]);
+    });
+
+    test('the nodes getSelectedNodes returns for a selected grand total row can be deselected, also once it is hidden', async () => {
+        const api = await createSelectableGrandTotalGrid(undefined, 'bottom');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        const root = api.getRowNode('1')!.parent!;
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!, root], newValue: true, source: 'api' });
+        expect(grandTotal.isSelected()).toBe(true);
+        expect(api.getSelectedNodes()).toHaveLength(2);
+
+        api.setNodesSelected({ nodes: api.getSelectedNodes(), newValue: false, source: 'api' });
+
+        expect(grandTotal.isSelected()).toBe(false);
+        expect(api.getSelectedNodes()).toEqual([]);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!, grandTotal], newValue: true, source: 'api' });
+        api.setGridOption('grandTotalRow', undefined);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined();
+        expect(api.getSelectedNodes()).toHaveLength(2);
+
+        api.setNodesSelected({ nodes: api.getSelectedNodes(), newValue: false, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([]);
+    });
+
+    test('without a grand total row the server-side root can be selected through the API, as the client-side root can', async () => {
+        const api = await createSelectableGrandTotalGrid(() => true, undefined);
+        const root = api.getRowNode('1')!.parent!;
+        expect(root.level).toBe(-1);
+
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([root]);
+
+        api.setNodesSelected({ nodes: [root], newValue: false, source: 'api' });
+        expect(api.getSelectedNodes()).toEqual([]);
+    });
+
+    test('a loading row cannot be deselected through the API', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [60] });
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow' },
+            getRowId: (params: GetRowIdParams<FlatRow>) => params.data.id,
+            serverSideDatasource: { getRows: () => {} },
+        });
+        const loading = api.getDisplayedRowAtIndex(0)!;
+        expect({ id: loading.id, level: loading.level }).toEqual({ id: undefined, level: 0 });
+
+        api.setNodesSelected({ nodes: [loading], newValue: false, source: 'api' });
+
+        expect(warnSpy.mock.calls.map((call) => String(call[0]))).toEqual([expect.stringContaining('#60')]);
+        warnSpy.mockClear();
+    });
+
+    test('isRowSelectable is not asked again when an unrelated selection option changes', async () => {
+        let asked = 0;
+        const isRowSelectable = () => {
+            ++asked;
+            return true;
+        };
+        const api = await createSelectableGrandTotalGrid(isRowSelectable, 'bottom');
+        expect(asked).toBeGreaterThan(0);
+        asked = 0;
+
+        api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true, isRowSelectable });
+
+        expect(asked).toBe(0);
     });
 });

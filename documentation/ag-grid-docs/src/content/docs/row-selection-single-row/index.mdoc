@@ -80,6 +80,8 @@ const gridOptions = {
 
 Rows for which `isRowSelectable` returns `false` cannot be selected at all, whether using the UI or the API.
 
+Selecting a total row selects its group, or the root node for the grand total row (see [Selecting Total Rows](./grouping-row-selection/#selecting-total-rows)). A group total row can be selected when its group can. For the grand total row, `isRowSelectable` is called with the grand total row itself, which has no `data` with the Client-Side Row Model.
+
 {% gridExampleRunner title="Configuring Selectable Rows" name="configure-selectable-rows" /%}
 
 Note this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.

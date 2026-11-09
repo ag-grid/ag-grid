@@ -24,11 +24,16 @@ export interface ISelectionService {
     getSelectionCount(): number;
     setNodesSelected(params: ISetNodesSelectedParams): number;
     /** Drops a node leaving the model from the selection. Event-free; the single `selectionChanged`
-     *  (carrying `source`) is emitted by `updateSelectableAfterGrouping`. CSRM only. */
+     *  (carrying `source`) is emitted when the refresh's selection batch ends. CSRM only. */
     removeFromSelection?(node: RowNode, source: SelectionEventSourceType): void;
     /** Dispatches the coalesced `selectionChanged` left pending by `removeFromSelection` when the refresh
      *  that would normally flush it is deferred. CSRM only. */
     flushPendingSelectionChanged?(): void;
+    /** Asks the row again, removes the selection it holds itself if `isRowSelectable` rejects it, and shows the row's selection. Server-side only. */
+    refreshRowSelection?(rowNode: RowNode): void;
+    /** Opens a batch: the outermost `endSelectionBatch` emits one `selectionChanged`, client-side after asking the rows edited in it. */
+    beginSelectionBatch(): void;
+    endSelectionBatch(): void;
     /** Should only be called if groupSelects = 'descendants' or 'filteredDescendants' in CSRM */
     updateGroupsFromChildrenSelections?(
         source: SelectionEventSourceType,
@@ -54,8 +59,10 @@ export interface ISelectionService {
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void;
     /** `column` is `undefined` on a full-width row. */
     announceAriaRowSelection(rowNode: RowNode, column: AgColumn | undefined): void;
-    /** Single post-refresh selectable pass (flat + hierarchical), invoked by the client-side row model. */
+    /** Post-grouping selectable pass for leaves, and for groups when they roll up from their rows; client-side row model only. */
     updateSelectableAfterGrouping(changedPath: ChangedPath | undefined, changedRowNodes?: ChangedRowNodes): void;
+    /** Selectable pass for groups and the root once aggregation has run, invoked by the client-side row model. */
+    updateGroupsSelectable?(changedPath: ChangedPath | undefined): void;
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;
