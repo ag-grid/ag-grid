@@ -208,6 +208,7 @@
   },
   "defaultProject": "all",
   "useLegacyCache": false,
+  "cacheDirectory": ".nx/cache",
   "affected": {
     "legacy": true
   }
