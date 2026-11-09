@@ -80,6 +80,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public destroyRowNode(rowNode: RowNode, preserveStore: boolean = false): void {
         if (rowNode.childStore && !preserveStore) {
+            // reported before its store goes, as the store's range covers its rows that are not loaded
+            this.beans.rowRenderer.onRowNodeRemoved(rowNode);
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }

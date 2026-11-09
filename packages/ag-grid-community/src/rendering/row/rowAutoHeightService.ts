@@ -73,8 +73,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         pinnedRowModel?.forEachPinnedRow?.('bottom', updateRowHeight);
         rowModel.forEachDisplayedNode?.(updateRowHeight);
 
+        const rowRenderer = this.beans.rowRenderer;
         if (anyNodeChanged) {
-            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
+            rowRenderer.maintainRowsInViewForHeights(() =>
+                (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.()
+            );
+        }
+        if (this.areRowsMeasured()) {
+            rowRenderer.onRowsMeasured();
         }
     }
 
