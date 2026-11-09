@@ -593,7 +593,11 @@
 }
 
 .ag-loading {
-    padding-left: var(--ag-cell-horizontal-padding);
+    /* full width loading rows set these to line the spinner up with the group hierarchy */
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-internal-loading-row-offset, 0px) +
+            var(--ag-internal-loading-row-level, 0) * var(--ag-row-group-indent-size)
+    );
     display: flex;
     height: 100%;
     align-items: center;

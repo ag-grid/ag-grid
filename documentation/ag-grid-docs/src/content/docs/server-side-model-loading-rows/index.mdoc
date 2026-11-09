@@ -10,6 +10,16 @@ These loading rows are managed by the row model, not by the `loading` or `loadin
 
 ## Full Width Loading Row
 
+When rows are grouped, the provided loading row is indented to the level of the rows being loaded, so the spinner lines up with the expand and collapse icons of the rows around it. The indentation accounts for columns displayed before the group column and for row drag, drag source and checkbox controls in the group column. It does not follow horizontal scrolling of the group column.
+
+To display every loading row without indentation, add the following CSS:
+
+```css
+.ag-row-loading .ag-loading {
+    padding-inline-start: var(--ag-cell-horizontal-padding);
+}
+```
+
 The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
 
 - **Custom Loading Component** is supplied via `gridOptions.loadingCellRenderer`.

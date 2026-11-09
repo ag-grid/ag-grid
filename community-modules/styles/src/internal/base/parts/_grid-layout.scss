@@ -434,7 +434,10 @@
     .ag-loading {
         @include ag.unthemed-rtl(
             (
-                padding-left: var(--ag-cell-horizontal-padding),
+                padding-left: calc(
+                        var(--ag-cell-horizontal-padding) + var(--ag-internal-loading-row-offset, 0px) +
+                            var(--ag-internal-loading-row-level, 0) * var(--ag-row-group-indent-size)
+                    ),
             )
         );
         display: flex;
