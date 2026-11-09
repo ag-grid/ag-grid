@@ -105,7 +105,11 @@ describe('deferred column tool panel keeps keyboard focus', () => {
 
     test.each<[string, ColumnToolPanelAction[], (toolPanelGui: HTMLElement, viewport: HTMLElement) => HTMLElement]>([
         ['Cancel', ['cancel', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Cancel')],
-        ['Reset when there is no Cancel button', ['reset', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Reset')],
+        [
+            'Reset when there is no Cancel button',
+            ['reset', 'apply'],
+            (toolPanelGui) => getButton(toolPanelGui, 'Reset'),
+        ],
         ['the column list when there is no other button', ['apply'], (_gui, viewport) => getRow(viewport, 'Athlete')],
     ])('pressing Enter on Apply moves focus to %s', async (_name, buttons, getFocusTarget) => {
         const { gridApi, gridDiv, viewport, toolPanelGui } = await createGrid(buttons);
