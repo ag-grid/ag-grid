@@ -85,14 +85,14 @@ type FilterDef = Pick<ColDef, 'filter' | 'filterParams'>;
 /**
  * Whether the filter a definition builds is chosen by the column's data type, so typing the column could swap it:
  * `true` and `{ component: true }` resolve to the data type's default filter, and a Multi Filter with no filters
- * of its own derives its first one from it.
+ * of its own (an empty list included) derives its first one from it.
  */
 function filterFollowsDataType({ filter, filterParams }: FilterDef): boolean {
     const component = typeof filter === 'object' && filter != null ? filter.component : filter;
     if (component === true) {
         return true;
     }
-    return component === 'agMultiColumnFilter' && (typeof filterParams === 'function' || !filterParams?.filters);
+    return component === 'agMultiColumnFilter' && (typeof filterParams === 'function' || !filterParams?.filters?.length);
 }
 
 /** The column state keys set on each column parked awaiting inference, which inference then keeps. */
