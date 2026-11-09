@@ -9,6 +9,7 @@ import type {
 import {
     AgTabGuardComp,
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _createAgElement,
     _findNextFocusableElement,
@@ -131,7 +132,7 @@ export class AgTabbedLayout<
         const eIcon = this.beans.iconSvc.createIconNoSpan('close')!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
-        this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
+        _addManagedElementListeners(this, eCloseButton, { click: () => this.params.onCloseClicked?.() });
         const eCloseButtonWrapper = _createAgElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         eCloseButtonWrapper.appendChild(eCloseButton);
@@ -319,7 +320,7 @@ export class AgTabbedLayout<
 
             if (this.params.keepScrollPosition) {
                 const scrollableContainer = tabbedItem.getScrollableContainer?.() ?? body;
-                [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
+                [this.lastScrollListener] = _addManagedElementListeners(this, scrollableContainer, {
                     scroll: () => {
                         this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
                     },

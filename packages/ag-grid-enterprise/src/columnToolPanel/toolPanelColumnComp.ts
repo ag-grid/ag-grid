@@ -1,4 +1,10 @@
-import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -166,7 +172,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
-        this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();

@@ -8,7 +8,13 @@ import type {
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
-import { AgComponentStub, AgTabGuardFeature, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    AgComponentStub,
+    AgTabGuardFeature,
+    _addManagedElementListeners,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -257,14 +263,14 @@ export class AgDialog<
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
 
-        maximizeButtonComp.addManagedElementListeners(maximizeButtonComp.getGui(), {
+        _addManagedElementListeners(maximizeButtonComp, maximizeButtonComp.getGui(), {
             click: this.toggleMaximize.bind(this),
         });
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(
-            ...this.addManagedElementListeners(eTitleBar, {
+            ..._addManagedElementListeners(this, eTitleBar, {
                 dblclick: this.toggleMaximize.bind(this),
             })
         );

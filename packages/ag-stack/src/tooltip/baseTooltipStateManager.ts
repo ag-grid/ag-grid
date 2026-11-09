@@ -10,6 +10,7 @@ import type { TooltipCtrl } from '../interfaces/iTooltip';
 import { _setAriaRole } from '../utils/aria';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _addManagedElementListeners } from '../utils/event';
 import { _findFocusableElements } from '../utils/focus';
 import { _exists } from '../utils/generic';
 
@@ -441,12 +442,12 @@ export abstract class BaseTooltipStateManager<
         }
 
         if (this.interactionEnabled) {
-            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(eGui, {
+            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = _addManagedElementListeners(this, eGui, {
                 mouseenter: this.onTooltipMouseEnter.bind(this),
                 mouseleave: this.onTooltipMouseLeave.bind(this),
             });
 
-            [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+            [this.onDocumentKeyDownCallback] = _addManagedElementListeners(this, _getDocument(this.beans), {
                 keydown: (event) => {
                     if (event) {
                         this.onDocumentKeyDown(event, eGui);
@@ -454,13 +455,13 @@ export abstract class BaseTooltipStateManager<
                 },
             });
 
-            [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
+            [this.tooltipFocusInListener, this.tooltipFocusOutListener] = _addManagedElementListeners(this, eGui, {
                 focusin: this.onTooltipFocusIn.bind(this),
                 focusout: this.onTooltipFocusOut.bind(this),
             });
         }
 
-        [this.onDocumentTouchStartCallback] = this.addManagedElementListeners(_getDocument(this.beans), {
+        [this.onDocumentTouchStartCallback] = _addManagedElementListeners(this, _getDocument(this.beans), {
             touchstart: (event) => {
                 if (event && !eGui.contains(event.target as Node)) {
                     this.hideTooltip(true);

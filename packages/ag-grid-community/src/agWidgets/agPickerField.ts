@@ -10,6 +10,7 @@ import type {
 import {
     KeyCode,
     RefPlaceholder,
+    _addManagedElementListeners,
     _formatSize,
     _getAbsoluteWidth,
     _getInnerHeight,
@@ -152,10 +153,10 @@ export abstract class AgPickerField<
         this.eDisplayField.setAttribute('id', displayId);
 
         const ariaEl = this.getAriaElement();
-        this.addManagedElementListeners(ariaEl, { keydown: this.onKeyDown.bind(this) });
+        _addManagedElementListeners(this, ariaEl, { keydown: this.onKeyDown.bind(this) });
 
-        this.addManagedElementListeners(this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
-        this.addManagedElementListeners(this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        _addManagedElementListeners(this, this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
 
         const { pickerIcon, inputWidth } = this.config;
 

@@ -1,4 +1,4 @@
-import { RefPlaceholder, _setAriaExpanded } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _setAriaExpanded } from 'ag-stack';
 
 import type { ElementParams, IconName, ToolPanelDef } from 'ag-grid-community';
 import { Component, _createIconNoSpan } from 'ag-grid-community';
@@ -44,7 +44,7 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
         this.setTemplate(SideBarButtonElement, []);
         this.setLabel();
         this.setIcon();
-        this.addManagedElementListeners(this.eToggleButton, { click: this.onButtonPressed.bind(this) });
+        _addManagedElementListeners(this, this.eToggleButton, { click: this.onButtonPressed.bind(this) });
         this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 

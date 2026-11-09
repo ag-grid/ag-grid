@@ -1,4 +1,8 @@
+import type { AgBean } from '../interfaces/agBean';
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { AgEventHandlers } from '../interfaces/iContext';
 import { _getBodyHeight, _getBodyWidth, _getDocument } from './document';
 import { _getElementRectWithOffset } from './dom';
 
@@ -31,6 +35,18 @@ export const _isEventSupported = (() => {
 
     return eventChecker;
 })();
+
+/**
+ * Listens to DOM events on `element` until `bean` is destroyed, typing each handler's event from the DOM.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
+    bean: Pick<AgBean<unknown, BaseProperties, BaseEvents, string>, 'addManagedElementListeners'>,
+    element: Element | Document | ShadowRoot,
+    handlers: AgEventHandlers<TEvent, HTMLElementEventMap[TEvent]>
+): (() => null)[] {
+    return bean.addManagedElementListeners<TEvent>(element, handlers);
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {

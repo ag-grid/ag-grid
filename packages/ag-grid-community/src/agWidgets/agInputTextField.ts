@@ -5,7 +5,14 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { _createAgElement, _exists, _setAriaInvalid, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    _addManagedElementListeners,
+    _createAgElement,
+    _exists,
+    _setAriaInvalid,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
@@ -169,7 +176,7 @@ export class AgInputTextField<
             eClearButton.appendChild(clearIcon);
         }
         _setAriaLabel(eClearButton, this.getLocaleTextFunc()('ariaLabelInputClear', 'Clear'));
-        this.addManagedElementListeners(eClearButton, {
+        _addManagedElementListeners(this, eClearButton, {
             mousedown: (event: MouseEvent) => event.preventDefault(),
             click: () => this.clearInput(),
         });

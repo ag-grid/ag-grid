@@ -1,3 +1,4 @@
+import { _addManagedElementListeners } from 'ag-stack';
 import type {
     AgComponentSelector,
     AgCoreBeanCollection,
@@ -56,8 +57,8 @@ export class AgCheckbox<
     }
 
     protected override addInputListeners() {
-        this.addManagedElementListeners(this.eInput, { click: this.onCheckboxClick.bind(this) });
-        this.addManagedElementListeners(this.eLabel, { click: this.toggle.bind(this) });
+        _addManagedElementListeners(this, this.eInput, { click: this.onCheckboxClick.bind(this) });
+        _addManagedElementListeners(this, this.eLabel, { click: this.toggle.bind(this) });
     }
 
     public getNextValue(): boolean {

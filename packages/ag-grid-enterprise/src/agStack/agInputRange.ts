@@ -1,3 +1,4 @@
+import { _addManagedElementListeners } from 'ag-stack';
 import type {
     AgComponentSelector,
     AgCoreBeanCollection,
@@ -59,7 +60,7 @@ export class AgInputRange<
     }
 
     protected override addInputListeners() {
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: (e: any) => {
                 const value = e.target.value;
 

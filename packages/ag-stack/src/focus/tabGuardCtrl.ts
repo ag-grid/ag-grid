@@ -4,6 +4,7 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _addManagedElementListeners } from '../utils/event';
 import { _findFocusableElements, _findNextFocusableElement, _removeNonTabStopRadios } from '../utils/focus';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
@@ -133,7 +134,7 @@ export class AgTabGuardCtrl<
         this.activateTabGuards();
 
         for (const guard of [this.eTopGuard, this.eBottomGuard]) {
-            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) });
+            _addManagedElementListeners(this, guard, { focus: this.onFocus.bind(this) });
         }
     }
 

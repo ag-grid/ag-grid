@@ -1,5 +1,5 @@
 import type { AgComponentPopupPositionParams } from 'ag-stack';
-import { _getActiveDomElement } from 'ag-stack';
+import { _addManagedElementListeners, _getActiveDomElement } from 'ag-stack';
 
 import type { BeanCollection, IFormulaService, PopupPositionParams } from 'ag-grid-community';
 import { BeanStub, KeyCode } from 'ag-grid-community';
@@ -25,7 +25,7 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedElementListeners(this.field.getContentElement(), {
+        _addManagedElementListeners(this, this.field.getContentElement(), {
             keydown: this.onContentKeyDown.bind(this),
             mouseup: this.updateFunctionAutocomplete.bind(this),
             focusin: this.updateFunctionAutocomplete.bind(this),
