@@ -103,11 +103,11 @@ describe('deferred column tool panel keeps keyboard focus', () => {
         await expectRowFocused(viewport, 'Medals');
     });
 
-    test.each<[string, ColumnToolPanelAction[], string | null]>([
-        ['Cancel', ['cancel', 'apply'], 'Cancel'],
-        ['Reset when there is no Cancel button', ['reset', 'apply'], 'Reset'],
-        ['the column list when there is no other button', ['apply'], null],
-    ])('pressing Enter on Apply moves focus to %s', async (_name, buttons, focusLabel) => {
+    test.each<[string, ColumnToolPanelAction[], (toolPanelGui: HTMLElement, viewport: HTMLElement) => HTMLElement]>([
+        ['Cancel', ['cancel', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Cancel')],
+        ['Reset when there is no Cancel button', ['reset', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Reset')],
+        ['the column list when there is no other button', ['apply'], (_gui, viewport) => getRow(viewport, 'Athlete')],
+    ])('pressing Enter on Apply moves focus to %s', async (_name, buttons, getFocusTarget) => {
         const { gridApi, gridDiv, viewport, toolPanelGui } = await createGrid(buttons);
         await runMenuItemFromKeyboard(gridDiv, viewport, 'Silver', 'Add Silver to values');
         await expectRowFocused(viewport, 'Silver');
@@ -118,11 +118,7 @@ describe('deferred column tool panel keeps keyboard focus', () => {
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver']);
         expect(apply.disabled).toBe(true);
-        if (focusLabel) {
-            expect(document.activeElement).toBe(getButton(toolPanelGui, focusLabel));
-        } else {
-            await expectRowFocused(viewport, 'Athlete');
-        }
+        await waitFor(() => expect(document.activeElement).toBe(getFocusTarget(toolPanelGui, viewport)));
     });
 
     test('Apply leaves focus alone when it did not hold focus', async () => {
