@@ -1,5 +1,12 @@
 import type { AgCoreBeanCollection, AgElementParams, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { RefPlaceholder, _addOrRemoveAttribute, _setAriaLabel, _setDisabled, _setElementWidth } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _addOrRemoveAttribute,
+    _setAriaLabel,
+    _setDisabled,
+    _setElementWidth,
+} from 'ag-stack';
 
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
@@ -107,7 +114,7 @@ export abstract class AgAbstractInputField<
     }
 
     protected addInputListeners() {
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: (e: InputEvent) => this.setValue((e.target as HTMLInputElement).value as TValue),
         });
     }

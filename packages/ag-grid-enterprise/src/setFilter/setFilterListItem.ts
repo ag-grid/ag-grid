@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -232,12 +233,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', beans, null));
         eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', beans, null));
         const listener = this.onExpandOrContractClicked.bind(this);
-        this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
-        this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupClosedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         if (hasIndeterminateExpandState) {
             eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', beans, null));
-            this.addManagedElementListeners(eGroupIndeterminateIcon, {
+            _addManagedElementListeners(this, eGroupIndeterminateIcon, {
                 click: listener,
             });
         }

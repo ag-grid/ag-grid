@@ -1,4 +1,4 @@
-import { _debounce, _setDisabled } from 'ag-stack';
+import { _addManagedElementListeners, _debounce, _setDisabled } from 'ag-stack';
 
 import type {
     FindChangedEvent,
@@ -94,7 +94,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
 
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: () => (findSearchValueTimeout = updateFindSearchValueDebounced()),
             keydown: (e: KeyboardEvent) => {
                 if (e.key === 'Enter') {
@@ -110,10 +110,10 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             },
         });
 
-        this.addManagedElementListeners(this.ePrevButton, {
+        _addManagedElementListeners(this, this.ePrevButton, {
             click: () => this.beans.findSvc?.previous(),
         });
-        this.addManagedElementListeners(this.eNextButton, {
+        _addManagedElementListeners(this, this.eNextButton, {
             click: () => this.beans.findSvc?.next(),
         });
 

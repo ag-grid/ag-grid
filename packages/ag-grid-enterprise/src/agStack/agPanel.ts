@@ -12,6 +12,7 @@ import {
     AgComponentStub,
     AgPositionableFeature,
     RefPlaceholder,
+    _addManagedElementListeners,
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
@@ -169,7 +170,7 @@ export class AgPanel<
             _setDisplayed(this.eTitleBar, false);
         }
 
-        this.addManagedElementListeners(this.eTitleBar, {
+        _addManagedElementListeners(this, this.eTitleBar, {
             mousedown: (e: MouseEvent) => {
                 if (
                     eGui.contains(e.relatedTarget as HTMLElement) ||
@@ -258,7 +259,7 @@ export class AgPanel<
             eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
+            _addManagedElementListeners(closeButtonComp, eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.remove();

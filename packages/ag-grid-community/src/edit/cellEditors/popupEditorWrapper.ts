@@ -1,4 +1,4 @@
-import { AgPopupComponent, _setAriaLabel } from 'ag-stack';
+import { AgPopupComponent, _addManagedElementListeners, _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -46,6 +46,6 @@ export class PopupEditorWrapper extends AgPopupComponent<
             }
         };
 
-        this.addManagedElementListeners(eGui, { keydown: listener });
+        _addManagedElementListeners(this, eGui, { keydown: listener });
     }
 }

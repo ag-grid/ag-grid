@@ -1,4 +1,4 @@
-import { _debounce } from 'ag-stack';
+import { _addManagedElementListeners, _debounce } from 'ag-stack';
 
 import type {
     GridInputTextField,
@@ -59,7 +59,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
         const updateQuickFilterText = _debounce(this, () => setQuickFilterText(this.eInput.value), INPUT_DEBOUNCE_MS);
 
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: () => (quickFilterTextTimeout = updateQuickFilterText()),
         });
 

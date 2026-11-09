@@ -1,5 +1,13 @@
 import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, KeyCode, _clearElement, _isVisible, _last, _setAriaRole } from 'ag-stack';
+import {
+    AgComponentStub,
+    KeyCode,
+    _addManagedElementListeners,
+    _clearElement,
+    _isVisible,
+    _last,
+    _setAriaRole,
+} from 'ag-stack';
 
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
@@ -61,7 +69,7 @@ export class AgList<
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        _addManagedElementListeners(this, eGui, { mouseleave: () => this.clearHighlighted() });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {

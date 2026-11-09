@@ -14,6 +14,7 @@ import type {
 import {
     AgBeanStub,
     FAST_TEST_TIMINGS,
+    _addManagedElementListeners,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
@@ -248,13 +249,13 @@ export class AgMenuItemComponent<
 
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
-            this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
+            _addManagedElementListeners(this, eGui, { click: (e) => this.onItemSelected(e!) });
             const touchListener = new TouchListener(eGui, true);
             this.addManagedListeners(touchListener, { tap: (e: TapEvent) => this.onItemSelected(e.touchStart) });
             this.addDestroyFunc(() => touchListener.destroy());
         }
         if (!params?.suppressKeyboardSelect) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 keydown: (e: KeyboardEvent) => {
                     if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                         e.preventDefault();
@@ -264,7 +265,7 @@ export class AgMenuItemComponent<
             });
         }
         if (!params?.suppressMouseDown) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 mousedown: (e: MouseEvent) => {
                     // Prevent event bubbling to other event handlers such as PopupService triggering
                     // premature closing of any open sub-menu popup.
@@ -274,7 +275,7 @@ export class AgMenuItemComponent<
             });
         }
         if (!params?.suppressMouseOver) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 mouseenter: () => this.onMouseEnter(),
                 mouseleave: () => this.onMouseLeave(),
             });

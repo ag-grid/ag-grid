@@ -10,6 +10,7 @@ import type {
 import {
     AgComponentStub,
     RefPlaceholder,
+    _addManagedElementListeners,
     _isComponent,
     _removeAriaExpanded,
     _removeFromParent,
@@ -561,7 +562,7 @@ class DefaultTitleBar<
         const iconSvc = this.beans.iconSvc;
         this.eGroupClosedIcon.appendChild(iconSvc.createIconNoSpan('accordionClosed')!);
         this.eGroupOpenedIcon.appendChild(iconSvc.createIconNoSpan('accordionOpen')!);
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
                 const { ENTER, SPACE, RIGHT, LEFT, UP, DOWN, PAGE_UP, PAGE_DOWN, PAGE_HOME, PAGE_END } = KeyCode;

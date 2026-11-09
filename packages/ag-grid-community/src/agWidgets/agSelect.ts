@@ -9,7 +9,13 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy, _setAriaReadOnly } from 'ag-stack';
+import {
+    KeyCode,
+    _addManagedElementListeners,
+    _isElementOverflowingCallback,
+    _setAriaLabelledBy,
+    _setAriaReadOnly,
+} from 'ag-stack';
 
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -126,7 +132,7 @@ export class AgSelect<
             this.setReadOnly(readOnly);
         }
 
-        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -160,7 +166,7 @@ export class AgSelect<
         _setAriaLabelledBy(eListAriaEl, this.getAriaElement().id);
         this.setAriaControlsId(listId);
 
-        listComponent.addManagedElementListeners(listComponent.getGui(), {
+        _addManagedElementListeners(listComponent, listComponent.getGui(), {
             mousedown: (e) => {
                 e?.preventDefault();
             },

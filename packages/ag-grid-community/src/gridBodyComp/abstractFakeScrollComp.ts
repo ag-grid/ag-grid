@@ -1,4 +1,4 @@
-import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _isIOSUserAgent, _isMacOsUserAgent } from 'ag-stack';
 
 import type { BodyScrollEvent } from '../events';
 import type { ElementParams } from '../utils/element';
@@ -103,6 +103,6 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     }
 
     public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.eViewport, { scroll: fn });
+        _addManagedElementListeners(this, this.eViewport, { scroll: fn });
     }
 }
