@@ -1,12 +1,15 @@
 import type { AgBean } from '../interfaces/agBean';
 import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgEventHandlers } from '../interfaces/iContext';
-import type { ListenerTarget } from '../interfaces/iEventEmitter';
+import type { AgListenerOptions } from '../interfaces/iEventEmitter';
 import { _getBodyHeight, _getBodyWidth, _getDocument } from './document';
 import { _getElementRectWithOffset } from './dom';
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
 const NON_PASSIVE_EVENTS = ['wheel'];
+// OPTIMIZATION: shared across every listener rather than allocated per listener.
+const PASSIVE_LISTENER: Readonly<AgListenerOptions> = { passive: true };
+const ACTIVE_LISTENER: Readonly<AgListenerOptions> = { passive: false };
 const supports: { [key: string]: boolean } = {};
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -87,47 +90,22 @@ export function _addManagedElementListeners<TEvent extends keyof HTMLElementEven
     element: Element | Document | ShadowRoot,
     handlers: AgEventHandlers<TEvent, HTMLElementEventMap[TEvent]>
 ): (() => null)[] {
-    const target = element instanceof HTMLElement ? new PassiveElementTarget(element) : element;
-    return bean.addManagedListeners<TEvent>(target, handlers);
+    return bean.addManagedListeners<TEvent>(
+        element,
+        handlers,
+        element instanceof HTMLElement ? getPassiveListenerOptions : undefined
+    );
 }
 
-/** Adds an element's listeners with the passive state its event type needs. */
-class PassiveElementTarget implements ListenerTarget {
-    constructor(private readonly element: HTMLElement) {}
-
-    public addEventListener(event: string, listener: (event?: any) => void): void {
-        _addSafePassiveEventListener(this.element, event, listener);
+function getPassiveListenerOptions(event: string): Readonly<AgListenerOptions> | undefined {
+    if (PASSIVE_EVENTS.includes(event)) {
+        return PASSIVE_LISTENER;
     }
-
-    public removeEventListener(event: string, listener: (event?: any) => void): void {
-        this.element.removeEventListener(event, listener);
+    if (NON_PASSIVE_EVENTS.includes(event)) {
+        return ACTIVE_LISTENER;
     }
+    return undefined;
 }
-
-function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
-    const passive = getPassiveStateForEvent(event);
-
-    let options: AddEventListenerOptions | undefined;
-
-    if (passive != null) {
-        options = { passive };
-    }
-
-    eElement.addEventListener(event, listener, options);
-}
-
-const getPassiveStateForEvent = (event: string): boolean | undefined => {
-    const isPassive = PASSIVE_EVENTS.includes(event);
-    const isNonPassive = NON_PASSIVE_EVENTS.includes(event);
-
-    if (isPassive) {
-        return true;
-    }
-
-    if (isNonPassive) {
-        return false;
-    }
-};
 
 /**
  * `True` if the event is close to the original event by X pixels either vertically or horizontally.

@@ -12,7 +12,7 @@ describe('_addManagedElementListeners', () => {
 
         expect(addEventListener).toHaveBeenCalledWith('touchstart', expect.any(Function), { passive: true });
         expect(addEventListener).toHaveBeenCalledWith('wheel', expect.any(Function), { passive: false });
-        expect(addEventListener).toHaveBeenCalledWith('click', expect.any(Function), undefined);
+        expect(addEventListener).toHaveBeenCalledWith('click', expect.any(Function));
     });
 
     test('removes the listener from the element when the bean is destroyed', () => {

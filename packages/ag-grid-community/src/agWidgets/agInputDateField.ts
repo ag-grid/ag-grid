@@ -1,5 +1,6 @@
 import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _getActiveDomElement,
     _isBrowserFirefox,
@@ -54,7 +55,7 @@ export class AgInputDateField<
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
         const usingSafari = _isBrowserSafari();
-        this.addManagedListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             wheel: this.onWheel.bind(this),
             mousedown: () => {
                 if (this.isDisabled() || usingSafari) {

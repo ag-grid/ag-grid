@@ -20,6 +20,7 @@ import {
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
+    _throttleToFrame,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
@@ -161,7 +162,11 @@ export class AgVirtualList<
         const destroyObserver = _observeResize(
             this.beans,
             this.getGui(),
-            this.throttleToFrame(() => this.drawVirtualRows())
+            _throttleToFrame(
+                this,
+                () => this.beans,
+                () => this.drawVirtualRows()
+            )
         );
         this.addDestroyFunc(destroyObserver);
     }
