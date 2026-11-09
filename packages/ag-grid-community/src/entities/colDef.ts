@@ -308,8 +308,10 @@ export type SortComparatorFn<TData = any, TValue = any> = (
     isDescending: boolean
 ) => number;
 
+// `in out`: `field`'s conditional types stop TypeScript measuring this variance, and comparing ColDefs structurally
+// recurses through Column and the callback params deep enough to overflow the stack of in-browser TypeScript workers.
 /** Configuration options for columns in AG Grid. */
-export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
+export interface ColDef<in out TData = any, in out TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
     // *** Columns *** //
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
