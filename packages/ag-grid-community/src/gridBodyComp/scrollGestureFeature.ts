@@ -1,4 +1,4 @@
-import { _getWindow } from 'ag-stack';
+import { FORM_FIELD_SELECTOR, _getWindow } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { GridBodyScrollFeature } from './gridBodyScrollFeature';
@@ -35,6 +35,11 @@ const MOMENTUM_DECAY = 250;
 const MIN_VELOCITY = 0.02;
 const MAX_VELOCITY = 3;
 const RELEASE_WINDOW = 80;
+
+// Controls and grid handles own their touch gestures for editing, activation and dragging.
+const TOUCH_SCROLL_EXCLUDE_SELECTOR =
+    `${FORM_FIELD_SELECTOR}, a, [contenteditable]:not([contenteditable="false"]), ` +
+    '.ag-row-drag, .ag-header-cell-resize, .ag-fill-handle, .ag-selection-handle';
 
 function isElement(target: EventTarget): target is Element {
     // Elements can be created in another window or adopted into this document.
@@ -85,8 +90,7 @@ export class ScrollGestureFeature extends BeanStub {
         );
     }
 
-    private hasNestedScroller(event: Event): boolean {
-        const win = _getWindow(this.beans);
+    private hasNestedScroller(event: Event, win: Window): boolean {
         for (const element of event.composedPath()) {
             if (element === this.viewport) {
                 break;
@@ -114,7 +118,8 @@ export class ScrollGestureFeature extends BeanStub {
             this.wheelGesture = null;
             return;
         }
-        const time = performance.now();
+        const win = _getWindow(this.beans);
+        const time = win.performance.now();
         let gesture = this.wheelGesture;
         if (!gesture || time - gesture.lastAxisInputTime > WHEEL_GESTURE_GAP) {
             this.wheelGesture = null;
@@ -122,7 +127,7 @@ export class ScrollGestureFeature extends BeanStub {
         }
         const target = event.target;
         if (!target || !gesture?.targets.has(target)) {
-            if (this.hasNestedScroller(event)) {
+            if (this.hasNestedScroller(event, win)) {
                 this.wheelGesture = null;
                 return;
             }
@@ -139,8 +144,7 @@ export class ScrollGestureFeature extends BeanStub {
             y = 0;
         }
         if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
-            const lineHeight =
-                Number.parseFloat(_getWindow(this.beans).getComputedStyle(this.viewport).lineHeight) || 16;
+            const lineHeight = Number.parseFloat(win.getComputedStyle(this.viewport).lineHeight) || 16;
             x *= lineHeight;
             y *= lineHeight;
         } else if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
@@ -171,9 +175,7 @@ export class ScrollGestureFeature extends BeanStub {
         }
         const delta = axis === 'x' ? gesture.x : gesture.y;
         gesture.axis = axis;
-        const unapplied = delta - this.scrollBy(axis, delta);
-        // Retain subpixel rounding, but discard movement clamped at a boundary.
-        const remainder = this.canScroll(axis, delta) && Math.abs(unapplied) < 1 ? unapplied : 0;
+        const remainder = this.applyScrollDelta(axis, delta).remainder;
         gesture.x = axis === 'x' ? remainder : 0;
         gesture.y = axis === 'y' ? remainder : 0;
     }
@@ -182,26 +184,18 @@ export class ScrollGestureFeature extends BeanStub {
         this.stopMomentum();
         this.wheelGesture = null;
         this.clearTouchGesture();
+        if (event.touches.length !== 1 || event.defaultPrevented || this.isBlocked()) {
+            return;
+        }
+        const win = _getWindow(this.beans);
         if (
-            event.touches.length !== 1 ||
-            event.defaultPrevented ||
-            this.isBlocked() ||
-            this.hasNestedScroller(event) ||
-            event
-                .composedPath()
-                .some(
-                    (element) =>
-                        isElement(element) &&
-                        element.matches(
-                            'input, textarea, select, button, a, [contenteditable]:not([contenteditable="false"]), ' +
-                                '.ag-row-drag, .ag-header-cell-resize, .ag-fill-handle, .ag-selection-handle'
-                        )
-                )
+            this.hasNestedScroller(event, win) ||
+            event.composedPath().some((element) => isElement(element) && element.matches(TOUCH_SCROLL_EXCLUDE_SELECTOR))
         ) {
             return;
         }
         const { identifier, clientX, clientY } = event.touches[0];
-        const time = performance.now();
+        const time = win.performance.now();
         this.touchGesture = {
             id: identifier,
             axis: null,
@@ -265,15 +259,12 @@ export class ScrollGestureFeature extends BeanStub {
             return;
         }
         const delta = axis === 'x' ? gesture.x - point.clientX : gesture.y - point.clientY;
-        const time = performance.now();
-        const requested = delta + gesture.remainder;
-        const applied = this.scrollBy(axis, requested);
-        const unapplied = requested - applied;
-        const canScroll = this.canScroll(axis, delta);
-        // Keep fractional movement for the next touch event, without accumulating overscroll at an edge.
-        gesture.remainder = canScroll && Math.abs(unapplied) < 1 ? unapplied : 0;
+        const win = _getWindow(this.beans);
+        const time = win.performance.now();
+        const { remainder, canContinue } = this.applyScrollDelta(axis, delta, gesture.remainder);
+        gesture.remainder = remainder;
         const position = axis === 'x' ? x : y;
-        if (canScroll) {
+        if (canContinue) {
             this.updateTouchVelocity(gesture, position, delta, time);
         } else {
             gesture.velocity = 0;
@@ -317,8 +308,12 @@ export class ScrollGestureFeature extends BeanStub {
     private onTouchEnd(): void {
         const gesture = this.touchGesture;
         this.clearTouchGesture();
-        if (gesture?.axis && performance.now() - gesture.time < RELEASE_WINDOW) {
-            this.startMomentum(gesture.axis, gesture.velocity);
+        if (!gesture?.axis) {
+            return;
+        }
+        const win = _getWindow(this.beans);
+        if (win.performance.now() - gesture.time < RELEASE_WINDOW) {
+            this.startMomentum(gesture.axis, gesture.velocity, win);
         }
     }
 
@@ -343,6 +338,14 @@ export class ScrollGestureFeature extends BeanStub {
         return direction < 0 ? position > 0 : direction > 0 && position < limit;
     }
 
+    private applyScrollDelta(axis: Axis, delta: number, remainder = 0): { remainder: number; canContinue: boolean } {
+        const requested = delta + remainder;
+        const unapplied = requested - this.scrollBy(axis, requested);
+        const canContinue = this.canScroll(axis, delta);
+        // Retain subpixel rounding, but discard movement clamped at a boundary.
+        return { remainder: canContinue && Math.abs(unapplied) < 1 ? unapplied : 0, canContinue };
+    }
+
     private scrollBy(axis: Axis, delta: number): number {
         if (axis === 'x') {
             const sign = this.gos.get('enableRtl') ? -1 : 1;
@@ -354,11 +357,10 @@ export class ScrollGestureFeature extends BeanStub {
         return viewport.scrollTop - previous;
     }
 
-    private startMomentum(axis: Axis, velocity: number): void {
+    private startMomentum(axis: Axis, velocity: number, win: Window): void {
         if (Math.abs(velocity) < MIN_VELOCITY) {
             return;
         }
-        const win = _getWindow(this.beans);
         let previous = win.performance.now();
         let remainder = 0;
         const step = (time: number) => {

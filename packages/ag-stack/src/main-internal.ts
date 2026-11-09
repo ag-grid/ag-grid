@@ -229,6 +229,7 @@ export {
     _setFixedWidth,
     _setScrollLeft,
     _setVisible,
+    FORM_FIELD_SELECTOR,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';

@@ -21,6 +21,49 @@ async function dragPastEndOfText(page: Page, eValue: Locator, eEnd: Locator = eV
 
 const selectedText = (page: Page) => page.evaluate(() => window.getSelection()!.toString());
 
+for (const fullWidth of [false, true]) {
+    test(`editable renderer from another window keeps focus when clicked (fullWidth=${fullWidth})`, async ({
+        page,
+    }) => {
+        const { grid } = await mountGrid(page, {
+            options: () => {
+                const iframe = document.createElement('iframe');
+                iframe.hidden = true;
+                document.body.appendChild(iframe);
+                const renderer = () => {
+                    const childDocument = iframe.contentDocument!;
+                    const editor = childDocument.createElement('div');
+                    editor.setAttribute('contenteditable', '');
+                    const text = childDocument.createElement('span');
+                    text.textContent = 'Editable name';
+                    editor.appendChild(text);
+                    for (const eventName of ['pointerdown', 'mousedown']) {
+                        editor.addEventListener(eventName, (event) => event.preventDefault());
+                    }
+                    return editor;
+                };
+                return {
+                    columnDefs: [{ field: 'name', cellRenderer: renderer }],
+                    rowData: [{ fullWidth: false }, { fullWidth: true }],
+                    enableCellTextSelection: true,
+                    isFullWidthRow: ({ rowNode }) => rowNode.data.fullWidth,
+                    fullWidthCellRenderer: renderer,
+                };
+            },
+        });
+        const editor = grid.locator(`.ag-row[row-index="${fullWidth ? 1 : 0}"] [contenteditable]`);
+        expect(await editor.evaluate((element) => element instanceof HTMLElement)).toBe(false);
+        await editor.focus();
+        await expect(editor).toBeFocused();
+
+        await editor.locator('span').click();
+
+        await expect(editor).toBeFocused();
+        await page.keyboard.type('!');
+        await expect(editor).toContainText('!');
+    });
+}
+
 test.describe('enableCellTextSelection', () => {
     test('dragging past the end of a cell value selects only that cell value', async ({ page }) => {
         const { cell } = await mountGrid(page, {
