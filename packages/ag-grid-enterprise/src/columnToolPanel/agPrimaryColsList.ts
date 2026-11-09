@@ -267,14 +267,21 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 const activeEl = _getActiveDomElement(this.beans);
                 const focusLost = !activeEl || activeEl === eOldRow || activeEl === _getDocument(this.beans).body;
                 if (focusLost) {
-                    void this.focusRowIfAlive(this.indexOfItem(item));
+                    // A group split by column order has several rows sharing its groupId; a leaf picks this one.
+                    const leafColumn = item.group ? item.columnGroup.getLeafColumns()[0] : undefined;
+                    void this.focusRowIfAlive(this.indexOfItem(item, leafColumn));
                 }
             }, 0)
         );
     }
 
-    public focusList(): void {
+    /** Returns false when the list has no rows to focus, e.g. a search with no matches. */
+    public focusList(): boolean {
+        if (this.displayedColsList.length === 0) {
+            return false;
+        }
         void this.focusRowIfAlive(this.virtualList.getLastFocusedRow() ?? 0);
+        return true;
     }
 
     private createComponentFromItem(

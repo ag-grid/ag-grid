@@ -1,4 +1,4 @@
-import { findByText, fireEvent, getByText, waitFor } from '@testing-library/dom';
+import { findByText, fireEvent, getAllByText, getByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager } from 'ag-test-utils';
 
@@ -40,7 +40,11 @@ describe('deferred column tool panel keeps keyboard focus', () => {
             },
         });
         const gridDiv = getGridElement(gridApi)! as HTMLElement;
-        const toolPanelGui = await waitFor(() => (gridApi.getToolPanelInstance('columns') as any).getGui());
+        const toolPanelGui = await waitFor(() => {
+            const panel = gridDiv.querySelector<HTMLElement>('.ag-column-panel');
+            expect(panel).not.toBeNull();
+            return panel!;
+        });
 
         // happy-dom needs a viewport height to render the virtual-list rows.
         const viewport = toolPanelGui.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement;
@@ -103,6 +107,33 @@ describe('deferred column tool panel keeps keyboard focus', () => {
         await expectRowFocused(viewport, 'Medals');
     });
 
+    test('focus returns to the same part of a split column group', async () => {
+        const { gridApi, gridDiv, viewport } = await createGrid(
+            ['cancel', 'apply'],
+            [
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'silver' }, { field: 'total' }] },
+                { field: 'athlete' },
+            ]
+        );
+        gridApi.moveColumns(['athlete'], 1);
+        const getMedalsRows = () =>
+            getAllByText(viewport, 'Medals').map((label) => label.closest('.ag-virtual-list-item') as HTMLElement);
+        await waitFor(() => expect(getMedalsRows()).toHaveLength(2));
+
+        const secondPart = getMedalsRows()[1];
+        secondPart.focus();
+        fireEvent.keyDown(secondPart, { key: 'F10', shiftKey: true });
+        const option = (await findByText(gridDiv, 'Group by Medals')).closest('.ag-menu-option') as HTMLElement;
+        option.focus();
+        await userEvent.keyboard('{Enter}');
+
+        await waitFor(() => {
+            const rows = getMedalsRows();
+            expect(rows[1].isConnected).toBe(true);
+            expect(document.activeElement).toBe(rows[1]);
+        });
+    });
+
     test.each<[string, ColumnToolPanelAction[], (toolPanelGui: HTMLElement, viewport: HTMLElement) => HTMLElement]>([
         ['Cancel', ['cancel', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Cancel')],
         [
@@ -123,6 +154,25 @@ describe('deferred column tool panel keeps keyboard focus', () => {
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver']);
         expect(apply.disabled).toBe(true);
         await waitFor(() => expect(document.activeElement).toBe(getFocusTarget(toolPanelGui, viewport)));
+    });
+
+    test('pressing Enter on Apply moves focus to the search input when the search matches no columns', async () => {
+        const { gridApi, gridDiv, viewport, toolPanelGui } = await createGrid(['apply']);
+        await runMenuItemFromKeyboard(gridDiv, viewport, 'Silver', 'Add Silver to values');
+        await expectRowFocused(viewport, 'Silver');
+
+        const searchInput = toolPanelGui.querySelector<HTMLInputElement>(
+            '.ag-column-select-header-filter-wrapper input'
+        )!;
+        await userEvent.type(searchInput, 'no such column');
+        await waitFor(() => expect(viewport.classList.contains('ag-hidden')).toBe(true));
+
+        const apply = getButton(toolPanelGui, 'Apply');
+        apply.focus();
+        fireEvent.keyDown(apply, { key: 'Enter' });
+
+        expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver']);
+        await waitFor(() => expect(document.activeElement).toBe(searchInput));
     });
 
     test('Apply leaves focus alone when it did not hold focus', async () => {

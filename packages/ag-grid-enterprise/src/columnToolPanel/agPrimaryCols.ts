@@ -92,7 +92,9 @@ export class AgPrimaryCols extends Component {
     }
 
     public focusList(): void {
-        this.primaryColsListPanel.focusList();
+        if (!this.primaryColsListPanel.focusList()) {
+            this.primaryColsHeaderPanel.focusFilter();
+        }
     }
 
     public syncLayoutWithGrid(): void {
