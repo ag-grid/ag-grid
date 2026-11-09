@@ -39,6 +39,8 @@ export interface VirtualListParams<C> {
     retainRoleWhenEmpty?: boolean;
     listName?: string;
     moveItemCallback?: (item: C, isUp: boolean) => void;
+    /** Called after every pass that draws the visible rows, whether a scroll, a resize or a refresh triggered it. */
+    onRowsDrawn?: () => void;
 }
 
 function getVirtualListTemplate<TComponentSelectorType extends string>(
@@ -101,6 +103,7 @@ export class AgVirtualList<
     /** 0 while nothing waits: timer handles are always positive. */
     private awaitStableInterval = 0;
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
+    private readonly onRowsDrawn?: () => void;
 
     constructor(
         private readonly stopPropagationCallbacks?: StopPropagationCallbacks,
@@ -109,13 +112,20 @@ export class AgVirtualList<
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
         this.registerCSS(agVirtualListCSS);
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params ?? {};
+        const {
+            cssIdentifier = 'default',
+            ariaRole = 'listbox',
+            listName,
+            moveItemCallback,
+            onRowsDrawn,
+        } = params ?? {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
         this.retainRoleWhenEmpty = params?.retainRoleWhenEmpty ?? false;
         this.listName = listName;
         this.moveItemCallback = moveItemCallback;
+        this.onRowsDrawn = onRowsDrawn;
     }
 
     public postConstruct(): void {
@@ -492,6 +502,8 @@ export class AgVirtualList<
 
             this.ensureRowsRendered(firstRow, lastRow, softRefresh);
         }
+
+        this.onRowsDrawn?.();
     }
 
     private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
