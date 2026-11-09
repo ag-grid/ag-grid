@@ -61,9 +61,9 @@ Inference applies to every row model, and resolves once from the first batch of 
 | Row Model                                | Data inferred from                                      |
 | ---------------------------------------- | ------------------------------------------------------- |
 | [Client-Side](./row-models/#client-side) | The `rowData` grid option                               |
-| [Server-Side](./row-models/#server-side) | The first block of leaf rows returned by the datasource |
-| [Infinite](./row-models/#infinite)       | The first block of rows returned by the datasource      |
-| [Viewport](./row-models/#viewport)       | The first rows pushed by the datasource                 |
+| [Server-Side](./server-side-model/)      | The first block of leaf rows returned by the datasource |
+| [Infinite](./infinite-scrolling/)        | The first block of rows returned by the datasource      |
+| [Viewport](./viewport/)                  | The first rows pushed by the datasource                 |
 
 A column is never re-inferred once resolved, so later values of a different type do not change it, and a column with no value in that batch falls back to `cellDataType: false` and stays there — declare `cellDataType` explicitly on such a column.
 
