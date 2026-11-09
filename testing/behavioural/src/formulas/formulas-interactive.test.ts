@@ -1190,6 +1190,11 @@ describe('ag-grid formulas interactive workflows', () => {
                 Array.from(shadowRoot.querySelectorAll('.ag-autocomplete-row-label'), (label) => label.textContent)
             ).toContain('SUM')
         );
+        await waitFor(() =>
+            expect(
+                shadowRoot.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim()
+            ).toBe('SUM')
+        );
         await userEvent.keyboard('{Enter}');
         expect(editor.value).toBe('=SUM(');
     });

@@ -230,7 +230,6 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
 
         const input = this.field.getInputElement();
         const activeOptionId = list.getActiveOptionId();
-        // only reference an option that is rendered in the same root as the input.
         const renderedActiveOptionId =
             activeOptionId && _getElementRootNode(input).getElementById(activeOptionId) ? activeOptionId : null;
 
