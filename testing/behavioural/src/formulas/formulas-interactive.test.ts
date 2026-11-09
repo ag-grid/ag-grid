@@ -6,7 +6,7 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clipboardUtils,
-    fakeElementAttribute,
+    mockGridLayout,
     initPointerEventPolyfill,
     waitForEvent,
 } from 'ag-test-utils';
@@ -1276,11 +1276,8 @@ describe('ag-grid formulas interactive workflows', () => {
     });
 
     test('the formula editor references a function suggestion that only renders once scrolled into view', async () => {
-        const viewportHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight')!;
-        onTestFinished(() => {
-            Object.defineProperty(HTMLElement.prototype, 'offsetHeight', viewportHeight);
-        });
-        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+        onTestFinished(() => mockGridLayout.resetOptions());
+        mockGridLayout.asyncScrollEvents = true;
 
         const formulaFuncs: GridOptions['formulaFuncs'] = {};
         for (let i = 0; i < 30; ++i) {
@@ -1303,10 +1300,8 @@ describe('ag-grid formulas interactive workflows', () => {
         await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST00'));
         expect(document.querySelector('[aria-posinset="12"]')).toBeNull();
 
-        for (let i = 0; i < 11; ++i) {
-            await userEvent.keyboard('{ArrowDown}');
-        }
-        document.querySelector('.ag-autocomplete-virtual-list-viewport')!.dispatchEvent(new Event('scroll'));
+        // Held down, the key outpaces the scrolls it causes, so the target row renders only afterwards.
+        await userEvent.setup({ delay: null }).keyboard('{ArrowDown>11/}');
 
         await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST11'));
     });
