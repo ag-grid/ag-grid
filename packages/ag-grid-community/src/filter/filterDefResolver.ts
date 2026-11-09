@@ -193,7 +193,6 @@ export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFil
  * Whether changing the base data type of `column` from `from` to `to` changes the filter `filterDef` builds on it:
  * a different filter, or params of either data type's, which can invalidate the filter's model. A Selectable Filter
  * is judged by its active choice, a Multi Filter by its children.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isFilterChangedByDataType(
     beans: BeanCollection,
