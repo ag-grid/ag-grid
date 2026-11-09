@@ -1,6 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
@@ -24,12 +24,12 @@ export interface StopPropagationCallbacks {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgManagedFocusFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     constructor(
         private readonly eFocusable: HTMLElement,
         private readonly stopPropagationCallbacks: StopPropagationCallbacks = {

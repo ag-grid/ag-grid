@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponent,
     AgCoreBean,
-    AgCoreBeanCollection,
     BaseEvents,
     BaseProperties,
     ICommonSource,
@@ -12,7 +12,7 @@ import type {
     WithoutCommon,
 } from 'ag-stack';
 import {
-    AgBeanStub,
+    AgAbstractBean,
     FAST_TEST_TIMINGS,
     _addManagedElementListeners,
     _setAriaDisabled,
@@ -99,7 +99,7 @@ export interface AgCloseMenuEvent extends AgEvent<'closeMenu'> {
 }
 
 export interface AgMenuItemActivatedEvent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -172,14 +172,14 @@ export interface AgMenuItemCallbacks<TBeanCollection, TMenuActionParams extends 
 }
 
 export class AgMenuItemComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
-> extends AgBeanStub<
+> extends AgAbstractBean<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

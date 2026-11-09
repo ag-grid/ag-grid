@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponent,
     AgComponentEvent,
-    AgCoreBeanCollection,
     AgElementParams,
     AgStylesChangedEvent,
     BaseEvents,
@@ -58,7 +58,7 @@ function getVirtualListTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgVirtualList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

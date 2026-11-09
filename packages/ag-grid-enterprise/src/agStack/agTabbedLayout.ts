@@ -1,6 +1,6 @@
 import type {
     AfterGuiAttachedParams,
-    AgCoreBeanCollection,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -53,7 +53,7 @@ function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgTabbedLayout<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

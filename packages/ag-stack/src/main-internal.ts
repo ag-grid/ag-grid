@@ -1,9 +1,9 @@
 export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
-export { AgBeanStub } from './core/agBeanStub';
-export type { AgBeanStubEvent } from './core/agBeanStub';
-export { AgComponentStub } from './core/agComponentStub';
+export { AgAbstractBean } from './core/agAbstractBean';
+export type { AgBeanStubEvent } from './core/agAbstractBean';
+export { AgAbstractComponent } from './core/agAbstractComponent';
 export { AgContext } from './core/agContext';
 export type { AgContextParams, AgSingletonBeanClass } from './core/agContext';
 export { BaseAriaAnnouncementService } from './core/baseAriaAnnouncementService';
@@ -32,7 +32,7 @@ export type {
     VisibleChangedEvent,
 } from './interfaces/agComponent';
 export type { AgCoreBean, AgSingletonBean } from './interfaces/agCoreBean';
-export type { AgCoreBeanCollection } from './interfaces/agCoreBeanCollection';
+export type { AgBeanCollection } from './interfaces/agBeanCollection';
 export type {
     AgFrameworkOverrides,
     AgListenerWrapper,

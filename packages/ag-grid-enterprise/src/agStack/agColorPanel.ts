@@ -1,12 +1,6 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     RefPlaceholder,
     _exists,
     _getDocument,
@@ -27,13 +21,13 @@ const maxRecentColors = 8;
 let sharedRecentColors: string[] = [];
 
 export class AgColorPanel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

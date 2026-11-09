@@ -1,7 +1,7 @@
 import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type {
@@ -52,14 +52,14 @@ interface Position {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BasePopupService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TPopupPositionParams,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
 {
     beanName = 'popupSvc' as const;

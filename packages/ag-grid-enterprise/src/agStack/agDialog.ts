@@ -1,6 +1,6 @@
 import type {
+    AgBeanCollection,
     AgComponent,
-    AgCoreBeanCollection,
     BaseEvents,
     BaseProperties,
     IPopupService,
@@ -9,7 +9,7 @@ import type {
     StopPropagationCallbacks,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     AgTabGuardFeature,
     _addManagedElementListeners,
     _setAriaLabel,
@@ -43,7 +43,7 @@ export interface AgDialogCallbacks<TBeanCollection, TDialog> {
 }
 
 export class AgDialog<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -287,7 +287,7 @@ export class AgDialog<
         const maximizeButtonComp = (this.maximizeButtonComp = this.createBean<
             AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>
         >(
-            new AgComponentStub({
+            new AgAbstractComponent({
                 tag: 'button',
                 cls: 'ag-button ag-dialog-button',
                 attrs: { type: 'button' },

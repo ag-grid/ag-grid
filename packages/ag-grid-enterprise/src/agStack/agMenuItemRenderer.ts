@@ -1,5 +1,5 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, _createAgElement, _isNodeOrElement, _setAriaChecked, _setAriaExpanded } from 'ag-stack';
+import type { AgBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import { AgAbstractComponent, _createAgElement, _isNodeOrElement, _setAriaChecked, _setAriaExpanded } from 'ag-stack';
 
 import type { IMenuItem } from 'ag-grid-community';
 
@@ -11,7 +11,7 @@ interface AgMenuItemRendererParams {
 }
 
 export class AgMenuItemRenderer<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -19,7 +19,7 @@ export class AgMenuItemRenderer<
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 >
-    extends AgComponentStub<
+    extends AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,

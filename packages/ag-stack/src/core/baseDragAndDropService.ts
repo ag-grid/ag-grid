@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
@@ -15,7 +15,7 @@ import { _initStyledRoot } from '../theming/styledRoot';
 import { _getPageBody, _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 interface DragSourceAndParams<
     TDragSourceType extends number,
@@ -29,7 +29,7 @@ interface DragSourceAndParams<
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseDragAndDropService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -40,7 +40,7 @@ export abstract class BaseDragAndDropService<
     TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
     TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
 {
     beanName = 'dragAndDrop' as const;

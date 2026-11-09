@@ -1,6 +1,6 @@
 import type {
+    AgBeanCollection,
     AgComponent,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -9,7 +9,7 @@ import type {
     ResizableStructure,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     AgPositionableFeature,
     RefPlaceholder,
     _addManagedElementListeners,
@@ -81,7 +81,7 @@ function getTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgPanel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -89,7 +89,7 @@ export class AgPanel<
     TComponentSelectorType extends string,
     TConfig extends AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams> =
         AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -245,7 +245,7 @@ export class AgPanel<
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({
+            const closeButtonComp = (this.closeButtonComp = new AgAbstractComponent({
                 tag: 'button',
                 cls: 'ag-button',
                 attrs: { type: 'button' },

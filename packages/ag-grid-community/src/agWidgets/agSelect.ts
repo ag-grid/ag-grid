@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponentSelector,
     AgCoreBean,
-    AgCoreBeanCollection,
     AgEvent,
     BaseEvents,
     BaseProperties,
@@ -43,7 +43,7 @@ export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
 }
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgSelect<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

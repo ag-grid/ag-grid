@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _setAriaHidden } from './aria';
 import { _last } from './array';
 import { _getDocument, _getWindow } from './document';

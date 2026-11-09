@@ -1,6 +1,6 @@
 import type { AgBaseBean } from '../interfaces/agBaseBean';
 import type { AgSingletonBean } from '../interfaces/agCoreBean';
-import type { AgDomFreeBeanCollection } from '../interfaces/agDomFreeBeanCollection';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { IContext } from '../interfaces/iContext';
 import type { IDomFreePropertiesService } from '../interfaces/iDomFreeProperties';
 
@@ -11,7 +11,7 @@ type BeanComparator<TBeanCollection> = (
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgContextParams<
-    TBeanCollection extends AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
     TProperties,
     TGlobalEvents,
     TCommon,
@@ -41,7 +41,7 @@ let contextId = 1;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgContext<
-    TBeanCollection extends AgDomFreeBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
     TProperties,
     TGlobalEvents,
     TCommon,

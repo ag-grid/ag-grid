@@ -1,3 +1,4 @@
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type {
     AgBaseComponent,
     AgComponent,
@@ -6,7 +7,6 @@ import type {
     VisibleChangedEvent,
 } from '../interfaces/agComponent';
 import { RefPlaceholder } from '../interfaces/agComponent';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
@@ -20,13 +20,13 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 let compIdSequence = 0;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgComponentStub<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+export class AgAbstractComponent<
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -34,7 +34,7 @@ export class AgComponentStub<
     TComponentSelectorType extends string,
     TLocalEventType extends string = AgComponentEvent,
 >
-    extends AgBeanStub<
+    extends AgAbstractBean<
         TBeanCollection,
         TProperties,
         TGlobalEvents,

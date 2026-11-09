@@ -1,6 +1,6 @@
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgComponent } from '../interfaces/agComponent';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
@@ -43,12 +43,12 @@ export interface AgTabGuardParams {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTabGuardFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;

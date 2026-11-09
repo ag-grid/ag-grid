@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _requestAnimationFrame } from './dom';
 
 const doOnceSet = new Set<string>();
