@@ -372,14 +372,17 @@ export class DataTypeService extends BeanStub implements NamedBean {
         let value: any;
         const rowData = this.getInitialRowData();
         const isClientSide = _isClientSideRowModel(this.gos);
-        if (!isClientSide && this.inferredValueByField.has(field)) {
-            value = this.inferredValueByField.get(field);
+        // a dotted field reads a nested value or a literal key depending on `suppressFieldDotNotation`,
+        // so the two lookups are sampled separately
+        const sampleKey = fieldPath ? `path:${field}` : `key:${field}`;
+        if (!isClientSide && this.inferredValueByField.has(sampleKey)) {
+            value = this.inferredValueByField.get(sampleKey);
         } else if (rowData) {
             for (let i = 0, len = rowData.length; value == null && i < len; ++i) {
                 value = getValue(rowData[i]);
             }
             if (!isClientSide) {
-                this.inferredValueByField.set(field, value ?? null);
+                this.inferredValueByField.set(sampleKey, value ?? null);
             }
         } else {
             const rowNodes = isClientSide ? (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs : undefined;

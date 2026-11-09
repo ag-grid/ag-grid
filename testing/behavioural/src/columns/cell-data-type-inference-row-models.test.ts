@@ -446,6 +446,18 @@ describe('cellDataType inference under non-client-side row models', () => {
         });
     });
 
+    test('a dotted field rebuilt under `suppressFieldDotNotation` is not typed from the nested value', async () => {
+        const api = await createInfiniteGrid([{ a: { b: 123 }, 'a.b': 'hello' }], [{ field: 'a.b' }]);
+
+        expect(inferredType(api, 'a.b')).toBe('number');
+
+        api.setGridOption('suppressFieldDotNotation', true);
+        await asyncSetTimeout(0);
+
+        // the literal key has not been sampled, so the column no longer carries the nested value's type
+        expect(inferredType(api, 'a.b')).not.toBe('number');
+    });
+
     test('a grand total record extracted from the response is not inferred from', async () => {
         const first = batchServed();
         const api = gridsManager.createGrid('grid', {
