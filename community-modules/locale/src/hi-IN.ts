@@ -874,6 +874,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',
     ariaLabelFilterCardDelete: 'फ़िल्टर हटाएं',
     ariaLabelFilterCardHasEdits: 'संपादन हैं',
+    ariaLabelFilterCardType: 'फ़िल्टर प्रकार',
     ariaHasNote: 'इस सेल में एक नोट है।',
 
     // Number Format (Status Bar, Pagination Panel)

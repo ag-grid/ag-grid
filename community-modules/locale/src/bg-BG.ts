@@ -854,6 +854,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaLabelFilterCardType: 'Тип филтър',
     ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)

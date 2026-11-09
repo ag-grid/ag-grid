@@ -851,6 +851,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
+    ariaLabelFilterCardType: 'Тип фільтра',
     ariaHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -856,6 +856,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaLabelFilterCardType: 'Szűrő típusa',
     ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)

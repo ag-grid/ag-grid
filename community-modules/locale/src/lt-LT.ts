@@ -876,6 +876,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelAddFilterField: 'Pridėti filtro laukas',
     ariaLabelFilterCardDelete: 'Ištrinti filtrą',
     ariaLabelFilterCardHasEdits: 'Turi pakeitimų',
+    ariaLabelFilterCardType: 'Filtro tipas',
     ariaHasNote: 'Šis langelis turi pastabą.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -853,6 +853,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaLabelFilterCardType: 'Filtre Türü',
     ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)

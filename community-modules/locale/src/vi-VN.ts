@@ -849,6 +849,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaLabelFilterCardType: 'Loại Bộ Lọc',
     ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)

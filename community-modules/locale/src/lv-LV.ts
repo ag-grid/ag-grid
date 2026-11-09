@@ -874,6 +874,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelAddFilterField: 'Pievienot filtra lauku',
     ariaLabelFilterCardDelete: 'Dzēst filtru',
     ariaLabelFilterCardHasEdits: 'Ir izmaiņas',
+    ariaLabelFilterCardType: 'Filtra tips',
     ariaHasNote: 'Šai šūnai ir piezīme.',
 
     // Number Format (Status Bar, Pagination Panel)

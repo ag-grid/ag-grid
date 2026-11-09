@@ -872,6 +872,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Obriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmene',
+    ariaLabelFilterCardType: 'Tip filtera',
     ariaHasNote: 'Ova ćelija ima napomenu.',
 
     // Number Format (Status Bar, Pagination Panel)

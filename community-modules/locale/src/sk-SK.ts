@@ -849,6 +849,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtra',
     ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

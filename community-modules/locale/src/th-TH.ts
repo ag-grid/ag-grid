@@ -871,6 +871,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelAddFilterField: 'ฟิลด์เพิ่มตัวกรอง',
     ariaLabelFilterCardDelete: 'ลบตัวกรอง',
     ariaLabelFilterCardHasEdits: 'มีการแก้ไข',
+    ariaLabelFilterCardType: 'ประเภทตัวกรอง',
     ariaHasNote: 'เซลล์นี้มีบันทึกช่วยจำ',
 
     // Number Format (Status Bar, Pagination Panel)

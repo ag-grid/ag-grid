@@ -875,6 +875,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelAddFilterField: 'Tambah Bidang Filter',
     ariaLabelFilterCardDelete: 'Hapus Filter',
     ariaLabelFilterCardHasEdits: 'Memiliki Perubahan',
+    ariaLabelFilterCardType: 'Jenis Filter',
     ariaHasNote: 'Sel ini memiliki catatan.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -854,6 +854,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaLabelFilterCardType: 'Τύπος Φίλτρου',
     ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)

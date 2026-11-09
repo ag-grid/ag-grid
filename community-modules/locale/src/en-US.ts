@@ -861,6 +861,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaLabelFilterCardType: 'Filter Type',
     ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)

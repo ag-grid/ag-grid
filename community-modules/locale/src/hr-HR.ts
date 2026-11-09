@@ -851,6 +851,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)

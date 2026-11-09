@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaLabelFilterCardType: 'סוג מסנן',
     ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)

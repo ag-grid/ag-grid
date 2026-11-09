@@ -876,6 +876,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelAddFilterField: 'Поле добавления фильтра',
     ariaLabelFilterCardDelete: 'Удалить фильтр',
     ariaLabelFilterCardHasEdits: 'Есть изменения',
+    ariaLabelFilterCardType: 'Тип фильтра',
     ariaHasNote: 'У этой ячейки есть заметка.',
 
     // Number Format (Status Bar, Pagination Panel)

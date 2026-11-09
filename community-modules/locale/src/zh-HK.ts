@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
+    ariaLabelFilterCardType: '篩選類型',
     ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)

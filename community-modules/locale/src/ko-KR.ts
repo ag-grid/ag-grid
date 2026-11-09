@@ -848,6 +848,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaLabelFilterCardType: '필터 유형',
     ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)

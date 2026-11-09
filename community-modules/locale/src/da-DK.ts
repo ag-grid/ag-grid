@@ -851,6 +851,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)

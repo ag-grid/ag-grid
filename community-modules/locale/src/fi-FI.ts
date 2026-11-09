@@ -853,6 +853,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaLabelFilterCardType: 'Suodattimen tyyppi',
     ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)

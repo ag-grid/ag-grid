@@ -848,6 +848,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
+    ariaLabelFilterCardType: 'فلٹر کی قسم',
     ariaHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)
