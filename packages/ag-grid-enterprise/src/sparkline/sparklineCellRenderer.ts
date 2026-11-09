@@ -4,6 +4,7 @@ import { RefPlaceholder, _batchCall, _setAriaLabel, _setAriaLabelledBy } from 'a
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
 import { Component, _formatNumberCommas } from 'ag-grid-community';
 
+import { getCellWidgetsWidth } from '../cellRenderers/cellWidgetUtils';
 import {
     getChartTypeLabel,
     getSparklineAriaTemplate,
