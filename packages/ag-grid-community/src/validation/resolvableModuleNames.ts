@@ -71,6 +71,7 @@ const MODULES_FOR_ROW_MODELS: Partial<Record<CommunityModuleName | EnterpriseMod
     ClientSideRowModel: 'clientSide',
     ServerSideRowModelApi: 'serverSide',
     ServerSideRowModel: 'serverSide',
+    ServerSideRowModelMergeTransactions: 'serverSide',
     ViewportRowModel: 'viewport',
 };
 
