@@ -60,7 +60,7 @@ export interface ToolbarButtonItemDef<TData = any, TContext = any> extends Toolb
     label?: string;
     /** Hover tooltip and `aria-label`. Falls back to `label` when omitted. */
     tooltip?: string;
-    /** Icon displayed on the default button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. */
+    /** Icon displayed on the default button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. A grid icon name also picks up any override set for it in the `icons` grid option. */
     icon?: IconKey;
     /** Function invoked when the default button is clicked. */
     action?: (params: ToolbarItemActionParams<TData, TContext>) => void;
@@ -106,7 +106,7 @@ export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends 
     label?: string;
     /** Hover tooltip and `aria-label`. Falls back to `label`, then to the locale "Menu" text. */
     tooltip?: string;
-    /** Icon displayed on the button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. Defaults to the `menu` icon. */
+    /** Icon displayed on the button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. A grid icon name also picks up any override set for it in the `icons` grid option. Defaults to the `menu` icon. */
     icon?: IconKey;
     /** Not used for menu items. */
     action?: never;

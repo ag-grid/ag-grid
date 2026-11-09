@@ -141,7 +141,7 @@ export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 /**
  * A provided icon's CSS name (e.g. `'filter-remove'`), a grid icon name (e.g. `'csvExport'`),
  * or a custom key from the `icons` grid option. A grid icon name resolves only when the module
- * that uses it is registered.
+ * that uses it is registered, and picks up any override set for it in the `icons` grid option.
  */
 export type IconKey = IconName | IconValue | (string & {});
 
