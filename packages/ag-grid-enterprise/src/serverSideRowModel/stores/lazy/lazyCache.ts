@@ -972,7 +972,11 @@ export class LazyCache extends BeanStub {
 
         // group rows carry only their group key and any aggregated values, so they say nothing about
         // the columns populated on leaf rows: inference waits for a level whose rows are the data
-        this.beans.dataTypeSvc?.onRowsReceived(response.rowData, this.isLeafLevel());
+        // grand total records extracted above are aggregates, not a sample of any column's values
+        const rowsToInferFrom = skippedRowCount
+            ? response.rowData.filter((data) => this.getRowId(data) !== grandTotalId)
+            : response.rowData;
+        this.beans.dataTypeSvc?.onRowsReceived(rowsToInferFrom, this.isLeafLevel());
     }
 
     /** Whether this store's rows are leaf rows, and so representative of every column's values. */

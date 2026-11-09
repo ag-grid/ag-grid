@@ -120,6 +120,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // settled — filter model updates queue on it — so it covers only the wait for the grid's first
     // rows, not a column still parked because those rows were not ones to infer from
     private hasReceivedRows: boolean = false;
+    // outside the Client-Side Row Model the rows inferred from are not kept, so the value each field was
+    // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
+    // `null` records a field the rows held no value for
+    private readonly inferredValueByField: Map<string, any> = new Map();
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
 
@@ -362,14 +366,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         let value: any;
         const rowData = this.getInitialRowData();
-        if (rowData) {
+        const isClientSide = _isClientSideRowModel(this.gos);
+        if (!isClientSide && this.inferredValueByField.has(field)) {
+            value = this.inferredValueByField.get(field);
+        } else if (rowData) {
             for (let i = 0, len = rowData.length; value == null && i < len; ++i) {
                 value = getValue(rowData[i]);
             }
+            if (!isClientSide) {
+                this.inferredValueByField.set(field, value ?? null);
+            }
         } else {
-            const rowNodes = _isClientSideRowModel(this.gos)
-                ? (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs
-                : undefined;
+            const rowNodes = isClientSide ? (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs : undefined;
             if (!rowNodes?.length) {
                 this.initWaitForRowData(colId);
                 return undefined;
@@ -472,6 +480,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
+            if (this.keepColumnWithActiveFilter(colId)) {
+                continue;
+            }
             const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
             if (!updatedColumnState) {
                 continue;
@@ -497,6 +508,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (state.length) {
             _applyColumnState(beans, { state }, 'cellDataTypeInferred', true);
         }
+    }
+
+    /**
+     * A column still parked once the grid has rows — the Server-Side Row Model's leaf columns while every
+     * group is collapsed — can already be filtered through its untyped filter. Typing it now could swap
+     * that filter for another, discarding the active model, so it keeps the definition it is filtered by.
+     */
+    private keepColumnWithActiveFilter(colId: string): boolean {
+        const column = this.colModel.colsById[colId];
+        if (!column || !this.beans.colFilter?.isFilterActive(column)) {
+            return false;
+        }
+        const field = column.getColDef().field;
+        if (field) {
+            this.inferredValueByField.set(field, null);
+        }
+        return true;
     }
 
     private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
@@ -840,6 +868,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = Object.create(null);
+        this.inferredValueByField.clear();
         super.destroy();
     }
 }

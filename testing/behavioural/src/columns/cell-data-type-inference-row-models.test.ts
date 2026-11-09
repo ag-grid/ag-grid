@@ -1,8 +1,15 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, IViewportDatasourceParams } from 'ag-grid-community';
-import { InfiniteRowModelModule, RowApiModule, ScrollApiModule } from 'ag-grid-community';
+import {
+    GRAND_TOTAL_ROW_ID,
+    InfiniteRowModelModule,
+    NumberFilterModule,
+    RowApiModule,
+    ScrollApiModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
 /**
@@ -19,6 +26,8 @@ describe('cellDataType inference under non-client-side row models', () => {
             RowGroupingModule,
             ScrollApiModule,
             RowApiModule,
+            TextFilterModule,
+            NumberFilterModule,
         ],
     });
 
@@ -165,6 +174,25 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             expect(inferredType(api, 'year')).toBe('text');
         });
+
+        test('rebuilding the column definitions keeps the inferred types without new rows', async () => {
+            const api = await createGrid(FIRST_BATCH);
+
+            api.setGridOption(
+                'columnDefs',
+                COLUMN_DEFS.map((colDef) => ({ ...colDef, headerName: `${colDef.field}!` }))
+            );
+            api.setGridOption('defaultColDef', { minWidth: 50 });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('year')!.getColDef().headerName).toBe('year!');
+            expect(inferredType(api, 'name')).toBe('text');
+            expect(inferredType(api, 'year')).toBe('number');
+            expect(inferredType(api, 'date')).toBe('date');
+            expect(inferredType(api, 'done')).toBe('boolean');
+            expect(inferredType(api, 'notes')).toBe(false);
+            expect(api.getColumn('year')!.getColDef().cellEditor).toBe('agNumberCellEditor');
+        });
     });
 
     test('a later batch changes nothing, neither a resolved column nor a sparse one', async () => {
@@ -211,11 +239,15 @@ describe('cellDataType inference under non-client-side row models', () => {
          * A grouped datasource: the root block holds group rows, which carry only the group key, and
          * expanding a group serves the leaf rows under it.
          */
-        const createGroupedGrid = async () => {
+        const createGroupedGrid = async (columnDefs?: ColDef[]) => {
             const rootBlockServed = batchServed();
             const leafBlockServed = batchServed();
             const api = gridsManager.createGrid('grid', {
-                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }, { field: 'done' }],
+                columnDefs: columnDefs ?? [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year' },
+                    { field: 'done' },
+                ],
                 rowModelType: 'serverSide',
                 serverSideDatasource: {
                     getRows: (params) => {
@@ -268,6 +300,56 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             expect(inferredType(api, 'country')).toBe('text');
         });
+
+        test('a column filtered before the leaf rows arrive keeps its filter, rather than being re-typed', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', filter: true },
+                { field: 'done' },
+            ]);
+
+            // with every group collapsed, `year` is untyped and so offers the Text Filter
+            const textModel = { filterType: 'text', type: 'contains', filter: '20' };
+            api.setFilterModel({ year: textModel });
+            // the filter change reloads the root store, so wait for its group rows before expanding one
+            await waitForNoLoadingRows(api);
+            expect(api.getFilterModel()).toEqual({ year: textModel });
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            // typing `year` as a number would swap in the Number Filter and discard the active model
+            expect(api.getFilterModel()).toEqual({ year: textModel });
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(inferredType(api, 'done')).toBe('boolean');
+        });
+    });
+
+    test('a grand total record extracted from the response is not inferred from', async () => {
+        const first = batchServed();
+        const api = gridsManager.createGrid('grid', {
+            columnDefs: [{ field: 'name' }, { field: 'notes' }],
+            rowModelType: 'serverSide',
+            getRowId: ({ data }) => data.id,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    // the grand total leads the block, holding an aggregate count for each text column
+                    const rowData = [
+                        { id: GRAND_TOTAL_ROW_ID, name: 2, notes: 1 },
+                        { id: 'a', name: 'Michael', notes: null },
+                        { id: 'b', name: 'Natalie', notes: 'late' },
+                    ];
+                    params.success({ rowData, rowCount: 2 });
+                    first.serve();
+                },
+            },
+        });
+        await first.promise;
+        await asyncSetTimeout(0);
+
+        expect(inferredType(api, 'name')).toBe('text');
+        expect(inferredType(api, 'notes')).toBe('text');
     });
 
     test('a viewport datasource that starts with no rows stays pending, then infers from the rows it pushes', async () => {
