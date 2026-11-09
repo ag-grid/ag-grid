@@ -117,8 +117,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // captured when inference is first deferred, as the definitions can change before it resolves
     private columnTypeOverridesExistPendingInference: boolean = false;
     // set once any rows have arrived. `isPendingInference` holds back work that needs the types to be
-    // settled — filter model updates queue on it — so it covers only the wait for the grid's first
-    // rows, not a column still parked because those rows were not ones to infer from
+    // settled — filter model updates queue on it — so it covers only the Client-Side Row Model's wait
+    // for its first rows, not a column still parked because those rows were not ones to infer from
     private hasReceivedRows: boolean = false;
     // outside the Client-Side Row Model the rows inferred from are not kept, so the value each field was
     // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
@@ -412,8 +412,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (this.isPendingInference || this.hasReceivedRows) {
             return;
         }
-        this.isPendingInference = true;
         this.columnTypeOverridesExistPendingInference = this.isColumnTypeOverrideInDataTypeDefinitions;
+        if (!_isClientSideRowModel(this.gos)) {
+            // the other row models fetch their rows with the filter model, so nothing may wait on those
+            // rows: the columns stay parked in the pending map alone, as they do awaiting leaf rows
+            return;
+        }
+        this.isPendingInference = true;
         const { colAutosize } = this.beans;
         if (this.columnTypeOverridesExistPendingInference && colAutosize) {
             colAutosize.shouldQueueResizeOperations = true;
