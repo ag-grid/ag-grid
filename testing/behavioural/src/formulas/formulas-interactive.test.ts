@@ -1194,6 +1194,66 @@ describe('ag-grid formulas interactive workflows', () => {
         expect(editor.value).toBe('=SUM(');
     });
 
+    test('the formula editor is a named combobox that is collapsed when no suggestions show', async () => {
+        const api = await createGrid('fx-editor-aria-name', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.value).toBe('=A1');
+        expect(editor.getAttribute('aria-label')).toBe('Input Editor');
+        expect(editor.getAttribute('role')).toBe('combobox');
+        expect(editor.getAttribute('aria-autocomplete')).toBe('list');
+        expect(editor.getAttribute('aria-haspopup')).toBe('listbox');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor exposes the function suggestions and the highlighted one while they show', async () => {
+        const api = await createGrid('fx-editor-aria-suggestions', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOption = () => document.getElementById(editor.getAttribute('aria-activedescendant') ?? '');
+        const activeOptionLabel = () => activeOption()?.textContent?.trim();
+
+        await userEvent.type(editor, '=SU');
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('SUM'));
+        expect(editor.getAttribute('aria-expanded')).toBe('true');
+        expect(document.getElementById(editor.getAttribute('aria-controls')!)?.getAttribute('role')).toBe('listbox');
+        expect(activeOption()?.getAttribute('role')).toBe('option');
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        const firstOptionId = activeOption()!.id;
+        await userEvent.keyboard('{ArrowDown}');
+        await waitFor(() => expect(activeOption()?.id).toBe(firstOptionId.replace(/-0$/, '-1')));
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        await userEvent.keyboard('{Escape}');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+
+        await userEvent.type(editor, 'M');
+        await waitFor(() => expect(editor.getAttribute('aria-expanded')).toBe('true'));
+        await userEvent.keyboard('{Tab}');
+        expect(editor.value).toBe('=SUM(');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
     test('returning to a formula editor in a grid inside a shadow root after picking a reference puts the caret at the end', async () => {
         const host = document.body.appendChild(document.createElement('div'));
         const outside = document.body.appendChild(document.createElement('button'));
