@@ -45,6 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'F
     RowSelectionModule: true,
     RowStyleModule: true,
     ScrollApiModule: true,
+    ScrollGestureModule: true,
     SelectEditorModule: true,
     TextEditorModule: true,
     TextFilterModule: true,

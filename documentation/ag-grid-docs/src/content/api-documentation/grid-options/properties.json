@@ -2039,13 +2039,13 @@
         "scrollGestureMode": {
             "more": {
                 "name": "Scroll Gestures",
-                "url": "./scrolling-performance/#scroll-gestures"
+                "url": "./scrolling/#scroll-gestures"
             }
         },
         "debounceVerticalScrollbar": {
             "more": {
                 "name": "Debounce Vertical Scroll",
-                "url": "./scrolling-performance/#debounce-vertical-scroll"
+                "url": "./scrolling/#debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {

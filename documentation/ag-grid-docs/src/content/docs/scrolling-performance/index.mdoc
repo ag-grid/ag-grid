@@ -100,19 +100,7 @@ so that the grid only scrolls after the user has finished updating the scroll po
 
 To debounce the vertical scroll, set grid property `debounceVerticalScrollbar=true`.
 
-## Scroll Gestures
-
-Set `scrollGestureMode: 'axisLocked'` to keep touch and trackpad gestures on one axis and reduce accidental diagonal scrolling. The default, `'native'`, leaves scrolling to the browser.
-
-```js
-const gridOptions = {
-    scrollGestureMode: 'axisLocked',
-};
-```
-
-Axis-locked touch scrolling uses grid-managed momentum, so its feel differs from native scrolling. Keyboard scrolling and scrollbar dragging are unchanged. Use the toggle below to compare modes; changing this initial-only option recreates the grid.
-
-{% gridExampleRunner title="Scroll Gestures" name="scroll-gestures" /%}
+See [Debounce Vertical Scroll](./scrolling/#debounce-vertical-scroll) for an interactive example.
 
 ## Disable Row Highlighting
 

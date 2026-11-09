@@ -142,6 +142,37 @@ for (const rtl of [false, true]) {
                 await mount(page, rtl, debounce);
             });
 
+            test('runtime mode changes preserve position and restore native diagonal scrolling', async ({ page }) => {
+                const viewport = page.locator('.ag-grid-viewport');
+                const originalViewport = await viewport.elementHandle();
+                const setMode = (mode: 'native' | 'axisLocked') =>
+                    page.evaluate(async (mode) => {
+                        window.gridApi.setGridOption('scrollGestureMode', mode);
+                        // Let WebKit commit the listener change before injecting native wheel input.
+                        await new Promise<void>((resolve) =>
+                            requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+                        );
+                    }, mode);
+                await viewport.hover();
+                await page.mouse.wheel(rtl ? -120 : 120, 5);
+                await expect.poll(() => positions(page)).toMatchObject({ left: 120, top: 0 });
+
+                await setMode('native');
+                expect(await positions(page)).toMatchObject({ left: 120, top: 0 });
+                await page.mouse.wheel(rtl ? -40 : 40, 120);
+                await expect.poll(() => positions(page)).toMatchObject({ left: 160, top: 120 });
+
+                await setMode('axisLocked');
+                expect(await positions(page)).toMatchObject({ left: 160, top: 120 });
+                await page.mouse.wheel(rtl ? -5 : 5, 120);
+                await expect.poll(() => positions(page)).toMatchObject({ left: 160, top: 240 });
+                await expect
+                    .poll(() => positions(page))
+                    .toMatchObject({ horizontalDifference: 0, verticalDifference: 0 });
+                expect(await originalViewport!.evaluate((element) => element.isConnected)).toBe(true);
+                await originalViewport!.dispose();
+            });
+
             test('native wheel input keeps its axis, then a new gesture can change direction', async ({ page }) => {
                 await pauseClock(page);
                 await page.locator('.ag-grid-scrolling-rows .ag-cell[col-id="c1"]').first().hover();
@@ -320,6 +351,31 @@ for (const rtl of [false, true]) {
             });
         });
     }
+}
+
+for (const horizontal of [false, true]) {
+    test(`switching to native cancels touch momentum (horizontal=${horizontal})`, async ({ page }) => {
+        await mount(page);
+        await pauseClock(page);
+        await page.evaluate(() => {
+            window.gestureTarget = document.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        });
+        await touch(page, 'touchstart', 300, 400);
+        await page.clock.runFor(16);
+        await touch(page, 'touchmove', horizontal ? 260 : 295, horizontal ? 395 : 360);
+        await touch(page, 'touchend', horizontal ? 260 : 295, horizontal ? 395 : 360);
+        await page.clock.runFor(32);
+        const position = async () => (await positions(page))[horizontal ? 'left' : 'top'];
+        expect(await position()).toBeGreaterThan(40);
+
+        await page.evaluate(() => window.gridApi.setGridOption('scrollGestureMode', 'native'));
+        const stopped = await position();
+        await page.clock.runFor(300);
+        expect(await position()).toBe(stopped);
+        await page.evaluate(() => window.gridApi.setGridOption('scrollGestureMode', 'axisLocked'));
+        await page.clock.runFor(300);
+        expect(await position()).toBe(stopped);
+    });
 }
 
 test('a new outward wheel gesture scrolls the surrounding page', async ({ page }) => {

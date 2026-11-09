@@ -184,6 +184,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
+    scrollGestureMode: ({ scrollGestureMode }) => (scrollGestureMode === 'axisLocked' ? 'ScrollGesture' : null),
     sendToClipboard: 'Clipboard',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',

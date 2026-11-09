@@ -10,6 +10,7 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     headerGroupCellCtrl: 'ColumnGroup',
     rangeHandle: 'CellSelection',
     pageNumbers: 'PaginationPageNumbers',
+    scrollGestureFeature: 'ScrollGesture',
     tooltipFeature: 'Tooltip',
     highlightTooltipFeature: 'Tooltip',
     tooltipStateManager: 'Tooltip',

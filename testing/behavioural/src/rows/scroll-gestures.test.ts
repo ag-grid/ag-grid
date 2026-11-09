@@ -1,8 +1,15 @@
-import { TestGridsManager, nextAnimationFrame } from 'ag-test-utils';
+import { TestGridsManager, nextAnimationFrame, waitForMissingModuleReports } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
-import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
+import type { GridOptions, Module } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ClientSideRowModelModule,
+    PinnedRowModule,
+    ScrollApiModule,
+    ScrollGestureModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 
 describe('scroll gestures', () => {
     const grids = new TestGridsManager({ modules: [ClientSideRowModelModule, PinnedRowModule, ScrollApiModule] });
@@ -15,16 +22,21 @@ describe('scroll gestures', () => {
         grids.reset();
         mockGridLayout.useRealOffsetDimensions = false;
         vi.useRealTimers();
+        vi.restoreAllMocks();
     });
 
-    async function createGrid(options: GridOptions = {}) {
-        const api = grids.createGrid('gestures', {
-            scrollGestureMode: 'axisLocked',
-            rowHeight: 40,
-            columnDefs: Array.from({ length: 10 }, (_, i) => ({ field: `c${i}`, width: 200 })),
-            rowData: Array.from({ length: 200 }, () => ({})),
-            ...options,
-        });
+    async function createGrid(options: GridOptions = {}, modules: Module[] = [ScrollGestureModule]) {
+        const api = grids.createGrid(
+            'gestures',
+            {
+                scrollGestureMode: 'axisLocked',
+                rowHeight: 40,
+                columnDefs: Array.from({ length: 10 }, (_, i) => ({ field: `c${i}`, width: 200 })),
+                rowData: Array.from({ length: 200 }, () => ({})),
+                ...options,
+            },
+            { modules }
+        );
         const root = TestGridsManager.getHTMLElement(api)!;
         root.style.width = '700px';
         root.style.height = '500px';
@@ -66,6 +78,134 @@ describe('scroll gestures', () => {
         touch(viewport, 'touchstart', 200, 200);
         expect(touch(viewport, 'touchmove', 150, 100).defaultPrevented).toBe(false);
         expect(viewport.style.touchAction).toBe('');
+    });
+
+    test('reports the missing gesture module and retains native scrolling', async () => {
+        enableDevValidations({ throwOn: [] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const { root, viewport } = await createGrid({ pinnedTopRowData: [{}] }, []);
+        await waitForMissingModuleReports();
+
+        expect(errorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('error #200'),
+            expect.stringContaining('ScrollGestureModule'),
+            expect.any(String)
+        );
+        expect(wheel(viewport, 30, 80).defaultPrevented).toBe(false);
+        touch(viewport, 'touchstart', 200, 200);
+        expect(touch(viewport, 'touchmove', 150, 100).defaultPrevented).toBe(false);
+        wheel(root.querySelector<HTMLElement>('.ag-row-pinned .ag-cell')!, 0, 40);
+        expect(viewport.scrollTop).toBe(40);
+    });
+
+    test.each([undefined, 'native'] as const)('native mode (%s) does not require the gesture module', async (mode) => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const { viewport } = await createGrid({ scrollGestureMode: mode }, []);
+        await waitForMissingModuleReports();
+
+        expect(errorSpy).not.toHaveBeenCalled();
+        expect(wheel(viewport, 30, 80).defaultPrevented).toBe(false);
+        touch(viewport, 'touchstart', 200, 200);
+        expect(touch(viewport, 'touchmove', 150, 100).defaultPrevented).toBe(false);
+    });
+
+    test('AllCommunityModule includes axis-locked gestures', async () => {
+        const { viewport } = await createGrid({}, [AllCommunityModule]);
+
+        expect(wheel(viewport, 5, 40).defaultPrevented).toBe(true);
+        expect(viewport.scrollTop).toBe(40);
+        expect(viewport.scrollLeft).toBe(0);
+    });
+
+    test('runtime mode changes preserve the grid and start fresh gestures without duplicating handlers', async () => {
+        const { api, root, viewport } = await createGrid({ scrollGestureMode: 'native', pinnedTopRowData: [{}] });
+        vi.useFakeTimers();
+        const pinnedCell = () => root.querySelector<HTMLElement>('.ag-row-pinned .ag-cell')!;
+
+        expect(wheel(viewport, 5, 40).defaultPrevented).toBe(false);
+        for (let i = 0; i < 3; i++) {
+            const top = viewport.scrollTop;
+            const left = viewport.scrollLeft;
+            api.setGridOption('scrollGestureMode', 'axisLocked');
+            wheel(pinnedCell(), 40, 5);
+            api.setGridOption('scrollGestureMode', 'axisLocked');
+            wheel(pinnedCell(), 10, 80);
+            expect(viewport.scrollLeft).toBe(left + 50);
+            expect(viewport.scrollTop).toBe(top);
+
+            api.setGridOption('scrollGestureMode', 'native');
+            expect(wheel(viewport, 5, 40).defaultPrevented).toBe(false);
+            wheel(pinnedCell(), 0, 40);
+            expect(viewport.scrollTop).toBe(top + 40);
+
+            api.setGridOption('scrollGestureMode', 'axisLocked');
+            wheel(pinnedCell(), 5, 40);
+            expect(viewport.scrollTop).toBe(top + 80);
+            expect(viewport.scrollLeft).toBe(left + 50);
+            api.setGridOption('scrollGestureMode', undefined);
+            expect(wheel(viewport, 5, 40).defaultPrevented).toBe(false);
+            expect(api.isDestroyed()).toBe(false);
+            expect(root.querySelector('.ag-grid-viewport')).toBe(viewport);
+        }
+    });
+
+    test('enabling gestures at runtime still requires the module', async () => {
+        enableDevValidations({ throwOn: [] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const { api, viewport } = await createGrid({ scrollGestureMode: 'native' }, []);
+        await waitForMissingModuleReports();
+        expect(errorSpy).not.toHaveBeenCalled();
+
+        api.setGridOption('scrollGestureMode', 'axisLocked');
+        await waitForMissingModuleReports();
+        expect(errorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('error #200'),
+            expect.stringContaining('ScrollGestureModule'),
+            expect.any(String)
+        );
+        expect(wheel(viewport, 5, 40).defaultPrevented).toBe(false);
+    });
+
+    test('switching to native cancels an active touch, including after re-enabling gestures', async () => {
+        const { api, viewport } = await createGrid();
+        vi.useFakeTimers();
+        touch(viewport, 'touchstart', 200, 200);
+        await vi.advanceTimersByTimeAsync(16);
+        touch(viewport, 'touchmove', 195, 160);
+        api.setGridOption('scrollGestureMode', 'native');
+        expect(touch(viewport, 'touchmove', 190, 120).defaultPrevented).toBe(false);
+        api.setGridOption('scrollGestureMode', 'axisLocked');
+        expect(touch(viewport, 'touchmove', 185, 80).defaultPrevented).toBe(false);
+        touch(viewport, 'touchend', 185, 80);
+        await vi.advanceTimersByTimeAsync(300);
+        expect(viewport.scrollTop).toBe(40);
+
+        touch(viewport, 'touchstart', 200, 200);
+        await vi.advanceTimersByTimeAsync(16);
+        expect(touch(viewport, 'touchmove', 160, 195).defaultPrevented).toBe(true);
+        expect(viewport.scrollLeft).toBe(40);
+        expect(viewport.scrollTop).toBe(40);
+        touch(viewport, 'touchcancel', 160, 195);
+    });
+
+    test.each([false, true])('switching to native stops touch momentum (horizontal=%s)', async (horizontal) => {
+        const { api, viewport } = await createGrid();
+        vi.useFakeTimers();
+        const position = () => (horizontal ? viewport.scrollLeft : viewport.scrollTop);
+        touch(viewport, 'touchstart', 200, 200);
+        await vi.advanceTimersByTimeAsync(16);
+        touch(viewport, 'touchmove', horizontal ? 160 : 195, horizontal ? 195 : 160);
+        touch(viewport, 'touchend', horizontal ? 160 : 195, horizontal ? 195 : 160);
+        await vi.advanceTimersByTimeAsync(32);
+        expect(position()).toBeGreaterThan(40);
+
+        api.setGridOption('scrollGestureMode', 'native');
+        const stopped = position();
+        await vi.advanceTimersByTimeAsync(300);
+        expect(position()).toBe(stopped);
+        api.setGridOption('scrollGestureMode', 'axisLocked');
+        await vi.advanceTimersByTimeAsync(300);
+        expect(position()).toBe(stopped);
     });
 
     test('wheel direction stays locked until input stops, then a new gesture can change axis', async () => {

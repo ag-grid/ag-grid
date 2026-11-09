@@ -10,39 +10,39 @@ test.agExample(import.meta, () => {
 
                 const select = page.getByLabel('Scroll gesture mode:');
                 const viewport = page.locator('.ag-grid-viewport');
+                const originalViewport = await viewport.elementHandle();
+                const position = () =>
+                    viewport.evaluate((element) => ({ left: element.scrollLeft, top: element.scrollTop }));
                 await expect(select).toHaveValue('native');
+                await expect(agIdFor.cell('0', 'c0')).toContainText('Row 1, column 1');
 
                 const modes = ['native', 'axisLocked', 'native'];
                 for (let i = 0; i < modes.length; i++) {
                     const mode = modes[i];
+                    const before = await position();
                     if (i > 0) {
                         await select.selectOption(mode);
                     }
                     await expect(page.locator('.ag-root-wrapper')).toHaveCount(1);
-                    await expect(async () => {
-                        const position = await viewport.evaluate((element) => ({
-                            left: element.scrollLeft,
-                            top: element.scrollTop,
-                        }));
-                        expect(position).toEqual({ left: 0, top: 0 });
-                    }).toPass();
-                    await expect(agIdFor.cell('0', 'c0')).toContainText('Row 1, column 1');
-                    await agIdFor.cell('0', 'c0').hover();
+                    expect(await originalViewport!.evaluate((element) => element.isConnected)).toBe(true);
+                    expect(await position()).toEqual(before);
+                    await viewport.hover();
 
                     await page.mouse.wheel(horizontal ? 120 : 40, horizontal ? 40 : 120);
                     await expect(async () => {
-                        const position = await viewport.evaluate((element) => ({
-                            left: element.scrollLeft,
-                            top: element.scrollTop,
-                        }));
+                        const after = await position();
                         if (mode === 'native') {
-                            expect(position.left).toBeGreaterThan(0);
-                            expect(position.top).toBeGreaterThan(0);
+                            expect(after.left).toBeGreaterThan(before.left);
+                            expect(after.top).toBeGreaterThan(before.top);
                         } else {
-                            expect(position).toEqual({ left: horizontal ? 120 : 0, top: horizontal ? 0 : 120 });
+                            expect(after).toEqual({
+                                left: before.left + (horizontal ? 120 : 0),
+                                top: before.top + (horizontal ? 0 : 120),
+                            });
                         }
                     }).toPass();
                 }
+                await originalViewport!.dispose();
             }
         );
     }

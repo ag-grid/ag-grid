@@ -1763,7 +1763,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
      * Keyboard, API scrolling and scrollbar dragging are unaffected.
      * @default 'native'
-     * @initial
+     * @agModule `ScrollGestureModule`
      */
     @Input() public scrollGestureMode: 'native' | 'axisLocked' | undefined = undefined;
     /** Set to `true` to always show the horizontal scrollbar.

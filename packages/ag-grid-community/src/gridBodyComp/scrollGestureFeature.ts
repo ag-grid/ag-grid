@@ -53,25 +53,22 @@ export class ScrollGestureFeature extends BeanStub {
     private removeTouchListeners: (() => void) | null = null;
     private momentumFrame: { window: Window; id: number } | null = null;
 
-    constructor(
-        private readonly gridBody: HTMLElement,
-        private readonly viewport: HTMLElement,
-        private readonly scrollFeature: GridBodyScrollFeature
-    ) {
-        super();
-    }
+    private viewport: HTMLElement;
+    private scrollFeature: GridBodyScrollFeature;
 
-    public postConstruct(): void {
+    public init(gridBody: HTMLElement, viewport: HTMLElement, scrollFeature: GridBodyScrollFeature): void {
+        this.viewport = viewport;
+        this.scrollFeature = scrollFeature;
         const stopMomentum = this.stopMomentum.bind(this);
-        this.addManagedElementListeners(this.viewport, {
+        this.addManagedElementListeners(viewport, {
             wheel: this.gos.get('suppressPreventDefaultOnMouseWheel') ? undefined : this.onWheel.bind(this),
             touchstart: this.gos.get('suppressTouch') ? undefined : this.onTouchStart.bind(this),
         });
-        this.addManagedElementListeners(this.gridBody, {
+        this.addManagedElementListeners(gridBody, {
             pointerdown: stopMomentum,
             keydown: stopMomentum,
         });
-        const document = this.viewport.ownerDocument;
+        const document = viewport.ownerDocument;
         document.addEventListener('visibilitychange', stopMomentum);
         this.addDestroyFunc(() => document.removeEventListener('visibilitychange', stopMomentum));
     }

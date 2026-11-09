@@ -171,6 +171,7 @@ export type DynamicBeanName =
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
     | 'pageNumbers'
+    | 'scrollGestureFeature'
     | 'tooltipFeature'
     | 'highlightTooltipFeature'
     | 'tooltipStateManager'

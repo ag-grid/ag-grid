@@ -65,7 +65,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     viewportRowModelPageSize: true,
     viewportRowModelBufferSize: true,
     debounceVerticalScrollbar: true,
-    scrollGestureMode: true,
     suppressAnimationFrame: true,
     suppressPreventDefaultOnMouseWheel: true,
     scrollbarWidth: true,

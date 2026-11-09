@@ -1592,7 +1592,7 @@ export interface Props<TData> {
          * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
          * Keyboard, API scrolling and scrollbar dragging are unaffected.
          * @default 'native'
-         * @initial
+         * @agModule `ScrollGestureModule`
          */
     scrollGestureMode?: 'native' | 'axisLocked',
     /** Set to `true` to always show the horizontal scrollbar.
