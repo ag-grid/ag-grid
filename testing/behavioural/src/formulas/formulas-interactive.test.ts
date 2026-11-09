@@ -6,8 +6,8 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clipboardUtils,
-    mockGridLayout,
     initPointerEventPolyfill,
+    mockGridLayout,
     waitForEvent,
 } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
