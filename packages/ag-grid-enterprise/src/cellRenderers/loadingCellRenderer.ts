@@ -45,10 +45,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
         this.eLoadingText.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
     }
 
-    /**
-     * Full width loading rows span the whole grid, so line the spinner up with the expand/collapse
-     * chevron of the rows being loaded, as the group cell renderer would place it.
-     */
+    /** Lines the spinner up with the expand/collapse chevron of the rows being loaded. */
     private setupIndent({ node }: ILoadingCellRendererParams): void {
         const setIndent = () => {
             const { showRowGroupCols, visibleCols, environment } = this.beans;
@@ -64,7 +61,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
                     level = 0;
                 }
 
-                // columns displayed before the group column, in display order so RTL is accounted for
+                // allCols is in display order, so this also holds in RTL
                 for (const col of visibleCols.allCols) {
                     if (col === groupCol) {
                         break;
