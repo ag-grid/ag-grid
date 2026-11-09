@@ -149,8 +149,12 @@ export class AgList<
 
     /** A repeated character cycles through the options starting with it; other text matches the first option starting with it. */
     public typeCharacter(char: string): void {
+        const typedChar = normaliseForTypeAhead(char);
+        if (typedChar === '') {
+            return;
+        }
         this.pauseHover();
-        const typedText = (this.hasActiveTypeAhead() ? this.typedText : '') + normaliseForTypeAhead(char);
+        const typedText = (this.hasActiveTypeAhead() ? this.typedText : '') + typedChar;
         this.typedText = typedText;
         this.lastTypedTime = Date.now();
 

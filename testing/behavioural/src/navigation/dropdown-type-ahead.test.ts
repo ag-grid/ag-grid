@@ -117,6 +117,7 @@ describe('Typing to move to an option in grid dropdowns', () => {
 
             type(wrapper, 'ly');
             expect(highlighted()).toBe('Lynx');
+            // Row data only changes when editing stops, so check the editor's own value.
             expect(api.getCellEditorInstances()[0].getValue()).toBe('Ant');
 
             fireEvent.keyDown(wrapper, { key: 'Enter' });
@@ -125,14 +126,23 @@ describe('Typing to move to an option in grid dropdowns', () => {
         });
 
         test('matches the formatted text', async () => {
-            const names: Record<string, string> = { en: 'English', fr: 'French' };
-            const { wrapper } = await startEditing(['en', 'fr'], 'en', {
+            const names: Record<string, string> = { de: 'German', fr: 'French' };
+            const { wrapper } = await startEditing(['de', 'fr'], 'fr', {
                 valueFormatter: (params: { value: string }) => names[params.value],
             });
 
-            type(wrapper, 'f');
+            type(wrapper, 'g');
 
-            expect(highlighted()).toBe('French');
+            expect(highlighted()).toBe('German');
+        });
+
+        test('a key that types only an accent mark is ignored', async () => {
+            const { wrapper } = await startEditing(['Ant', 'กัน', 'Lemur'], 'Ant');
+
+            // Thai vowel mark, typed on its own by a Thai keyboard.
+            type(wrapper, 'ั');
+
+            expect(highlighted()).toBe('Ant');
         });
 
         test('options whose text is not a string do not stop matching', async () => {
