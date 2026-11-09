@@ -59,6 +59,32 @@ const documentNoCacheRules = `
 Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 `;
 
+// Production only, after documentNoCacheRules so it wins for the same responses: CloudFront keeps
+// current pages and their markdown variants for a day (s-maxage), while browsers still revalidate
+// every time (max-age=0). Each live docs deploy invalidates them through docsCacheTagRules, so the
+// day is only a bound for a missed invalidation. stale-while-revalidate serves the cached copy while
+// CloudFront refetches it; stale-if-error serves it instead of a 5xx when the origin is overloaded.
+// Status below 400: 200, and the 304 CloudFront gets when it revalidates (no-cache on that 304 would
+// make the copy it already holds uncacheable). Error pages - the 404 ErrorDocument is text/html too -
+// keep no-cache. The rules emitted later (runtime-fetched files, Studio archives, in-flight archives)
+// still override it for their paths.
+const documentEdgeCacheRules = `
+# Current pages and markdown variants: CloudFront caches a day, browsers revalidate. Invalidated by
+# cache tag on every live docs deploy. Excludes /archive/<v>/ and error responses.
+Header set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -lt 400 && %{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+`;
+
+// CloudFront reads cache tags from x-ag-cache-tag (terraform/www in ag-devops), and the live docs
+// deploys of grid, charts and studio invalidate "#ag-docs": every cached grid, charts and studio
+// response that a deploy can change, pages a release removed included, in one invalidation path.
+// Released archives are immutable and hashed assets change URL when their content does (the same
+// hash shapes as hashedAssetCacheRules), so neither carries the tag. Production only: staging is not
+// behind that distribution.
+const docsCacheTagRules = `
+# Cache tag for the deploy-time CloudFront invalidation (#ag-docs). Not on archives or hashed assets.
+Header set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -lt 400 && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# ) && !( %{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$# )"
+`;
+
 // A redirect has no content worth caching, and a shared cache that keys it on the path alone
 // would replay the first visitor's query string in its Location to everyone after. 'always' is
 // what reaches a redirect at all: Apache drops the ordinary (onsuccess) header table on non-2xx
@@ -897,6 +923,8 @@ function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
 ${unlessArchiveBuild(defaultCacheRules('public, max-age=86400'))}
 ${documentNoCacheRules}
+${unlessArchiveBuild(documentEdgeCacheRules)}
+${unlessArchiveBuild(docsCacheTagRules)}
 ${unlessArchiveBuild(redirectNoCacheRules)}
 ${unlessArchiveBuild(archiveMarkdownNoindexRules)}
 ${hashedAssetCacheRules}
