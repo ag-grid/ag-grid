@@ -826,6 +826,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelSelectField: 'Mező kiválasztása',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cella szerkesztő',
     ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
     ariaFullRowValidationError: 'Teljes sor érvényesítése: ${variable}',
     ariaFullRowEditValidationFailed: 'A sor szerkesztése nem fejezhető be. ${variable}',

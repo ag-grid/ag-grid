@@ -841,6 +841,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelSelectField: 'फ़ील्ड चुनें',
 
     // Cell Editor
+    ariaLabelCellEditor: 'सेल संपादक',
     ariaValidationErrorPrefix: 'सेल संपादक सत्यापन',
     ariaFullRowValidationError: 'पूर्ण रो सत्यापन: ${variable}',
     ariaFullRowEditValidationFailed: 'रो संपादन पूर्ण नहीं किया जा सकता। ${variable}',

@@ -817,6 +817,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
+    ariaLabelCellEditor: '單元編輯器',
     ariaValidationErrorPrefix: '單元編輯器驗證',
     ariaFullRowValidationError: '整行驗證：${variable}',
     ariaFullRowEditValidationFailed: '無法完成行編輯。${variable}',

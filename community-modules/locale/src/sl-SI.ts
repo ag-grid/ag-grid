@@ -839,6 +839,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelSelectField: 'Izberi polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Urejevalnik celic',
     ariaValidationErrorPrefix: 'Preverjanje veljavnosti urejevalnika celic',
     ariaFullRowValidationError: 'Preverjanje veljavnosti cele vrstice: ${variable}',
     ariaFullRowEditValidationFailed: 'Urejanja vrstice ni mogoče dokončati. ${variable}',

@@ -818,6 +818,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelSelectField: 'フィールドを選択',
 
     // Cell Editor
+    ariaLabelCellEditor: 'セルエディタ',
     ariaValidationErrorPrefix: 'セルエディタの検証',
     ariaFullRowValidationError: '行全体の検証: ${variable}',
     ariaFullRowEditValidationFailed: '行の編集を完了できません。${variable}',

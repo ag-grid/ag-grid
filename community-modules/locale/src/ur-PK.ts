@@ -818,6 +818,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelSelectField: 'فیلڈ منتخب کریں',
 
     // Cell Editor
+    ariaLabelCellEditor: 'سیل ایڈیٹر',
     ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaFullRowValidationError: 'مکمل صف کی توثیق: ${variable}',
     ariaFullRowEditValidationFailed: 'صف کی ترمیم مکمل نہیں ہو سکتی۔ ${variable}',

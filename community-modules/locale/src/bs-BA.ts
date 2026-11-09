@@ -843,6 +843,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaLabelSelectField: 'Polje za izbor',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor ćelije',
     ariaValidationErrorPrefix: 'Validacija editora ćelije',
     ariaFullRowValidationError: 'Validacija cijelog reda: ${variable}',
     ariaFullRowEditValidationFailed: 'Nije moguće završiti uređivanje reda. ${variable}',

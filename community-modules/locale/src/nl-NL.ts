@@ -821,6 +821,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelSelectField: 'Selectievak',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaFullRowValidationError: 'Validatie van volledige rij: ${variable}',
     ariaFullRowEditValidationFailed: 'Kan het bewerken van de rij niet voltooien. ${variable}',

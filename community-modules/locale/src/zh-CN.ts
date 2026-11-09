@@ -817,6 +817,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaLabelSelectField: '选择字段',
 
     // Cell Editor
+    ariaLabelCellEditor: '单元格编辑器',
     ariaValidationErrorPrefix: '单元格编辑器验证',
     ariaFullRowValidationError: '整行验证：${variable}',
     ariaFullRowEditValidationFailed: '无法完成行编辑。${variable}',
