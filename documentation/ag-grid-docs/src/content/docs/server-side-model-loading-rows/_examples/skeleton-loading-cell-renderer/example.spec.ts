@@ -10,7 +10,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Skeleton loading cells display while data loads', async ({ page }) => {
         await ensureGridReady(page);
 
-        // suppressServerSideFullWidthLoadingRow makes the grid render per-cell skeleton loaders.
+        // serverSideLoadingRowType: 'cell' makes the grid render per-cell skeleton loaders.
         await expect(page.locator('.ag-skeleton-effect').first()).toBeVisible();
     });
 

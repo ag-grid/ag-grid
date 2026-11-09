@@ -156,6 +156,11 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow', 'alwaysShowGrandTotalRow'],
             () => this.onStoreUpdated()
         );
+        this.addManagedPropertyListeners(['serverSideLoadingRowType', 'suppressServerSideFullWidthLoadingRow'], () => {
+            // levels still awaiting their first block show or drop their placeholder row to match the new type
+            this.getRootStore()?.forEachStoreDeep((store) => store.getCache().syncInitialLoadingRow());
+            this.onStoreUpdated();
+        });
         this.verifyProps();
 
         this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());

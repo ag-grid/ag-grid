@@ -27,8 +27,10 @@ import {
     _addGridCommonParams,
     _getCheckboxLocation,
     _getCheckboxes,
+    _getServerSideLoadingRowType,
     _isCellSelectionEnabled,
     _isClientSideLoadingRow,
+    _isServerSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
@@ -419,7 +421,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
-        const { beans, column, rowNode, rangeFeature } = this;
+        const { beans, column, rowNode, rangeFeature, gos } = this;
         const { userCompFactory } = beans;
         let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
@@ -432,6 +434,9 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             const params = this.createCellRendererParams();
             if (!isLoading || isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
+            } else if (_isServerSideRowModel(gos) && _getServerSideLoadingRowType(gos) === 'none') {
+                // serverSideLoadingRowType 'none' leaves loading cells empty
+                valueToDisplay = null;
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }

@@ -6,12 +6,12 @@ import { ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 /**
- * Tests for suppressServerSideFullWidthLoadingRow combined with groupDisplayType and groupHideOpenParents.
+ * Tests for serverSideLoadingRowType='cell' combined with groupDisplayType and groupHideOpenParents.
  *
  * The row type assigned to a stub group row depends on three options:
  *
- *   isStub              = stub && !suppress && !groupHideOpenParents
- *   isSuppressedGroupStub = suppress && stub && !groupHideOpenParents
+ *   isStub              = stub && !cell && !groupHideOpenParents
+ *   isSuppressedGroupStub = cell && stub && !groupHideOpenParents
  *
  *   if (isStub)                                  → FullWidthLoading
  *   else if (isFullWidthGroup && !isSuppressedGroupStub) → FullWidthGroup
@@ -23,7 +23,7 @@ import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise'
  *
  * Truth table for stub group rows:
  *
- *   groupDisplayType   suppress  groupHideOpenParents  rowType
+ *   groupDisplayType   cell      groupHideOpenParents  rowType
  *   ────────────────   ────────  ────────────────────  ──────────────
  *   groupRows          false     false                 FullWidthLoading
  *   groupRows          true      false                 Normal          ← fix
@@ -70,7 +70,7 @@ function assertStubRowsAreNormal() {
     }
 }
 
-describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () => {
+describe("SSRM serverSideLoadingRowType='cell' with groupDisplayType", () => {
     const gridManager = new TestGridsManager({
         modules: [ServerSideRowModelModule, RowGroupingModule, ValidationModule],
     });
@@ -99,12 +99,12 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
             assertStubRowsAreFullWidth();
         });
 
-        test('suppressServerSideFullWidthLoadingRow=true: stub group rows are Normal (per-cell, not full-width)', () => {
+        test('serverSideLoadingRowType=cell: stub group rows are Normal (per-cell, not full-width)', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
                 groupDisplayType,
-                suppressServerSideFullWidthLoadingRow: true,
+                serverSideLoadingRowType: 'cell',
                 serverSideDatasource: createHangingDatasource(),
             });
 
@@ -129,14 +129,14 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
             );
         });
 
-        test('suppressServerSideFullWidthLoadingRow=true + groupHideOpenParents=true: warns that groupHideOpenParents has no effect', () => {
+        test('serverSideLoadingRowType=cell + groupHideOpenParents=true: warns that groupHideOpenParents has no effect', () => {
             // Asserts the invalid-combo warning (#315); suppress only that id so any other still throws.
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
                 groupDisplayType,
-                suppressServerSideFullWidthLoadingRow: true,
+                serverSideLoadingRowType: 'cell',
                 groupHideOpenParents: true,
                 serverSideDatasource: createHangingDatasource(),
             });
@@ -167,12 +167,12 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
                 assertStubRowsAreFullWidth();
             });
 
-            test('suppressServerSideFullWidthLoadingRow=true: stub rows are Normal (per-cell, not full-width)', () => {
+            test('serverSideLoadingRowType=cell: stub rows are Normal (per-cell, not full-width)', () => {
                 gridManager.createGrid('myGrid', {
                     columnDefs,
                     rowModelType: 'serverSide',
                     groupDisplayType,
-                    suppressServerSideFullWidthLoadingRow: true,
+                    serverSideLoadingRowType: 'cell',
                     serverSideDatasource: createHangingDatasource(),
                 });
 
@@ -198,7 +198,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
                 assertStubRowsAreNormal();
             });
 
-            test('suppressServerSideFullWidthLoadingRow=true + groupHideOpenParents=true: stub rows are Normal', () => {
+            test('serverSideLoadingRowType=cell + groupHideOpenParents=true: stub rows are Normal', () => {
                 // groupHideOpenParents is invalid outside multipleColumns (#315); suppress only there so
                 // the valid multipleColumns case still throws on any diagnostic.
                 if (groupDisplayType !== 'multipleColumns') {
@@ -208,7 +208,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
                     columnDefs,
                     rowModelType: 'serverSide',
                     groupDisplayType,
-                    suppressServerSideFullWidthLoadingRow: true,
+                    serverSideLoadingRowType: 'cell',
                     groupHideOpenParents: true,
                     serverSideDatasource: createHangingDatasource(),
                 });

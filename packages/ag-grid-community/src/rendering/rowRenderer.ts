@@ -156,6 +156,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
                 'loadingCellRenderer',
                 'loadingCellRendererParams',
+                'serverSideLoadingRowType',
 
                 'detailCellRenderer',
                 'detailCellRendererParams',
