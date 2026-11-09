@@ -5,7 +5,7 @@ import { AgAbstractBean } from '../core/agAbstractBean';
 interface Props {
     mode?: string;
 }
-interface Events {
+interface ChangedEvents {
     changed: { type: 'changed' };
 }
 type PropsSvc = {
@@ -26,12 +26,12 @@ interface Beans {
     gamma: { flag: boolean };
 }
 
-class Undeclared extends AgAbstractBean<Beans, Props, Events, PropsSvc> {}
+class Undeclared extends AgAbstractBean<Beans, Props, ChangedEvents, PropsSvc> {}
 
 class Declared extends AgAbstractBean<
     Beans,
     Props,
-    Events,
+    ChangedEvents,
     PropsSvc,
     'destroyed',
     readonly ['alpha'],
