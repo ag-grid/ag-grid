@@ -48,13 +48,14 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     /** Lines the spinner up with the expand/collapse chevron of the rows being loaded. */
     private setupIndent({ node }: ILoadingCellRendererParams): void {
         const setIndent = () => {
-            const { showRowGroupCols, visibleCols, environment } = this.beans;
-            const groupCols = showRowGroupCols?.columns.filter((col) => col.isVisible()) ?? [];
-            const groupCol = groupCols[Math.min(node.uiLevel, groupCols.length - 1)];
+            const { showRowGroupCols, rowGroupColsSvc, visibleCols, environment } = this.beans;
+            // leaf rows and tree data have no row group column at their level, so use the last group column
+            const groupCols = showRowGroupCols?.columns ?? [];
+            const groupCol = rowGroupColsSvc?.columns[node.uiLevel]?.showRowGroupCol ?? groupCols[groupCols.length - 1];
 
             let level = node.uiLevel;
             let offset = 0;
-            if (groupCol) {
+            if (groupCol?.isVisible()) {
                 const colDef = groupCol.getColDef();
                 // as with the group cell renderer, only a single group column indents by level
                 if (colDef.showRowGroup !== true) {
