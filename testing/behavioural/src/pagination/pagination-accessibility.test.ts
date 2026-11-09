@@ -27,11 +27,11 @@ function createPaginationGrid(gridsManager: TestGridsManager, options: Partial<G
 
 const getPagingPanel = (api: GridApi) => getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-panel')!;
 
-/** The grid's live region is the root wrapper's direct child; the page size hint reuses the same class. */
+/** The grid's live region is the root wrapper's direct child. Zero-width spaces are stripped from its text. */
 const getLiveRegionText = (api: GridApi): string =>
     (
         getGridElement(api)!.querySelector('.ag-root-wrapper > .ag-aria-description-container')?.textContent ?? ''
-    ).replaceAll('​', '');
+    ).replaceAll('\u200B', '');
 
 const waitForAnnouncement = (api: GridApi, expected: string) =>
     waitFor(() => expect(getLiveRegionText(api)).toContain(expected));
