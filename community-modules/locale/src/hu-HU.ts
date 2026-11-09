@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     advancedFilterCancel: 'Mégsem',
     advancedFilterClear: 'Törlés',
     advancedFilterBuilder: 'Szűrő Készítő',
+    advancedFilterPlaceholder: 'Speciális szűrő',
     advancedFilterValidationMissingColumn: 'Oszlop hiányzik',
     advancedFilterValidationMissingOption: 'Opció hiányzik',
     advancedFilterValidationMissingValue: 'Érték hiányzik',

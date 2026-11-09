@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     advancedFilterCancel: 'Anulează',
     advancedFilterClear: 'Șterge',
     advancedFilterBuilder: 'Constructor',
+    advancedFilterPlaceholder: 'Filtru Avansat',
     advancedFilterValidationMissingColumn: 'Lipsă coloană',
     advancedFilterValidationMissingOption: 'Lipsă opțiune',
     advancedFilterValidationMissingValue: 'Lipsă valoare',

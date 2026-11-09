@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     advancedFilterCancel: 'Скасувати',
     advancedFilterClear: 'Очистити',
     advancedFilterBuilder: 'Побудова',
+    advancedFilterPlaceholder: 'Розширений фільтр',
     advancedFilterValidationMissingColumn: 'Відсутня колонка',
     advancedFilterValidationMissingOption: 'Відсутній варіант',
     advancedFilterValidationMissingValue: 'Відсутнє значення',

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     advancedFilterCancel: 'Ακύρωση',
     advancedFilterClear: 'Καθαρισμός',
     advancedFilterBuilder: 'Κατασκευαστής',
+    advancedFilterPlaceholder: 'Προχωρημένο Φίλτρο',
     advancedFilterValidationMissingColumn: 'Η στήλη λείπει',
     advancedFilterValidationMissingOption: 'Η επιλογή λείπει',
     advancedFilterValidationMissingValue: 'Η τιμή λείπει',

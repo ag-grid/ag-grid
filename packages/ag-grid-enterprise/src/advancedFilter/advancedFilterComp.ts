@@ -104,6 +104,7 @@ export class AdvancedFilterComp extends Component {
             .setForceLastSelection((lastSelection, searchString) =>
                 this.forceLastSelection(lastSelection, searchString)
             )
+            .setInputPlaceholder(this.advFilterExpSvc.translate('advancedFilterPlaceholder'))
             .setInputAriaLabel(this.advFilterExpSvc.translate('ariaAdvancedFilterInput'))
             .setListAriaLabel(this.advFilterExpSvc.translate('ariaLabelAdvancedFilterAutocomplete'));
 

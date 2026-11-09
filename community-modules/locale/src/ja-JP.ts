@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     advancedFilterCancel: 'キャンセル',
     advancedFilterClear: 'クリア',
     advancedFilterBuilder: 'ビルダー',
+    advancedFilterPlaceholder: '高度なフィルター',
     advancedFilterValidationMissingColumn: '列が欠落しています',
     advancedFilterValidationMissingOption: 'オプションが欠落しています',
     advancedFilterValidationMissingValue: '値が欠落しています',

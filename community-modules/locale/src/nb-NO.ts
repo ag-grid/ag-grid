@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Tøm',
     advancedFilterBuilder: 'Bygger',
+    advancedFilterPlaceholder: 'Avansert filter',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Alternativ mangler',
     advancedFilterValidationMissingValue: 'Verdi mangler',
