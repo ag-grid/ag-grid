@@ -80,13 +80,13 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private focusedCell: CellPosition | null = null;
-    private previousCellFocusParams: CellFocusedParams | null = null;
+    #previousCellFocusParams: CellFocusedParams | null = null;
 
     public focusedHeader: HeaderPosition | null = null;
-    private elementToReveal: HTMLElement | null = null;
-    private owedFocus: OwedFocus | null = null;
+    #elementToReveal: HTMLElement | null = null;
+    #owedFocus: OwedFocus | null = null;
     /** the column that had focus before it moved into the advanced filter */
-    private advFilterFocusColumn: AgColumn | undefined;
+    #advFilterFocusColumn: AgColumn | undefined;
 
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
@@ -104,18 +104,18 @@ export class FocusService extends BeanStub implements NamedBean {
     public override destroy(): void {
         // cells destroyed after this service, as spanned cells are, then owe it nothing
         this.focusedCell = null;
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
         super.destroy();
     }
 
     /** Owes browser focus to the focused cell or row: taken as it lands, dropped on a new target or a move away. */
     public oweFocus(event?: CellFocusedEvent): void {
-        const owed = this.owedFocus;
+        const owed = this.#owedFocus;
         // a header asked for focus after the cell or row was focused
         if (owed?.header) {
             return;
         }
-        this.setOwedFocus(
+        this.#setOwedFocus(
             undefined,
             event ?? owed?.event,
             owed ? owed.activeAtOwed : _getDeepActiveElement(this.beans)
@@ -124,37 +124,37 @@ export class FocusService extends BeanStub implements NamedBean {
 
     /** Owes browser focus to a header waiting for its element to mount, in place of any earlier owe. */
     public deferFocus(header: AbstractHeaderCellCtrl): void {
-        this.setOwedFocus(header, undefined, _getDeepActiveElement(this.beans));
+        this.#setOwedFocus(header, undefined, _getDeepActiveElement(this.beans));
     }
 
-    private setOwedFocus(
+    #setOwedFocus(
         header: AbstractHeaderCellCtrl | undefined,
         event: CellFocusedEvent | undefined,
         activeAtOwed: Element | null
     ): void {
-        let shadowRoots = this.owedFocus?.shadowRoots;
+        let shadowRoots = this.#owedFocus?.shadowRoots;
         if (!shadowRoots) {
             const doc = _getDocument(this.beans);
-            doc.addEventListener('pointerdown', this.onActionWhileFocusOwed, true);
-            doc.addEventListener('focusin', this.onActionWhileFocusOwed, true);
+            doc.addEventListener('pointerdown', this.#onActionWhileFocusOwed, true);
+            doc.addEventListener('focusin', this.#onActionWhileFocusOwed, true);
             const roots: ShadowRoot[] = [];
             for (
                 let root = this.beans.eRootDiv.getRootNode();
                 root instanceof ShadowRoot;
                 root = root.host.getRootNode()
             ) {
-                root.addEventListener('pointerdown', this.onActionWhileFocusOwed, true);
-                root.addEventListener('focusin', this.onActionWhileFocusOwed, true);
+                root.addEventListener('pointerdown', this.#onActionWhileFocusOwed, true);
+                root.addEventListener('focusin', this.#onActionWhileFocusOwed, true);
                 roots.push(root);
             }
             shadowRoots = roots;
         }
-        this.owedFocus = { header, event, activeAtOwed, shadowRoots };
+        this.#owedFocus = { header, event, activeAtOwed, shadowRoots };
     }
 
     /** Takes an owed focus event, replayed as its cell or row is drawn; other owes wait for takeOwedFocus. */
     public takeOwedFocusEvent(): CellFocusedEvent | undefined {
-        const event = this.owedFocus?.event;
+        const event = this.#owedFocus?.event;
         return event && this.takeOwedFocus() ? event : undefined;
     }
 
@@ -163,44 +163,44 @@ export class FocusService extends BeanStub implements NamedBean {
      * without an event under suppressFocusAfterRefresh.
      */
     public takeOwedFocus(): boolean {
-        const owed = this.owedFocus;
+        const owed = this.#owedFocus;
         if (!owed || owed.header) {
             return false;
         }
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
         if (!owed.event && this.gos.get('suppressFocusAfterRefresh')) {
             return false;
         }
         return _getDeepActiveElement(this.beans) === owed.activeAtOwed || this.isFocusFreeForGrid();
     }
 
-    private dropOwedFocus(): void {
-        const owed = this.owedFocus;
+    #dropOwedFocus(): void {
+        const owed = this.#owedFocus;
         if (!owed) {
             return;
         }
-        this.owedFocus = null;
+        this.#owedFocus = null;
         const doc = _getDocument(this.beans);
-        doc.removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
-        doc.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
+        doc.removeEventListener('pointerdown', this.#onActionWhileFocusOwed, true);
+        doc.removeEventListener('focusin', this.#onActionWhileFocusOwed, true);
         const shadowRoots = owed.shadowRoots;
         for (let i = 0, len = shadowRoots.length; i < len; ++i) {
             const root = shadowRoots[i];
-            root.removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
-            root.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
+            root.removeEventListener('pointerdown', this.#onActionWhileFocusOwed, true);
+            root.removeEventListener('focusin', this.#onActionWhileFocusOwed, true);
         }
     }
 
     /** A press outside the grid, or focus moved where the grid would not take it from, gives the owed focus up. */
-    private readonly onActionWhileFocusOwed = (event: Event): void => {
-        const staysWithGrid = event.type === 'focusin' ? this.isFocusFreeForGrid() : this.mayPressBeOnGrid(event);
+    readonly #onActionWhileFocusOwed = (event: Event): void => {
+        const staysWithGrid = event.type === 'focusin' ? this.isFocusFreeForGrid() : this.#mayPressBeOnGrid(event);
         if (!staysWithGrid) {
-            this.dropOwedFocus();
+            this.#dropOwedFocus();
         }
     };
 
     /** Whether a press is on the grid as the listening root sees it: a closed root holding it shows only its host. */
-    private mayPressBeOnGrid(event: Event): boolean {
+    #mayPressBeOnGrid(event: Event): boolean {
         let gridNode: Node = this.beans.eRootDiv;
         let root = gridNode.getRootNode();
         while (root !== event.currentTarget && root instanceof ShadowRoot) {
@@ -218,19 +218,19 @@ export class FocusService extends BeanStub implements NamedBean {
 
     /** A destroyed header gives up the focus owed to it, so later owes of cells and rows are kept. */
     public dropOwedHeaderFocus(header: AbstractHeaderCellCtrl): void {
-        if (this.owedFocus?.header !== header) {
+        if (this.#owedFocus?.header !== header) {
             return;
         }
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
     }
 
     /** Takes a header's owed focus, once: false unless it asked last and focus stayed put or is unclaimed. */
     public takeOwedHeaderFocus(header: AbstractHeaderCellCtrl): boolean {
-        const owed = this.owedFocus;
+        const owed = this.#owedFocus;
         if (owed?.header !== header) {
             return false;
         }
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
         return _getDeepActiveElement(this.beans) === owed.activeAtOwed || _isNothingFocused(this.beans);
     }
 
@@ -284,7 +284,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (!this.isDomDataPresentInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_HEADER_CTRL)) {
+        if (!this.#isDomDataPresentInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
@@ -302,14 +302,14 @@ export class FocusService extends BeanStub implements NamedBean {
             return false;
         }
         // check for cell first
-        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL)) {
+        if (this.#isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL)) {
             return true;
         }
         // otherwise rows
-        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
+        return this.#isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
     }
 
-    private isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
+    #isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
@@ -326,7 +326,7 @@ export class FocusService extends BeanStub implements NamedBean {
         return this.focusedCell;
     }
 
-    private getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
+    #getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
         const { rowIndex, rowPinned, column } = focusedCellPosition;
 
         const params: CommonCellFocusParams = {
@@ -350,11 +350,11 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
-        const focusEventParams = this.getFocusEventParams(this.focusedCell);
+        const focusEventParams = this.#getFocusEventParams(this.focusedCell);
 
         this.focusedCell = null;
-        if (!this.owedFocus?.header) {
-            this.dropOwedFocus();
+        if (!this.#owedFocus?.header) {
+            this.#dropOwedFocus();
         }
 
         this.eventSvc.dispatchEvent({
@@ -381,7 +381,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public setFocusedCell(params: CellFocusedParams): void {
         // a new focused cell settles what was owed or waiting
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
 
         const {
             column,
@@ -408,18 +408,18 @@ export class FocusService extends BeanStub implements NamedBean {
             column: gridColumn,
         };
 
-        const focusEventParams = this.getFocusEventParams(this.focusedCell);
+        const focusEventParams = this.#getFocusEventParams(this.focusedCell);
 
         this.eventSvc.dispatchEvent({
             type: 'cellFocused',
             ...focusEventParams,
-            ...(this.previousCellFocusParams && { previousParams: this.previousCellFocusParams }),
+            ...(this.#previousCellFocusParams && { previousParams: this.#previousCellFocusParams }),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
             sourceEvent,
         });
 
-        this.previousCellFocusParams = focusEventParams;
+        this.#previousCellFocusParams = focusEventParams;
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -454,30 +454,30 @@ export class FocusService extends BeanStub implements NamedBean {
         }
         element.focus({ preventScroll: true });
         // the latest element focused wins
-        if (!this.elementToReveal) {
-            colAnimation.executeLaterVMTurn(() => this.revealElement());
+        if (!this.#elementToReveal) {
+            colAnimation.executeLaterVMTurn(() => this.#revealElement());
         }
-        this.elementToReveal = element;
+        this.#elementToReveal = element;
     }
 
-    private revealElement(): void {
-        const element = this.elementToReveal;
+    #revealElement(): void {
+        const element = this.#elementToReveal;
         if (!element || !this.isAlive() || !element.contains(_getActiveDomElement(this.beans))) {
-            this.elementToReveal = null;
+            this.#elementToReveal = null;
             return;
         }
         const colAnimation = this.beans.colAnimation;
         if (colAnimation?.isActive()) {
-            colAnimation.executeLaterVMTurn(() => this.revealElement());
+            colAnimation.executeLaterVMTurn(() => this.#revealElement());
             return;
         }
         // a header drawn anew starts its slide after the animation window opens, so it can outlast it
         const slides = element.getAnimations?.().filter(isSlide);
         if (slides?.length) {
-            void Promise.allSettled(slides.map((slide) => slide.finished)).then(() => this.revealElement());
+            void Promise.allSettled(slides.map((slide) => slide.finished)).then(() => this.#revealElement());
             return;
         }
-        this.elementToReveal = null;
+        this.#elementToReveal = null;
         element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 
@@ -492,7 +492,7 @@ export class FocusService extends BeanStub implements NamedBean {
         scroll?: boolean;
     }): boolean {
         // focusing header has been attempted; don't try to recover focus
-        this.dropOwedFocus();
+        this.#dropOwedFocus();
 
         if (_isHeaderFocusSuppressed(this.beans)) {
             return false;
@@ -502,7 +502,7 @@ export class FocusService extends BeanStub implements NamedBean {
         let { headerPosition } = params;
 
         if (fromCell && this.filterManager?.isAdvFilterHeaderActive()) {
-            return this.focusAdvancedFilter(headerPosition);
+            return this.#focusAdvancedFilter(headerPosition);
         }
 
         if (allowUserOverride) {
@@ -512,7 +512,7 @@ export class FocusService extends BeanStub implements NamedBean {
             if (fromTab) {
                 const userFunc = this.gos.getCallback('tabToNextHeader');
                 if (userFunc) {
-                    headerPosition = this.getHeaderPositionFromUserFunc({
+                    headerPosition = this.#getHeaderPositionFromUserFunc({
                         userFunc,
                         direction,
                         currentPosition,
@@ -563,7 +563,7 @@ export class FocusService extends BeanStub implements NamedBean {
         const { userFunc, headerPosition, direction, event } = params;
         const currentPosition = this.focusedHeader;
         const headerRowCount = getFocusHeaderRowCount(this.beans);
-        const newHeaderPosition = this.getHeaderPositionFromUserFunc({
+        const newHeaderPosition = this.#getHeaderPositionFromUserFunc({
             userFunc,
             direction,
             currentPosition,
@@ -580,7 +580,7 @@ export class FocusService extends BeanStub implements NamedBean {
         );
     }
 
-    private getHeaderPositionFromUserFunc(params: {
+    #getHeaderPositionFromUserFunc(params: {
         userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition;
         direction?: FocusDirection;
         currentPosition: HeaderPosition | null;
@@ -616,7 +616,7 @@ export class FocusService extends BeanStub implements NamedBean {
         const { column, headerRowIndex } = headerPosition;
         const { filterManager, ctrlsSvc, headerNavigation } = this.beans;
 
-        const browserFocusOnHeader = this.isDomDataPresentInHierarchy(
+        const browserFocusOnHeader = this.#isDomDataPresentInHierarchy(
             _getActiveDomElement(this.beans),
             DOM_DATA_KEY_HEADER_CTRL
         );
@@ -630,7 +630,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         if (headerRowIndex === -1) {
             if (filterManager?.isAdvFilterHeaderActive()) {
-                return this.focusAdvancedFilter(headerPosition);
+                return this.#focusAdvancedFilter(headerPosition);
             }
             return this.focusGridView({ column: column as AgColumn, event });
         }
@@ -687,7 +687,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
         if (this.filterManager?.isAdvFilterHeaderActive()) {
-            return this.focusAdvancedFilter(null);
+            return this.#focusAdvancedFilter(null);
         }
         return this.focusLastHeader(event);
     }
@@ -719,7 +719,7 @@ export class FocusService extends BeanStub implements NamedBean {
         let gridBodyTarget: TabToNextGridContainerTarget | null | undefined;
         const getGridBodyTabTarget = (): TabToNextGridContainerTarget | null => {
             if (gridBodyTarget === undefined) {
-                gridBodyTarget = this.getGridBodyTabTarget(backwards);
+                gridBodyTarget = this.#getGridBodyTabTarget(backwards);
             }
 
             return gridBodyTarget;
@@ -736,9 +736,9 @@ export class FocusService extends BeanStub implements NamedBean {
         return null;
     }
 
-    private getGridBodyTabTarget(backwards: boolean): CellPosition | HeaderPosition | null {
+    #getGridBodyTabTarget(backwards: boolean): CellPosition | HeaderPosition | null {
         if (backwards) {
-            return this.getGridViewTabTarget({ column: _last(this.visibleCols.allCols), backwards: true });
+            return this.#getGridViewTabTarget({ column: _last(this.visibleCols.allCols), backwards: true });
         }
 
         const firstColumn = this.visibleCols.allCols[0];
@@ -746,7 +746,7 @@ export class FocusService extends BeanStub implements NamedBean {
         // forward tab into grid body mirrors focusGridBodyDefault:
         // headers first when enabled, otherwise first focusable grid cell.
         if (this.gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(this.beans)) {
-            return this.getGridViewTabTarget({ column: firstColumn });
+            return this.#getGridViewTabTarget({ column: firstColumn });
         }
 
         if (!firstColumn) {
@@ -756,10 +756,7 @@ export class FocusService extends BeanStub implements NamedBean {
         return getHeaderIndexToFocus(this.beans, firstColumn, 0);
     }
 
-    private getGridViewTabTarget(params: {
-        column?: AgColumn;
-        backwards?: boolean;
-    }): CellPosition | HeaderPosition | null {
+    #getGridViewTabTarget(params: { column?: AgColumn; backwards?: boolean }): CellPosition | HeaderPosition | null {
         const { backwards = false } = params;
         const column: AgColumn | undefined = params.column ?? (this.focusedHeader?.column as AgColumn | undefined);
 
@@ -922,13 +919,13 @@ export class FocusService extends BeanStub implements NamedBean {
         return false;
     }
 
-    private focusAdvancedFilter(position: HeaderPosition | null): boolean {
-        this.advFilterFocusColumn = position?.column as AgColumn | undefined;
+    #focusAdvancedFilter(position: HeaderPosition | null): boolean {
+        this.#advFilterFocusColumn = position?.column as AgColumn | undefined;
         return this.beans.advancedFilter?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column = (forceFirstColumn ? undefined : this.advFilterFocusColumn) ?? this.visibleCols.allCols?.[0];
+        const column = (forceFirstColumn ? undefined : this.#advFilterFocusColumn) ?? this.visibleCols.allCols?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {
@@ -941,7 +938,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public clearAdvancedFilterColumn(): void {
-        this.advFilterFocusColumn = undefined;
+        this.#advFilterFocusColumn = undefined;
     }
 }
 

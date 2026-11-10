@@ -8,11 +8,11 @@ import { _createElement } from '../utils/element';
 export class AutoWidthCalculator extends BeanStub implements NamedBean {
     beanName = 'autoWidthCalc' as const;
 
-    private scrollingRowContainerCtrl: RowContainerCtrl;
+    #scrollingRowContainerCtrl: RowContainerCtrl;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.scrollingRowContainerCtrl = p.scrolling;
+            this.#scrollingRowContainerCtrl = p.scrolling;
         });
     }
 
@@ -21,7 +21,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
     public getPreferredWidthForColumn(column: AgColumn, skipHeader?: boolean): number {
-        const eHeaderCell = this.getHeaderCellForColumn(column);
+        const eHeaderCell = this.#getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) {
             return -1;
@@ -40,7 +40,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     }
 
     public getPreferredWidthForColumnGroup(columnGroup: AgColumnGroup): number {
-        const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
+        const eHeaderCell = this.#getHeaderCellForColumn(columnGroup);
 
         if (!eHeaderCell) {
             return -1;
@@ -60,10 +60,10 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // we put the dummy into the body viewport, so it inherits all the css styles the real
         // cells inherit. we use the viewport rather than the row container because the container
         // is set to display:none while the grid has no rows, which would measure every clone at 0.
-        const eBodyViewport = this.scrollingRowContainerCtrl.eViewport;
+        const eBodyViewport = this.#scrollingRowContainerCtrl.eViewport;
 
         for (const el of elements) {
-            this.cloneItemIntoDummy(el, eDummyContainer);
+            this.#cloneItemIntoDummy(el, eDummyContainer);
         }
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
@@ -83,11 +83,11 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         return dummyContainerWidth + extraPadding;
     }
 
-    private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
+    #getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
         return this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getHtmlElementForColumnHeader(column) ?? null;
     }
 
-    private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
+    #cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
         // make a deep clone of the cell
         const eCellClone: HTMLElement = eCell.cloneNode(true) as HTMLElement;
         // the original has a fixed width, we remove this to allow the natural width based on content

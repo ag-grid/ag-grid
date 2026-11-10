@@ -69,20 +69,26 @@ export abstract class AgAbstractInputField<
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
     protected readonly eInput: TElement = RefPlaceholder;
-    private autoCompleteOverride: boolean | string | undefined;
+    #autoCompleteOverride: boolean | string | undefined;
+
+    readonly #displayFieldTag: keyof HTMLElementTagNameMap;
+
+    #inputType: string | null | undefined;
 
     constructor(
         config?: TConfig,
         className?: string,
-        private inputType: string | null | undefined = 'text',
-        private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input'
+        inputType: string | null | undefined = 'text',
+        displayFieldTag: keyof HTMLElementTagNameMap = 'input'
     ) {
         super(config, config?.template ?? buildTemplate(displayFieldTag), [], className);
+        this.#displayFieldTag = displayFieldTag;
+        this.#inputType = inputType;
     }
 
     public override postConstruct() {
         super.postConstruct();
-        this.setInputType(this.inputType!);
+        this.setInputType(this.#inputType!);
 
         const { eLabel, eWrapper, eInput, className } = this;
         eLabel.classList.add(`${className}-label`);
@@ -105,9 +111,9 @@ export abstract class AgAbstractInputField<
         if (autoComplete != null) {
             this.setAutoComplete(autoComplete);
         } else {
-            this.refreshAutoComplete();
+            this.#refreshAutoComplete();
         }
-        this.addManagedPropertyListener('enableInputAutoComplete', () => this.refreshAutoComplete());
+        this.addManagedPropertyListener('enableInputAutoComplete', () => this.#refreshAutoComplete());
 
         this.addInputListeners();
         this.activateTabIndex([eInput], tabIndex);
@@ -120,8 +126,8 @@ export abstract class AgAbstractInputField<
     }
 
     public setInputType(inputType?: string) {
-        if (this.displayFieldTag === 'input') {
-            this.inputType = inputType;
+        if (this.#displayFieldTag === 'input') {
+            this.#inputType = inputType;
             _addOrRemoveAttribute(this.eInput, 'type', inputType);
         }
     }
@@ -177,22 +183,22 @@ export abstract class AgAbstractInputField<
     }
 
     public setAutoComplete(value?: boolean | string): this {
-        this.autoCompleteOverride = value;
+        this.#autoCompleteOverride = value;
         if (value == null) {
-            this.refreshAutoComplete();
+            this.#refreshAutoComplete();
         } else {
-            this.applyAutoComplete(value);
+            this.#applyAutoComplete(value);
         }
         return this;
     }
 
-    private refreshAutoComplete(): void {
-        if (this.autoCompleteOverride == null && this.isAutoCompleteCapableField()) {
-            this.applyAutoComplete(this.gos.get('enableInputAutoComplete') === true);
+    #refreshAutoComplete(): void {
+        if (this.#autoCompleteOverride == null && this.#isAutoCompleteCapableField()) {
+            this.#applyAutoComplete(this.gos.get('enableInputAutoComplete') === true);
         }
     }
 
-    private isAutoCompleteCapableField(): boolean {
+    #isAutoCompleteCapableField(): boolean {
         const { eInput } = this;
         if (eInput.tagName === 'TEXTAREA') {
             return true;
@@ -204,7 +210,7 @@ export abstract class AgAbstractInputField<
         return !NON_AUTOCOMPLETE_INPUT_TYPES.has(type);
     }
 
-    private applyAutoComplete(value: boolean | string): void {
+    #applyAutoComplete(value: boolean | string): void {
         if (value === true) {
             // Remove the autocomplete attribute if the value is explicitly set to true
             // to allow the default browser autocomplete/autofill behaviour.

@@ -21,32 +21,35 @@ export class PageSizeSelectorComp extends Component {
         this.pagination = beans.pagination!;
     }
 
-    private selectPageSizeComp: GridSelect | undefined;
-    private hasEmptyOption = false;
-    private pageSizeOptions?: (string | number)[];
+    #selectPageSizeComp: GridSelect | undefined;
+    #hasEmptyOption = false;
+    #pageSizeOptions?: (string | number)[];
 
-    constructor(private readonly panelParams?: PageSizePanelParams) {
+    readonly #panelParams?: PageSizePanelParams;
+
+    constructor(panelParams?: PageSizePanelParams) {
         super(PageSizeSelectorCompElement);
+        this.#panelParams = panelParams;
     }
 
-    private getPageSizeSelectorOption(): number[] | boolean | undefined {
-        return this.panelParams?.paginationPageSizeSelector ?? this.gos.get(paginationPageSizeSelector);
+    #getPageSizeSelectorOption(): number[] | boolean | undefined {
+        return this.#panelParams?.paginationPageSizeSelector ?? this.gos.get(paginationPageSizeSelector);
     }
 
     public postConstruct() {
         this.addManagedPropertyListener(paginationPageSizeSelector, () => {
-            this.onPageSizeSelectorValuesChange();
+            this.#onPageSizeSelectorValuesChange();
         });
 
-        this.addManagedEventListeners({ paginationChanged: (event) => this.handlePaginationChanged(event) });
+        this.addManagedEventListeners({ paginationChanged: (event) => this.#handlePaginationChanged(event) });
     }
 
-    private readonly handlePageSizeItemSelected = (): void => {
-        if (!this.selectPageSizeComp) {
+    readonly #handlePageSizeItemSelected = (): void => {
+        if (!this.#selectPageSizeComp) {
             return;
         }
 
-        const newValue = this.selectPageSizeComp.getValue();
+        const newValue = this.#selectPageSizeComp.getValue();
 
         if (!newValue) {
             return;
@@ -64,32 +67,32 @@ export class PageSizeSelectorComp extends Component {
 
         this.pagination.setPageSize(paginationPageSize, 'pageSizeSelector');
 
-        if (this.hasEmptyOption) {
+        if (this.#hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
             // as it's no longer needed.
             this.toggleSelectDisplay(true);
         }
 
-        this.selectPageSizeComp.getFocusableElement().focus();
+        this.#selectPageSizeComp.getFocusableElement().focus();
     };
 
-    private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
-        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) {
+    #handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
+        if (!this.#selectPageSizeComp || !paginationChangedEvent?.newPageSize) {
             return;
         }
 
         const paginationPageSize = this.pagination.getPageSize();
-        if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
-            this.selectPageSizeComp.setValue(paginationPageSize.toString());
-        } else if (this.hasEmptyOption) {
-            this.selectPageSizeComp.setValue('');
+        if (this.#getPageSizeSelectorValues().includes(paginationPageSize)) {
+            this.#selectPageSizeComp.setValue(paginationPageSize.toString());
+        } else if (this.#hasEmptyOption) {
+            this.#selectPageSizeComp.setValue('');
         } else {
             this.toggleSelectDisplay(true);
         }
     }
 
     public toggleSelectDisplay(show: boolean) {
-        if (this.selectPageSizeComp && !show) {
+        if (this.#selectPageSizeComp && !show) {
             this.reset();
         }
 
@@ -97,9 +100,9 @@ export class PageSizeSelectorComp extends Component {
             return;
         }
 
-        this.reloadPageSizesSelector();
+        this.#reloadPageSizesSelector();
 
-        if (!this.selectPageSizeComp) {
+        if (!this.#selectPageSizeComp) {
             return;
         }
     }
@@ -107,25 +110,25 @@ export class PageSizeSelectorComp extends Component {
     private reset(): void {
         _clearElement(this.getGui());
 
-        if (!this.selectPageSizeComp) {
+        if (!this.#selectPageSizeComp) {
             return;
         }
 
-        this.selectPageSizeComp = this.destroyBean(this.selectPageSizeComp);
+        this.#selectPageSizeComp = this.destroyBean(this.#selectPageSizeComp);
     }
 
-    private onPageSizeSelectorValuesChange(): void {
-        if (!this.selectPageSizeComp) {
+    #onPageSizeSelectorValuesChange(): void {
+        if (!this.#selectPageSizeComp) {
             return;
         }
 
         if (this.shouldShowPageSizeSelector()) {
-            this.reloadPageSizesSelector();
+            this.#reloadPageSizesSelector();
         }
     }
 
     public shouldShowPageSizeSelector(): boolean {
-        return !this.gos.get('paginationAutoPageSize') && this.getPageSizeSelectorOption() !== false;
+        return !this.gos.get('paginationAutoPageSize') && this.#getPageSizeSelectorOption() !== false;
     }
 
     public updateVisibility(): void {
@@ -134,22 +137,22 @@ export class PageSizeSelectorComp extends Component {
         this.setDisplayed(show);
     }
 
-    private isPanelDisplayed(): boolean {
+    #isPanelDisplayed(): boolean {
         const { gos } = this;
         return gos.get('pagination') && !gos.get('suppressPaginationPanel');
     }
 
-    private reloadPageSizesSelector(): void {
-        const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
+    #reloadPageSizesSelector(): void {
+        const pageSizeOptions: (number | string)[] = this.#getPageSizeSelectorValues();
         const paginationPageSizeOption: number = this.pagination.getPageSize();
         const shouldAddAndSelectEmptyOption =
             !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
         if (shouldAddAndSelectEmptyOption) {
-            const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
-            const pageSizesSet = this.getPageSizeSelectorOption() !== true;
+            const pageSizeSet = this.#panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
+            const pageSizesSet = this.#getPageSizeSelectorOption() !== true;
 
             // PaginationComp re-runs this when the panel is shown, so the warning is deferred rather than lost.
-            if (this.isPanelDisplayed()) {
+            if (this.#isPanelDisplayed()) {
                 this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
                 if (!pageSizesSet) {
                     this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
@@ -162,44 +165,44 @@ export class PageSizeSelectorComp extends Component {
 
         const value = String(shouldAddAndSelectEmptyOption ? '' : paginationPageSizeOption);
 
-        if (this.selectPageSizeComp) {
-            if (!_areEqual(this.pageSizeOptions, pageSizeOptions)) {
-                this.selectPageSizeComp.clearOptions().addOptions(this.createPageSizeSelectOptions(pageSizeOptions));
-                this.pageSizeOptions = pageSizeOptions;
+        if (this.#selectPageSizeComp) {
+            if (!_areEqual(this.#pageSizeOptions, pageSizeOptions)) {
+                this.#selectPageSizeComp.clearOptions().addOptions(this.#createPageSizeSelectOptions(pageSizeOptions));
+                this.#pageSizeOptions = pageSizeOptions;
             }
-            this.selectPageSizeComp.setValue(value, true);
+            this.#selectPageSizeComp.setValue(value, true);
         } else {
-            this.createPageSizeSelectorComp(pageSizeOptions, value);
+            this.#createPageSizeSelectorComp(pageSizeOptions, value);
         }
 
-        this.hasEmptyOption = shouldAddAndSelectEmptyOption;
+        this.#hasEmptyOption = shouldAddAndSelectEmptyOption;
     }
 
-    private createPageSizeSelectOptions(pageSizeOptions: (string | number)[]): ListOption<string>[] {
+    #createPageSizeSelectOptions(pageSizeOptions: (string | number)[]): ListOption<string>[] {
         return pageSizeOptions.map((value) => ({
             value: String(value),
         }));
     }
 
-    private createPageSizeSelectorComp(pageSizeOptions: (string | number)[], value: string): void {
+    #createPageSizeSelectorComp(pageSizeOptions: (string | number)[], value: string): void {
         const localeTextFunc = this.getLocaleTextFunc();
 
         const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
         const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');
 
-        this.selectPageSizeComp = this.createManagedBean<GridSelect>(new AgSelect())
-            .addOptions(this.createPageSizeSelectOptions(pageSizeOptions))
+        this.#selectPageSizeComp = this.createManagedBean<GridSelect>(new AgSelect())
+            .addOptions(this.#createPageSizeSelectOptions(pageSizeOptions))
             .setValue(value)
             .setAriaLabel(localisedAriaLabel)
             .setLabel(localisedLabel)
-            .onValueChange(() => this.handlePageSizeItemSelected());
+            .onValueChange(() => this.#handlePageSizeItemSelected());
 
-        this.appendChild(this.selectPageSizeComp);
+        this.appendChild(this.#selectPageSizeComp);
     }
 
-    private getPageSizeSelectorValues(): number[] {
+    #getPageSizeSelectorValues(): number[] {
         const defaultValues = [20, 50, 100];
-        const paginationPageSizeSelectorValues = this.getPageSizeSelectorOption();
+        const paginationPageSizeSelectorValues = this.#getPageSizeSelectorOption();
 
         if (!Array.isArray(paginationPageSizeSelectorValues) || !paginationPageSizeSelectorValues?.length) {
             return defaultValues;

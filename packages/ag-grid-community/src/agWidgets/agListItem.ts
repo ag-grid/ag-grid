@@ -60,18 +60,21 @@ export class AgListItem<
     private readonly eText: HTMLElement = RefPlaceholder;
     public tooltipFeature: ITooltipFeature;
 
+    readonly #cssIdentifier: string;
+
     constructor(
-        private readonly cssIdentifier: string,
+        cssIdentifier: string,
         private readonly label: string,
         private readonly value: TValue
     ) {
         super(getAgListElement(cssIdentifier, label));
+        this.#cssIdentifier = cssIdentifier;
     }
 
     public postConstruct() {
-        this.getGui().id = `ag-${this.cssIdentifier}-list-item-${this.getCompId()}`;
-        this.createTooltip();
-        this.addEventListeners();
+        this.getGui().id = `ag-${this.#cssIdentifier}-list-item-${this.getCompId()}`;
+        this.#createTooltip();
+        this.#addEventListeners();
     }
 
     public setHighlighted(highlighted: boolean) {
@@ -98,7 +101,7 @@ export class AgListItem<
         _setAriaSetSize(eGui, setSize);
     }
 
-    private createTooltip(): void {
+    #createTooltip(): void {
         const tooltipCtrl = {
             getTooltipValue: () => this.label,
             getGui: () => this.getGui(),
@@ -122,7 +125,7 @@ export class AgListItem<
         }
     }
 
-    private addEventListeners(): void {
+    #addEventListeners(): void {
         const parentComponent =
             this.getParentComponent<
                 AgList<

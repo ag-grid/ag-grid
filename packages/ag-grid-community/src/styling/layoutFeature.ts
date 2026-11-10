@@ -36,11 +36,11 @@ export class LayoutFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
-        this.updateLayoutClasses();
+        this.addManagedPropertyListener('domLayout', this.#updateLayoutClasses.bind(this));
+        this.#updateLayoutClasses();
     }
 
-    private updateLayoutClasses(): void {
+    #updateLayoutClasses(): void {
         const domLayout = this.gos.get('domLayout');
         const params = {
             autoHeight: domLayout === 'autoHeight',

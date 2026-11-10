@@ -83,7 +83,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public prepare(_columnsToExport: AgColumn[]): void {}
 
     public extractHeaderValue(column: AgColumn): string {
-        const value = this.getHeaderName(this.processHeaderCallback, column);
+        const value = this.#getHeaderName(this.processHeaderCallback, column);
         return value ?? '';
     }
 
@@ -185,7 +185,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         };
     }
 
-    private getHeaderName(
+    #getHeaderName(
         callback: ((params: ProcessHeaderForExportParams) => string) | undefined,
         column: AgColumn
     ): string | null {

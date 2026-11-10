@@ -36,19 +36,19 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         dispatchEvent,
     };
 
-    private preDestroyLink: string = '';
+    #preDestroyLink: string = '';
 
     public constructor() {
         super();
 
         const { api } = this;
         for (const key of Object.keys(gridApiFunctionsMap)) {
-            api[key as ApiFunctionName] = this.makeApi(key as ApiFunctionName)[key];
+            api[key as ApiFunctionName] = this.#makeApi(key as ApiFunctionName)[key];
         }
     }
 
     public postConstruct(): void {
-        this.preDestroyLink = this.beans.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed');
+        this.#preDestroyLink = this.beans.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed');
     }
 
     public addFunction<TFunctionName extends ApiFunctionName>(
@@ -61,7 +61,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         }
     }
 
-    private makeApi(apiName: ApiFunctionName) {
+    #makeApi(apiName: ApiFunctionName) {
         // We return an object here to be sure the function name is properly applied,
         // in this way error stack trace are correct and gridApi.xxx.name === 'xxx'
         // This is generally faster than using Object.defineProperty(gridApi, apiName, { value: apiName, configurable: true });
@@ -73,15 +73,16 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                     fns: { [apiName]: fn },
                 } = this;
                 if (!fn) {
-                    return this.apiNotFound(apiName);
+                    return this.#apiNotFound(apiName);
                 }
                 return fn(beans, ...args);
             },
         };
     }
 
-    private apiNotFound(fnName: ApiFunctionName): void {
-        const { beans, gos, preDestroyLink } = this;
+    #apiNotFound(fnName: ApiFunctionName): void {
+        const { beans, gos } = this;
+        const preDestroyLink = this.#preDestroyLink;
         if (!beans) {
             // No grid context (grid destroyed) — genuinely unattributed.
             _warnWithoutAttribution(26, { fnName, preDestroyLink });

@@ -23,40 +23,53 @@ const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
-    private mouseDownListener: (() => void) | undefined;
+    #mouseDownListener: (() => void) | undefined;
     private disabled = false;
 
+    readonly #alwaysVisible: boolean;
+
+    readonly #dragStartPixels?: number;
+
+    readonly #customGui?: HTMLElement;
+
+    readonly #cellValueFn: () => string;
+
     constructor(
-        private readonly cellValueFn: () => string,
+        cellValueFn: () => string,
         private readonly rowNode: RowNode,
         private readonly column?: AgColumn,
-        private readonly customGui?: HTMLElement,
-        private readonly dragStartPixels?: number,
-        private readonly alwaysVisible: boolean = false
+        customGui?: HTMLElement,
+        dragStartPixels?: number,
+        alwaysVisible: boolean = false
     ) {
         super();
+        this.#alwaysVisible = alwaysVisible;
+        this.#dragStartPixels = dragStartPixels;
+        this.#customGui = customGui;
+        this.#cellValueFn = cellValueFn;
     }
 
     public isCustomGui(): boolean {
-        return this.customGui != null;
+        return this.#customGui != null;
     }
 
     public postConstruct(): void {
-        const { beans, customGui } = this;
+        const { beans } = this;
+        const customGui = this.#customGui;
         if (customGui) {
-            this.setDragElement(customGui, this.dragStartPixels);
+            this.setDragElement(customGui, this.#dragStartPixels);
         } else {
             this.setTemplate(RowDragElement);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, null)!);
-            this.addDragSource();
+            this.#addDragSource();
         }
 
-        if (!this.alwaysVisible) {
-            this.initCellDrag();
+        if (!this.#alwaysVisible) {
+            this.#initCellDrag();
         }
     }
 
-    private initCellDrag(): void {
+    #initCellDrag(): void {
         const { beans, rowNode } = this;
         const refreshVisibility = this.refreshVisibility.bind(this);
 
@@ -77,11 +90,11 @@ export class RowDragComp extends Component {
         // We set suppressDataRefValidation as the drag element could contain AG Grid comps with data references
         // that are not part of this row dragger's context. Maybe this should just setGui and not setTemplateFromElement?
         this.setTemplateFromElement(dragElement, undefined, undefined, true);
-        this.addDragSource(dragStartPixels);
+        this.#addDragSource(dragStartPixels);
     }
 
     public refreshVisibility(): void {
-        if (this.alwaysVisible) {
+        if (this.#alwaysVisible) {
             return; // Always visible row draggers do not refresh visibility
         }
 
@@ -141,20 +154,20 @@ export class RowDragComp extends Component {
         return getRowDragMultiRowNodes(this.rowNode, this.gos, this.beans.selectionSvc);
     }
 
-    private getDragItem(): IRowDragItem {
+    #getDragItem(): IRowDragItem {
         const { column, rowNode } = this;
         return {
             rowNode,
             rowNodes: this.getSelectedNodes(),
             columns: column ? [column] : undefined,
-            defaultTextValue: this.cellValueFn(),
+            defaultTextValue: this.#cellValueFn(),
         };
     }
 
-    private addDragSource(dragStartPixels: number = 4): void {
+    #addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) {
-            this.removeDragSource();
+            this.#removeDragSource();
         }
 
         if (this.gos.get('rowDragManaged') && this.rowNode.footer) {
@@ -164,13 +177,13 @@ export class RowDragComp extends Component {
         const eGui = this.getGui();
 
         if (this.gos.get('enableCellTextSelection')) {
-            this.removeMouseDownListener();
+            this.#removeMouseDownListener();
 
             const listeners: Record<string, (e: MouseEvent | PointerEvent) => void> = _isEventSupported('pointerdown')
                 ? { pointerdown: preventEventDefault }
                 : { mousedown: preventEventDefault };
 
-            this.mouseDownListener = _addManagedElementListeners(this, eGui, listeners)[0];
+            this.#mouseDownListener = _addManagedElementListeners(this, eGui, listeners)[0];
         }
 
         const translate = this.getLocaleTextFunc();
@@ -178,8 +191,8 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: (draggingEvent) => this.getDragItemName(draggingEvent, translate),
-            getDragItem: () => this.getDragItem(),
+            dragItemName: (draggingEvent) => this.#getDragItemName(draggingEvent, translate),
+            getDragItem: () => this.#getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.gos.getDomDataKey(),
         };
@@ -187,8 +200,8 @@ export class RowDragComp extends Component {
         this.beans.dragAndDrop!.addDragSource(this.dragSource, true);
     }
 
-    private getDragItemName(draggingEvent: RowDraggingEvent | null | undefined, translate: LocaleTextFunc): string {
-        const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
+    #getDragItemName(draggingEvent: RowDraggingEvent | null | undefined, translate: LocaleTextFunc): string {
+        const dragItem = draggingEvent?.dragItem ?? this.#getDragItem();
         const dragItemCount = (draggingEvent?.dropTarget?.rows.length ?? dragItem.rowNodes?.length) || 1;
 
         const rowDragTextGetter = this.column?.getColDef()?.rowDragText ?? this.gos.get('rowDragText');
@@ -200,7 +213,7 @@ export class RowDragComp extends Component {
             return `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
         }
 
-        const value = this.cellValueFn();
+        const value = this.#cellValueFn();
         if (value) {
             return value;
         }
@@ -209,12 +222,12 @@ export class RowDragComp extends Component {
     }
 
     public override destroy(): void {
-        this.removeDragSource();
-        this.removeMouseDownListener();
+        this.#removeDragSource();
+        this.#removeMouseDownListener();
         super.destroy();
     }
 
-    private removeDragSource() {
+    #removeDragSource() {
         if (!this.dragSource) {
             return;
         }
@@ -223,12 +236,12 @@ export class RowDragComp extends Component {
         this.dragSource = null;
     }
 
-    private removeMouseDownListener() {
-        if (!this.mouseDownListener) {
+    #removeMouseDownListener() {
+        if (!this.#mouseDownListener) {
             return;
         }
 
-        this.mouseDownListener();
-        this.mouseDownListener = undefined;
+        this.#mouseDownListener();
+        this.#mouseDownListener = undefined;
     }
 }

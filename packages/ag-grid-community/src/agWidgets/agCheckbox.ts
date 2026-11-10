@@ -29,7 +29,7 @@ export class AgCheckbox<
 
     private selected?: boolean = false;
     private readOnly = false;
-    private passive = false;
+    #passive = false;
 
     constructor(config?: TConfig, className = 'ag-checkbox', inputType = 'checkbox') {
         super(config, className, inputType);
@@ -51,7 +51,7 @@ export class AgCheckbox<
     }
 
     protected override addInputListeners() {
-        _addManagedElementListeners(this, this.eInput, { click: this.onCheckboxClick.bind(this) });
+        _addManagedElementListeners(this, this.eInput, { click: this.#onCheckboxClick.bind(this) });
         _addManagedElementListeners(this, this.eLabel, { click: this.toggle.bind(this) });
     }
 
@@ -60,7 +60,7 @@ export class AgCheckbox<
     }
 
     public setPassive(passive: boolean): void {
-        this.passive = passive;
+        this.#passive = passive;
     }
 
     public isReadOnly(): boolean {
@@ -87,8 +87,8 @@ export class AgCheckbox<
         const previousValue = this.isSelected();
         const nextValue = this.getNextValue();
 
-        if (this.passive) {
-            this.dispatchChange(nextValue, previousValue);
+        if (this.#passive) {
+            this.#dispatchChange(nextValue, previousValue);
         } else {
             this.setValue(nextValue);
         }
@@ -99,7 +99,7 @@ export class AgCheckbox<
     }
 
     public override setValue(value?: boolean, silent?: boolean): this {
-        this.refreshSelectedClass(value);
+        this.#refreshSelectedClass(value);
         this.setSelected(value, silent);
 
         return this;
@@ -124,14 +124,14 @@ export class AgCheckbox<
         this.previousValue = this.isSelected();
 
         this.selected = typeof selected === 'boolean' ? selected : undefined;
-        this.refreshInput();
+        this.#refreshInput();
 
         if (!silent) {
-            this.dispatchChange(this.selected, this.previousValue);
+            this.#dispatchChange(this.selected, this.previousValue);
         }
     }
 
-    private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
+    #dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
         this.dispatchLocalEvent({ type: 'fieldValueChanged', selected, previousValue, event });
 
         const input = this.getInputElement();
@@ -145,23 +145,23 @@ export class AgCheckbox<
         });
     }
 
-    private onCheckboxClick(e: MouseEvent) {
-        if (!this.passive && !this.eInput.disabled) {
+    #onCheckboxClick(e: MouseEvent) {
+        if (!this.#passive && !this.eInput.disabled) {
             const previousValue = this.isSelected();
             const selected = (this.selected = (e.target as HTMLInputElement).checked);
-            this.refreshSelectedClass(selected);
-            this.dispatchChange(selected, previousValue, e);
+            this.#refreshSelectedClass(selected);
+            this.#dispatchChange(selected, previousValue, e);
         }
-        this.refreshInput();
+        this.#refreshInput();
     }
 
-    private refreshInput(): void {
+    #refreshInput(): void {
         const { eInput, selected } = this;
         eInput.checked = !!selected;
         eInput.indeterminate = selected === undefined;
     }
 
-    private refreshSelectedClass(value?: boolean | null) {
+    #refreshSelectedClass(value?: boolean | null) {
         const classList = this.eWrapper.classList;
         classList.toggle('ag-checked', value === true);
         classList.toggle('ag-indeterminate', value == null);

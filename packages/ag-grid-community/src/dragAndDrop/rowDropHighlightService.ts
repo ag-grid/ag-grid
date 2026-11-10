@@ -20,26 +20,26 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
     beanName = 'rowDropHighlightSvc' as const;
 
     private uiLevel = 0;
-    private dragging = false;
+    #dragging = false;
     public row: RowNode | null = null;
     public position: DropIndicatorPosition = 'none';
 
     public postConstruct(): void {
         this.addManagedEventListeners({
-            modelUpdated: this.onModelUpdated.bind(this),
+            modelUpdated: this.#onModelUpdated.bind(this),
         });
     }
 
-    private onModelUpdated(): void {
+    #onModelUpdated(): void {
         const row = this.row;
-        const oldDragging = this.dragging;
+        const oldDragging = this.#dragging;
         // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (!row || row?.rowIndex === null || this.position === 'none') {
             this.clear();
         } else {
             this.set(row, this.position);
         }
-        this.dragging = oldDragging;
+        this.#dragging = oldDragging;
     }
 
     public override destroy(): void {
@@ -49,7 +49,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
 
     public clear(): void {
         const last = this.row;
-        this.dragging = false;
+        this.#dragging = false;
         if (last) {
             this.uiLevel = 0;
             this.position = 'none';
@@ -63,7 +63,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
         const uiLevel = row.uiLevel;
         const highlightChanged = dropIndicatorPosition !== this.position;
         const uiLevelChanged = uiLevel !== this.uiLevel;
-        this.dragging = false;
+        this.#dragging = false;
         if (nodeChanged || highlightChanged || uiLevelChanged) {
             if (nodeChanged) {
                 this.clear();
@@ -81,11 +81,11 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
             const { highlight, target, position } = rowsDrop;
             if (highlight && target && position !== 'none') {
                 this.set(target as RowNode, position);
-                this.dragging = true;
+                this.#dragging = true;
                 return;
             }
         }
-        if (this.dragging) {
+        if (this.#dragging) {
             this.clear();
         }
     }

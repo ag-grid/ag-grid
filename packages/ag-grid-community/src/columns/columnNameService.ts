@@ -20,7 +20,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         if (!column) {
             return null;
         }
-        const headerName: string | null = this.getHeaderName(column.colDef, column, null, null, location);
+        const headerName: string | null = this.#getHeaderName(column.colDef, column, null, null, location);
         const aggColNameSvc = this.beans.aggColNameSvc;
         if (includeAggFunc && aggColNameSvc) {
             return aggColNameSvc.getHeaderName(column, headerName);
@@ -36,7 +36,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         colGroupDef: ColGroupDef | null | undefined = providedColumnGroup?.colGroupDef
     ): string | null {
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, providedColumnGroup, location);
+            return this.#getHeaderName(colGroupDef, null, columnGroup, providedColumnGroup, location);
         }
 
         return null;
@@ -47,7 +47,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     }
 
     // location is where the column is going to appear, ie who is calling us
-    private getHeaderName(
+    #getHeaderName(
         colDef: AbstractColDef,
         column: AgColumn | null,
         columnGroup: AgColumnGroup | null,

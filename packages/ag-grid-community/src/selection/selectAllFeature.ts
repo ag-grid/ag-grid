@@ -21,7 +21,7 @@ import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 export class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible = false;
-    private processingEventFromCheckbox = false;
+    #processingEventFromCheckbox = false;
     private headerCellCtrl: HeaderCellCtrl;
 
     private cbSelectAll: GridCheckbox;
@@ -49,12 +49,12 @@ export class SelectAllFeature extends BeanStub {
         this.cbSelectAll = cbSelectAll;
         cbSelectAll.addCss('ag-header-select-all');
         _setAriaRole(cbSelectAll.getGui(), 'presentation');
-        this.showOrHideSelectAll();
+        this.#showOrHideSelectAll();
 
-        const updateStateOfCheckbox = this.updateStateOfCheckbox.bind(this);
+        const updateStateOfCheckbox = this.#updateStateOfCheckbox.bind(this);
 
         this.addManagedEventListeners({
-            newColumnsLoaded: () => this.showOrHideSelectAll(),
+            newColumnsLoaded: () => this.#showOrHideSelectAll(),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             selectionChanged: updateStateOfCheckbox,
             paginationChanged: updateStateOfCheckbox,
@@ -67,46 +67,46 @@ export class SelectAllFeature extends BeanStub {
                     ? undefined
                     : rowSelection.selectAll;
             if (getSelectAll(currentValue) !== getSelectAll(previousValue)) {
-                this.showOrHideSelectAll();
+                this.#showOrHideSelectAll();
             }
-            this.updateStateOfCheckbox();
+            this.#updateStateOfCheckbox();
         });
 
-        this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
+        this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.#onCbSelectAll.bind(this) });
         cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
-        this.refreshSelectAllLabel();
+        this.#refreshSelectAllLabel();
     }
 
     private onDisplayedColumnsChanged(e: DisplayedColumnsChangedEvent): void {
         if (!this.isAlive()) {
             return;
         }
-        this.showOrHideSelectAll(e.source === 'uiColumnMoved');
+        this.#showOrHideSelectAll(e.source === 'uiColumnMoved');
     }
 
-    private showOrHideSelectAll(fromColumnMoved: boolean = false): void {
-        const cbSelectAllVisible = this.isCheckboxSelection();
+    #showOrHideSelectAll(fromColumnMoved: boolean = false): void {
+        const cbSelectAllVisible = this.#isCheckboxSelection();
         this.cbSelectAllVisible = cbSelectAllVisible;
         this.cbSelectAll.setDisplayed(cbSelectAllVisible);
         if (cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
-            this.checkRightRowModelType('selectAllCheckbox');
+            this.#checkRightRowModelType('selectAllCheckbox');
             // in case user is trying this feature with the wrong model type
-            this.checkSelectionType('selectAllCheckbox');
+            this.#checkSelectionType('selectAllCheckbox');
             // make sure checkbox is showing the right state
-            this.updateStateOfCheckbox();
+            this.#updateStateOfCheckbox();
         }
-        this.refreshSelectAllLabel(fromColumnMoved);
+        this.#refreshSelectAllLabel(fromColumnMoved);
     }
 
-    private updateStateOfCheckbox(): void {
-        if (!this.cbSelectAllVisible || this.processingEventFromCheckbox) {
+    #updateStateOfCheckbox(): void {
+        if (!this.cbSelectAllVisible || this.#processingEventFromCheckbox) {
             return;
         }
 
-        this.processingEventFromCheckbox = true;
+        this.#processingEventFromCheckbox = true;
 
-        const selectAllMode = this.getSelectAllMode();
+        const selectAllMode = this.#getSelectAllMode();
         const selectionSvc = this.beans.selectionSvc!;
         const cbSelectAll = this.cbSelectAll;
 
@@ -116,12 +116,12 @@ export class SelectAllFeature extends BeanStub {
         const hasNodesToSelect = selectionSvc.hasNodesToSelect(selectAllMode);
         cbSelectAll.setDisabled(!hasNodesToSelect);
 
-        this.refreshSelectAllLabel();
+        this.#refreshSelectAllLabel();
 
-        this.processingEventFromCheckbox = false;
+        this.#processingEventFromCheckbox = false;
     }
 
-    private refreshSelectAllLabel(fromColumnMoved: boolean = false): void {
+    #refreshSelectAllLabel(fromColumnMoved: boolean = false): void {
         const translate = this.getLocaleTextFunc();
         const { headerCellCtrl, cbSelectAll, cbSelectAllVisible } = this;
         const checked = cbSelectAll.getValue();
@@ -141,7 +141,7 @@ export class SelectAllFeature extends BeanStub {
         }
     }
 
-    private checkSelectionType(feature: string): boolean {
+    #checkSelectionType(feature: string): boolean {
         const isMultiSelect = _isMultiRowSelection(this.gos);
 
         if (!isMultiSelect) {
@@ -151,7 +151,7 @@ export class SelectAllFeature extends BeanStub {
         return true;
     }
 
-    private checkRightRowModelType(feature: string): boolean {
+    #checkRightRowModelType(feature: string): boolean {
         const { gos, rowModel } = this.beans;
         const rowModelMatches = _isClientSideRowModel(gos) || _isServerSideRowModel(gos);
 
@@ -162,8 +162,8 @@ export class SelectAllFeature extends BeanStub {
         return true;
     }
 
-    private onCbSelectAll(): void {
-        if (this.processingEventFromCheckbox) {
+    #onCbSelectAll(): void {
+        if (this.#processingEventFromCheckbox) {
             return;
         }
         if (!this.cbSelectAllVisible) {
@@ -171,7 +171,7 @@ export class SelectAllFeature extends BeanStub {
         }
 
         const value = this.cbSelectAll.getValue();
-        const selectAll = this.getSelectAllMode();
+        const selectAll = this.#getSelectAllMode();
 
         let source: SelectionEventSourceType = 'uiSelectAll';
         if (selectAll === 'currentPage') {
@@ -193,7 +193,7 @@ export class SelectAllFeature extends BeanStub {
      * Checkbox is enabled when either the `headerCheckbox` option is enabled in the new selection API
      * or `headerCheckboxSelection` is enabled in the legacy API.
      */
-    private isCheckboxSelection(): boolean {
+    #isCheckboxSelection(): boolean {
         const { column, gos, beans } = this;
         const rowSelection = gos.get('rowSelection');
         const newHeaderCheckbox = typeof rowSelection === 'object';
@@ -201,12 +201,12 @@ export class SelectAllFeature extends BeanStub {
 
         return (
             isCheckboxSelection(beans, column) &&
-            this.checkRightRowModelType(featureName) &&
-            this.checkSelectionType(featureName)
+            this.#checkRightRowModelType(featureName) &&
+            this.#checkSelectionType(featureName)
         );
     }
 
-    private getSelectAllMode(): SelectAllMode {
+    #getSelectAllMode(): SelectAllMode {
         const selectAll = _getSelectAll(this.gos, false);
         if (selectAll) {
             return selectAll;

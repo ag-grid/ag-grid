@@ -18,17 +18,17 @@ interface HorizontalResizeParams {
 export class HorizontalResizeService extends BeanStub implements NamedBean {
     beanName = 'horizontalResizeSvc' as const;
 
-    private dragStartX: number;
-    private resizeAmount: number;
+    #dragStartX: number;
+    #resizeAmount: number;
 
     public addResizeBar(params: HorizontalResizeParams): () => void {
         const dragSource: DragListenerParams = {
             dragStartPixels: params.dragStartPixels || 0,
             eElement: params.eResizeBar,
-            onDragStart: this.onDragStart.bind(this, params),
-            onDragStop: this.onDragStop.bind(this, params),
+            onDragStart: this.#onDragStart.bind(this, params),
+            onDragStop: this.#onDragStop.bind(this, params),
             onDragging: this.onDragging.bind(this, params),
-            onDragCancel: this.onDragStop.bind(this, params),
+            onDragCancel: this.#onDragStop.bind(this, params),
             includeTouch: true,
             stopPropagationForTouch: true,
         };
@@ -44,16 +44,16 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
         return finishedWithResizeFunc;
     }
 
-    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        this.dragStartX = mouseEvent.clientX;
+    #onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+        this.#dragStartX = mouseEvent.clientX;
 
-        this.setResizeIcons(!!params.isColumn);
+        this.#setResizeIcons(!!params.isColumn);
 
         const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey;
         params.onResizeStart(shiftKey);
     }
 
-    private setResizeIcons(isColumn: boolean): void {
+    #setResizeIcons(isColumn: boolean): void {
         const ctrl = this.beans.ctrlsSvc.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl?.setResizeCursor(Direction.Horizontal, isColumn);
@@ -61,19 +61,19 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
         ctrl?.disableUserSelect(true);
     }
 
-    private onDragStop(params: HorizontalResizeParams): void {
-        params.onResizeEnd(this.resizeAmount);
-        this.resetIcons();
+    #onDragStop(params: HorizontalResizeParams): void {
+        params.onResizeEnd(this.#resizeAmount);
+        this.#resetIcons();
     }
 
-    private resetIcons(): void {
+    #resetIcons(): void {
         const ctrl = this.beans.ctrlsSvc.get('gridCtrl');
         ctrl?.setResizeCursor(false);
         ctrl?.disableUserSelect(false);
     }
 
     private onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        this.resizeAmount = mouseEvent.clientX - this.dragStartX;
-        params.onResizing(this.resizeAmount);
+        this.#resizeAmount = mouseEvent.clientX - this.#dragStartX;
+        params.onResizing(this.#resizeAmount);
     }
 }

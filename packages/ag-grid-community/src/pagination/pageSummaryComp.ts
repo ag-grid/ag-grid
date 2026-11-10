@@ -23,17 +23,17 @@ export class PageSummaryComp extends Component {
     private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
 
-    private previousAndFirstButtonsDisabled = false;
-    private nextButtonDisabled = false;
-    private lastButtonDisabled = false;
+    #previousAndFirstButtonsDisabled = false;
+    #nextButtonDisabled = false;
+    #lastButtonDisabled = false;
 
     public ariaStatus = '';
-    private readonly idPrefix: string;
+    readonly #idPrefix: string;
     private readonly suppressPageInput: boolean;
 
     constructor(idPrefix: string, suppressPageInput?: boolean) {
         super();
-        this.idPrefix = idPrefix;
+        this.#idPrefix = idPrefix;
         this.suppressPageInput = suppressPageInput ?? false;
     }
 
@@ -45,25 +45,25 @@ export class PageSummaryComp extends Component {
     public postConstruct(): void {
         const localeTextFunc = this.getLocaleTextFunc();
         this.setTemplate(
-            buildPageSummaryTemplate(this.idPrefix, this.suppressPageInput, localeTextFunc),
+            buildPageSummaryTemplate(this.#idPrefix, this.suppressPageInput, localeTextFunc),
             this.suppressPageInput ? [] : [AgInputNumberFieldSelector]
         );
         insertNavIcons(this.gos.get('enableRtl'), this.beans, this.btFirst, this.btPrevious, this.btNext, this.btLast);
-        this.initNavButtons();
+        this.#initNavButtons();
         if (!this.suppressPageInput) {
-            this.initPageInput();
+            this.#initPageInput();
         }
         this.refresh();
     }
 
-    private initNavButtons(): void {
+    #initNavButtons(): void {
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
         for (const { el, fn } of [
-            { el: btFirst, fn: this.onBtFirst.bind(this) },
-            { el: btPrevious, fn: this.onBtPrevious.bind(this) },
-            { el: btNext, fn: this.onBtNext.bind(this) },
-            { el: btLast, fn: this.onBtLast.bind(this) },
+            { el: btFirst, fn: this.#onBtFirst.bind(this) },
+            { el: btPrevious, fn: this.#onBtPrevious.bind(this) },
+            { el: btNext, fn: this.#onBtNext.bind(this) },
+            { el: btLast, fn: this.#onBtLast.bind(this) },
         ]) {
             this.addManagedListeners(el, {
                 click: fn,
@@ -77,7 +77,7 @@ export class PageSummaryComp extends Component {
         }
     }
 
-    private initPageInput(): void {
+    #initPageInput(): void {
         const { lbCurrentInput, pagination } = this;
         const eInput = lbCurrentInput.getInputElement();
         _setAriaRole(eInput, 'spinbutton');
@@ -93,10 +93,10 @@ export class PageSummaryComp extends Component {
                 const maxPage = pagination.getTotalPages();
                 switch (key) {
                     case KeyCode.ENTER:
-                        this.commitPageInput();
+                        this.#commitPageInput();
                         break;
                     case KeyCode.ESCAPE:
-                        lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true); // needs to happen before blur below
+                        lbCurrentInput.setValue(String(this.#getDisplayPageNumber()), true); // needs to happen before blur below
                         eInput.blur();
                         break;
                     case KeyCode.UP:
@@ -112,42 +112,42 @@ export class PageSummaryComp extends Component {
                 }
                 if (targetPage !== null) {
                     lbCurrentInput.setValue(String(targetPage), true);
-                    this.commitPageInput();
+                    this.#commitPageInput();
                 }
             },
-            blur: () => this.commitPageInput(),
+            blur: () => this.#commitPageInput(),
         });
     }
 
-    private onBtFirst(): void {
-        if (!this.previousAndFirstButtonsDisabled) {
+    #onBtFirst(): void {
+        if (!this.#previousAndFirstButtonsDisabled) {
             this.pagination.goToFirstPage();
         }
     }
 
-    private onBtPrevious(): void {
-        if (!this.previousAndFirstButtonsDisabled) {
+    #onBtPrevious(): void {
+        if (!this.#previousAndFirstButtonsDisabled) {
             this.pagination.goToPreviousPage();
         }
     }
 
-    private onBtNext(): void {
-        if (!this.nextButtonDisabled) {
+    #onBtNext(): void {
+        if (!this.#nextButtonDisabled) {
             this.pagination.goToNextPage();
         }
     }
 
-    private onBtLast(): void {
-        if (!this.lastButtonDisabled) {
+    #onBtLast(): void {
+        if (!this.#lastButtonDisabled) {
             this.pagination.goToLastPage();
         }
     }
 
-    private commitPageInput(): void {
+    #commitPageInput(): void {
         const { pagination, lbCurrentInput } = this;
         const rawValue = lbCurrentInput.getValue(true);
         if (!rawValue?.trim()) {
-            lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true);
+            lbCurrentInput.setValue(String(this.#getDisplayPageNumber()), true);
             return;
         }
         const rawValueNum = Number(rawValue);
@@ -155,7 +155,7 @@ export class PageSummaryComp extends Component {
         const isValid =
             Number.isFinite(rawValueNum) && Number.isInteger(rawValueNum) && rawValueNum >= 1 && rawValueNum <= total;
         if (!isValid) {
-            lbCurrentInput.setValue(String(this.getDisplayPageNumber()), true);
+            lbCurrentInput.setValue(String(this.#getDisplayPageNumber()), true);
             return;
         }
         pagination.goToPage(rawValueNum - 1);
@@ -166,7 +166,7 @@ export class PageSummaryComp extends Component {
      * `Page 0 of 0` alongside its `0 to 0 of 0` row summary. While the last row index is still unknown
      * (data loading, or infinite scroll) it stays at 1, as page 1 is yet to arrive.
      */
-    private getDisplayPageNumber(): number {
+    #getDisplayPageNumber(): number {
         const { rowModel, pagination } = this;
         if (pagination.getTotalPages() > 0) {
             return pagination.getCurrentPage() + 1;
@@ -175,35 +175,35 @@ export class PageSummaryComp extends Component {
     }
 
     public refresh(): void {
-        this.enableOrDisableButtons();
-        this.updateLabels();
+        this.#enableOrDisableButtons();
+        this.#updateLabels();
     }
 
-    private enableOrDisableButtons(): void {
+    #enableOrDisableButtons(): void {
         const currentPage = this.pagination.getCurrentPage();
         const maxRowFound = this.rowModel.isLastRowIndexKnown();
         const totalPages = this.pagination.getTotalPages();
 
-        this.previousAndFirstButtonsDisabled = currentPage === 0;
-        this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
-        this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
+        this.#previousAndFirstButtonsDisabled = currentPage === 0;
+        this.#toggleButtonDisabled(this.btFirst, this.#previousAndFirstButtonsDisabled);
+        this.#toggleButtonDisabled(this.btPrevious, this.#previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = maxRowFound && totalPages === 0;
         const onLastPage = currentPage === totalPages - 1;
 
-        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || onLastPage;
+        this.#nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        this.#lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || onLastPage;
 
-        this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
-        this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
+        this.#toggleButtonDisabled(this.btNext, this.#nextButtonDisabled);
+        this.#toggleButtonDisabled(this.btLast, this.#lastButtonDisabled);
     }
 
-    private toggleButtonDisabled(button: HTMLElement, disabled: boolean): void {
+    #toggleButtonDisabled(button: HTMLElement, disabled: boolean): void {
         _setAriaDisabled(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
     }
 
-    private updateLabels(): void {
+    #updateLabels(): void {
         const { rowModel, pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
         const lastPageFound = rowModel.isLastRowIndexKnown();
         const totalPages = pagination.getTotalPages();
@@ -211,14 +211,14 @@ export class PageSummaryComp extends Component {
 
         let lbTotalStr: string;
         if (lastPageFound) {
-            lbTotalStr = this.formatNumber(totalPages);
+            lbTotalStr = this.#formatNumber(totalPages);
         } else {
             lbTotalStr = localeTextFunc('more', 'more');
         }
         lbTotal.textContent = lbTotalStr;
 
-        const lbCurrentValue = this.getDisplayPageNumber();
-        const lbCurrent = this.formatNumber(lbCurrentValue);
+        const lbCurrentValue = this.#getDisplayPageNumber();
+        const lbCurrent = this.#formatNumber(lbCurrentValue);
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -245,7 +245,7 @@ export class PageSummaryComp extends Component {
         this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
     }
 
-    private formatNumber(value: number): string {
+    #formatNumber(value: number): string {
         return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
     }
 }

@@ -56,7 +56,7 @@ export class AgInputDateField<
         // unless using safari as there is no clear button and focus does not work properly
         const usingSafari = _isBrowserSafari();
         _addManagedElementListeners(this, this.eInput, {
-            wheel: this.onWheel.bind(this),
+            wheel: this.#onWheel.bind(this),
             mousedown: () => {
                 if (this.isDisabled() || usingSafari) {
                     return;
@@ -81,7 +81,7 @@ export class AgInputDateField<
         }
     }
 
-    private onWheel(e: WheelEvent) {
+    #onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
         if (_getActiveDomElement(this.beans) === this.eInput) {
             e.preventDefault();

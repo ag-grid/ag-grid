@@ -8,7 +8,7 @@ import { _logIfDebug } from './utils/log';
 export class SyncService extends BeanStub implements NamedBean {
     beanName = 'syncSvc' as const;
 
-    private waitingForColumns: boolean = false;
+    #waitingForColumns: boolean = false;
 
     public postConstruct(): void {
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
@@ -19,15 +19,15 @@ export class SyncService extends BeanStub implements NamedBean {
         this.beans.ctrlsSvc.whenReady(this, () => {
             const columnDefs = this.gos.get('columnDefs');
             if (columnDefs) {
-                this.setColumnsAndData(columnDefs);
+                this.#setColumnsAndData(columnDefs);
             } else {
-                this.waitingForColumns = true;
+                this.#waitingForColumns = true;
             }
             this.gridReady();
         });
     }
 
-    private setColumnsAndData(columnDefs: (ColDef | ColGroupDef)[]): void {
+    #setColumnsAndData(columnDefs: (ColDef | ColGroupDef)[]): void {
         const { colModel, rowModel } = this.beans;
         colModel.setColumnDefs(columnDefs ?? [], 'gridInitializing');
         rowModel.start();
@@ -47,9 +47,9 @@ export class SyncService extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.waitingForColumns) {
-            this.waitingForColumns = false;
-            this.setColumnsAndData(columnDefs);
+        if (this.#waitingForColumns) {
+            this.#waitingForColumns = false;
+            this.#setColumnsAndData(columnDefs);
             return;
         }
 

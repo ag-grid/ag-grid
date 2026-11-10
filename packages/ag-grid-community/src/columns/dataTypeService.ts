@@ -91,7 +91,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private dataTypeDefinitions: DataTypeDefinitionMap = {};
-    private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
+    #dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
     private formatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc };
     /**
      * Makes an `object` column's filter, when it is not a Set Filter, filter by the value's formatted text. It is one
@@ -110,24 +110,24 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return formatValue({ column, node, value });
     };
     public isPendingInference: boolean = false;
-    private hasObjectValueParser: boolean;
-    private hasObjectValueFormatter: boolean;
-    private initialData: any[] | null | undefined;
-    private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
+    #hasObjectValueParser: boolean;
+    #hasObjectValueFormatter: boolean;
+    #initialData: any[] | null | undefined;
+    #isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
     // keep track of any column state updates whilst waiting for data types to be inferred
-    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
+    #columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
 
     public postConstruct(): void {
-        this.processDataTypeDefinitions();
+        this.#processDataTypeDefinitions();
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
-            this.processDataTypeDefinitions();
+            this.#processDataTypeDefinitions();
             this.colModel.recreateColumnDefs(event);
         });
     }
 
-    private processDataTypeDefinitions(): void {
-        const defaultDataTypes = this.getDefaultDataTypes();
+    #processDataTypeDefinitions(): void {
+        const defaultDataTypes = this.#getDefaultDataTypes();
         const newDataTypeDefinitions: DataTypeDefinitionMap = {};
         const newFormatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc } = {};
         const generateFormatValueFunc = (
@@ -158,7 +158,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         for (const cellDataType of Object.keys(userDataTypeDefs) as BaseCellDataType[]) {
             const userDataTypeDef = userDataTypeDefs[cellDataType];
-            const mergedDataTypeDefinition = this.processDataTypeDefinition(
+            const mergedDataTypeDefinition = this.#processDataTypeDefinition(
                 userDataTypeDef,
                 userDataTypeDefs,
                 [cellDataType],
@@ -175,18 +175,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const { valueParser: defaultValueParser, valueFormatter: defaultValueFormatter } = defaultDataTypes.object;
         const { valueParser: userValueParser, valueFormatter: userValueFormatter } = newDataTypeDefinitions.object;
 
-        this.hasObjectValueParser = userValueParser !== defaultValueParser;
-        this.hasObjectValueFormatter = userValueFormatter !== defaultValueFormatter;
+        this.#hasObjectValueParser = userValueParser !== defaultValueParser;
+        this.#hasObjectValueFormatter = userValueFormatter !== defaultValueFormatter;
         this.formatValueFuncs = newFormatValueFuncs;
         this.dataTypeDefinitions = newDataTypeDefinitions;
-        this.dataTypeMatchers = this.sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
+        this.#dataTypeMatchers = this.#sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
     }
 
     /**
      * Sorts the keys in the matchers object.
      * Does not mutate the original object, creates a copy of it with sorted keys instead.
      */
-    private sortKeysInMatchers(matchers: Record<string, any>, dataTypes: CoreDataTypeDefMap) {
+    #sortKeysInMatchers(matchers: Record<string, any>, dataTypes: CoreDataTypeDefMap) {
         const sortedMatchers = { ...matchers };
         for (const cellDataType of SORTED_CELL_DATA_TYPES_FOR_MATCHING) {
             delete sortedMatchers[cellDataType];
@@ -195,7 +195,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return sortedMatchers;
     }
 
-    private processDataTypeDefinition(
+    #processDataTypeDefinition(
         userDataTypeDef: DataTypeDefinition,
         userDataTypeDefs: { [key: string]: DataTypeDefinition },
         alreadyProcessedDataTypes: string[],
@@ -205,7 +205,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const extendsCellDataType = userDataTypeDef.extendsDataType;
 
         if (userDataTypeDef.columnTypes) {
-            this.isColumnTypeOverrideInDataTypeDefinitions = true;
+            this.#isColumnTypeOverrideInDataTypeDefinitions = true;
         }
 
         if (userDataTypeDef.extendsDataType === userDataTypeDef.baseDataType) {
@@ -242,7 +242,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             ) {
                 return undefined;
             }
-            const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
+            const mergedExtendedDataTypeDefinition = this.#processDataTypeDefinition(
                 extendedDataTypeDefinition,
                 userDataTypeDefs,
                 [...alreadyProcessedDataTypes, extendsCellDataType],
@@ -275,10 +275,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const { field } = userColDef;
 
         if (cellDataType == null || cellDataType === true) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
+            cellDataType = this.#canInferCellDataType(colDef, userColDef)
+                ? this.#inferCellDataType(field, colId)
+                : false;
         }
 
-        this.addFormulaCellEditorToColDef(colDef, userColDef);
+        this.#addFormulaCellEditorToColDef(colDef, userColDef);
 
         if (!cellDataType) {
             colDef.cellDataType = false;
@@ -299,12 +301,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colDef.valueParser = dataTypeDefinition.valueParser;
         }
         if (!dataTypeDefinition.suppressDefaultProperties) {
-            this.setColDefPropertiesForBaseDataType(colDef, cellDataType, dataTypeDefinition, colId);
+            this.#setColDefPropertiesForBaseDataType(colDef, cellDataType, dataTypeDefinition, colId);
         }
         return dataTypeDefinition.columnTypes;
     }
 
-    private addFormulaCellEditorToColDef(colDef: ColDef, userColDef: ColDef): void {
+    #addFormulaCellEditorToColDef(colDef: ColDef, userColDef: ColDef): void {
         const allowFormula = userColDef.allowFormula ?? colDef.allowFormula;
 
         if (!allowFormula || userColDef.cellEditor) {
@@ -316,10 +318,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /** Records a state key set on a column before its data type is inferred, which inference then keeps. */
     public columnStateUpdated(column: AgColumn, key: keyof ColumnStateParams): void {
-        this.columnStateUpdatesPendingInference[column.colId]?.add(key);
+        this.#columnStateUpdatesPendingInference[column.colId]?.add(key);
     }
 
-    private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
+    #canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
         const { gos } = this;
         if (!_isClientSideRowModel(gos)) {
             return false;
@@ -342,7 +344,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return !doColDefPropsPreventInference(colDef, propsToCheckForInference);
     }
 
-    private inferCellDataType(field: string | undefined, colId: string): string | undefined {
+    #inferCellDataType(field: string | undefined, colId: string): string | undefined {
         if (!field) {
             return undefined;
         }
@@ -358,7 +360,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
 
         let value: any;
-        const rowData = this.getInitialRowData();
+        const rowData = this.#getInitialRowData();
         if (rowData) {
             for (let i = 0, len = rowData.length; value == null && i < len; ++i) {
                 value = getValue(rowData[i]);
@@ -366,7 +368,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         } else {
             const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
             if (!rowNodes?.length) {
-                this.initWaitForRowData(colId);
+                this.#initWaitForRowData(colId);
                 return undefined;
             }
             for (let i = 0, len = rowNodes.length; value == null && i < len; ++i) {
@@ -377,28 +379,28 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (value == null) {
             return undefined;
         }
-        const matchedType = Object.keys(this.dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
-            this.dataTypeMatchers[_cellDataType]!(value)
+        const matchedType = Object.keys(this.#dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
+            this.#dataTypeMatchers[_cellDataType]!(value)
         );
 
         return matchedType ?? 'object';
     }
 
-    private getInitialRowData(): any[] | null {
+    #getInitialRowData(): any[] | null {
         const rowData = this.gos.get('rowData');
         if (rowData?.length) {
             return rowData;
         }
-        return this.initialData?.length ? this.initialData : null;
+        return this.#initialData?.length ? this.#initialData : null;
     }
 
-    private initWaitForRowData(colId: string): void {
-        this.columnStateUpdatesPendingInference[colId] = new Set();
+    #initWaitForRowData(colId: string): void {
+        this.#columnStateUpdatesPendingInference[colId] = new Set();
         if (this.isPendingInference) {
             return;
         }
         this.isPendingInference = true;
-        const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
+        const columnTypeOverridesExist = this.#isColumnTypeOverrideInDataTypeDefinitions;
         const { colAutosize, eventSvc } = this.beans;
         if (columnTypeOverridesExist && colAutosize) {
             colAutosize.shouldQueueResizeOperations = true;
@@ -410,8 +412,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 }
                 destroyFunc?.();
                 this.isPendingInference = false;
-                this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
-                this.columnStateUpdatesPendingInference = Object.create(null);
+                this.#processColumnsPendingInference(rowData, columnTypeOverridesExist);
+                this.#columnStateUpdatesPendingInference = Object.create(null);
                 if (columnTypeOverridesExist) {
                     colAutosize?.processResizeOperations();
                 }
@@ -422,26 +424,26 @@ export class DataTypeService extends BeanStub implements NamedBean {
         });
     }
 
-    private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
-        this.initialData = rowData;
+    #processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
+        this.#initialData = rowData;
         // one update, so a column redefined here is told once every inferred column holds its new definition
         const colModel = this.colModel;
         colModel.beginColUpdate();
         try {
-            this.applyInferredColDefs(columnTypeOverridesExist);
+            this.#applyInferredColDefs(columnTypeOverridesExist);
         } finally {
             colModel.endColUpdate();
         }
-        this.initialData = null;
+        this.#initialData = null;
     }
 
-    private applyInferredColDefs(columnTypeOverridesExist: boolean): void {
+    #applyInferredColDefs(columnTypeOverridesExist: boolean): void {
         const beans = this.beans;
         const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
-        for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
-            const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
+        for (const colId of Object.keys(this.#columnStateUpdatesPendingInference)) {
+            const updatedColumnState = this.#resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
             if (!updatedColumnState) {
                 continue;
             }
@@ -468,23 +470,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
-    private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
+    #resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
         const column = this.colModel.colsById[colId];
         if (!column) {
             return null;
         }
         const oldColDef = column.colDef;
-        if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
+        if (!this.#resetColDefIntoCol(column, 'cellDataTypeInferred')) {
             return null;
         }
         const newColDef = column.colDef;
         if (!columnTypeOverridesExist || !newColDef.type || newColDef.type === oldColDef.type) {
             return null;
         }
-        return getUpdatedColumnState(this.beans, column, this.columnStateUpdatesPendingInference[colId]);
+        return getUpdatedColumnState(this.beans, column, this.#columnStateUpdatesPendingInference[colId]);
     }
 
-    private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
+    #resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) {
             return false;
@@ -494,7 +496,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
+    #getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
         const { dateString } = this.dataTypeDefinitions;
         if (!column) {
             return dateString as DateStringDataTypeDefinition;
@@ -503,11 +505,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public getDateParserFunction(column?: AgColumn | null): (value: string | undefined) => Date | undefined {
-        return this.getDateStringTypeDefinition(column).dateParser!;
+        return this.#getDateStringTypeDefinition(column).dateParser!;
     }
 
     public getDateFormatterFunction(column?: AgColumn | null): (value: Date | undefined) => string | undefined {
-        return this.getDateStringTypeDefinition(column).dateFormatter!;
+        return this.#getDateStringTypeDefinition(column).dateFormatter!;
     }
 
     public getDateIncludesTimeFlag(cellDataType?: any): boolean {
@@ -550,10 +552,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
             const warning = (property: 'Formatter' | 'Parser') => this.warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
-            if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
+            if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.#hasObjectValueFormatter) {
                 warning('Formatter');
             }
-            if (colDef.editable && colDef.valueParser === object.valueParser && !this.hasObjectValueParser) {
+            if (colDef.editable && colDef.valueParser === object.valueParser && !this.#hasObjectValueParser) {
                 warning('Parser');
             }
         }
@@ -579,7 +581,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /** Whether the column definitions are being updated with the data types inferred from the first row data. */
     public isInferring(): boolean {
-        return this.initialData != null;
+        return this.#initialData != null;
     }
 
     public isDataTypeRegistered(cellDataType: string): boolean {
@@ -587,11 +589,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public isColPendingInference(colId: string): boolean {
-        return this.isPendingInference && !!this.columnStateUpdatesPendingInference[colId];
+        return this.isPendingInference && !!this.#columnStateUpdatesPendingInference[colId];
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
-    private readonly columnDefinitionPropsPerDataType: Record<
+    readonly #columnDefinitionPropsPerDataType: Record<
         BaseCellDataType,
         (args: {
             colDef: ColDef;
@@ -667,14 +669,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
         },
     };
 
-    private setColDefPropertiesForBaseDataType(
+    #setColDefPropertiesForBaseDataType(
         colDef: ColDef,
         cellDataType: string,
         dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
         colId: string
     ): void {
         const formatValue = this.formatValueFuncs[cellDataType];
-        const partialColDef = this.columnDefinitionPropsPerDataType[dataTypeDefinition.baseDataType]({
+        const partialColDef = this.#columnDefinitionPropsPerDataType[dataTypeDefinition.baseDataType]({
             colDef,
             cellDataType,
             colModel: this.colModel,
@@ -693,7 +695,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         Object.assign(colDef, partialColDef);
     }
 
-    private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
+    #getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
         const translate = this.getLocaleTextFunc();
         const includeTime = this.getDateIncludesTimeFlag(baseDataType);
         return {
@@ -713,7 +715,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
     }
 
-    private getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
+    #getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
         const includeTime = this.getDateIncludesTimeFlag(baseDataType);
         return {
             baseDataType,
@@ -727,7 +729,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
     }
 
-    private getDefaultDataTypes(): CoreDataTypeDefMap {
+    #getDefaultDataTypes(): CoreDataTypeDefMap {
         const translate = this.getLocaleTextFunc();
 
         return {
@@ -789,11 +791,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
             },
-            date: this.getDateObjectTypeDef('date'),
-            dateString: this.getDateStringTypeDef('dateString'),
-            dateTime: this.getDateObjectTypeDef('dateTime'),
+            date: this.#getDateObjectTypeDef('date'),
+            dateString: this.#getDateStringTypeDef('dateString'),
+            dateTime: this.#getDateObjectTypeDef('dateTime'),
             dateTimeString: {
-                ...this.getDateStringTypeDef('dateTimeString'),
+                ...this.#getDateStringTypeDef('dateTimeString'),
                 dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDateTime(value),
             },
             object: {
@@ -806,9 +808,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.dataTypeDefinitions = {};
-        this.dataTypeMatchers = {};
+        this.#dataTypeMatchers = {};
         this.formatValueFuncs = {};
-        this.columnStateUpdatesPendingInference = Object.create(null);
+        this.#columnStateUpdatesPendingInference = Object.create(null);
         super.destroy();
     }
 }

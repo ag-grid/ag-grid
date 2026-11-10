@@ -39,11 +39,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private eOverlayWrapper: HTMLElement | null = RefPlaceholder;
 
     public activeOverlay: IOverlayComp | null = null;
-    private activePromise: AgPromise<IOverlayComp> | null = null;
-    private activeCssClass: string | null = null;
-    private elToFocusAfter: HTMLElement | null = null;
-    private overlayExclusive = false;
-    private oldWrapperPadding: number | null = null;
+    #activePromise: AgPromise<IOverlayComp> | null = null;
+    #activeCssClass: string | null = null;
+    #elToFocusAfter: HTMLElement | null = null;
+    #overlayExclusive = false;
+    #oldWrapperPadding: number | null = null;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -51,7 +51,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.registerCSS(overlayWrapperComponentCSS);
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    #handleKeyDown(e: KeyboardEvent): void {
         if (e.key !== KeyCode.TAB || e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
             return;
         }
@@ -97,20 +97,20 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
 
         this.beans.overlays!.setWrapperComp(this, false);
-        _addManagedElementListeners(this, this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
+        _addManagedElementListeners(this, this.getFocusableElement(), { keydown: this.#handleKeyDown.bind(this) });
         this.addManagedEventListeners({ gridSizeChanged: this.refreshWrapperPadding.bind(this) });
     }
 
-    private setWrapperTypeClass(overlayWrapperCssClass: string): void {
+    #setWrapperTypeClass(overlayWrapperCssClass: string): void {
         const overlayWrapperClassList = this.eOverlayWrapper?.classList;
         if (!overlayWrapperClassList) {
-            this.activeCssClass = null;
+            this.#activeCssClass = null;
             return;
         }
-        if (this.activeCssClass) {
-            overlayWrapperClassList.toggle(this.activeCssClass, false);
+        if (this.#activeCssClass) {
+            overlayWrapperClassList.toggle(this.#activeCssClass, false);
         }
-        this.activeCssClass = overlayWrapperCssClass;
+        this.#activeCssClass = overlayWrapperCssClass;
         overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     }
 
@@ -119,25 +119,25 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperCssClass: string,
         exclusive: boolean
     ): AgPromise<IOverlayComp | undefined> {
-        this.destroyActiveOverlay();
+        this.#destroyActiveOverlay();
 
-        this.elToFocusAfter = null;
-        this.activePromise = overlayComponentPromise;
-        this.overlayExclusive = exclusive;
+        this.#elToFocusAfter = null;
+        this.#activePromise = overlayComponentPromise;
+        this.#overlayExclusive = exclusive;
 
         if (!overlayComponentPromise) {
             this.refreshWrapperPadding();
             return AgPromise.resolve();
         }
 
-        this.setWrapperTypeClass(overlayWrapperCssClass);
+        this.#setWrapperTypeClass(overlayWrapperCssClass);
         this.setDisplayed(true, { skipAriaHidden: true });
         this.refreshWrapperPadding();
 
-        if (exclusive && this.isGridFocused()) {
+        if (exclusive && this.#isGridFocused()) {
             const activeElement = _getActiveDomElement(this.beans);
             if (activeElement && !_isNothingFocused(this.beans)) {
-                this.elToFocusAfter = activeElement as HTMLElement;
+                this.#elToFocusAfter = activeElement as HTMLElement;
             }
         }
 
@@ -147,7 +147,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 this.destroyBean(comp);
                 return; // Error handling
             }
-            if (this.activePromise !== overlayComponentPromise) {
+            if (this.#activePromise !== overlayComponentPromise) {
                 // Another promise was started, we need to cancel this old operation
                 if (this.activeOverlay !== comp) {
                     this.destroyBean(comp);
@@ -155,7 +155,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 return;
             }
 
-            this.activePromise = null; // Promise completed, so we can reset this
+            this.#activePromise = null; // Promise completed, so we can reset this
 
             if (!comp) {
                 return; // Error handling
@@ -166,7 +166,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 this.activeOverlay = comp;
             }
 
-            if (exclusive && this.isGridFocused()) {
+            if (exclusive && this.#isGridFocused()) {
                 _focusInto(eOverlayWrapper);
             }
         });
@@ -175,40 +175,40 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public refreshWrapperPadding(): void {
         if (!this.eOverlayWrapper) {
-            this.oldWrapperPadding = null;
+            this.#oldWrapperPadding = null;
             return;
         }
 
-        const overlayActive = !!this.activeOverlay || !!this.activePromise;
+        const overlayActive = !!this.activeOverlay || !!this.#activePromise;
         let padding = 0;
 
-        if (overlayActive && !this.overlayExclusive) {
+        if (overlayActive && !this.#overlayExclusive) {
             padding = this.beans.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight || 0;
         }
 
-        if (padding !== this.oldWrapperPadding) {
-            this.oldWrapperPadding = padding;
+        if (padding !== this.#oldWrapperPadding) {
+            this.#oldWrapperPadding = padding;
             this.eOverlayWrapper.style.setProperty('padding-top', `${padding}px`);
         }
     }
 
-    private destroyActiveOverlay(): void {
-        this.activePromise = null;
+    #destroyActiveOverlay(): void {
+        this.#activePromise = null;
 
         const activeOverlay = this.activeOverlay;
         if (!activeOverlay) {
-            this.overlayExclusive = false;
-            this.elToFocusAfter = null;
+            this.#overlayExclusive = false;
+            this.#elToFocusAfter = null;
             this.refreshWrapperPadding();
             return; // Nothing to destroy
         }
 
-        let elementToFocus = this.elToFocusAfter;
-        this.elToFocusAfter = null;
+        let elementToFocus = this.#elToFocusAfter;
+        this.#elToFocusAfter = null;
         this.activeOverlay = null;
-        this.overlayExclusive = false;
+        this.#overlayExclusive = false;
 
-        if (elementToFocus && !this.isGridFocused()) {
+        if (elementToFocus && !this.#isGridFocused()) {
             elementToFocus = null;
         }
 
@@ -226,18 +226,18 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public hideOverlay(): void {
-        this.destroyActiveOverlay();
+        this.#destroyActiveOverlay();
         this.setDisplayed(false, { skipAriaHidden: true });
     }
 
-    private isGridFocused(): boolean {
+    #isGridFocused(): boolean {
         const activeEl = _getActiveDomElement(this.beans);
         return !!activeEl && this.beans.eGridDiv.contains(activeEl);
     }
 
     public override destroy(): void {
-        this.elToFocusAfter = null;
-        this.destroyActiveOverlay();
+        this.#elToFocusAfter = null;
+        this.#destroyActiveOverlay();
         this.beans.overlays!.setWrapperComp(this, true);
         super.destroy();
         this.eOverlayWrapper = null;

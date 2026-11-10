@@ -64,7 +64,7 @@ export class AgList<
     > | null = null;
 
     private value: TValue | null;
-    private displayValue: string | null;
+    #displayValue: string | null;
 
     constructor(private readonly cssIdentifier = 'default') {
         super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
@@ -73,7 +73,7 @@ export class AgList<
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        _addManagedElementListeners(this, eGui, { mouseleave: () => this.clearHighlighted() });
+        _addManagedElementListeners(this, eGui, { mouseleave: () => this.#clearHighlighted() });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -90,14 +90,14 @@ export class AgList<
             case KeyCode.DOWN:
             case KeyCode.UP:
                 e.preventDefault();
-                this.navigate(key);
+                this.#navigate(key);
                 break;
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 e.preventDefault();
-                this.navigateToPage(key);
+                this.#navigateToPage(key);
                 break;
         }
     }
@@ -114,9 +114,9 @@ export class AgList<
         const valueToRender = String(text ?? value ?? '');
 
         this.options.push({ value, text: valueToRender });
-        this.renderOption(value, valueToRender);
+        this.#renderOption(value, valueToRender);
 
-        this.updateIndices();
+        this.#updateIndices();
 
         return this;
     }
@@ -131,7 +131,7 @@ export class AgList<
         _clearElement(this.getGui());
 
         this.listItems = [];
-        this.refreshAriaRole();
+        this.#refreshAriaRole();
     }
 
     public updateOptions(listOptions: ListOption<TValue>[]): boolean {
@@ -145,7 +145,7 @@ export class AgList<
 
     public setValue(value?: TValue | null, silent?: boolean): this {
         if (this.value === value) {
-            this.fireItemSelected();
+            this.#fireItemSelected();
             return this;
         }
 
@@ -160,11 +160,11 @@ export class AgList<
             const option = this.options[idx];
 
             this.value = option.value;
-            this.displayValue = option.text!;
+            this.#displayValue = option.text!;
             this.highlightItem(this.listItems[idx]);
 
             if (!silent) {
-                this.fireChangeEvent();
+                this.#fireChangeEvent();
             }
         }
 
@@ -180,11 +180,11 @@ export class AgList<
     }
 
     public getDisplayValue(): string | null {
-        return this.displayValue;
+        return this.#displayValue;
     }
 
     public refreshHighlighted(): void {
-        this.clearHighlighted();
+        this.#clearHighlighted();
         const idx = this.options.findIndex((option) => option.value === this.value);
 
         if (idx !== -1) {
@@ -208,7 +208,7 @@ export class AgList<
             return;
         }
 
-        this.setHighlightedItem(item);
+        this.#setHighlightedItem(item);
 
         const eGui = this.getGui();
 
@@ -231,18 +231,18 @@ export class AgList<
 
     private reset(silent?: boolean): void {
         this.value = null;
-        this.displayValue = null;
-        this.clearHighlighted();
+        this.#displayValue = null;
+        this.#clearHighlighted();
         if (!silent) {
-            this.fireChangeEvent();
+            this.#fireChangeEvent();
         }
     }
 
-    private clearHighlighted(): void {
-        this.setHighlightedItem(null);
+    #clearHighlighted(): void {
+        this.#setHighlightedItem(null);
     }
 
-    private setHighlightedItem(
+    #setHighlightedItem(
         item: AgListItem<
             TBeanCollection,
             TProperties,
@@ -266,7 +266,7 @@ export class AgList<
         }
     }
 
-    private renderOption(value: TValue, text: string): void {
+    #renderOption(value: TValue, text: string): void {
         const item = new AgListItem<
             TBeanCollection,
             TProperties,
@@ -283,7 +283,7 @@ export class AgList<
         this.getGui().appendChild(listItem.getGui());
     }
 
-    private navigate(key: 'ArrowUp' | 'ArrowDown'): void {
+    #navigate(key: 'ArrowUp' | 'ArrowDown'): void {
         const isDown = key === KeyCode.DOWN;
         let itemToHighlight;
 
@@ -299,7 +299,7 @@ export class AgList<
         this.highlightItem(itemToHighlight);
     }
 
-    private navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
+    #navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
         const { listItems, highlightedItem } = this;
         if (!highlightedItem || listItems.length === 0) {
             return;
@@ -329,12 +329,12 @@ export class AgList<
         this.highlightItem(listItems[newIndex]);
     }
 
-    private refreshAriaRole(): void {
+    #refreshAriaRole(): void {
         _setAriaRole(this.getGui(), this.options.length === 0 ? 'presentation' : 'listbox');
     }
 
-    private updateIndices(): void {
-        this.refreshAriaRole();
+    #updateIndices(): void {
+        this.#refreshAriaRole();
 
         const listItems = this.listItems;
         const len = listItems.length;
@@ -344,12 +344,12 @@ export class AgList<
         });
     }
 
-    private fireChangeEvent(): void {
+    #fireChangeEvent(): void {
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
-        this.fireItemSelected();
+        this.#fireItemSelected();
     }
 
-    private fireItemSelected(): void {
+    #fireItemSelected(): void {
         this.dispatchLocalEvent({ type: 'selectedItem' });
     }
 }

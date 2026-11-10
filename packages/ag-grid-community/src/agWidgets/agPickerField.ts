@@ -96,15 +96,15 @@ export abstract class AgPickerField<
     protected maxPickerWidth: string | undefined;
     protected override value: TValue;
 
-    private skipClick: boolean = false;
+    #skipClick: boolean = false;
     private pickerGap: number = 4;
 
-    private hideCurrentPicker: (() => void) | null = null;
-    private destroyMouseWheelFunc: (() => null) | undefined;
-    private readonly ariaRole?: string;
+    #hideCurrentPicker: (() => void) | null = null;
+    #destroyMouseWheelFunc: (() => null) | undefined;
+    readonly #ariaRole?: string;
     // Id of the picker's list element. Only in the DOM while the picker is shown, so `aria-controls`
     // is gated on the expand state (see `toggleExpandedStyles`) rather than set permanently.
-    private ariaControlsId?: string;
+    #ariaControlsId?: string;
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
@@ -115,7 +115,7 @@ export abstract class AgPickerField<
         super(config, config?.template ?? AgPickerFieldElement, config?.agComponents ?? [], config?.className);
         this.registerCSS(agPickerFieldCSS);
 
-        this.ariaRole = config?.ariaRole;
+        this.#ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
 
@@ -179,8 +179,8 @@ export abstract class AgPickerField<
 
         _setAriaExpanded(ariaEl, false);
 
-        if (this.ariaRole) {
-            _setAriaRole(ariaEl, this.ariaRole);
+        if (this.#ariaRole) {
+            _setAriaRole(ariaEl, this.#ariaRole);
         }
     }
 
@@ -200,8 +200,8 @@ export abstract class AgPickerField<
             this.getFocusableElement().focus();
         }
 
-        if (this.skipClick) {
-            this.skipClick = false;
+        if (this.#skipClick) {
+            this.#skipClick = false;
             return;
         }
 
@@ -229,8 +229,8 @@ export abstract class AgPickerField<
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (this.hideCurrentPicker) {
-                        this.hideCurrentPicker();
+                    if (this.#hideCurrentPicker) {
+                        this.#hideCurrentPicker();
                     }
                 }
                 break;
@@ -246,7 +246,7 @@ export abstract class AgPickerField<
         pickerGui.addEventListener('focusin', this.onPickerFocusIn);
         pickerGui.addEventListener('focusout', this.onPickerFocusOut);
 
-        this.hideCurrentPicker = this.renderAndPositionPicker();
+        this.#hideCurrentPicker = this.renderAndPositionPicker();
 
         this.toggleExpandedStyles(true);
     }
@@ -255,7 +255,7 @@ export abstract class AgPickerField<
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
-            [this.destroyMouseWheelFunc] = this.addManagedEventListeners({
+            [this.#destroyMouseWheelFunc] = this.addManagedEventListeners({
                 bodyScroll: () => {
                     this.hidePicker();
                 },
@@ -343,9 +343,9 @@ export abstract class AgPickerField<
     }
 
     protected beforeHidePicker(): void {
-        if (this.destroyMouseWheelFunc) {
-            this.destroyMouseWheelFunc();
-            this.destroyMouseWheelFunc = undefined;
+        if (this.#destroyMouseWheelFunc) {
+            this.#destroyMouseWheelFunc();
+            this.#destroyMouseWheelFunc = undefined;
         }
 
         this.toggleExpandedStyles(false);
@@ -357,7 +357,7 @@ export abstract class AgPickerField<
 
         this.isPickerDisplayed = false;
         this.pickerComponent = undefined;
-        this.hideCurrentPicker = null;
+        this.#hideCurrentPicker = null;
     }
 
     protected toggleExpandedStyles(expanded: boolean): void {
@@ -368,8 +368,8 @@ export abstract class AgPickerField<
         const ariaEl = this.getAriaElement();
 
         _setAriaExpanded(ariaEl, expanded);
-        if (this.ariaControlsId != null) {
-            _setAriaControls(ariaEl, expanded ? this.ariaControlsId : null);
+        if (this.#ariaControlsId != null) {
+            _setAriaControls(ariaEl, expanded ? this.#ariaControlsId : null);
         }
 
         const classList = this.eWrapper.classList;
@@ -378,16 +378,16 @@ export abstract class AgPickerField<
     }
 
     private onPickerFocusIn(): void {
-        this.togglePickerHasFocus(true);
+        this.#togglePickerHasFocus(true);
     }
 
     private onPickerFocusOut(e: FocusEvent): void {
         if (!this.pickerComponent?.getGui().contains(e.relatedTarget as Element)) {
-            this.togglePickerHasFocus(false);
+            this.#togglePickerHasFocus(false);
         }
     }
 
-    private togglePickerHasFocus(focused: boolean): void {
+    #togglePickerHasFocus(focused: boolean): void {
         if (!this.pickerComponent) {
             return;
         }
@@ -396,8 +396,8 @@ export abstract class AgPickerField<
     }
 
     public hidePicker(): void {
-        if (this.hideCurrentPicker) {
-            this.hideCurrentPicker();
+        if (this.#hideCurrentPicker) {
+            this.#hideCurrentPicker();
             this.dispatchLocalEvent({
                 type: 'pickerHidden',
             });
@@ -415,7 +415,7 @@ export abstract class AgPickerField<
 
     // Called by subclasses once the list is created, so `aria-controls` can be gated on expand state.
     protected setAriaControlsId(controlsId: string): void {
-        this.ariaControlsId = controlsId;
+        this.#ariaControlsId = controlsId;
     }
 
     public setPickerGap(gap: number): this {

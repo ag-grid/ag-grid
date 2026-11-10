@@ -36,7 +36,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             filterChanged: refreshVisibility,
         });
 
-        this.visibility = this.computeVisibility();
+        this.visibility = this.#computeVisibility();
     }
 
     public createRowDragComp(
@@ -98,7 +98,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         }
     }
 
-    private computeVisibility(): RowDragVisibility {
+    #computeVisibility(): RowDragVisibility {
         const beans = this.beans;
         const gos = beans.gos;
 
@@ -134,7 +134,7 @@ export class RowDragService extends BeanStub implements NamedBean {
 
     private refreshVisibility(): void {
         const previousVisibility = this.visibility;
-        const newVisibility = this.computeVisibility();
+        const newVisibility = this.#computeVisibility();
         if (previousVisibility !== newVisibility) {
             this.visibility = newVisibility;
             this.eventSvc?.dispatchEvent({ type: 'rowDragVisibilityChanged' });

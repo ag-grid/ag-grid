@@ -42,51 +42,47 @@ import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateSvc' as const;
 
-    private updateRowGroupExpansionStateTimer: ReturnType<typeof setTimeout> | number = 0;
+    #updateRowGroupExpansionStateTimer: ReturnType<typeof setTimeout> | number = 0;
 
-    private isClientSideRowModel: boolean;
-    private cachedState: GridState;
-    private suppressEvents = true;
-    private readonly queuedUpdateSources: Set<keyof GridState | 'gridInitializing' | 'api'> = new Set();
-    private readonly dispatchStateUpdateEventDebounced = _debounce(
-        this,
-        () => this.dispatchQueuedStateUpdateEvents(),
-        0
-    );
+    #isClientSideRowModel: boolean;
+    #cachedState: GridState;
+    #suppressEvents = true;
+    readonly #queuedUpdateSources: Set<keyof GridState | 'gridInitializing' | 'api'> = new Set();
+    readonly #dispatchStateUpdateEventDebounced = _debounce(this, () => this.#dispatchQueuedStateUpdateEvents(), 0);
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
-    private readonly onRowGroupOpenedDebounced = _debounce(this, () => this.updateGroupExpansionState(), 0);
+    readonly #onRowGroupOpenedDebounced = _debounce(this, () => this.#updateGroupExpansionState(), 0);
     // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
-    private readonly onRowSelectedDebounced = _debounce(
+    readonly #onRowSelectedDebounced = _debounce(
         this,
         () => {
-            this.staleStateKeys.delete('rowSelection');
-            this.updateCachedState('rowSelection', this.getRowSelectionState());
+            this.#staleStateKeys.delete('rowSelection');
+            this.#updateCachedState('rowSelection', this.#getRowSelectionState());
         },
         0
     );
-    private columnStates?: ColumnState[];
-    private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
+    #columnStates?: ColumnState[];
+    #columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
-    private deferredFilterState?: FilterState;
+    #deferredFilterState?: FilterState;
     /** The initial filter state until applied, when the row count is ready or before a filter set through the API. */
-    private initialFilterState?: FilterState;
-    private readonly staleStateKeys: Set<keyof GridState> = new Set();
+    #initialFilterState?: FilterState;
+    readonly #staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
         const { gos, ctrlsSvc, colDelayRenderSvc } = this.beans;
-        this.isClientSideRowModel = _isClientSideRowModel(gos);
+        this.#isClientSideRowModel = _isClientSideRowModel(gos);
 
         const initialState = migrateGridStateModel(gos.get('initialState') ?? {});
         const partialColumnState = initialState.partialColumnState;
         delete initialState.partialColumnState;
-        this.cachedState = initialState;
-        this.initialFilterState = initialState.filter;
+        this.#cachedState = initialState;
+        this.#initialFilterState = initialState.filter;
 
-        const suppressEventsAndDispatchInitEvent = this.suppressEventsAndDispatchInitEvent.bind(this);
+        const suppressEventsAndDispatchInitEvent = this.#suppressEventsAndDispatchInitEvent.bind(this);
 
         ctrlsSvc.whenReady(this, () =>
-            suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady(initialState))
+            suppressEventsAndDispatchInitEvent(() => this.#setupStateOnGridReady(initialState))
         );
 
         // if there is column state then we hide the columns until the state is applied
@@ -106,18 +102,18 @@ export class StateService extends BeanStub implements NamedBean {
                     if (source === 'gridInitializing') {
                         newColumnsLoadedDestroyFunc();
                         suppressEventsAndDispatchInitEvent(() => {
-                            this.setupStateOnColumnsInitialised(initialState, !!partialColumnState);
+                            this.#setupStateOnColumnsInitialised(initialState, !!partialColumnState);
                             colDelayRenderSvc?.revealColumns('columnState');
                         });
                     }
                 },
                 rowCountReady: () => {
                     rowCountReadyDestroyFunc?.();
-                    suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady(initialState));
+                    suppressEventsAndDispatchInitEvent(() => this.#setupStateOnRowCountReady(initialState));
                 },
                 firstDataRendered: () => {
                     firstDataRenderedDestroyFunc?.();
-                    suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered(initialState));
+                    suppressEventsAndDispatchInitEvent(() => this.#setupStateOnFirstDataRendered(initialState));
                 },
             });
     }
@@ -126,67 +122,63 @@ export class StateService extends BeanStub implements NamedBean {
         super.destroy();
 
         // Release memory
-        clearTimeout(this.updateRowGroupExpansionStateTimer);
-        this.queuedUpdateSources.clear();
+        clearTimeout(this.#updateRowGroupExpansionStateTimer);
+        this.#queuedUpdateSources.clear();
     }
 
     public getState(): GridState {
-        if (this.staleStateKeys.size) {
-            this.refreshStaleState();
+        if (this.#staleStateKeys.size) {
+            this.#refreshStaleState();
         }
-        return this.cachedState;
+        return this.#cachedState;
     }
 
     public setState(providedState: GridState, propertiesToIgnore?: GridStateKey[]): void {
         const state = migrateGridStateModel(providedState);
         delete state.partialColumnState;
-        this.cachedState = state;
+        this.#cachedState = state;
 
-        this.startSuppressEvents();
+        this.#startSuppressEvents();
         this.applyInitialFilterState();
 
         const source = 'api';
 
         const ignoreSet = propertiesToIgnore ? new Set(propertiesToIgnore) : undefined;
 
-        this.setGridReadyState(state, source, ignoreSet);
+        this.#setGridReadyState(state, source, ignoreSet);
 
-        this.setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
+        this.#setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
 
-        this.setRowCountState(state, source, ignoreSet);
+        this.#setRowCountState(state, source, ignoreSet);
 
         setTimeout(() => {
             if (this.isAlive()) {
-                this.setFirstDataRenderedState(state, source, ignoreSet);
+                this.#setFirstDataRenderedState(state, source, ignoreSet);
             }
-            this.stopSuppressEvents(source);
+            this.#stopSuppressEvents(source);
         });
     }
 
-    private setGridReadyState(
-        state: GridState,
-        source: 'gridInitializing' | 'api',
-        ignoreSet?: Set<GridStateKey>
-    ): void {
+    #setGridReadyState(state: GridState, source: 'gridInitializing' | 'api', ignoreSet?: Set<GridStateKey>): void {
         // sidebar reads the initial state itself, so don't need to set on init
         if (source === 'api' && !ignoreSet?.has('sideBar')) {
             this.beans.sideBar?.comp?.setState(state.sideBar);
         }
-        this.updateCachedState('sideBar', this.getSideBarState());
+        this.#updateCachedState('sideBar', this.#getSideBarState());
     }
 
-    private setupStateOnGridReady(initialState: GridState): void {
-        this.setGridReadyState(initialState, 'gridInitializing');
+    #setupStateOnGridReady(initialState: GridState): void {
+        this.#setGridReadyState(initialState, 'gridInitializing');
 
-        const stateUpdater = () => this.updateCachedState('sideBar', this.getSideBarState());
+        const stateUpdater = () => this.#updateCachedState('sideBar', this.#getSideBarState());
         this.addManagedEventListeners({
             toolPanelVisibleChanged: stateUpdater,
             sideBarUpdated: stateUpdater,
         });
     }
 
-    private updateColumnAndGroupState(): void {
-        this.updateColumnState([
+    #updateColumnAndGroupState(): void {
+        this.#updateColumnState([
             'aggregation',
             'columnOrder',
             'columnPinning',
@@ -198,33 +190,29 @@ export class StateService extends BeanStub implements NamedBean {
             'showValuesAs',
             'sort',
         ]);
-        this.updateCachedState('columnGroup', this.getColumnGroupState());
+        this.#updateCachedState('columnGroup', this.getColumnGroupState());
         // Every user-column mutation rebuilds the column tree, so this covers creation, removal and
         // property-only edits (e.g. a cell data type change) alike.
-        this.updateCachedState('userColumns', this.beans.userColumnSvc!.getState());
+        this.#updateCachedState('userColumns', this.beans.userColumnSvc!.getState());
     }
 
-    private setColumnsInitialisedState(
+    #setColumnsInitialisedState(
         state: GridState,
         source: 'gridInitializing' | 'api',
         partialColumnState: boolean,
         ignoreSet?: Set<GridStateKey>
     ): void {
         // Runs first: the other sections configure columns, so the ones this creates must already exist.
-        this.setUserColumnsState(state, source, ignoreSet);
-        this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
+        this.#setUserColumnsState(state, source, ignoreSet);
+        this.#applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
 
-        this.updateColumnAndGroupState();
+        this.#updateColumnAndGroupState();
     }
 
     /** Recreates the user-column layer (columns the user created at runtime, plus their overrides and
      *  removals of declared columns) and rebuilds the column tree when it changed. */
-    private setUserColumnsState(
-        state: GridState,
-        source: 'gridInitializing' | 'api',
-        ignoreSet?: Set<GridStateKey>
-    ): void {
+    #setUserColumnsState(state: GridState, source: 'gridInitializing' | 'api', ignoreSet?: Set<GridStateKey>): void {
         if (ignoreSet?.has('userColumns') || (!state.userColumns && source !== 'api')) {
             return;
         }
@@ -244,10 +232,10 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
-    private setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {
-        this.setColumnsInitialisedState(initialState, 'gridInitializing', partialColumnState);
+    #setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {
+        this.#setColumnsInitialisedState(initialState, 'gridInitializing', partialColumnState);
 
-        const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
+        const onUpdate = (state: keyof GridState) => () => this.#updateColumnState([state]);
         this.addManagedEventListeners({
             columnValueChanged: onUpdate('aggregation'),
             columnMoved: onUpdate('columnOrder'),
@@ -260,27 +248,23 @@ export class StateService extends BeanStub implements NamedBean {
             columnShowValuesAsChanged: onUpdate('showValuesAs'),
             sortChanged: onUpdate('sort'),
             newColumnsLoaded: ({ source }) => {
-                this.updateColumnAndGroupState();
+                this.#updateColumnAndGroupState();
                 // When setGridOption('columnDefs') changes row groups, columnRowGroupChanged fires
                 // while changeEventsDispatching=true, so CSRM defers its re-group to newColumnsLoaded.
                 // Re-read expansion state here so the cache reflects the post-re-group node IDs.
-                if (source !== 'gridInitializing' && this.isClientSideRowModel) {
-                    this.onRowGroupOpenedDebounced();
+                if (source !== 'gridInitializing' && this.#isClientSideRowModel) {
+                    this.#onRowGroupOpenedDebounced();
                 }
             },
-            columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+            columnGroupOpened: () => this.#updateCachedState('columnGroup', this.getColumnGroupState()),
             columnHeaderNameChanged: () => {
-                this.updateColumnState(['columnHeaderName']);
-                this.updateCachedState('columnGroup', this.getColumnGroupState());
+                this.#updateColumnState(['columnHeaderName']);
+                this.#updateCachedState('columnGroup', this.getColumnGroupState());
             },
         });
     }
 
-    private setRowCountState(
-        state: GridState,
-        source: 'gridInitializing' | 'api',
-        ignoreSet?: Set<GridStateKey>
-    ): void {
+    #setRowCountState(state: GridState, source: 'gridInitializing' | 'api', ignoreSet?: Set<GridStateKey>): void {
         const {
             filter: filterState,
             quickFilter: quickFilterState,
@@ -294,74 +278,74 @@ export class StateService extends BeanStub implements NamedBean {
             !ignoreSet?.has(prop) && (propState || source === 'api');
 
         if (shouldSetState('filter', filterState)) {
-            this.setFilterStateDeferringPivot(filterState, source);
+            this.#setFilterStateDeferringPivot(filterState, source);
         }
         if (shouldSetState('quickFilter', quickFilterState)) {
-            this.setQuickFilterState(quickFilterState, source);
+            this.#setQuickFilterState(quickFilterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
             shouldSetState('ssrmRowGroupExpansion', ssrmRowGroupExpansion)
         ) {
-            this.setRowGroupExpansionState(ssrmRowGroupExpansion, rowGroupExpansionState, source);
+            this.#setRowGroupExpansionState(ssrmRowGroupExpansion, rowGroupExpansionState, source);
         }
         if (shouldSetState('rowSelection', rowSelectionState)) {
-            this.setRowSelectionState(rowSelectionState, source);
+            this.#setRowSelectionState(rowSelectionState, source);
         }
         if (shouldSetState('pagination', paginationState)) {
-            this.setPaginationState(paginationState, source);
+            this.#setPaginationState(paginationState, source);
         }
         if (shouldSetState('rowPinning', rowPinning)) {
-            this.setRowPinningState(rowPinning);
+            this.#setRowPinningState(rowPinning);
         }
 
-        const updateCachedState = this.updateCachedState.bind(this);
-        updateCachedState('filter', this.getFilterState());
-        updateCachedState('quickFilter', this.getQuickFilterState());
-        this.updateGroupExpansionState();
+        const updateCachedState = this.#updateCachedState.bind(this);
+        updateCachedState('filter', this.#getFilterState());
+        updateCachedState('quickFilter', this.#getQuickFilterState());
+        this.#updateGroupExpansionState();
 
-        updateCachedState('rowSelection', this.getRowSelectionState());
-        updateCachedState('pagination', this.getPaginationState());
+        updateCachedState('rowSelection', this.#getRowSelectionState());
+        updateCachedState('pagination', this.#getPaginationState());
     }
 
-    private setupStateOnRowCountReady(initialState: GridState): void {
+    #setupStateOnRowCountReady(initialState: GridState): void {
         this.applyInitialFilterState();
-        this.setRowCountState({ ...initialState, filter: undefined }, 'gridInitializing');
+        this.#setRowCountState({ ...initialState, filter: undefined }, 'gridInitializing');
 
-        const updateCachedState = this.updateCachedState.bind(this);
+        const updateCachedState = this.#updateCachedState.bind(this);
         const updateRowGroupExpansionState = () => {
-            this.updateRowGroupExpansionStateTimer = 0;
-            this.updateGroupExpansionState();
+            this.#updateRowGroupExpansionStateTimer = 0;
+            this.#updateGroupExpansionState();
         };
-        const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        const updateFilterState = () => updateCachedState('filter', this.#getFilterState());
         // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
         this.addManagedPropertyListener('quickFilterText', () =>
-            updateCachedState('quickFilter', this.getQuickFilterState())
+            updateCachedState('quickFilter', this.#getQuickFilterState())
         );
 
         const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
-            rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
+            rowExpansionStateChanged: this.#onRowGroupOpenedDebounced,
             expandOrCollapseAll: updateRowGroupExpansionState,
             // `groupDefaultExpanded`/`isGroupOpenByDefault` updates expansion state without an expansion event
             columnRowGroupChanged: updateRowGroupExpansionState,
             rowDataUpdated: () => {
                 if (gos.get('groupDefaultExpanded') !== 0 || gos.get('isGroupOpenByDefault')) {
                     // once rows are loaded, they may be expanded, start the timer only once
-                    this.updateRowGroupExpansionStateTimer ||= setTimeout(updateRowGroupExpansionState);
+                    this.#updateRowGroupExpansionStateTimer ||= setTimeout(updateRowGroupExpansionState);
                 }
             },
             selectionChanged: () => {
-                this.staleStateKeys.add('rowSelection');
-                this.onRowSelectedDebounced();
+                this.#staleStateKeys.add('rowSelection');
+                this.#onRowSelectedDebounced();
             },
             paginationChanged: (event) => {
                 if (event.newPage || event.newPageSize) {
-                    updateCachedState('pagination', this.getPaginationState());
+                    updateCachedState('pagination', this.#getPaginationState());
                 }
             },
-            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.#getRowPinningState()),
         });
         if (colFilter) {
             this.addManagedListeners(colFilter, {
@@ -375,7 +359,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
-    private setFirstDataRenderedState(
+    #setFirstDataRenderedState(
         state: GridState,
         source: 'gridInitializing' | 'api',
         ignoreSet?: Set<GridStateKey>
@@ -391,58 +375,58 @@ export class StateService extends BeanStub implements NamedBean {
             !ignoreSet?.has(prop) && (propState || source === 'api');
 
         if (shouldSetState('focusedCell', focusedCellState)) {
-            this.setFocusedCellState(focusedCellState);
+            this.#setFocusedCellState(focusedCellState);
         }
         if (shouldSetState('cellSelection', cellSelectionState)) {
-            this.setCellSelectionState(cellSelectionState);
+            this.#setCellSelectionState(cellSelectionState);
         }
-        this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
+        this.#setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
-        const deferredFilterState = this.deferredFilterState;
+        const deferredFilterState = this.#deferredFilterState;
         if (deferredFilterState) {
-            this.deferredFilterState = undefined;
-            this.setFilterState(deferredFilterState, source);
+            this.#deferredFilterState = undefined;
+            this.#setFilterState(deferredFilterState, source);
         }
 
         if (shouldSetState('find', findState)) {
-            this.setFindState(findState, source);
+            this.#setFindState(findState, source);
         }
         if (shouldSetState('scroll', scrollState)) {
-            this.setScrollState(scrollState);
+            this.#setScrollState(scrollState);
         }
 
-        const updateCachedState = this.updateCachedState.bind(this);
+        const updateCachedState = this.#updateCachedState.bind(this);
         // reset sidebar as it could have updated when columns changed
-        updateCachedState('sideBar', this.getSideBarState());
-        updateCachedState('focusedCell', this.getFocusedCellState());
-        const cellSelection = this.getRangeSelectionState();
+        updateCachedState('sideBar', this.#getSideBarState());
+        updateCachedState('focusedCell', this.#getFocusedCellState());
+        const cellSelection = this.#getRangeSelectionState();
         updateCachedState('rangeSelection', cellSelection);
         updateCachedState('cellSelection', cellSelection);
-        updateCachedState('scroll', this.getScrollState());
-        updateCachedState('find', this.getFindState());
+        updateCachedState('scroll', this.#getScrollState());
+        updateCachedState('find', this.#getFindState());
     }
 
-    private setupStateOnFirstDataRendered(initialState: GridState): void {
-        this.setFirstDataRenderedState(initialState, 'gridInitializing');
+    #setupStateOnFirstDataRendered(initialState: GridState): void {
+        this.#setFirstDataRenderedState(initialState, 'gridInitializing');
 
-        const updateCachedState = this.updateCachedState.bind(this);
-        const updateFocusState = () => updateCachedState('focusedCell', this.getFocusedCellState());
+        const updateCachedState = this.#updateCachedState.bind(this);
+        const updateFocusState = () => updateCachedState('focusedCell', this.#getFocusedCellState());
         this.addManagedEventListeners({
             cellFocused: updateFocusState,
             cellFocusCleared: updateFocusState,
             cellSelectionChanged: (event) => {
                 if (event.finished) {
-                    const cellSelection = this.getRangeSelectionState();
+                    const cellSelection = this.#getRangeSelectionState();
                     updateCachedState('rangeSelection', cellSelection);
                     updateCachedState('cellSelection', cellSelection);
                 }
             },
-            bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
-            findChanged: () => updateCachedState('find', this.getFindState()),
+            bodyScrollEnd: () => updateCachedState('scroll', this.#getScrollState()),
+            findChanged: () => updateCachedState('find', this.#getFindState()),
         });
     }
 
-    private getColumnGridState(): {
+    #getColumnGridState(): {
         sort?: SortState;
         rowGroup?: RowGroupState;
         aggregation?: AggregationState;
@@ -458,7 +442,7 @@ export class StateService extends BeanStub implements NamedBean {
         return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
     }
 
-    private applyColumnGridState(
+    #applyColumnGridState(
         state: GridState,
         source: 'gridInitializing' | 'api',
         partialColumnState: boolean,
@@ -615,7 +599,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
 
         if (columnStates.length || forceSetState) {
-            this.columnStates = columnStates;
+            this.#columnStates = columnStates;
             _applyColumnState(
                 this.beans,
                 {
@@ -628,11 +612,11 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
-    private setColumnPivotState(applyOrder: boolean, source: 'gridInitializing' | 'api'): void {
-        const columnStates = this.columnStates;
-        this.columnStates = undefined;
-        const columnGroupStates = this.columnGroupStates;
-        this.columnGroupStates = undefined;
+    #setColumnPivotState(applyOrder: boolean, source: 'gridInitializing' | 'api'): void {
+        const columnStates = this.#columnStates;
+        this.#columnStates = undefined;
+        const columnGroupStates = this.#columnGroupStates;
+        this.#columnGroupStates = undefined;
 
         const beans = this.beans;
         const { pivotResultCols, colModel } = beans;
@@ -703,12 +687,12 @@ export class StateService extends BeanStub implements NamedBean {
             });
         }
         if (stateItems.length) {
-            this.columnGroupStates = stateItems;
+            this.#columnGroupStates = stateItems;
         }
         _setColGroupState(this.beans, stateItems, source);
     }
 
-    private getFilterState(): FilterState | undefined {
+    #getFilterState(): FilterState | undefined {
         const { filterManager, selectableFilter } = this.beans;
         let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
@@ -722,7 +706,7 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+    #setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
         const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
@@ -745,17 +729,17 @@ export class StateService extends BeanStub implements NamedBean {
      * Find and the Quick Filter are only state-managed when the Quick Access Toolbar owns an input
      * for them; otherwise their grid option is the only source and state leaves it alone.
      */
-    private isToolbarStateManaged(item: 'agFindToolbarItem' | 'agQuickFilterToolbarItem'): boolean {
+    #isToolbarStateManaged(item: 'agFindToolbarItem' | 'agQuickFilterToolbarItem'): boolean {
         return !!this.beans.toolbar?.hasItem(item);
     }
 
-    private getQuickFilterState(): QuickFilterState | undefined {
+    #getQuickFilterState(): QuickFilterState | undefined {
         // Without the module the option is inert, and writing it on restore reports a missing-module error.
-        return this.isToolbarStateManaged('agQuickFilterToolbarItem') ? this.beans.quickFilter?.getState() : undefined;
+        return this.#isToolbarStateManaged('agQuickFilterToolbarItem') ? this.beans.quickFilter?.getState() : undefined;
     }
 
-    private setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
-        if (!this.isToolbarStateManaged('agQuickFilterToolbarItem')) {
+    #setQuickFilterState(quickFilterState?: QuickFilterState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.#isToolbarStateManaged('agQuickFilterToolbarItem')) {
             return;
         }
         const { text } = quickFilterState ?? {};
@@ -766,15 +750,15 @@ export class StateService extends BeanStub implements NamedBean {
 
     /** Applies the initial filter state once, so a filter set through the API before the rows arrive lands after it. */
     public applyInitialFilterState(): void {
-        const filterState = this.initialFilterState;
+        const filterState = this.#initialFilterState;
         if (filterState) {
-            this.initialFilterState = undefined;
-            this.setFilterStateDeferringPivot(filterState, 'gridInitializing');
+            this.#initialFilterState = undefined;
+            this.#setFilterStateDeferringPivot(filterState, 'gridInitializing');
         }
     }
 
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
-    private setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
+    #setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
         const { colModel, pivotResultCols } = this.beans;
         const filterModel = state?.filterModel;
         if (filterModel && source === 'gridInitializing' && colModel.pivotMode && !pivotResultCols?.pivotCols) {
@@ -782,15 +766,15 @@ export class StateService extends BeanStub implements NamedBean {
             const colIds = Object.keys(filterModel);
             for (let i = 0, len = colIds.length; i < len; ++i) {
                 if (colsById[colIds[i]] == null) {
-                    this.deferredFilterState = state;
+                    this.#deferredFilterState = state;
                     return;
                 }
             }
         }
-        this.setFilterState(state, source);
+        this.#setFilterState(state, source);
     }
 
-    private getRangeSelectionState(): CellSelectionState | undefined {
+    #getRangeSelectionState(): CellSelectionState | undefined {
         const cellRanges = this.beans.rangeSvc?.getCellRanges().map((cellRange) => {
             const { id, type, startRow, endRow, columns, startColumn } = cellRange;
             return {
@@ -805,7 +789,7 @@ export class StateService extends BeanStub implements NamedBean {
         return cellRanges?.length ? { cellRanges } : undefined;
     }
 
-    private setCellSelectionState(cellSelectionState?: CellSelectionState): void {
+    #setCellSelectionState(cellSelectionState?: CellSelectionState): void {
         const { gos, rangeSvc, colModel, visibleCols } = this.beans;
 
         if (!_isCellSelectionEnabled(gos) || !rangeSvc) {
@@ -841,12 +825,12 @@ export class StateService extends BeanStub implements NamedBean {
         rangeSvc.setCellRanges(cellRanges);
     }
 
-    private getFindState(): FindState | undefined {
-        return this.isToolbarStateManaged('agFindToolbarItem') ? this.beans.findSvc?.getState() : undefined;
+    #getFindState(): FindState | undefined {
+        return this.#isToolbarStateManaged('agFindToolbarItem') ? this.beans.findSvc?.getState() : undefined;
     }
 
-    private setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
-        if (!this.isToolbarStateManaged('agFindToolbarItem')) {
+    #setFindState(findState?: FindState, source: 'gridInitializing' | 'api' = 'api'): void {
+        if (!this.#isToolbarStateManaged('agFindToolbarItem')) {
             return;
         }
         const { searchValue, activeMatch } = findState ?? {};
@@ -856,8 +840,8 @@ export class StateService extends BeanStub implements NamedBean {
         });
     }
 
-    private getScrollState(): ScrollState | undefined {
-        if (!this.isClientSideRowModel) {
+    #getScrollState(): ScrollState | undefined {
+        if (!this.#isClientSideRowModel) {
             // can't restore, so don't provide
             return undefined;
         }
@@ -872,8 +856,8 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private setScrollState(scrollState?: ScrollState): void {
-        if (!this.isClientSideRowModel) {
+    #setScrollState(scrollState?: ScrollState): void {
+        if (!this.#isClientSideRowModel) {
             return;
         }
         const { top, left } = scrollState ?? { top: 0, left: 0 };
@@ -889,12 +873,12 @@ export class StateService extends BeanStub implements NamedBean {
         });
     }
 
-    private getSideBarState(): SideBarState | undefined {
+    #getSideBarState(): SideBarState | undefined {
         return this.beans.sideBar?.comp?.getState();
     }
 
-    private getFocusedCellState(): FocusedCellState | undefined {
-        if (!this.isClientSideRowModel) {
+    #getFocusedCellState(): FocusedCellState | undefined {
+        if (!this.#isClientSideRowModel) {
             // can't restore, so don't provide
             return undefined;
         }
@@ -910,8 +894,8 @@ export class StateService extends BeanStub implements NamedBean {
         return undefined;
     }
 
-    private setFocusedCellState(focusedCellState?: FocusedCellState): void {
-        if (!this.isClientSideRowModel) {
+    #setFocusedCellState(focusedCellState?: FocusedCellState): void {
+        if (!this.#isClientSideRowModel) {
             return;
         }
         const { focusSvc, colModel } = this.beans;
@@ -929,7 +913,7 @@ export class StateService extends BeanStub implements NamedBean {
         });
     }
 
-    private getPaginationState(): PaginationState | undefined {
+    #getPaginationState(): PaginationState | undefined {
         const { pagination, gos } = this.beans;
         if (!pagination) {
             return undefined;
@@ -943,7 +927,7 @@ export class StateService extends BeanStub implements NamedBean {
         return { page, pageSize };
     }
 
-    private setPaginationState(paginationState: PaginationState | undefined, source: 'gridInitializing' | 'api'): void {
+    #setPaginationState(paginationState: PaginationState | undefined, source: 'gridInitializing' | 'api'): void {
         const { pagination, gos } = this.beans;
         if (!pagination) {
             return;
@@ -963,8 +947,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
-    private getRowSelectionState():
-        string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
+    #getRowSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
         const selectionSvc = this.beans.selectionSvc;
         if (!selectionSvc) {
             return undefined;
@@ -980,34 +963,34 @@ export class StateService extends BeanStub implements NamedBean {
         return noSelections ? undefined : selectionState;
     }
 
-    private setRowSelectionState(
+    #setRowSelectionState(
         rowSelectionState: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined,
         source: 'gridInitializing' | 'api'
     ): void {
         this.beans.selectionSvc?.setSelectionState(rowSelectionState, source, source === 'api');
     }
 
-    private updateGroupExpansionState(): void {
+    #updateGroupExpansionState(): void {
         const { expansionSvc, gos } = this.beans;
         const state = expansionSvc?.getExpansionState();
         const ssrmExpandAllAffectsAllRows = gos.get('ssrmExpandAllAffectsAllRows');
 
-        this.updateCachedState('ssrmRowGroupExpansion', ssrmExpandAllAffectsAllRows ? state : undefined);
-        this.updateCachedState(
+        this.#updateCachedState('ssrmRowGroupExpansion', ssrmExpandAllAffectsAllRows ? state : undefined);
+        this.#updateCachedState(
             'rowGroupExpansion',
             ssrmExpandAllAffectsAllRows ? undefined : (state as RowGroupExpansionState)
         );
     }
 
-    private getRowPinningState(): RowPinningState | undefined {
+    #getRowPinningState(): RowPinningState | undefined {
         return this.beans.pinnedRowModel?.getPinnedState();
     }
 
-    private setRowPinningState(state?: RowPinningState): void {
+    #setRowPinningState(state?: RowPinningState): void {
         this.beans.pinnedRowModel?.setPinnedState(state ?? { top: [], bottom: [] });
     }
 
-    private setRowGroupExpansionState(
+    #setRowGroupExpansionState(
         ssrmRowGroupExpansionState: RowGroupExpansionState | RowGroupBulkExpansionState | undefined,
         rowGroupExpansionState: RowGroupExpansionState | undefined,
         source: 'gridInitializing' | 'api'
@@ -1017,10 +1000,10 @@ export class StateService extends BeanStub implements NamedBean {
         this.beans.expansionSvc?.setExpansionState(state, source);
     }
 
-    private updateColumnState(features: (keyof GridState)[]): void {
-        const newColumnState = this.getColumnGridState();
+    #updateColumnState(features: (keyof GridState)[]): void {
+        const newColumnState = this.#getColumnGridState();
         let hasChanged = false;
-        const cachedState = this.cachedState;
+        const cachedState = this.#cachedState;
         for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {
             const value = (newColumnState as any)[key];
             if (!_jsonEquals(value, cachedState[key])) {
@@ -1028,86 +1011,86 @@ export class StateService extends BeanStub implements NamedBean {
             }
         }
 
-        this.cachedState = {
+        this.#cachedState = {
             ...cachedState,
             ...newColumnState,
         };
         if (hasChanged) {
-            this.dispatchStateUpdateEvent(features);
+            this.#dispatchStateUpdateEvent(features);
         }
     }
 
-    private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
-        const existingValue = this.cachedState[key];
-        this.setCachedStateValue(key, value);
+    #updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
+        const existingValue = this.#cachedState[key];
+        this.#setCachedStateValue(key, value);
         if (!_jsonEquals(value, existingValue)) {
-            this.dispatchStateUpdateEvent([key]);
+            this.#dispatchStateUpdateEvent([key]);
         }
     }
 
-    private setCachedStateValue<K extends keyof GridState>(key: K, value: GridState[K]): void {
-        this.cachedState = {
-            ...this.cachedState,
+    #setCachedStateValue<K extends keyof GridState>(key: K, value: GridState[K]): void {
+        this.#cachedState = {
+            ...this.#cachedState,
             [key]: value,
         };
     }
 
-    private refreshStaleState(): void {
-        const staleStateKeys = this.staleStateKeys;
+    #refreshStaleState(): void {
+        const staleStateKeys = this.#staleStateKeys;
         for (const key of staleStateKeys) {
             // only row selection supported for now
             if (key === 'rowSelection') {
-                this.setCachedStateValue(key, this.getRowSelectionState());
+                this.#setCachedStateValue(key, this.#getRowSelectionState());
             }
         }
         staleStateKeys.clear();
     }
 
-    private dispatchStateUpdateEvent(sources: (keyof GridState | 'gridInitializing' | 'api')[]): void {
-        if (this.suppressEvents) {
+    #dispatchStateUpdateEvent(sources: (keyof GridState | 'gridInitializing' | 'api')[]): void {
+        if (this.#suppressEvents) {
             return;
         }
         for (const source of sources) {
-            this.queuedUpdateSources.add(source);
+            this.#queuedUpdateSources.add(source);
         }
-        this.dispatchStateUpdateEventDebounced();
+        this.#dispatchStateUpdateEventDebounced();
     }
 
-    private dispatchQueuedStateUpdateEvents(): void {
-        const queuedUpdateSources = this.queuedUpdateSources;
+    #dispatchQueuedStateUpdateEvents(): void {
+        const queuedUpdateSources = this.#queuedUpdateSources;
         const sources = Array.from(queuedUpdateSources);
         queuedUpdateSources.clear();
         this.eventSvc.dispatchEvent({
             type: 'stateUpdated',
             sources,
-            state: this.cachedState,
+            state: this.#cachedState,
         });
     }
 
-    private startSuppressEvents(): void {
-        this.suppressEvents = true;
+    #startSuppressEvents(): void {
+        this.#suppressEvents = true;
         this.beans.colAnimation?.setSuppressAnimation(true);
     }
 
-    private stopSuppressEvents(source: 'gridInitializing' | 'api'): void {
+    #stopSuppressEvents(source: 'gridInitializing' | 'api'): void {
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
         setTimeout(() => {
-            this.suppressEvents = false;
+            this.#suppressEvents = false;
             // We only want the grid initializing source.
-            this.queuedUpdateSources.clear();
+            this.#queuedUpdateSources.clear();
             if (!this.isAlive()) {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
             this.beans.colAnimation?.setSuppressAnimation(false);
-            this.dispatchStateUpdateEvent([source]);
+            this.#dispatchStateUpdateEvent([source]);
         });
     }
 
-    private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
-        this.startSuppressEvents();
+    #suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
+        this.#startSuppressEvents();
         updateFunc();
-        this.stopSuppressEvents('gridInitializing');
+        this.#stopSuppressEvents('gridInitializing');
     }
 }

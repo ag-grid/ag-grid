@@ -22,20 +22,31 @@ import { _isUseApplyButton } from './provided/providedFilterUtils';
 export class FilterWrapperComp extends Component {
     private eButtons?: FilterButtonComp;
     private params?: FilterWrapperParams;
-    private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
+    #hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     private applyActive: boolean = false;
+
+    readonly #enableGlobalButtonCheck?: boolean;
+
+    #isGlobalButtons: boolean;
+
+    readonly #eventParent: IEventEmitter<
+        'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
+    >;
 
     constructor(
         private readonly column: AgColumn,
         private readonly wrapper: FilterDisplayWrapper,
-        private readonly eventParent: IEventEmitter<
+        eventParent: IEventEmitter<
             'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
         >,
         private readonly updateModel: (column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => void,
-        private isGlobalButtons: boolean,
-        private readonly enableGlobalButtonCheck?: boolean
+        isGlobalButtons: boolean,
+        enableGlobalButtonCheck?: boolean
     ) {
         super();
+        this.#enableGlobalButtonCheck = enableGlobalButtonCheck;
+        this.#isGlobalButtons = isGlobalButtons;
+        this.#eventParent = eventParent;
     }
 
     public postConstruct(): void {
@@ -52,16 +63,16 @@ export class FilterWrapperComp extends Component {
                 submit: (e) => {
                     e?.preventDefault();
                 },
-                keydown: this.handleKeyDown.bind(this),
+                keydown: this.#handleKeyDown.bind(this),
             });
         }
         this.appendChild(comp.getGui());
         this.params = params;
-        this.resetButtonsPanel(params);
-        this.addManagedListeners(this.eventParent, {
+        this.#resetButtonsPanel(params);
+        this.addManagedListeners(this.#eventParent, {
             filterParamsChanged: ({ column, params: eventParams }: FilterParamsChangedEvent) => {
                 if (column === this.column) {
-                    this.resetButtonsPanel(eventParams as FilterWrapperParams, this.params);
+                    this.#resetButtonsPanel(eventParams as FilterWrapperParams, this.params);
                 }
             },
             filterStateChanged: ({ column, state }: FilterStateChangedEvent) => {
@@ -71,16 +82,16 @@ export class FilterWrapperComp extends Component {
             },
             filterAction: ({ column, action, event: keyboardEvent }: FilterActionEvent) => {
                 if (column === this.column) {
-                    this.afterAction(action, keyboardEvent);
+                    this.#afterAction(action, keyboardEvent);
                 }
             },
-            ...(this.enableGlobalButtonCheck
+            ...(this.#enableGlobalButtonCheck
                 ? {
                       filterGlobalButtons: ({ isGlobal }: FilterGlobalButtonsEvent) => {
-                          if (isGlobal !== this.isGlobalButtons) {
-                              this.isGlobalButtons = isGlobal;
+                          if (isGlobal !== this.#isGlobalButtons) {
+                              this.#isGlobalButtons = isGlobal;
                               const currentParams = this.params;
-                              this.resetButtonsPanel(currentParams!, currentParams, true);
+                              this.#resetButtonsPanel(currentParams!, currentParams, true);
                           }
                       },
                   }
@@ -90,22 +101,18 @@ export class FilterWrapperComp extends Component {
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params) {
-            this.hidePopup = params.hidePopup;
+            this.#hidePopup = params.hidePopup;
         }
     }
 
-    private resetButtonsPanel(
-        newParams: FilterWrapperParams,
-        oldParams?: FilterWrapperParams,
-        forceUpdate?: boolean
-    ): void {
+    #resetButtonsPanel(newParams: FilterWrapperParams, oldParams?: FilterWrapperParams, forceUpdate?: boolean): void {
         const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
         const { buttons: newButtons, readOnly, useForm } = newParams;
         if (!forceUpdate && oldReadOnly === readOnly && _jsonEquals(oldButtons, newButtons)) {
             return;
         }
 
-        const hasButtons = newButtons && newButtons.length > 0 && !newParams.readOnly && !this.isGlobalButtons;
+        const hasButtons = newButtons && newButtons.length > 0 && !newParams.readOnly && !this.#isGlobalButtons;
 
         let eButtonsPanel = this.eButtons;
         if (hasButtons) {
@@ -123,7 +130,7 @@ export class FilterWrapperComp extends Component {
                     (action: FilterAction) =>
                     ({ event }: FilterButtonEvent) => {
                         this.updateModel(column, action, { fromButtons: true });
-                        this.afterAction(action, event);
+                        this.#afterAction(action, event);
                     };
                 eButtonsPanel?.addManagedListeners(eButtonsPanel, {
                     apply: getListener('apply'),
@@ -144,7 +151,7 @@ export class FilterWrapperComp extends Component {
     }
 
     private close(e?: Event): void {
-        const hidePopup = this.hidePopup;
+        const hidePopup = this.#hidePopup;
         if (!hidePopup) {
             return;
         }
@@ -158,10 +165,10 @@ export class FilterWrapperComp extends Component {
         }
 
         hidePopup(params!);
-        this.hidePopup = null;
+        this.#hidePopup = null;
     }
 
-    private afterAction(action: FilterAction, event?: Event): void {
+    #afterAction(action: FilterAction, event?: Event): void {
         const { params, applyActive } = this;
         const closeOnApply = params?.closeOnApply;
         switch (action) {
@@ -188,16 +195,16 @@ export class FilterWrapperComp extends Component {
         }
     }
 
-    private handleKeyDown(event: KeyboardEvent): void {
+    #handleKeyDown(event: KeyboardEvent): void {
         if (!event.defaultPrevented && event.key === KeyCode.ENTER && this.applyActive) {
             // trigger apply. Can't do this via form submit as it will use click event, which prevents restoring focus on close
             this.updateModel(this.column, 'apply', { fromButtons: true });
-            this.afterAction('apply', event);
+            this.#afterAction('apply', event);
         }
     }
 
     public override destroy(): void {
-        this.hidePopup = null;
+        this.#hidePopup = null;
         this.eButtons = this.destroyBean(this.eButtons);
     }
 }

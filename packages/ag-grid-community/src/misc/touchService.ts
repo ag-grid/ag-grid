@@ -28,8 +28,8 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridBodyCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener, {
-            shouldHandleLongTap: () => this.isBodyContextMenuEnabled(),
+        this.#mockContextMenu(ctrl, ctrl.eGridViewport, listener, {
+            shouldHandleLongTap: () => this.#isBodyContextMenuEnabled(),
         });
     }
 
@@ -37,7 +37,7 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridHeaderCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eGui, listener, {
+        this.#mockContextMenu(ctrl, ctrl.eGui, listener, {
             shouldHandleLongTap: () => !!this.beans.menuSvc?.isHeaderContextMenuEnabled(),
         });
     }
@@ -52,8 +52,8 @@ export class TouchService extends BeanStub implements NamedBean {
             const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
             this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
-        this.mockContextMenu(ctrl, ctrl.element, listener, {
-            shouldHandleLongTap: () => this.isBodyContextMenuEnabled(),
+        this.#mockContextMenu(ctrl, ctrl.element, listener, {
+            shouldHandleLongTap: () => this.#isBodyContextMenuEnabled(),
             onLongTapDetected: ({ touchEvent }) => {
                 if (!_isEventFromThisInstance(this.beans, touchEvent)) {
                     return;
@@ -154,11 +154,11 @@ export class TouchService extends BeanStub implements NamedBean {
         comp.addDestroyFunc(() => touchListener.destroy());
     }
 
-    private isBodyContextMenuEnabled(): boolean {
+    #isBodyContextMenuEnabled(): boolean {
         return !!this.beans.contextMenuSvc && !this.gos.get('suppressContextMenu');
     }
 
-    private mockContextMenu(
+    #mockContextMenu(
         ctrl: BeanStub,
         element: HTMLElement,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void,

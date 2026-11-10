@@ -10,7 +10,7 @@ import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/c
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeStartWidth = 0;
     private takeFromAdjacent = false;
-    private dragSign = 1;
+    #dragSign = 1;
 
     constructor(
         private readonly column: AgColumn,
@@ -39,9 +39,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             const finishedWithResizeFunc = horizontalResizeSvc!.addResizeBar({
                 eResizeBar: this.eResize,
                 isColumn: true,
-                onResizeStart: this.onResizeStart.bind(this),
-                onResizing: this.onResizing.bind(this, false),
-                onResizeEnd: this.onResizing.bind(this, true),
+                onResizeStart: this.#onResizeStart.bind(this),
+                onResizing: this.#onResizing.bind(this, false),
+                onResizeEnd: this.#onResizing.bind(this, true),
             });
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
@@ -74,9 +74,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.ctrl.setRefreshFunction('resize', refresh);
     }
 
-    private onResizing(finished: boolean, amount: number): void {
+    #onResizing(finished: boolean, amount: number): void {
         const { column, resizeStartWidth: startWidth, takeFromAdjacent, beans } = this;
-        const change = amount * this.dragSign;
+        const change = amount * this.#dragSign;
         const held = beans.pinnedCols?.limitResize(column, takeFromAdjacent, change, startWidth) ?? change;
         // set even when capped, so a finished drag completes
         beans.colResize?.resizeColumn(column, startWidth + held, takeFromAdjacent, finished);
@@ -86,11 +86,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         }
     }
 
-    private onResizeStart(shiftKey: boolean): void {
+    #onResizeStart(shiftKey: boolean): void {
         const { column, beans } = this;
         this.resizeStartWidth = column.actualWidth;
         this.takeFromAdjacent = beans.colResize!.takesFromAdjacent(shiftKey);
-        this.dragSign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
+        this.#dragSign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
 
         _cancelColumnWidthAnimation(beans);
         this.toggleColumnResizing(true);

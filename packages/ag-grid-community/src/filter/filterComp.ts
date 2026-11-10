@@ -20,22 +20,25 @@ const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;
-    private afterGuiAttachedParams?: IAfterGuiAttachedParams;
+    #afterGuiAttachedParams?: IAfterGuiAttachedParams;
+
+    readonly #enableGlobalButtonCheck?: boolean;
 
     constructor(
         private readonly column: AgColumn,
         public readonly source: FilterRequestSource,
-        private readonly enableGlobalButtonCheck?: boolean
+        enableGlobalButtonCheck?: boolean
     ) {
         super(FilterElement);
+        this.#enableGlobalButtonCheck = enableGlobalButtonCheck;
     }
 
     public postConstruct(): void {
         this.beans.colFilter?.activeFilterComps.add(this);
 
-        this.createFilter(true);
+        this.#createFilter(true);
 
-        this.addManagedEventListeners({ filterDestroyed: this.onFilterDestroyed.bind(this) });
+        this.addManagedEventListeners({ filterDestroyed: this.#onFilterDestroyed.bind(this) });
     }
 
     public hasFilter(): boolean {
@@ -51,7 +54,7 @@ export class FilterComp extends Component {
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        this.afterGuiAttachedParams = params;
+        this.#afterGuiAttachedParams = params;
         this.wrapper?.then((wrapper) => {
             this.comp?.afterGuiAttached(params);
             wrapper?.comp?.afterGuiAttached?.(params);
@@ -64,7 +67,7 @@ export class FilterComp extends Component {
         });
     }
 
-    private createFilter(init?: boolean): void {
+    #createFilter(init?: boolean): void {
         const {
             column,
             source,
@@ -79,7 +82,7 @@ export class FilterComp extends Component {
             const { isHandler, comp } = wrapper;
             let filterGui: HTMLElement;
             if (isHandler) {
-                const enableGlobalButtonCheck = !!this.enableGlobalButtonCheck;
+                const enableGlobalButtonCheck = !!this.#enableGlobalButtonCheck;
                 const displayComp = this.createBean(
                     new FilterWrapperComp(
                         column,
@@ -110,12 +113,12 @@ export class FilterComp extends Component {
                 });
             } else {
                 // parent is already attached, and switching filter comps, so fire for the new comp
-                comp.afterGuiAttached?.(this.afterGuiAttachedParams);
+                comp.afterGuiAttached?.(this.#afterGuiAttachedParams);
             }
         });
     }
 
-    private onFilterDestroyed(event: FilterDestroyedEvent): void {
+    #onFilterDestroyed(event: FilterDestroyedEvent): void {
         const { source, column } = event;
         if (
             (source === 'api' || source === 'paramsUpdated') &&
@@ -125,7 +128,7 @@ export class FilterComp extends Component {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             _clearElement(this.getGui());
             this.comp = this.destroyBean(this.comp);
-            this.createFilter();
+            this.#createFilter();
         }
     }
 
@@ -137,7 +140,7 @@ export class FilterComp extends Component {
         });
         this.wrapper = null;
         this.comp = this.destroyBean(this.comp);
-        this.afterGuiAttachedParams = undefined;
+        this.#afterGuiAttachedParams = undefined;
         super.destroy();
     }
 }

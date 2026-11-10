@@ -59,7 +59,7 @@ export class GridCtrl extends BeanStub {
     private view: IGridComp;
     private eGui: HTMLElement;
 
-    private readonly additionalFocusableContainers: Set<FocusableContainer> = new Set();
+    readonly #additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
     public setComp(view: IGridComp, eGui: HTMLElement, eAriaDescription: HTMLElement): void {
         this.view = view;
@@ -103,7 +103,7 @@ export class GridCtrl extends BeanStub {
             });
         }
 
-        const unsubscribeFromResize = _observeResize(this.beans, this.eGui, this.onGridSizeChanged.bind(this));
+        const unsubscribeFromResize = _observeResize(this.beans, this.eGui, this.#onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
         ctrlsSvc.register('gridCtrl', this);
@@ -128,7 +128,7 @@ export class GridCtrl extends BeanStub {
         };
     }
 
-    private onGridSizeChanged(): void {
+    #onGridSizeChanged(): void {
         const eGui = this.eGui;
         this.eventSvc.dispatchEvent({
             type: 'gridSizeChanged',
@@ -163,7 +163,7 @@ export class GridCtrl extends BeanStub {
 
     public focusNextInnerContainer(backwards: boolean): boolean | undefined {
         const focusableContainers = this.getFocusableContainers();
-        const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
+        const { indexWithFocus, nextIndex } = this.#getNextFocusableIndex(focusableContainers, backwards);
         const startIndex = backwards ? focusableContainers.length - 1 : 0;
         const resolvedNextIndex = indexWithFocus === -1 ? startIndex : nextIndex;
         const {
@@ -199,7 +199,7 @@ export class GridCtrl extends BeanStub {
 
                 if (typeof userResult === 'string') {
                     if (userResult === 'gridBody') {
-                        return this.focusGridBodyDefault(backwards) || undefined;
+                        return this.#focusGridBodyDefault(backwards) || undefined;
                     }
 
                     const targetContainer = focusableContainers.find(
@@ -224,7 +224,7 @@ export class GridCtrl extends BeanStub {
         }
 
         return (
-            this.focusNextInnerContainerDefault({
+            this.#focusNextInnerContainerDefault({
                 backwards,
                 focusableContainers,
                 indexWithFocus,
@@ -248,7 +248,7 @@ export class GridCtrl extends BeanStub {
 
         if (fromBottom) {
             if (
-                this.focusNextInnerContainerDefault({
+                this.#focusNextInnerContainerDefault({
                     backwards: true,
                     focusableContainers,
                     indexWithFocus: focusableContainers.length,
@@ -285,32 +285,32 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusNextElementOutsideContainer(up = false): boolean {
-        const eExcludeContainers = [...this.additionalFocusableContainers].map((container) => container.getGui());
+        const eExcludeContainers = [...this.#additionalFocusableContainers].map((container) => container.getGui());
         return this.view.focusNextElementOutsideContainer(up, eExcludeContainers);
     }
 
     public isFocusInsideGridBody(): boolean {
         const focusableContainers = this.getFocusableContainers();
-        const { indexWithFocus } = this.getNextFocusableIndex(focusableContainers);
+        const { indexWithFocus } = this.#getNextFocusableIndex(focusableContainers);
         return focusableContainers[indexWithFocus]?.getFocusableContainerName() === 'gridBody';
     }
 
     public addFocusableContainer(container: FocusableContainer): void {
-        this.additionalFocusableContainers.add(container);
+        this.#additionalFocusableContainers.add(container);
     }
 
     public removeFocusableContainer(container: FocusableContainer): void {
-        this.additionalFocusableContainers.delete(container);
+        this.#additionalFocusableContainers.delete(container);
     }
 
     public allowFocusForNextCoreContainer(up?: boolean): void {
         const coreContainers = this.view.getFocusableContainers();
-        const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(coreContainers, up);
+        const { indexWithFocus, nextIndex } = this.#getNextFocusableIndex(coreContainers, up);
 
         // browser default tabbing can focus unmanaged scrollable elements and lose focus context.
         // move focus to the next reachable core container first; if none can take focus, push focus out.
         if (
-            !this.focusNextInnerContainerDefault({
+            !this.#focusNextInnerContainerDefault({
                 backwards: !!up,
                 focusableContainers: coreContainers,
                 indexWithFocus,
@@ -328,7 +328,7 @@ export class GridCtrl extends BeanStub {
         );
     }
 
-    private getNextFocusableIndex(
+    #getNextFocusableIndex(
         focusableContainers: FocusableContainer[],
         backwards?: boolean
     ): {
@@ -341,7 +341,7 @@ export class GridCtrl extends BeanStub {
         return { indexWithFocus, nextIndex: indexWithFocus + (backwards ? -1 : 1) };
     }
 
-    private focusGridBodyDefault(backwards: boolean): boolean {
+    #focusGridBodyDefault(backwards: boolean): boolean {
         const {
             gos,
             beans,
@@ -361,7 +361,7 @@ export class GridCtrl extends BeanStub {
         return focusSvc.focusFirstHeader();
     }
 
-    private focusNextInnerContainerDefault(params: {
+    #focusNextInnerContainerDefault(params: {
         backwards: boolean;
         focusableContainers: FocusableContainer[];
         indexWithFocus: number;
@@ -380,7 +380,7 @@ export class GridCtrl extends BeanStub {
                 const enteringGridBody =
                     indexWithFocus === -1 || (backwards ? indexWithFocus > index : indexWithFocus < index);
                 if (enteringGridBody) {
-                    if (this.focusGridBodyDefault(backwards)) {
+                    if (this.#focusGridBodyDefault(backwards)) {
                         return true;
                     }
                     continue;
@@ -396,11 +396,11 @@ export class GridCtrl extends BeanStub {
     }
 
     private getFocusableContainers(): FocusableContainer[] {
-        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
+        return [...this.view.getFocusableContainers(), ...this.#additionalFocusableContainers];
     }
 
     public override destroy(): void {
-        this.additionalFocusableContainers.clear();
+        this.#additionalFocusableContainers.clear();
         super.destroy();
     }
 }

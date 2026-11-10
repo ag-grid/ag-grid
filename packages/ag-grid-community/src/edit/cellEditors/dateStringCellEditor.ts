@@ -24,14 +24,18 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     private params: IDateStringCellEditorParams;
     private includeTime: boolean | undefined;
     /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
-    private cachedRaw: unknown = this;
+    #cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
-    private cachedParsed: string | null | undefined;
+    #cachedParsed: string | null | undefined;
+
+    readonly #getDataTypeService: () => DataTypeService | undefined;
 
     constructor(
-        private readonly getDataTypeService: () => DataTypeService | undefined,
+        getDataTypeService: () => DataTypeService | undefined,
         private readonly getLocaleTextFunc: () => LocaleTextFunc
-    ) {}
+    ) {
+        this.#getDataTypeService = getDataTypeService;
+    }
 
     public getTemplate(): ElementParams {
         return DateStringCellElement;
@@ -61,7 +65,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
             eEditor.setStep(step);
         }
         this.includeTime =
-            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+            params.includeTime ?? this.#getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
         if (this.includeTime != null) {
             eEditor.setIncludeTime(this.includeTime);
         }
@@ -70,15 +74,15 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public getValidationErrors(untouched: boolean): string[] | null {
         const { eEditor, params } = this;
         const date = _parseDateTimeFromString(eEditor.getInputElement().value) ?? undefined;
-        const value = this.formatDate(date);
-        const internalErrors = this.getInternalValidationErrors(date);
+        const value = this.#formatDate(date);
+        const internalErrors = this.#getInternalValidationErrors(date);
 
         if (!params.getValidationErrors) {
             return internalErrors;
         }
 
         return params.getValidationErrors({
-            value: untouched ? params.value : this.parseEditorValue(value),
+            value: untouched ? params.value : this.#parseEditorValue(value),
             cellEditorParams: params,
             internalErrors,
         });
@@ -89,16 +93,16 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getValue(): string | null | undefined {
-        const value = this.formatDate(this.eEditor.getDate());
-        return this.parseEditorValue(value);
+        const value = this.#formatDate(this.eEditor.getDate());
+        return this.#parseEditorValue(value);
     }
 
-    private parseEditorValue(value: string | undefined): string | null | undefined {
+    #parseEditorValue(value: string | undefined): string | null | undefined {
         const { params } = this;
         // Key the cache on the formatted date string — the exact input to parseValue —
         // so the cache cannot diverge from what the parser would actually receive.
-        if (Object.is(this.cachedRaw, value)) {
-            return this.cachedParsed;
+        if (Object.is(this.#cachedRaw, value)) {
+            return this.#cachedParsed;
         }
         let parsed: string | null | undefined;
         if (!_exists(value) && !_exists(params.value)) {
@@ -106,16 +110,16 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         } else {
             parsed = params.parseValue(value ?? '');
         }
-        this.cachedRaw = value;
-        this.cachedParsed = parsed;
+        this.#cachedRaw = value;
+        this.#cachedParsed = parsed;
         return parsed;
     }
 
     public getStartValue(): string | null | undefined {
-        return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, this.includeTime ?? false);
+        return _serialiseDate(this.#parseDate(this.params.value ?? undefined) ?? null, this.includeTime ?? false);
     }
 
-    private getInternalValidationErrors(date: Date | undefined): string[] | null {
+    #getInternalValidationErrors(date: Date | undefined): string[] | null {
         if (!date) {
             return null;
         }
@@ -143,15 +147,15 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         return errors.length ? errors : null;
     }
 
-    private parseDate(value: string | undefined): Date | undefined {
-        const dataTypeSvc = this.getDataTypeService();
+    #parseDate(value: string | undefined): Date | undefined {
+        const dataTypeSvc = this.#getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateParserFunction(this.params.column as AgColumn)(value)
             : (_parseDateTimeFromString(value) ?? undefined);
     }
 
-    private formatDate(value: Date | undefined): string | undefined {
-        const dataTypeSvc = this.getDataTypeService();
+    #formatDate(value: Date | undefined): string | undefined {
+        const dataTypeSvc = this.#getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateFormatterFunction(this.params.column as AgColumn)(value)
             : (_serialiseDate(value ?? null, this.includeTime ?? false) ?? undefined);

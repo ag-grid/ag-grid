@@ -21,13 +21,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         ctrlPressed: boolean = false
     ): CellPosition | null {
         if (ctrlPressed) {
-            return this.getNextCellToFocusWithCtrlPressed(key, focusedCell);
+            return this.#getNextCellToFocusWithCtrlPressed(key, focusedCell);
         }
 
-        return this.getNextCellToFocusWithoutCtrlPressed(key, focusedCell);
+        return this.#getNextCellToFocusWithoutCtrlPressed(key, focusedCell);
     }
 
-    private getNextCellToFocusWithCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
+    #getNextCellToFocusWithCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
         const upKey = key === KeyCode.UP;
         const downKey = key === KeyCode.DOWN;
         const leftKey = key === KeyCode.LEFT;
@@ -59,7 +59,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             column = allColumns.find(
                 (col) =>
                     !isRowNumberCol(col) &&
-                    this.isCellGoodToFocusOn({
+                    this.#isCellGoodToFocusOn({
                         rowIndex,
                         rowPinned: null,
                         column: col,
@@ -76,7 +76,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             : null;
     }
 
-    private getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
+    #getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
         // starting with the provided cell, we keep moving until we find a cell we can
         // focus on.
         let pointer: CellPosition | null = focusedCell;
@@ -88,16 +88,16 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         while (!finished) {
             switch (key) {
                 case KeyCode.UP:
-                    pointer = this.getCellAbove(pointer);
+                    pointer = this.#getCellAbove(pointer);
                     break;
                 case KeyCode.DOWN:
-                    pointer = this.getCellBelow(pointer);
+                    pointer = this.#getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    pointer = this.gos.get('enableRtl') ? this.getCellToLeft(pointer) : this.getCellToRight(pointer);
+                    pointer = this.gos.get('enableRtl') ? this.#getCellToLeft(pointer) : this.#getCellToRight(pointer);
                     break;
                 case KeyCode.LEFT:
-                    pointer = this.gos.get('enableRtl') ? this.getCellToRight(pointer) : this.getCellToLeft(pointer);
+                    pointer = this.gos.get('enableRtl') ? this.#getCellToRight(pointer) : this.#getCellToLeft(pointer);
                     break;
                 default:
                     pointer = null;
@@ -107,7 +107,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
 
             if (pointer) {
-                finished = this.isCellGoodToFocusOn(pointer);
+                finished = this.#isCellGoodToFocusOn(pointer);
             } else {
                 finished = true;
             }
@@ -116,7 +116,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return pointer;
     }
 
-    private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
+    #isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         const column = gridCell.column as AgColumn;
         let rowNode: RowNode | undefined;
         const { pinnedRowModel, rowModel } = this.beans;
@@ -141,7 +141,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return !suppressNavigable;
     }
 
-    private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
+    #getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) {
             return null;
         }
@@ -158,7 +158,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         } as CellPosition;
     }
 
-    private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
+    #getCellToRight(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) {
             return null;
         }
@@ -176,7 +176,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         } as CellPosition;
     }
 
-    private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
+    #getCellBelow(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) {
             return null;
         }
@@ -197,7 +197,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return null;
     }
 
-    private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
+    #getCellAbove(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) {
             return null;
         }

@@ -98,7 +98,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.applyColumnWidths(columns, widths, finished, source, columns, false);
+        this.#applyColumnWidths(columns, widths, finished, source, columns, false);
     }
 
     /** Sets widths decided elsewhere, each held within its column's bounds in `widths`, none taken from another. */
@@ -114,7 +114,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             // held first, so a width this column cannot take reads as unchanged rather than re-laid out
             widths[i] = Math.min(Math.max(widths[i], col.minWidth), col.maxWidth);
         }
-        this.applyColumnWidths(columns, widths, finished, source, resizingCols, false);
+        this.#applyColumnWidths(columns, widths, finished, source, resizingCols, false);
     }
 
     /** Whether a resize takes from the column or group after it: Shift does, `colResizeDefault: 'shift'` inverting. */
@@ -145,7 +145,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         }
         const columns = otherCol ? [column, otherCol] : [column];
         const widths = otherCol ? [width, total - width] : [width];
-        this.applyColumnWidths(columns, widths, finished, 'uiColumnResized', columns, false);
+        this.#applyColumnWidths(columns, widths, finished, 'uiColumnResized', columns, false);
     }
 
     /** Plans a group resize, with the next group's resizable leaves when it takes from that group. */
@@ -196,12 +196,12 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             distributeWidth(plan, next, total - fitted);
         }
         const columns = plan.columns;
-        this.applyColumnWidths(columns, plan.widths, finished, source, reflexAll ? undefined : columns, true);
+        this.#applyColumnWidths(columns, plan.widths, finished, source, reflexAll ? undefined : columns, true);
     }
 
     /** Applies `widths`, re-flexes the flex cols after `resizingCols` (all when absent), lays out and reports, with
      *  `flexColumns` only when `resizingCols` bounded the flex pass, so an aligned grid re-flexes as this one did. */
-    private applyColumnWidths(
+    #applyColumnWidths(
         columns: AgColumn[],
         widths: number[],
         finished: boolean,

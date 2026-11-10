@@ -11,12 +11,12 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
 
     public postConstruct(): void {
-        this.generateColumns(true);
-        this.addManagedPropertyListener('rowData', () => this.generateColumns(false));
-        this.addManagedPropertyListener('autoGenerateColumnDefs', () => this.generateColumns(false));
+        this.#generateColumns(true);
+        this.addManagedPropertyListener('rowData', () => this.#generateColumns(false));
+        this.addManagedPropertyListener('autoGenerateColumnDefs', () => this.#generateColumns(false));
     }
 
-    private generateColumns(isInitial: boolean): void {
+    #generateColumns(isInitial: boolean): void {
         const gos = this.gos;
         const optionValue = gos.get('autoGenerateColumnDefs');
         if (!optionValue) {

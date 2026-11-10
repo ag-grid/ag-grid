@@ -8,10 +8,10 @@ import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/
 import type { GroupResizePlan } from './columnResizeService';
 
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private dragPlan: GroupResizePlan | null = null;
-    private dragTakeFromAdjacent = false;
-    private dragGroupWidth = 0;
-    private dragSign = 1;
+    #dragPlan: GroupResizePlan | null = null;
+    #dragTakeFromAdjacent = false;
+    #dragGroupWidth = 0;
+    #dragSign = 1;
 
     constructor(
         private readonly comp: IHeaderGroupCellComp,
@@ -32,9 +32,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         const finishedWithResizeFunc = horizontalResizeSvc!.addResizeBar({
             eResizeBar: this.eResize,
             isColumn: true,
-            onResizeStart: this.onResizeStart.bind(this),
-            onResizing: this.onResizing.bind(this, false),
-            onResizeEnd: this.onResizing.bind(this, true),
+            onResizeStart: this.#onResizeStart.bind(this),
+            onResizing: this.#onResizing.bind(this, false),
+            onResizeEnd: this.#onResizing.bind(this, true),
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
@@ -48,31 +48,31 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         }
     }
 
-    private onResizeStart(shiftKey: boolean): void {
+    #onResizeStart(shiftKey: boolean): void {
         const { columnGroup, beans } = this;
         const colResize = beans.colResize!;
         const takeFromAdjacent = colResize.takesFromAdjacent(shiftKey);
-        this.dragPlan = colResize.planGroupResize(columnGroup, takeFromAdjacent);
-        this.dragTakeFromAdjacent = takeFromAdjacent;
-        this.dragGroupWidth = columnGroup.getActualWidth();
-        this.dragSign = getDragSign(this.gos.get('enableRtl'), columnGroup.pinnedLane);
+        this.#dragPlan = colResize.planGroupResize(columnGroup, takeFromAdjacent);
+        this.#dragTakeFromAdjacent = takeFromAdjacent;
+        this.#dragGroupWidth = columnGroup.getActualWidth();
+        this.#dragSign = getDragSign(this.gos.get('enableRtl'), columnGroup.pinnedLane);
         _cancelColumnWidthAnimation(beans);
         this.toggleColumnResizing(true);
     }
 
-    private onResizing(finished: boolean, amount: number): void {
-        const plan = this.dragPlan;
+    #onResizing(finished: boolean, amount: number): void {
+        const plan = this.#dragPlan;
         if (!plan) {
             return;
         }
         const { columnGroup, beans } = this;
-        const change = amount * this.dragSign;
+        const change = amount * this.#dragSign;
         const held =
-            beans.pinnedCols?.limitResize(columnGroup, this.dragTakeFromAdjacent, change, this.dragGroupWidth) ??
+            beans.pinnedCols?.limitResize(columnGroup, this.#dragTakeFromAdjacent, change, this.#dragGroupWidth) ??
             change;
         beans.colResize!.resizeGroup(plan, plan.group.startWidth + held, finished, 'uiColumnResized');
         if (finished) {
-            this.dragPlan = null;
+            this.#dragPlan = null;
             this.toggleColumnResizing(false);
         }
     }
@@ -103,6 +103,6 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     public override destroy(): void {
         super.destroy();
 
-        this.dragPlan = null;
+        this.#dragPlan = null;
     }
 }

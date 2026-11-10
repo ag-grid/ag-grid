@@ -11,7 +11,7 @@ export class PinnedRows {
     /** IDs of nodes that need to be pinned once they are available from the row model */
     public readonly queued = new Set<string>();
     private readonly sorted: RowNode[] = [];
-    private sortedValid = true;
+    #sortedValid = true;
 
     constructor(
         private readonly beans: BeanCollection,
@@ -25,8 +25,8 @@ export class PinnedRows {
     /** The displayed nodes in display order, re-sorted in place on the first read after a change. */
     public getSorted(): RowNode[] {
         const sorted = this.sorted;
-        if (!this.sortedValid) {
-            this.sortedValid = true;
+        if (!this.#sortedValid) {
+            this.#sortedValid = true;
             sortPinnedRows(this.beans, this.all, this.hidden, sorted);
         }
         return sorted;
@@ -41,7 +41,7 @@ export class PinnedRows {
         if (hidden) {
             this.hidden.add(node);
         } else {
-            this.sortedValid = false;
+            this.#sortedValid = false;
         }
     }
 
@@ -51,7 +51,7 @@ export class PinnedRows {
             return;
         }
         if (!this.hidden.delete(item)) {
-            this.sortedValid = false;
+            this.#sortedValid = false;
         }
     }
 
@@ -79,7 +79,7 @@ export class PinnedRows {
                 changed = true;
             }
         }
-        this.sortedValid = false;
+        this.#sortedValid = false;
         return changed;
     }
 }

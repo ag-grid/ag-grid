@@ -17,16 +17,16 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private cellValueChanges: CellValueChange[] = [];
+    #cellValueChanges: CellValueChange[] = [];
 
-    private undoStack: UndoRedoStack;
-    private redoStack: UndoRedoStack;
+    #undoStack: UndoRedoStack;
+    #redoStack: UndoRedoStack;
 
-    private activeCellEdit: CellPosition | null = null;
-    private activeRowEdit: RowPosition | null = null;
+    #activeCellEdit: CellPosition | null = null;
+    #activeRowEdit: RowPosition | null = null;
 
-    private isPasting = false;
-    private isRangeInAction = false;
+    #isPasting = false;
+    #isRangeInAction = false;
     private batchEditing = false;
     private bulkEditing = false;
 
@@ -42,19 +42,19 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.undoStack = new UndoRedoStack(undoRedoLimit);
-        this.redoStack = new UndoRedoStack(undoRedoLimit);
+        this.#undoStack = new UndoRedoStack(undoRedoLimit);
+        this.#redoStack = new UndoRedoStack(undoRedoLimit);
 
         this.addListeners();
 
-        const listener = this.clearStacks.bind(this);
+        const listener = this.#clearStacks.bind(this);
         this.addManagedEventListeners({
             cellValueChanged: this.onCellValueChanged.bind(this),
             // undo / redo is restricted to actual editing so we clear the stacks when other operations are
             // performed that change the order of the row / cols.
             modelUpdated: (e) => {
                 if (!e.keepUndoRedoStack) {
-                    this.clearStacks();
+                    this.#clearStacks();
                 }
             },
             columnPivotModeChanged: listener,
@@ -74,10 +74,10 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private readonly onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
-        const isCellEditing = this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
-        const isRowEditing = this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
+        const isCellEditing = this.#activeCellEdit !== null && _areCellsEqual(this.#activeCellEdit, eventCell);
+        const isRowEditing = this.#activeRowEdit !== null && _isSameRow(this.#activeRowEdit, eventCell);
 
-        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.#isPasting || this.#isRangeInAction;
 
         if (!shouldCaptureAction) {
             return;
@@ -93,24 +93,26 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             oldValue,
         };
 
-        this.cellValueChanges.push(cellValueChange);
+        this.#cellValueChanges.push(cellValueChange);
     };
 
-    private readonly clearStacks = () => {
-        this.undoStack.clear();
-        this.redoStack.clear();
+    readonly #clearStacks = () => {
+        this.#undoStack.clear();
+        this.#redoStack.clear();
     };
 
     public getCurrentUndoStackSize(): number {
-        return this.undoStack?.getCurrentStackSize() ?? 0;
+        return this.#undoStack?.getCurrentStackSize() ?? 0;
     }
 
     public getCurrentRedoStackSize(): number {
-        return this.redoStack?.getCurrentStackSize() ?? 0;
+        return this.#redoStack?.getCurrentStackSize() ?? 0;
     }
 
     public undo(source: 'api' | 'ui'): void {
-        const { eventSvc, undoStack, redoStack } = this;
+        const { eventSvc } = this;
+        const undoStack = this.#undoStack;
+        const redoStack = this.#redoStack;
         eventSvc.dispatchEvent({
             type: 'undoStarted',
             source,
@@ -126,7 +128,9 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     }
 
     public redo(source: 'api' | 'ui'): void {
-        const { eventSvc, undoStack, redoStack } = this;
+        const { eventSvc } = this;
+        const undoStack = this.#undoStack;
+        const redoStack = this.#redoStack;
         eventSvc.dispatchEvent({
             type: 'redoStarted',
             source,
@@ -158,16 +162,16 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             return false;
         }
 
-        this.processAction(
+        this.#processAction(
             undoRedoAction,
             (cellValueChange: CellValueChange) => cellValueChange[cellValueChangeProperty],
             source
         );
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(undoRedoAction.ranges ?? [undoRedoAction[rangeProperty]]);
+            this.#processRange(undoRedoAction.ranges ?? [undoRedoAction[rangeProperty]]);
         } else {
-            this.processCell(undoRedoAction.cellValueChanges);
+            this.#processCell(undoRedoAction.cellValueChanges);
         }
 
         opposingUndoRedoStack.push(undoRedoAction);
@@ -175,11 +179,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private processAction(
-        action: UndoRedoAction,
-        valueExtractor: (cellValueChange: CellValueChange) => any,
-        source: string
-    ) {
+    #processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any, source: string) {
         const { changeDetectionSvc, editSvc } = this.beans;
         editSvc?.beginBulkWrite();
         try {
@@ -203,7 +203,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         }
     }
 
-    private processRange(ranges: (CellRange | undefined)[]) {
+    #processRange(ranges: (CellRange | undefined)[]) {
         let lastFocusedCell: LastFocusedCell;
         const rangeSvc = this.beans.rangeSvc!;
 
@@ -223,7 +223,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                     columnId: range.startColumn.getColId(),
                 };
 
-                this.setLastFocusedCell(lastFocusedCell, false);
+                this.#setLastFocusedCell(lastFocusedCell, false);
             }
 
             const cellRangeParams: CellRangeParams = {
@@ -239,7 +239,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         });
     }
 
-    private processCell(cellValueChanges: CellValueChange[]) {
+    #processCell(cellValueChanges: CellValueChange[]) {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
@@ -254,11 +254,11 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         // when single cells are being processed, they should be considered
         // as ranges when the rangeSvc is present (singleCellRanges).
         // otherwise focus will be restore but the range will not.
-        this.setLastFocusedCell(lastFocusedCell, true);
+        this.#setLastFocusedCell(lastFocusedCell, true);
     }
 
     /** @param setRange false where the caller restores its own ranges, which setting one here would clear */
-    private setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRange: boolean) {
+    #setLastFocusedCell(lastFocusedCell: LastFocusedCell, setRange: boolean) {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const { colModel, focusSvc, rangeSvc } = this.beans;
 
@@ -283,70 +283,71 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     private addListeners(): void {
         this.addManagedEventListeners({
             rowEditingStarted: (e) => {
-                this.activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
+                this.#activeRowEdit = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
             },
             rowEditingStopped: () => {
-                const action = new UndoRedoAction(this.cellValueChanges);
-                this.pushActionsToUndoStack(action);
-                this.activeRowEdit = null;
+                const action = new UndoRedoAction(this.#cellValueChanges);
+                this.#pushActionsToUndoStack(action);
+                this.#activeRowEdit = null;
             },
             cellEditingStarted: (e) => {
-                this.activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
+                this.#activeCellEdit = { column: e.column, rowIndex: e.rowIndex!, rowPinned: e.rowPinned };
             },
             cellEditingStopped: (e) => {
-                this.activeCellEdit = null;
+                this.#activeCellEdit = null;
 
                 const shouldPushAction =
-                    e.valueChanged && !this.activeRowEdit && !this.isPasting && !this.isRangeInAction;
+                    e.valueChanged && !this.#activeRowEdit && !this.#isPasting && !this.#isRangeInAction;
 
                 if (shouldPushAction) {
-                    const action = new UndoRedoAction(this.cellValueChanges);
-                    this.pushActionsToUndoStack(action);
+                    const action = new UndoRedoAction(this.#cellValueChanges);
+                    this.#pushActionsToUndoStack(action);
                 }
             },
             pasteStart: () => {
-                this.isPasting = true;
+                this.#isPasting = true;
             },
             pasteEnd: () => {
-                const action = new UndoRedoAction(this.cellValueChanges);
-                this.pushActionsToUndoStack(action);
-                this.isPasting = false;
+                const action = new UndoRedoAction(this.#cellValueChanges);
+                this.#pushActionsToUndoStack(action);
+                this.#isPasting = false;
             },
             fillStart: () => {
-                this.isRangeInAction = true;
+                this.#isRangeInAction = true;
             },
             fillEnd: (event) => {
-                const action = new RangeUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
-                this.pushActionsToUndoStack(action);
-                this.isRangeInAction = false;
+                const action = new RangeUndoRedoAction(this.#cellValueChanges, event.initialRange, event.finalRange);
+                this.#pushActionsToUndoStack(action);
+                this.#isRangeInAction = false;
             },
             keyShortcutChangedCellStart: () => {
-                this.isRangeInAction = true;
+                this.#isRangeInAction = true;
             },
             keyShortcutChangedCellEnd: () => {
                 let action: UndoRedoAction;
                 const { rangeSvc, gos } = this.beans;
                 if (rangeSvc && _isCellSelectionEnabled(gos)) {
-                    action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [
+                    action = new RangeUndoRedoAction(this.#cellValueChanges, undefined, undefined, [
                         ...rangeSvc.getCellRanges(),
                     ]);
                 } else {
-                    action = new UndoRedoAction(this.cellValueChanges);
+                    action = new UndoRedoAction(this.#cellValueChanges);
                 }
-                this.pushActionsToUndoStack(action);
-                this.isRangeInAction = false;
+                this.#pushActionsToUndoStack(action);
+                this.#isRangeInAction = false;
             },
-            batchEditingStarted: () => this.startBigChange('batchEditing'),
-            batchEditingStopped: ({ changes }: BatchEditingStoppedEvent) => this.stopBigChange('batchEditing', changes),
-            bulkEditingStarted: () => this.startBigChange('bulkEditing'),
-            bulkEditingStopped: ({ changes }: BulkEditingStoppedEvent) => this.stopBigChange('bulkEditing', changes),
+            batchEditingStarted: () => this.#startBigChange('batchEditing'),
+            batchEditingStopped: ({ changes }: BatchEditingStoppedEvent) =>
+                this.#stopBigChange('batchEditing', changes),
+            bulkEditingStarted: () => this.#startBigChange('bulkEditing'),
+            bulkEditingStopped: ({ changes }: BulkEditingStoppedEvent) => this.#stopBigChange('bulkEditing', changes),
         });
     }
 
-    private startBigChange(key: BigChangeKey): void {
-        this.updateBigChange(key, true);
+    #startBigChange(key: BigChangeKey): void {
+        this.#updateBigChange(key, true);
     }
-    private updateBigChange(key: BigChangeKey, value: boolean): void {
+    #updateBigChange(key: BigChangeKey, value: boolean): void {
         if (key === 'bulkEditing') {
             this.bulkEditing = value;
         } else {
@@ -354,26 +355,26 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         }
     }
 
-    private stopBigChange(key: BigChangeKey, changes?: CellValueChange[]): void {
+    #stopBigChange(key: BigChangeKey, changes?: CellValueChange[]): void {
         if ((key === 'bulkEditing' && !this.bulkEditing) || (key === 'batchEditing' && !this.batchEditing)) {
             return;
         }
 
-        this.updateBigChange(key, false);
+        this.#updateBigChange(key, false);
 
         if (changes?.length === 0) {
             return;
         }
 
         const action = new UndoRedoAction(changes ?? []);
-        this.pushActionsToUndoStack(action);
+        this.#pushActionsToUndoStack(action);
     }
 
-    private pushActionsToUndoStack(action: UndoRedoAction) {
-        this.cellValueChanges = [];
+    #pushActionsToUndoStack(action: UndoRedoAction) {
+        this.#cellValueChanges = [];
         // a no-change action keeps the redo stack; inside a batch a staged edit is empty too, so every action clears it
-        if (this.undoStack.push(action) || this.batchEditing) {
-            this.redoStack.clear();
+        if (this.#undoStack.push(action) || this.batchEditing) {
+            this.#redoStack.clear();
         }
     }
 }

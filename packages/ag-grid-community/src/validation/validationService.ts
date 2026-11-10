@@ -32,7 +32,7 @@ export class ValidationService extends BeanStub implements NamedBean {
      * A property is invalid if it has an unsupported row model, or is an unrecognised name.
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
-    private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
+    readonly #propertyNameCache: Map<string, Map<string, boolean>> = new Map();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -46,7 +46,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        this.#processOptions(options, GRID_OPTIONS_VALIDATORS());
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
@@ -62,10 +62,10 @@ export class ValidationService extends BeanStub implements NamedBean {
         agGridDefaults: { [key in UserComponentName]?: any },
         jsComps: { [key: string]: any }
     ): void {
-        this.checkUserComponent(propertyName, componentName, agGridDefaults, jsComps);
+        this.#checkUserComponent(propertyName, componentName, agGridDefaults, jsComps);
     }
 
-    private checkUserComponent(
+    #checkUserComponent(
         propertyName: string,
         componentName: string,
         agGridDefaults: { [key in UserComponentName]?: any },
@@ -126,10 +126,10 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     public validateIcon(iconName: IconName): void {
-        this.checkIcon(iconName);
+        this.#checkIcon(iconName);
     }
 
-    private checkIcon(iconName: IconName): void {
+    #checkIcon(iconName: IconName): void {
         if (DEPRECATED_ICONS_V33.has(iconName)) {
             this.warn(43, { iconName });
         }
@@ -146,18 +146,18 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     /** Should only be called via the GridOptionsService */
     public validateColDef(colDef: ColDef | ColGroupDef): void {
-        this.processOptions(colDef, COL_DEF_VALIDATORS());
+        this.#processOptions(colDef, COL_DEF_VALIDATORS());
     }
 
-    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
+    #processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
         const log = this.beans.log;
 
         const optionKeys = Object.keys(options) as (keyof T & string)[];
-        let isValidMap = this.propertyNameCache.get(objectName);
+        let isValidMap = this.#propertyNameCache.get(objectName);
         if (!isValidMap) {
             isValidMap = new Map();
-            this.propertyNameCache.set(objectName, isValidMap);
+            this.#propertyNameCache.set(objectName, isValidMap);
         }
 
         // Check uncached property names: emit one-time warnings and record validity
@@ -244,7 +244,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (dependencies) {
-                const depWarnings = this.checkForRequiredDependencies(key, dependencies, options);
+                const depWarnings = this.#checkForRequiredDependencies(key, dependencies, options);
                 if (depWarnings.length > 0) {
                     idWarnings.push(...depWarnings);
                     return;
@@ -272,7 +272,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    private checkForRequiredDependencies<T extends object>(
+    #checkForRequiredDependencies<T extends object>(
         key: keyof T,
         validator: RequiredOptions<T>,
         options: T

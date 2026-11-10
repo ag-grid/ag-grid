@@ -47,13 +47,13 @@ export class AgInputNumberField<
         _addManagedElementListeners(this, eInput, {
             blur: () => {
                 const floatedValue = Number.parseFloat(eInput.value);
-                const value = Number.isNaN(floatedValue) ? '' : this.normalizeBlurValue(floatedValue.toString());
+                const value = Number.isNaN(floatedValue) ? '' : this.#normalizeBlurValue(floatedValue.toString());
 
                 if (this.value !== value) {
                     this.setValue(value);
                 }
             },
-            wheel: this.onWheel.bind(this),
+            wheel: this.#onWheel.bind(this),
         });
 
         eInput.step = 'any';
@@ -73,7 +73,7 @@ export class AgInputNumberField<
         }
     }
 
-    private onWheel(e: WheelEvent) {
+    #onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
         if (_getActiveDomElement(this.beans) === this.eInput) {
             e.preventDefault();
@@ -86,20 +86,20 @@ export class AgInputNumberField<
         }
 
         if (this.precision != null) {
-            value = this.adjustPrecision(value);
+            value = this.#adjustPrecision(value);
         }
 
         return value;
     }
 
-    private normalizeBlurValue(value: string): string {
-        if (this.isScientificNotation(value)) {
-            return this.adjustPrecision(value, true);
+    #normalizeBlurValue(value: string): string {
+        if (this.#isScientificNotation(value)) {
+            return this.#adjustPrecision(value, true);
         }
         return this.normalizeValue(value);
     }
 
-    private adjustPrecision(value: string, isScientificNotation?: boolean): string {
+    #adjustPrecision(value: string, isScientificNotation?: boolean): string {
         const precision = this.precision;
         if (precision == null) {
             return value;
@@ -164,7 +164,7 @@ export class AgInputNumberField<
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
-        return this.setValueOrInputValue(
+        return this.#setValueOrInputValue(
             (v) => super.setValue(v, silent),
             () => this,
             value
@@ -172,7 +172,7 @@ export class AgInputNumberField<
     }
 
     public override setStartValue(value?: string | null): void {
-        return this.setValueOrInputValue<void>(
+        return this.#setValueOrInputValue<void>(
             (v) => super.setValue(v, true),
             (v) => {
                 this.eInput.value = v;
@@ -181,19 +181,19 @@ export class AgInputNumberField<
         );
     }
 
-    private setValueOrInputValue<T>(
+    #setValueOrInputValue<T>(
         setValueFunc: (value?: string | null) => T,
         setInputValueOnlyFunc: (value: string) => T,
         value?: string | null
     ): T {
         if (_exists(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
-            let setInputValueOnly = this.isScientificNotation(value);
+            let setInputValueOnly = this.#isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {
                 return setValueFunc(value);
             }
             if (!setInputValueOnly) {
-                value = this.adjustPrecision(value);
+                value = this.#adjustPrecision(value);
                 const normalizedValue = this.normalizeValue(value);
                 // outside of valid range
                 setInputValueOnly = value != normalizedValue;
@@ -213,13 +213,13 @@ export class AgInputNumberField<
             return undefined;
         }
         const inputValue = eInput.value;
-        if (this.isScientificNotation(inputValue)) {
-            return this.adjustPrecision(inputValue, true);
+        if (this.#isScientificNotation(inputValue)) {
+            return this.#adjustPrecision(inputValue, true);
         }
         return super.getValue();
     }
 
-    private isScientificNotation(value: string): boolean {
+    #isScientificNotation(value: string): boolean {
         return typeof value === 'string' && value.includes('e');
     }
 }

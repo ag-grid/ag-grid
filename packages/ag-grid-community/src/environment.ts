@@ -57,7 +57,7 @@ export class Environment
 
         this.getSizeEl(ROW_BORDER_WIDTH);
         this.getSizeEl(PINNED_BORDER_WIDTH);
-        this.refreshRowBorderWidthVariable();
+        this.#refreshRowBorderWidthVariable();
     }
 
     public getPinnedRowBorderWidth(): number {
@@ -131,17 +131,17 @@ export class Environment
 
     protected override fireStylesChangedEvent(change: keyof CssChangeKeys): void {
         if (change === 'rowBorderWidth') {
-            this.refreshRowBorderWidthVariable();
+            this.#refreshRowBorderWidthVariable();
         }
         // catches variables a class swap introduces after grid creation; 'theme' is covered by
         // postProcessThemeChange, which runs after the new theme is in place
         if (change !== 'theme') {
-            this.checkLegacyThemeVariables();
+            this.#checkLegacyThemeVariables();
         }
         super.fireStylesChangedEvent(change);
     }
 
-    private refreshRowBorderWidthVariable(): void {
+    #refreshRowBorderWidthVariable(): void {
         const width = this.getCSSVariablePixelValue(ROW_BORDER_WIDTH);
         this.eRootDiv.style.setProperty('--ag-internal-row-border-width', `${width}px`);
     }
@@ -162,12 +162,12 @@ export class Environment
                 this.beans.log.error(239);
             }
         } else if (newGridTheme) {
-            this.checkLegacyThemeVariables();
+            this.#checkLegacyThemeVariables();
         }
     }
 
     /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
-    private checkLegacyThemeVariables(): void {
+    #checkLegacyThemeVariables(): void {
         this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }
 

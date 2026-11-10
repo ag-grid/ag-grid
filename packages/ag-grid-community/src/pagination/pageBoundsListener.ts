@@ -8,15 +8,15 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.addManagedEventListeners({
-            modelUpdated: this.onModelUpdated.bind(this),
-            recalculateRowBounds: this.calculatePages.bind(this),
+            modelUpdated: this.#onModelUpdated.bind(this),
+            recalculateRowBounds: this.#calculatePages.bind(this),
         });
 
-        this.onModelUpdated();
+        this.#onModelUpdated();
     }
 
-    private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
-        this.calculatePages();
+    #onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
+        this.#calculatePages();
 
         this.eventSvc.dispatchEvent({
             type: 'paginationChanged',
@@ -28,7 +28,7 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
         });
     }
 
-    private calculatePages(): void {
+    #calculatePages(): void {
         const { pageBounds, pagination, rowModel } = this.beans;
         if (pagination) {
             pagination.calculatePages();

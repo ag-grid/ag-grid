@@ -8,23 +8,26 @@ import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
     private eInput: GridInputTextField = RefPlaceholder;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
-    private onValueCleared: () => void = () => {};
+    #onValueCleared: () => void = () => {};
 
     /** A hook, not the pattern itself: importing the guard here would put it in the text filter's bundle. */
-    constructor(private readonly onInputCreated?: (field: GridInputTextField) => void) {
+    readonly #onInputCreated?: (field: GridInputTextField) => void;
+
+    constructor(onInputCreated?: (field: GridInputTextField) => void) {
         super();
+        this.#onInputCreated = onInputCreated;
     }
 
     public setupGui(parentElement: HTMLElement): void {
         const field = this.createManagedBean<GridInputTextField>(
             new AgInputTextField({
                 clearButton: true,
-                onValueClear: () => this.onValueCleared(),
+                onValueClear: () => this.#onValueCleared(),
             })
         );
         this.eInput = field;
 
-        this.onInputCreated?.(field);
+        this.#onInputCreated?.(field);
 
         const eInput = field.getGui();
 
@@ -62,7 +65,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 
     public setValueClearedListener(listener: () => void): void {
-        this.onValueCleared = listener;
+        this.#onValueCleared = listener;
     }
 
     public setParams({

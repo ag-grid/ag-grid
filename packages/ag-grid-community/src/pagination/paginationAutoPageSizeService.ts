@@ -8,45 +8,45 @@ import { _getRowHeightAsNumber } from '../gridOptionsUtils';
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
     beanName = 'paginationAutoPageSizeSvc' as const;
 
-    private scrollingRowsCtrl: RowContainerCtrl;
+    #scrollingRowsCtrl: RowContainerCtrl;
 
     // Once the body is rendered, we debounce changes to the page size,
     // but we do not want to debounce the first time the body is rendered.
-    private isBodyRendered: boolean;
+    #isBodyRendered: boolean;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.scrollingRowsCtrl = p.scrolling;
+            this.#scrollingRowsCtrl = p.scrolling;
 
-            const listener = this.checkPageSize.bind(this);
+            const listener = this.#checkPageSize.bind(this);
             this.addManagedEventListeners({
                 bodyHeightChanged: listener,
                 scrollVisibilityChanged: listener,
             });
-            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
+            this.addManagedPropertyListener('paginationAutoPageSize', this.#onPaginationAutoSizeChanged.bind(this));
 
-            this.checkPageSize();
+            this.#checkPageSize();
         });
     }
 
-    private notActive(): boolean {
-        return !this.gos.get('paginationAutoPageSize') || this.scrollingRowsCtrl == null;
+    #notActive(): boolean {
+        return !this.gos.get('paginationAutoPageSize') || this.#scrollingRowsCtrl == null;
     }
 
-    private onPaginationAutoSizeChanged(): void {
-        if (this.notActive()) {
+    #onPaginationAutoSizeChanged(): void {
+        if (this.#notActive()) {
             this.beans.pagination!.unsetAutoCalculatedPageSize();
         } else {
-            this.checkPageSize();
+            this.#checkPageSize();
         }
     }
 
-    private checkPageSize(): void {
-        if (this.notActive()) {
+    #checkPageSize(): void {
+        if (this.#notActive()) {
             return;
         }
 
-        const bodyHeight = this.scrollingRowsCtrl.viewportSizeFeature!.getBodyHeight();
+        const bodyHeight = this.#scrollingRowsCtrl.viewportSizeFeature!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const beans = this.beans;
@@ -56,15 +56,15 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
                 beans.pagination!.setPageSize(newPageSize, 'autoCalculated');
             };
 
-            if (!this.isBodyRendered) {
+            if (!this.#isBodyRendered) {
                 update();
-                this.isBodyRendered = true;
+                this.#isBodyRendered = true;
             } else {
                 // TODO: this is weird, since this _debounce is inlined here this seems to act just as a setTimeout?
                 _debounce(this, update, 50)();
             }
         } else {
-            this.isBodyRendered = false;
+            this.#isBodyRendered = false;
         }
     }
 }

@@ -139,7 +139,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const { headerRowIndex } = focusedHeader;
         const column = focusedHeader.column as AgColumn;
         const rowLen = getFocusHeaderRowCount(this.beans);
-        const currentRowType = this.getHeaderRowType(headerRowIndex);
+        const currentRowType = this.#getHeaderRowType(headerRowIndex);
         const columnHeaderRowIndex = visibleCols.headerGroupRowCount;
 
         let {
@@ -202,10 +202,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         if ((direction === 'LEFT') !== gos.get('enableRtl')) {
             normalisedDirection = 'Before';
-            nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.#findHeader(focusedHeader, normalisedDirection)!;
         } else {
             normalisedDirection = 'After';
-            nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.#findHeader(focusedHeader, normalisedDirection)!;
         }
 
         const userFunc = gos.getCallback('tabToNextHeader');
@@ -238,14 +238,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             });
         }
 
-        return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
+        return this.#focusNextHeaderRow(focusedHeader, normalisedDirection, event);
     }
 
-    private focusNextHeaderRow(
-        focusedHeader: HeaderPosition,
-        direction: 'Before' | 'After',
-        event: KeyboardEvent
-    ): boolean {
+    #focusNextHeaderRow(focusedHeader: HeaderPosition, direction: 'Before' | 'After', event: KeyboardEvent): boolean {
         const beans = this.beans;
         const currentIndex = focusedHeader.headerRowIndex;
 
@@ -303,7 +299,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         this.gridBodyCon.scrollFeature.ensureColumnVisible(columnToScrollTo);
     }
 
-    private findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
+    #findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         const { visibleCols } = this.beans;
 
         let currentFocusedColumn = focusedHeader.column as AgColumn | AgColumnGroup;
@@ -351,7 +347,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         };
     }
 
-    private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
+    #getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
         const headerRowContainerCtrl = this.beans.ctrlsSvc.getHeaderRowContainerCtrl();
         if (headerRowContainerCtrl) {
             return headerRowContainerCtrl.getRowType(rowIndex);

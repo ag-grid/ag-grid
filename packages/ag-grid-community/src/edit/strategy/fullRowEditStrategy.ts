@@ -14,7 +14,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowNode?: IRowNode;
-    private readonly startedRows = new Set<IRowNode>();
+    readonly #startedRows = new Set<IRowNode>();
 
     public override shouldStop(
         position?: EditPosition,
@@ -57,7 +57,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override start(params: StartEditWithPositionParams): void {
         const { position, silent, startedEdit, event, ignoreEventKey } = params;
         const { rowNode } = position;
-        const { beans, model, startedRows } = this;
+        const { beans, model } = this;
+        const startedRows = this.#startedRows;
 
         if (this.rowNode !== rowNode) {
             super.cleanupEditors(position);
@@ -207,7 +208,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override releaseRows(rowNodes: Set<IRowNode>): void {
-        const { startedRows } = this;
+        const startedRows = this.#startedRows;
         for (const rowNode of rowNodes) {
             if (startedRows.delete(rowNode)) {
                 this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
@@ -225,10 +226,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     ): void {
         super.cleanupEditors(position, includeEditing, validationCache);
 
-        const { startedRows } = this;
+        const startedRows = this.#startedRows;
         for (const rowNode of startedRows) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
-            this.destroyEditorsForRow(rowNode, validationCache);
+            this.#destroyEditorsForRow(rowNode, validationCache);
         }
         startedRows.clear();
     }
@@ -237,7 +238,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
      * Destroys all editors for a row that started full row editing, including editors
      * that are not represented in the edit model (e.g. empty/unedited editors).
      */
-    private destroyEditorsForRow(rowNode: IRowNode, validationCache?: EditorValidationCache): void {
+    #destroyEditorsForRow(rowNode: IRowNode, validationCache?: EditorValidationCache): void {
         const rowCtrl = _getRowCtrl(this.beans, { rowNode });
         if (!rowCtrl) {
             return; // Row not rendered, no editors to destroy.
@@ -309,7 +310,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         // Restored editors join this same pass; otherwise their attachment revalidates every live sibling.
-        validationCache = this.restoreEditors(validationCache);
+        validationCache = this.#restoreEditors(validationCache);
 
         const suppressStartEditOnTab = gos.get('suppressStartEditOnTab');
 
@@ -376,7 +377,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    private restoreEditors(validationCache?: EditorValidationCache): EditorValidationCache | undefined {
+    #restoreEditors(validationCache?: EditorValidationCache): EditorValidationCache | undefined {
         const { beans, editSvc, model } = this;
         // check all cells that should have an editor have one - in the case of small viewports,
         // editors might have been destroyed along with their corresponding cellCtrl
@@ -406,6 +407,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override destroy(): void {
         super.destroy();
         this.rowNode = undefined;
-        this.startedRows.clear();
+        this.#startedRows.clear();
     }
 }

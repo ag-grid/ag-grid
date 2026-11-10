@@ -22,12 +22,15 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
 
     public rowNodes: RowNode[];
 
+    readonly #parentCache: InfiniteCache;
+
     constructor(
         public readonly id: number,
-        private readonly parentCache: InfiniteCache,
+        parentCache: InfiniteCache,
         private readonly params: InfiniteCacheParams
     ) {
         super();
+        this.#parentCache = parentCache;
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
@@ -37,7 +40,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
 
     public load(): void {
         this.state = 'loading';
-        this.loadFromDatasource();
+        this.#loadFromDatasource();
     }
 
     public setStateWaitingToLoad(): void {
@@ -46,8 +49,8 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         this.state = 'needsLoading';
     }
 
-    private pageLoadFailed(version: number) {
-        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+    #pageLoadFailed(version: number) {
+        const requestMostRecentAndLive = this.#isRequestMostRecentAndLive(version);
         if (requestMostRecentAndLive) {
             this.state = 'failed';
         }
@@ -55,11 +58,11 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         this.dispatchLocalEvent({ type: 'loadComplete' });
     }
 
-    private pageLoaded(version: number, rows: any[], lastRow: number) {
-        this.successCommon(version, { rowData: rows, rowCount: lastRow });
+    #pageLoaded(version: number, rows: any[], lastRow: number) {
+        this.#successCommon(version, { rowData: rows, rowCount: lastRow });
     }
 
-    private isRequestMostRecentAndLive(version: number): boolean {
+    #isRequestMostRecentAndLive(version: number): boolean {
         // thisIsMostRecentRequest - if block was refreshed, then another request
         // could of been sent after this one.
         const thisIsMostRecentRequest = version === this.version;
@@ -71,17 +74,17 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         return thisIsMostRecentRequest && weAreNotDestroyed;
     }
 
-    private successCommon(version: number, params: LoadSuccessParams) {
+    #successCommon(version: number, params: LoadSuccessParams) {
         // need to dispatch load complete before processing the data, as PaginationComp checks
         // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
         // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
         this.dispatchLocalEvent({ type: 'loadComplete' });
 
-        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        const requestMostRecentAndLive = this.#isRequestMostRecentAndLive(version);
 
         if (requestMostRecentAndLive) {
             this.state = 'loaded';
-            this.processServerResult(params);
+            this.#processServerResult(params);
         }
     }
 
@@ -121,7 +124,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         };
     }
 
-    private setDataAndId(rowNode: RowNode, data: any, index: number): void {
+    #setDataAndId(rowNode: RowNode, data: any, index: number): void {
         if (_exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
@@ -134,8 +137,8 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         this.beans.selectionSvc?.updateRowSelectable(rowNode);
     }
 
-    private loadFromDatasource(): void {
-        const params = this.createLoadParams();
+    #loadFromDatasource(): void {
+        const params = this.#createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
             this.warn(90);
             return;
@@ -147,7 +150,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         }, 0);
     }
 
-    private createLoadParams(): any {
+    #createLoadParams(): any {
         const {
             startRow,
             endRow,
@@ -162,8 +165,8 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         const params: IGetRowsParams = _addGridCommonParams(gos, {
             startRow,
             endRow,
-            successCallback: this.pageLoaded.bind(this, version),
-            failCallback: this.pageLoadFailed.bind(this, version),
+            successCallback: this.#pageLoaded.bind(this, version),
+            failCallback: this.#pageLoadFailed.bind(this, version),
             sortModel,
             filterModel,
         });
@@ -191,7 +194,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         return this.rowNodes[localIndex];
     }
 
-    private processServerResult(params: LoadSuccessParams): void {
+    #processServerResult(params: LoadSuccessParams): void {
         const { rowNodes, beans } = this;
         rowNodes.forEach((rowNode: RowNode, index: number) => {
             const data = params.rowData ? params.rowData[index] : undefined;
@@ -208,10 +211,10 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
                 // clean up the old row
                 rowNode._destroy(true);
             }
-            this.setDataAndId(rowNodes[index], data, this.startRow + index);
+            this.#setDataAndId(rowNodes[index], data, this.startRow + index);
         });
         const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
-        this.parentCache.pageLoaded(this, finalRowCount);
+        this.#parentCache.pageLoaded(this, finalRowCount);
     }
 
     public override destroy(): void {

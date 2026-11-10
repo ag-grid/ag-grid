@@ -24,21 +24,21 @@ export class Registry
     >
     implements NamedBean
 {
-    private agGridDefaults: { [key in UserComponentName]?: any } = {};
+    #agGridDefaults: { [key in UserComponentName]?: any } = {};
 
-    private agGridDefaultOverrides: {
+    #agGridDefaultOverrides: {
         [key in UserComponentName]?: { params?: any; processParams?: ProcessParamsFunc };
     } = {};
 
-    private jsComps: { [key: string]: any } = {};
+    #jsComps: { [key: string]: any } = {};
 
-    private selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
+    #selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
 
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
             for (const key of Object.keys(comps)) {
-                this.jsComps[key] = comps[key];
+                this.#jsComps[key] = comps[key];
             }
         }
     }
@@ -53,9 +53,9 @@ export class Registry
                 params?: any,
                 processParams?: ProcessParamsFunc
             ) => {
-                this.agGridDefaults[name] = component;
+                this.#agGridDefaults[name] = component;
                 if (params || processParams) {
-                    this.agGridDefaultOverrides[name] = { params, processParams };
+                    this.#agGridDefaultOverrides[name] = { params, processParams };
                 }
             };
             for (const name of Object.keys(userComponents) as UserComponentName[]) {
@@ -75,7 +75,7 @@ export class Registry
         this.registerDynamicBeans(dynamicBeans);
 
         for (const selector of selectors ?? []) {
-            this.selectors[selector.selector] = selector;
+            this.#selectors[selector.selector] = selector;
         }
     }
 
@@ -109,39 +109,39 @@ export class Registry
             return createResult(registeredViaFrameworkComp, true);
         }
 
-        const jsComponent = this.jsComps[name];
+        const jsComponent = this.#jsComps[name];
         if (jsComponent) {
             const isFwkComp = frameworkOverrides.isFrameworkComponent(jsComponent);
             return createResult(jsComponent, isFwkComp);
         }
 
-        const defaultComponent = this.agGridDefaults[name as UserComponentName];
+        const defaultComponent = this.#agGridDefaults[name as UserComponentName];
         if (defaultComponent) {
-            const overrides = this.agGridDefaultOverrides[name as UserComponentName];
+            const overrides = this.#agGridDefaultOverrides[name as UserComponentName];
             return createResult(defaultComponent, false, overrides?.params, overrides?.processParams);
         }
 
-        this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
+        this.beans.validation?.missingUserComponent(propertyName, name, this.#agGridDefaults, this.#jsComps);
         return null;
     }
 
     /** Whether `getUserComponent` finds `name`, reporting it the same way when it does not. */
     public hasUserComponent(propertyName: string, name: string): boolean {
         if (
-            this.jsComps[name] ||
-            this.agGridDefaults[name as UserComponentName] ||
+            this.#jsComps[name] ||
+            this.#agGridDefaults[name as UserComponentName] ||
             this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
         ) {
             return true;
         }
-        this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
+        this.beans.validation?.missingUserComponent(propertyName, name, this.#agGridDefaults, this.#jsComps);
         return false;
     }
 
     public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(
         name: AgComponentSelectorType
     ): ComponentSelector<TComponent> | undefined {
-        return this.selectors[name];
+        return this.#selectors[name];
     }
 
     protected override createDynamicError(name: DynamicBeanName, init: boolean): Error {

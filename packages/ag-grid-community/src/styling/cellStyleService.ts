@@ -28,7 +28,7 @@ export class CellStyleService extends BeanStub implements NamedBean {
             onApplicableClass,
             onNotApplicableClass
         );
-        this.processStaticCellClasses(colDef, params, onApplicableClass);
+        this.#processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
     public getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[] {
@@ -70,11 +70,7 @@ export class CellStyleService extends BeanStub implements NamedBean {
         _applyCellClassRules(this.beans, cellCtrl);
     }
 
-    private processStaticCellClasses(
-        colDef: ColDef,
-        params: CellClassParams,
-        onApplicableClass: (className: string) => void
-    ) {
+    #processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
         const classOrClasses = this.getStaticCellClasses(colDef, params);
 
         classOrClasses.forEach((cssClassItem: string) => {

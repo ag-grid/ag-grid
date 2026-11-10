@@ -47,9 +47,9 @@ export class AgInputTextField<
     TConfig,
     AgInputTextFieldEvent | TEventType
 > {
-    private eClearButton: HTMLButtonElement | undefined;
-    private eSearchIcon: HTMLElement | undefined;
-    private clearButtonEnabled: boolean = false;
+    #eClearButton: HTMLButtonElement | undefined;
+    #eSearchIcon: HTMLElement | undefined;
+    #clearButtonEnabled: boolean = false;
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
@@ -69,12 +69,12 @@ export class AgInputTextField<
         if (searchIcon) {
             this.setSearchIcon(true);
         }
-        this.addManagedPropertyListener('suppressInputClearButton', () => this.refreshClearButton());
+        this.addManagedPropertyListener('suppressInputClearButton', () => this.#refreshClearButton());
     }
 
     public override setInputType(inputType?: string): void {
         super.setInputType(inputType);
-        this.refreshClearButton();
+        this.#refreshClearButton();
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
@@ -83,17 +83,17 @@ export class AgInputTextField<
         if (eInput.value !== value) {
             eInput.value = _exists(value) ? value : '';
         }
-        this.refreshClearButton();
+        this.#refreshClearButton();
 
         return super.setValue(value, silent);
     }
 
     public setClearButtonEnabled(enabled: boolean): this {
-        this.clearButtonEnabled = enabled;
-        if (enabled && !this.eClearButton) {
-            this.createClearButton();
+        this.#clearButtonEnabled = enabled;
+        if (enabled && !this.#eClearButton) {
+            this.#createClearButton();
         }
-        this.refreshClearButton();
+        this.#refreshClearButton();
         return this;
     }
 
@@ -104,10 +104,10 @@ export class AgInputTextField<
 
     public setSearchIcon(searchIcon: boolean): this {
         this.toggleCss('ag-input-field-search', searchIcon);
-        if (searchIcon && !this.eSearchIcon) {
-            this.createSearchIcon();
+        if (searchIcon && !this.#eSearchIcon) {
+            this.#createSearchIcon();
         }
-        const { eSearchIcon } = this;
+        const eSearchIcon = this.#eSearchIcon;
         if (eSearchIcon) {
             // decorative: it stays aria-hidden whether or not it is displayed
             _setDisplayed(eSearchIcon, searchIcon, { skipAriaHidden: true });
@@ -123,7 +123,7 @@ export class AgInputTextField<
 
     public override setDisabled(disabled: boolean): this {
         super.setDisabled(disabled);
-        this.refreshClearButton();
+        this.#refreshClearButton();
         return this;
     }
 
@@ -146,7 +146,7 @@ export class AgInputTextField<
         _setAriaInvalid(eInput, isInvalid);
     }
 
-    private clearInput(): void {
+    #clearInput(): void {
         const { eInput } = this;
         eInput.focus();
         if (!eInput.value) {
@@ -158,7 +158,7 @@ export class AgInputTextField<
         this.dispatchLocalEvent({ type: 'fieldValueCleared' });
     }
 
-    private createClearButton(): void {
+    #createClearButton(): void {
         const eClearButton = _createAgElement<HTMLButtonElement>({
             tag: 'button',
             cls: 'ag-input-field-clear-button',
@@ -172,13 +172,13 @@ export class AgInputTextField<
         _setAriaLabel(eClearButton, this.getLocaleTextFunc()('ariaLabelInputClear', 'Clear'));
         _addManagedElementListeners(this, eClearButton, {
             mousedown: (event: MouseEvent) => event.preventDefault(),
-            click: () => this.clearInput(),
+            click: () => this.#clearInput(),
         });
         this.eWrapper.appendChild(eClearButton);
-        this.eClearButton = eClearButton;
+        this.#eClearButton = eClearButton;
     }
 
-    private createSearchIcon(): void {
+    #createSearchIcon(): void {
         const eIcon = this.beans.iconSvc.createIconNoSpan('search');
         if (!eIcon) {
             return;
@@ -191,16 +191,17 @@ export class AgInputTextField<
         eSearchIcon.appendChild(eIcon);
         // the search icon leads the input; the clear button trails it
         this.eWrapper.insertBefore(eSearchIcon, this.eWrapper.firstChild);
-        this.eSearchIcon = eSearchIcon;
+        this.#eSearchIcon = eSearchIcon;
     }
 
-    private refreshClearButton(): void {
-        const { eClearButton, eInput } = this;
+    #refreshClearButton(): void {
+        const { eInput } = this;
+        const eClearButton = this.#eClearButton;
         if (!eClearButton || !eInput) {
             return;
         }
         const supportsClearButton =
-            this.clearButtonEnabled &&
+            this.#clearButtonEnabled &&
             !this.gos.get('suppressInputClearButton') &&
             CUSTOM_CLEAR_BUTTON_INPUT_TYPES.has(eInput.type);
 

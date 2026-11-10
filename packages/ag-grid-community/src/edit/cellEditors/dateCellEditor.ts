@@ -23,10 +23,14 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
+    readonly #getDataTypeService: () => DataTypeService | undefined;
+
     constructor(
-        private readonly getDataTypeService: () => DataTypeService | undefined,
+        getDataTypeService: () => DataTypeService | undefined,
         private readonly getLocaleTextFunc: () => LocaleTextFunc
-    ) {}
+    ) {
+        this.#getDataTypeService = getDataTypeService;
+    }
 
     public getTemplate(): ElementParams {
         return DateCellElement;
@@ -56,7 +60,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
             eEditor.setStep(step);
         }
         this.includeTime =
-            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+            params.includeTime ?? this.#getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
         if (this.includeTime != null) {
             eEditor.setIncludeTime(this.includeTime);
         }
@@ -69,7 +73,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
 
         const { params } = this;
         const { getValidationErrors } = params;
-        const internalErrors = this.getInternalValidationErrors(value);
+        const internalErrors = this.#getInternalValidationErrors(value);
 
         if (getValidationErrors) {
             const graded = untouched ? params.value : value;
@@ -79,7 +83,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return internalErrors;
     }
 
-    private getInternalValidationErrors(date: Date | null): string[] | null {
+    #getInternalValidationErrors(date: Date | null): string[] | null {
         if (!date) {
             return null;
         }

@@ -17,9 +17,9 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     private eEditor: GridInputNumberField;
     private params: INumberCellEditorParams;
     /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
-    private cachedRaw: unknown = this;
+    #cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
-    private cachedParsed: number | null | undefined;
+    #cachedParsed: number | null | undefined;
 
     constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
@@ -52,7 +52,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         const editorEl = eEditor.getInputElement();
         if (params.preventStepping) {
-            _addManagedElementListeners(eEditor, editorEl, { keydown: this.preventStepping });
+            _addManagedElementListeners(eEditor, editorEl, { keydown: this.#preventStepping });
         } else if (params.showStepperButtons) {
             editorEl.classList.add('ag-number-field-input-stepper');
         }
@@ -88,7 +88,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         if (getValidationErrors) {
             return getValidationErrors({
-                value: untouched ? params.value : this.parseRaw(this.eEditor.getValue(true)),
+                value: untouched ? params.value : this.#parseRaw(this.eEditor.getValue(true)),
                 cellEditorParams: params,
                 internalErrors,
             });
@@ -97,23 +97,23 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return internalErrors;
     }
 
-    private preventStepping(e: KeyboardEvent): void {
+    #preventStepping(e: KeyboardEvent): void {
         if (e.key === KeyCode.UP || e.key === KeyCode.DOWN) {
             e.preventDefault();
         }
     }
 
     public getValue(): number | null | undefined {
-        return this.parseRaw(this.eEditor.getValue(true));
+        return this.#parseRaw(this.eEditor.getValue(true));
     }
 
-    private parseRaw(value: string | null | undefined): number | null | undefined {
+    #parseRaw(value: string | null | undefined): number | null | undefined {
         const { params } = this;
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
-        if (Object.is(this.cachedRaw, value)) {
-            return this.cachedParsed;
+        if (Object.is(this.#cachedRaw, value)) {
+            return this.#cachedParsed;
         }
         const parsedValue = params.parseValue(value!);
         let result: number | null | undefined;
@@ -129,8 +129,8 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         } else {
             result = Number.isNaN(parsedValue) ? null : parsedValue;
         }
-        this.cachedRaw = value;
-        this.cachedParsed = result;
+        this.#cachedRaw = value;
+        this.#cachedParsed = result;
         return result;
     }
 

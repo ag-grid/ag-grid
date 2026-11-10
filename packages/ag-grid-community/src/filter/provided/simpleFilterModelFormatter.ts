@@ -36,13 +36,16 @@ export abstract class SimpleFilterModelFormatter<
 > extends BeanStub {
     protected abstract readonly filterTypeKeys: TKeys;
 
+    #optionsFactory: OptionsFactory;
+
     constructor(
-        private optionsFactory: OptionsFactory,
+        optionsFactory: OptionsFactory,
         protected filterParams: TFilterParams,
         /** Named so a `numberFormatter` shared across columns can tell which one it is rendering. */
         protected readonly column: Column
     ) {
         super();
+        this.#optionsFactory = optionsFactory;
     }
 
     /** Read per call, so a `colDef` refresh that replaces the formatter reaches the summary. */
@@ -72,7 +75,7 @@ export abstract class SimpleFilterModelFormatter<
                 : translate(model.type, model.type);
         } else {
             const condition = model;
-            const customOption = this.optionsFactory.getCustomOption(condition.type);
+            const customOption = this.#optionsFactory.getCustomOption(condition.type);
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
@@ -101,7 +104,7 @@ export abstract class SimpleFilterModelFormatter<
 
     public updateParams(params: { optionsFactory: OptionsFactory; filterParams: TFilterParams }) {
         const { optionsFactory, filterParams } = params;
-        this.optionsFactory = optionsFactory;
+        this.#optionsFactory = optionsFactory;
         this.filterParams = filterParams;
     }
 

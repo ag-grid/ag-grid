@@ -24,9 +24,9 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
     // we don't fire back any events.
-    private consuming = false;
+    #consuming = false;
 
-    private getAlignedGridApis(): GridApi[] {
+    #getAlignedGridApis(): GridApi[] {
         let alignedGrids = this.gos.get('alignedGrids') ?? [];
         const isCallbackConfig = typeof alignedGrids === 'function';
         if (typeof alignedGrids === 'function') {
@@ -41,7 +41,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     }
                     return;
                 }
-                if (this.isGridApi(alignedGrid)) {
+                if (this.#isGridApi(alignedGrid)) {
                     return alignedGrid;
                 }
                 // Extract the GridApi from a ref or component
@@ -60,21 +60,21 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         return apis as GridApi[];
     }
 
-    private isGridApi(ref: AlignedGrid): ref is GridApi {
+    #isGridApi(ref: AlignedGrid): ref is GridApi {
         return !!ref && !!(ref as GridApi).dispatchEvent;
     }
 
     public postConstruct(): void {
-        const fireColumnEvent = this.fireColumnEvent.bind(this);
+        const fireColumnEvent = this.#fireColumnEvent.bind(this);
         this.addManagedEventListeners({
             columnMoved: fireColumnEvent,
             columnVisible: fireColumnEvent,
             columnPinned: fireColumnEvent,
             columnGroupOpened: fireColumnEvent,
             columnResized: fireColumnEvent,
-            bodyScroll: this.fireScrollEvent.bind(this),
+            bodyScroll: this.#fireScrollEvent.bind(this),
             alignedGridColumn: ({ event }) => this.onColumnEvent(event),
-            alignedGridScroll: ({ event }) => this.onScrollEvent(event),
+            alignedGridScroll: ({ event }) => this.#onScrollEvent(event),
         });
     }
 
@@ -82,11 +82,11 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     private fireEvent(event: WithoutGridCommon<AlignedGridColumnEvent | AlignedGridScrollEvent>): void {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
-        if (this.consuming) {
+        if (this.#consuming) {
             return;
         }
 
-        for (const api of this.getAlignedGridApis()) {
+        for (const api of this.#getAlignedGridApis()) {
             if (api.isDestroyed()) {
                 continue;
             }
@@ -96,20 +96,20 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
     // common logic across all consume methods. very little common logic, however extracting
     // guarantees consistency across the methods.
-    private onEvent(callback: () => void): void {
-        this.consuming = true;
+    #onEvent(callback: () => void): void {
+        this.#consuming = true;
         callback();
-        this.consuming = false;
+        this.#consuming = false;
     }
 
-    private fireColumnEvent(columnEvent: ColumnEvent | ColumnGroupOpenedEvent): void {
+    #fireColumnEvent(columnEvent: ColumnEvent | ColumnGroupOpenedEvent): void {
         this.fireEvent({
             type: 'alignedGridColumn',
             event: columnEvent,
         });
     }
 
-    private fireScrollEvent(scrollEvent: BodyScrollEvent): void {
+    #fireScrollEvent(scrollEvent: BodyScrollEvent): void {
         if (scrollEvent.direction !== 'horizontal') {
             return;
         }
@@ -119,24 +119,24 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         });
     }
 
-    private onScrollEvent(event: BodyScrollEvent): void {
-        this.onEvent(() => {
+    #onScrollEvent(event: BodyScrollEvent): void {
+        this.#onEvent(() => {
             this.beans.ctrlsSvc.getScrollFeature().setHorizontalScrollPosition(event.left, true);
         });
     }
 
     public onColumnEvent(event: AgEvent): void {
-        this.onEvent(() => {
+        this.#onEvent(() => {
             switch (event.type) {
                 case 'columnMoved':
                 case 'columnVisible':
                 case 'columnPinned':
                 case 'columnResized': {
-                    this.processColumnEvent(event as ColumnEvent);
+                    this.#processColumnEvent(event as ColumnEvent);
                     break;
                 }
                 case 'columnGroupOpened': {
-                    this.processGroupOpenedEvent(event as ColumnGroupOpenedEvent);
+                    this.#processGroupOpenedEvent(event as ColumnGroupOpenedEvent);
                     break;
                 }
                 case 'columnPivotChanged':
@@ -148,7 +148,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         });
     }
 
-    private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
+    #processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         const beans = this.beans;
         const colsGroupsById = beans.colModel.colsGroupsById;
         for (const masterGroup of groupOpenedEvent.columnGroups) {
@@ -167,7 +167,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         }
     }
 
-    private processColumnEvent(colEvent: ColumnEvent): void {
+    #processColumnEvent(colEvent: ColumnEvent): void {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
@@ -262,7 +262,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             }
         }
         const isVerticalScrollShowing = scrollVisibleSvc.isVerticalScrollShowing();
-        for (const api of this.getAlignedGridApis()) {
+        for (const api of this.#getAlignedGridApis()) {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
         }
     }

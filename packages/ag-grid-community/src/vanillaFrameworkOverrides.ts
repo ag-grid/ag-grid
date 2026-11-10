@@ -14,11 +14,14 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     public readonly renderingEngine: 'vanilla' | 'react' = 'vanilla';
     public readonly batchFrameworkComps: boolean = false;
     public readonly usesAgGridProvider: boolean | undefined = undefined;
-    private readonly baseDocLink: string;
+    readonly #baseDocLink: string;
 
-    constructor(private readonly frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {
-        this.baseDocLink = `${BASE_URL}/${this.frameworkName}-data-grid`;
-        setValidationDocLink(this.baseDocLink);
+    readonly #frameworkName: 'javascript' | 'angular' | 'react' | 'vue';
+
+    constructor(frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {
+        this.#frameworkName = frameworkName;
+        this.#baseDocLink = `${BASE_URL}/${this.#frameworkName}-data-grid`;
+        setValidationDocLink(this.#baseDocLink);
     }
 
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = runCallback;
@@ -33,6 +36,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
 
     getDocLink(path?: string): string {
-        return this.baseDocLink + (path ? '/' + path : '');
+        return this.#baseDocLink + (path ? '/' + path : '');
     }
 }

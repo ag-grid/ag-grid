@@ -21,9 +21,9 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
     private eEditor: GridInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
     /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
-    private cachedRaw: unknown = this;
+    #cachedRaw: unknown = this;
     /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
-    private cachedParsed: TValue | null | undefined;
+    #cachedParsed: TValue | null | undefined;
 
     constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
@@ -80,12 +80,12 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
-        if (Object.is(this.cachedRaw, value)) {
-            return this.cachedParsed;
+        if (Object.is(this.#cachedRaw, value)) {
+            return this.#cachedParsed;
         }
         const parsed = params.parseValue(value!);
-        this.cachedRaw = value;
-        this.cachedParsed = parsed;
+        this.#cachedRaw = value;
+        this.#cachedParsed = parsed;
         return parsed;
     }
 

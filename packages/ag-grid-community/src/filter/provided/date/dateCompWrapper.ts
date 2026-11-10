@@ -26,32 +26,35 @@ const REPORT_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 500;
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
-    private dateComp: IDateComp | null | undefined;
+    #dateComp: IDateComp | null | undefined;
     private tempValue: Date | null;
     private disabled: boolean | null;
-    private alive = true;
-    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, REPORT_DEBOUNCE);
-    private timeoutHandle: ReturnType<typeof setTimeout> | null = null;
-    private lastValidityMessage: string | null = null;
+    #alive = true;
+    readonly #debouncedReport = _debounce({ isAlive: () => this.#alive }, reportValidity, REPORT_DEBOUNCE);
+    #timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+    #lastValidityMessage: string | null = null;
+
+    readonly #eParent: HTMLElement;
 
     constructor(
         private readonly context: Context,
         userCompFactory: UserComponentFactory,
         colDef: ColDef,
         dateComponentParams: IDateParams,
-        private readonly eParent: HTMLElement,
+        eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {
+        this.#eParent = eParent;
         const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
 
         compDetails?.newAgStackInstance().then((dateComp) => {
             // because async, check the filter still exists after component comes back
-            if (!this.alive) {
+            if (!this.#alive) {
                 context.destroyBean(dateComp);
                 return;
             }
 
-            this.dateComp = dateComp;
+            this.#dateComp = dateComp;
 
             if (!dateComp) {
                 return;
@@ -74,16 +77,16 @@ export class DateCompWrapper {
     }
 
     public destroy(): void {
-        this.alive = false;
-        this.dateComp = this.context.destroyBean(this.dateComp);
+        this.#alive = false;
+        this.#dateComp = this.context.destroyBean(this.#dateComp);
     }
 
     public getDate(): Date | null {
-        return this.dateComp ? this.dateComp.getDate() : this.tempValue;
+        return this.#dateComp ? this.#dateComp.getDate() : this.tempValue;
     }
 
     public setDate(value: Date | null): void {
-        const dateComp = this.dateComp;
+        const dateComp = this.#dateComp;
         if (dateComp) {
             dateComp.setDate(value);
         } else {
@@ -92,7 +95,7 @@ export class DateCompWrapper {
     }
 
     public setDisabled(disabled: boolean): void {
-        const dateComp = this.dateComp;
+        const dateComp = this.#dateComp;
         if (dateComp) {
             dateComp.setDisabled?.(disabled);
         } else {
@@ -101,32 +104,32 @@ export class DateCompWrapper {
     }
 
     public setDisplayed(displayed: boolean) {
-        _setDisplayed(this.eParent, displayed);
+        _setDisplayed(this.#eParent, displayed);
     }
 
     public setInputPlaceholder(placeholder: string): void {
-        this.dateComp?.setInputPlaceholder?.(placeholder);
+        this.#dateComp?.setInputPlaceholder?.(placeholder);
     }
 
     public setInputAriaLabel(label: string): void {
-        this.dateComp?.setInputAriaLabel?.(label);
+        this.#dateComp?.setInputAriaLabel?.(label);
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        this.dateComp?.afterGuiAttached?.(params);
+        this.#dateComp?.afterGuiAttached?.(params);
     }
 
     public updateParams(params: IDateParams): void {
-        this.dateComp?.refresh?.(params);
+        this.#dateComp?.refresh?.(params);
     }
 
     public setCustomValidity(message: string, reportMode: ValidationReportMode = 'immediate'): void {
-        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
+        const eInput = this.#dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
             const isInvalid = message.length > 0;
-            const messageChanged = message !== this.lastValidityMessage;
-            this.lastValidityMessage = message;
+            const messageChanged = message !== this.#lastValidityMessage;
+            this.#lastValidityMessage = message;
             eInput.setCustomValidity(message);
 
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
@@ -136,10 +139,10 @@ export class DateCompWrapper {
                 if (reportMode === 'immediate') {
                     reportValidity(eInput);
                 } else if (reportMode === 'debounce' || messageChanged) {
-                    this.timeoutHandle = this.debouncedReport(eInput);
+                    this.#timeoutHandle = this.#debouncedReport(eInput);
                 }
-            } else if (this.timeoutHandle) {
-                clearTimeout(this.timeoutHandle);
+            } else if (this.#timeoutHandle) {
+                clearTimeout(this.#timeoutHandle);
             }
 
             _setAriaInvalid(eInput, isInvalid);
@@ -147,7 +150,7 @@ export class DateCompWrapper {
     }
 
     public getValidity(): ValidityState | undefined {
-        return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
+        return this.#dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
 }
 

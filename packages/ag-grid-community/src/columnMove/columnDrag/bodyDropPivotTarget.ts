@@ -5,9 +5,9 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
-    private readonly columnsToAggregate: AgColumn[] = [];
-    private readonly columnsToGroup: AgColumn[] = [];
-    private readonly columnsToPivot: AgColumn[] = [];
+    readonly #columnsToAggregate: AgColumn[] = [];
+    readonly #columnsToGroup: AgColumn[] = [];
+    readonly #columnsToPivot: AgColumn[] = [];
 
     constructor(private readonly pinned: ColumnPinnedType) {
         super();
@@ -15,7 +15,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
 
     /** Callback for when drag enters */
     public onDragEnter(draggingEvent: GridDraggingEvent): void {
-        this.clearColumnsList();
+        this.#clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gos.get('functionsReadOnly')) {
@@ -39,17 +39,18 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             }
 
             if (column.isAllowValue()) {
-                this.columnsToAggregate.push(column);
+                this.#columnsToAggregate.push(column);
             } else if (column.isAllowRowGroup()) {
-                this.columnsToGroup.push(column);
+                this.#columnsToGroup.push(column);
             } else if (column.isAllowPivot()) {
-                this.columnsToPivot.push(column);
+                this.#columnsToPivot.push(column);
             }
         }
     }
 
     public getIconName(): DragAndDropIcon | null {
-        const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
+        const totalColumns =
+            this.#columnsToAggregate.length + this.#columnsToGroup.length + this.#columnsToPivot.length;
         if (totalColumns > 0) {
             return this.pinned ? 'pinned' : 'move';
         }
@@ -60,13 +61,13 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     /** Callback for when drag leaves */
     public onDragLeave(_draggingEvent: GridDraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
-        this.clearColumnsList();
+        this.#clearColumnsList();
     }
 
-    private clearColumnsList(): void {
-        this.columnsToAggregate.length = 0;
-        this.columnsToGroup.length = 0;
-        this.columnsToPivot.length = 0;
+    #clearColumnsList(): void {
+        this.#columnsToAggregate.length = 0;
+        this.#columnsToGroup.length = 0;
+        this.#columnsToPivot.length = 0;
     }
 
     /** Callback for when dragging */
@@ -77,14 +78,14 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         const { colModel, valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
         colModel.beginColUpdate();
         try {
-            if (this.columnsToAggregate.length > 0) {
-                valueColsSvc?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
+            if (this.#columnsToAggregate.length > 0) {
+                valueColsSvc?.addColumns(this.#columnsToAggregate, 'toolPanelDragAndDrop');
             }
-            if (this.columnsToGroup.length > 0) {
-                rowGroupColsSvc?.addColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
+            if (this.#columnsToGroup.length > 0) {
+                rowGroupColsSvc?.addColumns(this.#columnsToGroup, 'toolPanelDragAndDrop');
             }
-            if (this.columnsToPivot.length > 0) {
-                pivotColsSvc?.addColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
+            if (this.#columnsToPivot.length > 0) {
+                pivotColsSvc?.addColumns(this.#columnsToPivot, 'toolPanelDragAndDrop');
             }
         } finally {
             colModel.endColUpdate();
@@ -92,6 +93,6 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     public onDragCancel(): void {
-        this.clearColumnsList();
+        this.#clearColumnsList();
     }
 }

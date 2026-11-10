@@ -38,10 +38,10 @@ function getColumnDropAreaName(columnDrop: Element): string | undefined {
 export class TestIdService extends BeanStub implements NamedBean, ITestIdService {
     beanName: BeanName = 'testIdSvc';
 
-    private headerObserver?: MutationObserver;
-    private observedHeader?: Element;
-    private popupObserver?: MutationObserver;
-    private observedPopupParent?: Element;
+    #headerObserver?: MutationObserver;
+    #observedHeader?: Element;
+    #popupObserver?: MutationObserver;
+    #observedPopupParent?: Element;
 
     public postConstruct(): void {
         // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
@@ -100,36 +100,36 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         // `api.refreshHeader()` throws away the header rows and builds new ones, which drops every
         // test ID stamped on the old header DOM. No grid event reports that, so the replacement is
         // watched for in the DOM instead - the same approach as the scroll listener above.
-        this.headerObserver = new MutationObserver(setup);
-        this.addDestroyFunc(() => this.headerObserver?.disconnect());
+        this.#headerObserver = new MutationObserver(setup);
+        this.addDestroyFunc(() => this.#headerObserver?.disconnect());
 
         // Menus opened without a grid event (tool panel context menu, hover-opened sub menus) are still popups.
-        this.popupObserver = new MutationObserver(setup);
-        this.addDestroyFunc(() => this.popupObserver?.disconnect());
+        this.#popupObserver = new MutationObserver(setup);
+        this.addDestroyFunc(() => this.#popupObserver?.disconnect());
     }
 
     /** Watch the popup parent for popups being added. Called on every stamping pass, as `popupParent` can change. */
-    private observePopupParent(): void {
+    #observePopupParent(): void {
         const popupParent = this.beans.popupSvc?.getPopupParent();
-        if (!popupParent || popupParent === this.observedPopupParent) {
+        if (!popupParent || popupParent === this.#observedPopupParent) {
             return;
         }
         // Child list only, so the attributes stamped on a popup's contents cannot re-trigger this.
-        this.popupObserver?.disconnect();
-        this.popupObserver?.observe(popupParent, { childList: true });
-        this.observedPopupParent = popupParent;
+        this.#popupObserver?.disconnect();
+        this.#popupObserver?.observe(popupParent, { childList: true });
+        this.#observedPopupParent = popupParent;
     }
 
     /** Watch this grid's own header for rows being replaced. Called as the header is first stamped. */
-    private observeHeader(gridWrapper: Element | null): void {
+    #observeHeader(gridWrapper: Element | null): void {
         const header = gridWrapper?.querySelector('.ag-header');
-        if (!header || header === this.observedHeader) {
+        if (!header || header === this.#observedHeader) {
             return;
         }
         // Only child lists are observed, so the attributes stamped below cannot re-trigger this.
-        this.headerObserver?.disconnect();
-        this.headerObserver?.observe(header, { childList: true, subtree: true });
-        this.observedHeader = header;
+        this.#headerObserver?.disconnect();
+        this.#headerObserver?.observe(header, { childList: true, subtree: true });
+        this.#observedHeader = header;
     }
 
     public setupAllTestIds(): void {
@@ -141,8 +141,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         const gridWrapper = root.querySelector(`[grid-id="${gridId}"]`);
         setTestId(gridWrapper, agTestIdFor.grid(gridId));
 
-        this.observeHeader(gridWrapper);
-        this.observePopupParent();
+        this.#observeHeader(gridWrapper);
+        this.#observePopupParent();
 
         /** Headers */
 
@@ -167,7 +167,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
             setTestId(cell.querySelector('.ag-floating-filter-button button'), agTestIdFor.floatingFilterButton(colId));
 
-            this.setupFilterInstance(cell.querySelector('.ag-floating-filter-body'), {
+            this.#setupFilterInstance(cell.querySelector('.ag-floating-filter-body'), {
                 source: 'floating-filter',
                 colId,
             });
@@ -176,7 +176,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         /** Column Filter */
 
         const filterMenu = root.querySelector('.ag-filter-menu');
-        this.setupFilterInstance(filterMenu, { source: 'column-filter' });
+        this.#setupFilterInstance(filterMenu, { source: 'column-filter' });
 
         /** Advanced Filter */
 
@@ -306,7 +306,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     });
                 });
 
-                this.setupColumnDropArea(panel, 'toolbar');
+                this.#setupColumnDropArea(panel, 'toolbar');
             });
 
             /** Filter Tool Panel (New) */
@@ -328,7 +328,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     filterCard
                         .querySelectorAll('.ag-filter')
                         .forEach((filter) =>
-                            this.setupFilterInstance(filter, { source: 'filter-toolpanel', colLabel })
+                            this.#setupFilterInstance(filter, { source: 'filter-toolpanel', colLabel })
                         );
                 });
             });
@@ -353,7 +353,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
                     const filterRoot = group.querySelector('.ag-filter-toolpanel-instance-filter');
                     if (filterRoot) {
-                        this.setupFilterInstance(filterRoot, { source: 'filter-toolpanel', colLabel: title });
+                        this.#setupFilterInstance(filterRoot, { source: 'filter-toolpanel', colLabel: title });
                     }
                 });
             });
@@ -489,11 +489,11 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         const rowGroupPanelWrapper = root.querySelector('.ag-column-drop-wrapper');
         if (rowGroupPanelWrapper) {
-            this.setupColumnDropArea(rowGroupPanelWrapper, 'panel');
+            this.#setupColumnDropArea(rowGroupPanelWrapper, 'panel');
         }
     }
 
-    private setupFilterInstance(filterRoot: Element | null, spec: FilterSpec): void {
+    #setupFilterInstance(filterRoot: Element | null, spec: FilterSpec): void {
         if (!filterRoot) {
             return;
         }
@@ -552,7 +552,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         });
     }
 
-    private setupColumnDropArea(root: Element, source: 'panel' | 'toolbar'): void {
+    #setupColumnDropArea(root: Element, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
             const dropAreaName = getColumnDropAreaName(columnDrop);
             setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));

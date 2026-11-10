@@ -10,28 +10,28 @@ type RowNodeBlockLoaderEvent = 'blockLoaded';
 export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implements NamedBean {
     beanName = 'rowNodeBlockLoader' as const;
 
-    private maxConcurrentRequests: number | undefined;
-    private checkBlockToLoadDebounce: () => void;
+    #maxConcurrentRequests: number | undefined;
+    #checkBlockToLoadDebounce?: () => void;
 
-    private activeBlockLoadsCount = 0;
-    private readonly blocks: InfiniteBlock[] = [];
+    #activeBlockLoadsCount = 0;
+    readonly #blocks: InfiniteBlock[] = [];
     private active = true;
 
     public postConstruct(): void {
-        this.maxConcurrentRequests = _getMaxConcurrentDatasourceRequests(this.gos);
+        this.#maxConcurrentRequests = _getMaxConcurrentDatasourceRequests(this.gos);
         const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _debounce(
+            this.#checkBlockToLoadDebounce = _debounce(
                 this,
-                this.performCheckBlocksToLoad.bind(this),
+                this.#performCheckBlocksToLoad.bind(this),
                 blockLoadDebounceMillis
             );
         }
     }
 
     public addBlock(block: InfiniteBlock): void {
-        this.blocks.push(block);
+        this.#blocks.push(block);
 
         // note that we do not remove this listener when removing the block. this is because the
         // cache can get destroyed (and containing blocks) when a block is loading. however the loading block
@@ -42,7 +42,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     }
 
     public removeBlock(block: InfiniteBlock): void {
-        _removeFromArray(this.blocks, block);
+        _removeFromArray(this.#blocks, block);
     }
 
     public override destroy(): void {
@@ -51,55 +51,55 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     }
 
     private loadComplete(): void {
-        this.activeBlockLoadsCount--;
+        this.#activeBlockLoadsCount--;
         this.checkBlockToLoad();
     }
 
     public checkBlockToLoad(): void {
-        if (this.checkBlockToLoadDebounce) {
-            this.checkBlockToLoadDebounce();
+        if (this.#checkBlockToLoadDebounce) {
+            this.#checkBlockToLoadDebounce();
         } else {
-            this.performCheckBlocksToLoad();
+            this.#performCheckBlocksToLoad();
         }
     }
 
-    private performCheckBlocksToLoad(): void {
+    #performCheckBlocksToLoad(): void {
         if (!this.active) {
             return;
         }
 
-        this.printCacheStatus();
+        this.#printCacheStatus();
 
-        if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
+        if (this.#maxConcurrentRequests != null && this.#activeBlockLoadsCount >= this.#maxConcurrentRequests) {
             _logIfDebug(this.gos, `RowNodeBlockLoader - checkBlockToLoad: max loads exceeded`);
             return;
         }
 
         const loadAvailability =
-            this.maxConcurrentRequests != null ? this.maxConcurrentRequests - this.activeBlockLoadsCount : 1;
-        const blocksToLoad: InfiniteBlock[] = this.blocks
+            this.#maxConcurrentRequests != null ? this.#maxConcurrentRequests - this.#activeBlockLoadsCount : 1;
+        const blocksToLoad: InfiniteBlock[] = this.#blocks
             .filter((block) => block.state === 'needsLoading')
             .slice(0, loadAvailability);
-        this.activeBlockLoadsCount += blocksToLoad.length;
+        this.#activeBlockLoadsCount += blocksToLoad.length;
         for (const block of blocksToLoad) {
             block.load();
         }
-        this.printCacheStatus();
+        this.#printCacheStatus();
     }
 
     public getBlockState() {
         const result: { [key: string]: any } = {};
-        this.blocks.forEach((block: InfiniteBlock) => {
+        this.#blocks.forEach((block: InfiniteBlock) => {
             const { id, state } = block.getBlockStateJson();
             result[id] = state;
         });
         return result;
     }
 
-    private printCacheStatus(): void {
+    #printCacheStatus(): void {
         _logIfDebug(
             this.gos,
-            `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
+            `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.#activeBlockLoadsCount},` +
                 ` blocks = ${JSON.stringify(this.getBlockState())}`
         );
     }

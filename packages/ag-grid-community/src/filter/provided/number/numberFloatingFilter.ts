@@ -21,32 +21,35 @@ import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern, processNumberFilterValue, stringToFloat, usesTextInput } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
-    private eTextInput: GridInputTextField;
-    private eNumberInput: GridInputNumberField;
+    #eTextInput: GridInputTextField;
+    #eNumberInput: GridInputNumberField;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
-    private onValueCleared: () => void = () => {};
+    #onValueCleared: () => void = () => {};
 
-    private numberInputActive = true;
+    #numberInputActive = true;
 
     /** Matches the text service: a hook, so the guard is imported by the filters that offer it. */
-    constructor(private readonly onInputCreated?: (field: GridInputNumberField) => void) {
+    readonly #onInputCreated?: (field: GridInputNumberField) => void;
+
+    constructor(onInputCreated?: (field: GridInputNumberField) => void) {
         super();
+        this.#onInputCreated = onInputCreated;
     }
 
     public setupGui(parentElement: HTMLElement): void {
         const numberField = this.createManagedBean<GridInputNumberField>(
             new AgInputNumberField({
                 clearButton: true,
-                onValueClear: () => this.onValueCleared(),
+                onValueClear: () => this.#onValueCleared(),
             })
         );
-        this.eNumberInput = numberField;
-        this.onInputCreated?.(numberField);
+        this.#eNumberInput = numberField;
+        this.#onInputCreated?.(numberField);
 
         const textField = this.createManagedBean<GridInputTextField>(
-            new AgInputTextField({ clearButton: true, onValueClear: () => this.onValueCleared() })
+            new AgInputTextField({ clearButton: true, onValueClear: () => this.#onValueCleared() })
         );
-        this.eTextInput = textField;
+        this.#eTextInput = textField;
         // Never typed into: it stands in for the number input while the filter is not editable.
         textField.setDisabled(true);
 
@@ -61,34 +64,34 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 
     public setEditable(editable: boolean): void {
-        this.numberInputActive = editable;
-        this.eNumberInput.setDisplayed(this.numberInputActive);
-        this.eTextInput.setDisplayed(!this.numberInputActive);
+        this.#numberInputActive = editable;
+        this.#eNumberInput.setDisplayed(this.#numberInputActive);
+        this.#eTextInput.setDisplayed(!this.#numberInputActive);
     }
 
     public setAutoComplete(autoComplete?: boolean | string): void {
-        this.eNumberInput.setAutoComplete(autoComplete);
-        this.eTextInput.setAutoComplete(autoComplete);
+        this.#eNumberInput.setAutoComplete(autoComplete);
+        this.#eTextInput.setAutoComplete(autoComplete);
     }
 
     public isFocused(): boolean {
-        return _getActiveDomElement(this.beans) === this.getActiveInputElement().getInputElement();
+        return _getActiveDomElement(this.beans) === this.#getActiveInputElement().getInputElement();
     }
 
     public getValue(): string | null | undefined {
-        return this.getActiveInputElement().getValue();
+        return this.#getActiveInputElement().getValue();
     }
 
     public setValue(value: string | null | undefined, silent?: boolean): void {
-        this.getActiveInputElement().setValue(value, silent);
+        this.#getActiveInputElement().setValue(value, silent);
     }
 
-    private getActiveInputElement(): GridInputTextField | GridInputNumberField {
-        return this.numberInputActive ? this.eNumberInput : this.eTextInput;
+    #getActiveInputElement(): GridInputTextField | GridInputNumberField {
+        return this.#numberInputActive ? this.#eNumberInput : this.#eTextInput;
     }
 
     public getInputText(): string {
-        return this.getActiveInputElement().getInputElement().value;
+        return this.#getActiveInputElement().getInputElement().value;
     }
 
     public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {
@@ -96,7 +99,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 
     public setValueClearedListener(listener: () => void): void {
-        this.onValueCleared = listener;
+        this.#onValueCleared = listener;
     }
 
     private setupListeners(element: HTMLElement, listener: (e: KeyboardEvent) => void): void {
@@ -119,18 +122,18 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
         this.setAutoComplete(autoComplete);
 
-        this.setPlaceholder(this.eNumberInput, placeholder);
-        this.setPlaceholder(this.eTextInput, placeholder);
+        this.#setPlaceholder(this.#eNumberInput, placeholder);
+        this.#setPlaceholder(this.#eTextInput, placeholder);
     }
 
-    private setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
+    #setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
         input.setSearchIcon(!!placeholder);
         input.setInputPlaceholder(placeholder);
     }
 
     public setAriaLabel(ariaLabel: string): void {
-        this.eNumberInput.setInputAriaLabel(ariaLabel);
-        this.eTextInput.setInputAriaLabel(ariaLabel);
+        this.#eNumberInput.setInputAriaLabel(ariaLabel);
+        this.#eTextInput.setInputAriaLabel(ariaLabel);
     }
 }
 

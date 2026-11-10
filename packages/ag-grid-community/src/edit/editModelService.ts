@@ -22,17 +22,17 @@ import { UNEDITED } from './utils/editors';
 export class EditModelService extends BeanStub implements NamedBean {
     public beanName = 'editModelSvc' as const;
 
-    private readonly edits: EditMap = new Map();
+    readonly #edits: EditMap = new Map();
     // O(1) count of 'editing'-state edits so hasOpenEditors avoids scanning the map (`state` is the truth).
     private editingCount = 0;
-    private cellValidations: EditCellValidationModel = new EditCellValidationModel();
-    private rowValidations: EditRowValidationModel = new EditRowValidationModel();
+    #cellValidations: EditCellValidationModel = new EditCellValidationModel();
+    #rowValidations: EditRowValidationModel = new EditRowValidationModel();
 
     // during some operations, we want to always return false from `hasEdits`
-    private suspendEdits = false;
+    #suspendEdits = false;
 
     public suspend(suspend: boolean): void {
-        this.suspendEdits = suspend;
+        this.#suspendEdits = suspend;
     }
 
     public hasOpenEditors(): boolean {
@@ -61,20 +61,20 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
 
         if (editRow.size === 0) {
-            this.edits.delete(rowNode);
+            this.#edits.delete(rowNode);
         }
     }
 
     public getEditRow(rowNode: IRowNode, checkSiblings?: boolean): EditRow | undefined {
-        if (this.suspendEdits) {
+        if (this.#suspendEdits) {
             return undefined;
         }
 
-        if (this.edits.size === 0) {
+        if (this.#edits.size === 0) {
             return undefined;
         }
 
-        const edits = rowNode && this.edits.get(rowNode);
+        const edits = rowNode && this.#edits.get(rowNode);
 
         if (edits) {
             return edits;
@@ -91,7 +91,7 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public getEditRowDataValue(rowNode: IRowNode): any {
-        if (!rowNode || this.edits.size === 0) {
+        if (!rowNode || this.#edits.size === 0) {
             return undefined;
         }
 
@@ -121,8 +121,8 @@ export class EditModelService extends BeanStub implements NamedBean {
 
     /** Direct single-cell lookup — allocation-free, no pinned-sibling fallback (see {@link getCellEditWithSibling}). */
     public getCellEdit(rowNode: IRowNode | null | undefined, column: Column | null | undefined): EditValue | undefined {
-        const edits = this.edits;
-        if (edits.size === 0 || this.suspendEdits || !rowNode || !column) {
+        const edits = this.#edits;
+        if (edits.size === 0 || this.#suspendEdits || !rowNode || !column) {
             return undefined; // no edits or incomplete position
         }
         return edits.get(rowNode)?.get(column);
@@ -138,16 +138,16 @@ export class EditModelService extends BeanStub implements NamedBean {
 
     /** The live edit map, or null while edits are suspended. Read-only: mutating it would break editingCount. */
     public getEditMap(): ReadonlyEditMap | null {
-        return this.suspendEdits ? null : this.edits;
+        return this.#suspendEdits ? null : this.#edits;
     }
 
     /** A deep copy of the edit map — a mutable snapshot, safe to hold and mutate across model changes. */
     public getEditMapCopy(): EditMap {
         const map: EditMap = new Map();
-        if (this.suspendEdits) {
+        if (this.#suspendEdits) {
             return map;
         }
-        this.edits.forEach((editRow, rowNode) => {
+        this.#edits.forEach((editRow, rowNode) => {
             const newEditRow = new Map<Column, EditValue>();
             editRow.forEach(({ editorState: _, ...cellData }, column) =>
                 // Copy the cell data so the snapshot is decoupled from the live model.
@@ -173,7 +173,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             rebuilt.set(rowNode, newRow);
         });
 
-        const edits = this.edits;
+        const edits = this.#edits;
         edits.clear();
         rebuilt.forEach((row, rowNode) => edits.set(rowNode, row));
         this.editingCount = editingCount;
@@ -181,7 +181,7 @@ export class EditModelService extends BeanStub implements NamedBean {
 
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
         const { rowNode, column } = position;
-        const edits = this.edits;
+        const edits = this.#edits;
         let editRow = edits.get(rowNode);
         if (!editRow) {
             editRow = new Map<Column, EditValue>();
@@ -190,7 +190,7 @@ export class EditModelService extends BeanStub implements NamedBean {
 
         // Matches getEdit's suspend semantics: while suspended there is no current edit to merge onto.
         const existing = editRow.get(column);
-        const currentEdit = this.suspendEdits ? undefined : existing;
+        const currentEdit = this.#suspendEdits ? undefined : existing;
 
         const updatedEdit: EditValue = {
             editorState: {
@@ -242,7 +242,7 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public getState(position: EditPosition): EditState | undefined {
-        if (this.suspendEdits) {
+        if (this.#suspendEdits) {
             return undefined;
         }
 
@@ -250,12 +250,12 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public getEditPositions(editMap?: EditMap): EditPositionValue[] {
-        if (this.suspendEdits || (editMap ?? this.edits).size === 0) {
+        if (this.#suspendEdits || (editMap ?? this.#edits).size === 0) {
             return [];
         }
 
         const positions: EditPositionValue[] = [];
-        (editMap ?? this.edits).forEach((editRow, rowNode) => {
+        (editMap ?? this.#edits).forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
                 const { editorState: _, ...rest } = editRow.get(column)!;
                 positions.push({
@@ -270,11 +270,11 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public hasRowEdits(rowNode: IRowNode, checkSiblings?: boolean): boolean {
-        if (this.suspendEdits) {
+        if (this.#suspendEdits) {
             return false;
         }
 
-        if (this.edits.size === 0) {
+        if (this.#edits.size === 0) {
             return false;
         }
 
@@ -283,11 +283,11 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
-        if (this.suspendEdits) {
+        if (this.#suspendEdits) {
             return false;
         }
 
-        if (this.edits.size === 0) {
+        if (this.#edits.size === 0) {
             return false;
         }
 
@@ -320,17 +320,17 @@ export class EditModelService extends BeanStub implements NamedBean {
             return this.hasOpenEditors();
         }
 
-        return this.edits.size > 0;
+        return this.#edits.size > 0;
     }
 
     public start(position: Required<EditPosition>): void {
         const { rowNode, column } = position;
         // Read the live row directly (not via getEditRow, which returns undefined while suspended):
         // replacing an existing row here would drop its editing entries without adjusting editingCount.
-        let map = this.edits.get(rowNode);
+        let map = this.#edits.get(rowNode);
         if (!map) {
             map = new Map<Column, EditValue>();
-            this.edits.set(rowNode, map);
+            this.#edits.set(rowNode, map);
         }
         if (column && !map.has(column)) {
             map.set(column, {
@@ -372,10 +372,10 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public clear(): void {
-        for (const pendingRowEdits of this.edits.values()) {
+        for (const pendingRowEdits of this.#edits.values()) {
             pendingRowEdits.clear();
         }
-        this.edits.clear();
+        this.#edits.clear();
         this.editingCount = 0;
     }
 
@@ -384,23 +384,23 @@ export class EditModelService extends BeanStub implements NamedBean {
      * a rowNode without a column means that row. Callers that must not repopulate/refresh use this.
      */
     public hasValidationErrors(position?: EditPosition): boolean {
-        return this.rowValidations.hasRowValidation(position) || this.cellValidations.hasCellValidation(position);
+        return this.#rowValidations.hasRowValidation(position) || this.#cellValidations.hasCellValidation(position);
     }
 
     public getCellValidationModel(): EditCellValidationModel {
-        return this.cellValidations;
+        return this.#cellValidations;
     }
 
     public getRowValidationModel(): EditRowValidationModel {
-        return this.rowValidations;
+        return this.#rowValidations;
     }
 
     public setCellValidationModel(model: EditCellValidationModel): void {
-        this.cellValidations = model;
+        this.#cellValidations = model;
     }
 
     public setRowValidationModel(model: EditRowValidationModel): void {
-        this.rowValidations = model;
+        this.#rowValidations = model;
     }
 
     public override destroy(): void {
@@ -410,34 +410,34 @@ export class EditModelService extends BeanStub implements NamedBean {
 }
 
 export class EditCellValidationModel {
-    private cellValidations: EditValidationMap = new Map();
+    #cellValidations: EditValidationMap = new Map();
 
     public getCellValidation(position?: EditPosition): EditValidation | undefined {
         const { rowNode, column } = position ?? {};
-        return this.cellValidations?.get(rowNode!)?.get(column!);
+        return this.#cellValidations?.get(rowNode!)?.get(column!);
     }
 
     /** Scope follows the position: no rowNode means the whole grid, a rowNode without a column means that row. */
     public hasCellValidation(position?: EditPosition): boolean {
         const rowNode = position?.rowNode;
         if (!rowNode) {
-            return this.cellValidations.size > 0;
+            return this.#cellValidations.size > 0;
         }
-        return position.column ? !!this.getCellValidation(position) : this.cellValidations.has(rowNode);
+        return position.column ? !!this.getCellValidation(position) : this.#cellValidations.has(rowNode);
     }
 
     public setCellValidation(position: Required<EditPosition>, validation: EditValidation): void {
         const { rowNode, column } = position;
-        if (!this.cellValidations.has(rowNode)) {
-            this.cellValidations.set(rowNode, new Map());
+        if (!this.#cellValidations.has(rowNode)) {
+            this.#cellValidations.set(rowNode, new Map());
         }
         // validators may reuse and mutate their array; retain the historical result used for change detection.
-        this.cellValidations.get(rowNode)!.set(column, { errorMessages: [...validation.errorMessages] });
+        this.#cellValidations.get(rowNode)!.set(column, { errorMessages: [...validation.errorMessages] });
     }
 
     public clearCellValidation(position: Required<EditPosition>): void {
         const { rowNode, column } = position;
-        const cellValidations = this.cellValidations;
+        const cellValidations = this.#cellValidations;
         const rowValidations = cellValidations.get(rowNode);
         if (rowValidations) {
             rowValidations.delete(column);
@@ -449,49 +449,49 @@ export class EditCellValidationModel {
     }
 
     public setCellValidationMap(validationMap: EditValidationMap): void {
-        this.cellValidations = validationMap;
+        this.#cellValidations = validationMap;
     }
 
     public getCellValidationMap(): EditValidationMap {
-        return this.cellValidations;
+        return this.#cellValidations;
     }
 
     public clearCellValidationMap(): void {
-        this.cellValidations.clear();
+        this.#cellValidations.clear();
     }
 }
 export class EditRowValidationModel {
-    private rowValidations: EditRowValidationMap = new Map();
+    #rowValidations: EditRowValidationMap = new Map();
 
     public getRowValidation(position?: EditRowPosition): EditValidation | undefined {
         const { rowNode } = position ?? {};
-        return this.rowValidations.get(rowNode!);
+        return this.#rowValidations.get(rowNode!);
     }
 
     public hasRowValidation(position?: EditRowPosition): boolean {
         if (!position?.rowNode) {
-            return this.rowValidations.size > 0;
+            return this.#rowValidations.size > 0;
         }
         return !!this.getRowValidation(position);
     }
 
     public setRowValidation({ rowNode }: Required<EditRowPosition>, rowValidation: EditValidation): void {
         // Validators may reuse and mutate their array; retain the historical result used for change detection.
-        this.rowValidations.set(rowNode, { errorMessages: [...rowValidation.errorMessages] });
+        this.#rowValidations.set(rowNode, { errorMessages: [...rowValidation.errorMessages] });
     }
 
     public clearRowValidation({ rowNode }: Required<EditRowPosition>): void {
-        this.rowValidations.delete(rowNode);
+        this.#rowValidations.delete(rowNode);
     }
 
     public setRowValidationMap(validationMap: EditRowValidationMap): void {
-        this.rowValidations = validationMap;
+        this.#rowValidations = validationMap;
     }
     public getRowValidationMap(): EditRowValidationMap {
-        return this.rowValidations;
+        return this.#rowValidations;
     }
     public clearRowValidationMap(): void {
-        this.rowValidations.clear();
+        this.#rowValidations.clear();
     }
 }
 

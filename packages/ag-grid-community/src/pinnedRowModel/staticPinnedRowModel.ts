@@ -16,15 +16,15 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private nextId = 0;
     private readonly pinnedTopRows: OrderedCache = { cache: new Map(), order: [] };
     private readonly pinnedBottomRows: OrderedCache = { cache: new Map(), order: [] };
-    private topHeight = 0;
-    private bottomHeight = 0;
+    #topHeight = 0;
+    #bottomHeight = 0;
 
     public postConstruct(): void {
         const gos = this.gos;
-        this.setPinnedRowData(gos.get('pinnedTopRowData'), 'top');
-        this.setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
-        this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
-        this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
+        this.#setPinnedRowData(gos.get('pinnedTopRowData'), 'top');
+        this.#setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
+        this.addManagedPropertyListener('pinnedTopRowData', (e) => this.#setPinnedRowData(e.currentValue, 'top'));
+        this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.#setPinnedRowData(e.currentValue, 'bottom'));
         _addRowHeightChangedListener(this, () => {
             estimateSectionRowHeights(this.pinnedBottomRows.order);
             estimateSectionRowHeights(this.pinnedTopRows.order);
@@ -37,7 +37,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
-        return this.getCache(floating).order.length === 0;
+        return this.#getCache(floating).order.length === 0;
     }
 
     public isRowsToRender(floating: RowPinnedType): boolean {
@@ -61,18 +61,18 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         // A height applied outside this pass, by column autoHeight, moves no row top when it lands on the
         // last row of its section, so only the total reports it.
-        if (!bottomChanged && !topChanged && topHeight === this.topHeight && bottomHeight === this.bottomHeight) {
+        if (!bottomChanged && !topChanged && topHeight === this.#topHeight && bottomHeight === this.#bottomHeight) {
             return false;
         }
 
-        this.topHeight = topHeight;
-        this.bottomHeight = bottomHeight;
+        this.#topHeight = topHeight;
+        this.#bottomHeight = bottomHeight;
         this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
         return true;
     }
 
-    private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
-        this.updateNodesFromRowData(rowData, floating);
+    #setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
+        this.#updateNodesFromRowData(rowData, floating);
         this.eventSvc.dispatchEvent({
             type: 'pinnedRowDataChanged',
         });
@@ -83,8 +83,8 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
      *
      * Setting data as `undefined` will clear row nodes
      */
-    private updateNodesFromRowData(allData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
-        const nodes = this.getCache(floating);
+    #updateNodesFromRowData(allData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
+        const nodes = this.#getCache(floating);
         const cache = nodes.cache;
 
         if (allData === undefined) {
@@ -125,14 +125,14 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 if (existingNode.data !== data) {
                     existingNode.updateData(data);
                 }
-                nextRowTop += this.setRowTopAndRowIndex(existingNode, nextRowTop, i);
+                nextRowTop += this.#setRowTopAndRowIndex(existingNode, nextRowTop, i);
                 newOrder.push(existingNode);
             } else {
                 const rowNode = new RowNode(this.beans);
                 rowNode.id = id;
                 rowNode.data = data;
                 rowNode.rowPinned = floating;
-                nextRowTop += this.setRowTopAndRowIndex(rowNode, nextRowTop, i);
+                nextRowTop += this.#setRowTopAndRowIndex(rowNode, nextRowTop, i);
                 cache.set(id, rowNode);
                 newOrder.push(rowNode);
             }
@@ -151,7 +151,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         nodes.order = newOrder;
     }
 
-    private setRowTopAndRowIndex(rowNode: RowNode, rowTop: number, rowIndex: number): number {
+    #setRowTopAndRowIndex(rowNode: RowNode, rowTop: number, rowIndex: number): number {
         rowNode.setRowTop(rowTop);
         rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode).height);
         rowNode.setRowIndex(rowIndex);
@@ -183,14 +183,14 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined {
-        return this.getCache(floating).cache.get(id);
+        return this.#getCache(floating).cache.get(id);
     }
 
     public forEachPinnedRow(
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        const { cache, order } = this.getCache(floating);
+        const { cache, order } = this.#getCache(floating);
         for (let i = 0, len = order.length; i < len; ++i) {
             const node = order[i];
             // a row the callback removed is skipped
@@ -200,7 +200,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    private getCache(floating: RowPinnedType): OrderedCache {
+    #getCache(floating: RowPinnedType): OrderedCache {
         return floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
     }
 

@@ -27,11 +27,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         this.popupSvc = beans.popupSvc;
     }
 
-    private hidePopup?: () => void;
-    private activeMenu?: FilterComp;
+    #hidePopup?: () => void;
+    #activeMenu?: FilterComp;
 
     public hideActiveMenu(): void {
-        this.hidePopup?.();
+        this.#hidePopup?.();
     }
 
     public showMenuAfterMouseEvent(
@@ -46,7 +46,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             // not supported
             return;
         }
-        this.showPopup({
+        this.#showPopup({
             column,
             positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupUnderMouseEvent({
@@ -86,7 +86,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const nudgeX = isLegacyMenuEnabled ? undefined : 4 * multiplier;
         const nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
-        return this.showPopup({
+        return this.#showPopup({
             column,
             positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupByComponent({
@@ -110,7 +110,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         });
     }
 
-    private showPopup({
+    #showPopup({
         column,
         positionCallback,
         containerType,
@@ -179,11 +179,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             }
             afterGuiDetached();
             this.destroyBean(comp);
-            if (this.activeMenu === comp) {
-                this.activeMenu = undefined;
-                this.hidePopup = undefined;
+            if (this.#activeMenu === comp) {
+                this.#activeMenu = undefined;
+                this.#hidePopup = undefined;
             }
-            this.dispatchVisibleChangedEvent(false, containerType, column);
+            this.#dispatchVisibleChangedEvent(false, containerType, column);
             onClosedCallback?.(e);
         };
 
@@ -210,8 +210,8 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             return false;
         }
 
-        this.activeMenu = comp;
-        this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        this.#activeMenu = comp;
+        this.#hidePopup = hidePopup = addPopupRes.hideFunc;
 
         comp.afterInit().then(() => {
             // need to make sure the filter is present before positioning, as only
@@ -223,11 +223,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
         _setColMenuVisible(column, true, 'contextMenu');
 
-        this.dispatchVisibleChangedEvent(true, containerType, column);
+        this.#dispatchVisibleChangedEvent(true, containerType, column);
         return true;
     }
 
-    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
+    #dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
         this.eventSvc.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
@@ -248,7 +248,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     public override destroy(): void {
-        this.destroyBean(this.activeMenu);
+        this.destroyBean(this.#activeMenu);
         super.destroy();
     }
 }

@@ -15,10 +15,10 @@ interface TooltipTouchTarget {
 export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
     beanName = 'tooltipTouchSvc' as const;
 
-    private readonly targets = new Map<HTMLElement, TooltipTouchTarget[]>();
-    private selectedTarget: TooltipTouchTarget | undefined;
-    private lastTouchEventTime = 0;
-    private lastTouchTarget: Node | undefined;
+    readonly #targets = new Map<HTMLElement, TooltipTouchTarget[]>();
+    #selectedTarget: TooltipTouchTarget | undefined;
+    #lastTouchEventTime = 0;
+    #lastTouchTarget: Node | undefined;
 
     public postConstruct(): void {
         const doc = this.beans.eRootDiv.ownerDocument;
@@ -26,20 +26,20 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
             capture: true,
             // Tooltips must not steal the long press from context menu / column menu listeners.
             yieldsLongTap: true,
-            shouldTrackTouch: (event) => this.startTracking(event),
-            getLongTapTarget: (event) => this.resolveLongTapTarget(event),
+            shouldTrackTouch: (event) => this.#startTracking(event),
+            getLongTapTarget: (event) => this.#resolveLongTapTarget(event),
         });
         touchListener.addEventListener('longTap', ({ touchStart }: LongTapEvent) => {
-            const target = this.selectedTarget;
-            this.selectedTarget = undefined;
+            const target = this.#selectedTarget;
+            this.#selectedTarget = undefined;
             if (target?.active) {
                 target.show(touchStart);
             }
         });
 
         const recordTouch = (event: TouchEvent) => {
-            if (!this.gos.get('suppressTouch') && this.getCandidates(event).length) {
-                this.recordTouchAt(event);
+            if (!this.gos.get('suppressTouch') && this.#getCandidates(event).length) {
+                this.#recordTouchAt(event);
             }
         };
         const options = { capture: true, passive: true };
@@ -54,14 +54,14 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
 
     public registerSource(element: HTMLElement, canShow: () => boolean, show: (touchStart: Touch) => void): () => void {
         const target: TooltipTouchTarget = { element, canShow, show, active: true };
-        const existing = this.targets.get(element);
+        const existing = this.#targets.get(element);
         if (existing) {
             existing.push(target);
         } else {
-            this.targets.set(element, [target]);
+            this.#targets.set(element, [target]);
         }
 
-        return () => this.unregisterSource(target);
+        return () => this.#unregisterSource(target);
     }
 
     /**
@@ -69,46 +69,46 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
      * touch. Scoped to the touched element so a real mouse hover elsewhere on a hybrid device still shows.
      */
     public isCompatibilityMouseEvent(sourceElement: HTMLElement): boolean {
-        const target = this.lastTouchTarget;
-        if (!target || Date.now() - this.lastTouchEventTime >= COMPATIBILITY_MOUSE_EVENT_WINDOW_MS) {
+        const target = this.#lastTouchTarget;
+        if (!target || Date.now() - this.#lastTouchEventTime >= COMPATIBILITY_MOUSE_EVENT_WINDOW_MS) {
             return false;
         }
         return sourceElement.contains(target) || target.contains(sourceElement);
     }
 
-    private recordTouchAt(event: Event): void {
-        this.lastTouchEventTime = Date.now();
-        const target = this.getEventPath(event)[0];
-        this.lastTouchTarget = target instanceof Node ? target : undefined;
+    #recordTouchAt(event: Event): void {
+        this.#lastTouchEventTime = Date.now();
+        const target = this.#getEventPath(event)[0];
+        this.#lastTouchTarget = target instanceof Node ? target : undefined;
     }
 
-    private startTracking(event: TouchEvent): boolean {
-        this.selectedTarget = undefined;
+    #startTracking(event: TouchEvent): boolean {
+        this.#selectedTarget = undefined;
         if (this.gos.get('suppressTouch')) {
             return false;
         }
-        const hasTarget = this.getCandidates(event).length > 0;
+        const hasTarget = this.#getCandidates(event).length > 0;
         if (hasTarget) {
-            this.recordTouchAt(event);
+            this.#recordTouchAt(event);
         }
         return hasTarget;
     }
 
-    private resolveLongTapTarget(event: TouchEvent): Element | undefined {
-        for (const target of this.getCandidates(event)) {
+    #resolveLongTapTarget(event: TouchEvent): Element | undefined {
+        for (const target of this.#getCandidates(event)) {
             if (target.canShow()) {
-                this.selectedTarget = target;
+                this.#selectedTarget = target;
                 return target.element;
             }
         }
-        this.selectedTarget = undefined;
+        this.#selectedTarget = undefined;
         return undefined;
     }
 
-    private getCandidates(event: Event): TooltipTouchTarget[] {
+    #getCandidates(event: Event): TooltipTouchTarget[] {
         const candidates: TooltipTouchTarget[] = [];
-        for (const item of this.getEventPath(event)) {
-            const targets = this.targets.get(item as HTMLElement);
+        for (const item of this.#getEventPath(event)) {
+            const targets = this.#targets.get(item as HTMLElement);
             if (!targets) {
                 continue;
             }
@@ -121,7 +121,7 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
         return candidates;
     }
 
-    private getEventPath(event: Event): EventTarget[] {
+    #getEventPath(event: Event): EventTarget[] {
         const path = event.composedPath?.();
         if (path?.length) {
             return path;
@@ -136,9 +136,9 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
         return result;
     }
 
-    private unregisterSource(target: TooltipTouchTarget): void {
+    #unregisterSource(target: TooltipTouchTarget): void {
         target.active = false;
-        const targets = this.targets.get(target.element);
+        const targets = this.#targets.get(target.element);
         if (!targets) {
             return;
         }
@@ -147,14 +147,14 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
             targets.splice(index, 1);
         }
         if (targets.length === 0) {
-            this.targets.delete(target.element);
+            this.#targets.delete(target.element);
         }
     }
 
     public override destroy(): void {
-        this.targets.clear();
-        this.selectedTarget = undefined;
-        this.lastTouchTarget = undefined;
+        this.#targets.clear();
+        this.#selectedTarget = undefined;
+        this.#lastTouchTarget = undefined;
         super.destroy();
     }
 }

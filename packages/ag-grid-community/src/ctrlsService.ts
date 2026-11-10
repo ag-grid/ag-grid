@@ -49,7 +49,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
 
     private params: Partial<ReadyParams> = {};
     private ready = false;
-    private readonly readyCallbacks: ((p: ReadyParams) => void)[] = [];
+    readonly #readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
     public postConstruct() {
         // With React 19 StrictMode, ctrlService can be ready twice.
@@ -60,19 +60,19 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         this.addEventListener(
             'ready',
             () => {
-                this.updateReady();
+                this.#updateReady();
                 if (this.ready) {
-                    for (const callback of this.readyCallbacks) {
+                    for (const callback of this.#readyCallbacks) {
                         callback(this.params as ReadyParams);
                     }
-                    this.readyCallbacks.length = 0;
+                    this.#readyCallbacks.length = 0;
                 }
             },
             this.beans.frameworkOverrides.runWhenReadyAsync?.() ?? false
         );
     }
 
-    private updateReady(): void {
+    #updateReady(): void {
         const params = this.params;
         for (let i = 0, len = REQUIRED_CTRLS.length; i < len; ++i) {
             if (!params[REQUIRED_CTRLS[i]]?.isAlive()) {
@@ -87,20 +87,20 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         if (this.ready) {
             callback(this.params as ReadyParams);
         } else {
-            this.readyCallbacks.push(callback);
+            this.#readyCallbacks.push(callback);
         }
         caller.addDestroyFunc(() => {
             // remove the callback if the caller is destroyed so that we don't call it against a destroyed component
-            const index = this.readyCallbacks.indexOf(callback);
+            const index = this.#readyCallbacks.indexOf(callback);
             if (index >= 0) {
-                this.readyCallbacks.splice(index, 1);
+                this.#readyCallbacks.splice(index, 1);
             }
         });
     }
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
         this.params[ctrlType] = ctrl;
-        this.updateReady();
+        this.#updateReady();
         if (this.ready) {
             this.dispatchLocalEvent({ type: 'ready' });
         }
@@ -109,7 +109,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
             // Ensure ready is false when a controller is destroyed
             // We do not clear them as a lot of code still runs during destroy logic which may need access to the controllers
             // NOTE: This is not ideal and we should look to stop logic using controllers during destroy
-            this.updateReady();
+            this.#updateReady();
         });
     }
 

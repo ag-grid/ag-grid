@@ -10,11 +10,11 @@
 // getInstanceIdForKey('country') => 4
 export class GroupInstanceIdCreator {
     // Per-key counter: remembers the last instance id handed out for each key.
-    private readonly existingIds: Record<string, number> = Object.create(null);
+    readonly #existingIds: Record<string, number> = Object.create(null);
 
     public getInstanceIdForKey(key: string): number {
-        const result = (this.existingIds[key] ?? -1) + 1;
-        this.existingIds[key] = result;
+        const result = (this.#existingIds[key] ?? -1) + 1;
+        this.#existingIds[key] = result;
         return result;
     }
 }

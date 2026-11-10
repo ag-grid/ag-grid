@@ -36,7 +36,7 @@ export class FilterButtonComp extends Component<FilterAction> {
     private listeners: (() => void)[] = [];
     private eApply?: HTMLElement;
 
-    private validationTooltipFeature?: TooltipFeature;
+    #validationTooltipFeature?: TooltipFeature;
     private validationMessage: string | null = null;
     private readonly className: string;
 
@@ -57,7 +57,7 @@ export class FilterButtonComp extends Component<FilterAction> {
         const eGui = this.getGui();
         _clearElement(eGui);
         let eApplyButton: HTMLElement | undefined;
-        this.destroyListeners();
+        this.#destroyListeners();
 
         // Instead of appending each button to the DOM individually, we create a fragment and append that
         // to the DOM once. This is much faster than appending each button individually.
@@ -116,11 +116,11 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         this.eApply = eApplyButton;
 
-        const tooltip = this.validationTooltipFeature;
+        const tooltip = this.#validationTooltipFeature;
 
         if (eApplyButton && !tooltip) {
             const initialApplyButton = eApplyButton;
-            this.validationTooltipFeature = this.createOptionalManagedBean(
+            this.#validationTooltipFeature = this.createOptionalManagedBean(
                 this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eApply ?? initialApplyButton,
                     getTooltipComponentDefinition: () => undefined,
@@ -129,7 +129,7 @@ export class FilterButtonComp extends Component<FilterAction> {
                 })
             );
         } else if (!eApplyButton && tooltip) {
-            this.validationTooltipFeature = this.destroyBean(tooltip);
+            this.#validationTooltipFeature = this.destroyBean(tooltip);
         }
 
         eGui.append(fragment);
@@ -146,10 +146,10 @@ export class FilterButtonComp extends Component<FilterAction> {
         }
         _setDisabled(eApplyButton, !valid);
         this.validationMessage = message;
-        this.validationTooltipFeature?.setTooltipAndRefresh(this.validationMessage);
+        this.#validationTooltipFeature?.setTooltipAndRefresh(this.validationMessage);
     }
 
-    private destroyListeners(): void {
+    #destroyListeners(): void {
         for (const destroyFunc of this.listeners) {
             destroyFunc();
         }
@@ -157,7 +157,7 @@ export class FilterButtonComp extends Component<FilterAction> {
     }
 
     public override destroy(): void {
-        this.destroyListeners();
+        this.#destroyListeners();
         super.destroy();
     }
 }

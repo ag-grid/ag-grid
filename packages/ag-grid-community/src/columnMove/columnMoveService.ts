@@ -62,7 +62,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                 }
             }
 
-            if (this.doesMovePassRules(movedColumns, toIndex)) {
+            if (this.#doesMovePassRules(movedColumns, toIndex)) {
                 _moveInArray(colModel.colsList, movedColumns, toIndex);
                 colModel.markColsListIndexDirty();
                 visibleCols.refresh(source, false);
@@ -80,7 +80,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         }
     }
 
-    private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
+    #doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);

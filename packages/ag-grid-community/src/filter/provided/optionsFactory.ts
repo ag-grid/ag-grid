@@ -4,52 +4,52 @@ import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from './simpleF
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
-    private customFilterOptions: Map<string, IFilterOptionDef>;
+    #customFilterOptions: Map<string, IFilterOptionDef>;
     /** As configured, so a refresh compares what it was given rather than what it kept. */
-    private configuredOptions: (IFilterOptionDef | string)[];
+    #configuredOptions: (IFilterOptionDef | string)[];
     /** What the dropdown offers: the configured list minus its malformed entries, or the built-ins if none survive. */
     public filterOptions: (IFilterOptionDef | string)[];
-    private offeredOptions: Map<string, IFilterOptionDef | string>;
+    #offeredOptions: Map<string, IFilterOptionDef | string>;
     public defaultOption?: string;
 
     public init(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
-        this.configuredOptions = params.filterOptions ?? defaultOptions;
-        this.buildOptions(log, defaultOptions);
-        this.defaultOption = this.getDefaultItem(log, params.defaultOption);
+        this.#configuredOptions = params.filterOptions ?? defaultOptions;
+        this.#buildOptions(log, defaultOptions);
+        this.defaultOption = this.#getDefaultItem(log, params.defaultOption);
     }
 
     public refresh(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
         const filterOptions = params.filterOptions ?? defaultOptions;
-        if (this.configuredOptions !== filterOptions) {
-            this.configuredOptions = filterOptions;
-            this.buildOptions(log, defaultOptions);
+        if (this.#configuredOptions !== filterOptions) {
+            this.#configuredOptions = filterOptions;
+            this.#buildOptions(log, defaultOptions);
         }
-        this.defaultOption = this.getDefaultItem(log, params.defaultOption);
+        this.defaultOption = this.#getDefaultItem(log, params.defaultOption);
     }
 
     /** Rebuilt wholesale, so a `predicate` the previous list carried cannot survive into this one. */
-    private buildOptions(log: LogService, defaultOptions: string[]): void {
-        this.collectUsableOptions(log, this.configuredOptions);
+    #buildOptions(log: LogService, defaultOptions: string[]): void {
+        this.#collectUsableOptions(log, this.#configuredOptions);
         // A column with nothing to offer cannot open its filter at all, so a list that keeps none falls back.
         if (!this.filterOptions.length) {
             log.warn(74);
-            this.collectUsableOptions(log, defaultOptions);
+            this.#collectUsableOptions(log, defaultOptions);
         }
     }
 
-    private collectUsableOptions(log: LogService, configuredOptions: (IFilterOptionDef | string)[]): void {
+    #collectUsableOptions(log: LogService, configuredOptions: (IFilterOptionDef | string)[]): void {
         // A column offers the Advanced Filter's own options through the same list, and cannot evaluate one itself.
         const { offered, customOptions } = _classifyFilterOptions(
             configuredOptions,
             (keys) => log.warn(72, { keys }),
             _ADVANCED_FILTER_ONLY_OPTIONS
         );
-        this.offeredOptions = offered;
+        this.#offeredOptions = offered;
         this.filterOptions = [...offered.values()];
-        this.customFilterOptions = customOptions;
+        this.#customFilterOptions = customOptions;
     }
 
-    private getDefaultItem(log: LogService, defaultOption?: string): string | undefined {
+    #getDefaultItem(log: LogService, defaultOption?: string): string | undefined {
         const firstFilterOption = this.filterOptions[0];
         if (firstFilterOption == null) {
             return undefined;
@@ -65,10 +65,10 @@ export class OptionsFactory {
     }
 
     public hasOption(key?: string | null): boolean {
-        return key != null && this.offeredOptions.has(key);
+        return key != null && this.#offeredOptions.has(key);
     }
 
     public getCustomOption(name?: string | null): IFilterOptionDef | undefined {
-        return name == null ? undefined : this.customFilterOptions.get(name);
+        return name == null ? undefined : this.#customFilterOptions.get(name);
     }
 }

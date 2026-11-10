@@ -22,12 +22,12 @@ interface RangePartition {
 export class RowRangeSelectionContext {
     /** Whether the user is currently selecting all nodes either via the header checkbox or API */
     public selectAll = false;
-    private rootId: string | null = null;
+    #rootId: string | null = null;
     /**
      * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
      * actual grid.
      */
-    private endId: string | null = null;
+    #endId: string | null = null;
 
     constructor(
         private readonly rowModel: IRowModel,
@@ -35,17 +35,17 @@ export class RowRangeSelectionContext {
     ) {}
 
     public reset(): void {
-        this.rootId = null;
-        this.endId = null;
+        this.#rootId = null;
+        this.#endId = null;
     }
 
     public setRoot(node: RowNode): void {
-        this.rootId = node.id!;
-        this.endId = null;
+        this.#rootId = node.id!;
+        this.#endId = null;
     }
 
     public setEndRange(end: RowNode): void {
-        this.endId = end.id!;
+        this.#endId = end.id!;
     }
 
     /** Not memoised: the range depends on which rows are currently displayed, which can change under it. */
@@ -57,11 +57,11 @@ export class RowRangeSelectionContext {
             return [];
         }
 
-        return this.getNodesInRange(root, end) ?? [];
+        return this.#getNodesInRange(root, end) ?? [];
     }
 
     public isInRange(node: RowNode): boolean {
-        if (this.rootId === null) {
+        if (this.#rootId === null) {
             return false;
         }
 
@@ -69,8 +69,8 @@ export class RowRangeSelectionContext {
     }
 
     public getRoot(fallback?: RowNode): RowNode | undefined {
-        if (this.rootId) {
-            return this.getRowNode(this.rootId);
+        if (this.#rootId) {
+            return this.getRowNode(this.#rootId);
         }
         if (fallback) {
             this.setRoot(fallback);
@@ -79,8 +79,8 @@ export class RowRangeSelectionContext {
     }
 
     private getEnd(): RowNode | undefined {
-        if (this.endId) {
-            return this.getRowNode(this.endId);
+        if (this.#endId) {
+            return this.getRowNode(this.#endId);
         }
     }
 
@@ -104,8 +104,8 @@ export class RowRangeSelectionContext {
      * (e.g. hidden inside a collapsed group) is bounded by its nearest displayed ancestor instead, so
      * the range never contains the root's own id.
      */
-    private isRangeStartTheRoot(rangeStart: RowNode): boolean {
-        const { rootId } = this;
+    #isRangeStartTheRoot(rangeStart: RowNode): boolean {
+        const rootId = this.#rootId;
         if (rootId === null) {
             return false;
         }
@@ -131,7 +131,7 @@ export class RowRangeSelectionContext {
 
         // if root is first, then selection range goes "down" the table
         // so we should be unselecting the range _after_ the given `node`
-        const discardAfter = this.isRangeStartTheRoot(range[0]);
+        const discardAfter = this.#isRangeStartTheRoot(range[0]);
 
         const idx = range.findIndex((rowNode) => rowNode.id === node.id);
         if (idx > -1) {
@@ -169,7 +169,7 @@ export class RowRangeSelectionContext {
             return { keep, discard: [] };
         }
 
-        const newRange = this.getNodesInRange(root, node);
+        const newRange = this.#getNodesInRange(root, node);
         if (!newRange) {
             this.setRoot(node);
             return { keep: [node], discard: [] };
@@ -177,7 +177,7 @@ export class RowRangeSelectionContext {
 
         // OPTIMIZATION: `newRange` is what `getRange()` would recompute once `node` is the end,
         // so reuse it rather than walking the row model again.
-        if (newRange.some((newRangeNode) => newRangeNode.id === this.endId)) {
+        if (newRange.some((newRangeNode) => newRangeNode.id === this.#endId)) {
             // Range between root and given node contains the current "end"
             // so this is an extension of the current range direction
             this.setEndRange(node);
@@ -190,7 +190,7 @@ export class RowRangeSelectionContext {
         }
     }
 
-    private getNodesInRange(start: RowNode, end: RowNode): RowNode[] | null {
+    #getNodesInRange(start: RowNode, end: RowNode): RowNode[] | null {
         const { pinnedRowModel, rowModel } = this;
 
         // 1. No manual row pinning: just look at row model

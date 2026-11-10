@@ -22,7 +22,7 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     TooltipSourceParams,
     TooltipLocation
 > {
-    private onColumnMovedEventCallback: (() => null) | undefined;
+    #onColumnMovedEventCallback: (() => null) | undefined;
 
     public override postConstruct(): void {
         super.postConstruct();
@@ -58,14 +58,14 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     }
 
     protected override setEventHandlers(listener: () => void): void {
-        [this.onColumnMovedEventCallback] = this.addManagedEventListeners({
+        [this.#onColumnMovedEventCallback] = this.addManagedEventListeners({
             columnMoved: listener,
         });
     }
 
     protected override clearEventHandlers(): void {
-        this.onColumnMovedEventCallback?.();
-        this.onColumnMovedEventCallback = undefined;
+        this.#onColumnMovedEventCallback?.();
+        this.#onColumnMovedEventCallback = undefined;
     }
 
     protected override getPopupPositionParams(): PopupPositionParams {

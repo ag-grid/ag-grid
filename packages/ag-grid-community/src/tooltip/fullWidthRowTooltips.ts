@@ -22,11 +22,14 @@ interface RowTooltip {
  * Tooltip module so full-width rows carry no tooltip code when the module is not registered.
  */
 export class FullWidthRowTooltips extends BeanStub {
-    private readonly tooltipFeatures = new Map<HTMLElement, RowTooltip>();
-    private readonly rendererGuards = new Map<HTMLElement, ComponentInstanceGuard>();
+    readonly #tooltipFeatures = new Map<HTMLElement, RowTooltip>();
+    readonly #rendererGuards = new Map<HTMLElement, ComponentInstanceGuard>();
 
-    public constructor(private readonly rowCtrl: RowCtrl) {
+    readonly #rowCtrl: RowCtrl;
+
+    public constructor(rowCtrl: RowCtrl) {
         super();
+        this.#rowCtrl = rowCtrl;
     }
 
     /**
@@ -34,7 +37,7 @@ export class FullWidthRowTooltips extends BeanStub {
      * provisionally: the surviving renderer's earlier params must keep working when it is kept in place.
      */
     public claimRenderer(eGui: HTMLElement, adopt: boolean): ComponentInstanceClaim {
-        const { rendererGuards } = this;
+        const rendererGuards = this.#rendererGuards;
         let guard = rendererGuards.get(eGui);
         if (!guard) {
             guard = new ComponentInstanceGuard();
@@ -44,7 +47,9 @@ export class FullWidthRowTooltips extends BeanStub {
     }
 
     public pruneStaleElements(): void {
-        const { tooltipFeatures, rendererGuards, rowCtrl } = this;
+        const tooltipFeatures = this.#tooltipFeatures;
+        const rendererGuards = this.#rendererGuards;
+        const rowCtrl = this.#rowCtrl;
         if (tooltipFeatures.size === 0 && rendererGuards.size === 0) {
             return;
         }
@@ -82,9 +87,9 @@ export class FullWidthRowTooltips extends BeanStub {
             return;
         }
 
-        const isGroupRow = this.rowCtrl.getRowType() === 'FullWidthGroup';
+        const isGroupRow = this.#rowCtrl.getRowType() === 'FullWidthGroup';
         if (value == null) {
-            this.clearTooltip(eGui);
+            this.#clearTooltip(eGui);
             if (isGroupRow) {
                 this.setupGroupRowsTooltip(rowNode, eGui);
             }
@@ -92,8 +97,8 @@ export class FullWidthRowTooltips extends BeanStub {
         }
         // Renderer-supplied tooltips are not gated by `tooltip: false`, so pass the colDef ungated.
         const groupCol = isGroupRow ? (rowNode.rowGroupColumn as AgColumn | undefined) : undefined;
-        const colDef = isGroupRow ? this.getGroupColDef(rowNode) : undefined;
-        this.setupTooltip(
+        const colDef = isGroupRow ? this.#getGroupColDef(rowNode) : undefined;
+        this.#setupTooltip(
             eGui,
             () => value,
             shouldDisplayTooltip,
@@ -111,15 +116,15 @@ export class FullWidthRowTooltips extends BeanStub {
 
     /** Resolves a group row's tooltip lazily from its group column, unless its renderer set one. */
     public setupGroupRowsTooltip(rowNode: RowNode, eGui: HTMLElement): void {
-        if (this.tooltipFeatures.get(eGui)?.fromRenderer) {
+        if (this.#tooltipFeatures.get(eGui)?.fromRenderer) {
             return;
         }
         const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
         const { gos } = this;
 
-        const colDef = this.getGroupColDef(rowNode);
+        const colDef = this.#getGroupColDef(rowNode);
         if (!colDef) {
-            this.clearTooltip(eGui);
+            this.#clearTooltip(eGui);
             return;
         }
 
@@ -129,7 +134,7 @@ export class FullWidthRowTooltips extends BeanStub {
             !hasTooltipValue &&
             !!(colDef.tooltipComponent || colDef.tooltipComponentSelector);
         if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip) {
-            this.clearTooltip(eGui);
+            this.#clearTooltip(eGui);
             return;
         }
 
@@ -142,7 +147,7 @@ export class FullWidthRowTooltips extends BeanStub {
             return display;
         };
 
-        this.setupTooltip(
+        this.#setupTooltip(
             eGui,
             () => {
                 const { value, valueFormatted } = getDisplay();
@@ -196,12 +201,12 @@ export class FullWidthRowTooltips extends BeanStub {
      * Regular row grouping: read tooltip config from the row-group column's colDef.
      * Tree data (no rowGroupColumn): fall back to the auto-group column def.
      */
-    private getGroupColDef(rowNode: RowNode): ColDef | undefined {
+    #getGroupColDef(rowNode: RowNode): ColDef | undefined {
         const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
         return groupCol?.colDef ?? this.gos.get('autoGroupColumnDef');
     }
 
-    private setupTooltip(
+    #setupTooltip(
         eGui: HTMLElement,
         getTooltipValue: () => any,
         shouldDisplayTooltip: (() => boolean) | undefined,
@@ -209,7 +214,9 @@ export class FullWidthRowTooltips extends BeanStub {
         getTooltipComponentDefinition: () => ColDef | undefined,
         fromRenderer: boolean
     ): void {
-        const { tooltipFeatures, rowCtrl, beans } = this;
+        const { beans } = this;
+        const tooltipFeatures = this.#tooltipFeatures;
+        const rowCtrl = this.#rowCtrl;
         if (!rowCtrl.getCurrentRowElement()) {
             return;
         }
@@ -230,8 +237,8 @@ export class FullWidthRowTooltips extends BeanStub {
         }
     }
 
-    private clearTooltip(eGui: HTMLElement): void {
-        const { tooltipFeatures } = this;
+    #clearTooltip(eGui: HTMLElement): void {
+        const tooltipFeatures = this.#tooltipFeatures;
         const feature = tooltipFeatures.get(eGui)?.feature;
         if (feature) {
             this.destroyBean(feature, this.beans.context);
@@ -241,7 +248,8 @@ export class FullWidthRowTooltips extends BeanStub {
 
     public override destroy(): void {
         const { context } = this.beans;
-        const { tooltipFeatures, rendererGuards } = this;
+        const tooltipFeatures = this.#tooltipFeatures;
+        const rendererGuards = this.#rendererGuards;
         for (const tooltip of tooltipFeatures.values()) {
             this.destroyBean(tooltip.feature, context);
         }

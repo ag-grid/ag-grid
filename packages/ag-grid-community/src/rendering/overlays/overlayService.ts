@@ -145,39 +145,39 @@ export class OverlayService extends BeanStub implements NamedBean {
     public eWrapper: OverlayWrapperComponent | undefined = undefined;
 
     public exclusive: boolean = false;
-    private oldExclusive: boolean = false;
-    private currentDef: OverlayDef | null = null;
-    private showInitialOverlay: boolean = true;
-    private userForcedNoRows: boolean = false;
-    private exportsInProgress: number = 0;
+    #oldExclusive: boolean = false;
+    #currentDef: OverlayDef | null = null;
+    #showInitialOverlay: boolean = true;
+    #userForcedNoRows: boolean = false;
+    #exportsInProgress: number = 0;
     private focusedCell: CellPosition | null;
-    private devErrorOverlayActive: boolean = false;
+    #devErrorOverlayActive: boolean = false;
 
-    private newColumnsLoadedCleanup: (() => void) | null = null;
+    #newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
         const gos = this.gos;
-        this.showInitialOverlay = _isClientSideRowModel(gos);
+        this.#showInitialOverlay = _isClientSideRowModel(gos);
 
         const updateOverlayVisibility = () => {
-            if (this.userForcedNoRows) {
+            if (this.#userForcedNoRows) {
                 // Stop handling grid events so we do not clear the manually triggered no rows overlay
                 return;
             }
-            this.updateOverlay(false);
+            this.#updateOverlay(false);
         };
 
         const [newColumnsLoadedCleanup, rowCountReadyCleanup, _, __] = this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
             rowCountReady: () => {
                 // Support hiding the initial overlay when data is set via transactions.
-                this.disableInitialOverlay();
+                this.#disableInitialOverlay();
                 updateOverlayVisibility();
                 rowCountReadyCleanup();
             },
             rowDataUpdated: updateOverlayVisibility,
             modelUpdated: updateOverlayVisibility,
         });
-        this.newColumnsLoadedCleanup = newColumnsLoadedCleanup;
+        this.#newColumnsLoadedCleanup = newColumnsLoadedCleanup;
 
         this.addManagedPropertyListeners(
             [
@@ -191,12 +191,12 @@ export class OverlayService extends BeanStub implements NamedBean {
                 'autoGenerateColumnDefs',
                 'processFileInput',
             ],
-            (params) => this.onPropChange(new Set(params.changeSet?.properties))
+            (params) => this.#onPropChange(new Set(params.changeSet?.properties))
         );
     }
 
     public override destroy(): void {
-        this.doHideOverlay();
+        this.#doHideOverlay();
         super.destroy();
         this.eWrapper = undefined;
     }
@@ -210,12 +210,12 @@ export class OverlayService extends BeanStub implements NamedBean {
         } else if (this.eWrapper === overlayWrapperComp) {
             this.eWrapper = undefined;
         }
-        this.updateOverlay(false);
+        this.#updateOverlay(false);
     }
 
     /** Returns true if the overlay is visible. */
     public isVisible(): boolean {
-        return !!this.currentDef;
+        return !!this.#currentDef;
     }
 
     /**
@@ -224,43 +224,48 @@ export class OverlayService extends BeanStub implements NamedBean {
      * immediately so the overlay appears as soon as the wrapper exists (or once it later mounts).
      */
     public setDevErrorOverlay(active: boolean): void {
-        if (this.devErrorOverlayActive === active) {
+        if (this.#devErrorOverlayActive === active) {
             return;
         }
-        this.devErrorOverlayActive = active;
-        this.updateOverlay(false);
+        this.#devErrorOverlayActive = active;
+        this.#updateOverlay(false);
     }
 
     public showLoadingOverlay(): void {
-        this.showInitialOverlay = false;
+        this.#showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive || _isClientSideLoadingRows(gos)) {
+        if (
+            !this.eWrapper ||
+            gos.get('activeOverlay') ||
+            this.#devErrorOverlayActive ||
+            _isClientSideLoadingRows(gos)
+        ) {
             return;
         }
-        if (this.isDisabled(LoadingOverlayDef)) {
+        if (this.#isDisabled(LoadingOverlayDef)) {
             return;
         }
         const loading = gos.get('loading');
         if (!loading && loading !== undefined) {
             return;
         }
-        this.doShowOverlay(LoadingOverlayDef);
+        this.#doShowOverlay(LoadingOverlayDef);
     }
 
     public showNoRowsOverlay(): void {
-        this.showInitialOverlay = false;
+        this.#showInitialOverlay = false;
         const gos = this.gos;
         if (
             !this.eWrapper ||
             gos.get('activeOverlay') ||
             gos.get('loading') ||
-            this.isDisabled(NoRowsOverlayDef) ||
-            this.devErrorOverlayActive
+            this.#isDisabled(NoRowsOverlayDef) ||
+            this.#devErrorOverlayActive
         ) {
             return;
         }
-        this.userForcedNoRows = true;
-        this.doShowOverlay(NoRowsOverlayDef);
+        this.#userForcedNoRows = true;
+        this.#doShowOverlay(NoRowsOverlayDef);
     }
     public showExportOverlay(heavyOperation: () => void): void {
         const gos = this.gos;
@@ -268,33 +273,33 @@ export class OverlayService extends BeanStub implements NamedBean {
             !this.eWrapper ||
             gos.get('activeOverlay') ||
             gos.get('loading') ||
-            this.isDisabled(ExportingOverlayDef) ||
-            this.devErrorOverlayActive ||
-            (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
+            this.#isDisabled(ExportingOverlayDef) ||
+            this.#devErrorOverlayActive ||
+            (this.#userForcedNoRows && this.#currentDef === NoRowsOverlayDef)
         ) {
             heavyOperation();
             return;
         }
 
-        const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
+        const desiredDef = this.#getDesiredDefWithOverride(ExportingOverlayDef);
         if (!desiredDef) {
             heavyOperation();
             return;
         }
 
-        void this.runWithExportOverlay(desiredDef, heavyOperation);
+        void this.#runWithExportOverlay(desiredDef, heavyOperation);
     }
 
-    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => void): Promise<void> {
+    async #runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => void): Promise<void> {
         const beans = this.beans;
 
         // Make sure if multiple export calls are run we don't clear until the last one.
-        this.exportsInProgress++;
+        this.#exportsInProgress++;
         // Aim to restore cell focus after it is lost due to the overlay
         this.focusedCell = beans.focusSvc.getFocusedCell();
 
         // wait until the wrapper has mounted the overlay component
-        await this.doShowOverlay(desiredDef);
+        await this.#doShowOverlay(desiredDef);
 
         // ensure the overlay has a chance to be painted
         await new Promise<void>((resolve) => setTimeout(() => resolve()));
@@ -308,9 +313,9 @@ export class OverlayService extends BeanStub implements NamedBean {
             const remaining = Math.max(0, MIN_EXPORT_OVERLAY_SHOW_TIME - elapsed);
 
             const clearExportOverlay = () => {
-                this.exportsInProgress--;
-                if (this.exportsInProgress === 0) {
-                    this.updateOverlay(false);
+                this.#exportsInProgress--;
+                if (this.#exportsInProgress === 0) {
+                    this.#updateOverlay(false);
                     _attemptToRestoreCellFocus(beans, this.focusedCell);
                     this.focusedCell = null;
                 }
@@ -326,9 +331,9 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     public hideOverlay(): void {
         const gos = this.gos;
-        this.showInitialOverlay = false;
-        const userHadForced = this.userForcedNoRows;
-        this.userForcedNoRows = false;
+        this.#showInitialOverlay = false;
+        const userHadForced = this.#userForcedNoRows;
+        this.#userForcedNoRows = false;
         if (gos.get('loading')) {
             this.warn(99);
             return;
@@ -337,15 +342,15 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.warn(296);
             return;
         }
-        if (this.currentDef === NoMatchingRowsOverlayDef) {
+        if (this.#currentDef === NoMatchingRowsOverlayDef) {
             this.warn(297);
             return;
         }
-        this.doHideOverlay();
+        this.#doHideOverlay();
         if (userHadForced) {
             // if user had forced no-rows overlay, we need to reevaluate what overlay should be shown now if any
-            if (this.getOverlayDef() !== NoRowsOverlayDef) {
-                this.updateOverlay(false);
+            if (this.#getOverlayDef() !== NoRowsOverlayDef) {
+                this.#updateOverlay(false);
             }
         }
     }
@@ -358,86 +363,86 @@ export class OverlayService extends BeanStub implements NamedBean {
         return OverlayWrapperComponent;
     }
 
-    private onPropChange(changedProps: ReadonlySet<string>): void {
+    #onPropChange(changedProps: ReadonlySet<string>): void {
         const activeOverlayChanged = changedProps.has('activeOverlay');
         if (activeOverlayChanged || changedProps.has('loading') || changedProps.has('loadingRows')) {
-            if (this.updateOverlay(activeOverlayChanged)) {
+            if (this.#updateOverlay(activeOverlayChanged)) {
                 return; // overlay changed, no need to check further
             }
         }
 
-        const currentDef = this.currentDef;
+        const currentDef = this.#currentDef;
         const currOverlayComp = this.eWrapper?.activeOverlay;
         if (currOverlayComp && currentDef) {
             const activeOverlayParamsChanged = changedProps.has('activeOverlayParams');
             if (currentDef === CustomOverlayDef) {
                 // If its an activeOverlay update if the changes are in the activeOverlayParams
                 if (activeOverlayParamsChanged) {
-                    currOverlayComp.refresh?.(this.makeCompParams(true));
+                    currOverlayComp.refresh?.(this.#makeCompParams(true));
                 }
             } else {
                 // Check for overlay component param or legacy provided param changes
                 const paramsKey = currentDef.paramsKey;
                 if (changedProps.has('overlayComponentParams') || (paramsKey && changedProps.has(paramsKey))) {
-                    currOverlayComp.refresh?.(this.makeCompParams(false, paramsKey, currentDef.overlayType));
+                    currOverlayComp.refresh?.(this.#makeCompParams(false, paramsKey, currentDef.overlayType));
                 }
             }
         }
     }
 
-    private updateOverlay(activeOverlayChanged: boolean): boolean {
+    #updateOverlay(activeOverlayChanged: boolean): boolean {
         const eWrapper = this.eWrapper;
         if (!eWrapper) {
-            this.currentDef = null;
+            this.#currentDef = null;
             return false;
         }
 
         // Active overlay should take priority over loading=true
-        const desiredDef = this.getDesiredDefWithOverride();
+        const desiredDef = this.#getDesiredDefWithOverride();
 
-        const currentDef = this.currentDef;
+        const currentDef = this.#currentDef;
         const shouldReload = desiredDef === CustomOverlayDef && activeOverlayChanged;
 
         if (desiredDef !== currentDef) {
             if (!desiredDef) {
-                this.disableInitialOverlay();
-                return this.doHideOverlay();
+                this.#disableInitialOverlay();
+                return this.#doHideOverlay();
             }
-            this.doShowOverlay(desiredDef);
+            this.#doShowOverlay(desiredDef);
             return true;
         }
 
         if (shouldReload && desiredDef) {
             eWrapper.hideOverlay();
-            this.doShowOverlay(desiredDef);
+            this.#doShowOverlay(desiredDef);
             return true;
         }
 
         if (!desiredDef) {
-            this.disableInitialOverlay();
+            this.#disableInitialOverlay();
         }
 
         return false;
     }
 
-    private getDesiredDefWithOverride(defaultDef?: OverlayDef) {
+    #getDesiredDefWithOverride(defaultDef?: OverlayDef) {
         const { gos } = this;
         let desiredDef = getActiveOverlayDef(gos.get('activeOverlay'));
         if (!desiredDef) {
-            desiredDef = defaultDef ?? this.getOverlayDef();
-            if (desiredDef && this.isDisabled(desiredDef)) {
+            desiredDef = defaultDef ?? this.#getOverlayDef();
+            if (desiredDef && this.#isDisabled(desiredDef)) {
                 desiredDef = null;
             }
         }
         return desiredDef;
     }
 
-    private getOverlayDef(): OverlayDef | null {
+    #getOverlayDef(): OverlayDef | null {
         const { gos, beans } = this;
         const { rowModel } = beans;
 
         // Dev validation errors take priority over the data-driven overlays (loading / no-rows).
-        if (this.devErrorOverlayActive && this.eWrapper) {
+        if (this.#devErrorOverlayActive && this.eWrapper) {
             return ErrorOverlayDef;
         }
 
@@ -446,24 +451,24 @@ export class OverlayService extends BeanStub implements NamedBean {
         const loadingDefined = loading !== undefined;
 
         if (loadingDefined) {
-            this.disableInitialOverlay();
+            this.#disableInitialOverlay();
             if (loading) {
                 return _isClientSideLoadingRows(gos) ? null : LoadingOverlayDef;
             }
-        } else if (this.showInitialOverlay) {
+        } else if (this.#showInitialOverlay) {
             const noColumnDefs = !gos.get('columnDefs') && !gos.get('autoGenerateColumnDefs');
             const noRowData = !gos.get('rowData');
             if (noColumnDefs || noRowData) {
-                if (noRowData && gos.get('processFileInput') && !this.isDisabled(FileInputOverlayDef)) {
+                if (noRowData && gos.get('processFileInput') && !this.#isDisabled(FileInputOverlayDef)) {
                     return FileInputOverlayDef;
                 }
-                if (!this.isDisabled(LoadingOverlayDef)) {
+                if (!this.#isDisabled(LoadingOverlayDef)) {
                     return LoadingOverlayDef;
                 }
             }
-            this.disableInitialOverlay();
+            this.#disableInitialOverlay();
         } else {
-            this.disableInitialOverlay();
+            this.#disableInitialOverlay();
         }
 
         // activeOverlay already checked above
@@ -471,11 +476,11 @@ export class OverlayService extends BeanStub implements NamedBean {
         return getOverlayDefForType(overlayType);
     }
 
-    private disableInitialOverlay(): void {
-        this.showInitialOverlay = false;
+    #disableInitialOverlay(): void {
+        this.#showInitialOverlay = false;
         // Stop listening for new columns loaded as initial overlay is now hidden
-        this.newColumnsLoadedCleanup?.();
-        this.newColumnsLoadedCleanup = null;
+        this.#newColumnsLoadedCleanup?.();
+        this.#newColumnsLoadedCleanup = null;
     }
 
     /**
@@ -483,11 +488,11 @@ export class OverlayService extends BeanStub implements NamedBean {
      * This single function replaces the previous three helpers and handles
      * param selection and wrapper class choice for loading / no-rows and custom overlays.
      */
-    private doShowOverlay(componentDef: OverlayDef): AgPromise<IOverlayComp | undefined> {
+    #doShowOverlay(componentDef: OverlayDef): AgPromise<IOverlayComp | undefined> {
         const { gos, beans } = this;
         const { userCompFactory } = beans;
 
-        this.currentDef = componentDef;
+        this.#currentDef = componentDef;
         const isProvidedOverlay = componentDef !== CustomOverlayDef;
         const exclusive = !!componentDef.exclusive;
         this.exclusive = exclusive;
@@ -510,7 +515,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 compDetails = userCompFactory.getCompDetailsFromGridOptions(
                     { name: 'overlayComponent', optionalMethods: ['refresh'] },
                     undefined,
-                    this.makeCompParams(false, componentDef.paramsKey, componentDef.overlayType)
+                    this.#makeCompParams(false, componentDef.paramsKey, componentDef.overlayType)
                 );
             }
         }
@@ -518,7 +523,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         compDetails ??= userCompFactory.getCompDetailsFromGridOptions(
             componentDef.comp,
             isProvidedOverlay ? componentDef.id : undefined,
-            this.makeCompParams(!isProvidedOverlay, legacyParamsKey, componentDef.overlayType),
+            this.#makeCompParams(!isProvidedOverlay, legacyParamsKey, componentDef.overlayType),
             false
         );
 
@@ -527,12 +532,12 @@ export class OverlayService extends BeanStub implements NamedBean {
             ? this.eWrapper.showOverlay(promise, componentDef.wrapperCls, exclusive)
             : AgPromise.resolve();
         this.eWrapper?.refreshWrapperPadding();
-        this.setExclusive(exclusive);
+        this.#setExclusive(exclusive);
 
         return mountedPromise;
     }
 
-    private makeCompParams(
+    #makeCompParams(
         includeActiveOverlayParams: boolean,
         legacyParamsKey?: keyof GridOptions,
         overlayType?: OverlayType
@@ -550,10 +555,10 @@ export class OverlayService extends BeanStub implements NamedBean {
         return _addGridCommonParams(gos, params ?? {});
     }
 
-    private doHideOverlay(): boolean {
+    #doHideOverlay(): boolean {
         let changed = false;
-        if (this.currentDef) {
-            this.currentDef = null;
+        if (this.#currentDef) {
+            this.#currentDef = null;
             changed = true;
         }
         this.exclusive = false;
@@ -561,19 +566,19 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (eWrapper) {
             eWrapper.hideOverlay();
             eWrapper.refreshWrapperPadding();
-            this.setExclusive(false);
+            this.#setExclusive(false);
         }
         return changed;
     }
 
-    private setExclusive(exclusive: boolean): void {
-        if (this.oldExclusive !== exclusive) {
-            this.oldExclusive = exclusive;
+    #setExclusive(exclusive: boolean): void {
+        if (this.#oldExclusive !== exclusive) {
+            this.#oldExclusive = exclusive;
             this.eventSvc.dispatchEvent({ type: 'overlayExclusiveChanged' });
         }
     }
 
-    private isDisabled(def: OverlayDef): boolean {
+    #isDisabled(def: OverlayDef): boolean {
         const { gos } = this;
 
         return (

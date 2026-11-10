@@ -32,7 +32,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });
-        const listener = this.checkContainerWidths.bind(this);
+        const listener = this.#checkContainerWidths.bind(this);
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             displayedColumnsWidthChanged: listener,
@@ -41,7 +41,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('domLayout', listener);
     }
 
-    private checkContainerWidths() {
+    #checkContainerWidths() {
         const { gos, visibleCols, eventSvc } = this.beans;
         const printLayout = _isDomLayout(gos, 'print');
 
@@ -70,7 +70,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        const processedColumnsToRemove = this.getPinnedColumnsOverflowingViewport(
+        const processedColumnsToRemove = this.#getPinnedColumnsOverflowingViewport(
             bodyWidth - MIN_CENTER_VIEWPORT_WIDTH
         );
         const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
@@ -169,8 +169,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const centre = column.pinnedLane === 1;
         // taking from a pinned neighbour keeps the pinned total
         const limited = centre
-            ? change < 0 && takeFromAdjacent && this.isNextPinned(column)
-            : change > 0 && !(takeFromAdjacent && this.isNextPinned(column));
+            ? change < 0 && takeFromAdjacent && this.#isNextPinned(column)
+            : change > 0 && !(takeFromAdjacent && this.#isNextPinned(column));
         if (!limited) {
             return change;
         }
@@ -198,7 +198,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return Math.max(viewportWidth - MIN_CENTER_VIEWPORT_WIDTH - this.leftWidth - this.rightWidth + freed, 0);
     }
 
-    private isNextPinned(column: AgColumn | AgColumnGroup): boolean {
+    #isNextPinned(column: AgColumn | AgColumnGroup): boolean {
         const visibleCols = this.beans.visibleCols;
         if (isColumn(column)) {
             const next = getShiftPair(visibleCols, column);
@@ -209,7 +209,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return !!next && next.pinnedLane !== 1 && next.isResizable();
     }
 
-    private getPinnedColumnsOverflowingViewport(viewportWidth: number): {
+    #getPinnedColumnsOverflowingViewport(viewportWidth: number): {
         columns: AgColumn[];
         hasLockedPinned: boolean;
     } {

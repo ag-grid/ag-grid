@@ -17,19 +17,19 @@ export class IssueEventService extends BeanStub implements NamedBean {
      * A consumer's handler may itself raise a diagnostic (calling a deprecated API, say), which would
      * re-enter here and recurse without bound. Diagnostics raised while dispatching are dropped.
      */
-    private dispatching = false;
+    #dispatching = false;
 
     public postConstruct(): void {
         this.addDestroyFunc(
-            _addDiagnosticListener(this.beans.context.getId(), (diagnostic) => this.onDiagnostic(diagnostic))
+            _addDiagnosticListener(this.beans.context.getId(), (diagnostic) => this.#onDiagnostic(diagnostic))
         );
     }
 
-    private onDiagnostic(diagnostic: CapturedDiagnostic): void {
-        if (this.dispatching) {
+    #onDiagnostic(diagnostic: CapturedDiagnostic): void {
+        if (this.#dispatching) {
             return;
         }
-        this.dispatching = true;
+        this.#dispatching = true;
         try {
             this.eventSvc.dispatchEvent({
                 type: 'issueRaised',
@@ -43,7 +43,7 @@ export class IssueEventService extends BeanStub implements NamedBean {
             // again under a matching `throwOn`, from inside the listener loop the guard exists to protect.
             _errorOnce(_errMsg(333, { error: e }));
         } finally {
-            this.dispatching = false;
+            this.#dispatching = false;
         }
     }
 }

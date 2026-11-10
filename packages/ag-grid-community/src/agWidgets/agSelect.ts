@@ -85,7 +85,7 @@ export class AgSelect<
           >
         | undefined;
     private tooltipFeature?: ITooltipFeature;
-    private commitKeyboardEvent?: KeyboardEvent;
+    #commitKeyboardEvent?: KeyboardEvent;
     private readOnly = false;
 
     constructor(config?: AgSelectParams<TComponentSelectorType, TValue>) {
@@ -133,10 +133,10 @@ export class AgSelect<
             this.setReadOnly(readOnly);
         }
 
-        _addManagedElementListeners(this, this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focusout: this.#onWrapperFocusOut.bind(this) });
     }
 
-    private onWrapperFocusOut(e: FocusEvent): void {
+    #onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
             this.hidePicker();
         }
@@ -178,7 +178,7 @@ export class AgSelect<
                 this.hidePicker();
                 this.dispatchLocalEvent<AgSelectSelectedItemEvent>({
                     type: 'selectedItem',
-                    keyboardEvent: this.commitKeyboardEvent,
+                    keyboardEvent: this.#commitKeyboardEvent,
                 });
             },
             fieldValueChanged: () => {
@@ -249,9 +249,9 @@ export class AgSelect<
                 if (this.isPickerDisplayed) {
                     // handleKeyDown commits synchronously, firing `selectedItem` before it returns, so
                     // stash the Enter keydown here for that dispatch to forward (e.g. for post-edit nav).
-                    this.commitKeyboardEvent = key === KeyCode.ENTER ? e : undefined;
+                    this.#commitKeyboardEvent = key === KeyCode.ENTER ? e : undefined;
                     this.listComponent?.handleKeyDown(e);
-                    this.commitKeyboardEvent = undefined;
+                    this.#commitKeyboardEvent = undefined;
                 } else {
                     super.onKeyDown(e);
                 }

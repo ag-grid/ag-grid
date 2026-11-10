@@ -14,11 +14,11 @@ export class RowSummaryComp extends Component {
 
     public ariaStatus = '';
 
-    private readonly idPrefix: string;
+    readonly #idPrefix: string;
 
     constructor(idPrefix: string) {
         super();
-        this.idPrefix = idPrefix;
+        this.#idPrefix = idPrefix;
     }
 
     public wireBeans(beans: BeanCollection): void {
@@ -26,7 +26,7 @@ export class RowSummaryComp extends Component {
     }
 
     public postConstruct(): void {
-        const idPrefix = this.idPrefix;
+        const idPrefix = this.#idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
 
         this.setTemplate({
@@ -65,7 +65,7 @@ export class RowSummaryComp extends Component {
         this.refresh();
     }
 
-    private isZeroPages(): boolean {
+    #isZeroPages(): boolean {
         return this.beans.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
     }
 
@@ -85,7 +85,7 @@ export class RowSummaryComp extends Component {
         let startRow: number;
         let endRow: number;
 
-        if (this.isZeroPages()) {
+        if (this.#isZeroPages()) {
             startRow = endRow = 0;
         } else {
             startRow = pageSize * currentPage + 1;

@@ -37,7 +37,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const { allColumns, columnKeys, skipRowGroups, exportRowNumbers } = params;
-        const columnsToExport = this.getColumnsToExport({
+        const columnsToExport = this.#getColumnsToExport({
             allColumns,
             skipRowGroups,
             columnKeys: columnKeys as (string | AgColumn)[] | undefined,
@@ -46,19 +46,19 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         return [
             // first pass, put in the header names of the cols
-            this.prepareSession(columnsToExport),
-            this.prependContent(params),
-            this.exportHeaders(params, columnsToExport),
-            this.processPinnedTopRows(params, columnsToExport),
-            this.processRows(params, columnsToExport),
-            this.processPinnedBottomRows(params, columnsToExport),
-            this.appendContent(params),
+            this.#prepareSession(columnsToExport),
+            this.#prependContent(params),
+            this.#exportHeaders(params, columnsToExport),
+            this.#processPinnedTopRows(params, columnsToExport),
+            this.#processRows(params, columnsToExport),
+            this.#processPinnedBottomRows(params, columnsToExport),
+            this.#appendContent(params),
         ]
             .reduce((composed, f) => f(composed), gridSerializingSession)
             .parse();
     }
 
-    private processRow<T>(
+    #processRow<T>(
         gridSerializingSession: GridSerializingSession<T>,
         params: ExportParams<T>,
         columnsToExport: AgColumn[],
@@ -108,7 +108,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         }
     }
 
-    private appendContent<T>(
+    #appendContent<T>(
         params: ExportParams<T>
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession: GridSerializingSession<T>) => {
@@ -120,7 +120,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private prependContent<T>(
+    #prependContent<T>(
         params: ExportParams<T>
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession: GridSerializingSession<T>) => {
@@ -132,7 +132,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private prepareSession<T>(
+    #prepareSession<T>(
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
@@ -141,7 +141,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private exportHeaders<T>(
+    #exportHeaders<T>(
         params: ExportParams<T>,
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -172,19 +172,19 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     ? gridSerializingSession.onNewHeaderGroupingRow()
                     : gridSerializingSession.onNewHeaderRow();
                 for (const cell of row.cells) {
-                    accumulator.onCell(this.withCollapsibleGroupRanges(cell, columnsToExport));
+                    accumulator.onCell(this.#withCollapsibleGroupRanges(cell, columnsToExport));
                 }
             }
             return gridSerializingSession;
         };
     }
 
-    private processPinnedTopRows<T>(
+    #processPinnedTopRows<T>(
         params: ExportParams<T>,
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
+            const processRow = this.#processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
             if (params.rowPositions) {
                 params.rowPositions
@@ -200,7 +200,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private processRows<T>(
+    #processRows<T>(
         params: ExportParams<T>,
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -210,7 +210,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             const usingCsrm = _isClientSideRowModel(this.gos, rowModel);
             const usingSsrm = _isServerSideRowModel(this.gos, rowModel);
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
-            const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
+            const processRow = this.#processRow.bind(this, gridSerializingSession, params, columnsToExport);
             const pinnedRowModel = this.pinnedRowModel;
             const processBodyRow = (node: RowNode): void => {
                 if (!params.skipPinnedRowDuplicates) {
@@ -268,7 +268,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                         selectedNodes.push(row);
                     }
                 }
-                this.replicateSortedOrder(selectedNodes);
+                this.#replicateSortedOrder(selectedNodes);
                 selectedNodes.forEach(processBodyRow);
             }
             // here is everything else - including standard row model and selected. we don't use
@@ -286,7 +286,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private replicateSortedOrder(rows: RowNode[]) {
+    #replicateSortedOrder(rows: RowNode[]) {
         const { sortSvc, rowNodeSorter } = this.beans;
         if (!sortSvc || !rowNodeSorter) {
             return;
@@ -323,12 +323,12 @@ export class GridSerializer extends BeanStub implements NamedBean {
         rows.sort(compareNodes);
     }
 
-    private processPinnedBottomRows<T>(
+    #processPinnedBottomRows<T>(
         params: ExportParams<T>,
         columnsToExport: AgColumn[]
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
+            const processRow = this.#processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
             if (params.rowPositions) {
                 params.rowPositions
@@ -344,7 +344,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private getColumnsToExport(params: {
+    #getColumnsToExport(params: {
         allColumns?: boolean;
         skipRowGroups?: boolean;
         exportRowNumbers?: boolean;
@@ -391,7 +391,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return columnsToExport;
     }
 
-    private withCollapsibleGroupRanges(cell: GridHeaderCell, columnsToExport: AgColumn[]): GridHeaderCell {
+    #withCollapsibleGroupRanges(cell: GridHeaderCell, columnsToExport: AgColumn[]): GridHeaderCell {
         // only real group cells contribute ranges: padding cells wrapping an expandable chain
         // would re-emit the same range once per padded row, inflating the outline nesting
         if (cell.type !== 'group') {

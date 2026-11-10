@@ -106,7 +106,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
     public override stopCancelled(forceCancel: boolean, validationCache?: EditorValidationCache): boolean {
         super.stopCancelled(forceCancel, validationCache);
-        return this.clearPosition();
+        return this.#clearPosition();
     }
 
     public override stopCommitted(
@@ -115,10 +115,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         validationCache?: EditorValidationCache
     ): boolean {
         super.stopCommitted(event, commit, validationCache);
-        return this.clearPosition();
+        return this.#clearPosition();
     }
 
-    private clearPosition(): true {
+    #clearPosition(): true {
         this.rowNode = undefined;
         this.column = undefined;
         return true;

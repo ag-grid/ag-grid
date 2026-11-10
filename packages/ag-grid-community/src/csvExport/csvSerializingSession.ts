@@ -17,18 +17,18 @@ interface CsvSerializingParams extends GridSerializingParams {
 }
 
 export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
-    private isFirstLine = true;
+    #isFirstLine = true;
     private result: string = '';
-    private readonly suppressQuotes: boolean;
-    private readonly columnSeparator: string;
+    readonly #suppressQuotes: boolean;
+    readonly #columnSeparator: string;
 
     constructor(private readonly config: CsvSerializingParams) {
         super(config);
 
         const { suppressQuotes, columnSeparator } = config;
 
-        this.suppressQuotes = suppressQuotes;
-        this.columnSeparator = columnSeparator;
+        this.#suppressQuotes = suppressQuotes;
+        this.#columnSeparator = columnSeparator;
     }
 
     public addCustomContent(content: CsvCustomContent) {
@@ -37,21 +37,21 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         }
         if (typeof content === 'string') {
             if (!/^\s*\n/.test(content)) {
-                this.beginNewLine();
+                this.#beginNewLine();
             }
             // replace whatever newlines are supplied with the style we're using
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content;
         } else {
             content.forEach((row) => {
-                this.beginNewLine();
+                this.#beginNewLine();
                 row.forEach((cell, index) => {
                     if (index !== 0) {
-                        this.result += this.columnSeparator;
+                        this.result += this.#columnSeparator;
                     }
-                    this.result += this.putInQuotes(cell.data.value || '');
+                    this.result += this.#putInQuotes(cell.data.value || '');
                     if (cell.mergeAcross) {
-                        this.appendEmptyCells(cell.mergeAcross);
+                        this.#appendEmptyCells(cell.mergeAcross);
                     }
                 });
             });
@@ -59,10 +59,10 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     }
 
     public onNewHeaderRow(): HeaderRowAccumulator {
-        this.beginNewLine();
+        this.#beginNewLine();
 
         return {
-            onCell: this.onNewHeaderCell.bind(this),
+            onCell: this.#onNewHeaderCell.bind(this),
         };
     }
 
@@ -70,9 +70,9 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         return this.onNewHeaderRow();
     }
 
-    private onNewHeaderCell(cell: GridHeaderCell): void {
+    #onNewHeaderCell(cell: GridHeaderCell): void {
         if (cell.columnIndex != 0) {
-            this.result += this.columnSeparator;
+            this.result += this.#columnSeparator;
         }
 
         let value = '';
@@ -82,28 +82,28 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             // padding groups still resolve names via defaultColGroupDef and group header callbacks.
             value = this.extractGroupHeaderValue(cell.column);
         }
-        this.result += this.putInQuotes(value);
+        this.result += this.#putInQuotes(value);
 
-        this.appendEmptyCells(cell.columnSpan - 1);
+        this.#appendEmptyCells(cell.columnSpan - 1);
     }
 
-    private appendEmptyCells(count: number) {
+    #appendEmptyCells(count: number) {
         for (let i = 1; i <= count; i++) {
-            this.result += this.columnSeparator + this.putInQuotes('');
+            this.result += this.#columnSeparator + this.#putInQuotes('');
         }
     }
 
     public onNewBodyRow(): RowAccumulator {
-        this.beginNewLine();
+        this.#beginNewLine();
 
         return {
-            onColumn: this.onNewBodyRowColumn.bind(this),
+            onColumn: this.#onNewBodyRowColumn.bind(this),
         };
     }
 
-    private onNewBodyRowColumn(column: AgColumn, index: number, node: RowNode): void {
+    #onNewBodyRowColumn(column: AgColumn, index: number, node: RowNode): void {
         if (index != 0) {
-            this.result += this.columnSeparator;
+            this.result += this.#columnSeparator;
         }
         const rowCellValue = this.extractRowCellValue({
             column,
@@ -113,11 +113,11 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             type: 'csv',
             useRawFormula: false,
         });
-        this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
+        this.result += this.#putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
     }
 
-    private putInQuotes(value: any): string {
-        if (this.suppressQuotes) {
+    #putInQuotes(value: any): string {
+        if (this.#suppressQuotes) {
             return value;
         }
 
@@ -145,10 +145,10 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         return this.result;
     }
 
-    private beginNewLine() {
-        if (!this.isFirstLine) {
+    #beginNewLine() {
+        if (!this.#isFirstLine) {
             this.result += LINE_SEPARATOR;
         }
-        this.isFirstLine = false;
+        this.#isFirstLine = false;
     }
 }

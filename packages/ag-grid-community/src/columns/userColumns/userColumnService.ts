@@ -33,27 +33,27 @@ export class UserColumnService extends BeanStub implements NamedBean {
     private readonly entries = new Map<string, UserColumnEntry>();
     /** Owners' enabled checks. An entry only reaches the built columns while an owner is active, so a
      *  disabled feature (or an unregistered module) preserves state without acting on it. */
-    private readonly owners: (() => boolean)[] = [];
+    readonly #owners: (() => boolean)[] = [];
     /** Union of the properties the registered owners' UI can produce, or `null` while none have registered. */
-    private ownedProperties: Set<UserColumnPropertyKey> | null = null;
+    #ownedProperties: Set<UserColumnPropertyKey> | null = null;
     /** `colModel.colDefs` the declared lookup was built from; a new array rebuilds it. */
-    private declaredDefsSource: (ColDef | ColGroupDef)[] | null | undefined;
-    private declaredDefs = new Map<string, ColDef>();
+    #declaredDefsSource: (ColDef | ColGroupDef)[] | null | undefined;
+    #declaredDefs = new Map<string, ColDef>();
 
     /** Registers a feature that builds user columns, along with its enabled check and the definition
      *  properties its UI lets a user configure. Incoming state is filtered to the registered properties, so
      *  the layer stays a record of user choices rather than a second route into `columnDefs`. */
     public registerOwner(isEnabled: () => boolean, ownedProperties: readonly UserColumnPropertyKey[]): void {
-        this.owners.push(isEnabled);
-        const properties = this.ownedProperties ?? new Set<UserColumnPropertyKey>();
+        this.#owners.push(isEnabled);
+        const properties = this.#ownedProperties ?? new Set<UserColumnPropertyKey>();
         for (let i = 0, len = ownedProperties.length; i < len; ++i) {
             properties.add(ownedProperties[i]);
         }
-        this.ownedProperties = properties;
+        this.#ownedProperties = properties;
     }
 
     public isActive(): boolean {
-        const owners = this.owners;
+        const owners = this.#owners;
         for (let i = 0, len = owners.length; i < len; ++i) {
             if (owners[i]()) {
                 return true;
@@ -67,13 +67,13 @@ export class UserColumnService extends BeanStub implements NamedBean {
      *  merged in, and a tombstoned column is not built at all. */
     public getDeclaredDef(colId: string): ColDef | undefined {
         const colDefs = this.beans.colModel.colDefs ?? null;
-        if (this.declaredDefsSource !== colDefs) {
+        if (this.#declaredDefsSource !== colDefs) {
             const declaredDefs = new Map<string, ColDef>();
             collectDeclaredDefs(colDefs, declaredDefs);
-            this.declaredDefs = declaredDefs;
-            this.declaredDefsSource = colDefs;
+            this.#declaredDefs = declaredDefs;
+            this.#declaredDefsSource = colDefs;
         }
-        return this.declaredDefs.get(colId);
+        return this.#declaredDefs.get(colId);
     }
 
     public isDeclared(colId: string): boolean {
@@ -126,7 +126,7 @@ export class UserColumnService extends BeanStub implements NamedBean {
     /** Drops the whole layer, returning whether it held anything. */
     public clear(): boolean {
         const { entries } = this;
-        this.declaredDefsSource = undefined;
+        this.#declaredDefsSource = undefined;
         if (!entries.size) {
             return false;
         }
@@ -207,7 +207,7 @@ export class UserColumnService extends BeanStub implements NamedBean {
                 next.set(colId, { removed: true });
             } else if (state.created) {
                 next.set(colId, {
-                    properties: this.acceptProperties(state.properties),
+                    properties: this.#acceptProperties(state.properties),
                     parentGroupId: state.parentGroupId ?? null,
                     created: true,
                     calculatedExpressionError: state.calculatedExpressionError,
@@ -217,7 +217,7 @@ export class UserColumnService extends BeanStub implements NamedBean {
                 // developer's columns, it cannot reinstate one they have taken away. Resolved against the
                 // declarations, not the built columns — a tombstoned column is absent from the build.
                 next.set(colId, {
-                    properties: this.acceptProperties(state.properties),
+                    properties: this.#acceptProperties(state.properties),
                     calculatedExpressionError: state.calculatedExpressionError,
                 });
             }
@@ -238,8 +238,8 @@ export class UserColumnService extends BeanStub implements NamedBean {
      *  With no owner registered the properties pass through untouched: there is nothing to validate against,
      *  the entries never reach the built columns, and they must re-save unchanged so a state saved on a
      *  grid that has the feature is not lossy on one that does not. */
-    private acceptProperties(properties: UserColumnProperty[] | undefined): ColDef {
-        const owned = this.ownedProperties;
+    #acceptProperties(properties: UserColumnProperty[] | undefined): ColDef {
+        const owned = this.#ownedProperties;
         const result: Record<string, any> = {};
         for (let i = 0, len = properties?.length ?? 0; i < len; ++i) {
             const { property, value } = properties![i];
