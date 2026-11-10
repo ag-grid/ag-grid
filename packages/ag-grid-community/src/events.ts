@@ -137,60 +137,60 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
         issueRaised: IssueRaisedEvent<TData, TContext>;
         // Internal events
-        scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
-        keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
-        keyShortcutChangedCellEnd: KeyShortcutChangedCellEndEvent<TData, TContext>;
-        pinnedHeightChanged: PinnedHeightChangedEvent<TData, TContext>;
-        cellFocusCleared: CellFocusClearedEvent<TData, TContext>;
-        fullWidthRowFocused: FullWidthRowFocusedEvent<TData, TContext>;
-        checkboxChanged: CheckboxChangedEvent<TData, TContext>;
-        heightScaleChanged: HeightScaleChangedEvent<TData, TContext>;
-        suppressMovableColumns: SuppressMovableColumnsEvent<TData, TContext>;
-        suppressMenuHide: SuppressMenuHideEvent<TData, TContext>;
-        suppressFieldDotNotation: SuppressFieldDotNotationEvent<TData, TContext>;
-        columnPanelItemDragStart: ColumnPanelItemDragStartEvent<TData, TContext>;
-        columnPanelItemDragEnd: ColumnPanelItemDragEndEvent<TData, TContext>;
-        bodyHeightChanged: BodyHeightChangedEvent<TData, TContext>;
-        gridViewportWidthChanged: GridViewportWidthChangedEvent<TData, TContext>;
-        columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
-        displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
-        scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
-        scrollGapChanged: ScrollOverflowChangedEvent<TData, TContext>;
-        columnHoverChanged: ColumnHoverChangedEvent<TData, TContext>;
-        flashCells: FlashCellsEvent<TData, TContext>;
-        paginationPixelOffsetChanged: PaginationPixelOffsetChangedEvent<TData, TContext>;
-        displayedRowsChanged: DisplayedRowsChangedEvent<TData, TContext>;
-        leftPinnedWidthChanged: LeftPinnedWidthChangedEvent<TData, TContext>;
-        rightPinnedWidthChanged: RightPinnedWidthChangedEvent<TData, TContext>;
-        rowContainerHeightChanged: RowContainerHeightChangedEvent<TData, TContext>;
-        headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
-        columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent<TData, TContext>;
+        scrollbarWidthChanged: ScrollbarWidthChangedEvent;
+        keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent;
+        keyShortcutChangedCellEnd: KeyShortcutChangedCellEndEvent;
+        pinnedHeightChanged: PinnedHeightChangedEvent;
+        cellFocusCleared: CellFocusClearedEvent;
+        fullWidthRowFocused: FullWidthRowFocusedEvent;
+        checkboxChanged: CheckboxChangedEvent;
+        heightScaleChanged: HeightScaleChangedEvent;
+        suppressMovableColumns: SuppressMovableColumnsEvent;
+        suppressMenuHide: SuppressMenuHideEvent;
+        suppressFieldDotNotation: SuppressFieldDotNotationEvent;
+        columnPanelItemDragStart: ColumnPanelItemDragStartEvent;
+        columnPanelItemDragEnd: ColumnPanelItemDragEndEvent;
+        bodyHeightChanged: BodyHeightChangedEvent;
+        gridViewportWidthChanged: GridViewportWidthChangedEvent;
+        columnContainerWidthChanged: ColumnContainerWidthChangedEvent;
+        displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent;
+        scrollVisibilityChanged: ScrollVisibilityChangedEvent;
+        scrollGapChanged: ScrollOverflowChangedEvent;
+        columnHoverChanged: ColumnHoverChangedEvent;
+        flashCells: FlashCellsEvent;
+        paginationPixelOffsetChanged: PaginationPixelOffsetChangedEvent;
+        displayedRowsChanged: DisplayedRowsChangedEvent;
+        leftPinnedWidthChanged: LeftPinnedWidthChangedEvent;
+        rightPinnedWidthChanged: RightPinnedWidthChangedEvent;
+        rowContainerHeightChanged: RowContainerHeightChangedEvent;
+        headerHeightChanged: HeaderHeightChangedEvent;
+        columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent;
         columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
-        stylesChanged: StylesChangedEvent<TData, TContext>;
-        storeUpdated: StoreUpdatedEvent<TData, TContext>;
-        filterDestroyed: FilterDestroyedEvent<TData, TContext>;
-        filterHandlerDestroyed: FilterHandlerDestroyedEvent<TData, TContext>;
-        filterClosed: FilterClosedEvent<TData, TContext>;
-        rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
-        rowCountReady: RowCountReadyEvent<TData, TContext>;
-        advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent<TData, TContext>;
-        dataTypesInferred: DataTypesInferredEvent<TData, TContext>;
-        fieldValueChanged: FieldValueChangedEvent<TData, TContext>;
-        fieldPickerValueSelected: FieldPickerValueSelectedEvent<TData, TContext>;
-        richSelectListRowSelected: RichSelectListRowSelectedEvent<TData, TContext>;
-        sideBarUpdated: SideBarUpdatedEvent<TData, TContext>;
-        alignedGridScroll: AlignedGridScrollEvent<TData, TContext>;
-        alignedGridColumn: AlignedGridColumnEvent<TData, TContext>;
-        gridOptionsChanged: GridOptionsChangedEvent<TData, TContext>;
-        chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
-        recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
-        stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
-        stickyBottomOffsetChanged: StickyBottomOffsetChangedEvent<TData, TContext>;
+        stylesChanged: StylesChangedEvent;
+        storeUpdated: StoreUpdatedEvent;
+        filterDestroyed: FilterDestroyedEvent;
+        filterHandlerDestroyed: FilterHandlerDestroyedEvent;
+        filterClosed: FilterClosedEvent;
+        rowDataUpdateStarted: RowDataUpdateStartedEvent<TData>;
+        rowCountReady: RowCountReadyEvent;
+        advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent;
+        dataTypesInferred: DataTypesInferredEvent;
+        fieldValueChanged: FieldValueChangedEvent;
+        fieldPickerValueSelected: FieldPickerValueSelectedEvent;
+        richSelectListRowSelected: RichSelectListRowSelectedEvent;
+        sideBarUpdated: SideBarUpdatedEvent;
+        alignedGridScroll: AlignedGridScrollEvent;
+        alignedGridColumn: AlignedGridColumnEvent;
+        gridOptionsChanged: GridOptionsChangedEvent;
+        chartTitleEdit: ChartTitleEditEvent;
+        recalculateRowBounds: RecalculateRowBoundsEvent;
+        stickyTopOffsetChanged: StickyTopOffsetChangedEvent;
+        stickyBottomOffsetChanged: StickyBottomOffsetChangedEvent;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
-        rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        rowNodeDataChanged: RowNodeDataChangedEvent<TData>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, any, TContext>;
-        filterSwitched: FilterSwitchedEvent<TData, TContext>;
+        filterSwitched: FilterSwitchedEvent;
         batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
         bulkEditingStarted: BulkEditingStartedEvent<TData, TContext>;
@@ -222,6 +222,9 @@ export interface AgGlobalEvent<T extends AgEventType, TData = any, TContext = an
     TContext,
     T
 > {}
+
+/** An event the grid raises for its own use, so it is dispatched without the `api` and `context` public events carry. */
+export interface AgInternalEvent<T extends AgInternalEventType> extends AgEvent<T> {}
 
 export type AgEventListener<TData = any, TContext = any, TEventType extends AgEventType = AgEventType> = (
     params: AgEventTypeParams<TData, TContext>[TEventType]
@@ -334,11 +337,7 @@ export interface RowDataUpdatedEvent<TData = any, TContext = any> extends AgGlob
     TContext
 > {}
 
-export interface RowDataUpdateStartedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rowDataUpdateStarted',
-    TData,
-    TContext
-> {
+export interface RowDataUpdateStartedEvent<TData = any> extends AgInternalEvent<'rowDataUpdateStarted'> {
     rowData: TData[] | null;
 }
 
@@ -347,11 +346,7 @@ export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends 
     TData,
     TContext
 > {}
-export interface PinnedHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'pinnedHeightChanged',
-    TData,
-    TContext
-> {}
+export interface PinnedHeightChangedEvent extends AgInternalEvent<'pinnedHeightChanged'> {}
 
 export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'pinnedRowsChanged',
@@ -522,26 +517,10 @@ export interface ColumnContainerWidthChanged<TData = any, TContext = any> extend
     TData,
     TContext
 > {} // not documented
-export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'displayedColumnsWidthChanged',
-    TData,
-    TContext
-> {} // not documented
-export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'columnHoverChanged',
-    TData,
-    TContext
-> {} // not documented
-export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'bodyHeightChanged',
-    TData,
-    TContext
-> {} // not documented
-export interface GridViewportWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'gridViewportWidthChanged',
-    TData,
-    TContext
-> {} // not documented
+export interface DisplayedColumnsWidthChangedEvent extends AgInternalEvent<'displayedColumnsWidthChanged'> {} // not documented
+export interface ColumnHoverChangedEvent extends AgInternalEvent<'columnHoverChanged'> {} // not documented
+export interface BodyHeightChangedEvent extends AgInternalEvent<'bodyHeightChanged'> {} // not documented
+export interface GridViewportWidthChangedEvent extends AgInternalEvent<'gridViewportWidthChanged'> {} // not documented
 
 // this event is 'odd one out' as it should have properties for all the properties
 // in gridOptions that can be bound by the framework. for example, the gridOptions
@@ -553,19 +532,11 @@ export interface ComponentStateChangedEvent<TData = any, TContext = any> extends
     TContext
 > {}
 
-export interface ColumnPanelItemDragStartEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'columnPanelItemDragStart',
-    TData,
-    TContext
-> {
+export interface ColumnPanelItemDragStartEvent extends AgInternalEvent<'columnPanelItemDragStart'> {
     column: Column | ProvidedColumnGroup;
 }
 
-export interface ColumnPanelItemDragEndEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'columnPanelItemDragEnd',
-    TData,
-    TContext
-> {}
+export interface ColumnPanelItemDragEndEvent extends AgInternalEvent<'columnPanelItemDragEnd'> {}
 
 export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any> extends AgGlobalEvent<
     T,
@@ -589,11 +560,7 @@ export interface DragCancelledEvent<TData = any, TContext = any> extends AgDragE
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
 // that only one radio button in the same group is selected at any given time.
-export interface CheckboxChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'checkboxChanged',
-    TData,
-    TContext
-> {
+export interface CheckboxChangedEvent extends AgInternalEvent<'checkboxChanged'> {
     id: string;
     name: string;
     selected?: boolean;
@@ -1006,11 +973,7 @@ export interface TooltipShowEvent<TData = any, TContext = any> extends TooltipEv
 
 export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEvent<'tooltipHide', TData, TContext> {}
 
-export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'paginationPixelOffsetChanged',
-    TData,
-    TContext
-> {}
+export interface PaginationPixelOffsetChangedEvent extends AgInternalEvent<'paginationPixelOffsetChanged'> {}
 
 export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetChanged'> {
     offset: number;
@@ -1070,16 +1033,14 @@ export interface HeaderFocusedParams {
 export interface HeaderFocusedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'headerFocused', TData, TContext>, HeaderFocusedParams {}
 
-export interface CellFocusClearedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'cellFocusCleared', TData, TContext>, CellFocusClearedParams {}
+export interface CellFocusClearedEvent extends AgInternalEvent<'cellFocusCleared'>, CellFocusClearedParams {}
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
 export interface CellFocusedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'cellFocused', TData, TContext>, CellFocusedParams {}
 
-export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'fullWidthRowFocused', TData, TContext>, CellFocusedParams {
+export interface FullWidthRowFocusedEvent extends AgInternalEvent<'fullWidthRowFocused'>, CellFocusedParams {
     fromBelow: boolean;
 }
 
@@ -1570,11 +1531,8 @@ export interface CellValueChangedEvent<
     source: string | undefined;
 }
 
-export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext = any> extends CellWithDataEvent<
-    'cellEditValuesChanged',
-    TData,
-    TValue,
-    TContext
+export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext = any> extends WithoutGridCommon<
+    CellWithDataEvent<'cellEditValuesChanged', TData, TValue, TContext>
 > {
     /** The value of the cell before the edit. May be `null` or `undefined` — for example on group rows or rows whose data has not loaded; the handler must handle this. */
     oldValue: TValue | null | undefined;
@@ -1635,34 +1593,14 @@ export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobal
     state: GridState;
 }
 
-export interface ScrollVisibilityChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'scrollVisibilityChanged',
-    TData,
-    TContext
-> {} // not documented
+export interface ScrollVisibilityChangedEvent extends AgInternalEvent<'scrollVisibilityChanged'> {} // not documented
 
-export interface ScrollOverflowChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'scrollGapChanged',
-    TData,
-    TContext
-> {} // not documented
+export interface ScrollOverflowChangedEvent extends AgInternalEvent<'scrollGapChanged'> {} // not documented
 
-export interface StoreUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'storeUpdated',
-    TData,
-    TContext
-> {} // not documented
+export interface StoreUpdatedEvent extends AgInternalEvent<'storeUpdated'> {} // not documented
 
-export interface LeftPinnedWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'leftPinnedWidthChanged',
-    TData,
-    TContext
-> {} // not documented
-export interface RightPinnedWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rightPinnedWidthChanged',
-    TData,
-    TContext
-> {} // not documented
+export interface LeftPinnedWidthChangedEvent extends AgInternalEvent<'leftPinnedWidthChanged'> {} // not documented
+export interface RightPinnedWidthChangedEvent extends AgInternalEvent<'rightPinnedWidthChanged'> {} // not documented
 
 export interface RowContainerHeightChanged<TData = any, TContext = any> extends AgGlobalEvent<
     'rowContainerHeightChanged',
@@ -1675,239 +1613,95 @@ export interface RowContainerHeightChanged<TData = any, TContext = any> extends 
 /**-----------------*/
 
 // not documented
-export interface FlashCellsEvent<TData = any, TContext = any> extends AgGlobalEvent<'flashCells', TData, TContext> {
+export interface FlashCellsEvent extends AgInternalEvent<'flashCells'> {
     cells: any;
 }
-export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'displayedRowsChanged',
-    TData,
-    TContext
-> {
+export interface DisplayedRowsChangedEvent extends AgInternalEvent<'displayedRowsChanged'> {
     afterScroll: boolean;
 } // not documented
 
-export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'advancedFilterEnabledChanged',
-    TData,
-    TContext
-> {
+export interface AdvancedFilterEnabledChangedEvent extends AgInternalEvent<'advancedFilterEnabledChanged'> {
     enabled: boolean;
 }
 
-export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'dataTypesInferred',
-    TData,
-    TContext
-> {}
+export interface DataTypesInferredEvent extends AgInternalEvent<'dataTypesInferred'> {}
 
-export interface FieldValueEvent<
-    T extends AgEventType = 'fieldValueChanged',
-    TData = any,
-    TContext = any,
-> extends AgGlobalEvent<T, TData, TContext> {
+export interface FieldValueEvent<T extends AgInternalEventType = 'fieldValueChanged'> extends AgInternalEvent<T> {
     value: any;
 }
-export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent<
-    'fieldPickerValueSelected',
-    TData,
-    TContext
-> {
+export interface FieldPickerValueSelectedEvent extends FieldValueEvent<'fieldPickerValueSelected'> {
     fromEnterKey: boolean;
     /** The keydown event that triggered the commit, when the value was selected via Enter.
      * Forwarded so post-edit navigation (`enterNavigatesVerticallyAfterEdit`) can run. */
     keyboardEvent?: KeyboardEvent;
 }
-export interface RichSelectListRowSelectedEvent<TData = any, TContext = any> extends FieldValueEvent<
-    'richSelectListRowSelected',
-    TData,
-    TContext
-> {
+export interface RichSelectListRowSelectedEvent extends FieldValueEvent<'richSelectListRowSelected'> {
     fromEnterKey: boolean;
 }
 
-export interface AlignedGridColumnEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'alignedGridColumn',
-    TData,
-    TContext
-> {
+export interface AlignedGridColumnEvent extends AgInternalEvent<'alignedGridColumn'> {
     event: ColumnEvent<any> | ColumnGroupOpenedEvent;
 }
 
-export interface AlignedGridScrollEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'alignedGridScroll',
-    TData,
-    TContext
-> {
+export interface AlignedGridScrollEvent extends AgInternalEvent<'alignedGridScroll'> {
     event: BodyScrollEvent;
 }
 
-export interface GridOptionsChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'gridOptionsChanged',
-    TData,
-    TContext
-> {
+export interface GridOptionsChangedEvent extends AgInternalEvent<'gridOptionsChanged'> {
     options: GridOptions;
 }
 
-export interface ScrollbarWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'scrollbarWidthChanged',
-    TData,
-    TContext
+export interface ScrollbarWidthChangedEvent extends AgInternalEvent<'scrollbarWidthChanged'> {}
+export interface KeyShortcutChangedCellStartEvent extends AgInternalEvent<'keyShortcutChangedCellStart'> {}
+export interface KeyShortcutChangedCellEndEvent extends AgInternalEvent<'keyShortcutChangedCellEnd'> {}
+export interface HeightScaleChangedEvent extends AgInternalEvent<'heightScaleChanged'> {}
+export interface SuppressMovableColumnsEvent extends AgInternalEvent<'suppressMovableColumns'> {}
+export interface SuppressMenuHideEvent extends AgInternalEvent<'suppressMenuHide'> {}
+export interface SuppressFieldDotNotationEvent extends AgInternalEvent<'suppressFieldDotNotation'> {}
+export interface ColumnContainerWidthChangedEvent extends AgInternalEvent<'columnContainerWidthChanged'> {}
+export interface RowContainerHeightChangedEvent extends AgInternalEvent<'rowContainerHeightChanged'> {}
+export interface HeaderHeightChangedEvent extends AgInternalEvent<'headerHeightChanged'> {}
+export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any> extends WithoutGridCommon<
+    ColumnEvent<'columnHeaderHeightChanged', TData, TContext>
 > {}
-export interface KeyShortcutChangedCellStartEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'keyShortcutChangedCellStart',
-    TData,
-    TContext
-> {}
-export interface KeyShortcutChangedCellEndEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'keyShortcutChangedCellEnd',
-    TData,
-    TContext
-> {}
-export interface HeightScaleChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'heightScaleChanged',
-    TData,
-    TContext
-> {}
-export interface SuppressMovableColumnsEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'suppressMovableColumns',
-    TData,
-    TContext
-> {}
-export interface SuppressMenuHideEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'suppressMenuHide',
-    TData,
-    TContext
-> {}
-export interface SuppressFieldDotNotationEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'suppressFieldDotNotation',
-    TData,
-    TContext
-> {}
-export interface ColumnContainerWidthChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'columnContainerWidthChanged',
-    TData,
-    TContext
-> {}
-export interface RowContainerHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rowContainerHeightChanged',
-    TData,
-    TContext
-> {}
-export interface HeaderHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'headerHeightChanged',
-    TData,
-    TContext
-> {}
-export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any> extends ColumnEvent<
-    'columnHeaderHeightChanged',
-    TData,
-    TContext
-> {}
-export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'columnGroupHeaderHeightChanged',
-    TData,
-    TContext
-> {
+export interface ColumnGroupHeaderHeightChangedEvent extends AgInternalEvent<'columnGroupHeaderHeightChanged'> {
     columnGroup: ColumnGroup | null;
     source: 'autosizeColumnGroupHeaderHeight';
 }
-export interface StylesChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'stylesChanged',
-    TData,
-    TContext
-> {
+export interface StylesChangedEvent extends AgInternalEvent<'stylesChanged'> {
     themeChanged?: boolean;
     headerHeightChanged?: boolean;
     rowHeightChanged?: boolean;
     listItemHeightChanged?: boolean;
     rowBorderWidthChanged?: boolean;
 }
-export interface RowCountReadyEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rowCountReady',
-    TData,
-    TContext
-> {}
-export interface FieldValueChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'fieldValueChanged',
-    TData,
-    TContext
-> {}
-export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'fieldPickerValueSelected',
-    TData,
-    TContext
-> {}
-export interface RichSelectListRowSelectedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'richSelectListRowSelected',
-    TData,
-    TContext
-> {}
-export interface SideBarUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'sideBarUpdated',
-    TData,
-    TContext
-> {}
-export interface ChartTitleEditEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'chartTitleEdit',
-    TData,
-    TContext
-> {}
-export interface RecalculateRowBoundsEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'recalculateRowBounds',
-    TData,
-    TContext
-> {}
-export interface StickyTopOffsetChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'stickyTopOffsetChanged',
-    TData,
-    TContext
-> {}
-export interface StickyBottomOffsetChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'stickyBottomOffsetChanged',
-    TData,
-    TContext
-> {}
-export interface RowNodeDataChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rowNodeDataChanged',
-    TData,
-    TContext
-> {
+export interface RowCountReadyEvent extends AgInternalEvent<'rowCountReady'> {}
+export interface FieldValueChangedEvent extends AgInternalEvent<'fieldValueChanged'> {}
+export interface SideBarUpdatedEvent extends AgInternalEvent<'sideBarUpdated'> {}
+export interface ChartTitleEditEvent extends AgInternalEvent<'chartTitleEdit'> {}
+export interface RecalculateRowBoundsEvent extends AgInternalEvent<'recalculateRowBounds'> {}
+export interface RowNodeDataChangedEvent<TData = any> extends AgInternalEvent<'rowNodeDataChanged'> {
     node: RowNode<TData>;
 }
 export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobalEvent<'columnsReset', TData, TContext> {
     source: ColumnEventType;
 }
-export interface FilterSwitchedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'filterSwitched',
-    TData,
-    TContext
-> {
+export interface FilterSwitchedEvent extends AgInternalEvent<'filterSwitched'> {
     column: Column;
 }
 
-export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
+export interface FilterClosedEvent extends AgInternalEvent<'filterClosed'> {
     column: Column;
 }
 
 interface BaseFilterDestroyedEvent<
     TEventType extends 'filterDestroyed' | 'filterHandlerDestroyed',
-    TData = any,
-    TContext = any,
-> extends AgGlobalEvent<TEventType, TData, TContext> {
+> extends AgInternalEvent<TEventType> {
     source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
     column: Column;
 }
 
-export interface FilterDestroyedEvent<TData = any, TContext = any> extends BaseFilterDestroyedEvent<
-    'filterDestroyed',
-    TData,
-    TContext
-> {}
+export interface FilterDestroyedEvent extends BaseFilterDestroyedEvent<'filterDestroyed'> {}
 
 /** This is a special version of FilterDestroyedEvent, that only fires if the UI was never created (but the handler existed) */
-export interface FilterHandlerDestroyedEvent<TData = any, TContext = any> extends BaseFilterDestroyedEvent<
-    'filterHandlerDestroyed',
-    TData,
-    TContext
-> {}
+export interface FilterHandlerDestroyedEvent extends BaseFilterDestroyedEvent<'filterHandlerDestroyed'> {}
