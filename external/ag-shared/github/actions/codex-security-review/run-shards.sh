@@ -135,7 +135,8 @@ do
     start=$SECONDS
 
     set +e
-    timeout "$(( shard_minutes * 60 ))" \
+    # SIGTERM at the limit, SIGKILL 30s later if Codex hasn't exited
+    timeout --kill-after=30 "$(( shard_minutes * 60 ))" \
         codex exec "${CODEX_ARGS[@]}" --output-last-message "$output_file" - \
         < "$prompt_file" > "$log_file" 2>&1
     exit_code=$?
@@ -143,7 +144,8 @@ do
 
     duration=$(( (SECONDS - start) / 60 ))
 
-    if [ "$exit_code" -eq 124 ]
+    # 124: stopped at the limit; 137: killed after ignoring the stop
+    if [ "$exit_code" -eq 124 ] || [ "$exit_code" -eq 137 ]
     then
         echo "::error::Shard [$name] timed out after ${shard_minutes} minutes"
         record_status "$name" timeout "$paths_json"

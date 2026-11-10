@@ -23,8 +23,8 @@
         },
         {
             "name": "docs-site",
-            "paths": ["documentation"],
-            "focus": "Server-side code and API routes, redirects, search integration, rendering of untrusted content, and any secrets in the site or its build. Ignore example code under _examples."
+            "paths": ["documentation", "external/ag-website-shared"],
+            "focus": "Server-side code and API routes, redirects, search integration, rendering of untrusted content, and any secrets in the site or its build. Ignore example code under _examples. external/ag-website-shared holds the site components, layouts and scripts shared by the AG Grid, AG Charts and AG Studio sites."
         },
         {
             "name": "build-and-ci",

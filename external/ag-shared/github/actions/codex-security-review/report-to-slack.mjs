@@ -15,12 +15,18 @@ const MIN_SEVERITY = process.env.MIN_SEVERITY || 'medium';
 
 const SEVERITIES = ['critical', 'high', 'medium', 'low'];
 const SEVERITY_EMOJI = { critical: ':red_circle:', high: ':large_orange_circle:', medium: ':large_yellow_circle:', low: ':white_circle:' };
-// Slack allows about one message per second per channel, so posts are spaced out, and rate-limited
-// posts are retried. Findings are deleted from the runner after this step, so a post that gives up
-// loses them.
+// Slack allows about one message per second per channel, so posts are spaced out. Rate limits and
+// transient failures (network errors, Slack outages) are retried. Findings are deleted from the
+// runner after this step, so one finding that can't be posted must not stop the others.
 const POST_INTERVAL_MS = 1100;
 const RATE_LIMIT_BACKOFF_MS = 30_000;
-const MAX_RATE_LIMIT_RETRIES = 5;
+const TRANSIENT_BACKOFF_MS = 10_000;
+const MAX_RETRIES = 5;
+// Slack Web API errors worth retrying. The shared helper reports a network failure as an error
+// starting "Failed to send Slack message".
+const TRANSIENT_ERRORS = new Set(['internal_error', 'fatal_error', 'service_unavailable', 'request_timeout']);
+// Keeps each field well inside Slack's message size limit
+const MAX_FIELD_LENGTH = 3000;
 
 if (!SEVERITIES.includes(MIN_SEVERITY)) {
     console.log(`::error::Unknown min-severity [${MIN_SEVERITY}] - expected one of ${SEVERITIES.join(', ')}`);
@@ -28,6 +34,10 @@ if (!SEVERITIES.includes(MIN_SEVERITY)) {
 }
 
 const escape = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const field = (text) => {
+    const value = String(text ?? '');
+    return escape(value.length > MAX_FIELD_LENGTH ? `${value.slice(0, MAX_FIELD_LENGTH)}…` : value);
+};
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let lastPostAt = 0;
@@ -44,12 +54,16 @@ async function post(text, threadTs) {
         if (result.ok) {
             return result.ts;
         }
-        if (result.error === 'ratelimited' && attempt < MAX_RATE_LIMIT_RETRIES) {
-            console.log(`Slack rate limited the report - retrying in ${RATE_LIMIT_BACKOFF_MS / 1000}s`);
-            await sleep(RATE_LIMIT_BACKOFF_MS);
+        const error = String(result.error ?? 'unknown_error');
+        const transient = TRANSIENT_ERRORS.has(error) || error.startsWith('Failed to send Slack message');
+        if ((error === 'ratelimited' || transient) && attempt < MAX_RETRIES) {
+            const backoff = error === 'ratelimited' ? RATE_LIMIT_BACKOFF_MS : TRANSIENT_BACKOFF_MS;
+            console.log(`Slack post failed (${transient ? 'transient error' : error}) - retrying in ${backoff / 1000}s`);
+            await sleep(backoff);
             continue;
         }
-        throw new Error(`Slack chat.postMessage failed: ${result.error}`);
+        // Only the error code: a network error message could echo the request
+        throw new Error(`Slack chat.postMessage failed: ${transient ? 'transient error, retries used up' : error}`);
     }
 }
 
@@ -84,34 +98,73 @@ const failed = statuses.filter((s) => s.status !== 'ok');
 const shortSha = (GITHUB_SHA || '').slice(0, 10);
 const commitUrl = `https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}`;
 
+let headline;
+if (statuses.length === 0) {
+    headline = ':x: The review did not run - see the workflow run.';
+} else if (failed.length > 0) {
+    // Never a tick here: a failed shard (expired key, used-up quota, timeout) is not a clean result
+    headline =
+        `:warning: *Incomplete review* - ${failed.length} of ${statuses.length} shard${statuses.length === 1 ? '' : 's'} failed, so findings may be missing. ` +
+        (reportable.length === 0
+            ? `No findings at ${MIN_SEVERITY} severity or above from the shards that ran.`
+            : `*${reportable.length} finding${reportable.length === 1 ? '' : 's'}* (${counts}) from the shards that ran - details in the thread.`);
+} else if (reportable.length === 0) {
+    headline = `:white_check_mark: No findings at ${MIN_SEVERITY} severity or above.`;
+} else {
+    headline = `*${reportable.length} finding${reportable.length === 1 ? '' : 's'}* (${counts}) - details in the thread.`;
+}
+
 const summary = [
     `:shield: *${escape(PRODUCT_NAME)} Codex security review* on \`${escape(GITHUB_REF_NAME)}\` @ <${commitUrl}|${shortSha}>`,
-    statuses.length === 0
-        ? ':x: The review did not run - see the workflow run.'
-        : reportable.length === 0
-          ? `:white_check_mark: No findings at ${MIN_SEVERITY} severity or above.`
-          : `*${reportable.length} finding${reportable.length === 1 ? '' : 's'}* (${counts}) - details in the thread.`,
+    headline,
     `Shards reviewed: ${statuses.length - failed.length}/${statuses.length}` +
         (failed.length ? ` - :warning: failed: ${failed.map((s) => `${escape(s.shard)} (${s.status})`).join(', ')}` : ''),
     `<${RUN_URL}|Workflow run>`,
 ].join('\n');
 
-const threadTs = await post(summary);
+// Without the summary there is no thread to post findings into, so this failure ends the step
+let threadTs;
+try {
+    threadTs = await post(summary);
+} catch (error) {
+    console.log(`::error::Could not post the security review report to ${SLACK_CHANNEL}: ${error.message}`);
+    process.exit(1);
+}
 
+let unsent = 0;
 for (const f of reportable) {
-    const fileUrl = `https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${f.file}#L${f.line}`;
-    await post(
-        [
-            `${SEVERITY_EMOJI[f.severity]} *${f.severity.toUpperCase()}* (${f.confidence} confidence) - ${escape(f.category)}`,
-            `*${escape(f.title)}*`,
-            `<${fileUrl}|${escape(f.file)}:${f.line}> (shard: ${escape(f.shard)})`,
-            '',
-            `*What:* ${escape(f.description)}`,
-            `*Exploit:* ${escape(f.exploit_scenario)}`,
-            `*Fix:* ${escape(f.recommendation)}`,
-        ].join('\n'),
-        threadTs
-    );
+    const file = String(f.file).replace(/^\.?\//, '');
+    const fileUrl = `https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${encodeURI(file)}#L${f.line}`;
+    try {
+        await post(
+            [
+                `${SEVERITY_EMOJI[f.severity]} *${f.severity.toUpperCase()}* (${f.confidence} confidence) - ${field(f.category)}`,
+                `*${field(f.title)}*`,
+                `<${fileUrl}|${escape(file)}:${f.line}> (shard: ${escape(f.shard)})`,
+                '',
+                `*What:* ${field(f.description)}`,
+                `*Exploit:* ${field(f.exploit_scenario)}`,
+                `*Fix:* ${field(f.recommendation)}`,
+            ].join('\n'),
+            threadTs
+        );
+    } catch (error) {
+        unsent++;
+        console.log(`::error::Could not post a finding to Slack: ${error.message}`);
+    }
+}
+
+if (unsent > 0) {
+    try {
+        await post(
+            `:x: ${unsent} of ${reportable.length} findings could not be posted. Re-run the review to get them back.`,
+            threadTs
+        );
+    } catch (error) {
+        console.log(`::error::Could not post the unsent-findings notice to Slack: ${error.message}`);
+    }
+    console.log(`::error::${unsent} of ${reportable.length} findings could not be posted to ${SLACK_CHANNEL}`);
+    process.exit(1);
 }
 
 console.log(`Posted the security review report to ${SLACK_CHANNEL}`);

@@ -3,6 +3,10 @@ name: Codex Security Review
 # Weekly Codex review of the source tree for security vulnerabilities. Shards are defined in
 # .github/codex-security-review.json. Findings go to Slack only: this repo is public, so the
 # action keeps them out of the workflow log, job summary, artifacts and caches.
+#
+# Not reviewed: tests and test harnesses (testing, utilities), _examples under the docs, ESLint
+# rules, patches to third-party packages, README assets, and editor and agent configuration.
+# Dependency versions are covered by security.yml (Snyk).
 
 on:
     workflow_dispatch:
