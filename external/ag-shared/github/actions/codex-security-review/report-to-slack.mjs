@@ -118,8 +118,8 @@ if (statuses.length === 0) {
 const summary = [
     `:shield: *${escape(PRODUCT_NAME)} Codex security review* on \`${escape(GITHUB_REF_NAME)}\` @ <${commitUrl}|${shortSha}>`,
     headline,
-    `Shards reviewed: ${statuses.length - failed.length}/${statuses.length}` +
-        (failed.length ? ` - :warning: failed: ${failed.map((s) => `${escape(s.shard)} (${s.status})`).join(', ')}` : ''),
+    // Only failures are worth a line: the headline already says whether the review was complete
+    ...(failed.length ? [`Failed shards: ${failed.map((s) => `${escape(s.shard)} (${s.status})`).join(', ')}`] : []),
     `<${RUN_URL}|Workflow run>`,
 ].join('\n');
 
