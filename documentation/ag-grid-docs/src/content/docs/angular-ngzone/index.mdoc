@@ -20,7 +20,6 @@ export class MyCellRenderer implements ICellRendererAngularComp {
     }
 
     refresh(params: ICellRendererParams): boolean {
-        // updating a signal notifies Angular, no NgZone required
         this.value.set(params.value);
         return true;
     }
