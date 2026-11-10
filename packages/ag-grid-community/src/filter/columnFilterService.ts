@@ -1807,14 +1807,19 @@ export class ColumnFilterService
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
     }
 
-    /** Whether giving `column` the base data type `to` would change the filter `filterDef` builds on it. */
+    /**
+     * Whether giving `column` the base data type `to`, and so the filter definition `toDef` in place of `fromDef`,
+     * would change the filter built on it.
+     */
     public isFilterChangedByDataType(
         column: AgColumn,
-        filterDef: IFilterDef,
+        fromDef: IFilterDef,
+        toDef: IFilterDef,
         to: BaseCellDataType | undefined
     ): boolean {
         const beans = this.beans;
-        return _isFilterChangedByDataType(beans, column, filterDef, beans.dataTypeSvc?.getBaseDataType(column), to);
+        const from = beans.dataTypeSvc?.getBaseDataType(column);
+        return _isFilterChangedByDataType(beans, column, fromDef, toDef, from, to);
     }
 
     public setColDefPropsForDataType(

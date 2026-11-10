@@ -27,6 +27,16 @@ function getFiltersForDataType(
         : [{ filter: _getDefaultSimpleFilter(baseDataType) }, { filter: 'agSetColumnFilter' }];
 }
 
+/**
+ * The filter a Multi Filter child builds: the `{ component }` form builds the filter it names, and `true` the default
+ * child filter, so each takes that filter's params.
+ */
+function getNamedChildFilter(filterDef: IMultiFilterDef): unknown {
+    const childFilter = getChildFilter(filterDef);
+    const named = typeof childFilter === 'object' && childFilter !== null ? childFilter.component : childFilter;
+    return named === true ? DEFAULT_CHILD_FILTER : named;
+}
+
 export class MultiFilterService extends BeanStub implements IMultiFilterService {
     readonly beanName = 'multiFilter' as const;
 
@@ -39,10 +49,9 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         const params = typeof filterParams === 'function' ? undefined : filterParams;
         const toFilters = getFiltersForDataType(params, to);
         return getFiltersForDataType(params, from).some((def, i) => {
-            const filter = getChildFilter(def);
-            const named = typeof filter === 'object' && filter !== null ? filter.component : filter;
+            const named = getNamedChildFilter(def);
             return (
-                filter !== getChildFilter(toFilters[i]) ||
+                getChildFilter(def) !== getChildFilter(toFilters[i]) ||
                 (typeof named === 'string' &&
                     (_hasFilterParamsForDataType(named, from) || _hasFilterParamsForDataType(named, to)))
             );
@@ -61,10 +70,7 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         filters = filters.map((filterDef) => {
             const { filterParams: existingChildFilterParams, filterValueGetter: existingChildFilterValueGetter } =
                 filterDef;
-            const childFilter = getChildFilter(filterDef);
-            // the `{ component }` form builds the filter it names, so it takes that filter's params
-            const named = typeof childFilter === 'object' && childFilter !== null ? childFilter.component : childFilter;
-            const filter = named === true ? DEFAULT_CHILD_FILTER : named;
+            const filter = getNamedChildFilter(filterDef);
             if (typeof filter !== 'string') {
                 return filterDef;
             }

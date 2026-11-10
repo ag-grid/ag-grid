@@ -1,4 +1,4 @@
-import { _getLocaleTextFunc } from 'ag-stack';
+import { _getLocaleTextFunc, _jsonEquals } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -190,30 +190,46 @@ export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFil
 }
 
 /**
- * Whether changing the base data type of `column` from `from` to `to` changes the filter `filterDef` builds on it:
- * a different filter, or params of either data type's, which can invalidate the filter's model. A Selectable Filter
- * is judged by its active choice, a Multi Filter by its children.
+ * Whether changing the base data type of `column` from `from` to `to`, and so its filter definition from `fromDef`
+ * to `toDef`, changes the filter built on it: a different filter, different params, or params of either data
+ * type's, any of which can invalidate the filter's model. A Selectable Filter is judged by its active choice, a
+ * Multi Filter by its children.
  */
 export function _isFilterChangedByDataType(
     beans: BeanCollection,
     column: AgColumn,
-    filterDef: IFilterDef,
+    fromDef: IFilterDef,
+    toDef: IFilterDef,
     from: BaseCellDataType | undefined,
     to: BaseCellDataType | undefined
 ): boolean {
+    const selectableFilter = beans.selectableFilter;
+    const { filter, filterParams } = selectableFilter?.getFilterDef(column, fromDef) ?? fromDef;
+    const toFilterDef = selectableFilter?.getFilterDef(column, toDef) ?? toDef;
+    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
+    if (key !== _getFilterKey(beans, toFilterDef.filter, getDefaultFilterFromDataType(beans, to))) {
+        return true;
+    }
+    // column types the data type brings can give the filter params of their own
+    if (!areFilterParamsEqual(filterParams, toFilterDef.filterParams)) {
+        return true;
+    }
     if (from === to) {
         return false;
-    }
-    const { filter, filterParams } = beans.selectableFilter?.getFilterDef(column, filterDef) ?? filterDef;
-    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
-    if (key !== _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, to))) {
-        return true;
     }
     if (key === 'agMultiColumnFilter') {
         return !!beans.multiFilter?.areChildFiltersChangedByDataType(filterParams, from, to);
     }
     // a filter of the author's own takes no params from the data type
     return key !== undefined && (_hasFilterParamsForDataType(key, from) || _hasFilterParamsForDataType(key, to));
+}
+
+/** A function's params are only known once it is called, so two functions are equal only when the same one. */
+function areFilterParamsEqual(params: unknown, otherParams: unknown): boolean {
+    if (typeof params === 'function' || typeof otherParams === 'function') {
+        return params === otherParams;
+    }
+    return _jsonEquals(params, otherParams);
 }
 
 export function _setColDefPropsForDataType(

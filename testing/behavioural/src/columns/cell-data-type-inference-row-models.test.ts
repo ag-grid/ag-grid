@@ -12,7 +12,12 @@ import {
     ScrollApiModule,
     TextFilterModule,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
+import {
+    MultiFilterModule,
+    RowGroupingModule,
+    ServerSideRowModelModule,
+    ViewportRowModelModule,
+} from 'ag-grid-enterprise';
 
 /**
  * `cellDataType` inference under the Server-Side, Infinite and Viewport row models. None of them has
@@ -32,6 +37,7 @@ describe('cellDataType inference under non-client-side row models', () => {
             TextFilterModule,
             NumberFilterModule,
             CustomFilterModule,
+            MultiFilterModule,
         ],
     });
 
@@ -463,10 +469,66 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             api.setFilterModel(null);
             await waitForNoLoadingRows(api);
-            api.setGridOption('defaultColDef', { minWidth: 50 });
             await asyncSetTimeout(0);
 
             expect(inferredType(api, 'year')).toBe('number');
+        });
+
+        test('a filtered column is kept untyped where the column types of its inferred data type swap its filter', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                {
+                    defaultColDef: { filter: 'agTextColumnFilter' },
+                    columnTypes: { numberFiltered: { filter: 'agNumberColumnFilter' } },
+                    dataTypeDefinitions: {
+                        filteredNumber: {
+                            baseDataType: 'number',
+                            extendsDataType: 'number',
+                            columnTypes: ['numberFiltered'],
+                            dataTypeMatcher: (value) => typeof value === 'number',
+                        },
+                    },
+                }
+            );
+
+            // the default column names the Text Filter, which number typing alone keeps, but the data type's column
+            // type replaces it with the Number Filter
+            const textModel = { filterType: 'text', type: 'contains', filter: '20' };
+            api.setFilterModel({ year: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: textModel });
+        });
+
+        test('a Multi Filter child given as `{ component: true }` is protected as the default child filter', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid([
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    field: 'done',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: { component: true } }] },
+                },
+            ]);
+
+            // a boolean column gives the Text Filter child only true and false, which drops a "contains" model
+            const multiModel = {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'tr' }],
+            };
+            api.setFilterModel({ done: multiModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'done')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ done: multiModel });
         });
 
         test('a kept-untyped column given an explicitly named filter is typed, as typing no longer swaps it', async () => {
