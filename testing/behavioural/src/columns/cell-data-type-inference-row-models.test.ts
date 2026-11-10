@@ -404,25 +404,6 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(api.getFilterModel()).toEqual({ year: textModel });
         });
 
-        test('a filtered column whose filter typing leaves unchanged is typed, keeping its model', async () => {
-            const { api, leafBlockServed } = await createGroupedGrid([
-                { field: 'country', rowGroup: true, hide: true },
-                { colId: 'countryName', field: 'country', filter: true },
-            ]);
-
-            // a text column keeps the Text Filter it offered untyped, with the same options
-            const textModel = { filterType: 'text', type: 'contains', filter: 'U' };
-            api.setFilterModel({ countryName: textModel });
-            await waitForNoLoadingRows(api);
-
-            expandFirstGroup(api);
-            await leafBlockServed.promise;
-            await asyncSetTimeout(0);
-
-            expect(inferredType(api, 'countryName')).toBe('text');
-            expect(api.getFilterModel()).toEqual({ countryName: textModel });
-        });
-
         test('a filtered column whose filter options typing would change is kept untyped', async () => {
             const { api, leafBlockServed } = await createGroupedGrid([
                 { field: 'country', rowGroup: true, hide: true },
@@ -677,32 +658,6 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(api.getFilterModel()).toEqual({ done: multiModel });
         });
 
-        test('a kept-untyped column given an explicitly named filter is typed, as typing no longer swaps it', async () => {
-            const { api, leafBlockServed } = await createGroupedGrid([
-                { field: 'country', rowGroup: true, hide: true },
-                { colId: 'yearFiltered', field: 'year', filter: true },
-                { colId: 'yearPlain', field: 'year' },
-            ]);
-
-            api.setFilterModel({ yearFiltered: { filterType: 'text', type: 'contains', filter: '20' } });
-            await waitForNoLoadingRows(api);
-
-            expandFirstGroup(api);
-            await leafBlockServed.promise;
-            await asyncSetTimeout(0);
-
-            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe(false);
-
-            api.setGridOption('columnDefs', [
-                { field: 'country', rowGroup: true, hide: true },
-                { colId: 'yearFiltered', field: 'year', filter: 'agTextColumnFilter' },
-                { colId: 'yearPlain', field: 'year' },
-            ]);
-            await asyncSetTimeout(0);
-
-            expect(api.getColumn('yearFiltered')!.getColDef().cellDataType).toBe('number');
-        });
-
         test('column state the user sets while awaiting leaf rows survives the inferred column types', async () => {
             const rootBlockServed = batchServed();
             const leafBlockServed = batchServed();
@@ -742,7 +697,7 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(api.getColumn('year')!.getActualWidth()).toBe(150);
         });
 
-        test('a column filtered through an explicitly named filter is still typed, as typing keeps that filter', async () => {
+        test('a filtered column is kept untyped even where typing keeps its filter, and typed once it is cleared', async () => {
             const { api, leafBlockServed } = await createGroupedGrid([
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', filter: 'agNumberColumnFilter' },
@@ -756,8 +711,14 @@ describe('cellDataType inference under non-client-side row models', () => {
             await leafBlockServed.promise;
             await asyncSetTimeout(0);
 
-            expect(inferredType(api, 'year')).toBe('number');
+            expect(inferredType(api, 'year')).toBe(false);
             expect(api.getFilterModel()).toEqual({ year: numberModel });
+
+            api.setFilterModel(null);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe('number');
         });
     });
 

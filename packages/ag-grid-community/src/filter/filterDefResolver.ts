@@ -7,11 +7,7 @@ import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc 
 import { _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { FilterValueGetter, IFilterDef } from '../interfaces/iFilter';
 import { isColumnFilterComp } from '../interfaces/iFilter';
-import {
-    _getDefaultSimpleFilter,
-    _getFilterParamsForDataType,
-    _hasFilterParamsForDataType,
-} from './filterDataTypeUtils';
+import { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filterDataTypeUtils';
 
 /** A column, Multi Filter or Selectable Filter definition, each of which can name its own filter value getter. */
 export type FilterDefWithGetter = IFilterDef & { filterValueGetter?: FilterValueGetter };
@@ -187,63 +183,6 @@ export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFil
         return defaultFilter;
     }
     return typeof named === 'string' ? named : undefined;
-}
-
-/**
- * Whether changing the base data type of `column` from `from` to `to`, and so its filter definition from `fromDef`
- * to `toDef`, changes the filter built on it: a different definition, a different filter, or params of either data
- * type's, any of which can invalidate the filter's model. A Selectable Filter is judged by its active choice, a
- * Multi Filter by its children.
- */
-export function _isFilterChangedByDataType(
-    beans: BeanCollection,
-    column: AgColumn,
-    fromDef: IFilterDef,
-    toDef: IFilterDef,
-    from: BaseCellDataType | undefined,
-    to: BaseCellDataType | undefined
-): boolean {
-    // column types the data type brings can change any part of the definition
-    if (!areFilterDefValuesEqual(fromDef, toDef)) {
-        return true;
-    }
-    if (from === to) {
-        return false;
-    }
-    const { filter, filterParams } = beans.selectableFilter?.getFilterDef(column, fromDef) ?? fromDef;
-    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
-    if (key !== _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, to))) {
-        return true;
-    }
-    if (key === 'agMultiColumnFilter') {
-        return !!beans.multiFilter?.areChildFiltersChangedByDataType(filterParams, from, to);
-    }
-    // a filter of the author's own takes no params from the data type
-    return key !== undefined && (_hasFilterParamsForDataType(key, from) || _hasFilterParamsForDataType(key, to));
-}
-
-/**
- * Deep equality over a filter definition, where a function or class equals only itself, so that a swapped
- * component, handler, child filter or params function tells the two apart.
- */
-function areFilterDefValuesEqual(value: unknown, other: unknown): boolean {
-    if (value === other) {
-        return true;
-    }
-    if (
-        typeof value !== 'object' ||
-        typeof other !== 'object' ||
-        !value ||
-        !other ||
-        Array.isArray(value) !== Array.isArray(other)
-    ) {
-        return false;
-    }
-    const keys = Object.keys(value);
-    return (
-        keys.length === Object.keys(other).length &&
-        keys.every((key) => areFilterDefValuesEqual((value as any)[key], (other as any)[key]))
-    );
 }
 
 export function _setColDefPropsForDataType(
