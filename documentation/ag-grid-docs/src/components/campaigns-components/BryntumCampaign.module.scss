@@ -623,6 +623,104 @@
     color: var(--color-fg-secondary);
 }
 
+.tiersGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-6;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1080px;
+    list-style: none;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.tierCard {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-primary);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-50);
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.tierName {
+    margin: 0;
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-display-xl);
+}
+
+.tierLicence {
+    margin: $spacing-size-1 0 0;
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-body-sm);
+    color: var(--color-fg-secondary);
+}
+
+.tierDetails {
+    margin-top: $spacing-size-4;
+    padding-top: $spacing-size-4;
+    border-top: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.tierIncludes {
+    margin: 0 0 $spacing-size-3;
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-body-sm);
+    font-weight: var(--text-semibold);
+}
+
+.tierFeatures {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        gap: $spacing-size-2;
+        margin: 0;
+        font-size: var(--text-fs-sm);
+        line-height: var(--text-lh-body-sm);
+        color: var(--color-fg-secondary);
+    }
+
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --icon-color: var(--color-util-brand-600);
+
+        flex-shrink: 0;
+
+        #{$selector-darkmode} & {
+            --icon-color: var(--color-util-brand-900);
+        }
+    }
+}
+
+.tiersCtas {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-size-8;
+
+    a {
+        --icon-size: 1.1em;
+    }
+}
+
 .sectionHeading {
     text-align: center;
     font-size: var(--text-fs-2xl);

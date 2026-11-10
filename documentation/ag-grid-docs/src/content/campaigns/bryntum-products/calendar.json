@@ -119,21 +119,58 @@
         },
         {
             "id": "",
-            "type": "white-section",
-            "modifiers": [],
+            "type": "tiers",
             "eyebrow": "Tiers",
             "heading": "Choose the Calendar Tier That Fits",
-            "body_html": "<p>Bryntum Calendar comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): day, week, month, year and agenda views, a view switcher and date picker, creating, dragging and resizing events, the event editor, and custom event rendering.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds the sidebar, recurring events, time ranges, copy and paste, undo and redo, dragging in events from external sources, and backend sync with CrudManager.</li> <li><strong>Enterprise</strong> (commercial licence): adds resource views, day and month agenda views, the month grid and year planner, event buffers for travel time, loading events on demand, print, AI features, charts and Salesforce support.</li> </ul>",
-            "body_text": "Bryntum Calendar comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): day, week, month, year and agenda views, a view switcher and date picker, creating, dragging and resizing events, the event editor, and custom event rendering. {{tier.core}} (commercial licence): adds the sidebar, recurring events, time ranges, copy and paste, undo and redo, dragging in events from external sources, and backend sync with CrudManager. Enterprise (commercial licence): adds resource views, day and month agenda views, the month grid and year planner, event buffers for travel time, loading events on demand, print, AI features, charts and Salesforce support.",
-            "links": [],
+            "body_text": "Bryntum Calendar comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Day, week, month, year and agenda views",
+                        "View switcher and date picker",
+                        "Creating, dragging and resizing events",
+                        "Event editor",
+                        "Custom event rendering"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Sidebar",
+                        "Recurring events",
+                        "Time ranges",
+                        "Copy and paste",
+                        "Undo and redo",
+                        "Dragging in events from external sources",
+                        "Backend sync with CrudManager"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Resource views",
+                        "Day and month agenda views",
+                        "Month grid and year planner",
+                        "Event buffers for travel time",
+                        "Loading events on demand",
+                        "Print",
+                        "AI features",
+                        "Charts",
+                        "Salesforce support"
+                    ]
+                }
+            ],
             "ctas": [
                 {
                     "text": "Compare tiers",
                     "href": "/products/calendar/features#calendar-comparison-heading",
                     "title": "Compare Calendar tiers"
                 }
-            ],
-            "media": []
+            ]
         },
         {
             "id": "block_0b3a2b388d8b3c162ad4de5e0fe504b2",

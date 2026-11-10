@@ -1,4 +1,8 @@
-import type { BryntumCampaignContent } from '@components/campaigns-components/bryntum/types';
+import type {
+    BryntumCampaignContent,
+    BryntumSection,
+    BryntumTiersSection,
+} from '@components/campaigns-components/bryntum/types';
 import { describe, expect, it } from 'vitest';
 
 import tiers from '../content/campaigns/bryntum-tiers.json';
@@ -11,7 +15,9 @@ const VISIBLE_TEXT_FIELDS = new Set([
     'body_text',
     'description',
     'eyebrow',
+    'features',
     'heading',
+    'licence',
     'logo_alt',
     'og_description',
     'og_title',
@@ -71,6 +77,14 @@ describe('Bryntum campaign content', () => {
         expect(schedulerBlocks).toHaveLength(1);
     });
 
+    it.each(COMPARISON_PRODUCTS)('presents the %s tiers as cards, lowest first', (slug) => {
+        const content = campaigns.find((campaign) => campaign.content.slug === slug)?.content;
+        const tierSection = content?.sections.find(
+            (section: BryntumSection): section is BryntumTiersSection => section.type === 'tiers'
+        );
+        expect(tierSection?.items.map(({ heading }) => heading)).toEqual(['Community', tiers.core, 'Enterprise']);
+    });
+
     describe.each(campaigns.map(({ content }) => [content.slug, content] as const))('%s', (slug, content) => {
         it('leaves no unresolved template tokens', () => {
             expect(collectStrings(content).filter(({ value }) => value.includes('{{'))).toEqual([]);
@@ -91,15 +105,12 @@ describe('Bryntum campaign content', () => {
             expect(ctaHrefs(content)).toContain(expected);
         });
 
-        it('names all three tiers in both the rendered and the indexed copy', () => {
-            const tierSection = content.sections.find((section) => 'eyebrow' in section && section.eyebrow === 'Tiers');
+        it('names all three tiers in its tiers section', () => {
+            const tierSection = content.sections.find((section) => section.eyebrow === 'Tiers');
             expect(tierSection).toBeDefined();
-            for (const field of ['body_html', 'body_text'] as const) {
-                const copy =
-                    tierSection && field in tierSection ? String(tierSection[field as keyof typeof tierSection]) : '';
-                for (const tier of ['Community', tiers.core, 'Enterprise']) {
-                    expect(copy).toContain(tier);
-                }
+            const copy = tierSection ? visibleText({ ...content, sections: [tierSection] }).join(' ') : '';
+            for (const tier of ['Community', tiers.core, 'Enterprise']) {
+                expect(copy).toContain(tier);
             }
         });
     });

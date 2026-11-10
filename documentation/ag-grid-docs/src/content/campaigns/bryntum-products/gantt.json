@@ -94,21 +94,59 @@
         },
         {
             "id": "",
-            "type": "white-section",
-            "modifiers": [],
+            "type": "tiers",
             "eyebrow": "Tiers",
             "heading": "Choose the Gantt Tier That Fits",
-            "body_html": "<p>Bryntum Gantt comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): the Gantt chart with its task grid and timeline, drag-and-drop and resizing, cell editing and the basic task editor, dependencies, and the core date, progress, WBS and constraint columns.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds the full task editor, resource assignments, task calendars and non-working time, effort, slack and early and late date columns, the progress line, task grouping, and copy and paste.</li> <li><strong>Enterprise</strong> (commercial licence): adds critical paths, baselines, split tasks, Microsoft Project import, cost and time-phased data, the S-curve chart, PDF export and print, real-time updates and version history, AI features, and data sharing with Scheduler.</li> </ul>",
-            "body_text": "Bryntum Gantt comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): the Gantt chart with its task grid and timeline, drag-and-drop and resizing, cell editing and the basic task editor, dependencies, and the core date, progress, WBS and constraint columns. {{tier.core}} (commercial licence): adds the full task editor, resource assignments, task calendars and non-working time, effort, slack and early and late date columns, the progress line, task grouping, and copy and paste. Enterprise (commercial licence): adds critical paths, baselines, split tasks, Microsoft Project import, cost and time-phased data, the S-curve chart, PDF export and print, real-time updates and version history, AI features, and data sharing with Scheduler.",
-            "links": [],
+            "body_text": "Bryntum Gantt comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Task grid and timeline",
+                        "Drag-and-drop and resizing",
+                        "Cell editing and the basic task editor",
+                        "Dependencies",
+                        "Core date, progress, WBS and constraint columns"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Full task editor",
+                        "Resource assignments",
+                        "Task calendars and non-working time",
+                        "Effort, slack, and early and late date columns",
+                        "Progress line",
+                        "Task grouping",
+                        "Copy and paste"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Critical paths",
+                        "Baselines",
+                        "Split tasks",
+                        "Microsoft Project import",
+                        "Cost and time-phased data",
+                        "S-curve chart",
+                        "PDF export and print",
+                        "Real-time updates and version history",
+                        "AI features",
+                        "Data sharing with Scheduler"
+                    ]
+                }
+            ],
             "ctas": [
                 {
                     "text": "Compare tiers",
                     "href": "/products/gantt/features#gantt-comparison-heading",
                     "title": "Compare Gantt tiers"
                 }
-            ],
-            "media": []
+            ]
         },
         {
             "id": "block_2c3c61d9aa0568d9d622dade60699342",

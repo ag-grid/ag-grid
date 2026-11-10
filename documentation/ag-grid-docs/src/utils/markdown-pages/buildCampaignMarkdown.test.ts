@@ -76,6 +76,13 @@ describe('buildCampaignMarkdown', () => {
         expect(output).toContain('**');
     });
 
+    it('lists each tier with its licence and features, saying what it builds on', () => {
+        const output = build(CAMPAIGNS.gantt);
+        expect(output).toContain('**Community** (Free, MIT licence).\n- Task grid and timeline');
+        expect(output).toContain(`**${tiers.core}** (Commercial licence). Everything in Community, plus:\n- `);
+        expect(output).toContain(`**Enterprise** (Commercial licence). Everything in ${tiers.core}, plus:\n- `);
+    });
+
     it('keeps the hero copy under the H1', () => {
         const output = build(CAMPAIGNS.gantt);
         expect(output).toContain('# The Quickest JS Gantt Chart');

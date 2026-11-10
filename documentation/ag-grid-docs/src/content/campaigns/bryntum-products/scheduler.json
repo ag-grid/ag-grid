@@ -108,21 +108,57 @@
         },
         {
             "id": "",
-            "type": "white-section",
-            "modifiers": [],
+            "type": "tiers",
             "eyebrow": "Tiers",
             "heading": "Choose the Scheduler Tier That Fits",
-            "body_html": "<p>Bryntum Scheduler comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): horizontal and vertical timelines, drag-and-drop event editing, the event editor, dependency lines, context menus and tooltips, and backend sync with CrudManager.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds recurring events and time zone support, dependency editing, resource time ranges and non-working time, the timeline histogram, zoom and pan tools, undo and redo, and lazy loading.</li> <li><strong>Enterprise</strong> (commercial licence): adds the scheduling engine, with working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views, nested events and event segments, summaries, PDF export and print, AI features and Salesforce support.</li> </ul>",
-            "body_text": "Bryntum Scheduler comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): horizontal and vertical timelines, drag-and-drop event editing, the event editor, dependency lines, context menus and tooltips, and backend sync with CrudManager. {{tier.core}} (commercial licence): adds recurring events and time zone support, dependency editing, resource time ranges and non-working time, the timeline histogram, zoom and pan tools, undo and redo, and lazy loading. Enterprise (commercial licence): adds the scheduling engine, with working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views, nested events and event segments, summaries, PDF export and print, AI features and Salesforce support.",
-            "links": [],
+            "body_text": "Bryntum Scheduler comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Horizontal and vertical timelines",
+                        "Drag-and-drop event editing",
+                        "Event editor",
+                        "Dependency lines",
+                        "Context menus and tooltips",
+                        "Backend sync with CrudManager"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Recurring events and time zone support",
+                        "Dependency editing",
+                        "Resource time ranges and non-working time",
+                        "Timeline histogram",
+                        "Zoom and pan tools",
+                        "Undo and redo",
+                        "Lazy loading"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Scheduling engine with working-time calendars, constraints, effort-driven scheduling and dependency types",
+                        "Resource histogram and utilisation views",
+                        "Nested events and event segments",
+                        "Summaries",
+                        "PDF export and print",
+                        "AI features",
+                        "Salesforce support"
+                    ]
+                }
+            ],
             "ctas": [
                 {
                     "text": "Compare tiers",
                     "href": "/products/scheduler/features#scheduler-comparison-heading",
                     "title": "Compare Scheduler tiers"
                 }
-            ],
-            "media": []
+            ]
         },
         {
             "id": "block_5ab711fa9026978a2304b954034d59f1",

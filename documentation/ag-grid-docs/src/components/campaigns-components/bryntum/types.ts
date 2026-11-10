@@ -115,6 +115,18 @@ export interface BryntumTextButtonSection extends BryntumSectionBase {
     ctas?: BryntumCta[];
 }
 
+export interface BryntumTiersSection extends BryntumSectionBase {
+    type: 'tiers';
+    body_text?: string;
+    /** Ordered lowest to highest; each tier includes everything in the one before it. */
+    items: Array<{
+        heading: string;
+        licence: string;
+        features: string[];
+    }>;
+    ctas?: BryntumCta[];
+}
+
 export interface BryntumPartnershipSection extends BryntumSectionBase {
     type: 'partnership';
     body_html?: string;
@@ -148,6 +160,7 @@ export type BryntumSection =
     | BryntumColumnsWithMediaSection
     | BryntumBrandsSection
     | BryntumTextButtonSection
+    | BryntumTiersSection
     | BryntumPartnershipSection
     | BryntumTextMiniDemoSection
     | BryntumIntroVideoSection;

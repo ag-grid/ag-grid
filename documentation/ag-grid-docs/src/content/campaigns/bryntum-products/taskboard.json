@@ -88,21 +88,55 @@
         },
         {
             "id": "",
-            "type": "white-section",
-            "modifiers": [],
+            "type": "tiers",
             "eyebrow": "Tiers",
             "heading": "Choose the Task Board Tier That Fits",
-            "body_html": "<p>Bryntum Task Board comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): the task board with rich card content, drag-and-drop and multi-select, the task editor, menus and tooltips, and column toolbars.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds swimlanes, the filter bar and column filters, inline task editing, resource avatars, tags and checklists, renaming and resizing columns, and the zoom slider.</li> <li><strong>Enterprise</strong> (commercial licence): adds reordering columns and swimlanes by drag and drop, sorting, locking and searching columns, undo and redo, charts in cards, AI features and Salesforce support.</li> </ul>",
-            "body_text": "Bryntum Task Board comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): the task board with rich card content, drag-and-drop and multi-select, the task editor, menus and tooltips, and column toolbars. {{tier.core}} (commercial licence): adds swimlanes, the filter bar and column filters, inline task editing, resource avatars, tags and checklists, renaming and resizing columns, and the zoom slider. Enterprise (commercial licence): adds reordering columns and swimlanes by drag and drop, sorting, locking and searching columns, undo and redo, charts in cards, AI features and Salesforce support.",
-            "links": [],
+            "body_text": "Bryntum Task Board comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Task board with rich card content",
+                        "Drag-and-drop and multi-select",
+                        "Task editor",
+                        "Menus and tooltips",
+                        "Column toolbars"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Swimlanes",
+                        "Filter bar and column filters",
+                        "Inline task editing",
+                        "Resource avatars",
+                        "Tags and checklists",
+                        "Renaming and resizing columns",
+                        "Zoom slider"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Reordering columns and swimlanes by drag and drop",
+                        "Sorting, locking and searching columns",
+                        "Undo and redo",
+                        "Charts in cards",
+                        "AI features",
+                        "Salesforce support"
+                    ]
+                }
+            ],
             "ctas": [
                 {
                     "text": "Compare tiers",
                     "href": "/products/taskboard/features#taskboard-comparison-heading",
                     "title": "Compare Task Board tiers"
                 }
-            ],
-            "media": []
+            ]
         },
         {
             "id": "block_c57f051d24cd8095d56be8d6b7b4e1d6",
