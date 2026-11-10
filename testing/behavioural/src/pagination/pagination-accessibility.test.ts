@@ -190,5 +190,14 @@ describe('pagination accessibility', () => {
             await waitForAnnouncement(api, 'Loading records from 1');
             expect(getLiveRegionText(api)).not.toContain('?');
         });
+
+        test('announces the page without "of more" while the total page count is unknown', async () => {
+            const api = createInfiniteGrid({ getRows: () => {} });
+
+            await waitForAnnouncement(api, 'Page 1');
+            expect(getLiveRegionText(api)).not.toContain('more');
+            const pageInput = getPagingPanel(api).querySelector('.ag-paging-page-summary-panel input');
+            expect(pageInput?.getAttribute('aria-label')).toBe('Page number, 1');
+        });
     });
 });
