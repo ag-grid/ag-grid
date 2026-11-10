@@ -144,6 +144,27 @@ function checkAllowedExtension(filename) {
     }
 }
 
+/**
+ * `#private` class members compile to WeakMap-backed helpers when the build target predates ES2022, which costs
+ * size and speed. esbuild's helpers keep their error messages as string literals even when minified, and
+ * TypeScript's tslib helpers keep their names, so either appearing means a build lowered private members.
+ */
+const DOWNLEVELLED_PRIVATE_MEMBERS =
+    /Cannot add the same private member more than once|(?:read from|write to) private field|access private method|__classPrivateField(?:Get|Set|In)\b/;
+function checkNoDownlevelledPrivateMembers(filename) {
+    if (!/\.(?:js|mjs|cjs)$/.test(filename)) {
+        return;
+    }
+
+    const match = fs.readFileSync(path.join(dir, filename), 'utf8').match(DOWNLEVELLED_PRIVATE_MEMBERS);
+    if (match) {
+        console.log(
+            `[${packageJson.name}]: ${filename} contains downlevelled #private members ('${match[0]}'); is a build target below ES2022?`
+        );
+        exitStatus = 1;
+    }
+}
+
 function validatePackageVersions() {
     if (packageJson.version !== expectedGridVersion) {
         console.log(
@@ -189,6 +210,7 @@ function validateMandatoryNoneCodeFiles() {
 function validateCoreAllowedExtensions() {
     for (const file of packageContents) {
         checkAllowedExtension(file);
+        checkNoDownlevelledPrivateMembers(file);
     }
 }
 
