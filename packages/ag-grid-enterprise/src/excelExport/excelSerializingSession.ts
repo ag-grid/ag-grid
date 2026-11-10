@@ -419,8 +419,11 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private isAnyParentCollapsed(node?: RowNode | null): boolean {
+        const gos = this.gos;
+
         while (node && node.level !== -1) {
-            if (!node.expanded) {
+            // a hidden single-child group is not exported, so it has no row to expand its child
+            if (!node.expanded && !_isHiddenSingleChildGroup(gos, node)) {
                 return true;
             }
 

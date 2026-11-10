@@ -11,6 +11,9 @@ const getXmlAttributes = (tag: string): Record<string, string> =>
 const getRowOutlineLevels = (sheetXml: string): (string | undefined)[] =>
     [...sheetXml.matchAll(/<row [^>]*>/g)].map((match) => getXmlAttributes(match[0]).outlineLevel);
 
+const getRowHiddenFlags = (sheetXml: string): (string | undefined)[] =>
+    [...sheetXml.matchAll(/<row [^>]*>/g)].map((match) => getXmlAttributes(match[0]).hidden);
+
 const getSheetFormatPr = (sheetXml: string): Record<string, string> =>
     getXmlAttributes(sheetXml.match(/<sheetFormatPr [^>]*\/>/)![0]);
 
@@ -104,6 +107,42 @@ describe('Excel export outlines', () => {
         const sheetXml = api.getSheetDataForExcel()!;
         // header row, Ireland leaf (hidden parent, level 0), Spain group, 2 leaves
         expect(getRowOutlineLevels(sheetXml)).toEqual([undefined, undefined, undefined, '1', '1']);
+    });
+
+    test('shows rows of parents hidden by groupHideParentOfSingleChild when matching collapsed grid state', async () => {
+        const api = gridsManager.createGrid('excel-hidden-parent-match-state', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Ireland', sport: 'Golf' },
+                { country: 'Spain', sport: 'Tennis' },
+                { country: 'Spain', sport: 'Football' },
+            ],
+        });
+        // Ireland leaf is shown in place of its hidden parent, Spain is a collapsed group
+        await waitForDisplayedRowCount(api, 2);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+        // header row, Ireland leaf, Spain group, 2 collapsed Spain leaves
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '0', '1', '1']);
+    });
+
+    test('hides rows of parents hidden by groupHideParentOfSingleChild under a collapsed group when matching grid state', async () => {
+        const api = gridsManager.createGrid('excel-hidden-nested-parent-match-state', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport', rowGroup: true }, { field: 'player' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Spain', sport: 'Tennis', player: 'Nadal' },
+                { country: 'Spain', sport: 'Football', player: 'Xavi' },
+                { country: 'Spain', sport: 'Football', player: 'Iniesta' },
+            ],
+        });
+        // only the collapsed Spain group is displayed
+        await waitForDisplayedRowCount(api, 1);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+        // header row, Spain, Tennis leaf (hidden parent), Football group, 2 Football leaves: all under collapsed Spain
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '1', '1', '1', '1']);
     });
 
     test('creates per-column outline levels for collapsible column groups, preserving widths', async () => {
