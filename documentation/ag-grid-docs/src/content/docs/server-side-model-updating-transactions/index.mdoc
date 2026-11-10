@@ -53,7 +53,7 @@ The grid skips a row to add when it cannot work out where the row belongs, or wh
 - A row with the same ID is already loaded.
 - A later row in `add` has the same ID. Only the last of these rows is added.
 
-Skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`. Applying the same transaction again skips them again. If a skipped row exists on the server, it is shown once the block containing it is loaded, for example after a [refresh](./server-side-model-updating-refresh/). To show it straight away, apply it again with a valid `addIndex`, or with `update` if a row with that ID is already loaded.
+Skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`. Applying the same transaction again skips them again. If a skipped row exists on the server, it is shown once the block containing it is loaded, for example after a [refresh](./server-side-model-updating-refresh/). To show it straight away, check whether a row with that ID is loaded using `api.getRowNode(id)`. If it is, apply the row again with `update`. If not, apply it again with an `addIndex` that is within the loaded rows.
 
 ## Row Grouping
 
