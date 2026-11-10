@@ -91,7 +91,7 @@ export class AgPositionableFeature<
         this.dragSvc = beans.dragSvc;
     }
 
-    private dragStartPosition = {
+    #dragStartPosition = {
         x: 0,
         y: 0,
     };
@@ -101,35 +101,35 @@ export class AgPositionableFeature<
         y: 0,
     };
 
-    private readonly lastSize = {
+    readonly #lastSize = {
         width: -1,
         height: -1,
     };
 
-    private resizerMap:
+    #resizerMap:
         | {
               [key in ResizableSides]: MappedResizer;
           }
         | undefined;
 
     private minWidth: number;
-    private minHeight?: number;
-    private positioned = false;
-    private resizersAdded = false;
+    #minHeight?: number;
+    #positioned = false;
+    #resizersAdded = false;
     private readonly config: PositionableOptions;
 
-    private readonly resizeListeners: DragListenerParams[] = [];
-    private moveElementDragListener: DragListenerParams | undefined;
+    readonly #resizeListeners: DragListenerParams[] = [];
+    #moveElementDragListener: DragListenerParams | undefined;
 
     private offsetParent: HTMLElement;
-    private boundaryEl: HTMLElement | null = null;
+    #boundaryEl: HTMLElement | null = null;
 
     public isResizing = false;
     private isMoving = false;
     private resizable: ResizableStructure = {};
     private movable = false;
-    private currentResizer: { isTop: boolean; isRight: boolean; isBottom: boolean; isLeft: boolean } | null = null;
-    private resizeObserverSubscriber: (() => void) | undefined;
+    #currentResizer: { isTop: boolean; isRight: boolean; isBottom: boolean; isLeft: boolean } | null = null;
+    #resizeObserverSubscriber: (() => void) | undefined;
 
     constructor(
         private readonly element: HTMLElement,
@@ -149,14 +149,14 @@ export class AgPositionableFeature<
     }
 
     public initialisePosition(postProcessCallback?: () => void): void {
-        if (this.positioned) {
+        if (this.#positioned) {
             return;
         }
 
         const { centered, forcePopupParentAsOffsetParent, minWidth, width, minHeight, height, x, y } = this.config;
 
         if (!this.offsetParent) {
-            this.setOffsetParent();
+            this.#setOffsetParent();
         }
 
         let computedMinHeight = 0;
@@ -166,7 +166,7 @@ export class AgPositionableFeature<
         // in order to calculated the minWidth and minHeight correctly
         const isElementVisible = _isVisible(this.element);
         if (isElementVisible) {
-            const boundaryEl = this.findBoundaryElement();
+            const boundaryEl = this.#findBoundaryElement();
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
                 const paddingWidth = boundaryEl.offsetWidth - this.element.offsetWidth;
@@ -179,7 +179,7 @@ export class AgPositionableFeature<
             }
         }
 
-        this.minHeight = minHeight || computedMinHeight;
+        this.#minHeight = minHeight || computedMinHeight;
         this.minWidth = minWidth || computedMinWidth;
 
         if (width) {
@@ -191,7 +191,7 @@ export class AgPositionableFeature<
         }
 
         if (!width || !height) {
-            this.refreshSize();
+            this.#refreshSize();
         }
 
         if (centered) {
@@ -199,11 +199,11 @@ export class AgPositionableFeature<
         } else if (x || y) {
             this.offsetElement(x!, y!, postProcessCallback);
         } else if (isElementVisible && forcePopupParentAsOffsetParent) {
-            let boundaryEl: HTMLElement | null = this.boundaryEl;
+            let boundaryEl: HTMLElement | null = this.#boundaryEl;
             let initialisedDuringPositioning = true;
 
             if (!boundaryEl) {
-                boundaryEl = this.findBoundaryElement();
+                boundaryEl = this.#findBoundaryElement();
                 initialisedDuringPositioning = false;
             }
 
@@ -214,16 +214,16 @@ export class AgPositionableFeature<
                 if (initialisedDuringPositioning) {
                     this.offsetElement(Number.isNaN(left) ? 0 : left, Number.isNaN(top) ? 0 : top, postProcessCallback);
                 } else {
-                    this.setPosition(left, top);
+                    this.#setPosition(left, top);
                 }
             }
         }
 
-        this.positioned = !!this.offsetParent;
+        this.#positioned = !!this.offsetParent;
     }
 
     public isPositioned(): boolean {
-        return this.positioned;
+        return this.#positioned;
     }
 
     public getPosition(): { x: number; y: number } {
@@ -237,29 +237,29 @@ export class AgPositionableFeature<
 
         this.movable = movable;
 
-        const params: DragListenerParams = this.moveElementDragListener || {
+        const params: DragListenerParams = this.#moveElementDragListener || {
             eElement: moveElement,
-            onDragStart: this.onMoveStart.bind(this),
-            onDragging: this.onMove.bind(this),
-            onDragStop: this.onMoveEnd.bind(this),
+            onDragStart: this.#onMoveStart.bind(this),
+            onDragging: this.#onMove.bind(this),
+            onDragStop: this.#onMoveEnd.bind(this),
         };
 
         if (movable) {
             this.dragSvc?.addDragSource(params);
-            this.moveElementDragListener = params;
+            this.#moveElementDragListener = params;
         } else {
             this.dragSvc?.removeDragSource(params);
-            this.moveElementDragListener = undefined;
+            this.#moveElementDragListener = undefined;
         }
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
-        this.clearResizeListeners();
+        this.#clearResizeListeners();
 
         if (resizable) {
-            this.addResizers();
+            this.#addResizers();
         } else {
-            this.removeResizers();
+            this.#removeResizers();
         }
 
         if (typeof resizable === 'boolean') {
@@ -281,20 +281,20 @@ export class AgPositionableFeature<
 
         for (const side of Object.keys(resizable) as ResizableSides[]) {
             const isSideResizable = !!resizable[side];
-            const resizerEl = this.getResizerElement(side);
+            const resizerEl = this.#getResizerElement(side);
 
             const params: DragListenerParams = {
                 dragStartPixels: 0,
                 eElement: resizerEl!,
-                onDragStart: (e: MouseEvent) => this.onResizeStart(e, side),
-                onDragging: this.onResize.bind(this),
-                onDragStop: (e: MouseEvent) => this.onResizeEnd(e, side),
+                onDragStart: (e: MouseEvent) => this.#onResizeStart(e, side),
+                onDragging: this.#onResize.bind(this),
+                onDragStop: (e: MouseEvent) => this.#onResizeEnd(e, side),
             };
 
             if (isSideResizable || (!this.isAlive() && !isSideResizable)) {
                 if (isSideResizable) {
                     this.dragSvc?.addDragSource(params);
-                    this.resizeListeners.push(params);
+                    this.#resizeListeners.push(params);
                     resizerEl!.style.pointerEvents = 'all';
                 } else {
                     resizerEl!.style.pointerEvents = 'none';
@@ -313,7 +313,7 @@ export class AgPositionableFeature<
     public restoreLastSize(): void {
         this.element.style.flex = '0 0 auto';
 
-        const { height, width } = this.lastSize;
+        const { height, width } = this.#lastSize;
 
         if (width !== -1) {
             this.element.style.width = `${width}px`;
@@ -339,9 +339,9 @@ export class AgPositionableFeature<
             height = _getAbsoluteHeight(eGui);
             isPercent = true;
         } else {
-            height = Math.max(this.minHeight!, height as number);
-            if (this.positioned) {
-                const availableHeight = this.getAvailableHeight();
+            height = Math.max(this.#minHeight!, height as number);
+            if (this.#positioned) {
+                const availableHeight = this.#getAvailableHeight();
 
                 if (availableHeight && height > availableHeight) {
                     height = availableHeight;
@@ -363,14 +363,14 @@ export class AgPositionableFeature<
         } else {
             eGui.style.height = `${height}px`;
             eGui.style.flex = '0 0 auto';
-            this.lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
+            this.#lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
         }
     }
 
-    private getAvailableHeight(): number | null {
+    #getAvailableHeight(): number | null {
         const { popup, forcePopupParentAsOffsetParent } = this.config;
 
-        if (!this.positioned) {
+        if (!this.#positioned) {
             this.initialisePosition();
         }
 
@@ -403,7 +403,7 @@ export class AgPositionableFeature<
     }
 
     /** The element's x position relative to its offset parent. */
-    private getXPosition(): number {
+    #getXPosition(): number {
         if (this.config.popup) {
             return this.position.x;
         }
@@ -423,10 +423,10 @@ export class AgPositionableFeature<
             _setFixedWidth(eGui, width);
             width = _getAbsoluteWidth(eGui);
             isPercent = true;
-        } else if (this.positioned) {
+        } else if (this.#positioned) {
             width = Math.max(this.minWidth, width as number);
             const { clientWidth } = this.offsetParent;
-            const xPosition = this.getXPosition();
+            const xPosition = this.#getXPosition();
 
             if (clientWidth && width + xPosition > clientWidth) {
                 width = clientWidth - xPosition;
@@ -445,13 +445,13 @@ export class AgPositionableFeature<
         } else {
             eGui.style.width = `${width}px`;
             eGui.style.flex = ' unset';
-            this.lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
+            this.#lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
         }
     }
 
     public offsetElement(x = 0, y = 0, postProcessCallback?: () => void) {
         const { forcePopupParentAsOffsetParent } = this.config;
-        const ePopup = forcePopupParentAsOffsetParent ? this.boundaryEl : this.element;
+        const ePopup = forcePopupParentAsOffsetParent ? this.#boundaryEl : this.element;
 
         if (!ePopup) {
             return;
@@ -465,7 +465,7 @@ export class AgPositionableFeature<
             postProcessCallback,
         });
 
-        this.setPosition(Number.parseFloat(ePopup.style.left), Number.parseFloat(ePopup.style.top));
+        this.#setPosition(Number.parseFloat(ePopup.style.left), Number.parseFloat(ePopup.style.top));
     }
 
     public constrainSizeToAvailableHeight(constrain: boolean): void {
@@ -474,36 +474,36 @@ export class AgPositionableFeature<
         }
 
         const applyMaxHeightToElement = () => {
-            const availableHeight = this.getAvailableHeight();
+            const availableHeight = this.#getAvailableHeight();
             this.element.style.setProperty('max-height', `${availableHeight}px`);
         };
 
         if (constrain && this.popupSvc) {
-            this.resizeObserverSubscriber?.();
-            this.resizeObserverSubscriber = _observeResize(
+            this.#resizeObserverSubscriber?.();
+            this.#resizeObserverSubscriber = _observeResize(
                 this.beans,
                 this.popupSvc?.getPopupParent(),
                 applyMaxHeightToElement
             );
         } else {
             this.element.style.removeProperty('max-height');
-            if (this.resizeObserverSubscriber) {
-                this.resizeObserverSubscriber();
-                this.resizeObserverSubscriber = undefined;
+            if (this.#resizeObserverSubscriber) {
+                this.#resizeObserverSubscriber();
+                this.#resizeObserverSubscriber = undefined;
             }
         }
     }
 
-    private setPosition(x: number, y: number): void {
+    #setPosition(x: number, y: number): void {
         this.position.x = x;
         this.position.y = y;
     }
 
-    private updateDragStartPosition(x: number, y: number) {
-        this.dragStartPosition = { x, y };
+    #updateDragStartPosition(x: number, y: number) {
+        this.#dragStartPosition = { x, y };
     }
 
-    private calculateMouseMovement(params: {
+    #calculateMouseMovement(params: {
         e: MouseEvent;
         topBuffer?: number;
         anywhereWithin?: boolean;
@@ -512,19 +512,19 @@ export class AgPositionableFeature<
     }): { movementX: number; movementY: number } {
         const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
 
-        const xDiff = e.clientX - this.dragStartPosition.x;
-        const yDiff = e.clientY - this.dragStartPosition.y;
+        const xDiff = e.clientX - this.#dragStartPosition.x;
+        const yDiff = e.clientY - this.#dragStartPosition.y;
 
-        const movementX = this.shouldSkipX(e, !!isLeft, !!anywhereWithin, xDiff) ? 0 : xDiff;
-        const movementY = this.shouldSkipY(e, !!isTop, topBuffer, yDiff) ? 0 : yDiff;
+        const movementX = this.#shouldSkipX(e, !!isLeft, !!anywhereWithin, xDiff) ? 0 : xDiff;
+        const movementY = this.#shouldSkipY(e, !!isTop, topBuffer, yDiff) ? 0 : yDiff;
 
         return { movementX, movementY };
     }
 
-    private shouldSkipX(e: MouseEvent, isLeft: boolean, anywhereWithin: boolean, diff: number): boolean {
+    #shouldSkipX(e: MouseEvent, isLeft: boolean, anywhereWithin: boolean, diff: number): boolean {
         const parentRect = this.offsetParent.getBoundingClientRect();
-        const boundaryElRect = this.boundaryEl!.getBoundingClientRect();
-        const xPosition = this.getXPosition();
+        const boundaryElRect = this.#boundaryEl!.getBoundingClientRect();
+        const xPosition = this.#getXPosition();
         // skip if cursor is outside of popupParent horizontally
         let skipX =
             (xPosition <= 0 && parentRect.left >= e.clientX) ||
@@ -561,10 +561,10 @@ export class AgPositionableFeature<
         return skipX;
     }
 
-    private shouldSkipY(e: MouseEvent, isTop: boolean, topBuffer: number = 0, diff: number): boolean {
+    #shouldSkipY(e: MouseEvent, isTop: boolean, topBuffer: number = 0, diff: number): boolean {
         const elRect = this.element.getBoundingClientRect();
         const parentRect = this.offsetParent.getBoundingClientRect();
-        const boundaryElRect = this.boundaryEl!.getBoundingClientRect();
+        const boundaryElRect = this.#boundaryEl!.getBoundingClientRect();
         const yPosition = this.config.popup ? this.position.y : elRect.top;
 
         // skip if cursor is outside of popupParent vertically
@@ -598,12 +598,12 @@ export class AgPositionableFeature<
         return skipY;
     }
 
-    private createResizeMap() {
+    #createResizeMap() {
         const getElement = (ref: ResizerRefPrefix) => ({
             element: this.element.querySelector(`[data-ref=${ref}Resizer]`) as HTMLElement,
         });
 
-        this.resizerMap = {
+        this.#resizerMap = {
             topLeft: getElement('eTopLeft'),
             top: getElement('eTop'),
             topRight: getElement('eTopRight'),
@@ -615,8 +615,8 @@ export class AgPositionableFeature<
         };
     }
 
-    private addResizers() {
-        if (this.resizersAdded) {
+    #addResizers() {
+        if (this.#resizersAdded) {
             return;
         }
 
@@ -627,30 +627,30 @@ export class AgPositionableFeature<
         }
 
         eGui.appendChild(_createAgElement(RESIZE_TEMPLATE));
-        this.createResizeMap();
-        this.resizersAdded = true;
+        this.#createResizeMap();
+        this.#resizersAdded = true;
     }
 
-    private removeResizers() {
-        this.resizerMap = undefined;
+    #removeResizers() {
+        this.#resizerMap = undefined;
         const resizerEl = this.element.querySelector(`.${RESIZE_CONTAINER_STYLE}`);
 
         resizerEl?.remove();
-        this.resizersAdded = false;
+        this.#resizersAdded = false;
     }
 
-    private getResizerElement(side: ResizableSides): HTMLElement | null {
-        return this.resizerMap![side].element;
+    #getResizerElement(side: ResizableSides): HTMLElement | null {
+        return this.#resizerMap![side].element;
     }
 
-    private onResizeStart(e: MouseEvent, side: ResizableSides) {
-        this.boundaryEl = this.findBoundaryElement();
+    #onResizeStart(e: MouseEvent, side: ResizableSides) {
+        this.#boundaryEl = this.#findBoundaryElement();
 
-        if (!this.positioned) {
+        if (!this.#positioned) {
             this.initialisePosition();
         }
 
-        this.currentResizer = {
+        this.#currentResizer = {
             isTop: !!side.match(/top/i),
             isRight: !!side.match(/right/i),
             isBottom: !!side.match(/bottom/i),
@@ -658,19 +658,19 @@ export class AgPositionableFeature<
         };
 
         this.element.classList.add('ag-resizing');
-        this.resizerMap![side].element.classList.add('ag-active');
+        this.#resizerMap![side].element.classList.add('ag-active');
 
         const { popup, forcePopupParentAsOffsetParent } = this.config;
 
         if (!popup && !forcePopupParentAsOffsetParent) {
-            this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
+            this.#applySizeToSiblings(this.#currentResizer.isBottom || this.#currentResizer.isTop);
         }
 
         this.isResizing = true;
-        this.updateDragStartPosition(e.clientX, e.clientY);
+        this.#updateDragStartPosition(e.clientX, e.clientY);
     }
 
-    private getSiblings(): HTMLElement[] | null {
+    #getSiblings(): HTMLElement[] | null {
         const element = this.element;
         const parent = element.parentElement;
         if (!parent) {
@@ -682,8 +682,8 @@ export class AgPositionableFeature<
             .filter((el: HTMLElement) => !el.classList.contains('ag-hidden'));
     }
 
-    private getMinSizeOfSiblings(): { height: number; width: number } {
-        const siblings = this.getSiblings() || [];
+    #getMinSizeOfSiblings(): { height: number; width: number } {
+        const siblings = this.#getSiblings() || [];
 
         let height = 0;
         let width = 0;
@@ -695,7 +695,7 @@ export class AgPositionableFeature<
                 continue;
             }
 
-            let nextHeight = this.minHeight || 0;
+            let nextHeight = this.#minHeight || 0;
             let nextWidth = this.minWidth || 0;
 
             if (isFlex) {
@@ -718,9 +718,9 @@ export class AgPositionableFeature<
         return { height, width };
     }
 
-    private applySizeToSiblings(vertical: boolean) {
+    #applySizeToSiblings(vertical: boolean) {
         let containerToFlex: HTMLElement | null = null;
-        const siblings = this.getSiblings();
+        const siblings = this.#getSiblings();
 
         if (!siblings) {
             return;
@@ -757,16 +757,16 @@ export class AgPositionableFeature<
         return Object.values(this.resizable).some(Boolean);
     }
 
-    private onResize(e: MouseEvent) {
-        if (!this.isResizing || !this.currentResizer) {
+    #onResize(e: MouseEvent) {
+        if (!this.isResizing || !this.#currentResizer) {
             return;
         }
 
         const { popup, forcePopupParentAsOffsetParent } = this.config;
-        const { isTop, isRight, isBottom, isLeft } = this.currentResizer;
+        const { isTop, isRight, isBottom, isLeft } = this.#currentResizer;
         const isHorizontal = isRight || isLeft;
         const isVertical = isBottom || isTop;
-        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
+        const { movementX, movementY } = this.#calculateMouseMovement({ e, isLeft, isTop });
 
         const xPosition = this.position.x;
         const yPosition = this.position.y;
@@ -801,7 +801,7 @@ export class AgPositionableFeature<
 
             if (isTop) {
                 offsetTop = oldHeight! - newHeight;
-                if (yPosition + offsetTop <= 0 || newHeight <= this.minHeight!) {
+                if (yPosition + offsetTop <= 0 || newHeight <= this.#minHeight!) {
                     skipHeight = true;
                     offsetTop = 0;
                 }
@@ -810,7 +810,7 @@ export class AgPositionableFeature<
                 !this.config.popup &&
                 !this.config.forcePopupParentAsOffsetParent &&
                 oldHeight! < newHeight &&
-                this.getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
+                this.#getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
             ) {
                 skipHeight = true;
             }
@@ -820,25 +820,25 @@ export class AgPositionableFeature<
             }
         }
 
-        this.updateDragStartPosition(e.clientX, e.clientY);
+        this.#updateDragStartPosition(e.clientX, e.clientY);
 
         if (((popup || forcePopupParentAsOffsetParent) && offsetLeft) || offsetTop) {
             this.offsetElement(xPosition + offsetLeft, yPosition + offsetTop);
         }
     }
 
-    private onResizeEnd(e: MouseEvent, side: ResizableSides) {
+    #onResizeEnd(e: MouseEvent, side: ResizableSides) {
         this.isResizing = false;
-        this.currentResizer = null;
-        this.boundaryEl = null;
+        this.#currentResizer = null;
+        this.#boundaryEl = null;
 
         this.element.classList.remove('ag-resizing');
-        this.resizerMap![side].element.classList.remove('ag-active');
+        this.#resizerMap![side].element.classList.remove('ag-active');
 
         this.dispatchLocalEvent({ type: 'resize' });
     }
 
-    private refreshSize() {
+    #refreshSize() {
         const eGui = this.element;
 
         if (this.config.popup) {
@@ -852,20 +852,20 @@ export class AgPositionableFeature<
         }
     }
 
-    private onMoveStart(e: MouseEvent) {
-        this.boundaryEl = this.findBoundaryElement();
+    #onMoveStart(e: MouseEvent) {
+        this.#boundaryEl = this.#findBoundaryElement();
 
-        if (!this.positioned) {
+        if (!this.#positioned) {
             this.initialisePosition();
         }
 
         this.isMoving = true;
 
         this.element.classList.add('ag-moving');
-        this.updateDragStartPosition(e.clientX, e.clientY);
+        this.#updateDragStartPosition(e.clientX, e.clientY);
     }
 
-    private onMove(e: MouseEvent) {
+    #onMove(e: MouseEvent) {
         if (!this.isMoving) {
             return;
         }
@@ -877,7 +877,7 @@ export class AgPositionableFeature<
             topBuffer = this.config.calculateTopBuffer();
         }
 
-        const { movementX, movementY } = this.calculateMouseMovement({
+        const { movementX, movementY } = this.#calculateMouseMovement({
             e,
             isTop: true,
             anywhereWithin: true,
@@ -885,16 +885,16 @@ export class AgPositionableFeature<
         });
 
         this.offsetElement(x + movementX, y + movementY);
-        this.updateDragStartPosition(e.clientX, e.clientY);
+        this.#updateDragStartPosition(e.clientX, e.clientY);
     }
 
-    private onMoveEnd() {
+    #onMoveEnd() {
         this.isMoving = false;
-        this.boundaryEl = null;
+        this.#boundaryEl = null;
         this.element.classList.remove('ag-moving');
     }
 
-    private setOffsetParent() {
+    #setOffsetParent() {
         if (this.config.forcePopupParentAsOffsetParent && this.popupSvc) {
             this.offsetParent = this.popupSvc.getPopupParent();
         } else {
@@ -902,7 +902,7 @@ export class AgPositionableFeature<
         }
     }
 
-    private findBoundaryElement(): HTMLElement {
+    #findBoundaryElement(): HTMLElement {
         let el = this.element;
         while (el) {
             if (window.getComputedStyle(el).position !== 'static') {
@@ -914,9 +914,9 @@ export class AgPositionableFeature<
         return this.element;
     }
 
-    private clearResizeListeners(): void {
-        while (this.resizeListeners.length) {
-            const params = this.resizeListeners.pop()!;
+    #clearResizeListeners(): void {
+        while (this.#resizeListeners.length) {
+            const params = this.#resizeListeners.pop()!;
             this.dragSvc?.removeDragSource(params);
         }
     }
@@ -924,12 +924,12 @@ export class AgPositionableFeature<
     public override destroy() {
         super.destroy();
 
-        if (this.moveElementDragListener) {
-            this.dragSvc?.removeDragSource(this.moveElementDragListener);
+        if (this.#moveElementDragListener) {
+            this.dragSvc?.removeDragSource(this.#moveElementDragListener);
         }
 
         this.constrainSizeToAvailableHeight(false);
-        this.clearResizeListeners();
-        this.removeResizers();
+        this.#clearResizeListeners();
+        this.#removeResizers();
     }
 }

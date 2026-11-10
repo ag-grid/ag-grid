@@ -39,27 +39,30 @@ export class AgHighlightTooltipFeature<
 > {
     private tooltipMode: TooltipTrigger;
 
+    readonly #highlightTracker: IEventEmitter<HighlightTooltipEventType>;
+
     constructor(
         ctrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
-        private readonly highlightTracker: IEventEmitter<HighlightTooltipEventType>,
+        highlightTracker: IEventEmitter<HighlightTooltipEventType>,
         beans?: TBeanCollection
     ) {
         super(ctrl, beans);
+        this.#highlightTracker = highlightTracker;
         this.onHighlight = this.onHighlight.bind(this);
     }
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.wireHighlightListeners();
+        this.#wireHighlightListeners();
     }
 
-    private wireHighlightListeners(): void {
+    #wireHighlightListeners(): void {
         this.addManagedPropertyListener('tooltipTrigger', ({ currentValue }) => {
-            this.setTooltipMode(currentValue);
+            this.#setTooltipMode(currentValue);
         });
 
-        this.setTooltipMode(this.gos.get('tooltipTrigger'));
-        this.highlightTracker.addEventListener('itemHighlighted', this.onHighlight);
+        this.#setTooltipMode(this.gos.get('tooltipTrigger'));
+        this.#highlightTracker.addEventListener('itemHighlighted', this.onHighlight);
     }
 
     private onHighlight(event: HighlightTooltipEvent): void {
@@ -74,12 +77,12 @@ export class AgHighlightTooltipFeature<
         }
     }
 
-    private setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
+    #setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
         this.tooltipMode = tooltipTriggerMode === 'focus' ? TooltipTrigger.FOCUS : TooltipTrigger.HOVER;
     }
 
     public override destroy() {
-        this.highlightTracker.removeEventListener('itemHighlighted', this.onHighlight);
+        this.#highlightTracker.removeEventListener('itemHighlighted', this.onHighlight);
         super.destroy();
     }
 }

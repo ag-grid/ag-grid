@@ -30,15 +30,18 @@ export class AgManagedFocusFeature<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 > extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
+    readonly #stopPropagationCallbacks: StopPropagationCallbacks;
+
     constructor(
         private readonly eFocusable: HTMLElement,
-        private readonly stopPropagationCallbacks: StopPropagationCallbacks = {
+        stopPropagationCallbacks: StopPropagationCallbacks = {
             isStopPropagation: () => false,
             stopPropagation: () => {},
         },
         private readonly callbacks: ManagedFocusCallbacks = {}
     ) {
         super();
+        this.#stopPropagationCallbacks = stopPropagationCallbacks;
         this.callbacks = {
             shouldStopEventPropagation: () => false,
             onTabKeyDown: (e: KeyboardEvent) => {
@@ -70,7 +73,7 @@ export class AgManagedFocusFeature<
         } = this;
         eFocusable.classList.add(FOCUS_MANAGED_CLASS);
 
-        this.addKeyDownListeners(eFocusable);
+        this.#addKeyDownListeners(eFocusable);
 
         if (onFocusIn) {
             _addManagedElementListeners(this, eFocusable, { focusin: onFocusIn });
@@ -81,17 +84,17 @@ export class AgManagedFocusFeature<
         }
     }
 
-    private addKeyDownListeners(eGui: HTMLElement): void {
+    #addKeyDownListeners(eGui: HTMLElement): void {
         _addManagedElementListeners(this, eGui, {
             keydown: (e: KeyboardEvent) => {
-                if (e.defaultPrevented || this.stopPropagationCallbacks.isStopPropagation(e)) {
+                if (e.defaultPrevented || this.#stopPropagationCallbacks.isStopPropagation(e)) {
                     return;
                 }
 
                 const { callbacks } = this;
 
                 if (callbacks.shouldStopEventPropagation!(e)) {
-                    this.stopPropagationCallbacks.stopPropagation(e);
+                    this.#stopPropagationCallbacks.stopPropagation(e);
                     return;
                 }
 

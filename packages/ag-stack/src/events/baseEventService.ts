@@ -33,14 +33,14 @@ export class BaseEventService<
     public beanName = 'eventSvc' as const;
     public eventServiceType = 'global' as const;
 
-    private readonly globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();
+    readonly #globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();
 
     public addListener<TEventType extends keyof TGlobalEvents & string>(
         eventType: TEventType,
         listener: AgEventServiceListener<TGlobalEvents, TEventType>,
         async?: boolean
     ): void {
-        this.globalSvc.addEventListener(eventType, listener as any, async);
+        this.#globalSvc.addEventListener(eventType, listener as any, async);
     }
 
     public removeListener<TEventType extends keyof TGlobalEvents & string>(
@@ -48,7 +48,7 @@ export class BaseEventService<
         listener: AgEventServiceListener<TGlobalEvents, TEventType>,
         async?: boolean
     ): void {
-        this.globalSvc.removeEventListener(eventType, listener as any, async);
+        this.#globalSvc.removeEventListener(eventType, listener as any, async);
     }
 
     /** `eventTypes` limits the listener to those types, `exceptEventTypes` keeps those from it. */
@@ -58,17 +58,17 @@ export class BaseEventService<
         eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
         exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
     ): void {
-        this.globalSvc.addGlobalListener(listener, async, eventTypes, exceptEventTypes);
+        this.#globalSvc.addGlobalListener(listener, async, eventTypes, exceptEventTypes);
     }
 
     public removeGlobalListener(
         listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
         async = false
     ): void {
-        this.globalSvc.removeGlobalListener(listener, async);
+        this.#globalSvc.removeGlobalListener(listener, async);
     }
 
     public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon>): void {
-        this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event));
+        this.#globalSvc.dispatchEvent(this.gos.addCommon<any>(event));
     }
 }

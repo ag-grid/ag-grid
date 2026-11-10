@@ -46,10 +46,10 @@ export class AgContext<
     TPropertiesService extends IPropertiesService<TProperties>,
 > implements IContext<TBeanCollection> {
     protected beans: TBeanCollection = {} as TBeanCollection;
-    private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
-    private readonly beanDestroyComparator?: BeanComparator<TBeanCollection>;
+    #createdBeans: AgSingletonBean<TBeanCollection>[] = [];
+    readonly #beanDestroyComparator?: BeanComparator<TBeanCollection>;
     private id: string;
-    private destroyCallback?: () => void;
+    #destroyCallback?: () => void;
 
     private destroyed = false;
 
@@ -60,7 +60,7 @@ export class AgContext<
             return;
         }
 
-        this.beanDestroyComparator = params.beanDestroyComparator;
+        this.#beanDestroyComparator = params.beanDestroyComparator;
 
         this.init(params);
     }
@@ -70,7 +70,7 @@ export class AgContext<
     ): void {
         this.id = params.id;
         this.beans.context = this;
-        this.destroyCallback = params.destroyCallback;
+        this.#destroyCallback = params.destroyCallback;
 
         for (const beanName of Object.keys(params.providedBeanInstances) as (keyof TBeanCollection)[]) {
             this.beans[beanName] = params.providedBeanInstances[beanName] as any;
@@ -84,24 +84,24 @@ export class AgContext<
                 // eslint-disable-next-line no-console
                 console.error(`Bean ${BeanClass.name} is missing beanName`);
             }
-            this.createdBeans.push(instance);
+            this.#createdBeans.push(instance);
         }
 
         for (const beanFunc of params.derivedBeans ?? []) {
             const { beanName, bean } = beanFunc(this);
             this.beans[beanName] = bean;
-            this.createdBeans.push(bean);
+            this.#createdBeans.push(bean);
         }
 
         if (params.beanInitComparator) {
             // sort the beans so that they are in a consistent order
-            this.createdBeans.sort(params.beanInitComparator);
+            this.#createdBeans.sort(params.beanInitComparator);
         }
 
-        this.initBeans(this.createdBeans);
+        this.#initBeans(this.#createdBeans);
     }
 
-    private getBeanInstances(): AgSingletonBean<TBeanCollection>[] {
+    #getBeanInstances(): AgSingletonBean<TBeanCollection>[] {
         return Object.values(this.beans);
     }
 
@@ -109,11 +109,11 @@ export class AgContext<
         bean: T,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T {
-        this.initBeans([bean], afterPreCreateCallback);
+        this.#initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
-    private initBeans(
+    #initBeans(
         beanInstances: AgBaseBean<TBeanCollection>[],
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): void {
@@ -157,16 +157,16 @@ export class AgContext<
         // we are marked as destroyed already to prevent running destroy() twice
         this.destroyed = true;
 
-        const beanInstances = this.getBeanInstances();
-        if (this.beanDestroyComparator) {
-            beanInstances.sort(this.beanDestroyComparator);
+        const beanInstances = this.#getBeanInstances();
+        if (this.#beanDestroyComparator) {
+            beanInstances.sort(this.#beanDestroyComparator);
         }
         this.destroyBeans(beanInstances);
 
         this.beans = {} as TBeanCollection;
-        this.createdBeans = [];
+        this.#createdBeans = [];
 
-        this.destroyCallback?.();
+        this.#destroyCallback?.();
     }
 
     /**

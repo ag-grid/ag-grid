@@ -49,25 +49,31 @@ export class AgTabGuardFeature<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 > extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
-    private eTopGuard: HTMLElement;
-    private eBottomGuard: HTMLElement;
-    private eFocusableElement: HTMLElement;
+    #eTopGuard: HTMLElement;
+    #eBottomGuard: HTMLElement;
+    #eFocusableElement: HTMLElement;
 
-    private tabGuardCtrl: AgTabGuardCtrl<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>;
+    #tabGuardCtrl: AgTabGuardCtrl<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>;
+
+    readonly #stopPropagationCallbacks?: StopPropagationCallbacks;
 
     constructor(
         private readonly comp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
-        private readonly stopPropagationCallbacks?: StopPropagationCallbacks
+        stopPropagationCallbacks?: StopPropagationCallbacks
     ) {
         super();
+        this.#stopPropagationCallbacks = stopPropagationCallbacks;
     }
 
     public initialiseTabGuard(params: AgTabGuardParams) {
-        this.eTopGuard = this.createTabGuard('top');
-        this.eBottomGuard = this.createTabGuard('bottom');
-        this.eFocusableElement = this.comp.getFocusableElement();
+        this.#eTopGuard = this.#createTabGuard('top');
+        this.#eBottomGuard = this.#createTabGuard('bottom');
+        this.#eFocusableElement = this.comp.getFocusableElement();
 
-        const { eTopGuard, eBottomGuard, eFocusableElement, stopPropagationCallbacks } = this;
+        const eTopGuard = this.#eTopGuard;
+        const eBottomGuard = this.#eBottomGuard;
+        const eFocusableElement = this.#eFocusableElement;
+        const stopPropagationCallbacks = this.#stopPropagationCallbacks;
 
         const tabGuards = [eTopGuard, eBottomGuard];
 
@@ -83,7 +89,7 @@ export class AgTabGuardFeature<
             },
         };
 
-        this.addTabGuards(eTopGuard, eBottomGuard);
+        this.#addTabGuards(eTopGuard, eBottomGuard);
 
         const {
             focusTrapActive = false,
@@ -99,7 +105,7 @@ export class AgTabGuardFeature<
             isFocusableContainer,
         } = params;
 
-        this.tabGuardCtrl = this.createManagedBean(
+        this.#tabGuardCtrl = this.createManagedBean(
             new AgTabGuardCtrl(
                 {
                     comp: compProxy,
@@ -124,10 +130,10 @@ export class AgTabGuardFeature<
     }
 
     public getTabGuardCtrl(): AgTabGuardCtrl<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
-        return this.tabGuardCtrl;
+        return this.#tabGuardCtrl;
     }
 
-    private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
+    #createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = _getDocument(this.beans).createElement('div');
         const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
@@ -137,24 +143,24 @@ export class AgTabGuardFeature<
         return tabGuard;
     }
 
-    private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
-        const eFocusableElement = this.eFocusableElement;
+    #addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
+        const eFocusableElement = this.#eFocusableElement;
         eFocusableElement.prepend(topTabGuard);
         eFocusableElement.append(bottomTabGuard);
     }
 
     public removeAllChildrenExceptTabGuards(): void {
-        const tabGuards: [HTMLElement, HTMLElement] = [this.eTopGuard, this.eBottomGuard];
+        const tabGuards: [HTMLElement, HTMLElement] = [this.#eTopGuard, this.#eBottomGuard];
         _clearElement(this.comp.getFocusableElement());
-        this.addTabGuards(...tabGuards);
+        this.#addTabGuards(...tabGuards);
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {
-        this.tabGuardCtrl.forceFocusOutOfContainer(up);
+        this.#tabGuardCtrl.forceFocusOutOfContainer(up);
     }
 
     public focusNextElementOutsideContainer(up: boolean, excludeElements: HTMLElement[]): boolean {
-        return this.tabGuardCtrl.focusNextElementOutsideContainer(up, excludeElements);
+        return this.#tabGuardCtrl.focusNextElementOutsideContainer(up, excludeElements);
     }
 
     public appendChild(
@@ -169,7 +175,7 @@ export class AgTabGuardFeature<
             newChild = newChild.getGui();
         }
 
-        const { eBottomGuard: bottomTabGuard } = this;
+        const bottomTabGuard = this.#eBottomGuard;
 
         if (bottomTabGuard) {
             bottomTabGuard.before(newChild);
@@ -181,7 +187,8 @@ export class AgTabGuardFeature<
     public override destroy(): void {
         // in some places (`AgMenuPanel`) the lifecycle on the tab guard feature doesn't match
         // the lifecycle of the component gui, so remove the tab guards on destroy
-        const { eTopGuard, eBottomGuard } = this;
+        const eTopGuard = this.#eTopGuard;
+        const eBottomGuard = this.#eBottomGuard;
         _removeFromParent(eTopGuard);
         _removeFromParent(eBottomGuard);
         super.destroy();

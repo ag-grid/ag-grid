@@ -44,11 +44,11 @@ export class AgAbstractComponent<
     implements AgComponent<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>
 {
     private eGui: HTMLElement;
-    private readonly componentSelectors: Map<
+    readonly #componentSelectors: Map<
         TComponentSelectorType,
         AgComponentSelector<TComponentSelectorType, TBeanCollection>
     >;
-    private suppressDataRefValidation: boolean = false;
+    #suppressDataRefValidation: boolean = false;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -63,9 +63,9 @@ export class AgAbstractComponent<
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
     // around as we create a new rowComp instance for the same row node).
-    private readonly compId = compIdSequence++;
+    readonly #compId = compIdSequence++;
 
-    private readonly cssManager: CssClassManager;
+    readonly #cssManager: CssClassManager;
 
     constructor(
         templateOrParams?: string | AgElementParams<TComponentSelectorType>,
@@ -73,17 +73,17 @@ export class AgAbstractComponent<
     ) {
         super();
 
-        this.cssManager = new CssClassManager(() => this.eGui);
+        this.#cssManager = new CssClassManager(() => this.eGui);
 
-        this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
+        this.#componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
         if (templateOrParams) {
             this.setTemplate(templateOrParams);
         }
     }
 
     public preConstruct(): void {
-        this.wireTemplate(this.getGui());
-        this.addGlobalCss();
+        this.#wireTemplate(this.getGui());
+        this.#addGlobalCss();
     }
 
     /** Also accepts `BaseEvents` handlers, which a generic component cannot name through `TGlobalEvents`. */
@@ -95,20 +95,20 @@ export class AgAbstractComponent<
         return super.addManagedEventListeners(handlers as { [K in keyof TGlobalEvents]?: (event: any) => void });
     }
 
-    private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
+    #wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
         // ui exists if user sets template in constructor. when this happens,
         // We have to wait for the context to be autoWired first before we can create child components.
         if (element && this.gos) {
-            this.applyElementsToComponent(element);
-            this.createChildComponentsFromTags(element, paramsMap);
+            this.#applyElementsToComponent(element);
+            this.#createChildComponentsFromTags(element, paramsMap);
         }
     }
 
     public getCompId(): number {
-        return this.compId;
+        return this.#compId;
     }
 
-    private getDataRefAttribute(element: Element): string | null {
+    #getDataRefAttribute(element: Element): string | null {
         if (element.getAttribute) {
             return element.getAttribute(DataRefAttribute);
         }
@@ -116,14 +116,14 @@ export class AgAbstractComponent<
         return null;
     }
 
-    private applyElementsToComponent(
+    #applyElementsToComponent(
         element: Element,
         elementRef?: string | null,
         paramsMap?: { [key: string]: any },
         newComponent: AgBaseComponent<TBeanCollection> | null = null
     ) {
         if (elementRef === undefined) {
-            elementRef = this.getDataRefAttribute(element);
+            elementRef = this.#getDataRefAttribute(element);
         }
         if (elementRef) {
             // We store the reference to the element in the parent component under that same name
@@ -134,7 +134,7 @@ export class AgAbstractComponent<
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
                 const usedAsParamRef = paramsMap?.[elementRef];
-                if (!this.suppressDataRefValidation && !usedAsParamRef) {
+                if (!this.#suppressDataRefValidation && !usedAsParamRef) {
                     // This can happen because of:
                     // 1. The data-ref has a typo and doesn't match the property in the component
                     // 2. The  property is not initialised with the RefPlaceholder and should be.
@@ -148,7 +148,7 @@ export class AgAbstractComponent<
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
+    #createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = [];
@@ -161,7 +161,7 @@ export class AgAbstractComponent<
                 continue;
             }
 
-            const childComp = this.createComponentFromElement(
+            const childComp = this.#createComponentFromElement(
                 childNode,
                 (childComp) => {
                     // copy over all attributes, including css classes, so any attributes user put on the tag
@@ -178,7 +178,7 @@ export class AgAbstractComponent<
 
             if (childComp) {
                 if ((childComp as any).addItems && childNode.children.length) {
-                    this.createChildComponentsFromTags(childNode, paramsMap);
+                    this.#createChildComponentsFromTags(childNode, paramsMap);
 
                     // converting from HTMLCollection to Array
                     const items = Array.prototype.slice.call(childNode.children);
@@ -186,24 +186,26 @@ export class AgAbstractComponent<
                     (childComp as any).addItems(items);
                 }
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
-                this.swapComponentForNode(childComp, parentNode, childNode);
+                this.#swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {
-                this.createChildComponentsFromTags(childNode, paramsMap);
+                this.#createChildComponentsFromTags(childNode, paramsMap);
             }
         }
     }
 
-    private createComponentFromElement(
+    #createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (comp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>) => void,
         paramsMap?: { [key: string]: any }
     ): AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | null {
         const key = element.nodeName;
 
-        const elementRef = this.getDataRefAttribute(element);
+        const elementRef = this.#getDataRefAttribute(element);
 
         const isAgGridComponent = key.indexOf('AG-') === 0;
-        const componentSelector = isAgGridComponent ? this.componentSelectors.get(key as TComponentSelectorType) : null;
+        const componentSelector = isAgGridComponent
+            ? this.#componentSelectors.get(key as TComponentSelectorType)
+            : null;
         let newComponent: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | null = null;
         if (componentSelector) {
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
@@ -222,12 +224,12 @@ export class AgAbstractComponent<
             throw new Error(`selector: ${key}`);
         }
 
-        this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
+        this.#applyElementsToComponent(element, elementRef, paramsMap, newComponent);
 
         return newComponent;
     }
 
-    private swapComponentForNode(
+    #swapComponentForNode(
         newComponent: AgBaseComponent<TBeanCollection>,
         parentNode: Element,
         childNode: ChildNode
@@ -276,14 +278,14 @@ export class AgAbstractComponent<
         suppressDataRefValidation = false
     ): void {
         this.eGui = element;
-        this.suppressDataRefValidation = suppressDataRefValidation;
+        this.#suppressDataRefValidation = suppressDataRefValidation;
         if (components) {
             for (let i = 0; i < components.length; i++) {
                 const component = components[i];
-                this.componentSelectors.set(component.selector, component);
+                this.#componentSelectors.set(component.selector, component);
             }
         }
-        this.wireTemplate(element, paramsMap);
+        this.#wireTemplate(element, paramsMap);
     }
 
     public getGui(): HTMLElement {
@@ -317,7 +319,7 @@ export class AgAbstractComponent<
         return this.eGui.querySelector(cssSelector) as HTMLElement;
     }
 
-    private getContainerAndElement(
+    #getContainerAndElement(
         newChild: AgBaseComponent<TBeanCollection> | HTMLElement,
         container?: HTMLElement
     ): { element: HTMLElement; parent: HTMLElement } | null {
@@ -345,7 +347,7 @@ export class AgAbstractComponent<
     }
 
     public prependChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement) {
-        const { element, parent } = this.getContainerAndElement(newChild, container) || {};
+        const { element, parent } = this.#getContainerAndElement(newChild, container) || {};
 
         if (!element || !parent) {
             return;
@@ -355,7 +357,7 @@ export class AgAbstractComponent<
     }
 
     public appendChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void {
-        const { element, parent } = this.getContainerAndElement(newChild, container) || {};
+        const { element, parent } = this.#getContainerAndElement(newChild, container) || {};
 
         if (!element || !parent) {
             return;
@@ -405,28 +407,28 @@ export class AgAbstractComponent<
     }
 
     public addCss(className: string): void {
-        this.cssManager.toggleCss(className, true);
+        this.#cssManager.toggleCss(className, true);
     }
 
     public removeCss(className: string): void {
-        this.cssManager.toggleCss(className, false);
+        this.#cssManager.toggleCss(className, false);
     }
 
     public toggleCss(className: string, addOrRemove: boolean): void {
-        this.cssManager.toggleCss(className, addOrRemove);
+        this.#cssManager.toggleCss(className, addOrRemove);
     }
 
     protected registerCSS(css: string): void {
         if (this.css === globalCssAdded) {
             this.css = [css];
-            this.addGlobalCss();
+            this.#addGlobalCss();
         } else {
             this.css ||= [];
             this.css.push(css);
         }
     }
 
-    private addGlobalCss(): void {
+    #addGlobalCss(): void {
         if (Array.isArray(this.css)) {
             const debugId = 'component-' + Object.getPrototypeOf(this)?.constructor?.name;
             for (const css of this.css ?? []) {

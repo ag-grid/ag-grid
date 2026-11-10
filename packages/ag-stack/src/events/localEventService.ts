@@ -19,17 +19,17 @@ type AsyncQueue<TEventType extends string> = (
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
-    private readonly allSyncListeners = new Map<TEventType, TypeListeners<TEventType>>();
+    readonly #allSyncListeners = new Map<TEventType, TypeListeners<TEventType>>();
     // Created on first use: grid code adds async and global listeners only on its own service.
-    private allAsyncListeners: Map<TEventType, TypeListeners<TEventType>> | null = null;
+    #allAsyncListeners: Map<TEventType, TypeListeners<TEventType>> | null = null;
     // Replaced on change, never mutated, so a running dispatch keeps the global listeners it started with.
-    private globalSyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
-    private globalAsyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
+    #globalSyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
+    #globalAsyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
 
     private frameworkOverrides?: AgFrameworkOverrides;
 
-    private asyncQueue: AsyncQueue<TEventType> | null = null;
-    private scheduled = false;
+    #asyncQueue: AsyncQueue<TEventType> | null = null;
+    #scheduled = false;
 
     /** Set by a framework that may wrap user listeners: maps each user listener to the one registered for it. */
     public listenerWrapper?: AgListenerWrapper;
@@ -40,10 +40,10 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
 
     public noRegisteredListenersExist(): boolean {
         return (
-            this.allSyncListeners.size === 0 &&
-            !this.allAsyncListeners?.size &&
-            this.globalSyncListeners === null &&
-            this.globalAsyncListeners === null
+            this.#allSyncListeners.size === 0 &&
+            !this.#allAsyncListeners?.size &&
+            this.#globalSyncListeners === null &&
+            this.#globalAsyncListeners === null
         );
     }
 
@@ -51,18 +51,18 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
      *  listener counts, even one limited to other types: on the grid's service (it always has one) this is `true`. */
     public hasListeners(eventType: TEventType): boolean {
         return (
-            this.allSyncListeners.has(eventType) ||
-            !!this.allAsyncListeners?.has(eventType) ||
-            this.globalSyncListeners !== null ||
-            this.globalAsyncListeners !== null
+            this.#allSyncListeners.has(eventType) ||
+            !!this.#allAsyncListeners?.has(eventType) ||
+            this.#globalSyncListeners !== null ||
+            this.#globalAsyncListeners !== null
         );
     }
 
     public addEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
-        let listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+        let listenerMap = async ? this.#allAsyncListeners : this.#allSyncListeners;
         if (listenerMap === null) {
             listenerMap = new Map();
-            this.allAsyncListeners = listenerMap;
+            this.#allAsyncListeners = listenerMap;
         }
         const listeners = listenerMap.get(eventType);
         if (listeners === undefined) {
@@ -78,7 +78,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     }
 
     public removeEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
-        const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+        const listenerMap = async ? this.#allAsyncListeners : this.#allSyncListeners;
         if (listenerMap === null) {
             return;
         }
@@ -104,17 +104,17 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             exceptEventTypes: exceptEventTypes ?? null,
         };
         if (async) {
-            this.globalAsyncListeners = withGlobalListener(this.globalAsyncListeners, entry);
+            this.#globalAsyncListeners = withGlobalListener(this.#globalAsyncListeners, entry);
         } else {
-            this.globalSyncListeners = withGlobalListener(this.globalSyncListeners, entry);
+            this.#globalSyncListeners = withGlobalListener(this.#globalSyncListeners, entry);
         }
     }
 
     public removeGlobalListener(listener: IGlobalEventListener<TEventType>, async = false): void {
         if (async) {
-            this.globalAsyncListeners = withoutGlobalListener(this.globalAsyncListeners, listener);
+            this.#globalAsyncListeners = withoutGlobalListener(this.#globalAsyncListeners, listener);
         } else {
-            this.globalSyncListeners = withoutGlobalListener(this.globalSyncListeners, listener);
+            this.#globalSyncListeners = withoutGlobalListener(this.#globalSyncListeners, listener);
         }
     }
 
@@ -130,40 +130,40 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         }
 
         // async listeners are only queued here, so none can be added or removed before the last one is queued
-        const asyncListeners = this.allAsyncListeners?.get(eventType);
+        const asyncListeners = this.#allAsyncListeners?.get(eventType);
         if (typeof asyncListeners === 'function') {
-            this.queueListener(asyncListeners, event);
+            this.#queueListener(asyncListeners, event);
         } else if (asyncListeners !== undefined) {
             for (const listener of asyncListeners) {
-                this.queueListener(listener, event);
+                this.#queueListener(listener, event);
             }
         }
-        const globalAsyncListeners = this.globalAsyncListeners;
+        const globalAsyncListeners = this.#globalAsyncListeners;
         if (globalAsyncListeners !== null) {
             for (let i = 0, len = globalAsyncListeners.length; i < len; ++i) {
                 const entry = globalAsyncListeners[i];
                 if (receivesEventType(entry, eventType)) {
-                    this.queueListener(entry, event);
+                    this.#queueListener(entry, event);
                 } else {
                     // as if queued, so the flush keeps its place among timers set later in this turn
-                    this.scheduleFlush();
+                    this.#scheduleFlush();
                 }
             }
         }
 
-        const listeners = this.allSyncListeners.get(eventType);
-        if (listeners === undefined && this.globalSyncListeners === null) {
+        const listeners = this.#allSyncListeners.get(eventType);
+        if (listeners === undefined && this.#globalSyncListeners === null) {
             return;
         }
         const frameworkOverrides = this.frameworkOverrides;
         if (frameworkOverrides) {
-            frameworkOverrides.wrapIncoming(() => this.callListeners(event, listeners));
+            frameworkOverrides.wrapIncoming(() => this.#callListeners(event, listeners));
         } else {
-            this.callListeners(event, listeners);
+            this.#callListeners(event, listeners);
         }
     }
 
-    private callListeners(event: AgEvent<TEventType>, listeners: TypeListeners<TEventType> | undefined): void {
+    #callListeners(event: AgEvent<TEventType>, listeners: TypeListeners<TEventType> | undefined): void {
         if (typeof listeners === 'function') {
             listeners(event);
         } else if (listeners !== undefined) {
@@ -177,7 +177,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             }
         }
         // read after the type listeners, which may add or remove global ones
-        const globalListeners = this.globalSyncListeners;
+        const globalListeners = this.#globalSyncListeners;
         if (globalListeners !== null) {
             const eventType = event.type;
             for (let i = 0, len = globalListeners.length; i < len; ++i) {
@@ -190,25 +190,25 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     }
 
     // batched into one setTimeout per VM turn, as setTimeout is expensive
-    private queueListener(
+    #queueListener(
         listener: IEventListener<TEventType> | GlobalListenerEntry<TEventType>,
         event: AgEvent<TEventType>
     ): void {
-        const queue = this.asyncQueue;
+        const queue = this.#asyncQueue;
         if (queue === null) {
-            this.asyncQueue = [listener, event];
+            this.#asyncQueue = [listener, event];
         } else {
             queue.push(listener, event);
         }
-        this.scheduleFlush();
+        this.#scheduleFlush();
     }
 
     // the first call within a VM turn schedules the 'flush queue' method, later ones find it already scheduled
-    private scheduleFlush(): void {
-        if (this.scheduled) {
+    #scheduleFlush(): void {
+        if (this.#scheduled) {
             return;
         }
-        const flush = this.flushAsyncQueue.bind(this);
+        const flush = this.#flushAsyncQueue.bind(this);
         const frameworkOverrides = this.frameworkOverrides;
         // Bare `setTimeout`: hosts without a DOM have no `window`.
         if (frameworkOverrides) {
@@ -216,16 +216,16 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         } else {
             setTimeout(flush, 0);
         }
-        this.scheduled = true;
+        this.#scheduled = true;
     }
 
     // this happens in the next VM turn only, and empties the queue of events
-    private flushAsyncQueue(): void {
-        this.scheduled = false;
+    #flushAsyncQueue(): void {
+        this.#scheduled = false;
 
         // events dispatched by these listeners queue into a new batch, run in a later VM turn
-        const queue = this.asyncQueue;
-        this.asyncQueue = null;
+        const queue = this.#asyncQueue;
+        this.#asyncQueue = null;
         if (queue === null) {
             return;
         }

@@ -32,12 +32,12 @@ export class BaseAriaAnnouncementService<
 {
     beanName = 'ariaAnnounce' as const;
 
-    private descriptionContainer: HTMLElement | null = null;
+    #descriptionContainer: HTMLElement | null = null;
 
-    private readonly pendingAnnouncements = new Map<string, PendingAnnouncement>();
+    readonly #pendingAnnouncements = new Map<string, PendingAnnouncement>();
     // outlives the queue so a same-key update can cancel a value already waiting for its delayed DOM write.
-    private readonly announcementGenerations = new Map<string, number>();
-    private lastAnnouncement: string = '';
+    readonly #announcementGenerations = new Map<string, number>();
+    #lastAnnouncement: string = '';
 
     constructor() {
         super();
@@ -46,7 +46,7 @@ export class BaseAriaAnnouncementService<
     }
 
     public setDescriptionContainer(div: HTMLElement): void {
-        this.descriptionContainer = div;
+        this.#descriptionContainer = div;
 
         _setAriaLive(div, 'polite');
         _setAriaRelevant(div, 'additions text');
@@ -59,46 +59,46 @@ export class BaseAriaAnnouncementService<
      * @param key used for debouncing calls
      */
     public announceValue(value: string, key: string): void {
-        const generation = (this.announcementGenerations.get(key) ?? 0) + 1;
-        this.announcementGenerations.set(key, generation);
-        this.pendingAnnouncements.set(key, { generation, value });
+        const generation = (this.#announcementGenerations.get(key) ?? 0) + 1;
+        this.#announcementGenerations.set(key, generation);
+        this.#pendingAnnouncements.set(key, { generation, value });
         this.updateAnnouncement();
     }
 
     /** Drops the key's announcement if not yet delivered, leaving what was last announced untouched. */
     public cancelAnnouncement(key: string): void {
-        this.announcementGenerations.set(key, (this.announcementGenerations.get(key) ?? 0) + 1);
-        this.pendingAnnouncements.delete(key);
+        this.#announcementGenerations.set(key, (this.#announcementGenerations.get(key) ?? 0) + 1);
+        this.#pendingAnnouncements.delete(key);
     }
 
     private updateAnnouncement(): void {
-        if (!this.descriptionContainer || !this.pendingAnnouncements.size) {
+        if (!this.#descriptionContainer || !this.#pendingAnnouncements.size) {
             return;
         }
 
-        const announcements = Array.from(this.pendingAnnouncements, ([key, announcement]) => ({
+        const announcements = Array.from(this.#pendingAnnouncements, ([key, announcement]) => ({
             ...announcement,
             key,
         }));
-        this.pendingAnnouncements.clear();
+        this.#pendingAnnouncements.clear();
         // screen readers announce a change in content, so we set it to an empty value
         // and then use a setTimeout to force the Screen Reader announcement
-        this.descriptionContainer.textContent = '';
+        this.#descriptionContainer.textContent = '';
         setTimeout(() => {
             // A same-key update may arrive after this batch left the debounce queue but before its delayed
             // delivery. Drop only the superseded entry; unrelated announcements in this batch still apply.
             const current = announcements.filter(
-                ({ generation, key }) => this.announcementGenerations.get(key) === generation
+                ({ generation, key }) => this.#announcementGenerations.get(key) === generation
             );
             if (!current.length) {
                 return;
             }
-            this.handleAnnouncementUpdate(current.map(({ value }) => value).join('. '));
+            this.#handleAnnouncementUpdate(current.map(({ value }) => value).join('. '));
         }, ANNOUNCE_REPEAT_DELAY);
     }
 
-    private handleAnnouncementUpdate(value: string): void {
-        if (!this.isAlive() || !this.descriptionContainer) {
+    #handleAnnouncementUpdate(value: string): void {
+        if (!this.isAlive() || !this.#descriptionContainer) {
             return;
         }
 
@@ -106,23 +106,23 @@ export class BaseAriaAnnouncementService<
         // if the value is null or an empty string, or if it's a string
         // that only contains spaces and dots, it should not be announced
         if (valueToAnnounce == null || valueToAnnounce.replace(/[ .]/g, '') == '') {
-            this.lastAnnouncement = '';
+            this.#lastAnnouncement = '';
             return;
         }
         // if the announcement is the same (static announcement)
         // we add a zero-width space at the end to force screen readers to announce
-        if (this.lastAnnouncement === valueToAnnounce) {
+        if (this.#lastAnnouncement === valueToAnnounce) {
             valueToAnnounce = `${valueToAnnounce}\u200B`;
         }
-        this.lastAnnouncement = valueToAnnounce;
-        this.descriptionContainer.textContent = valueToAnnounce;
+        this.#lastAnnouncement = valueToAnnounce;
+        this.#descriptionContainer.textContent = valueToAnnounce;
     }
 
     public override destroy(): void {
         super.destroy();
 
-        this.descriptionContainer = null;
-        this.pendingAnnouncements.clear();
-        this.announcementGenerations.clear();
+        this.#descriptionContainer = null;
+        this.#pendingAnnouncements.clear();
+        this.#announcementGenerations.clear();
     }
 }

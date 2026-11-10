@@ -98,14 +98,14 @@ export class ThemeImpl {
         }
     }
 
-    private _cssClassCache?: [string, string];
+    #_cssClassCache?: [string, string];
 
     _getCssClasses(this: ThemeImpl): [inheritClasses: string, applyClasses: string] {
         if (FORCE_LEGACY_THEMES) {
             return ['', 'ag-theme-quartz'];
         }
 
-        return (this._cssClassCache ??= [
+        return (this.#_cssClassCache ??= [
             this._getParamsClassName(true),
             deduplicatePartsByFeature(this.parts)
                 .map((part) => part.use(undefined, undefined, undefined))
@@ -115,18 +115,18 @@ export class ThemeImpl {
         ]);
     }
 
-    private _classNamesId?: number;
-    private _getClassNamesId(): number {
-        return (this._classNamesId ??= ++getInjectionState().paramsId);
+    #_classNamesId?: number;
+    #_getClassNamesId(): number {
+        return (this.#_classNamesId ??= ++getInjectionState().paramsId);
     }
 
     _getParamsClassName(inherit = false): string {
-        return `ag-theme-${inherit ? 'inherit' : 'params'}-${this._getClassNamesId()}`;
+        return `ag-theme-${inherit ? 'inherit' : 'params'}-${this.#_getClassNamesId()}`;
     }
 
-    private _paramsCache?: ModalParamValues;
+    #_paramsCache?: ModalParamValues;
     _getModeParams(): ModalParamValues {
-        let paramsCache = this._paramsCache;
+        let paramsCache = this.#_paramsCache;
         if (!paramsCache) {
             const mergedModeParams: ModalParamValues = {
                 // NOTE: defining the default mode here is important, it ensures
@@ -169,15 +169,15 @@ export class ThemeImpl {
                     }
                 }
             }
-            this._paramsCache = paramsCache = mergedModeParams;
+            this.#_paramsCache = paramsCache = mergedModeParams;
         }
         return paramsCache;
     }
 
-    private _paramsCssCache?: string;
+    #_paramsCssCache?: string;
 
     _getParamsCss(): string {
-        if (!this._paramsCssCache) {
+        if (!this.#_paramsCssCache) {
             // Ensure that every variable has a value set on root elements ("root"
             // elements are those containing grid UI, e.g. ag-root-wrapper and
             // ag-popup)
@@ -225,9 +225,9 @@ export class ThemeImpl {
             }
             let css = `:where(.${this._getParamsClassName()}) {\n${variablesCss}}\n`;
             css += `:where(.${this._getParamsClassName(true)}) {\n${inheritanceCss}}\n`;
-            this._paramsCssCache = css;
+            this.#_paramsCssCache = css;
         }
-        return this._paramsCssCache;
+        return this.#_paramsCssCache;
     }
 }
 type ParamValues = Record<string, unknown>;

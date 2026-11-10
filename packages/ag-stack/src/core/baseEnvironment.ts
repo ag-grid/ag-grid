@@ -48,10 +48,10 @@ export abstract class BaseEnvironment<
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
     public styleNonce: string | undefined;
-    private mutationObserver: MutationObserver;
-    private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
-    private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
-    private eMeasurementContainer: HTMLElement | undefined;
+    #mutationObserver: MutationObserver;
+    readonly #sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
+    readonly #lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
+    #eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
 
     public wireBeans(beans: TBeanCollection): void {
@@ -59,7 +59,7 @@ export abstract class BaseEnvironment<
     }
 
     private theme: ThemeImpl | undefined;
-    private readonly globalCSS: [string, string][] = [];
+    readonly #globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
     protected abstract getAdditionalCss(): Map<string, string[]>;
@@ -105,13 +105,13 @@ export abstract class BaseEnvironment<
         }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
-        this.addManagedPropertyListener('theme', () => this.handleThemeChange());
-        this.handleThemeChange();
+        this.addManagedPropertyListener('theme', () => this.#handleThemeChange());
+        this.#handleThemeChange();
 
-        this.mutationObserver = new MutationObserver(() => {
+        this.#mutationObserver = new MutationObserver(() => {
             this.fireStylesChangedEvent('theme');
         });
-        this.addDestroyFunc(() => this.mutationObserver.disconnect());
+        this.addDestroyFunc(() => this.#mutationObserver.disconnect());
 
         this.initStyledRoot();
         this.getSizeEl(LIST_ITEM_HEIGHT);
@@ -127,7 +127,7 @@ export abstract class BaseEnvironment<
         const { theme } = this;
         const [inheritClass, applyClass] = theme
             ? theme._getCssClasses()
-            : ['', this.useLegacyThemeClasses(legacyThemeClassesInherited)];
+            : ['', this.#useLegacyThemeClasses(legacyThemeClassesInherited)];
         const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         // A grid nested within another grid's styled root inherits its theme, so its
         // own styled root must not re-apply the theme classes. Note it's intentional that
@@ -144,11 +144,11 @@ export abstract class BaseEnvironment<
      * When `legacyThemeClassesInherited` is set, returns '' instead of the classes while still
      * walking the ancestors to set up the observer.
      */
-    private useLegacyThemeClasses(legacyThemeClassesInherited?: boolean): string {
+    #useLegacyThemeClasses(legacyThemeClassesInherited?: boolean): string {
         const themeClasses = new Set<string>();
         // rebuild the observer set every time we call this function, to handle
         // edge cases where the grid is initialised outside the DOM or moved
-        this.mutationObserver.disconnect();
+        this.#mutationObserver.disconnect();
         let node = this.eRootDiv.parentElement;
         while (node) {
             if (!node.classList.contains('ag-styled-root')) {
@@ -160,7 +160,7 @@ export abstract class BaseEnvironment<
                     }
                 }
                 if (isThemeEl) {
-                    this.mutationObserver.observe(node, {
+                    this.#mutationObserver.observe(node, {
                         attributes: true,
                         attributeFilter: ['class'],
                     });
@@ -185,7 +185,7 @@ export abstract class BaseEnvironment<
         if (this.theme) {
             _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
         } else {
-            this.globalCSS.push([css, debugId]);
+            this.#globalCSS.push([css, debugId]);
         }
     }
 
@@ -194,19 +194,19 @@ export abstract class BaseEnvironment<
     }
 
     protected getCSSVariablePixelValue(variable: CssVariable<TChangeKeys>): number {
-        const cached = this.lastKnownValues.get(variable);
+        const cached = this.#lastKnownValues.get(variable);
         if (cached != null) {
             return cached;
         }
-        const measurement = this.measureSizeEl(variable);
+        const measurement = this.#measureSizeEl(variable);
         if (typeof measurement !== 'number') {
             return variable.defaultValue;
         }
-        this.lastKnownValues.set(variable, measurement);
+        this.#lastKnownValues.set(variable, measurement);
         return measurement;
     }
 
-    private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' | 'no-length' {
+    #measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' | 'no-length' {
         const sizeEl = this.getSizeEl(variable);
         if (sizeEl.offsetParent == null) {
             return 'detached';
@@ -224,9 +224,9 @@ export abstract class BaseEnvironment<
     }
 
     protected getMeasurementContainer(): HTMLElement {
-        let container = this.eMeasurementContainer;
+        let container = this.#eMeasurementContainer;
         if (!container) {
-            container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
+            container = this.#eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
             this.eRootDiv.appendChild(container);
             this.addDestroyFunc(() => container?.remove());
         }
@@ -234,7 +234,7 @@ export abstract class BaseEnvironment<
     }
 
     protected getSizeEl(variable: CssVariable<TChangeKeys>): HTMLElement {
-        let sizeEl = this.sizeEls.get(variable);
+        let sizeEl = this.#sizeEls.get(variable);
         if (sizeEl) {
             return sizeEl;
         }
@@ -244,7 +244,7 @@ export abstract class BaseEnvironment<
 
         const cssName = this.setSizeElStyles(sizeEl, variable);
         container.appendChild(sizeEl);
-        this.sizeEls.set(variable, sizeEl);
+        this.#sizeEls.set(variable, sizeEl);
 
         const { type, noWarn } = variable;
 
@@ -252,7 +252,7 @@ export abstract class BaseEnvironment<
             return sizeEl;
         }
 
-        let lastMeasurement = this.measureSizeEl(variable);
+        let lastMeasurement = this.#measureSizeEl(variable);
 
         if (lastMeasurement === 'no-styles' && !noWarn) {
             // No value for the variable
@@ -260,11 +260,14 @@ export abstract class BaseEnvironment<
         }
 
         const unsubscribe = _observeResize(this.beans, sizeEl, () => {
-            const newMeasurement = this.measureSizeEl(variable);
+            const newMeasurement = this.#measureSizeEl(variable);
             if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
                 return;
             }
-            this.lastKnownValues.set(variable, newMeasurement === 'no-length' ? variable.defaultValue : newMeasurement);
+            this.#lastKnownValues.set(
+                variable,
+                newMeasurement === 'no-length' ? variable.defaultValue : newMeasurement
+            );
             if (newMeasurement !== lastMeasurement) {
                 lastMeasurement = newMeasurement;
                 this.fireStylesChangedEvent(variable.changeKey);
@@ -298,7 +301,7 @@ export abstract class BaseEnvironment<
         return cssName;
     }
 
-    private handleThemeChange(): void {
+    #handleThemeChange(): void {
         const { gos, theme: oldTheme } = this;
         const themeProperty = gos.get('theme');
         let newTheme: ThemeImpl | undefined;
@@ -313,13 +316,14 @@ export abstract class BaseEnvironment<
             }
         }
         if (newTheme !== oldTheme) {
-            this.handleNewTheme(newTheme);
+            this.#handleNewTheme(newTheme);
         }
         this.postProcessThemeChange(newTheme, themeProperty);
     }
 
-    private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, globalCSS } = this;
+    #handleNewTheme(newTheme: ThemeImpl | undefined): void {
+        const { gos } = this;
+        const globalCSS = this.#globalCSS;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);

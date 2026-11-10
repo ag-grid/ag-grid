@@ -20,25 +20,25 @@ export abstract class BaseRegistry<
 {
     beanName = 'registry' as const;
 
-    private dynamicBeans: { [K in TDynamicBeanName]?: new (args?: any[]) => object };
+    #dynamicBeans: { [K in TDynamicBeanName]?: new (args?: any[]) => object };
 
     protected registerDynamicBeans(dynamicBeans?: Partial<Record<TDynamicBeanName, ClassImp>>): void {
         if (dynamicBeans) {
             // initialise the dynamic beans registry on first use
-            this.dynamicBeans ??= {};
+            this.#dynamicBeans ??= {};
             for (const name of Object.keys(dynamicBeans) as TDynamicBeanName[]) {
-                this.dynamicBeans[name] = dynamicBeans[name];
+                this.#dynamicBeans[name] = dynamicBeans[name];
             }
         }
     }
 
     public createDynamicBean<T>(name: TDynamicBeanName, mandatory: boolean, ...args: any[]): T | undefined {
-        if (!this.dynamicBeans) {
+        if (!this.#dynamicBeans) {
             // this happens when a module tries to init a dynamic bean during module initialization lifecycle
             throw this.createDynamicError(name, true);
         }
 
-        const BeanClass = this.dynamicBeans[name];
+        const BeanClass = this.#dynamicBeans[name];
 
         if (BeanClass == null) {
             if (mandatory) {

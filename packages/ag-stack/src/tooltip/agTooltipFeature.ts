@@ -23,7 +23,7 @@ export class AgTooltipFeature<
 {
     private tooltip: any;
 
-    private tooltipManager:
+    #tooltipManager:
         | BaseTooltipStateManager<
               TBeanCollection,
               TProperties,
@@ -35,7 +35,7 @@ export class AgTooltipFeature<
               TLocation
           >
         | undefined;
-    private browserTooltips: boolean;
+    #browserTooltips: boolean;
 
     constructor(
         private readonly ctrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
@@ -59,7 +59,7 @@ export class AgTooltipFeature<
      * when the browser adds a default tooltip the element and the tooltip service will be displayed
      * next to a browser tooltip causing confusion.
      */
-    private setBrowserTooltip(tooltip: string | null, allowEmptyString?: boolean): void {
+    #setBrowserTooltip(tooltip: string | null, allowEmptyString?: boolean): void {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
@@ -74,20 +74,20 @@ export class AgTooltipFeature<
         }
     }
 
-    private updateTooltipText(): void {
+    #updateTooltipText(): void {
         const { getTooltipValue } = this.ctrl;
         if (getTooltipValue) {
             this.tooltip = getTooltipValue();
         }
     }
 
-    private readonly getLatestTooltip = (): any => {
-        this.updateTooltipText();
+    readonly #getLatestTooltip = (): any => {
+        this.#updateTooltipText();
         return this.tooltip;
     };
 
-    private createTooltipFeatureIfNeeded(): void {
-        if (this.tooltipManager == null) {
+    #createTooltipFeatureIfNeeded(): void {
+        if (this.#tooltipManager == null) {
             const tooltipManager = this.beans.registry.createDynamicBean<
                 BaseTooltipStateManager<
                     TBeanCollection,
@@ -99,19 +99,19 @@ export class AgTooltipFeature<
                     TTooltipCtrlParams,
                     TLocation
                 >
-            >('tooltipStateManager', true, this.ctrl, this.getLatestTooltip);
+            >('tooltipStateManager', true, this.ctrl, this.#getLatestTooltip);
             if (tooltipManager) {
-                this.tooltipManager = this.createBean(tooltipManager, this.beans.context);
+                this.#tooltipManager = this.createBean(tooltipManager, this.beans.context);
             }
         }
     }
 
     public attemptToShowTooltip(): void {
-        this.tooltipManager?.prepareToShowTooltip();
+        this.#tooltipManager?.prepareToShowTooltip();
     }
 
     public attemptToHideTooltip(): void {
-        this.tooltipManager?.hideTooltip();
+        this.#tooltipManager?.hideTooltip();
     }
 
     public setTooltipAndRefresh(tooltip: any): void {
@@ -120,28 +120,28 @@ export class AgTooltipFeature<
     }
 
     public refreshTooltip(clearWithEmptyString?: boolean): void {
-        this.browserTooltips = this.beans.gos.get('enableBrowserTooltips')!;
+        this.#browserTooltips = this.beans.gos.get('enableBrowserTooltips')!;
 
         // a tooltip on screen renders the value, component and params it was shown with; this refresh
         // means any of them may have moved on, and none can be updated in place, so take it down
-        const tooltipManager = this.tooltipManager;
+        const tooltipManager = this.#tooltipManager;
         if (tooltipManager?.isShowing()) {
             tooltipManager.hideTooltip(true);
         }
 
-        if (this.browserTooltips) {
-            this.updateTooltipText();
-            this.setBrowserTooltip(this.tooltip);
-            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+        if (this.#browserTooltips) {
+            this.#updateTooltipText();
+            this.#setBrowserTooltip(this.tooltip);
+            this.#tooltipManager = this.destroyBean(this.#tooltipManager, this.beans.context);
         } else {
-            this.setBrowserTooltip(clearWithEmptyString ? '' : null, clearWithEmptyString);
-            this.createTooltipFeatureIfNeeded();
+            this.#setBrowserTooltip(clearWithEmptyString ? '' : null, clearWithEmptyString);
+            this.#createTooltipFeatureIfNeeded();
         }
     }
 
     public override destroy() {
-        this.setBrowserTooltip(null);
-        this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+        this.#setBrowserTooltip(null);
+        this.#tooltipManager = this.destroyBean(this.#tooltipManager, this.beans.context);
         super.destroy();
     }
 }

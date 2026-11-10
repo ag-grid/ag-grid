@@ -4,7 +4,7 @@ export class CssClassManager {
 
     // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already
     // there, or removing one that wasn't present, all takes CPU.
-    private cssClassStates: { [cssClass: string]: boolean } = {};
+    #cssClassStates: { [cssClass: string]: boolean } = {};
 
     constructor(getGui: () => HTMLElement | undefined | null) {
         this.getGui = getGui;
@@ -27,11 +27,11 @@ export class CssClassManager {
             }
         }
 
-        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
+        const updateNeeded = this.#cssClassStates[className] !== addOrRemove;
         if (updateNeeded && className.length) {
             this.getGui()?.classList.toggle(className, addOrRemove);
 
-            this.cssClassStates[className] = addOrRemove;
+            this.#cssClassStates[className] = addOrRemove;
         }
     }
 }

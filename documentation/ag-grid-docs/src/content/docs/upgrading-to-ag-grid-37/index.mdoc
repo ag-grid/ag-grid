@@ -19,7 +19,7 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 ### Build Output
 
-- The packages now target ES2022, so their output can contain ES2022 syntax such as `#private` class members. Your build tools must be able to parse it. A bundler set to a target older than ES2022 rewrites `#private` members into larger, slower helper code.
+- The packages now target ES2022, so their output can contain ES2022 syntax such as `#private` class members. Your build tools must be able to parse it. A bundler set to a target older than ES2022 rewrites `#private` members into larger, slower helper code. To avoid this, set your bundler's target to ES2022 or later, for example `build: { target: 'es2022' }` in Vite.
 
 {% if isFramework("react") %}
 
