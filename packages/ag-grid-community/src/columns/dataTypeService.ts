@@ -418,7 +418,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private initWaitForRowData(colId: string): void {
-        this.columnStateUpdatesPendingInference[colId] = new Set();
+        // a column rebuilt while it waits keeps the state keys already recorded for it
+        this.columnStateUpdatesPendingInference[colId] ??= new Set();
         if (this.isPendingInference) {
             return;
         }
