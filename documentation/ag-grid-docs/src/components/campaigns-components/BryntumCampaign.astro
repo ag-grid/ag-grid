@@ -12,9 +12,10 @@ import LiveDemoSection from './bryntum/LiveDemoSection.astro';
 import PartnershipSection from './bryntum/PartnershipSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
 import TextMiniDemoSection from './bryntum/TextMiniDemoSection.astro';
+import TiersSection from './bryntum/TiersSection.astro';
 import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
 import { MINI_DEMO_CONFIG } from './bryntum/miniDemoProducts';
-import type { BryntumCampaignContent } from './bryntum/types';
+import type { BryntumCampaignContent, BryntumLiveDemoSection } from './bryntum/types';
 import styles from './BryntumCampaign.module.scss';
 
 interface Props {
@@ -23,20 +24,25 @@ interface Props {
 
 const { content } = Astro.props;
 const productSlug = content.slug;
-const hasLiveDemo = productSlug in LIVE_DEMO_PRODUCT_CONFIG;
+const liveDemoProductOf = (section: BryntumLiveDemoSection) => section.demo_product ?? productSlug;
 
 // Collect the unique Bryntum product bundles needed by demo sections on this
-// page. The live-demo section uses the page's product slug; mini-demo sections
-// can configure their own product. Each bundle must only be loaded once or
-// Bryntum throws "bundle was loaded multiple times" at runtime.
+// page. A live-demo section uses its `demo_product` (default: the page's
+// product slug) and that demo's bundle; mini-demo sections can configure their
+// own product. Each bundle must only be loaded once or Bryntum throws "bundle
+// was loaded multiple times" at runtime.
 const bryntumProductSlugs = new Set<string>();
-if (hasLiveDemo && content.sections.some((s) => s.type === 'live-demo')) {
-    bryntumProductSlugs.add(productSlug);
-}
+const liveDemoCss = new Set<string>();
 for (const section of content.sections) {
-    if (section.type !== 'text-mini-demo') continue;
-    const config = MINI_DEMO_CONFIG[section.demo_kind ?? 'gantt'];
-    if (config) bryntumProductSlugs.add(config.productSlug);
+    if (section.type === 'live-demo') {
+        const config = LIVE_DEMO_PRODUCT_CONFIG[liveDemoProductOf(section)];
+        if (!config) continue;
+        bryntumProductSlugs.add(config.bundleSlug ?? liveDemoProductOf(section));
+        if (config.demoCss) liveDemoCss.add(config.demoCss);
+    } else if (section.type === 'text-mini-demo') {
+        const config = MINI_DEMO_CONFIG[section.demo_kind ?? 'gantt'];
+        if (config) bryntumProductSlugs.add(config.productSlug);
+    }
 }
 const bryntumProducts = [...bryntumProductSlugs].map((slug) => ({
     slug,
@@ -94,16 +100,16 @@ const altTextMediaSections = new WeakSet<object>();
                  * site's colour scheme.
                  */}
                 <link rel="stylesheet" data-bryntum-theme={slug} href={`${base}/svalbard-light.css`} />
-                {/*
-                 * Per-product demo stylesheet ported from the upstream
-                 * Bryntum example's app.css. Loaded only for products that
-                 * define one so its generic `.b-*` rules stay off other
-                 * product pages that render the same Bryntum classes.
-                 */}
-                {LIVE_DEMO_PRODUCT_CONFIG[slug]?.demoCss && (
-                    <link rel="stylesheet" href={urlWithBaseUrl(LIVE_DEMO_PRODUCT_CONFIG[slug].demoCss!)} />
-                )}
             </>
+        ))}
+        {/*
+         * Per-demo stylesheet ported from the upstream Bryntum example's
+         * app.css. Loaded only for live demos on this page that define one
+         * so its `.b-*` rules stay off other demos that render the same
+         * Bryntum classes.
+         */}
+        {[...liveDemoCss].map((href) => (
+            <link rel="stylesheet" href={urlWithBaseUrl(href)} />
         ))}
         {/*
          * `set:html` is the canonical Astro pattern for injecting a literal
@@ -162,8 +168,8 @@ const altTextMediaSections = new WeakSet<object>();
                     />
                 );
             case 'live-demo':
-                return hasLiveDemo ? (
-                    <BryntumLiveDemo section={section} productSlug={productSlug} />
+                return liveDemoProductOf(section) in LIVE_DEMO_PRODUCT_CONFIG ? (
+                    <BryntumLiveDemo section={section} productSlug={liveDemoProductOf(section)} />
                 ) : (
                     <LiveDemoSection section={section} />
                 );
@@ -173,6 +179,8 @@ const altTextMediaSections = new WeakSet<object>();
                 return <BrandsSection section={section} />;
             case 'text-button':
                 return <CtaSection section={section} />;
+            case 'tiers':
+                return <TiersSection section={section} />;
             case 'partnership':
                 return <PartnershipSection section={section} />;
             case 'text-mini-demo':

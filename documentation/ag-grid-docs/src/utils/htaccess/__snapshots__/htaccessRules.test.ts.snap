@@ -3019,6 +3019,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /core-data-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /vuejs-charts/ https://www.ag-grid.com/charts/
     Redirect 301 /campaigns/beyond-the-prompt/ /community/beyond-the-prompt/
+    Redirect 301 /campaigns/bryntum-scheduler-pro/ /campaigns/bryntum-scheduler/
+    Redirect 301 /campaigns/bryntum-scheduler-pro.md /campaigns/bryntum-scheduler.md
     RedirectMatch 301 "^/gallery/(.*)" "https://www.ag-grid.com/charts/gallery/$1"
     RedirectMatch 301 "^/options(/.*)?" "https://www.ag-grid.com/charts/options/"
     RedirectMatch 301 "^/vuejs-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
