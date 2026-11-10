@@ -72,6 +72,16 @@ REVIEW_BUDGET_MINUTES=${REVIEW_BUDGET_MINUTES:-300}
 PARALLEL_SHARDS=${PARALLEL_SHARDS:-3}
 MIN_SHARD_MINUTES=5
 
+# A zero, negative or non-numeric value would hang the scheduler or break the time budget
+for setting in SHARD_TIMEOUT_MINUTES REVIEW_BUDGET_MINUTES PARALLEL_SHARDS
+do
+    if ! [[ "${!setting}" =~ ^[1-9][0-9]*$ ]]
+    then
+        echo "::error::$setting must be a positive integer, got [${!setting}]"
+        exit 1
+    fi
+done
+
 # Reviews one shard. Runs in the background, so it reports only through its status file.
 review_shard() {
     local name=$1 shard focus p paths paths_json prompt_file output_file log_file remaining shard_minutes start exit_code duration
