@@ -350,17 +350,14 @@ export class CalculatedColumnForm extends Component {
         });
     }
 
-    private getPickerButtons(): [CalculatedColumnExpressionPicker, ColumnSuggestion['type'], HTMLButtonElement][] {
-        return [
+    private addActionListeners(): void {
+        const expressionPickers = this.expressionPickers;
+        const pickerButtons: [CalculatedColumnExpressionPicker, ColumnSuggestion['type'], HTMLButtonElement][] = [
             ['columns', 'column', this.eColumns],
             ['functions', 'function', this.eFunctions],
             ['operators', 'operator', this.eOperators],
         ];
-    }
-
-    private addActionListeners(): void {
-        const expressionPickers = this.expressionPickers;
-        for (const pickerButton of this.getPickerButtons()) {
+        for (const pickerButton of pickerButtons) {
             const [pickerKey, suggestionType, button] = pickerButton;
             if (expressionPickers.has(pickerKey)) {
                 _addManagedElementListeners(this, button, {
