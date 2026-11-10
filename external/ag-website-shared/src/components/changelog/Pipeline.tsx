@@ -1,6 +1,7 @@
 import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
+import { formatJiraNotes } from '@ag-website-shared/components/changelog/formatJiraNotes';
 import { transformVersion } from '@ag-website-shared/components/changelog/transformVersion';
 import { useSearchQuery } from '@ag-website-shared/components/changelog/useSearchQuery';
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
@@ -79,6 +80,7 @@ const detailCellRendererParams = (params) => {
         params.data.breakingChangesNotes,
     ]
         .filter(Boolean)
+        .map(formatJiraNotes)
         .join('\n\n');
     const message = newLinesToBreaks(combinedMessages);
     return {
