@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 320
+# @min-rows 322
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -213,28 +213,32 @@ www	/archive/36.2.0/javascript-grid/themes-customising/	301	https://www.ag-grid.
 www	/archive/36.3.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/react-hooks/	hops=1
 www	/archive/36.2.0/	200	
 
-# @category redirects-never-cached
-# Every redirect is sent Cache-Control: no-cache from the root's always-table rule, which no child
-# .htaccess overrides: host swap, add-slash and rule redirects, on every site, live and archived.
-apex	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	cc=no-cache
-blog	/some-post/	301	https://www.ag-grid.com/blog/some-post/	cc=no-cache
-www	/license-pricing	301	/license-pricing/	cc=no-cache
-www	/react-grid/fine-tuning/	301	https://www.ag-grid.com/react-data-grid/react-hooks/	cc=no-cache
-www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/	cc=no-cache
-www	/sitemap.xml	301	https://www.ag-grid.com/sitemap-index.xml	cc=no-cache
-apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	cc=no-cache
-www	/archive/36.2.0/license-pricing	301	/archive/36.2.0/license-pricing/	cc=no-cache
-www	/archive/36.2.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/react-hooks/	cc=no-cache
-www	/archive/36.3.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/react-hooks/	cc=no-cache
-apex	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-apex	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache
-www	/charts/archive/14.2.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache
-www	/charts/archive/14.3.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.3.0/react/bar-series/	cc=no-cache
-apex	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	cc=no-cache
-www	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	cc=no-cache
-apex	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	cc=no-cache
+# @category redirects-edge-cached
+# A permanent redirect of a current www path asked for without a query string is cached by CloudFront
+# for a day and tagged like the pages, so the deploy invalidation clears it (browsers get no-cache from
+# the viewer-cache-headers function). Every other redirect - with a query string, on the plain-http
+# listener, on another host, or inside an archive - keeps no-cache from the root's always-table rule.
+apex	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	cc=no-cache	h:x-ag-cache-tag=absent
+blog	/some-post/	301	https://www.ag-grid.com/blog/some-post/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/license-pricing	301	/license-pricing/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/react-grid/fine-tuning/	301	https://www.ag-grid.com/react-data-grid/react-hooks/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/sitemap.xml	301	https://www.ag-grid.com/sitemap-index.xml	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+apex	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/archive/36.2.0/license-pricing	301	/archive/36.2.0/license-pricing/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/archive/36.2.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/react-hooks/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/archive/36.3.0/react-grid/fine-tuning/	301	https://www.ag-grid.com/archive/36.3.0/react-data-grid/react-hooks/	cc=no-cache	h:x-ag-cache-tag=absent
+apex	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+apex	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/charts/archive/14.2.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/charts/archive/14.3.0/react/bar-series	301	https://www.ag-grid.com/charts/archive/14.3.0/react/bar-series/	cc=no-cache	h:x-ag-cache-tag=absent
+apex	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+apex	/studio/archive/3.0.0/react/quick-start/	301	https://www.ag-grid.com/studio/archive/3.0.0/react/quick-start/	cc=no-cache	h:x-ag-cache-tag=absent
+www	/license-pricing?utm_source=x	301	/license-pricing/?utm_source=x	cc=no-cache	h:x-ag-cache-tag=absent
+www	/license-pricing	301	https://www.ag-grid.com/license-pricing/	scheme=http	cc=no-cache	h:x-ag-cache-tag=absent
 # A 304 is a 3xx too, but it refreshes the headers of the copy a cache holds: it keeps that copy's
 # long cache rather than turning it into no-cache.
 www	/_astro/index.AbCd1234.js	304		req:If-None-Match=*	cc=public, max-age=604800, s-maxage=31536000
