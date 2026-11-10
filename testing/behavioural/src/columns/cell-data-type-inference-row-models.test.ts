@@ -280,6 +280,20 @@ describe('cellDataType inference under non-client-side row models', () => {
             return { api, leafBlockServed };
         };
 
+        /** A custom filter holding whatever model it is given; subclassed to give two distinct components. */
+        class ModelFilter implements IFilterComp {
+            private model: unknown = null;
+            getGui = () => document.createElement('div');
+            isFilterActive = () => this.model != null;
+            doesFilterPass = () => true;
+            getModel = () => this.model;
+            setModel(model: unknown) {
+                this.model = model;
+            }
+        }
+        class UntypedFilter extends ModelFilter {}
+        class NumberFilter extends ModelFilter {}
+
         const expandFirstGroup = (api: GridApi) => {
             const node = api.getDisplayedRowAtIndex(0)!;
             api.setRowNodeExpanded(node, true);
@@ -506,19 +520,6 @@ describe('cellDataType inference under non-client-side row models', () => {
         });
 
         test('a filtered column is kept untyped where its inferred data type swaps one custom filter for another', async () => {
-            class ModelFilter implements IFilterComp {
-                private model: unknown = null;
-                getGui = () => document.createElement('div');
-                isFilterActive = () => this.model != null;
-                doesFilterPass = () => true;
-                getModel = () => this.model;
-                setModel(model: unknown) {
-                    this.model = model;
-                }
-            }
-            class UntypedFilter extends ModelFilter {}
-            class NumberFilter extends ModelFilter {}
-
             const { api, leafBlockServed } = await createGroupedGrid(
                 [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
                 {
@@ -582,6 +583,72 @@ describe('cellDataType inference under non-client-side row models', () => {
             expect(inferredType(api, 'year')).toBe('wideNumber');
             expect(year.getPinned()).toBe('left');
             expect(year.getActualWidth()).toBe(150);
+        });
+
+        test('a filtered column is kept untyped where its inferred data type swaps a custom Multi Filter child', async () => {
+            const multiFilter = (child: unknown) => ({
+                filter: 'agMultiColumnFilter',
+                filterParams: { filters: [{ filter: child }] },
+            });
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                {
+                    defaultColDef: multiFilter(UntypedFilter),
+                    columnTypes: { numberFiltered: multiFilter(NumberFilter) },
+                    dataTypeDefinitions: {
+                        filteredNumber: {
+                            baseDataType: 'number',
+                            extendsDataType: 'number',
+                            columnTypes: ['numberFiltered'],
+                            dataTypeMatcher: (value) => typeof value === 'number',
+                        },
+                    },
+                }
+            );
+
+            const multiModel = { filterType: 'multi', filterModels: [{ min: 2000 }] };
+            api.setFilterModel({ year: multiModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: multiModel });
+        });
+
+        test('a filtered column is kept untyped where its inferred data type swaps the filter handler', async () => {
+            const withHandler = () => ({
+                filter: { component: 'agTextColumnFilter', handler: () => ({ doesFilterPass: () => true }) },
+            });
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                {
+                    enableFilterHandlers: true,
+                    defaultColDef: withHandler(),
+                    columnTypes: { numberFiltered: withHandler() },
+                    dataTypeDefinitions: {
+                        filteredNumber: {
+                            baseDataType: 'number',
+                            extendsDataType: 'number',
+                            columnTypes: ['numberFiltered'],
+                            dataTypeMatcher: (value) => typeof value === 'number',
+                        },
+                    },
+                }
+            );
+
+            const textModel = { filterType: 'text', type: 'contains', filter: '20' };
+            api.setFilterModel({ year: textModel });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: textModel });
         });
 
         test('a Multi Filter child given as `{ component: true }` is protected as the default child filter', async () => {

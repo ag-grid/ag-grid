@@ -1,4 +1,4 @@
-import { _getLocaleTextFunc, _jsonEquals } from 'ag-stack';
+import { _getLocaleTextFunc } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -176,16 +176,13 @@ function isLogicWithoutHandlers(beans: BeanCollection, filter: unknown): boolean
     );
 }
 
-/** The filter `filter` builds: the component its `{ component }` form names, or else itself. */
-const getFilterComp = (filter: unknown): unknown => (isColumnFilterComp(filter) ? filter.component : filter);
-
 /**
  * The filter `filter` builds: `true`, a name nothing is registered under and logic without filter handlers build
  * `defaultFilter`, the `{ component }` form the filter it names; `undefined` for none or a component of the author's.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFilter: string): string | undefined {
-    const named = getFilterComp(filter);
+    const named = isColumnFilterComp(filter) ? filter.component : filter;
     if (named === true || isUnregistered(beans, named) || isLogicWithoutHandlers(beans, filter)) {
         return defaultFilter;
     }
@@ -194,7 +191,7 @@ export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFil
 
 /**
  * Whether changing the base data type of `column` from `from` to `to`, and so its filter definition from `fromDef`
- * to `toDef`, changes the filter built on it: a different filter, different params, or params of either data
+ * to `toDef`, changes the filter built on it: a different definition, a different filter, or params of either data
  * type's, any of which can invalidate the filter's model. A Selectable Filter is judged by its active choice, a
  * Multi Filter by its children.
  */
@@ -206,24 +203,17 @@ export function _isFilterChangedByDataType(
     from: BaseCellDataType | undefined,
     to: BaseCellDataType | undefined
 ): boolean {
-    const selectableFilter = beans.selectableFilter;
-    const { filter, filterParams } = selectableFilter?.getFilterDef(column, fromDef) ?? fromDef;
-    const toFilterDef = selectableFilter?.getFilterDef(column, toDef) ?? toDef;
-    const toFilter = toFilterDef.filter;
-    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
-    if (
-        key !== _getFilterKey(beans, toFilter, getDefaultFilterFromDataType(beans, to)) ||
-        // components of the author's own have no key, so are told apart by the component itself
-        (key === undefined && getFilterComp(filter) !== getFilterComp(toFilter))
-    ) {
-        return true;
-    }
-    // column types the data type brings can give the filter params of their own
-    if (!areFilterParamsEqual(filterParams, toFilterDef.filterParams)) {
+    // column types the data type brings can change any part of the definition
+    if (!areFilterDefValuesEqual(fromDef, toDef)) {
         return true;
     }
     if (from === to) {
         return false;
+    }
+    const { filter, filterParams } = beans.selectableFilter?.getFilterDef(column, fromDef) ?? fromDef;
+    const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
+    if (key !== _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, to))) {
+        return true;
     }
     if (key === 'agMultiColumnFilter') {
         return !!beans.multiFilter?.areChildFiltersChangedByDataType(filterParams, from, to);
@@ -232,12 +222,28 @@ export function _isFilterChangedByDataType(
     return key !== undefined && (_hasFilterParamsForDataType(key, from) || _hasFilterParamsForDataType(key, to));
 }
 
-/** A function's params are only known once it is called, so two functions are equal only when the same one. */
-function areFilterParamsEqual(params: unknown, otherParams: unknown): boolean {
-    if (typeof params === 'function' || typeof otherParams === 'function') {
-        return params === otherParams;
+/**
+ * Deep equality over a filter definition, where a function or class equals only itself, so that a swapped
+ * component, handler, child filter or params function tells the two apart.
+ */
+function areFilterDefValuesEqual(value: unknown, other: unknown): boolean {
+    if (value === other) {
+        return true;
     }
-    return _jsonEquals(params, otherParams);
+    if (
+        typeof value !== 'object' ||
+        typeof other !== 'object' ||
+        !value ||
+        !other ||
+        Array.isArray(value) !== Array.isArray(other)
+    ) {
+        return false;
+    }
+    const keys = Object.keys(value);
+    return (
+        keys.length === Object.keys(other).length &&
+        keys.every((key) => areFilterDefValuesEqual((value as any)[key], (other as any)[key]))
+    );
 }
 
 export function _setColDefPropsForDataType(
