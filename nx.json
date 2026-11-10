@@ -72,7 +72,13 @@
         "externalDependencies": ["npm:typescript", "npm:esbuild"]
       }
     ],
-    "sharedGlobals": ["{workspaceRoot}/esbuild*.cjs", "{workspaceRoot}/tsconfig.*.json"],
+    "sharedGlobals": [
+      "{workspaceRoot}/esbuild*.cjs",
+      "{workspaceRoot}/tsconfig.*.json",
+      "{workspaceRoot}/scripts/package/emit-declarations.mjs",
+      "{workspaceRoot}/plugins/ag-grid-task-autogen/src/executors/esbuild-staged.cjs",
+      "{workspaceRoot}/scripts/package/sync-directory.cjs"
+    ],
     "charts": ["chartsPackages", "chartsTypes"],
     "chartsPackages": [
       {
@@ -201,5 +207,6 @@
     }
   },
   "defaultProject": "all",
-  "useLegacyCache": false
+  "useLegacyCache": false,
+  "cacheDirectory": ".nx/cache"
 }

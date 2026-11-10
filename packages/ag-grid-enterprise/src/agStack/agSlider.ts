@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import { RefPlaceholder, _setAriaLabelledBy } from 'ag-stack';
 
 import type { AgInputNumberField, AgLabelParams, LabelAlignment, _AgWidgetSelectorType } from 'ag-grid-community';
@@ -25,11 +19,11 @@ export interface AgSliderParams extends AgLabelParams {
 
 type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgAbstractLabel<
     TBeanCollection,

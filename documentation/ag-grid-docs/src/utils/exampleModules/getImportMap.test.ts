@@ -1,7 +1,14 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { NPM_CDN } from '@constants';
 
-import { DEVELOPMENT_FLAGS, FRAMEWORK_VERSION_PATTERN, getDefaultFrameworkVersion, getImportMap } from './getImportMap';
+import {
+    ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER,
+    DEVELOPMENT_FLAGS,
+    FRAMEWORK_VERSION_PATTERN,
+    FRAMEWORK_VERSION_PLACEHOLDER,
+    getDefaultFrameworkVersion,
+    getImportMap,
+} from './getImportMap';
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
@@ -139,6 +146,18 @@ describe('getImportMap', () => {
 
             expect(importMap['rxjs']).not.toContain('@1.2.3');
             expect(importMap['tslib']).not.toContain('@1.2.3');
+        });
+
+        test.each([
+            ['21.0.0', 'primitives-di.mjs'],
+            ['20.3.0', 'primitives/di.mjs'],
+            [FRAMEWORK_VERSION_PLACEHOLDER, `primitives${ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER}di.mjs`],
+        ])('Angular %s resolves the core primitives from %s', (frameworkVersion, entryPoint) => {
+            const importMap = getImportMap({ internalFramework: 'angular', isEnterprise: false, frameworkVersion });
+
+            expect(importMap['@angular/core/primitives/di']).toBe(
+                `${NPM_CDN}/@angular/core@${frameworkVersion}/fesm2022/${entryPoint}`
+            );
         });
 
         test('the frameworkless examples have no framework version', () => {

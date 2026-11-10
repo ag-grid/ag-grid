@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 
 export const INPUT_INVALID_CLASS = 'ag-cell-editor-input-invalid';
@@ -5,7 +7,7 @@ export const INPUT_INVALID_CLASS = 'ag-cell-editor-input-invalid';
 export function _addDateInputValidationStyleListeners(eEditor: GridInputDateField, eCell: HTMLElement): void {
     const input = eEditor.getInputElement();
     const refresh = () => _refreshDateInputValidationStyle(eCell, input);
-    eEditor.addManagedElementListeners(input, {
+    _addManagedElementListeners(eEditor, input, {
         input: refresh,
         change: refresh,
         // Firefox can change segment validity without an input event.

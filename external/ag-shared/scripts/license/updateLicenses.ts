@@ -1,19 +1,16 @@
-import { readFileSync, writeFileSync } from 'fs';
-import glob from 'glob';
+import { globSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 
 const LICENSE_REGEX = /(Copyright \(c\) 2015-)(\d+)( AG GRID LTD)/gm;
 
 async function updateLicenses() {
     const fullPath = path.join(__dirname, '../../../..');
-    const licenseGlob = `${fullPath}/**/LICENSE.txt`;
     const currentYear = new Date().getFullYear();
 
-    const licenseFiles = glob.sync(licenseGlob, {
-        ignore: ['**/node_modules/**'],
-    });
+    const licenseFiles = globSync('**/LICENSE.txt', { cwd: fullPath, exclude: ['**/node_modules'] });
 
-    licenseFiles.forEach((filePath) => {
+    licenseFiles.forEach((relativePath) => {
+        const filePath = path.join(fullPath, relativePath);
         const contents = readFileSync(filePath, 'utf-8');
 
         const newContents = contents.replace(LICENSE_REGEX, `$1${currentYear}$3`);

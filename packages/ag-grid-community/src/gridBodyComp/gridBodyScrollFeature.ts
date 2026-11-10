@@ -1,5 +1,6 @@
 import {
     Direction,
+    _addManagedElementListeners,
     _debounce,
     _getInnerHeight,
     _getInnerWidth,
@@ -126,7 +127,7 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollGapChanged: invalidateHorizontalScroll,
         });
 
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: () => {
                 invalidateVerticalScroll();
                 invalidateHorizontalScroll();
@@ -155,7 +156,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addHorizontalScrollListeners(): void {
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: this.onHScroll.bind(this, VIEWPORT),
         });
 
@@ -172,7 +173,7 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, VIEWPORT);
         const onFakeVScroll = isDebounce ? this.debounceFakeVScroll() : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
-        this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
+        _addManagedElementListeners(this, this.eGridViewport, { scroll: onVScroll });
         this.fakeVScrollComp.onScrollCallback(onFakeVScroll);
     }
 

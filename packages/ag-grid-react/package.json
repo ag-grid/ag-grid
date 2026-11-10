@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "36.3.0",
+  "version": "36.3.0-beta.20261106.1218",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
   "types": "./dist/types/src/index.d.ts",
@@ -32,23 +32,23 @@
     "@babel/plugin-proposal-throw-expressions": "^8.0.1",
     "@babel/preset-typescript": "^8.0.7",
     "@babel/runtime": "^8.0.7",
-    "@types/react": "~18.3.26",
-    "@types/react-dom": "~18.3.7",
-    "ag-grid-community": "36.3.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "ag-grid-community": "36.3.0-beta.20261106.1218",
     "babel-preset-react-app": "^10.1.0",
     "prop-types": "^15.6.2",
-    "react": "^16.9.0",
+    "react": "^17.0.2",
     "react-app-polyfill": "^3.0.0",
-    "react-dom": "^16.9.0",
-    "typescript": "~5.8.3"
+    "react-dom": "^17.0.2",
+    "typescript": "~5.9.3"
   },
   "dependencies": {
-    "ag-grid-community": "36.3.0",
+    "ag-grid-community": "36.3.0-beta.20261106.1218",
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0"
   },
   "eslintConfig": {
     "extends": [

@@ -17,30 +17,6 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [ColumnToolPanelFactory],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
-    icons: {
-        menuMoveUp: 'up',
-        menuMoveDown: 'down',
-        ensureColumnVisible: 'column-arrow',
-        // column tool panel tab
-        columnsToolPanel: 'columns',
-        // "Group by {column-name}" item in column header menu
-        menuAddRowGroup: 'group',
-        // "Un-Group by {column-name}" item in column header menu
-        menuRemoveRowGroup: 'group',
-        // identifies the pivot drop zone
-        pivotPanel: 'pivot',
-        // "Row groups" drop zone in column tool panel
-        rowGroupPanel: 'group',
-        // columns tool panel Values drop zone
-        valuePanel: 'aggregation',
-        // column tool panel column group contracted (click to expand)
-        columnSelectClosed: 'tree-closed',
-        // column tool panel column group expanded (click to contract)
-        columnSelectOpen: 'tree-open',
-        // column tool panel header expand/collapse all button, shown when some children are expanded and
-        //     others are collapsed
-        columnSelectIndeterminate: 'tree-indeterminate',
-    },
     dependsOn: [
         EnterpriseCoreModule,
         SharedColumnStateUpdateStrategyModule,

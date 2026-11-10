@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     advancedFilterCancel: 'İptal',
     advancedFilterClear: 'Temizle',
     advancedFilterBuilder: 'Oluşturucu',
+    advancedFilterPlaceholder: 'Gelişmiş Filtre',
     advancedFilterValidationMissingColumn: 'Sütun eksik',
     advancedFilterValidationMissingOption: 'Seçenek eksik',
     advancedFilterValidationMissingValue: 'Değer eksik',
@@ -823,6 +824,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelSelectField: 'Alan Seç',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Hücre Düzenleyici',
     ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulaması',
     ariaFullRowValidationError: 'Tam satır doğrulaması: ${variable}',
     ariaFullRowEditValidationFailed: 'Satır düzenlemesi tamamlanamıyor. ${variable}',
@@ -852,6 +854,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaLabelFilterCardType: 'Filtre Türü',
     ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)

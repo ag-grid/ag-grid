@@ -206,12 +206,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.135Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.734Z
-    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -222,12 +222,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.971Z
-    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.543Z
-    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -239,7 +239,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:23:41.846Z
   SNYK-JS-URIJS-19963963:
-    - eslint@10.11.0 > ajv@6.15.0 > uri-js@4.4.1:
+    - 'eslint@10.13.0 > ajv@6.15.0 > uri-js@4.4.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'

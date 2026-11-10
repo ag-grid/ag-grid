@@ -1,14 +1,62 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-OPEN-22112123:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:49:58.670Z
+  SNYK-JS-HIGHCHARTS-21826809:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:46:23.062Z
+  SNYK-JS-HIGHCHARTS-21826805:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:46:06.657Z
+  SNYK-JS-HIGHCHARTS-21826799:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:45:58.143Z
+  SNYK-JS-HIGHCHARTS-21816471:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:45:06.911Z
+  SNYK-JS-HIGHCHARTS-21816469:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:55.168Z
+  SNYK-JS-DOMPURIFY-21755401:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:39.573Z
+  SNYK-JS-DOMPURIFY-21755399:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:20.281Z
   SNYK-JS-DOMPURIFY-21460653:
-    - '@mobileaction/action-kit@1.60.1 > dompurify@3.4.15':
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T12:58:56.000Z
   SNYK-JS-DOMPURIFY-21460657:
-    - '@mobileaction/action-kit@1.60.1 > dompurify@3.4.15':
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'

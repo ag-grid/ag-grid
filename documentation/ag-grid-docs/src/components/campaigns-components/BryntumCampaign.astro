@@ -63,13 +63,16 @@ const altTextMediaSections = new WeakSet<object>();
 ---
 
 {/*
- * Bryntum partner-demo assets — loaded once per unique product slug on the
- * page. The Bryntum UMD bundle throws "bundle was loaded multiple times"
- * if the same product is loaded more than once, so per-section loading
- * would break pages that combine a live-demo and a mini-demo for the same
- * product (e.g. /campaigns/bryntum-gantt).
+ * Bryntum partner-demo assets — emitted once per unique product slug on the
+ * page, so pages that combine a live-demo and a mini-demo for the same
+ * product (e.g. /campaigns/bryntum-gantt) don't duplicate them.
  *
- * The CSS and UMD bundle are loaded straight from bryntum.com so the
+ * Bryntum no longer publishes UMD bundles, so each product's ES module is
+ * preloaded here and imported by bryntum-demo-bootstrap.js, which looks the
+ * URL up by its `data-bryntum-module` attribute. The browser's module map
+ * guarantees each bundle is evaluated only once per document.
+ *
+ * The CSS and ES module are loaded straight from bryntum.com so the
  * embedded demo stays in sync with the canonical Bryntum build. Trust
  * assumption: bryntum.com is a trusted partner origin. If that ever
  * changes, the bundle/CSS should be self-hosted under public/ and pinned
@@ -137,7 +140,7 @@ const altTextMediaSections = new WeakSet<object>();
         ></script>
         <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')}></script>
         {bryntumProducts.map(({ slug, base }) => (
-            <script is:inline src={`${base}/${slug}.umd.js`}></script>
+            <link rel="modulepreload" data-bryntum-module={slug} href={`${base}/${slug}.module.js`} />
         ))}
     </>
 )}

@@ -1,5 +1,6 @@
 import {
     KeyCode,
+    _addManagedElementListeners,
     _findFocusableElements,
     _findNextFocusableElement,
     _isKeyboardMode,
@@ -15,7 +16,7 @@ import type { Component } from '../widgets/component';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
-    comp.addManagedElementListeners(eGui, {
+    _addManagedElementListeners(comp, eGui, {
         keydown: (e: KeyboardEvent) => {
             // some managed containers handle tab themselves and only need to suppress
             // this generic fallback for the current event.

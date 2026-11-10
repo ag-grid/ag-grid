@@ -1,4 +1,5 @@
 import {
+    _addManagedElementListeners,
     _clearElement,
     _findFocusableElements,
     _getActiveDomElement,
@@ -124,7 +125,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
         // The toolbar clips overflow, so a focused item that sits outside the visible area
         // would otherwise appear to lose focus. Scroll it back into view on focusin.
-        this.addManagedElementListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             focusin: this.ensureFocusedItemVisible.bind(this),
         });
 

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     advancedFilterCancel: 'Peruuta',
     advancedFilterClear: 'Tyhjennä',
     advancedFilterBuilder: 'Rakentaja',
+    advancedFilterPlaceholder: 'Tarkennettu suodatin',
     advancedFilterValidationMissingColumn: 'Sarake puuttuu',
     advancedFilterValidationMissingOption: 'Valinta puuttuu',
     advancedFilterValidationMissingValue: 'Arvo puuttuu',
@@ -823,6 +824,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelSelectField: 'Valitse kenttä',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Solumuokkain',
     ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
     ariaFullRowValidationError: 'Koko rivin validointi: ${variable}',
     ariaFullRowEditValidationFailed: 'Rivin muokkausta ei voi viimeistellä. ${variable}',
@@ -852,6 +854,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaLabelFilterCardType: 'Suodattimen tyyppi',
     ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     advancedFilterCancel: 'Annulla',
     advancedFilterClear: 'Cancella',
     advancedFilterBuilder: 'Costruttore',
+    advancedFilterPlaceholder: 'Filtro Avanzato',
     advancedFilterValidationMissingColumn: 'Colonna mancante',
     advancedFilterValidationMissingOption: 'Opzione mancante',
     advancedFilterValidationMissingValue: 'Valore mancante',
@@ -826,6 +827,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaLabelSelectField: 'Seleziona Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor di cella',
     ariaValidationErrorPrefix: 'Validazione di Editor di cella',
     ariaFullRowValidationError: 'Convalida intera riga: ${variable}',
     ariaFullRowEditValidationFailed: 'Impossibile completare la modifica della riga. ${variable}',
@@ -855,6 +857,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaLabelAddFilterField: 'Aggiungi campo filtro',
     ariaLabelFilterCardDelete: 'Elimina filtro',
     ariaLabelFilterCardHasEdits: 'Ha modifiche',
+    ariaLabelFilterCardType: 'Tipo di Filtro',
     ariaHasNote: 'Questa cella ha una nota.',
 
     // Number Format (Status Bar, Pagination Panel)

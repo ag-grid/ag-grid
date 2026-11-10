@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '构建器',
+    advancedFilterPlaceholder: '高级过滤器',
     advancedFilterValidationMissingColumn: '缺少列',
     advancedFilterValidationMissingOption: '缺少选项',
     advancedFilterValidationMissingValue: '缺少值',
@@ -817,6 +818,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaLabelSelectField: '选择字段',
 
     // Cell Editor
+    ariaLabelCellEditor: '单元格编辑器',
     ariaValidationErrorPrefix: '单元格编辑器验证',
     ariaFullRowValidationError: '整行验证：${variable}',
     ariaFullRowEditValidationFailed: '无法完成行编辑。${variable}',
@@ -846,6 +848,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaLabelAddFilterField: '添加过滤字段',
     ariaLabelFilterCardDelete: '删除过滤器',
     ariaLabelFilterCardHasEdits: '有编辑',
+    ariaLabelFilterCardType: '过滤器类型',
     ariaHasNote: '此单元格有备注。',
 
     // Number Format (Status Bar, Pagination Panel)

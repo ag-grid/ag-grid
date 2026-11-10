@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     advancedFilterCancel: 'Скасувати',
     advancedFilterClear: 'Очистити',
     advancedFilterBuilder: 'Побудова',
+    advancedFilterPlaceholder: 'Розширений фільтр',
     advancedFilterValidationMissingColumn: 'Відсутня колонка',
     advancedFilterValidationMissingOption: 'Відсутній варіант',
     advancedFilterValidationMissingValue: 'Відсутнє значення',
@@ -821,6 +822,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaLabelSelectField: 'Виберіть поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор комірки',
     ariaValidationErrorPrefix: 'Валідація редактора комірки',
     ariaFullRowValidationError: 'Перевірка всього рядка: ${variable}',
     ariaFullRowEditValidationFailed: 'Не вдалося завершити редагування рядка. ${variable}',
@@ -850,6 +852,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
+    ariaLabelFilterCardType: 'Тип фільтра',
     ariaHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)

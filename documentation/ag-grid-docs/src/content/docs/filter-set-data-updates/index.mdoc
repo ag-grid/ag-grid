@@ -109,36 +109,51 @@ By default, a value that leaves the data is removed from the Filter List and its
 
 With this enabled:
 
-- A selected value whose rows are all removed stays selected, so its rows pass the filter again when they return.
-- An unselected value whose rows are all removed stays unselected, so its rows stay filtered out when they return.
-- Values no longer in the data keep their place in the list, so one leaving or returning does not move the others. Their checkbox has a dashed border, and screen readers, and the default tooltip when `showTooltips` is set, describe them as not in the current data. Set `preservePreviousValuesLabel` to show a text after them, as given, such as `'(not in rows)'`; a long value is truncated before it. They can still be selected and deselected, and take part in the Mini Filter and **(Select All)**. In a [Tree List](./filter-set-tree-list/) a group is marked the same way once every value under it is no longer in the data.
-- Values in a filter model that the data has never contained are kept and listed by their key, after the other values and marked the same way, so a model set before any rows are loaded is applied as written rather than reduced to the values present. Having no value, they are not passed to `valueFormatter`, the comparator, a cell renderer or the Tree List's `treeListPathGetter` and `treeListFormatter`, and `getFilterValues()` returns `null` for them.
+- A value whose rows are all removed keeps its selected state, so its rows pass or stay filtered out when they return, as before.
+- Values no longer in the data keep their place, so one leaving or returning does not move the others. In a [Tree List](./filter-set-tree-list/) they stay in their group, and a group is marked once everything under it has gone.
+- They are marked with a dashed checkbox border, and described as not in the current data to screen readers and in the default tooltip when `showTooltips` is set. Set `preservePreviousValuesLabel` to add a text after them, such as `'(not in rows)'`; a long value is truncated so the text stays visible. Screen readers then announce this text after the value in place of not in the current data, while the default tooltip is unchanged. They can still be selected, and take part in the Mini Filter and **(Select All)**.
+- Values in a filter model that the data has never contained are kept and listed by their key, after the other values and marked the same way, so a model set before any rows are loaded is applied as written rather than reduced to the values present. In a Tree List they are listed at the root, in their own row even beside a group with the same label. Having no value, they are not passed to `valueFormatter`, the comparator, a cell renderer or the Tree List's `treeListPathGetter` and `treeListFormatter`, and `getFilterValues()` returns `null` for them.
 - The floating filter and the Filters Tool Panel include selected values that are no longer in the data, as the filter still selects them.
 - New values are added as normal: unselected while the filter is active, and selected while it is inactive.
 - Values supplied through `filterParams.values` or `setFilterValues` work the same way: a value missing from the latest list is kept.
 - Unless `caseSensitive` is set, a value that returns in another case keeps the case it had when it left.
-- When values are taken from the grid, a value hidden only because another column's filter excludes its rows is still in the data, so it is not kept: it is hidden from the list as usual. A `values` callback that leaves out such values drops them from the provided values, so they are kept.
+- A value hidden because another column's filter excludes its rows is still in the data, so it is not preserved. A `values` callback that leaves such values out removes them from its values, so they are preserved.
 
 The following example demonstrates preserving previous values. Try the following:
 
-- Click **Select Algeria and Argentina**, then **Show 2004**. Afghanistan, Algeria and Armenia won no medals in 2004, but they stay in their places in the **Country** list, labelled `(not in rows)`: Algeria still selected, so its rows would pass again, and Afghanistan and Armenia still unselected. Only Argentina's rows are shown, and the floating filter and the **Filter Summaries** panel still name Algeria.
+- Click **Select Algeria and Argentina**, then **Load 2004 Data**. Afghanistan, Algeria and Armenia won no medals in 2004, but they stay in their places in the **Country** list, labelled `(not in rows)`. Algeria is still selected, and Afghanistan and Armenia still unselected. Only Argentina's rows are shown, and the floating filter and the **Filter Summaries** panel still name Algeria.
 - Click **Clear Preserved Values** to discard Afghanistan, Algeria and Armenia. They leave the list, and Algeria leaves the model with them.
-- Click **Show 2008**. The three return as new, unselected values, so Algeria's rows stay filtered out. Click **Show 2008** straight after **Show 2004** instead, without clearing, and Algeria's rows are shown again.
+- Click **Load 2008 Data**. The three return as new, unselected values, so Algeria's rows stay filtered out. Click **Load 2008 Data** straight after **Load 2004 Data** instead, without clearing, and Algeria's rows are shown again.
 
 {% gridExampleRunner title="Preserving Previous Values" name="preserve-previous-values"  exampleHeight=500 /%}
 
-The [Advanced Filter](./filter-advanced/) only suggests current values as you type, but still accepts a value that has left the data. Its Builder lists the values no longer in the data in their place, marked as the Filter List does. The values an applied expression names are kept as a column filter's selected values are, and the rest count towards `preservePreviousValuesLimit`. In the following example, click **Show 2012**, then type `[Country] is any of ["Austria"]` and apply it: Austria is no longer in the data and is not suggested, but it is accepted and no rows are shown. Click **Show 2008** and Austria's rows are shown again.
+### Advanced Filter
+
+The [Advanced Filter](./filter-advanced/) only suggests current values as you type, but still accepts a value that has left the data. Its Builder lists the values no longer in the data in their place, marked as the Filter List does. The values an applied expression names are kept as a column filter's selected values are, and the rest count towards `preservePreviousValuesLimit`. In the following example, click **Load 2012 Data**, then type `[Country] is any of ["Austria"]` and apply it: Austria is no longer in the data and is not suggested, but it is accepted and no rows are shown. Click **Load 2008 Data** and Austria's rows are shown again.
 
 {% gridExampleRunner title="Preserving Previous Values with the Advanced Filter" name="preserve-previous-values-advanced-filter"  exampleHeight=400 /%}
 
-In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, marked, and a group is marked once every value under it is gone. A model value that was never in the data is listed at the root by its key, in its own row even beside a group with the same label. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Try the following, opening the filter from the floating filter's button after each step, with its groups expanded, to see the result:
+### Row Grouping
 
-- Click **Select Paris and Madrid** (or **Select report.pdf and old.zip**). Madrid (or old.zip) is not in the data, so it is listed at the root by its key, `'Spain#Madrid'` (or `'Archive/old.zip'`).
-- Click **Remove Rome** (or **Remove beach.jpg**). The value stays in its group, marked and unselected.
-- Click **Remove France** (or **Remove Documents**). The whole group is marked, and `'Paris'` (or `'report.pdf'`) stays selected.
-- Click **Clear Preserved Values** to discard the values no longer in the data. `'Paris'` and `'Madrid'` (or `'report.pdf'` and `'old.zip'`) leave the model with them, so no rows pass until a value is selected again.
+The following example groups cities by country with [Row Grouping](./grouping/), and opens the **City** filter, a [Tree List](./filter-set-tree-list/), in the Filters Tool Panel. Try the following:
+
+- Click **Select Paris and Madrid**. Madrid is not in the data, so it is listed by its key, `'Spain#Madrid'`, at the end of the list.
+- Click **Remove Rome**, then expand **Italy**. Rome stays under Italy, marked and unselected.
+- Click **Remove France**. France is marked. Expand it: Paris stays selected.
+- Click **Clear Preserved Values**. Rome, France and `'Spain#Madrid'` leave the list, and Paris and Madrid leave the filter model, so no rows are shown.
+- Click **Restore Data**. France and Rome return unselected, so no rows are shown. Click **Restore Data** straight after **Remove France** instead, without clearing, and Paris's rows are shown again.
 
 {% gridExampleRunner title="Preserving Previous Values with Row Grouping" name="preserve-previous-values-grouping"  exampleHeight=500 /%}
+
+### Tree Data
+
+The following example shows files in folders with [Tree Data](./tree-data/), and opens the **File** filter, a Tree List, in the Filters Tool Panel. Try the following:
+
+- Click **Select report.pdf and old.zip**. old.zip is not in the data, so it is listed by its key, `'Archive/old.zip'`, at the end of the list.
+- Click **Remove beach.jpg**, then expand **Pictures**. beach.jpg stays under Pictures, marked and unselected.
+- Click **Remove Documents**. Documents is marked. Expand it: report.pdf stays selected.
+- Click **Clear Preserved Values**. beach.jpg, Documents and `'Archive/old.zip'` leave the list, and report.pdf and old.zip leave the filter model, so no rows are shown.
+- Click **Restore Data**. Documents and beach.jpg return unselected, so no rows are shown. Click **Restore Data** straight after **Remove Documents** instead, without clearing, and report.pdf's row is shown again.
 
 {% gridExampleRunner title="Preserving Previous Values with Tree Data" name="preserve-previous-values-tree-data"  exampleHeight=500 /%}
 
@@ -153,11 +168,11 @@ Selected values are always kept. Unselected values that are no longer in the dat
 | `0`                           | none: only selected values are kept, so the list shows the current values plus the selected ones |
 | `-1`                          | all of them, with no limit, so memory use is unbounded                                           |
 
-When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value does not change which rows pass the applied filter: it is not in the model, so if its rows return it is added back as a new, unselected value and its rows stay filtered out, exactly as if it had been kept. The limit only decides which of these values stay listed, and in memory, while their rows are away.
+When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value never changes which rows pass: if its rows return, it comes back unselected. The limit only decides which values stay listed, and in memory, while their rows are away.
 
 Values are discarded when the values next reload, for example when the data changes or [refreshFilterValues](./filter-set-api/#reference-SetFilterHandler-refreshFilterValues) is called on the filter handler (`api.getColumnFilterHandler(colKey)`), not when a value is deselected. Only the applied filter model, and an applied Advanced Filter expression, protect a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
 
-While the filter is inactive there is no model, so every retained value counts as unselected and the limit still applies. If a filter is applied later, a discarded value that returns is added back as a new, unselected value.
+While the filter is inactive there is no model, so every retained value counts as unselected and the limit still applies.
 
 ### Clearing Preserved Values
 

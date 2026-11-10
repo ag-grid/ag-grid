@@ -4,6 +4,7 @@ import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _createElement } from './element';
+import { ICON_NAME_TO_VALUE } from './iconNameToValue';
 
 //
 // IMPORTANT NOTE!
@@ -140,8 +141,8 @@ export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 
 /**
  * A provided icon's CSS name (e.g. `'filter-remove'`), a grid icon name (e.g. `'csvExport'`),
- * or a custom key from the `icons` grid option. A grid icon name resolves only when the module
- * that uses it is registered, and picks up any override set for it in the `icons` grid option.
+ * or a custom key from the `icons` grid option. A grid icon name picks up any override set for it
+ * in the `icons` grid option.
  */
 export type IconKey = IconName | IconValue | (string & {});
 
@@ -230,7 +231,7 @@ export function _createIconNoSpan(
         beans.log.warn(133, { iconName });
         return undefined;
     } else {
-        const iconValue = beans.registry.getIcon(iconName);
+        const iconValue: IconValue | undefined = ICON_NAME_TO_VALUE[iconName];
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }

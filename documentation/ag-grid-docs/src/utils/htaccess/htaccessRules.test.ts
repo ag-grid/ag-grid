@@ -32,6 +32,9 @@ import {
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
+    // Production's current pages: CloudFront keeps them a day, browsers revalidate every time.
+    const EDGE_CACHE = 'max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400';
+
     let productionContent: string;
     let stagingContent: string;
 
@@ -227,7 +230,11 @@ describe('htaccessRules', () => {
         });
 
         it('revalidates a live page and its markdown twin, whether fetched as .md or negotiated', () => {
-            for (const content of [productionContent, stagingContent]) {
+            // Production adds CloudFront's day (s-maxage) to the same browser revalidation (max-age=0).
+            for (const [content, expected] of [
+                [productionContent, EDGE_CACHE],
+                [stagingContent, 'no-cache'],
+            ]) {
                 const files = [compileHtaccess(content)];
                 for (const [uri, contentType] of [
                     ['/react-data-grid/getting-started/index.html', 'text/html; charset=utf-8'],
@@ -235,7 +242,7 @@ describe('htaccessRules', () => {
                     ['/index.md', 'text/markdown; charset=utf-8'],
                 ]) {
                     const headers = responseHeaders(files, { uri, status: 200, contentType });
-                    expect(headers.get('cache-control'), uri).toEqual(['no-cache']);
+                    expect(headers.get('cache-control'), uri).toEqual([expected]);
                     expect(headers.has('x-robots-tag'), uri).toBe(false);
                 }
             }
@@ -253,6 +260,61 @@ describe('htaccessRules', () => {
             const assetAt = lines.findIndex((l) => l.includes('max-age=604800'));
             expect(noCacheAt).toBeGreaterThan(-1);
             expect(assetAt).toBeGreaterThan(noCacheAt);
+        });
+    });
+
+    describe('CloudFront edge cache and cache tag (production)', () => {
+        const files = () => [compileHtaccess(productionContent)];
+        const headers = (uri: string, contentType: string, status = 200, content = productionContent) =>
+            responseHeaders([compileHtaccess(content)], { uri, status, contentType });
+
+        it('keeps the edge cache on the 304 CloudFront gets when it revalidates a page', () => {
+            const uri = '/react-data-grid/getting-started/index.html';
+            expect(
+                responseHeaders(files(), { uri, status: 304, contentType: 'text/html' }).get('cache-control')
+            ).toEqual([EDGE_CACHE]);
+        });
+
+        it.each([
+            ['/react-data-grid/getting-started/index.html', 'text/html'],
+            ['/react-data-grid/getting-started.md', 'text/markdown; charset=utf-8'],
+            ['/charts/react/bar-series/index.html', 'text/html'],
+            ['/studio/index.html', 'text/html'],
+            ['/llms.txt', 'text/plain'],
+            ['/sitemap-0.xml', 'application/xml'],
+            ['/images/ag-logos/png-logos/react.png', 'image/png'],
+            ['/_astro/unhashed.css', 'text/css'],
+        ])('tags %s for the deploy-time invalidation', (uri, contentType) => {
+            expect(headers(uri, contentType).get('x-ag-cache-tag')).toEqual(['ag-docs']);
+        });
+
+        it.each([
+            ['/archive/36.2.0/react-data-grid/getting-started/index.html', 'text/html'],
+            ['/archive/36.2.0/react-data-grid/getting-started.md', 'text/markdown; charset=utf-8'],
+            ['/charts/archive/14.2.0/react/bar-series/index.html', 'text/html'],
+            ['/_astro/design-system.BcXAtF3c.css', 'text/css'],
+            ['/charts/_astro/index.AbCd1234.js', 'text/javascript'],
+            ['/_astro/fonts/2eb6e0e4fc33dd24.woff2', 'font/woff2'],
+        ])('leaves %s untagged: immutable, never invalidated', (uri, contentType) => {
+            expect(headers(uri, contentType).has('x-ag-cache-tag')).toBe(false);
+        });
+
+        it('leaves error pages uncached and untagged', () => {
+            const errorPage = files()[0].errorDocuments.get(404)!;
+            const h = responseHeaders(files(), {
+                uri: errorPage,
+                status: 404,
+                contentType: 'text/html',
+                onSuccess: true,
+            });
+            expect(h.get('cache-control')).toEqual(['no-cache']);
+            expect(h.has('x-ag-cache-tag')).toBe(false);
+        });
+
+        it('is not on staging, which is not behind the production distribution', () => {
+            const h = headers('/react-data-grid/getting-started/index.html', 'text/html', 200, stagingContent);
+            expect(h.get('cache-control')).toEqual(['no-cache']);
+            expect(h.has('x-ag-cache-tag')).toBe(false);
         });
     });
 
@@ -356,11 +418,14 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('Redirects are never cached', () => {
+    describe('Redirects are no-cache by default', () => {
         // A shared cache keying a redirect on the path alone would replay the first visitor's query
-        // string (carried into Location) to everyone after, so every redirect must be no-cache.
+        // string (carried into Location) to everyone after, so redirects are no-cache unless the
+        // production edge rule below picks them out.
         const getRedirectRules = (content: string) =>
-            content.split('\n').filter((l) => l.startsWith('Header always set Cache-Control'));
+            content
+                .split('\n')
+                .filter((l) => l.startsWith('Header always set Cache-Control') && l.includes('"no-cache"'));
 
         // Evaluates the rule's REQUEST_STATUS comparisons the way ap_expr does.
         const appliesToStatus = (rule: string, status: number) =>
@@ -372,7 +437,6 @@ describe('htaccessRules', () => {
         it('sets no-cache on every redirect status, in both envs', () => {
             [productionContent, stagingContent].forEach((content) => {
                 const rules = getRedirectRules(content);
-                // The only 'always' Cache-Control rule, so nothing else can override it on a redirect.
                 expect(rules).toHaveLength(1);
                 expect(rules[0]).toContain('Cache-Control "no-cache"');
                 for (const status of [301, 302, 303, 307, 308]) {
@@ -443,31 +507,70 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('Redirects are never cached, end to end', () => {
+    describe('Redirects, end to end', () => {
         const WWW = 'https://www.ag-grid.com';
+        const EDGE = 'max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400';
         // Every kind of redirect the root file issues: scheme upgrade, host swap, add-slash, a
-        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move.
-        const REDIRECTS = [
+        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move. Only
+        // the permanent ones on www over https with no query string, outside the archives, are
+        // cached at the edge; the rest stay no-cache.
+        const NO_CACHE_REDIRECTS = [
             'http://www.ag-grid.com/react-data-grid/getting-started/?x=1',
+            'http://www.ag-grid.com/react-data-grid/getting-started',
             'https://ag-grid.com/react-data-grid/getting-started/',
             'http://ag-grid.com/',
             'https://angulargrid.com/license-pricing/',
             `${WWW}/react-data-grid/getting-started?x=1`,
+            `${WWW}/archive/36.2.0/react-data-grid/getting-started`,
+            'https://blog.ag-grid.com/some-post/',
+        ];
+        const EDGE_CACHED_REDIRECTS = [
+            `${WWW}/react-data-grid/getting-started`,
             `${WWW}/react-data-grid/whats-new`,
             `${WWW}/javascript-grid-virtual-paging/`,
             `${WWW}/sitemap.xml`,
-            'https://blog.ag-grid.com/some-post/',
         ];
         const redirectHeaders = (content: string, url: string) => {
             const files = [compileHtaccess(content)];
             const outcome = route(files, { url });
             expect(outcome.type, url).toBe('redirect');
             const status = (outcome as { status: number }).status;
-            return responseHeaders(files, { uri: new URL(url).pathname, status, contentType: 'text/html' });
+            const { pathname, search, host, protocol } = new URL(url);
+            return responseHeaders(files, {
+                uri: pathname,
+                status,
+                contentType: 'text/html',
+                host,
+                query: search.slice(1),
+                https: protocol === 'https:',
+            });
         };
 
-        it.each(REDIRECTS)('%s is sent with Cache-Control: no-cache', (url) => {
-            expect(redirectHeaders(productionContent, url).get('cache-control')).toEqual(['no-cache']);
+        it.each(NO_CACHE_REDIRECTS)('%s is sent with Cache-Control: no-cache and no cache tag', (url) => {
+            const headers = redirectHeaders(productionContent, url);
+            expect(headers.get('cache-control')).toEqual(['no-cache']);
+            expect(headers.get('x-ag-cache-tag')).toBeUndefined();
+        });
+
+        it.each(EDGE_CACHED_REDIRECTS)('%s is cached at the edge for a day and tagged', (url) => {
+            const headers = redirectHeaders(productionContent, url);
+            expect(headers.get('cache-control')).toEqual([EDGE]);
+            expect(headers.get('x-ag-cache-tag')).toEqual(['ag-docs']);
+        });
+
+        it('caches only 301s: other redirect statuses on the same request stay no-cache', () => {
+            const files = [compileHtaccess(productionContent)];
+            for (const status of [302, 303, 307, 308]) {
+                const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status });
+                expect(headers.get('cache-control'), String(status)).toEqual(['no-cache']);
+            }
+        });
+
+        it('caches no redirect on staging, which is not behind CloudFront', () => {
+            const files = [compileHtaccess(stagingContent)];
+            const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status: 301 });
+            expect(headers.get('cache-control')).toEqual(['no-cache']);
+            expect(headers.get('x-ag-cache-tag')).toBeUndefined();
         });
 
         it('covers the redirects staging gets from Apache itself, such as the mod_dir add-slash', () => {
@@ -540,6 +643,8 @@ describe('htaccessRules', () => {
         });
 
         it('emits neither rule, nor anything touching X-Robots-Tag or the always-sent Cache-Control', () => {
+            expect(archiveContent).not.toContain('s-maxage=86400');
+            expect(archiveContent).not.toContain('x-ag-cache-tag');
             expect(archiveContent).not.toContain('X-Robots-Tag');
             expect(archiveContent).not.toContain('Header always set Cache-Control');
             expect(archiveContent).not.toContain('REQUEST_STATUS} -ge 300');
@@ -2287,11 +2392,11 @@ describe('htaccessRules', () => {
             responseHeaders([compileHtaccess(content)], { uri, status, contentType }).get('cache-control');
 
         it.each([
-            ['/index.html', 'text/html; charset=utf-8', ['no-cache']],
-            ['/react-data-grid/getting-started/index.html', 'text/html', ['no-cache']],
-            ['/example/index.html', 'text/html', ['no-cache']],
-            ['/example-assets/flags/index.html', 'text/html', ['no-cache']],
-            ['/images/foo/index.html', 'text/html', ['no-cache']],
+            ['/index.html', 'text/html; charset=utf-8', [EDGE_CACHE]],
+            ['/react-data-grid/getting-started/index.html', 'text/html', [EDGE_CACHE]],
+            ['/example/index.html', 'text/html', [EDGE_CACHE]],
+            ['/example-assets/flags/index.html', 'text/html', [EDGE_CACHE]],
+            ['/images/foo/index.html', 'text/html', [EDGE_CACHE]],
             ['/_astro/design-system.BcXAtF3c.css', 'text/css', [LONG]],
             ['/_astro/fonts/2eb6e0e4fc33dd24.woff2', 'font/woff2', [LONG]],
             // Unhashed, so not long-cached: the default day.
@@ -2344,7 +2449,7 @@ describe('htaccessRules', () => {
             // ...an image inside an example directory too, though the asset rule matches it.
             ['/examples/some-page/some-example/images/logo.png', 'image/png', ['no-cache']],
             // Not a feed: a page directory's HTML, and a JSON file outside the three feed directories.
-            ['/changelog/releases/index.html', 'text/html', ['no-cache']],
+            ['/changelog/releases/index.html', 'text/html', [EDGE_CACHE]],
             ['/changelog-archive/changelog.json', 'application/json', [DAY]],
             // Released archives keep their long cache; the in-flight block is tested below.
             ['/archive/36.2.0/files/ag-grid-community/dist/ag-grid-community.min.js', 'text/javascript', [LONG]],
@@ -2353,7 +2458,7 @@ describe('htaccessRules', () => {
             ['/archive/36.2.0/sitemap-0.xml', 'application/xml', [LONG]],
             ['/studio/archive/1.0.0/_astro/a.abcdefgh.js', 'text/javascript', ['no-cache']],
             ['/studio/archive/1.0.0/index.html', 'text/html', ['no-cache']],
-            ['/studio/index.html', 'text/html', ['no-cache']],
+            ['/studio/index.html', 'text/html', [EDGE_CACHE]],
         ])('production: %s (%s) -> %j', (uri, contentType, expected) => {
             expect(cache(productionContent, uri, contentType)).toEqual(expected);
         });
@@ -2367,7 +2472,7 @@ describe('htaccessRules', () => {
             expect(cache(stagingContent, uri, contentType)).toEqual(['no-cache']);
         });
 
-        it('never long-caches HTML outside a released archive', () => {
+        it('never lets a browser keep HTML outside a released archive (max-age=0; CloudFront takes the day)', () => {
             const htmlUris = [
                 '/index.html',
                 '/react-data-grid/index.html',
@@ -2378,7 +2483,7 @@ describe('htaccessRules', () => {
                 '/charts/documentation-archive/index.html',
             ];
             for (const uri of htmlUris) {
-                expect(cache(productionContent, uri, 'text/html'), uri).toEqual(['no-cache']);
+                expect(cache(productionContent, uri, 'text/html'), uri).toEqual([EDGE_CACHE]);
             }
         });
 

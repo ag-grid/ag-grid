@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, mockGridLayout } from 'ag-test-utils';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
@@ -92,5 +92,40 @@ describe('Scrollbar visibility', () => {
 
         api.setGridOption('rowData', rowData.slice(0, initialRowCount));
         await expectScrollbarSizes('0px', '0px', 'restored row data');
+    });
+
+    // Overlay scrollbars take no layout space, which is when the fake scrollbars listen for touch.
+    describe('touch listeners with overlay scrollbars', () => {
+        beforeAll(() => {
+            mockGridLayout.nativeScrollbarWidth = 0;
+        });
+
+        afterAll(() => {
+            mockGridLayout.nativeScrollbarWidth = scrollbarWidth;
+        });
+
+        afterEach(() => {
+            vi.restoreAllMocks();
+        });
+
+        test('are passive on the fake scrollbars, so touching one never delays a scroll', async () => {
+            const addEventListener = vi.spyOn(HTMLElement.prototype, 'addEventListener');
+            gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'athlete' }], rowData });
+
+            const scrollbar = query<HTMLElement>('.ag-body-horizontal-scroll');
+            const touchListeners = () => {
+                const { calls, contexts } = addEventListener.mock;
+                return calls
+                    .filter(([type], i) => contexts[i] === scrollbar && type.startsWith('touch'))
+                    .map(([type, , options]) => [type, options]);
+            };
+
+            await waitFor(() =>
+                expect(touchListeners()).toEqual([
+                    ['touchstart', { passive: true }],
+                    ['touchend', { passive: true }],
+                ])
+            );
+        });
     });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/locale",
-  "version": "36.3.0",
+  "version": "36.3.0-beta.20261106.1218",
   "description": "Localisation Module for AG Grid, providing translations in 46 languages.",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -43,7 +43,7 @@
     "@types/node": "^24.19.2",
     "@typescript-eslint/eslint-plugin": "8.72.0",
     "@typescript-eslint/parser": "8.72.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3"
   },
   "publishConfig": {
     "access": "public"

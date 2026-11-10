@@ -1,5 +1,5 @@
 /* global bryntumDemoInit */
-// Bryntum Scheduler Pro "Try it yourself!" demo — UMD port of
+// Bryntum Scheduler Pro "Try it yourself!" demo — port of
 // https://bryntum.com/demos/live/schedulerpro/grouping/app.js
 // Bootstrap lives in bryntum-demo-bootstrap.js.
 
