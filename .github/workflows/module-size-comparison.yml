@@ -422,7 +422,8 @@ jobs:
     name: Module Size Status
     runs-on: ubuntu-latest
     needs: [prepare, detect-changes, check-base-cache, module-size-pr, module-size-base, compare-and-report]
-    if: always() && needs.prepare.outputs.run == 'true'
+    # Skip only when prepare decided to (`run == 'false'`); an empty `run` means prepare failed, and this job must fail then.
+    if: always() && needs.prepare.outputs.run != 'false'
     steps:
       - name: Check job results
         run: |
