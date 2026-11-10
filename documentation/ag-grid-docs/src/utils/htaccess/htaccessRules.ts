@@ -101,6 +101,25 @@ const redirectNoCacheRules = `
 Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 `;
 
+// Production only, after redirectNoCacheRules so it wins for the same responses: CloudFront keeps the
+// permanent redirects of current www.ag-grid.com paths for a day, like the pages they lead to - chiefly
+// the add-slash redirect, which scrapers asking for slash-less URLs otherwise send to the origin on every
+// request. Only requests without a query string: the cache key leaves query strings out, so this is the
+// one case where the cached Location cannot carry a visitor's query string to anyone else. The trade-off
+// is the reverse: a later request for the same path with a query string gets the cached Location, which
+// drops it. Archives keep no-cache: their redirects are untagged, and an in-flight archive's can change.
+// Tagged and rewritten to no-cache for browsers exactly as documentEdgeCacheRules is (keyed on
+// stale-if-error), so each live docs deploy invalidates them with the pages and a changed redirect rule
+// takes effect at once. Not on the plain-http listener (port 80): CloudFront reaches the origin over
+// HTTPS, so an http:// request did not come through it. 'always', as in redirectNoCacheRules, is what
+// reaches a redirect at all.
+const redirectEdgeCacheRules = `
+# Permanent redirects of current www paths with no query string: CloudFront caches a day, browsers
+# revalidate. Invalidated by cache tag on every live docs deploy. Excludes /archive/<v>/.
+Header always set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header always set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+`;
+
 // Archived docs stay out of search results: their HTML says so with a robots meta tag (see
 // Layout.astro), but a markdown variant has no <head> to carry one, so it gets the header
 // equivalent. Matched on content type rather than the .md extension so the negotiated variant,
@@ -930,6 +949,7 @@ ${documentNoCacheRules}
 ${unlessArchiveBuild(documentEdgeCacheRules)}
 ${unlessArchiveBuild(docsCacheTagRules)}
 ${unlessArchiveBuild(redirectNoCacheRules)}
+${unlessArchiveBuild(redirectEdgeCacheRules)}
 ${unlessArchiveBuild(archiveMarkdownNoindexRules)}
 ${hashedAssetCacheRules}
 ${unlessArchiveBuild(staticAssetCacheRules)}

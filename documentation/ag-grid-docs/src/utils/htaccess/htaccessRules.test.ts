@@ -418,11 +418,14 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('Redirects are never cached', () => {
+    describe('Redirects are no-cache by default', () => {
         // A shared cache keying a redirect on the path alone would replay the first visitor's query
-        // string (carried into Location) to everyone after, so every redirect must be no-cache.
+        // string (carried into Location) to everyone after, so redirects are no-cache unless the
+        // production edge rule below picks them out.
         const getRedirectRules = (content: string) =>
-            content.split('\n').filter((l) => l.startsWith('Header always set Cache-Control'));
+            content
+                .split('\n')
+                .filter((l) => l.startsWith('Header always set Cache-Control') && l.includes('"no-cache"'));
 
         // Evaluates the rule's REQUEST_STATUS comparisons the way ap_expr does.
         const appliesToStatus = (rule: string, status: number) =>
@@ -434,7 +437,6 @@ describe('htaccessRules', () => {
         it('sets no-cache on every redirect status, in both envs', () => {
             [productionContent, stagingContent].forEach((content) => {
                 const rules = getRedirectRules(content);
-                // The only 'always' Cache-Control rule, so nothing else can override it on a redirect.
                 expect(rules).toHaveLength(1);
                 expect(rules[0]).toContain('Cache-Control "no-cache"');
                 for (const status of [301, 302, 303, 307, 308]) {
@@ -505,31 +507,70 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('Redirects are never cached, end to end', () => {
+    describe('Redirects, end to end', () => {
         const WWW = 'https://www.ag-grid.com';
+        const EDGE = 'max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400';
         // Every kind of redirect the root file issues: scheme upgrade, host swap, add-slash, a
-        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move.
-        const REDIRECTS = [
+        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move. Only
+        // the permanent ones on www over https with no query string, outside the archives, are
+        // cached at the edge; the rest stay no-cache.
+        const NO_CACHE_REDIRECTS = [
             'http://www.ag-grid.com/react-data-grid/getting-started/?x=1',
+            'http://www.ag-grid.com/react-data-grid/getting-started',
             'https://ag-grid.com/react-data-grid/getting-started/',
             'http://ag-grid.com/',
             'https://angulargrid.com/license-pricing/',
             `${WWW}/react-data-grid/getting-started?x=1`,
+            `${WWW}/archive/36.2.0/react-data-grid/getting-started`,
+            'https://blog.ag-grid.com/some-post/',
+        ];
+        const EDGE_CACHED_REDIRECTS = [
+            `${WWW}/react-data-grid/getting-started`,
             `${WWW}/react-data-grid/whats-new`,
             `${WWW}/javascript-grid-virtual-paging/`,
             `${WWW}/sitemap.xml`,
-            'https://blog.ag-grid.com/some-post/',
         ];
         const redirectHeaders = (content: string, url: string) => {
             const files = [compileHtaccess(content)];
             const outcome = route(files, { url });
             expect(outcome.type, url).toBe('redirect');
             const status = (outcome as { status: number }).status;
-            return responseHeaders(files, { uri: new URL(url).pathname, status, contentType: 'text/html' });
+            const { pathname, search, host, protocol } = new URL(url);
+            return responseHeaders(files, {
+                uri: pathname,
+                status,
+                contentType: 'text/html',
+                host,
+                query: search.slice(1),
+                https: protocol === 'https:',
+            });
         };
 
-        it.each(REDIRECTS)('%s is sent with Cache-Control: no-cache', (url) => {
-            expect(redirectHeaders(productionContent, url).get('cache-control')).toEqual(['no-cache']);
+        it.each(NO_CACHE_REDIRECTS)('%s is sent with Cache-Control: no-cache and no cache tag', (url) => {
+            const headers = redirectHeaders(productionContent, url);
+            expect(headers.get('cache-control')).toEqual(['no-cache']);
+            expect(headers.get('x-ag-cache-tag')).toBeUndefined();
+        });
+
+        it.each(EDGE_CACHED_REDIRECTS)('%s is cached at the edge for a day and tagged', (url) => {
+            const headers = redirectHeaders(productionContent, url);
+            expect(headers.get('cache-control')).toEqual([EDGE]);
+            expect(headers.get('x-ag-cache-tag')).toEqual(['ag-docs']);
+        });
+
+        it('caches only 301s: other redirect statuses on the same request stay no-cache', () => {
+            const files = [compileHtaccess(productionContent)];
+            for (const status of [302, 303, 307, 308]) {
+                const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status });
+                expect(headers.get('cache-control'), String(status)).toEqual(['no-cache']);
+            }
+        });
+
+        it('caches no redirect on staging, which is not behind CloudFront', () => {
+            const files = [compileHtaccess(stagingContent)];
+            const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status: 301 });
+            expect(headers.get('cache-control')).toEqual(['no-cache']);
+            expect(headers.get('x-ag-cache-tag')).toBeUndefined();
         });
 
         it('covers the redirects staging gets from Apache itself, such as the mod_dir add-slash', () => {
