@@ -5,7 +5,6 @@ import calendar from '../../content/campaigns/bryntum-products/calendar.json';
 import complete from '../../content/campaigns/bryntum-products/complete.json';
 import gantt from '../../content/campaigns/bryntum-products/gantt.json';
 import scheduler from '../../content/campaigns/bryntum-products/scheduler.json';
-import schedulerpro from '../../content/campaigns/bryntum-products/schedulerpro.json';
 import taskboard from '../../content/campaigns/bryntum-products/taskboard.json';
 import tiers from '../../content/campaigns/bryntum-tiers.json';
 import { resolveBryntumTierTokens } from '../bryntumTierTokens';
@@ -18,7 +17,6 @@ const CAMPAIGNS: Record<string, BryntumCampaignContent> = {
     complete: resolve(complete),
     gantt: resolve(gantt),
     scheduler: resolve(scheduler),
-    schedulerpro: resolve(schedulerpro),
     taskboard: resolve(taskboard),
 };
 

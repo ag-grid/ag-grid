@@ -19,7 +19,6 @@ export interface CampaignSource {
 }
 
 const BRYNTUM_SLUG_ALIASES: Record<string, string> = {
-    schedulerpro: 'scheduler-pro',
     taskboard: 'task-board',
 };
 

@@ -4,7 +4,6 @@ import tiers from '../content/campaigns/bryntum-tiers.json';
 import { resolveBryntumTierTokens } from './bryntumTierTokens';
 
 const BRYNTUM_SLUG_ALIASES: Record<string, string> = {
-    schedulerpro: 'scheduler-pro',
     taskboard: 'task-board',
 };
 

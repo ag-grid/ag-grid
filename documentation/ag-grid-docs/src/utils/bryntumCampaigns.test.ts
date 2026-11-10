@@ -22,8 +22,7 @@ const VISIBLE_TEXT_FIELDS = new Set([
 /** Pages that link to their own tier comparison table on bryntum.com. */
 const COMPARISON_PRODUCTS = ['calendar', 'gantt', 'scheduler', 'taskboard'];
 
-// The retired Scheduler Pro page is removed in a later commit; it predates the tier names.
-const campaigns = loadBryntumCampaigns().filter(({ content }) => content.slug !== 'schedulerpro');
+const campaigns = loadBryntumCampaigns();
 
 function collectStrings(value: unknown, key = '', out: { key: string; value: string }[] = []) {
     if (typeof value === 'string') {
