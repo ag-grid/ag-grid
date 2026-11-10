@@ -3,7 +3,7 @@ import path from 'path';
 import { build } from 'vite';
 import zlib from 'zlib';
 
-import { DOWNLEVELLED_PRIVATE_MEMBERS } from '../../scripts/package/downlevelled-private-members.js';
+import { sanityCheckBuiltCode } from '../../scripts/package/sanity-check-built-code.js';
 import { AllEnterpriseModules, AllGridCommunityModules, baseModule, moduleCombinations } from './moduleDefinitions';
 
 interface ModuleSizeResult {
@@ -94,12 +94,9 @@ async function measureCombination(
 
     const distFilePath = files[0];
     const contents = fs.readFileSync(distFilePath);
-    // A size measured with #private members downlevelled is not what the packages ship.
-    const downlevelled = contents.toString('utf8').match(DOWNLEVELLED_PRIVATE_MEMBERS);
-    if (downlevelled) {
-        throw new Error(
-            `${path.basename(distFilePath)} contains downlevelled #private members ('${downlevelled[0]}'); is the Vite build target below ES2022?`
-        );
+    const problems = sanityCheckBuiltCode(contents.toString('utf8'));
+    if (problems.length > 0) {
+        throw new Error(`${path.basename(distFilePath)} ${problems.join('; ')}`);
     }
     const fileSizeInBytes = contents.length;
     const gzipSizeInBytes = zlib.gzipSync(contents).length;

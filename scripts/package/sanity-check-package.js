@@ -7,7 +7,7 @@ const glob = require('glob');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
-const { DOWNLEVELLED_PRIVATE_MEMBERS } = require('./downlevelled-private-members');
+const { sanityCheckBuiltCode } = require('./sanity-check-built-code');
 
 const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --type [type] --allowed-ext [extention(s)]')
@@ -146,16 +146,13 @@ function checkAllowedExtension(filename) {
     }
 }
 
-function checkNoDownlevelledPrivateMembers(filename) {
+function checkBuiltCode(filename) {
     if (!/\.(?:js|mjs|cjs)$/.test(filename)) {
         return;
     }
 
-    const match = fs.readFileSync(path.join(dir, filename), 'utf8').match(DOWNLEVELLED_PRIVATE_MEMBERS);
-    if (match) {
-        console.log(
-            `[${packageJson.name}]: ${filename} contains downlevelled #private members ('${match[0]}'); is a build target below ES2022?`
-        );
+    for (const problem of sanityCheckBuiltCode(fs.readFileSync(path.join(dir, filename), 'utf8'))) {
+        console.log(`[${packageJson.name}]: ${filename} ${problem}`);
         exitStatus = 1;
     }
 }
@@ -205,7 +202,7 @@ function validateMandatoryNoneCodeFiles() {
 function validateCoreAllowedExtensions() {
     for (const file of packageContents) {
         checkAllowedExtension(file);
-        checkNoDownlevelledPrivateMembers(file);
+        checkBuiltCode(file);
     }
 }
 
