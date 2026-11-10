@@ -1,9 +1,9 @@
-import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import { build } from 'vite';
 import zlib from 'zlib';
 
+import { DOWNLEVELLED_PRIVATE_MEMBERS } from '../../scripts/package/downlevelled-private-members.js';
 import { AllEnterpriseModules, AllGridCommunityModules, baseModule, moduleCombinations } from './moduleDefinitions';
 
 interface ModuleSizeResult {
@@ -74,25 +74,8 @@ function updateAppSource(source: string, modules: string[]): string {
 function createBuildConfig() {
     return {
         root: __dirname,
-        configFile: false as const,
+        configFile: path.join(__dirname, 'vite.config.mts'),
         logLevel: 'warn' as const,
-        plugins: [react()],
-        build: {
-            rollupOptions: {
-                output: {
-                    manualChunks: {
-                        react: ['react', 'react-dom'],
-                        agGridCommunityEnterprise: [
-                            'ag-grid-community',
-                            'ag-grid-enterprise',
-                            'ag-charts-enterprise',
-                            'ag-charts-community',
-                        ],
-                        agGridReact: ['ag-grid-react'],
-                    },
-                },
-            },
-        },
     };
 }
 
@@ -111,6 +94,13 @@ async function measureCombination(
 
     const distFilePath = files[0];
     const contents = fs.readFileSync(distFilePath);
+    // A size measured with #private members downlevelled is not what the packages ship.
+    const downlevelled = contents.toString('utf8').match(DOWNLEVELLED_PRIVATE_MEMBERS);
+    if (downlevelled) {
+        throw new Error(
+            `${path.basename(distFilePath)} contains downlevelled #private members ('${downlevelled[0]}'); is the Vite build target below ES2022?`
+        );
+    }
     const fileSizeInBytes = contents.length;
     const gzipSizeInBytes = zlib.gzipSync(contents).length;
 

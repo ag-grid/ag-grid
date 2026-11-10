@@ -7,6 +7,8 @@ const glob = require('glob');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
+const { DOWNLEVELLED_PRIVATE_MEMBERS } = require('./downlevelled-private-members');
+
 const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --type [type] --allowed-ext [extention(s)]')
     .option('type', { type: 'string', default: 'core' })
@@ -144,13 +146,6 @@ function checkAllowedExtension(filename) {
     }
 }
 
-/**
- * `#private` class members compile to WeakMap-backed helpers when the build target predates ES2022, which costs
- * size and speed. esbuild's helpers keep their error messages as string literals even when minified, and
- * TypeScript's tslib helpers keep their names, so either appearing means a build lowered private members.
- */
-const DOWNLEVELLED_PRIVATE_MEMBERS =
-    /Cannot add the same private member more than once|(?:read from|write to) private field|access private method|__classPrivateField(?:Get|Set|In)\b/;
 function checkNoDownlevelledPrivateMembers(filename) {
     if (!/\.(?:js|mjs|cjs)$/.test(filename)) {
         return;

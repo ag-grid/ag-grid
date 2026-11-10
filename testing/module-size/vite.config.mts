@@ -5,8 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [react()],
     build: {
-        // Vite 5's default target (es2020 / safari14) would downlevel the grid's `#private` members to WeakMap
-        // helpers, so sizes would no longer reflect what the packages ship.
+        // Vite 5's default target (es2020) would downlevel `#private` members and skew the sizes.
         target: 'es2022',
         rollupOptions: {
             output: {
