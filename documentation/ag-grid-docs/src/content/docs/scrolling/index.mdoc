@@ -1,13 +1,13 @@
 ---
 title: "Scrolling"
-description: "Configure scroll gestures and vertical scroll debouncing in AG Grid."
+description: "Configure scrollbar visibility, scroll gestures and vertical scroll debouncing in AG Grid."
 ---
 
 By default, the grid uses the browser's native scrolling. Scrollbars appear when rows or columns extend beyond the visible area, and touch or trackpad gestures can scroll both axes at once.
 
 ## Scroll Gestures
 
-Register `ScrollGestureModule` and set `scrollGestureMode: 'axisLocked'` to keep touch and trackpad gestures on one axis and reduce accidental diagonal scrolling. The default, `'native'`, leaves scrolling to the browser and does not require the module.
+To keep touch and trackpad gestures on one axis and reduce accidental diagonal scrolling set `scrollGestureMode: 'axisLocked'`. Axis-locked touch scrolling uses grid-managed momentum, so its feel differs from native scrolling. Keyboard scrolling and scrollbar dragging are unchanged.
 
 ```js
 const gridOptions = {
@@ -15,13 +15,52 @@ const gridOptions = {
 };
 ```
 
-Axis-locked touch scrolling uses grid-managed momentum, so its feel differs from native scrolling. Keyboard scrolling and scrollbar dragging are unchanged. Use `api.setGridOption('scrollGestureMode', mode)` to switch modes, as the toggle below demonstrates.
+{% apiDocumentation source="grid-options/properties.json" section="scrolling" names=["scrollGestureMode"] /%}
+
+Use a trackpad or touch screen in the example below to compare the modes:
+
+- With `native` selected, a diagonal swipe scrolls the grid horizontally and vertically at once.
+- Select `axisLocked` and swipe diagonally again. The grid scrolls only along the axis the gesture started on.
+- On a touch screen, flick and release to see the momentum continue along the same axis.
 
 {% gridExampleRunner title="Scroll Gestures" name="scroll-gestures" /%}
 
+## Scrollbar Visibility
+
+Set `alwaysShowHorizontalScroll` or `alwaysShowVerticalScroll` to `true` to always show the respective scrollbar, even when the content fits within the grid. By default, both are `false` and scrollbars only appear when rows or columns extend beyond the visible area.
+
+```js
+const gridOptions = {
+    alwaysShowHorizontalScroll: true,
+    alwaysShowVerticalScroll: true,
+};
+```
+
+{% note %}
+Windows and macOS let users hide scrollbars until they scroll. Depending on the browser, this setting can take precedence over these properties, so some of your users may not see an always-visible scrollbar.
+{% /note %}
+
+## Scrolling via API
+
+Use `api.ensureIndexVisible(index, position)` to scroll vertically until a row is inside the viewport, and `api.ensureColumnVisible(key, position)` to scroll horizontally until a column is.
+
+```js
+// scroll so that row 150 is in the middle of the viewport
+api.ensureIndexVisible(150, 'middle');
+
+// scroll the minimum amount needed to show the column
+api.ensureColumnVisible('c14');
+```
+
+{% apiDocumentation source="grid-api/api.json" section="scrolling" names=["ensureIndexVisible", "ensureColumnVisible"] /%}
+
+Use the controls below to scroll to a row or column with each position option.
+
+{% gridExampleRunner title="Scroll Controls" name="scroll-controls" /%}
+
 ## Debounce Vertical Scroll
 
-Set `debounceVerticalScrollbar: true` to delay updating the displayed rows until vertical scrolling pauses. When dragging the vertical scrollbar, the grid waits for a pause before moving to the new position. By default, this option is `false` and the grid follows the scrollbar continuously.
+Set `debounceVerticalScrollbar: true` to update the displayed rows only once vertical scrolling pauses. This can give smoother scrolling on slow machines, but is not recommended in most cases, as the rows lag behind the scrollbar and blank cells may appear briefly. See [Scrolling Performance](./scrolling-performance/) for other ways to improve scrolling on slow machines.
 
 ```js
 const gridOptions = {
@@ -29,6 +68,6 @@ const gridOptions = {
 };
 ```
 
-Use the toggle below, then drag the vertical scrollbar to compare the behaviours. This is an initial-only option, so the example recreates the grid when toggled.
+The toggle below starts enabled. Drag the vertical scrollbar, then untick it and drag again to compare the behaviours. This is an initial-only option, so the example recreates the grid when toggled.
 
 {% gridExampleRunner title="Debounce Vertical Scroll" name="debounce-vertical-scroll" /%}

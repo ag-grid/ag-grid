@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
     defaultColDef: { flex: 1 },
     rowData: Array.from({ length: 1000 }, (_, index) => ({ row: index + 1, name: `Item ${index + 1}` })),
     rowHeight: 40,
-    debounceVerticalScrollbar: false,
+    debounceVerticalScrollbar: true,
 };
 
 function onDebounceChange() {

@@ -41,7 +41,7 @@ export class AppComponent {
     public columnDefs: ColDef[] = [{ field: 'row' }, { field: 'name' }];
     public defaultColDef: ColDef = { flex: 1 };
     public rowData = Array.from({ length: 1000 }, (_, index) => ({ row: index + 1, name: `Item ${index + 1}` }));
-    public debounceVerticalScrollbar = false;
+    public debounceVerticalScrollbar = true;
     public gridVisible = true;
 
     constructor(private readonly changeDetector: ChangeDetectorRef) {}

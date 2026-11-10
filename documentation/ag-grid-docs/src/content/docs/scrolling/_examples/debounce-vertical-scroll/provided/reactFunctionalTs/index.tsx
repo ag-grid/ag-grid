@@ -19,7 +19,7 @@ const defaultColDef: ColDef = { flex: 1 };
 const rowData = Array.from({ length: 1000 }, (_, index) => ({ row: index + 1, name: `Item ${index + 1}` }));
 
 const GridExample = () => {
-    const [debounceVerticalScrollbar, setDebounceVerticalScrollbar] = useState(false);
+    const [debounceVerticalScrollbar, setDebounceVerticalScrollbar] = useState(true);
 
     return (
         <AgGridProvider modules={modules}>
