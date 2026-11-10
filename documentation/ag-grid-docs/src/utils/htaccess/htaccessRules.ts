@@ -101,6 +101,15 @@ const redirectNoCacheRules = `
 Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 `;
 
+// Production only: CloudFront caches permanent www redirects without a query string (outside archives)
+// for a day, tagged like the pages so each deploy invalidates them.
+const redirectEdgeCacheRules = `
+# Permanent redirects of current www paths with no query string: CloudFront caches a day, browsers
+# revalidate. Invalidated by cache tag on every live docs deploy. Excludes /archive/<v>/.
+Header always set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header always set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+`;
+
 // Archived docs stay out of search results: their HTML says so with a robots meta tag (see
 // Layout.astro), but a markdown variant has no <head> to carry one, so it gets the header
 // equivalent. Matched on content type rather than the .md extension so the negotiated variant,
@@ -930,6 +939,7 @@ ${documentNoCacheRules}
 ${unlessArchiveBuild(documentEdgeCacheRules)}
 ${unlessArchiveBuild(docsCacheTagRules)}
 ${unlessArchiveBuild(redirectNoCacheRules)}
+${unlessArchiveBuild(redirectEdgeCacheRules)}
 ${unlessArchiveBuild(archiveMarkdownNoindexRules)}
 ${hashedAssetCacheRules}
 ${unlessArchiveBuild(staticAssetCacheRules)}
