@@ -1,0 +1,34 @@
+---
+title: "Scrolling"
+description: "Configure scroll gestures and vertical scroll debouncing in AG Grid."
+---
+
+By default, the grid uses the browser's native scrolling. Scrollbars appear when rows or columns extend beyond the visible area, and touch or trackpad gestures can scroll both axes at once.
+
+## Scroll Gestures
+
+Register `ScrollGestureModule` and set `scrollGestureMode: 'axisLocked'` to keep touch and trackpad gestures on one axis and reduce accidental diagonal scrolling. The default, `'native'`, leaves scrolling to the browser and does not require the module.
+
+```js
+const gridOptions = {
+    scrollGestureMode: 'axisLocked',
+};
+```
+
+Axis-locked touch scrolling uses grid-managed momentum, so its feel differs from native scrolling. Keyboard scrolling and scrollbar dragging are unchanged. Use `api.setGridOption('scrollGestureMode', mode)` to switch modes, as the toggle below demonstrates.
+
+{% gridExampleRunner title="Scroll Gestures" name="scroll-gestures" /%}
+
+## Debounce Vertical Scroll
+
+Set `debounceVerticalScrollbar: true` to delay updating the displayed rows until vertical scrolling pauses. When dragging the vertical scrollbar, the grid waits for a pause before moving to the new position. By default, this option is `false` and the grid follows the scrollbar continuously.
+
+```js
+const gridOptions = {
+    debounceVerticalScrollbar: true,
+};
+```
+
+Use the toggle below, then drag the vertical scrollbar to compare the behaviours. This is an initial-only option, so the example recreates the grid when toggled.
+
+{% gridExampleRunner title="Debounce Vertical Scroll" name="debounce-vertical-scroll" /%}

@@ -233,6 +233,7 @@ export {
     _setScrollLeft,
     _setVisible,
     _throttleToFrame,
+    FORM_FIELD_SELECTOR,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';

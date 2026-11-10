@@ -1273,6 +1273,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Scrolling",
+                            "path": "scrolling"
+                        },
+                        {
+                            "type": "item",
                             "title": "Touch",
                             "path": "touch"
                         },

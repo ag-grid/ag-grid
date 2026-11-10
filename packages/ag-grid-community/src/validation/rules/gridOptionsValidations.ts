@@ -184,6 +184,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
+    scrollGestureMode: ({ scrollGestureMode }) => (scrollGestureMode === 'axisLocked' ? 'ScrollGesture' : null),
     sendToClipboard: 'Clipboard',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',
@@ -791,6 +792,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
                 return null;
+            },
+        },
+        scrollGestureMode: {
+            validate: ({ scrollGestureMode }) => {
+                const allowed = ['native', 'axisLocked'];
+                return scrollGestureMode != null && !allowed.includes(scrollGestureMode)
+                    ? _createValidationWarning(320, {
+                          property: 'scrollGestureMode',
+                          allowed,
+                          value: scrollGestureMode,
+                      })
+                    : null;
             },
         },
         renderingMode: {

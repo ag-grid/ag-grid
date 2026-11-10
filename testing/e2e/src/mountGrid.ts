@@ -101,7 +101,7 @@ export async function mountGrid(
     );
 
     const grid = page.locator(GRID_SELECTOR);
-    await grid.locator('.ag-root-wrapper').waitFor();
+    await grid.locator('.ag-root-wrapper').first().waitFor();
 
     return {
         grid,
