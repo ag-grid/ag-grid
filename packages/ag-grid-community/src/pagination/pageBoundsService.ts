@@ -7,20 +7,21 @@ import type { RowBounds } from '../interfaces/iRowModel';
 export class PageBoundsService extends BeanStub implements NamedBean {
     beanName = 'pageBounds' as const;
 
-    private topRowBounds?: Required<RowBounds> | null;
-    private bottomRowBounds?: Required<RowBounds> | null;
-    private pixelOffset = 0;
+    #topRowBounds?: Required<RowBounds> | null;
+    #bottomRowBounds?: Required<RowBounds> | null;
+    #pixelOffset = 0;
 
     public getFirstRow(): number {
-        return this.topRowBounds?.rowIndex ?? -1;
+        return this.#topRowBounds?.rowIndex ?? -1;
     }
 
     public getLastRow(): number {
-        return this.bottomRowBounds?.rowIndex ?? -1;
+        return this.#bottomRowBounds?.rowIndex ?? -1;
     }
 
     public getCurrentPageHeight(): number {
-        const { topRowBounds, bottomRowBounds } = this;
+        const topRowBounds = this.#topRowBounds;
+        const bottomRowBounds = this.#bottomRowBounds;
         if (!topRowBounds || !bottomRowBounds) {
             return 0;
         }
@@ -28,7 +29,8 @@ export class PageBoundsService extends BeanStub implements NamedBean {
     }
 
     public getCurrentPagePixelRange(): { pageFirstPixel: number; pageLastPixel: number } {
-        const { topRowBounds, bottomRowBounds } = this;
+        const topRowBounds = this.#topRowBounds;
+        const bottomRowBounds = this.#bottomRowBounds;
         const pageFirstPixel = topRowBounds?.rowTop ?? 0;
         const pageLastPixel = bottomRowBounds ? bottomRowBounds.rowTop + bottomRowBounds.rowHeight : 0;
         return { pageFirstPixel, pageLastPixel };
@@ -40,29 +42,29 @@ export class PageBoundsService extends BeanStub implements NamedBean {
         if (topRowBounds) {
             topRowBounds.rowIndex = topDisplayedRowIndex;
         }
-        this.topRowBounds = topRowBounds as Required<RowBounds> | null;
+        this.#topRowBounds = topRowBounds as Required<RowBounds> | null;
 
         const bottomRowBounds = rowModel.getRowBounds(bottomDisplayedRowIndex)!;
         if (bottomRowBounds) {
             bottomRowBounds.rowIndex = bottomDisplayedRowIndex;
         }
-        this.bottomRowBounds = bottomRowBounds as Required<RowBounds> | null;
+        this.#bottomRowBounds = bottomRowBounds as Required<RowBounds> | null;
 
-        this.calculatePixelOffset();
+        this.#calculatePixelOffset();
     }
 
     public getPixelOffset(): number {
-        return this.pixelOffset;
+        return this.#pixelOffset;
     }
 
-    private calculatePixelOffset(): void {
-        const value = this.topRowBounds?.rowTop ?? 0;
+    #calculatePixelOffset(): void {
+        const value = this.#topRowBounds?.rowTop ?? 0;
 
-        if (this.pixelOffset === value) {
+        if (this.#pixelOffset === value) {
             return;
         }
 
-        this.pixelOffset = value;
+        this.#pixelOffset = value;
         // this event is required even when pagination is off
         this.eventSvc.dispatchEvent({ type: 'paginationPixelOffsetChanged' });
     }
