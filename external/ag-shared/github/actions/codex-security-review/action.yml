@@ -6,7 +6,8 @@ description: Run a Codex security review over selected source directories and re
 # 1. CHECK AUTH: Fail when the Codex API key or Slack token is missing, so a removed or rotated
 #    secret can't turn the scheduled scan into a silent green run
 # 2. SETUP: Install the Codex CLI and make sure its sandbox can start on the runner
-# 3. REVIEW: For each shard in the shards file, run `codex exec` read-only over the shard's paths,
+# 3. REVIEW: For each shard in the shards file, run `codex exec` read-only over the shard's paths
+#    (several shards at once, see parallel-shards),
 #    writing structured findings (findings.schema.json) to $RUNNER_TEMP
 # 4. REPORT: Post a summary message to Slack, with each finding as a threaded reply
 # 5. CLEANUP: Remove the findings, prompts and Codex session files from the runner
@@ -52,6 +53,10 @@ inputs:
         description: 'Time limit for each shard review'
         required: false
         default: '45'
+    parallel-shards:
+        description: 'How many shards to review at once. Reviews mostly wait on the Codex API; keep it low enough to stay inside Codex rate limits.'
+        required: false
+        default: '3'
     review-budget-minutes:
         description: 'Time limit for all shards together. Keep it below the job timeout so the report still runs; shards that would start with less than 5 minutes left are reported as out-of-time.'
         required: false
@@ -134,6 +139,7 @@ runs:
               REASONING_EFFORT: ${{ inputs.reasoning-effort }}
               SHARD_TIMEOUT_MINUTES: ${{ inputs.shard-timeout-minutes }}
               REVIEW_BUDGET_MINUTES: ${{ inputs.review-budget-minutes }}
+              PARALLEL_SHARDS: ${{ inputs.parallel-shards }}
           run: '"$GITHUB_ACTION_PATH/run-shards.sh"'
 
         - name: Report to Slack

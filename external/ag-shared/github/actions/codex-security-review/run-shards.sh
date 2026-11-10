@@ -8,6 +8,9 @@
 ##   status.jsonl   one {"shard", "status", "paths"} line per shard
 ##                  (status: ok | failed | timeout | invalid-output | out-of-time)
 ##
+## Up to $PARALLEL_SHARDS shards run at once. Each review mostly waits on the Codex API, so this
+## cuts the run to roughly the slowest shards rather than the sum of all of them.
+##
 ## All shards share a budget of $REVIEW_BUDGET_MINUTES, so the job still has time to report what
 ## finished before it hits its own timeout. Each shard gets at most $SHARD_TIMEOUT_MINUTES or what
 ## is left of the budget, and shards with less than 5 minutes left are not started (out-of-time).
@@ -58,21 +61,30 @@ then
     CODEX_ARGS+=(-m "$MODEL")
 fi
 
+# Each shard writes its own status file, since shards finish in any order. They are combined into
+# status.jsonl in shard order at the end.
 record_status() {
-    jq -cn --arg shard "$1" --arg status "$2" --argjson paths "$3" '{shard: $shard, status: $status, paths: $paths}' >> "$OUT_DIR/status.jsonl"
+    jq -cn --arg shard "$1" --arg status "$2" --argjson paths "$3" '{shard: $shard, status: $status, paths: $paths}' > "$OUT_DIR/$1.status.json"
 }
 
-FAILED=()
 SHARD_TIMEOUT_MINUTES=${SHARD_TIMEOUT_MINUTES:-45}
 REVIEW_BUDGET_MINUTES=${REVIEW_BUDGET_MINUTES:-300}
+PARALLEL_SHARDS=${PARALLEL_SHARDS:-3}
 MIN_SHARD_MINUTES=5
 
-while IFS= read -r name
+# A zero, negative or non-numeric value would hang the scheduler or break the time budget
+for setting in SHARD_TIMEOUT_MINUTES REVIEW_BUDGET_MINUTES PARALLEL_SHARDS
 do
-    if [ -n "${SHARD_FILTER:-}" ] && [ "$name" != "$SHARD_FILTER" ]
+    if ! [[ "${!setting}" =~ ^[1-9][0-9]*$ ]]
     then
-        continue
+        echo "::error::$setting must be a positive integer, got [${!setting}]"
+        exit 1
     fi
+done
+
+# Reviews one shard. Runs in the background, so it reports only through its status file.
+review_shard() {
+    local name=$1 shard focus p paths paths_json prompt_file output_file log_file remaining shard_minutes start exit_code duration
 
     shard=$(jq -c --arg name "$name" '.shards[] | select(.name == $name)' "$SHARDS_FILE")
     focus=$(jq -r '.focus // ""' <<< "$shard")
@@ -93,8 +105,7 @@ do
     then
         echo "::error::Shard [$name] has no existing paths"
         record_status "$name" failed '[]'
-        FAILED+=("$name")
-        continue
+        return
     fi
     paths_json=$(printf '%s\n' "${paths[@]}" | jq -R . | jq -cs .)
 
@@ -126,8 +137,7 @@ do
     then
         echo "::error::Shard [$name] not started: the ${REVIEW_BUDGET_MINUTES}-minute review budget is used up"
         record_status "$name" out-of-time "$paths_json"
-        FAILED+=("$name")
-        continue
+        return
     fi
     shard_minutes=$(( remaining < SHARD_TIMEOUT_MINUTES ? remaining : SHARD_TIMEOUT_MINUTES ))
 
@@ -135,8 +145,10 @@ do
     start=$SECONDS
 
     set +e
-    # SIGTERM at the limit, SIGKILL 30s later if Codex hasn't exited
-    timeout --kill-after=30 "$(( shard_minutes * 60 ))" \
+    # Own Codex home per shard, so concurrent sessions don't share state. SIGTERM at the limit,
+    # SIGKILL 30s later if Codex hasn't exited.
+    mkdir -p "$CODEX_HOME/$name"
+    CODEX_HOME="$CODEX_HOME/$name" timeout --kill-after=30 "$(( shard_minutes * 60 ))" \
         codex exec "${CODEX_ARGS[@]}" --output-last-message "$output_file" - \
         < "$prompt_file" > "$log_file" 2>&1
     exit_code=$?
@@ -149,31 +161,64 @@ do
     then
         echo "::error::Shard [$name] timed out after ${shard_minutes} minutes"
         record_status "$name" timeout "$paths_json"
-        FAILED+=("$name")
     elif [ "$exit_code" -ne 0 ]
     then
         echo "::error::Shard [$name] failed: Codex exited with code ${exit_code} after ${duration}m"
         if grep -qE "(invalid_api_key|token_expired|401 Unauthorized|Incorrect API key)" "$log_file"
         then
-            echo "::error::Authentication failure - the CODEX_API_KEY secret is likely invalid or expired"
+            echo "::error::Shard [$name]: authentication failure - the CODEX_API_KEY secret is likely invalid or expired"
         elif grep -qiE "(rate limit|429|quota)" "$log_file"
         then
-            echo "::error::Codex was rate limited or ran out of quota"
+            echo "::error::Shard [$name]: Codex was rate limited or ran out of quota"
         elif grep -qiE "(bwrap|landlock|sandbox)" "$log_file"
         then
-            echo "::error::The Codex sandbox failed to start or run a command"
+            echo "::error::Shard [$name]: the Codex sandbox failed to start or run a command"
         fi
         record_status "$name" failed "$paths_json"
-        FAILED+=("$name")
     elif ! jq -e '.findings | type == "array"' "$output_file" > /dev/null 2>&1
     then
         echo "::error::Shard [$name] produced output that does not match the findings schema"
         rm -f "$output_file"
         record_status "$name" invalid-output "$paths_json"
-        FAILED+=("$name")
     else
         echo "Shard [$name] completed in ${duration}m"
         record_status "$name" ok "$paths_json"
+    fi
+}
+
+while IFS= read -r name
+do
+    if [ -n "${SHARD_FILTER:-}" ] && [ "$name" != "$SHARD_FILTER" ]
+    then
+        continue
+    fi
+    # Wait for a free slot
+    while [ "$(jobs -rp | wc -l)" -ge "$PARALLEL_SHARDS" ]
+    do
+        wait -n || true
+    done
+    review_shard "$name" < /dev/null &
+done <<< "$SHARD_NAMES"
+wait
+
+FAILED=()
+while IFS= read -r name
+do
+    status_file="$OUT_DIR/$name.status.json"
+    if [ -n "${SHARD_FILTER:-}" ] && [ "$name" != "$SHARD_FILTER" ]
+    then
+        continue
+    fi
+    if [ ! -f "$status_file" ]
+    then
+        # The shard's subshell died before recording a result
+        echo "::error::Shard [$name] ended without a result"
+        record_status "$name" failed '[]'
+    fi
+    cat "$status_file" >> "$OUT_DIR/status.jsonl"
+    if [ "$(jq -r .status "$status_file")" != ok ]
+    then
+        FAILED+=("$name")
     fi
 done <<< "$SHARD_NAMES"
 
