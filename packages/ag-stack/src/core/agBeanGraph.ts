@@ -115,8 +115,9 @@ function initBeans<TBeans>(
 }
 
 /**
- * Builds beans in dependency order, handing each declaring bean only what it declared. A declaring
- * bean's container is scoped to the same view, so beans it creates or looks up are narrowed too.
+ * Builds beans in dependency order, handing each declaring bean only what it declared, plus the graph
+ * itself as `context`, which reaches every bean. A bean created through it gets what that bean declares,
+ * or the whole collection if it declares nothing.
  *
  * Throws on a duplicate bean name, a missing required dependency, a cycle, or a bean another graph
  * already owns, naming the beans involved.
@@ -129,7 +130,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
     destroyCallback,
 }: AgBeanGraphParams<TBeans>): AgBeanGraph<TBeans> {
     const self: GraphOwner = { id };
-    const built: Record<string, unknown> = { ...kernel };
+    let built: Record<string, unknown> = { ...kernel };
 
     const kernelBeans = new Map<string, AgGraphBean<TBeans>>();
     for (const key of Object.keys(built)) {
@@ -203,33 +204,16 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
 
     let destroyed = false;
 
+    // Resolved against the whole graph, not the creator's view: what a bean needs doesn't depend on who creates it.
     const createIn = <T extends AgBaseBean<TBeans>>(
-        source: Record<string, unknown>,
         bean: T,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeans>) => void
     ): T => {
         const { beanName = '(runtime bean)', deps, optionalDeps } = bean as Partial<AgDeclaredBean<TBeans>>;
         assertUnowned(beanName, bean);
-        requireDeps(beanName, deps, (dep) => source[dep] !== undefined);
-        initBeans([bean], () => viewFor({ deps, optionalDeps }, source) as TBeans, afterPreCreateCallback);
+        requireDeps(beanName, deps, isAvailable);
+        initBeans([bean], () => viewFor({ deps, optionalDeps }, built) as TBeans, afterPreCreateCallback);
         return bean;
-    };
-
-    const scopedContext = (view: Record<string, unknown>): IContext<TBeans> => {
-        const base = built.context as IContext<TBeans>;
-        return {
-            get instanceId() {
-                return base.instanceId;
-            },
-            getId: () => base.getId(),
-            isDestroyed: () => base.isDestroyed(),
-            destroy: () => base.destroy(),
-            destroyBean: (bean) => base.destroyBean(bean),
-            destroyBeans: (list) => base.destroyBeans(list),
-            getBeans: () => view as TBeans,
-            getBean: (name) => (view as TBeans)[name],
-            createBean: (bean, afterPreCreateCallback) => createIn(view, bean, afterPreCreateCallback),
-        };
     };
 
     const viewFor = (
@@ -254,7 +238,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
                 view[dep] = source[dep];
             }
         }
-        view.context = scopedContext(view);
+        view.context = source.context;
         return view;
     };
 
@@ -263,9 +247,8 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         for (let i = started.length - 1; i >= 0; --i) {
             started[i].destroy?.();
         }
-        for (const key of Object.keys(built)) {
-            delete built[key];
-        }
+        // Replaced rather than emptied: undeclared beans hold the old collection, as they do with AgContext.
+        built = {};
         all.clear();
         owned.clear();
         kernelBeans.clear();
@@ -290,14 +273,16 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
     const instances = order.map((name) => all.get(name)!);
 
     const graph: AgBeanGraph<TBeans> = {
-        beans: built as TBeans,
+        get beans() {
+            return built as TBeans;
+        },
         order,
         instanceId: _nextContainerInstanceId(),
         getBeans: () => built as TBeans,
         getBean: (name) => (built as TBeans)[name],
         getId: () => id,
         isDestroyed: () => destroyed,
-        createBean: (bean, afterPreCreateCallback) => createIn(built, bean, afterPreCreateCallback),
+        createBean: (bean, afterPreCreateCallback) => createIn(bean, afterPreCreateCallback),
         destroyBean(bean) {
             destroyOne(bean);
             return undefined;

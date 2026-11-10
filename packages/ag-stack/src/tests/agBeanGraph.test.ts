@@ -180,32 +180,43 @@ describe('a bean built after the graph', () => {
 describe('a bean created by a declared bean', () => {
     const build = () => {
         const a = bean('a');
+        const secret = bean('secret');
         const owner = bean('owner', ['a']);
-        createBeanGraph({ id: 'test', beans: [a, bean('secret'), owner] });
-        return { a, container: owner.wiredWith!.context as IContext<Record<string, unknown>> };
+        createBeanGraph({ id: 'test', beans: [a, secret, owner] });
+        return { a, secret, container: owner.wiredWith!.context as IContext<Record<string, unknown>> };
     };
 
-    it('is handed only what its creator was', () => {
-        const { a, container } = build();
+    it('is handed the whole collection when it declares nothing, whoever creates it', () => {
+        const { a, secret, container } = build();
         const child = bean('child');
 
         container.createBean(child);
 
         expect(child.wiredWith!.a).toBe(a);
-        expect(child.wiredWith!.secret).toBeUndefined();
+        expect(child.wiredWith!.secret).toBe(secret);
     });
 
-    it('cannot declare a bean its creator was not handed', () => {
-        const { container } = build();
+    it('is handed what it declares, even beans its creator was not', () => {
+        const { secret, container } = build();
+        const child = bean('child', ['secret']);
 
-        expect(() => container.createBean(bean('child', ['secret']))).toThrow(/'child'.*depends on 'secret'/);
+        container.createBean(child);
+
+        expect(child.wiredWith!.secret).toBe(secret);
+        expect(child.wiredWith!.a).toBeUndefined();
     });
 
-    it('cannot look one up through the container either', () => {
+    it('is refused when it declares a bean the graph never built', () => {
         const { container } = build();
 
-        expect(container.getBean('secret')).toBeUndefined();
-        expect(container.getBeans()).not.toHaveProperty('secret');
+        expect(() => container.createBean(bean('child', ['missing']))).toThrow(/'child'.*depends on 'missing'/);
+    });
+
+    it('leaves its creator able to reach every bean through the container', () => {
+        const { secret, container } = build();
+
+        expect(container.getBean('secret')).toBe(secret);
+        expect(container.getBeans()).toHaveProperty('secret', secret);
     });
 });
 
@@ -216,6 +227,21 @@ describe('a destroyed graph', () => {
         graph.destroy();
 
         expect(graph.getBeans()).toEqual({});
+        expect(graph.beans).toEqual({});
+    });
+
+    it('leaves an undeclared bean the collection it was handed, so it can still destroy through it', () => {
+        const log: string[] = [];
+        const holder = bean('holder');
+        const graph = createBeanGraph({ id: 'test', beans: [holder] });
+        const child = graph.createBean(bean('child', [], [], log));
+
+        graph.destroy();
+        const { context } = holder.wiredWith as { context: IContext<Record<string, unknown>> };
+        context.destroyBean(child);
+
+        expect(holder.wiredWith).toHaveProperty('holder', holder);
+        expect(log).toEqual(['construct:child', 'destroy:child']);
     });
 });
 
@@ -433,14 +459,11 @@ describe('the kernel', () => {
         expect(graph.order).not.toContain('context');
     });
 
-    it('hands a declared bean a container scoped to what it declared', () => {
+    it('hands a declared bean itself as the container', () => {
         const a = bean('a', ['b']);
         const graph = createBeanGraph({ id: 'test', beans: [a, bean('b')] });
-        const container = a.wiredWith!.context as IContext<Record<string, unknown>>;
 
-        expect(container).not.toBe(graph);
-        expect(container.getId()).toBe('test');
-        expect(container.instanceId).toBe(graph.instanceId);
+        expect(a.wiredWith!.context).toBe(graph);
     });
 
     it('leaves a container it was handed alone', () => {
