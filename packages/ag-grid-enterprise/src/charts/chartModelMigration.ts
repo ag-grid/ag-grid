@@ -381,6 +381,12 @@ function migrateV36(model: ChartModel) {
 }
 
 function migrateV37(model: ChartModel): ChartModel {
+    // AG Charts deprecated the shadow `color` for `fill`, which wins when both are set.
+    model = jsonMutateProperty('chartOptions.*.series.shadow.color', true, model, (parent, targetProp) => {
+        parent.fill ??= parent[targetProp];
+        delete parent[targetProp];
+    });
+
     const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
     if (overrides === model.chartOptions) {
         return model;

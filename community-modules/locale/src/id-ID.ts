@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Bersihkan',
     advancedFilterBuilder: 'Pembuat',
+    advancedFilterPlaceholder: 'Filter Lanjutan',
     advancedFilterValidationMissingColumn: 'Kolom tidak ada',
     advancedFilterValidationMissingOption: 'Opsi tidak ada',
     advancedFilterValidationMissingValue: 'Nilai tidak ada',
@@ -842,6 +843,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelSelectField: 'Pilih Bidang',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Validasi Editor Sel',
     ariaFullRowValidationError: 'Validasi Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan penyuntingan baris. ${variable}',
@@ -874,6 +876,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelAddFilterField: 'Tambah Bidang Filter',
     ariaLabelFilterCardDelete: 'Hapus Filter',
     ariaLabelFilterCardHasEdits: 'Memiliki Perubahan',
+    ariaLabelFilterCardType: 'Jenis Filter',
     ariaHasNote: 'Sel ini memiliki catatan.',
 
     // Number Format (Status Bar, Pagination Panel)

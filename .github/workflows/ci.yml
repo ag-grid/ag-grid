@@ -202,7 +202,7 @@ jobs:
             count=10
             affected="ag-grid-community ag-grid-enterprise ag-stack @ag-grid-community/locale ag-behavioural-testing"
           else
-            affected="$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | tr '\n' ' ')"
+            affected="$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test --json=false | tr '\n' ' ')"
             count=$(echo $affected | wc -w)
           fi
           echo "test_count=${count}" >> $GITHUB_OUTPUT
@@ -221,7 +221,7 @@ jobs:
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             e2e_count=10
           else
-            e2e_count=$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+            e2e_count=$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all --json=false | wc -l)
           fi
 
           # not enough non-bundle size e2e tests to shard atm
@@ -695,6 +695,7 @@ jobs:
       contents: write
       actions: read
       checks: write
+      statuses: write
     steps:
       - name: Checkout
         id: checkout
@@ -856,6 +857,67 @@ jobs:
               "SonarCommunity": "${{ needs.sonar_community.result }}",
               "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
             }
+
+      # Manual-run status: fail open, because `report` is the required check.
+      - name: Publish manual run status check
+        # Not on ghabot-* branches: the watchdog acts on red rollup rows there.
+        if: always() && job.status != 'cancelled' && github.event_name == 'workflow_dispatch' && !startsWith(github.ref_name, 'ghabot-')
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_STATUS: ${{ steps.lastJobStatus.outputs.workflowStatus }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          post_status() {
+            gh api --method POST \
+                -H "Accept: application/vnd.github+json" \
+                "/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+                -f state="$1" \
+                -f context="CI (manual)" \
+                -f description="$2" \
+                -f target_url="${RUN_URL}" > /dev/null
+          }
+
+          case "${WORKFLOW_STATUS}" in
+            success) state="success"; description="Manual CI run passed" ;;
+            failure) state="failure"; description="Manual CI run failed" ;;
+            *)
+              echo "::warning::No workflow status for this run, so no manual run status was posted."
+              exit 0
+              ;;
+          esac
+
+          if ! post_status "${state}" "${description}" ; then
+            echo "::warning::Could not post the manual run status."
+          fi
+
+      - name: Supersede a red manual run status
+        # Not on drafts, where every job is skipped.
+        if: always() && job.status != 'cancelled' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Statuses come newest first.
+          if ! manual_state=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/statuses?per_page=100" \
+              --jq '[.[] | select(.context == "CI (manual)")][0].state // ""') ; then
+            echo "::warning::Could not read the manual run status."
+            exit 0
+          fi
+          if [[ "${manual_state}" != "failure" && "${manual_state}" != "error" ]] ; then
+            exit 0
+          fi
+          if ! gh api --method POST \
+              -H "Accept: application/vnd.github+json" \
+              "/repos/${GITHUB_REPOSITORY}/statuses/${HEAD_SHA}" \
+              -f state="success" \
+              -f context="CI (manual)" \
+              -f description="Superseded by the pull request CI run" \
+              -f target_url="${RUN_URL}" > /dev/null ; then
+            echo "::warning::Could not clear the failed manual run status."
+          fi
 
       - name: Fail job if workflow failed
         if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'

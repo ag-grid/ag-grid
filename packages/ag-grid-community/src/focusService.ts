@@ -298,7 +298,7 @@ export class FocusService extends BeanStub implements NamedBean {
     public doesRowOrCellHaveBrowserFocus() {
         const activeElement = _getActiveDomElement(this.beans);
         // a grid nested in one of this grid's rows (a detail grid) holds its own focus
-        if (!activeElement || !this.gos.isElementInThisInstance(activeElement)) {
+        if (!activeElement || !this.beans.environment.isElementInThisInstance(activeElement)) {
             return false;
         }
         // check for cell first

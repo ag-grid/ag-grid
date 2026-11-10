@@ -1,9 +1,10 @@
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _addManagedElementListeners } from '../utils/event';
 import { FOCUS_MANAGED_CLASS, _findNextFocusableElement } from '../utils/focus';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -23,12 +24,12 @@ export interface StopPropagationCallbacks {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgManagedFocusFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     constructor(
         private readonly eFocusable: HTMLElement,
         private readonly stopPropagationCallbacks: StopPropagationCallbacks = {
@@ -72,16 +73,16 @@ export class AgManagedFocusFeature<
         this.addKeyDownListeners(eFocusable);
 
         if (onFocusIn) {
-            this.addManagedElementListeners(eFocusable, { focusin: onFocusIn });
+            _addManagedElementListeners(this, eFocusable, { focusin: onFocusIn });
         }
 
         if (onFocusOut) {
-            this.addManagedElementListeners(eFocusable, { focusout: onFocusOut });
+            _addManagedElementListeners(this, eFocusable, { focusout: onFocusOut });
         }
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
-        this.addManagedElementListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             keydown: (e: KeyboardEvent) => {
                 if (e.defaultPrevented || this.stopPropagationCallbacks.isStopPropagation(e)) {
                     return;

@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     advancedFilterCancel: 'Loobu',
     advancedFilterClear: 'Tühjenda',
     advancedFilterBuilder: 'Koostaja',
+    advancedFilterPlaceholder: 'Täpsem filter',
     advancedFilterValidationMissingColumn: 'Veerg on puudu',
     advancedFilterValidationMissingOption: 'Valik on puudu',
     advancedFilterValidationMissingValue: 'Väärtus on puudu',
@@ -839,6 +840,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelSelectField: 'Väljavalik',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Lahtriredaktor',
     ariaValidationErrorPrefix: 'Lahtriredaktori valideerimine',
     ariaFullRowValidationError: 'Täisrea valideerimine: ${variable}',
     ariaFullRowEditValidationFailed: 'Rea muutmist ei saa lõpetada. ${variable}',
@@ -871,6 +873,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelAddFilterField: 'Filtrivälja lisamine',
     ariaLabelFilterCardDelete: 'Kustuta filter',
     ariaLabelFilterCardHasEdits: 'Sisaldab muudatusi',
+    ariaLabelFilterCardType: 'Filtri tüüp',
     ariaHasNote: 'Sellel lahtril on märkus.',
 
     // Number Format (Status Bar, Pagination Panel)

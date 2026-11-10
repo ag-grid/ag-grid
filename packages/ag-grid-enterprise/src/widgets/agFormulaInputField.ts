@@ -1,4 +1,4 @@
-import { _getActiveDomElement, _getDocument } from 'ag-stack';
+import { _addManagedElementListeners, _getActiveDomElement, _getDocument } from 'ag-stack';
 
 import type {
     AgComponentSelectorType,
@@ -77,7 +77,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
         this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
         this.autocompleteFeature = this.createManagedBean(new FormulaInputAutocompleteFeature(this));
 
-        this.addManagedElementListeners(this.getContentElement(), {
+        _addManagedElementListeners(this, this.getContentElement(), {
             focus: this.onContentFocus.bind(this),
             blur: this.onContentBlur.bind(this),
             mousedown: this.onContentMouseDown.bind(this),
@@ -85,7 +85,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
     }
 
     protected override addInputListeners(): void {
-        this.addManagedElementListeners(this.getInputElement(), {
+        _addManagedElementListeners(this, this.getInputElement(), {
             beforeinput: (event: InputEvent) => {
                 // enter commits the cell; a blocked commit must not insert a newline.
                 if (event.inputType === 'insertLineBreak' || event.inputType === 'insertParagraph') {

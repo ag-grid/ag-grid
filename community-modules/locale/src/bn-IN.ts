@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     advancedFilterCancel: 'বাতিল করুন',
     advancedFilterClear: 'পরিষ্কার করুন',
     advancedFilterBuilder: 'বিল্ডার',
+    advancedFilterPlaceholder: 'অ্যাডভান্সড ফিল্টার',
     advancedFilterValidationMissingColumn: 'কলাম অনুপস্থিত',
     advancedFilterValidationMissingOption: 'অপশন অনুপস্থিত',
     advancedFilterValidationMissingValue: 'মান অনুপস্থিত',
@@ -839,6 +840,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaLabelSelectField: 'ফিল্ড নির্বাচন করুন',
 
     // Cell Editor
+    ariaLabelCellEditor: 'সেল এডিটর',
     ariaValidationErrorPrefix: 'সেল এডিটর ভ্যালিডেশন',
     ariaFullRowValidationError: 'সম্পূর্ণ রো ভ্যালিডেশন: ${variable}',
     ariaFullRowEditValidationFailed: 'রো সম্পাদনা সম্পূর্ণ করা যায়নি। ${variable}',
@@ -871,6 +873,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',
     ariaLabelFilterCardDelete: 'ফিল্টার মুছুন',
     ariaLabelFilterCardHasEdits: 'পরিবর্তন আছে',
+    ariaLabelFilterCardType: 'ফিল্টারের ধরন',
     ariaHasNote: 'এই সেলে একটি নোট আছে।',
 
     // Number Format (Status Bar, Pagination Panel)

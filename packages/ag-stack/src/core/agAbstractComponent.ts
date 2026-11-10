@@ -1,3 +1,4 @@
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type {
     AgBaseComponent,
     AgComponent,
@@ -6,7 +7,6 @@ import type {
     VisibleChangedEvent,
 } from '../interfaces/agComponent';
 import { RefPlaceholder } from '../interfaces/agComponent';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
@@ -20,13 +20,13 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 let compIdSequence = 0;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgComponentStub<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+export class AgAbstractComponent<
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -34,11 +34,10 @@ export class AgComponentStub<
     TComponentSelectorType extends string,
     TLocalEventType extends string = AgComponentEvent,
 >
-    extends AgBeanStub<
+    extends AgAbstractBean<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
-        TCommon,
         TPropertiesService,
         TLocalEventType | AgComponentEvent
     >
@@ -85,6 +84,15 @@ export class AgComponentStub<
     public preConstruct(): void {
         this.wireTemplate(this.getGui());
         this.addGlobalCss();
+    }
+
+    /** Also accepts `BaseEvents` handlers, which a generic component cannot name through `TGlobalEvents`. */
+    public override addManagedEventListeners(
+        handlers:
+            | { [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void }
+            | { [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void }
+    ) {
+        return super.addManagedEventListeners(handlers as { [K in keyof TGlobalEvents]?: (event: any) => void });
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -222,11 +230,10 @@ export class AgComponentStub<
     private swapComponentForNode(
         newComponent: AgBaseComponent<TBeanCollection>,
         parentNode: Element,
-        childNode: Node
+        childNode: ChildNode
     ): void {
         const eComponent = newComponent.getGui();
-        // eslint-disable-next-line unicorn/prefer-modern-dom-apis
-        parentNode.replaceChild(eComponent, childNode);
+        childNode.replaceWith(eComponent);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }

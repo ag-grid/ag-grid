@@ -1,10 +1,5 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import { _addManagedElementListeners } from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 
 import { AgAbstractInputField } from './agAbstractInputField';
 import type { AgCheckboxParams, LabelAlignment } from './agFieldParams';
@@ -12,7 +7,7 @@ import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgCheckbox<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -56,8 +51,8 @@ export class AgCheckbox<
     }
 
     protected override addInputListeners() {
-        this.addManagedElementListeners(this.eInput, { click: this.onCheckboxClick.bind(this) });
-        this.addManagedElementListeners(this.eLabel, { click: this.toggle.bind(this) });
+        _addManagedElementListeners(this, this.eInput, { click: this.onCheckboxClick.bind(this) });
+        _addManagedElementListeners(this, this.eLabel, { click: this.toggle.bind(this) });
     }
 
     public getNextValue(): boolean {

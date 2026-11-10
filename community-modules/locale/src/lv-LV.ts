@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     advancedFilterCancel: 'Atcelt',
     advancedFilterClear: 'Notīrīt',
     advancedFilterBuilder: 'Konstruktors',
+    advancedFilterPlaceholder: 'Papildu filtrs',
     advancedFilterValidationMissingColumn: 'Trūkst kolonnas',
     advancedFilterValidationMissingOption: 'Trūkst opcijas',
     advancedFilterValidationMissingValue: 'Trūkst vērtības',
@@ -841,6 +842,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelSelectField: 'Atlases lauks',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Šūnas redaktors',
     ariaValidationErrorPrefix: 'Šūnas redaktora validācija',
     ariaFullRowValidationError: 'Pilnas rindas validācija: ${variable}',
     ariaFullRowEditValidationFailed: 'Nevar pabeigt rindas rediģēšanu. ${variable}',
@@ -873,6 +875,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelAddFilterField: 'Pievienot filtra lauku',
     ariaLabelFilterCardDelete: 'Dzēst filtru',
     ariaLabelFilterCardHasEdits: 'Ir izmaiņas',
+    ariaLabelFilterCardType: 'Filtra tips',
     ariaHasNote: 'Šai šūnai ir piezīme.',
 
     // Number Format (Status Bar, Pagination Panel)

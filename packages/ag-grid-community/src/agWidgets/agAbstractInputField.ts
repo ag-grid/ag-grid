@@ -1,5 +1,12 @@
-import type { AgCoreBeanCollection, AgElementParams, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { RefPlaceholder, _addOrRemoveAttribute, _setAriaLabel, _setDisabled, _setElementWidth } from 'ag-stack';
+import type { AgBeanCollection, AgElementParams, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _addOrRemoveAttribute,
+    _setAriaLabel,
+    _setDisabled,
+    _setElementWidth,
+} from 'ag-stack';
 
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
@@ -38,7 +45,7 @@ function buildTemplate<TComponentSelectorType extends string>(
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgAbstractInputField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -107,7 +114,7 @@ export abstract class AgAbstractInputField<
     }
 
     protected addInputListeners() {
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: (e: InputEvent) => this.setValue((e.target as HTMLInputElement).value as TValue),
         });
     }

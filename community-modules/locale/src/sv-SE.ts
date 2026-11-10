@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Rensa',
     advancedFilterBuilder: 'Byggare',
+    advancedFilterPlaceholder: 'Avancerat filter',
     advancedFilterValidationMissingColumn: 'Kolumn saknas',
     advancedFilterValidationMissingOption: 'Alternativ saknas',
     advancedFilterValidationMissingValue: 'Värde saknas',
@@ -822,6 +823,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelSelectField: 'Välj fält',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering av hela raden: ${variable}',
     ariaFullRowEditValidationFailed: 'Det går inte att slutföra radredigeringen. ${variable}',
@@ -851,6 +853,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
+    ariaLabelFilterCardType: 'Filtertyp',
     ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)

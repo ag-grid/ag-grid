@@ -1,6 +1,6 @@
 import type {
+    AgBeanCollection,
     AgCoreBean,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -11,7 +11,7 @@ import type {
     TooltipCtrl,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     RefPlaceholder,
     _isHorizontalScrollShowing,
     _setAriaPosInSet,
@@ -41,14 +41,14 @@ const getAgListElement = <TComponentSelectorType extends string>(
 });
 
 export class AgListItem<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TValue,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -61,7 +61,7 @@ export class AgListItem<
     public tooltipFeature: ITooltipFeature;
 
     constructor(
-        cssIdentifier: string,
+        private readonly cssIdentifier: string,
         private readonly label: string,
         private readonly value: TValue
     ) {
@@ -69,6 +69,7 @@ export class AgListItem<
     }
 
     public postConstruct() {
+        this.getGui().id = `ag-${this.cssIdentifier}-list-item-${this.getCompId()}`;
         this.createTooltip();
         this.addEventListeners();
     }
@@ -81,6 +82,10 @@ export class AgListItem<
             type: 'itemHighlighted',
             highlighted,
         });
+    }
+
+    public getId(): string {
+        return this.getGui().id;
     }
 
     public getHeight(): number {

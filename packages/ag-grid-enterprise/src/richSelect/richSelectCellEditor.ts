@@ -1,6 +1,7 @@
 import { _missing } from 'ag-stack';
 
 import type {
+    AgColumn,
     FieldPickerValueSelectedEvent,
     ICellEditorParams,
     KeyCreatorParams,
@@ -54,6 +55,10 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         this.eEditor = richSelect;
         this.seededValue = this.params.value;
+        richSelect.setAriaLabel(
+            this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header', true) ||
+                this.getLocaleTextFunc()('ariaLabelRichSelectField', 'Rich Select Field')
+        );
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 

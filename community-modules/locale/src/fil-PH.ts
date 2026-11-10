@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     advancedFilterCancel: 'Kanselahin',
     advancedFilterClear: 'I-clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Kulang ang column',
     advancedFilterValidationMissingOption: 'Kulang ang opsyon',
     advancedFilterValidationMissingValue: 'Kulang ang halaga',
@@ -847,6 +848,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelSelectField: 'Piliin ang Field',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Validation ng Cell Editor',
     ariaFullRowValidationError: 'Validation ng Buong Row: ${variable}',
     ariaFullRowEditValidationFailed: 'Hindi makumpleto ang pag-edit ng row. ${variable}',
@@ -879,6 +881,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelAddFilterField: 'Magdagdag ng Field ng Filter',
     ariaLabelFilterCardDelete: 'Tanggalin ang Filter',
     ariaLabelFilterCardHasEdits: 'May mga Pagbabago',
+    ariaLabelFilterCardType: 'Uri ng Filter',
     ariaHasNote: 'May tala ang cell na ito.',
 
     // Number Format (Status Bar, Pagination Panel)

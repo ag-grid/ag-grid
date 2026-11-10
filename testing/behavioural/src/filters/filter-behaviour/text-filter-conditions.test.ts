@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -426,6 +427,38 @@ describe('Text Filter — conditions coverage', () => {
 
         const body = document.querySelector('.ag-filter-menu .ag-filter-body');
         expect(body?.getAttribute('role')).toBe('presentation');
+    });
+
+    test('the operator combobox aria-activedescendant follows the highlighted option and is cleared on close', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+            rowData: [{ name: 'Apple' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'name');
+
+        const combobox = document.querySelector<HTMLElement>(
+            '.ag-filter-menu .ag-filter-select .ag-picker-field-wrapper'
+        )!;
+        const activeOptionText = () => {
+            const option = document.getElementById(combobox.getAttribute('aria-activedescendant')!);
+            expect(option?.getAttribute('role')).toBe('option');
+            return option?.textContent?.trim();
+        };
+
+        expect(combobox.getAttribute('aria-label')).toBe('Filtering operator');
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(activeOptionText()).toBe('Contains');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Does not contain');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Equals');
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(combobox.getAttribute('aria-expanded')).toBe('false');
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
     });
 
     test('trimInput:true also trims the values a Custom Filter Option takes', async () => {

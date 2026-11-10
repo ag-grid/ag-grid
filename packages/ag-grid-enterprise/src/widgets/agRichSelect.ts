@@ -1,6 +1,7 @@
 import type { IAriaAnnouncementService, VerticalDirection } from 'ag-stack';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _clearElement,
     _debounce,
@@ -231,11 +232,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
-        this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
-        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
 
         if (!suppressDeselectAll) {
-            this.addManagedElementListeners(this.eDeselect, {
+            _addManagedElementListeners(this, this.eDeselect, {
                 mousedown: this.onDeselectAllMouseDown.bind(this),
                 click: this.onDeselectAllClick.bind(this),
             });

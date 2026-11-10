@@ -1,9 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type { AgEvent } from '../interfaces/agEvent';
-import type { BaseEvents } from '../interfaces/baseEvents';
-import type { AgInternalEventService, AgRawEvents, ICommonSource } from '../interfaces/iDomFreeEvent';
-import type { AgEventService } from '../interfaces/iEvent';
+import type { AgEventService, AgRawEvents, ICommonSource } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 
 interface Common {
@@ -11,36 +9,26 @@ interface Common {
     context: unknown;
 }
 
-interface Events extends BaseEvents {
+interface Events {
     somethingHappened: AgEvent<'somethingHappened'> & Common & { widgetId: string };
 }
 
-// Members may move to a base interface, but must not change shape: grid compiles against these.
-describe('the types ag-grid consumes', () => {
-    it('keeps AgEventService dispatching the common-stripped event', () => {
-        type Dispatch = Parameters<AgEventService<Events, Common>['dispatchEvent']>[0];
+// Members may move, but must not change shape: grid and Studio compile against these.
+describe('AgEventService', () => {
+    it('dispatches a whole event by default', () => {
+        expectTypeOf<Parameters<AgEventService<Events>['dispatchEvent']>[0]>().toEqualTypeOf<Events[keyof Events]>();
+        expectTypeOf<AgEventService<Events>['beanName']>().toEqualTypeOf<'eventSvc'>();
+        expectTypeOf<AgEventService<Events>['eventServiceType']>().toEqualTypeOf<'global'>();
+    });
 
-        expectTypeOf<Dispatch>().toEqualTypeOf<AgRawEvents<Events, Common> | BaseEvents[keyof BaseEvents]>();
-        expectTypeOf<AgEventService<Events, Common>['beanName']>().toEqualTypeOf<'eventSvc'>();
-        expectTypeOf<AgEventService<Events, Common>['eventServiceType']>().toEqualTypeOf<'global'>();
+    it('dispatches the common-stripped event for a host that adds common fields', () => {
+        type Dispatch = Parameters<AgEventService<Events, AgRawEvents<Events, Common>>['dispatchEvent']>[0];
+
+        expectTypeOf<Dispatch>().toEqualTypeOf<AgRawEvents<Events, Common>>();
     });
 
     it('keeps the common fields off properties entirely', () => {
         expectTypeOf<IPropertiesService<{}>>().not.toHaveProperty('addCommon');
         expectTypeOf<ICommonSource<Common>>().toHaveProperty('addCommon');
-    });
-});
-
-describe('the internal view', () => {
-    it('dispatches a whole event, common fields included', () => {
-        expectTypeOf<Parameters<AgInternalEventService<Events>['dispatchEvent']>[0]>().toEqualTypeOf<
-            Events[keyof Events]
-        >();
-    });
-
-    it('is satisfied by the decorating service, so one bean can serve both', () => {
-        expectTypeOf<AgEventService<Events, Common>>().toExtend<
-            AgInternalEventService<Events, AgRawEvents<Events, Common> | BaseEvents[keyof BaseEvents]>
-        >();
     });
 });

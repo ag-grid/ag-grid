@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpar',
     advancedFilterBuilder: 'Construtor',
+    advancedFilterPlaceholder: 'Filtro Avançado',
     advancedFilterValidationMissingColumn: 'Coluna está faltando',
     advancedFilterValidationMissingOption: 'Opção está faltando',
     advancedFilterValidationMissingValue: 'Valor está faltando',
@@ -823,6 +824,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaLabelSelectField: 'Selecionar Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de Célula',
     ariaValidationErrorPrefix: 'Validação do Editor de Célula',
     ariaFullRowValidationError: 'Validação da linha completa: ${variable}',
     ariaFullRowEditValidationFailed: 'Não é possível concluir a edição da linha. ${variable}',
@@ -853,6 +855,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Tem Edições',
+    ariaLabelFilterCardType: 'Tipo de Filtro',
     ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)

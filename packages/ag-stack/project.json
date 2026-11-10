@@ -15,7 +15,7 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:package:core", "build:umd"]
     },
     "build:umd": {
       "executor": "ag-grid-task-autogen:esbuild-staged",
@@ -128,6 +128,47 @@
         }
       }
     },
+    "build:package:core": {
+      "executor": "ag-grid-task-autogen:esbuild-staged",
+      "dependsOn": ["^build:package"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "skipTypeCheck": true,
+        "outputPath": "{projectRoot}/dist/core",
+        "main": "{projectRoot}/src/main-core.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "neutral",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false,
+          "metafile": false
+        },
+        "production": {
+          "sourcemap": false,
+          "metafile": false
+        }
+      }
+    },
     "build:package:watch": {
       "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": [],
@@ -172,7 +213,11 @@
         "command": "eslint && stylelint './src/**/*css'"
       }
     },
-    "build:test": {},
+    "build:test": {
+      "options": {
+        "command": "npx tsc -p {projectRoot}/tsconfig.spec.json --noEmit && npx tsc -p {projectRoot}/tsconfig.core.json && npx tsc -p {projectRoot}/tsconfig.core.worker.json"
+      }
+    },
     "test": {
       "command": "npx vitest run",
       "dependsOn": ["build:test"],

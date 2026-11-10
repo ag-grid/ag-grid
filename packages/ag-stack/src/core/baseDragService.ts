@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import type { PointerCapture } from '../events/pointerCapture';
 import { capturePointer, releasePointerCapture } from '../events/pointerCapture';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { DragListenerParams, IDragService } from '../interfaces/iDrag';
@@ -18,7 +18,7 @@ import {
     clearTempEventHandlers,
     preventEventDefault,
 } from '../utils/event';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 /**
  * We keep a map document - Dragging to keep only one active drag also if multiple instances
@@ -47,13 +47,13 @@ const addHandledDragEvent = (event: Event): boolean => {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseDragService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IDragService
 {
     beanName = 'dragSvc' as const;

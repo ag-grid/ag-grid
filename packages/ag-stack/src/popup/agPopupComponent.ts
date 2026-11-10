@@ -1,6 +1,6 @@
-import { AgComponentStub } from '../core/agComponentStub';
+import { AgAbstractComponent } from '../core/agAbstractComponent';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgComponent } from '../interfaces/agComponent';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPopupComponent } from '../interfaces/iPopupComponent';
@@ -8,14 +8,14 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgPopupComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 >
-    extends AgComponentStub<
+    extends AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
