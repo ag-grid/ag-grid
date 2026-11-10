@@ -176,13 +176,16 @@ function isLogicWithoutHandlers(beans: BeanCollection, filter: unknown): boolean
     );
 }
 
+/** The filter `filter` builds: the component its `{ component }` form names, or else itself. */
+const getFilterComp = (filter: unknown): unknown => (isColumnFilterComp(filter) ? filter.component : filter);
+
 /**
  * The filter `filter` builds: `true`, a name nothing is registered under and logic without filter handlers build
  * `defaultFilter`, the `{ component }` form the filter it names; `undefined` for none or a component of the author's.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFilter: string): string | undefined {
-    const named = isColumnFilterComp(filter) ? filter.component : filter;
+    const named = getFilterComp(filter);
     if (named === true || isUnregistered(beans, named) || isLogicWithoutHandlers(beans, filter)) {
         return defaultFilter;
     }
@@ -206,8 +209,13 @@ export function _isFilterChangedByDataType(
     const selectableFilter = beans.selectableFilter;
     const { filter, filterParams } = selectableFilter?.getFilterDef(column, fromDef) ?? fromDef;
     const toFilterDef = selectableFilter?.getFilterDef(column, toDef) ?? toDef;
+    const toFilter = toFilterDef.filter;
     const key = _getFilterKey(beans, filter, getDefaultFilterFromDataType(beans, from));
-    if (key !== _getFilterKey(beans, toFilterDef.filter, getDefaultFilterFromDataType(beans, to))) {
+    if (
+        key !== _getFilterKey(beans, toFilter, getDefaultFilterFromDataType(beans, to)) ||
+        // components of the author's own have no key, so are told apart by the component itself
+        (key === undefined && getFilterComp(filter) !== getFilterComp(toFilter))
+    ) {
         return true;
     }
     // column types the data type brings can give the filter params of their own

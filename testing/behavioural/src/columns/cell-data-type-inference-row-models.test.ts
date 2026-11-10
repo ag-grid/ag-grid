@@ -1,7 +1,7 @@
 import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import type { ColDef, GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IFilterComp, IViewportDatasourceParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -503,6 +503,85 @@ describe('cellDataType inference under non-client-side row models', () => {
 
             expect(inferredType(api, 'year')).toBe(false);
             expect(api.getFilterModel()).toEqual({ year: textModel });
+        });
+
+        test('a filtered column is kept untyped where its inferred data type swaps one custom filter for another', async () => {
+            class ModelFilter implements IFilterComp {
+                private model: unknown = null;
+                getGui = () => document.createElement('div');
+                isFilterActive = () => this.model != null;
+                doesFilterPass = () => true;
+                getModel = () => this.model;
+                setModel(model: unknown) {
+                    this.model = model;
+                }
+            }
+            class UntypedFilter extends ModelFilter {}
+            class NumberFilter extends ModelFilter {}
+
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [{ field: 'country', rowGroup: true, hide: true }, { field: 'year' }],
+                {
+                    defaultColDef: { filter: UntypedFilter },
+                    columnTypes: { numberFiltered: { filter: NumberFilter } },
+                    dataTypeDefinitions: {
+                        filteredNumber: {
+                            baseDataType: 'number',
+                            extendsDataType: 'number',
+                            columnTypes: ['numberFiltered'],
+                            dataTypeMatcher: (value) => typeof value === 'number',
+                        },
+                    },
+                }
+            );
+
+            api.setFilterModel({ year: { min: 2000 } });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+
+            expect(inferredType(api, 'year')).toBe(false);
+            expect(api.getFilterModel()).toEqual({ year: { min: 2000 } });
+        });
+
+        test('a kept-untyped column typed once its filter is cleared takes the state of its column types, keeping the state set since', async () => {
+            const { api, leafBlockServed } = await createGroupedGrid(
+                [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', filter: true },
+                ],
+                {
+                    columnTypes: { wide: { width: 222, pinned: 'left' } },
+                    dataTypeDefinitions: {
+                        wideNumber: {
+                            baseDataType: 'number',
+                            extendsDataType: 'number',
+                            columnTypes: ['wide'],
+                            dataTypeMatcher: (value) => typeof value === 'number',
+                        },
+                    },
+                }
+            );
+
+            api.setFilterModel({ year: { filterType: 'text', type: 'contains', filter: '20' } });
+            await waitForNoLoadingRows(api);
+
+            expandFirstGroup(api);
+            await leafBlockServed.promise;
+            await asyncSetTimeout(0);
+            expect(inferredType(api, 'year')).toBe(false);
+
+            api.setColumnWidths([{ key: 'year', newWidth: 150 }]);
+            api.setFilterModel(null);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0);
+
+            const year = api.getColumn('year')!;
+            expect(inferredType(api, 'year')).toBe('wideNumber');
+            expect(year.getPinned()).toBe('left');
+            expect(year.getActualWidth()).toBe(150);
         });
 
         test('a Multi Filter child given as `{ component: true }` is protected as the default child filter', async () => {
