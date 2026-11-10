@@ -1,4 +1,4 @@
-import { _areEqual, _clearElement, _getActiveDomElement, _last } from 'ag-stack';
+import { _areEqual, _clearElement, _findNextFocusableElement, _getActiveDomElement, _last } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -217,6 +217,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private readonly onDeferredApply = (): void => {
         const applyHadFocus = _getActiveDomElement(this.beans) === this.buttonsComp?.getApplyButton();
+        // Found while Apply still has focus: disabling it below drops focus to the page body.
+        const eApplyNeighbour = applyHadFocus ? this.findApplyNeighbour() : null;
         this.isCommitting = true;
         try {
             this.beans.columnStateUpdateStrategy.commit(this.isDeferModeEnabled);
@@ -224,25 +226,25 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.isCommitting = false;
         }
         this.buttonsComp?.updateValidity(false);
-        if (applyHadFocus) {
-            this.focusAfterApply();
+        if (eApplyNeighbour) {
+            eApplyNeighbour.focus();
+        } else if (applyHadFocus) {
+            this.primaryColsPanel.focusList();
         }
         this.lastKnownGridState = this.captureGridState();
     };
 
-    /** Disabling the focused Apply button drops focus to the page body. */
-    private focusAfterApply(): void {
-        const buttons = this.params.buttons ?? [];
-        const eButtons = this.buttonsComp?.getGui().children;
-        for (const type of ['cancel', 'reset'] as const) {
-            const index = buttons.indexOf(type);
-            const eButton = index >= 0 ? (eButtons?.[index] as HTMLElement | undefined) : undefined;
-            if (eButton) {
-                eButton.focus();
-                return;
-            }
+    /** The focusable button left of the focused Apply button, else the one to its right. */
+    private findApplyNeighbour(): HTMLElement | null {
+        const rootNode = this.buttonsComp?.getGui();
+        if (!rootNode) {
+            return null;
         }
-        this.primaryColsPanel.focusList();
+        const beans = this.beans;
+        return (
+            _findNextFocusableElement({ beans, rootNode, backwards: true }) ??
+            _findNextFocusableElement({ beans, rootNode })
+        );
     }
 
     private readonly onDeferredCancel = (): void => {

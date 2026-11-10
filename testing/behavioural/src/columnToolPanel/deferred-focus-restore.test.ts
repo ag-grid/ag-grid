@@ -135,10 +135,10 @@ describe('deferred column tool panel keeps keyboard focus', () => {
     });
 
     test.each<[string, ColumnToolPanelAction[], (toolPanelGui: HTMLElement, viewport: HTMLElement) => HTMLElement]>([
-        ['Cancel', ['cancel', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Cancel')],
+        ['the button on its left', ['reset', 'cancel', 'apply'], (toolPanelGui) => getButton(toolPanelGui, 'Cancel')],
         [
-            'Reset when there is no Cancel button',
-            ['reset', 'apply'],
+            'the button on its right when it is first',
+            ['apply', 'reset', 'cancel'],
             (toolPanelGui) => getButton(toolPanelGui, 'Reset'),
         ],
         ['the column list when there is no other button', ['apply'], (_gui, viewport) => getRow(viewport, 'Athlete')],
