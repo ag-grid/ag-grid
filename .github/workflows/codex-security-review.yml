@@ -9,8 +9,6 @@ name: Codex Security Review
 # Dependency versions are covered by security.yml (Snyk).
 
 on:
-    push:
-        branches: [codex-security-review] # TEMP: test run from the PR branch - remove before merge
     workflow_dispatch:
         inputs:
             shard:
@@ -60,7 +58,7 @@ jobs:
               with:
                   codex-api-key: ${{ secrets.CODEX_API_KEY }}
                   shards-file: .github/codex-security-review.json
-                  shard: ${{ inputs.shard || 'frameworks' }} # TEMP: one shard for the test run - remove before merge
+                  shard: ${{ inputs.shard }}
                   min-severity: ${{ inputs.min_severity || 'medium' }}
                   slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
                   slack-channel: ${{ env.SLACK_CHANNEL }}
