@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaCalculatedColumn: 'Vypočítaný sloupec',
     ariaColumnShowValuesAs: 'Zobrazování hodnot jako',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
+    ariaColumnSelectExpandAll: 'Rozbalit nebo sbalit všechny skupiny sloupců',
     ariaDateFilterInput: 'Vstup datového filtru',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vstup filtru sloupců',

@@ -734,6 +734,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaCalculatedColumn: 'حساب شدہ کالم',
     ariaColumnShowValuesAs: 'اقدار کو اس طور دکھایا جا رہا ہے',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
+    ariaColumnSelectExpandAll: 'تمام کالم گروپس کو پھیلائیں یا سکیڑیں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
     ariaDefaultListName: 'فہرست',
     ariaFilterColumnsInput: 'کالمز فلٹر انپٹ',

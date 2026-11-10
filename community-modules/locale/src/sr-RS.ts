@@ -750,6 +750,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaCalculatedColumn: 'Израчуната колона',
     ariaColumnShowValuesAs: 'Приказивање вредности као',
     ariaColumnSelectAll: 'Укључи/искључи видљивост свих колона',
+    ariaColumnSelectExpandAll: 'Прошири или скупи све групе колона',
     ariaDateFilterInput: 'Унос филтера датума',
     ariaDefaultListName: 'Листа',
     ariaFilterColumnsInput: 'Унос за филтрирање колона',

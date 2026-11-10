@@ -737,6 +737,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser værdier som',
     ariaColumnSelectAll: 'Skift synlighed for alle kolonner',
+    ariaColumnSelectExpandAll: 'Udvid eller skjul alle kolonnegrupper',
     ariaDateFilterInput: 'Dato Filter Input',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer Kolonner Input',

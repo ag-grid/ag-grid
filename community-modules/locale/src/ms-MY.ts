@@ -753,6 +753,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaCalculatedColumn: 'Lajur dikira',
     ariaColumnShowValuesAs: 'Memaparkan Nilai Sebagai',
     ariaColumnSelectAll: 'Togol Keterlihatan Semua Lajur',
+    ariaColumnSelectExpandAll: 'Kembangkan atau Kuncupkan Semua Kumpulan Lajur',
     ariaDateFilterInput: 'Input Penapis Tarikh',
     ariaDefaultListName: 'Senarai',
     ariaFilterColumnsInput: 'Input Tapis Lajur',

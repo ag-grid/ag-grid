@@ -748,6 +748,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaCalculatedColumn: 'গণনাকৃত কলাম',
     ariaColumnShowValuesAs: 'মান দেখানো হচ্ছে হিসেবে',
     ariaColumnSelectAll: 'সব কলামের দৃশ্যমানতা টগল করুন',
+    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত বা সংকুচিত করুন',
     ariaDateFilterInput: 'তারিখ ফিল্টার ইনপুট',
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'ফিল্টার কলাম ইনপুট',

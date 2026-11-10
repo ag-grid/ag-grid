@@ -753,6 +753,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaCalculatedColumn: 'Skaičiuojamasis stulpelis',
     ariaColumnShowValuesAs: 'Rodomos reikšmės kaip',
     ariaColumnSelectAll: 'Perjungti visų stulpelių matomumą',
+    ariaColumnSelectExpandAll: 'Išskleisti arba suskleisti visas stulpelių grupes',
     ariaDateFilterInput: 'Datos filtro laukas',
     ariaDefaultListName: 'Sąrašas',
     ariaFilterColumnsInput: 'Stulpelių filtravimo laukas',

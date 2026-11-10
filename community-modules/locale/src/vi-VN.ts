@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaCalculatedColumn: 'Cột được tính toán',
     ariaColumnShowValuesAs: 'Đang hiển thị giá trị dưới dạng',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
+    ariaColumnSelectExpandAll: 'Mở rộng hoặc thu gọn tất cả nhóm cột',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
     ariaDefaultListName: 'Danh sách',
     ariaFilterColumnsInput: 'Đầu vào Lọc Cột',

@@ -750,6 +750,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaCalculatedColumn: 'Arvutatud veerg',
     ariaColumnShowValuesAs: 'Näitab väärtusi kui',
     ariaColumnSelectAll: 'Lülita kõikide veergude nähtavus',
+    ariaColumnSelectExpandAll: 'Laienda või ahenda kõik veerurühmad',
     ariaDateFilterInput: 'Kuupäevafiltri sisend',
     ariaDefaultListName: 'Loend',
     ariaFilterColumnsInput: 'Filtri veergude sisend',

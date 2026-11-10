@@ -734,6 +734,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaCalculatedColumn: '계산된 열',
     ariaColumnShowValuesAs: '값 표시 형식',
     ariaColumnSelectAll: '모든 열 가시성 전환',
+    ariaColumnSelectExpandAll: '모든 열 그룹 펼치기 또는 접기',
     ariaDateFilterInput: '날짜 필터 입력',
     ariaDefaultListName: '목록',
     ariaFilterColumnsInput: '열 필터 입력',

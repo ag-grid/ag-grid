@@ -738,6 +738,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaCalculatedColumn: 'Coluna calculada',
     ariaColumnShowValuesAs: 'A mostrar valores como',
     ariaColumnSelectAll: 'Alternar visibilidade de todas as colunas',
+    ariaColumnSelectExpandAll: 'Expandir ou recolher todos os grupos de colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtro de Colunas',

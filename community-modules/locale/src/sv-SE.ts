@@ -737,6 +737,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaCalculatedColumn: 'Beräknad kolumn',
     ariaColumnShowValuesAs: 'Visar värden som',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
+    ariaColumnSelectExpandAll: 'Expandera eller fäll ihop alla kolumngrupper',
     ariaDateFilterInput: 'Datumfilterinmatning',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',

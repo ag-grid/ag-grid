@@ -734,6 +734,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
+    ariaColumnSelectExpandAll: 'すべての列グループを展開または折りたたむ',
     ariaDateFilterInput: '日付フィルター入力',
     ariaDefaultListName: 'リスト',
     ariaFilterColumnsInput: 'フィルター列入力',

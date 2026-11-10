@@ -738,6 +738,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaCalculatedColumn: 'Coloană calculată',
     ariaColumnShowValuesAs: 'Se afișează valorile ca',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
+    ariaColumnSelectExpandAll: 'Extinde sau restrânge toate grupurile de coloane',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
     ariaDefaultListName: 'Listă',
     ariaFilterColumnsInput: 'Intrare Filtrare Coloane',

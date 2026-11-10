@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaCalculatedColumn: 'Laskettu sarake',
     ariaColumnShowValuesAs: 'Näytetään arvot muodossa',
     ariaColumnSelectAll: 'Vaihda kaikkien sarakkeiden näkyvyys',
+    ariaColumnSelectExpandAll: 'Laajenna tai tiivistä kaikki sarakeryhmät',
     ariaDateFilterInput: 'Päivämäärän suodattimen syöte',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Suodata sarakkeiden syöte',

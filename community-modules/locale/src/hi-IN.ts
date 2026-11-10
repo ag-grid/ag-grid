@@ -752,6 +752,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaCalculatedColumn: 'गणना किया गया कॉलम',
     ariaColumnShowValuesAs: 'मान इस रूप में दिखा रहा है',
     ariaColumnSelectAll: 'सभी कॉलम दृश्यता टॉगल करें',
+    ariaColumnSelectExpandAll: 'सभी कॉलम समूहों को विस्तृत या संक्षिप्त करें',
     ariaDateFilterInput: 'दिनांक फ़िल्टर इनपुट',
     ariaDefaultListName: 'सूची',
     ariaFilterColumnsInput: 'फ़िल्टर कॉलम इनपुट',
