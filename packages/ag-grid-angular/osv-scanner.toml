@@ -230,7 +230,7 @@ reason = "extract-zip is a transitive dependency of chromedriver (via @axe-core/
 
 [[IgnoredVulns]]
 id = "GHSA-px8p-9vwx-vf98"
-reason = "fflate is a transitive dependency of @vitest/ui and the compression-streams-polyfill dev dependency, used only in testing/build - not included in the final production build"
+reason = "fflate is a transitive dependency of @vitest/ui, used only in testing/build - not included in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-5p2g-fcmc-qvqq"

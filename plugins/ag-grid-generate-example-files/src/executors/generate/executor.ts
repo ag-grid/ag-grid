@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import { readGridOptionsType } from '../../../gridOptionsTypes/gridOptionsTypesFile';
-import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
+import { EXAMPLE_STYLE_FILE_NAME, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
     DARK_INTEGRATED_START,
@@ -263,7 +263,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             );
         }
 
-        let styleFilesKeys = [];
+        // Framework entry files import the example's own stylesheets, so only the shared one is linked
+        const styleFilesKeys = (['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)
+            ? Object.keys(mergedStyleFiles)
+            : [EXAMPLE_STYLE_FILE_NAME];
         let mergedFiles = {
             ...mergedStyleFiles,
             ...htmlFiles,
@@ -271,10 +274,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...provideFrameworkFiles,
             ...interfaceContents,
         };
-        if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
-            styleFilesKeys = Object.keys(mergedStyleFiles);
-        }
-
         if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
             if (mergedFiles[mainFileName].includes('useFetchJson')) {
                 mergedFiles['useFetchJson.' + (internalFramework === 'reactFunctionalTs' ? 'tsx' : 'jsx')] =

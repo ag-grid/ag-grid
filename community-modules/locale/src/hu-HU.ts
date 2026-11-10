@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     advancedFilterCancel: 'Mégsem',
     advancedFilterClear: 'Törlés',
     advancedFilterBuilder: 'Szűrő Készítő',
+    advancedFilterPlaceholder: 'Speciális szűrő',
     advancedFilterValidationMissingColumn: 'Oszlop hiányzik',
     advancedFilterValidationMissingOption: 'Opció hiányzik',
     advancedFilterValidationMissingValue: 'Érték hiányzik',
@@ -783,6 +784,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaPageSizeSelectorLabel: 'Oldal méret',
     ariaChartMenuClose: 'Diagram szerkesztési menü bezárása',
     ariaChartSelected: 'Kiválasztva',
+    ariaChartSeriesChartType: '${variable} diagramtípusa',
+    ariaChartPalettePrevious: 'Előző paletta',
+    ariaChartPaletteNext: 'Következő paletta',
+    ariaChartPalettePage: '${variable}/${variable}. paletta',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} értéket jelenít meg ${min} és ${max} között. ${start} értéknél kezdődik és ${end} értéknél végződik.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 értéket jelenít meg: ${value}.',
@@ -812,11 +817,17 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelClose: 'Bezárás',
     ariaLabelMaximize: 'Teljes méret',
     ariaLabelRestore: 'Előző méret',
+    ariaLabelColorPickerSpectrum: 'Telítettség és fényerő',
+    ariaValueColorPickerSpectrum: 'Telítettség ${variable}%, fényerő ${variable}%',
+    ariaLabelColorPickerHue: 'Színárnyalat',
+    ariaLabelColorPickerAlpha: 'Átlátszatlanság',
+    ariaLabelColorPickerHex: 'Hexadecimális szín',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',
     ariaLabelSelectField: 'Mező kiválasztása',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cella szerkesztő',
     ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
     ariaFullRowValidationError: 'Teljes sor érvényesítése: ${variable}',
     ariaFullRowEditValidationFailed: 'A sor szerkesztése nem fejezhető be. ${variable}',
@@ -846,6 +857,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaLabelFilterCardType: 'Szűrő típusa',
     ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)

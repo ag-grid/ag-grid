@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Bersihkan',
     advancedFilterBuilder: 'Pembuat',
+    advancedFilterPlaceholder: 'Filter Lanjutan',
     advancedFilterValidationMissingColumn: 'Kolom tidak ada',
     advancedFilterValidationMissingOption: 'Opsi tidak ada',
     advancedFilterValidationMissingValue: 'Nilai tidak ada',
@@ -794,6 +795,10 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaPageSizeSelectorLabel: 'Ukuran Halaman',
     ariaChartMenuClose: 'Tutup Menu Edit Grafik',
     ariaChartSelected: 'Dipilih',
+    ariaChartSeriesChartType: 'Tipe Grafik ${variable}',
+    ariaChartPalettePrevious: 'Palet sebelumnya',
+    ariaChartPaletteNext: 'Palet berikutnya',
+    ariaChartPalettePage: 'Palet ${variable} dari ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} menampilkan ${count} nilai antara ${min} dan ${max}. Dimulai pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} menampilkan 1 nilai, ${value}.',
@@ -826,6 +831,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelMaximize: 'Maksimalkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelColorPickerSpectrum: 'Saturasi dan Kecerahan',
+    ariaValueColorPickerSpectrum: 'Saturasi ${variable}%, Kecerahan ${variable}%',
+    ariaLabelColorPickerHue: 'Rona',
+    ariaLabelColorPickerAlpha: 'Opasitas',
+    ariaLabelColorPickerHex: 'Warna Heksadesimal',
 
     ariaLabelColumnMenu: 'Menu Kolom',
     ariaLabelColumnFilter: 'Filter Kolom',
@@ -833,6 +843,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelSelectField: 'Pilih Bidang',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Validasi Editor Sel',
     ariaFullRowValidationError: 'Validasi Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan penyuntingan baris. ${variable}',
@@ -865,6 +876,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelAddFilterField: 'Tambah Bidang Filter',
     ariaLabelFilterCardDelete: 'Hapus Filter',
     ariaLabelFilterCardHasEdits: 'Memiliki Perubahan',
+    ariaLabelFilterCardType: 'Jenis Filter',
     ariaHasNote: 'Sel ini memiliki catatan.',
 
     // Number Format (Status Bar, Pagination Panel)

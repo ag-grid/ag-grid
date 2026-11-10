@@ -52,6 +52,7 @@ export interface ChartModelParams {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -102,6 +103,7 @@ export class ChartDataModel extends BeanStub {
 
     public seriesGroupType?: SeriesGroupType;
     public useGroupColumnAsCategory: boolean = false;
+    public paired: boolean = true;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -125,6 +127,7 @@ export class ChartDataModel extends BeanStub {
             crossFilteringSort,
             seriesGroupType,
             useGroupColumnAsCategory,
+            paired,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -139,6 +142,7 @@ export class ChartDataModel extends BeanStub {
         this.crossFilteringSort = crossFilteringSort ?? true;
         this.seriesGroupType = seriesGroupType;
         this.useGroupColumnAsCategory = !!useGroupColumnAsCategory;
+        this.paired = paired ?? true;
     }
 
     public postConstruct(): void {

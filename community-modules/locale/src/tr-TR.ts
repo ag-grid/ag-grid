@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     advancedFilterCancel: 'İptal',
     advancedFilterClear: 'Temizle',
     advancedFilterBuilder: 'Oluşturucu',
+    advancedFilterPlaceholder: 'Gelişmiş Filtre',
     advancedFilterValidationMissingColumn: 'Sütun eksik',
     advancedFilterValidationMissingOption: 'Seçenek eksik',
     advancedFilterValidationMissingValue: 'Değer eksik',
@@ -780,6 +781,10 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaPageSizeSelectorLabel: 'Sayfa Boyutu',
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
+    ariaChartSeriesChartType: '${variable} Grafik Tipi',
+    ariaChartPalettePrevious: 'Önceki palet',
+    ariaChartPaletteNext: 'Sonraki palet',
+    ariaChartPalettePage: 'Palet ${variable} / ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} değer gösterir, ${min} ile ${max} arasında. ${start} ile başlar ve ${end} ile biter.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 değer gösterir: ${value}.',
@@ -809,11 +814,17 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelClose: 'Kapat',
     ariaLabelMaximize: 'Büyüt',
     ariaLabelRestore: 'Geri yükle',
+    ariaLabelColorPickerSpectrum: 'Doygunluk ve Parlaklık',
+    ariaValueColorPickerSpectrum: 'Doygunluk %${variable}, Parlaklık %${variable}',
+    ariaLabelColorPickerHue: 'Ton',
+    ariaLabelColorPickerAlpha: 'Opaklık',
+    ariaLabelColorPickerHex: 'Onaltılık Renk',
     ariaLabelColumnMenu: 'Sütun Menüsü',
     ariaLabelColumnFilter: 'Sütun Filtresi',
     ariaLabelSelectField: 'Alan Seç',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Hücre Düzenleyici',
     ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulaması',
     ariaFullRowValidationError: 'Tam satır doğrulaması: ${variable}',
     ariaFullRowEditValidationFailed: 'Satır düzenlemesi tamamlanamıyor. ${variable}',
@@ -843,6 +854,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaLabelFilterCardType: 'Filtre Türü',
     ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)

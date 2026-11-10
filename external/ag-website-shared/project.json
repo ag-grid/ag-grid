@@ -13,7 +13,7 @@
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest"],
-      "inputs": [],
+      "inputs": ["default", "buildOutputExcludes", "^production"],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}"

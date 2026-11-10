@@ -5,7 +5,6 @@ import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -19,13 +18,13 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `
-        <div class="test-container">
-            <div class="test-header">
-                <div style="margin-bottom: 1rem;">
-                    <input type="checkbox" id="pinFirstColumnOnLoad" />
-                    <label for="pinFirstColumnOnLoad">Pin first column on load</label>
-                </div>
-                <div style="margin-bottom: 1rem;">
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <div>
+                        <input type="checkbox" id="pinFirstColumnOnLoad" />
+                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
+                    </div>
                     <button id="reloadGridButton" (click)="reloadGrid()">Reload Grid</button>
                 </div>
             </div>

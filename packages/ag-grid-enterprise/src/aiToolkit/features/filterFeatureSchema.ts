@@ -24,7 +24,10 @@ const MultiFilterKey = 'agMultiColumnFilter';
 
 const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, BigIntFilterKey, DateFilterKey];
 
-export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
+export const buildFilterFeatureSchema = (
+    beans: BeanCollection,
+    params?: StructuredSchemaParams
+): SchemaBuilder | undefined => {
     const { advancedFilter } = beans;
 
     if (advancedFilter?.isEnabled()) {

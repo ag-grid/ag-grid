@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     advancedFilterCancel: 'Anuluj',
     advancedFilterClear: 'Wyczyść',
     advancedFilterBuilder: 'Kreator',
+    advancedFilterPlaceholder: 'Zaawansowany filtr',
     advancedFilterValidationMissingColumn: 'Brak kolumny',
     advancedFilterValidationMissingOption: 'Brak opcji',
     advancedFilterValidationMissingValue: 'Brak wartości',
@@ -780,6 +781,10 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaPageSizeSelectorLabel: 'Rozmiar Strony',
     ariaChartMenuClose: 'Zamknij Menu Edycji Wykresu',
     ariaChartSelected: 'Wybrane',
+    ariaChartSeriesChartType: 'Typ wykresu dla ${variable}',
+    ariaChartPalettePrevious: 'Poprzednia paleta',
+    ariaChartPaletteNext: 'Następna paleta',
+    ariaChartPalettePage: 'Paleta ${variable} z ${variable}',
     ariaSparklineChartDescription:
         'Wykres iskrowy - ${chartType} wyświetla ${count} wartości między ${min} a ${max}. Zaczyna się od ${start} i kończy na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Wykres iskrowy - ${chartType} wyświetla 1 wartość: ${value}.',
@@ -809,11 +814,17 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaLabelClose: 'Zamknij',
     ariaLabelMaximize: 'Maksymalizuj',
     ariaLabelRestore: 'Przywróć',
+    ariaLabelColorPickerSpectrum: 'Nasycenie i jasność',
+    ariaValueColorPickerSpectrum: 'Nasycenie ${variable}%, jasność ${variable}%',
+    ariaLabelColorPickerHue: 'Odcień',
+    ariaLabelColorPickerAlpha: 'Krycie',
+    ariaLabelColorPickerHex: 'Kolor szesnastkowy',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',
     ariaLabelSelectField: 'Wybierz pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Edytor komórek',
     ariaValidationErrorPrefix: 'Walidacja edytora komórek',
     ariaFullRowValidationError: 'Walidacja całego wiersza: ${variable}',
     ariaFullRowEditValidationFailed: 'Nie można ukończyć edycji wiersza. ${variable}',
@@ -843,6 +854,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaLabelAddFilterField: 'Dodaj pole filtru',
     ariaLabelFilterCardDelete: 'Usuń filtr',
     ariaLabelFilterCardHasEdits: 'Ma edycje',
+    ariaLabelFilterCardType: 'Typ Filtra',
     ariaHasNote: 'Ta komórka ma notatkę.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     advancedFilterCancel: 'Kanselahin',
     advancedFilterClear: 'I-clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Kulang ang column',
     advancedFilterValidationMissingOption: 'Kulang ang opsyon',
     advancedFilterValidationMissingValue: 'Kulang ang halaga',
@@ -799,6 +800,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaPageSizeSelectorLabel: 'Laki ng Pahina',
     ariaChartMenuClose: 'Isara ang Menu ng Pag-edit ng Chart',
     ariaChartSelected: 'Napili',
+    ariaChartSeriesChartType: 'Uri ng Chart ng ${variable}',
+    ariaChartPalettePrevious: 'Nakaraang palette',
+    ariaChartPaletteNext: 'Susunod na palette',
+    ariaChartPalettePage: 'Palette ${variable} ng ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} na nagpapakita ng ${count} na halaga sa pagitan ng ${min} at ${max}. Nagsisimula sa ${start} at nagtatapos sa ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} na nagpapakita ng 1 halaga, ${value}.',
@@ -831,6 +836,11 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelMaximize: 'I-maximize',
 
     ariaLabelRestore: 'Ibalik',
+    ariaLabelColorPickerSpectrum: 'Saturation at Liwanag',
+    ariaValueColorPickerSpectrum: 'Saturation ${variable}%, Liwanag ${variable}%',
+    ariaLabelColorPickerHue: 'Hue',
+    ariaLabelColorPickerAlpha: 'Opacity',
+    ariaLabelColorPickerHex: 'Hex na Kulay',
 
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',
@@ -838,6 +848,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelSelectField: 'Piliin ang Field',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Validation ng Cell Editor',
     ariaFullRowValidationError: 'Validation ng Buong Row: ${variable}',
     ariaFullRowEditValidationFailed: 'Hindi makumpleto ang pag-edit ng row. ${variable}',
@@ -870,6 +881,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelAddFilterField: 'Magdagdag ng Field ng Filter',
     ariaLabelFilterCardDelete: 'Tanggalin ang Filter',
     ariaLabelFilterCardHasEdits: 'May mga Pagbabago',
+    ariaLabelFilterCardType: 'Uri ng Filter',
     ariaHasNote: 'May tala ang cell na ito.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     advancedFilterCancel: 'Annuller',
     advancedFilterClear: 'Ryd',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Avanceret Filter',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Valgmulighed mangler',
     advancedFilterValidationMissingValue: 'Værdi mangler',
@@ -778,6 +779,10 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Luk Diagram Redigeringsmenu',
     ariaChartSelected: 'Valgt',
+    ariaChartSeriesChartType: 'Diagramtype for ${variable}',
+    ariaChartPalettePrevious: 'Forrige palet',
+    ariaChartPaletteNext: 'Næste palet',
+    ariaChartPalettePage: 'Palet ${variable} af ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} viser ${count} værdier mellem ${min} og ${max}. Starter ved ${start} og slutter ved ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 værdi, ${value}.',
@@ -807,11 +812,17 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelClose: 'Luk',
     ariaLabelMaximize: 'Maksimer',
     ariaLabelRestore: 'Gendan',
+    ariaLabelColorPickerSpectrum: 'Mætning og lysstyrke',
+    ariaValueColorPickerSpectrum: 'Mætning ${variable}%, lysstyrke ${variable}%',
+    ariaLabelColorPickerHue: 'Nuance',
+    ariaLabelColorPickerAlpha: 'Uigennemsigtighed',
+    ariaLabelColorPickerHex: 'Hex-farve',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',
     ariaLabelSelectField: 'Vælg felt',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering af hele rækken: ${variable}',
     ariaFullRowEditValidationFailed: 'Rækkeredigeringen kan ikke fuldføres. ${variable}',
@@ -841,6 +852,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)

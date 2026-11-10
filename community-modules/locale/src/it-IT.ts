@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     advancedFilterCancel: 'Annulla',
     advancedFilterClear: 'Cancella',
     advancedFilterBuilder: 'Costruttore',
+    advancedFilterPlaceholder: 'Filtro Avanzato',
     advancedFilterValidationMissingColumn: 'Colonna mancante',
     advancedFilterValidationMissingOption: 'Opzione mancante',
     advancedFilterValidationMissingValue: 'Valore mancante',
@@ -783,6 +784,10 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaPageSizeSelectorLabel: 'Dimensione della Pagina',
     ariaChartMenuClose: 'Chiudi Menu Modifica Grafico',
     ariaChartSelected: 'Selezionato',
+    ariaChartSeriesChartType: 'Tipo di grafico per ${variable}',
+    ariaChartPalettePrevious: 'Tavolozza precedente',
+    ariaChartPaletteNext: 'Tavolozza successiva',
+    ariaChartPalettePage: 'Tavolozza ${variable} di ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} che mostra ${count} valori tra ${min} e ${max}. Inizia da ${start} e termina a ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} che mostra 1 valore: ${value}.',
@@ -812,11 +817,17 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaLabelClose: 'Chiudi',
     ariaLabelMaximize: 'Ingrandisci',
     ariaLabelRestore: 'Ripristina',
+    ariaLabelColorPickerSpectrum: 'Saturazione e luminosità',
+    ariaValueColorPickerSpectrum: 'Saturazione ${variable}%, luminosità ${variable}%',
+    ariaLabelColorPickerHue: 'Tonalità',
+    ariaLabelColorPickerAlpha: 'Opacità',
+    ariaLabelColorPickerHex: 'Colore esadecimale',
     ariaLabelColumnMenu: 'Menù Colonna',
     ariaLabelColumnFilter: 'Filtro Colonna',
     ariaLabelSelectField: 'Seleziona Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor di cella',
     ariaValidationErrorPrefix: 'Validazione di Editor di cella',
     ariaFullRowValidationError: 'Convalida intera riga: ${variable}',
     ariaFullRowEditValidationFailed: 'Impossibile completare la modifica della riga. ${variable}',
@@ -846,6 +857,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaLabelAddFilterField: 'Aggiungi campo filtro',
     ariaLabelFilterCardDelete: 'Elimina filtro',
     ariaLabelFilterCardHasEdits: 'Ha modifiche',
+    ariaLabelFilterCardType: 'Tipo di Filtro',
     ariaHasNote: 'Questa cella ha una nota.',
 
     // Number Format (Status Bar, Pagination Panel)

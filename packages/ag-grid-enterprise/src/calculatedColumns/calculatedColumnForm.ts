@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _getActiveDomElement,
     _getElementRootNode,
     _setAriaActiveDescendant,
@@ -332,7 +333,7 @@ export class CalculatedColumnForm extends Component {
         if (this.readOnly) {
             return;
         }
-        this.addManagedElementListeners(input, {
+        _addManagedElementListeners(this, input, {
             click: () => {
                 this.rememberExpressionSelection();
                 this.refreshContextSuggestions();
@@ -354,26 +355,26 @@ export class CalculatedColumnForm extends Component {
         for (const pickerButton of pickerButtons) {
             const [pickerKey, suggestionType, button] = pickerButton;
             if (expressionPickers.has(pickerKey)) {
-                this.addManagedElementListeners(button, {
+                _addManagedElementListeners(this, button, {
                     mousedown: () => this.rememberExpressionSelection(),
                     click: () => this.openPicker(suggestionType, button),
                 });
             }
         }
         if (!this.liveApply) {
-            this.addManagedElementListeners(this.eApply, {
+            _addManagedElementListeners(this, this.eApply, {
                 click: () => {
                     this.setValidationErrors(this.onApply(this.draft));
                 },
             });
-            this.addManagedElementListeners(this.eCancel, {
+            _addManagedElementListeners(this, this.eCancel, {
                 click: () => this.onCancel(),
             });
         }
     }
 
     private addFormListeners(): void {
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (event.target !== this.eExpression.getInputElement()) {
                     this.onSuggestionKeyDown(event);

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     advancedFilterCancel: 'Annuler',
     advancedFilterClear: 'Effacer',
     advancedFilterBuilder: 'Constructeur',
+    advancedFilterPlaceholder: 'Filtre avancé',
     advancedFilterValidationMissingColumn: 'La colonne est manquante',
     advancedFilterValidationMissingOption: "L'option est manquante",
     advancedFilterValidationMissingValue: 'La valeur est manquante',
@@ -785,6 +786,10 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaPageSizeSelectorLabel: 'Taille de page',
     ariaChartMenuClose: "Fermer le menu d'édition de graphique",
     ariaChartSelected: 'Sélectionné',
+    ariaChartSeriesChartType: 'Type de graphique pour ${variable}',
+    ariaChartPalettePrevious: 'Palette précédente',
+    ariaChartPaletteNext: 'Palette suivante',
+    ariaChartPalettePage: 'Palette ${variable} sur ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} affichant ${count} valeurs entre ${min} et ${max}. Commence à ${start} et se termine à ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} affichant 1 valeur : ${value}.',
@@ -814,11 +819,17 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelClose: 'Fermer',
     ariaLabelMaximize: 'Agrandir',
     ariaLabelRestore: 'Restaurer',
+    ariaLabelColorPickerSpectrum: 'Saturation et luminosité',
+    ariaValueColorPickerSpectrum: 'Saturation ${variable} %, luminosité ${variable} %',
+    ariaLabelColorPickerHue: 'Teinte',
+    ariaLabelColorPickerAlpha: 'Opacité',
+    ariaLabelColorPickerHex: 'Couleur hexadécimale',
     ariaLabelColumnMenu: 'Menu de colonne',
     ariaLabelColumnFilter: 'Filtre de colonne',
     ariaLabelSelectField: 'Champ de sélection',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Éditeur de cellule',
     ariaValidationErrorPrefix: "Validation de l'éditeur de cellule",
     ariaFullRowValidationError: 'Validation de la ligne complète : ${variable}',
     ariaFullRowEditValidationFailed: 'Impossible de terminer la modification de la ligne. ${variable}',
@@ -849,6 +860,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelAddFilterField: 'Ajouter un champ de filtre',
     ariaLabelFilterCardDelete: 'Supprimer le filtre',
     ariaLabelFilterCardHasEdits: 'A des modifications',
+    ariaLabelFilterCardType: 'Type de filtre',
     ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)

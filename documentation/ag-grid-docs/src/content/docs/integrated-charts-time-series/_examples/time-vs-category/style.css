@@ -1,12 +1,7 @@
 .wrapper {
     display: grid;
-    grid-template-rows: 50px 300px 400px;
-    gap: 10px;
-    padding: 10px;
-}
-
-#buttonRow {
-    grid-row: 1;
+    grid-template-rows: auto 300px 400px;
+    gap: 8px;
 }
 
 #axisBtn {

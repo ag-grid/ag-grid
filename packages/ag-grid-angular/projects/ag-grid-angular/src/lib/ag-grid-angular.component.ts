@@ -1499,6 +1499,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+     * for example when the row data is empty or all rows are filtered out.
+     * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     */
+    @Input({ transform: booleanAttribute }) public alwaysShowGrandTotalRow: boolean | undefined = undefined;
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */

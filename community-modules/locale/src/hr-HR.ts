@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     advancedFilterCancel: 'Otkaži',
     advancedFilterClear: 'Očisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Nedostaje stupac',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
     advancedFilterValidationMissingValue: 'Nedostaje vrijednost',
@@ -778,6 +779,10 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
+    ariaChartPalettePrevious: 'Prethodna paleta',
+    ariaChartPaletteNext: 'Sljedeća paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost: ${value}.',
@@ -807,11 +812,17 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaLabelClose: 'Zatvori',
     ariaLabelMaximize: 'Maksimiziraj',
     ariaLabelRestore: 'Vrati',
+    ariaLabelColorPickerSpectrum: 'Zasićenost i svjetlina',
+    ariaValueColorPickerSpectrum: 'Zasićenost ${variable} %, svjetlina ${variable} %',
+    ariaLabelColorPickerHue: 'Nijansa',
+    ariaLabelColorPickerAlpha: 'Neprozirnost',
+    ariaLabelColorPickerHex: 'Heksadecimalna boja',
     ariaLabelColumnMenu: 'Izbornik stupca',
     ariaLabelColumnFilter: 'Filtar stupca',
     ariaLabelSelectField: 'Odaberi polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Uređivač ćelija',
     ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
     ariaFullRowValidationError: 'Provjera cijelog retka: ${variable}',
     ariaFullRowEditValidationFailed: 'Uređivanje retka nije moguće dovršiti. ${variable}',
@@ -841,6 +852,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)

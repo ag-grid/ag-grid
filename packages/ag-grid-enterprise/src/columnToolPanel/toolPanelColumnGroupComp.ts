@@ -1,4 +1,11 @@
-import { RefPlaceholder, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -174,7 +181,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
-        this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
         // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
@@ -367,8 +374,8 @@ export class ToolPanelColumnGroupComp extends Component {
         eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', beans, null));
 
         const listener = this.onExpandOrContractClicked.bind(this);
-        this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
-        this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupClosedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         const touchListener = new TouchListener(eColumnGroupIcons, true);
         this.addManagedListeners(touchListener, { tap: listener });

@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "36.2.0-beta.20261030.1444",
+  "version": "36.3.0-beta.20261106.1218",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "files": [
@@ -44,22 +44,22 @@
     "build-only:watch": "vite build --watch"
   },
   "dependencies": {
-    "ag-grid-community": "36.2.0-beta.20261030.1444"
+    "ag-grid-community": "36.3.0-beta.20261106.1218"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.10",
-    "@types/node": "^22.15.3",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vitejs/plugin-vue-jsx": "^4.0.0",
+    "@types/node": "^24.19.2",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vitejs/plugin-vue-jsx": "^5.1.6",
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
-    "npm-run-all2": "^9.0.3",
+    "npm-run-all2": "^9.0.4",
     "replace-in-file": "9.0.0",
     "typescript": "~5.8.3",
     "vite": "~5.4.19",
     "vite-plugin-vue-devtools": "^8.2.1",
-    "vue": "^3.5.43",
-    "vue-tsc": "^3.3.11"
+    "vue": "^3.5.44",
+    "vue-tsc": "^3.3.13"
   },
   "peerDependencies": {
     "vue": "^3.5.43"

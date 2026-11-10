@@ -44,6 +44,7 @@ export abstract class DragDataPanel extends Component {
         valueFormatter: (colState: ColState) => string,
         selectLabelKey: ChartTranslationKey,
         dragSourceId: string,
+        ariaLabel: string,
         skipAnimation?: () => boolean
     ): void {
         if (this.allowMultipleSelection) {
@@ -55,13 +56,17 @@ export abstract class DragDataPanel extends Component {
                     valueFormatter,
                     selectPlaceholder: this.chartTranslation.translate(selectLabelKey),
                     dragSourceId,
+                    ariaLabel,
                     onValuesChange: (params) => this.onValueChange(params),
                     maxSelection: this.maxSelection,
                 })
             );
             this.groupComp.addItem(this.valuePillSelect);
         } else {
-            const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
+            const params: AgSelectParams<AgComponentSelectorType, ColState> = {
+                ...this.createValueSelectParams(columns),
+                ariaLabel,
+            };
             params.onValueChange = (updatedColState: ColState) => {
                 for (const col of columns) {
                     col.selected = false;

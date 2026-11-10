@@ -1,5 +1,6 @@
 import {
     KeyCode,
+    _addManagedElementListeners,
     _isEventFromPrintableCharacter,
     _isEventFromThisInstance,
     _isEventSupported,
@@ -39,7 +40,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private addKeyboardListeners(): void {
         const eventName = 'keydown';
         const listener = this.processKeyboardEvent.bind(this, eventName);
-        this.addManagedElementListeners(this.element, { [eventName]: listener });
+        _addManagedElementListeners(this, this.element, { [eventName]: listener });
     }
 
     private addMouseListeners(): void {
@@ -52,7 +53,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         for (const eventName of eventNames) {
             const listener = this.processMouseEvent.bind(this, eventName);
-            this.addManagedElementListeners(this.element, { [eventName]: listener });
+            _addManagedElementListeners(this, this.element, { [eventName]: listener });
         }
     }
 

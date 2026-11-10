@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     advancedFilterCancel: 'منسوخ کریں',
     advancedFilterClear: 'صاف کریں',
     advancedFilterBuilder: 'بلڈر',
+    advancedFilterPlaceholder: 'ایڈوانسڈ فلٹر',
     advancedFilterValidationMissingColumn: 'کالم غائب ہے',
     advancedFilterValidationMissingOption: 'آپشن غائب ہے',
     advancedFilterValidationMissingValue: 'قدر غائب ہے',
@@ -775,6 +776,10 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaPageSizeSelectorLabel: 'صفہ کا سائز',
     ariaChartMenuClose: 'چارٹ ایڈیٹ مینو بند کریں',
     ariaChartSelected: 'منتخب شدہ',
+    ariaChartSeriesChartType: '${variable} چارٹ قسم',
+    ariaChartPalettePrevious: 'پچھلا پیلیٹ',
+    ariaChartPaletteNext: 'اگلا پیلیٹ',
+    ariaChartPalettePage: 'پیلیٹ ${variable} از ${variable}',
     ariaSparklineChartDescription:
         'اسپارک لائن - ${chartType}، ${count} اقدار دکھاتا ہے، ${min} اور ${max} کے درمیان۔ ${start} سے شروع ہوتا ہے اور ${end} پر ختم ہوتا ہے۔',
     ariaSparklineChartDescriptionSingleValue: 'اسپارک لائن - ${chartType}، 1 قدر دکھاتا ہے: ${value}۔',
@@ -804,11 +809,17 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelClose: 'بند کریں',
     ariaLabelMaximize: 'بڑا کریں',
     ariaLabelRestore: 'بحال کریں',
+    ariaLabelColorPickerSpectrum: 'سیچوریشن اور چمک',
+    ariaValueColorPickerSpectrum: 'سیچوریشن ${variable}%، چمک ${variable}%',
+    ariaLabelColorPickerHue: 'رنگت',
+    ariaLabelColorPickerAlpha: 'غیر شفافیت',
+    ariaLabelColorPickerHex: 'ہیکس رنگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',
     ariaLabelSelectField: 'فیلڈ منتخب کریں',
 
     // Cell Editor
+    ariaLabelCellEditor: 'سیل ایڈیٹر',
     ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaFullRowValidationError: 'مکمل صف کی توثیق: ${variable}',
     ariaFullRowEditValidationFailed: 'صف کی ترمیم مکمل نہیں ہو سکتی۔ ${variable}',
@@ -838,6 +849,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
+    ariaLabelFilterCardType: 'فلٹر کی قسم',
     ariaHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)

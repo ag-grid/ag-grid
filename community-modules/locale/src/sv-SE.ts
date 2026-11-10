@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Rensa',
     advancedFilterBuilder: 'Byggare',
+    advancedFilterPlaceholder: 'Avancerat filter',
     advancedFilterValidationMissingColumn: 'Kolumn saknas',
     advancedFilterValidationMissingOption: 'Alternativ saknas',
     advancedFilterValidationMissingValue: 'Värde saknas',
@@ -779,6 +780,10 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaPageSizeSelectorLabel: 'Sidstorlek',
     ariaChartMenuClose: 'Stäng diagramredigeringsmeny',
     ariaChartSelected: 'Vald',
+    ariaChartSeriesChartType: 'Diagramtyp för ${variable}',
+    ariaChartPalettePrevious: 'Föregående palett',
+    ariaChartPaletteNext: 'Nästa palett',
+    ariaChartPalettePage: 'Palett ${variable} av ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} som visar ${count} värden mellan ${min} och ${max}. Börjar på ${start} och slutar på ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} visar 1 värde, ${value}.',
@@ -808,11 +813,17 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelClose: 'Stäng',
     ariaLabelMaximize: 'Maximera',
     ariaLabelRestore: 'Återställ',
+    ariaLabelColorPickerSpectrum: 'Mättnad och ljusstyrka',
+    ariaValueColorPickerSpectrum: 'Mättnad ${variable} %, ljusstyrka ${variable} %',
+    ariaLabelColorPickerHue: 'Nyans',
+    ariaLabelColorPickerAlpha: 'Opacitet',
+    ariaLabelColorPickerHex: 'Hexfärg',
     ariaLabelColumnMenu: 'Kolumnmeny',
     ariaLabelColumnFilter: 'Kolumnfilter',
     ariaLabelSelectField: 'Välj fält',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering av hela raden: ${variable}',
     ariaFullRowEditValidationFailed: 'Det går inte att slutföra radredigeringen. ${variable}',
@@ -842,6 +853,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
+    ariaLabelFilterCardType: 'Filtertyp',
     ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)

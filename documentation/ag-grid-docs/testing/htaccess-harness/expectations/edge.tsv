@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 309
+# @min-rows 320
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -292,8 +292,9 @@ www	/examples/column-definitions/column-definition-update/angular/app.component.
 www	/examples/some-page/some-example/images/logo.png	200		cc=no-cache
 www	/archive/36.2.0/files/ag-grid-community/dist/ag-grid-community.min.js	200		cc=public, max-age=604800, s-maxage=31536000
 www	/archive/36.3.0/files/ag-grid-community/dist/ag-grid-community.min.js	200		cc=no-cache
-# /example/ is a live demo page: HTML no-cache, never the day-long asset cache.
-www	/example/	200		accept=html	cc=no-cache	ct~^text/html
+# /example/ is a live demo page: browsers revalidate it, never the day-long asset cache (CloudFront's
+# /example/ behaviour does not cache, whatever the s-maxage).
+www	/example/	200		accept=html	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	ct~^text/html
 # Live 404: the root ErrorDocument, revalidated, no agent Link header.
 www	/no-such-page/	404		body~grid-root-404	cc=no-cache	link-describedby	sec+
 # The asset rules cascade into the subsites through the merged mod_headers config.
@@ -305,6 +306,22 @@ www	/studio/images/logo.png	200		cc=public, max-age=86400
 www	/studio/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000
 www	/charts/no-such-page/	404		body~charts-404	cc=no-cache	link-describedby
 www	/studio/no-such-page/	404		body~studio-404	cc=no-cache	link-describedby
+
+# @category caching-edge-and-tags
+# Current pages and markdown: CloudFront keeps them a day (s-maxage), browsers revalidate (max-age=0),
+# and everything a docs deploy can change carries the cache tag the deploy jobs invalidate. Archives,
+# hashed assets and error pages are never tagged, and error pages stay no-cache.
+www	/react-data-grid/getting-started/	200		accept=html	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/react-data-grid/getting-started/	200		accept=md	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/bar-series/	200		accept=html	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/studio/react/quick-start/	200		accept=html	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/llms.txt	200		cc=public, max-age=86400	h:x-ag-cache-tag=ag-docs	page=/llms.txt
+www	/images/logo.svg	200		cc=public, max-age=86400	h:x-ag-cache-tag=ag-docs	page=/images/logo.svg
+www	/_astro/index.AbCd1234.js	200		cc=public, max-age=604800, s-maxage=31536000	h:x-ag-cache-tag=absent	page=/_astro/index.AbCd1234.js
+www	/archive/36.2.0/react-data-grid/getting-started/	200		accept=html	cc=public, max-age=604800, s-maxage=31536000	h:x-ag-cache-tag=absent
+www	/charts/archive/14.2.0/react/bar-series/	200		accept=html	h:x-ag-cache-tag=absent
+www	/no-such-page/	404		body~grid-root-404	cc=no-cache	h:x-ag-cache-tag=absent
+www	/charts/no-such-page/	404		body~charts-404	cc=no-cache	h:x-ag-cache-tag=absent
 
 # @category caching-released-archives
 # A released grid/charts archive is immutable: everything under it is long-cached.

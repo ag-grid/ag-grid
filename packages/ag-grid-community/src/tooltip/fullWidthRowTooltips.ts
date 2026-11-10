@@ -11,12 +11,18 @@ import type { TooltipFeature, TooltipSource, TooltipSourceParams } from './toolt
 import { _getCellTooltipComponentDefinition } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveGroupTooltipValue } from './tooltipValueUtils';
 
+interface RowTooltip {
+    feature: TooltipFeature;
+    /** set by the renderer through `params.setTooltip`, not resolved from the group column */
+    fromRenderer: boolean;
+}
+
 /**
  * Tooltip state for one full-width row, keyed by the element(s) the row renders into. Owned by the
  * Tooltip module so full-width rows carry no tooltip code when the module is not registered.
  */
 export class FullWidthRowTooltips extends BeanStub {
-    private readonly tooltipFeatures = new Map<HTMLElement, TooltipFeature>();
+    private readonly tooltipFeatures = new Map<HTMLElement, RowTooltip>();
     private readonly rendererGuards = new Map<HTMLElement, ComponentInstanceGuard>();
 
     public constructor(private readonly rowCtrl: RowCtrl) {
@@ -51,9 +57,9 @@ export class FullWidthRowTooltips extends BeanStub {
             rowComp?.getPinnedRightRowElement(),
         ]);
 
-        for (const [element, feature] of tooltipFeatures) {
+        for (const [element, tooltip] of tooltipFeatures) {
             if (!currentElements.has(element)) {
-                this.destroyBean(feature, this.beans.context);
+                this.destroyBean(tooltip.feature, this.beans.context);
                 tooltipFeatures.delete(element);
             }
         }
@@ -98,12 +104,16 @@ export class FullWidthRowTooltips extends BeanStub {
                 node: rowNode,
                 data: rowNode.data,
             }),
-            () => colDef
+            () => colDef,
+            true
         );
     }
 
-    /** Resolves a full-width group tooltip lazily from its owning group column or tree-data auto column. */
+    /** Resolves a group row's tooltip lazily from its group column, unless its renderer set one. */
     public setupGroupRowsTooltip(rowNode: RowNode, eGui: HTMLElement): void {
+        if (this.tooltipFeatures.get(eGui)?.fromRenderer) {
+            return;
+        }
         const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
         const { gos } = this;
 
@@ -177,7 +187,8 @@ export class FullWidthRowTooltips extends BeanStub {
                 data: rowNode.data,
                 valueFormatted: latestValueFormatted ?? undefined,
             }),
-            () => _getCellTooltipComponentDefinition(colDef)
+            () => _getCellTooltipComponentDefinition(colDef),
+            false
         );
     }
 
@@ -193,9 +204,10 @@ export class FullWidthRowTooltips extends BeanStub {
     private setupTooltip(
         eGui: HTMLElement,
         getTooltipValue: () => any,
-        shouldDisplayTooltip?: () => boolean,
-        getAdditionalParams?: () => TooltipSourceParams,
-        getTooltipComponentDefinition: () => ColDef | undefined = () => undefined
+        shouldDisplayTooltip: (() => boolean) | undefined,
+        getAdditionalParams: (() => TooltipSourceParams) | undefined,
+        getTooltipComponentDefinition: () => ColDef | undefined,
+        fromRenderer: boolean
     ): void {
         const { tooltipFeatures, rowCtrl, beans } = this;
         if (!rowCtrl.getCurrentRowElement()) {
@@ -210,9 +222,9 @@ export class FullWidthRowTooltips extends BeanStub {
             shouldDisplayTooltip,
             ...(getAdditionalParams ? { getAdditionalParams } : {}),
         };
-        const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui));
+        const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);
         if (feature) {
-            tooltipFeatures.set(eGui, feature);
+            tooltipFeatures.set(eGui, { feature, fromRenderer });
         } else {
             tooltipFeatures.delete(eGui);
         }
@@ -220,7 +232,7 @@ export class FullWidthRowTooltips extends BeanStub {
 
     private clearTooltip(eGui: HTMLElement): void {
         const { tooltipFeatures } = this;
-        const feature = tooltipFeatures.get(eGui);
+        const feature = tooltipFeatures.get(eGui)?.feature;
         if (feature) {
             this.destroyBean(feature, this.beans.context);
         }
@@ -230,8 +242,8 @@ export class FullWidthRowTooltips extends BeanStub {
     public override destroy(): void {
         const { context } = this.beans;
         const { tooltipFeatures, rendererGuards } = this;
-        for (const feature of tooltipFeatures.values()) {
-            this.destroyBean(feature, context);
+        for (const tooltip of tooltipFeatures.values()) {
+            this.destroyBean(tooltip.feature, context);
         }
         tooltipFeatures.clear();
         for (const guard of rendererGuards.values()) {

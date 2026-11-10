@@ -89,6 +89,23 @@ describe('convertTemplate', () => {
         expect(converted).toBe('<input type="text" title="checked" />');
     });
 
+    it('makes an empty disabled attribute bare, since React treats disabled="" as false', () => {
+        const template =
+            '<button disabled="">Go</button><input type="radio" disabled=""><fieldset disabled=""></fieldset>';
+        const converted = convertTemplate(template);
+
+        expect(converted).toBe(
+            '<button disabled>Go</button><input type="radio" disabled /><fieldset disabled></fieldset>'
+        );
+    });
+
+    it('does not rewrite attributes that merely end in disabled', () => {
+        const template = '<button aria-disabled="">Go</button>';
+        const converted = convertTemplate(template);
+
+        expect(converted).toBe('<button aria-disabled="">Go</button>');
+    });
+
     it('does not change value attributes for other elements', () => {
         const template = '<option value="bob">';
         const converted = convertTemplate(template);

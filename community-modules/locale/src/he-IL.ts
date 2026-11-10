@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     advancedFilterCancel: 'ביטול',
     advancedFilterClear: 'נקה',
     advancedFilterBuilder: 'בונה',
+    advancedFilterPlaceholder: 'סינון מתקדם',
     advancedFilterValidationMissingColumn: 'עמודה חסרה',
     advancedFilterValidationMissingOption: 'אפשרות חסרה',
     advancedFilterValidationMissingValue: 'ערך חסר',
@@ -774,6 +775,10 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaPageSizeSelectorLabel: 'גודל עמוד',
     ariaChartMenuClose: 'סגור תפריט עריכת תרשים',
     ariaChartSelected: 'נבחר',
+    ariaChartSeriesChartType: 'סוג תרשים עבור ${variable}',
+    ariaChartPalettePrevious: 'הפלטה הקודמת',
+    ariaChartPaletteNext: 'הפלטה הבאה',
+    ariaChartPalettePage: 'פלטה ${variable} מתוך ${variable}',
     ariaSparklineChartDescription:
         'ספארקליין - ${chartType} מציג ${count} ערכים בין ${min} ל-${max}. מתחיל ב-${start} ומסתיים ב-${end}.',
     ariaSparklineChartDescriptionSingleValue: 'ספארקליין - ${chartType} מציג ערך אחד: ${value}.',
@@ -803,11 +808,17 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaLabelClose: 'סגור',
     ariaLabelMaximize: 'הגדל',
     ariaLabelRestore: 'שחזר',
+    ariaLabelColorPickerSpectrum: 'רוויה ובהירות',
+    ariaValueColorPickerSpectrum: 'רוויה ${variable}%, בהירות ${variable}%',
+    ariaLabelColorPickerHue: 'גוון',
+    ariaLabelColorPickerAlpha: 'אטימות',
+    ariaLabelColorPickerHex: 'צבע הקסדצימלי',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',
     ariaLabelSelectField: 'שדה בחירה',
 
     // Cell Editor
+    ariaLabelCellEditor: 'עורך תא',
     ariaValidationErrorPrefix: 'אימות עורך תא',
     ariaFullRowValidationError: 'אימות שורה מלאה: ${variable}',
     ariaFullRowEditValidationFailed: 'לא ניתן להשלים את עריכת השורה. ${variable}',
@@ -837,6 +848,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaLabelFilterCardType: 'סוג מסנן',
     ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)

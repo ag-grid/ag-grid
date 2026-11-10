@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     advancedFilterCancel: 'إلغاء',
     advancedFilterClear: 'مسح',
     advancedFilterBuilder: 'المنشئ',
+    advancedFilterPlaceholder: 'الفلترة المتقدمة',
     advancedFilterValidationMissingColumn: 'العمود مفقود',
     advancedFilterValidationMissingOption: 'الخيار مفقود',
     advancedFilterValidationMissingValue: 'القيمة مفقودة',
@@ -774,6 +775,10 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaPageSizeSelectorLabel: 'حجم الصفحة',
     ariaChartMenuClose: 'إغلاق قائمة تحرير الرسم البياني',
     ariaChartSelected: 'محدد',
+    ariaChartSeriesChartType: 'نوع الرسم البياني لـ ${variable}',
+    ariaChartPalettePrevious: 'لوحة الألوان السابقة',
+    ariaChartPaletteNext: 'لوحة الألوان التالية',
+    ariaChartPalettePage: 'لوحة الألوان ${variable} من ${variable}',
     ariaSparklineChartDescription:
         'مخطط شراري - ${chartType} يعرض ${count} قيمة بين ${min} و ${max}. يبدأ عند ${start} وينتهي عند ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'مخطط شراري - ${chartType} يعرض قيمة واحدة، ${value}.',
@@ -803,11 +808,17 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelClose: 'إغلاق',
     ariaLabelMaximize: 'تكبير',
     ariaLabelRestore: 'استعادة',
+    ariaLabelColorPickerSpectrum: 'التشبع والسطوع',
+    ariaValueColorPickerSpectrum: 'التشبع ${variable}%، السطوع ${variable}%',
+    ariaLabelColorPickerHue: 'تدرج اللون',
+    ariaLabelColorPickerAlpha: 'العتامة',
+    ariaLabelColorPickerHex: 'لون سداسي عشري',
     ariaLabelColumnMenu: 'قائمة الأعمدة',
     ariaLabelColumnFilter: 'تصفية العمود',
     ariaLabelSelectField: 'اختيار الحقل',
 
     // Cell Editor
+    ariaLabelCellEditor: 'محرر الخلية',
     ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
     ariaFullRowValidationError: 'التحقق من الصف الكامل: ${variable}',
     ariaFullRowEditValidationFailed: 'تعذر إكمال تحرير الصف. ${variable}',
@@ -837,6 +848,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaLabelFilterCardType: 'نوع الفلتر',
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)

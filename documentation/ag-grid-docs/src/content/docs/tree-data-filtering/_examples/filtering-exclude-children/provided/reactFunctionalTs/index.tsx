@@ -7,7 +7,6 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -77,16 +76,18 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <label>
-                            <span>excludeChildrenWhenTreeDataFiltering:</span>
-                            <input
-                                type="checkbox"
-                                id="excludeChildrenWhenTreeDataFiltering"
-                                onClick={toggleFilter}
-                                defaultChecked
-                            />
-                        </label>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label>
+                                <span>excludeChildrenWhenTreeDataFiltering:</span>
+                                <input
+                                    type="checkbox"
+                                    id="excludeChildrenWhenTreeDataFiltering"
+                                    onClick={toggleFilter}
+                                    defaultChecked
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

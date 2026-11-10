@@ -1,4 +1,4 @@
-import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _debounce, _setDisplayed } from 'ag-stack';
 
 import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField } from 'ag-grid-community';
 import { AgCheckboxSelector, AgInputTextFieldSelector, Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
@@ -36,8 +36,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private expandState: ExpandState;
     private selectState?: boolean;
 
-    private onFilterTextChangedDebounced: () => number;
-    private filterTextChangedTimeout: number | undefined;
+    private onFilterTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private filterTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private params: ToolPanelColumnCompParams;
 
@@ -58,7 +58,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             },
         });
 
-        this.addManagedElementListeners(this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
+        _addManagedElementListeners(this, this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
         this.eFilterTextField

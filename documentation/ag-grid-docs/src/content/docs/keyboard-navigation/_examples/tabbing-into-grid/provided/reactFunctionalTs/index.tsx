@@ -61,9 +61,9 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={{ width: '100%', height: '100%' }}>
-                <div className="test-container">
-                    <div>
-                        <div className="form-container">
+                <div className="example-wrapper">
+                    <div className="example-controls">
+                        <div className="form-container controls-row">
                             <label>Input Above</label>
                             <input type="text" />
                         </div>
@@ -76,9 +76,11 @@ const GridExample = () => {
                             defaultColDef={defaultColDef}
                         />
                     </div>
-                    <div className="form-container">
-                        <label>Input Below</label>
-                        <input type="text" />
+                    <div className="form-container example-controls">
+                        <div className="controls-row">
+                            <label>Input Below</label>
+                            <input type="text" />
+                        </div>
                     </div>
                 </div>
             </div>

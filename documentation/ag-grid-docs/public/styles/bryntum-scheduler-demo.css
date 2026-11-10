@@ -3,7 +3,7 @@
    https://bryntum.com/products/scheduler/examples/drag-from-grid-custom/resources/app.css
 
    The only change from upstream is the container selector: the example mounts
-   its widgets in `#main`, whereas our UMD port (public/scripts/bryntum-scheduler-demo.js)
+   its widgets in `#main`, whereas our port (public/scripts/bryntum-scheduler-demo.js)
    mounts them in `#live-scheduler-demo`. Without the flex rule below the
    scheduler, splitter and unplanned grid stack vertically instead of laying out
    side-by-side.

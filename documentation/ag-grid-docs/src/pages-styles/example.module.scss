@@ -19,6 +19,9 @@ $copy-column-stacks-below: 1440px;
 
 .githubIcon,
 .youtubeIcon {
+    // Keeps the padded logos at their original size now that button icons are smaller.
+    --icon-size: 2em;
+
     padding: $spacing-size-1;
 }
 

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '構建器',
+    advancedFilterPlaceholder: '進階篩選',
     advancedFilterValidationMissingColumn: '缺少欄位',
     advancedFilterValidationMissingOption: '缺少選項',
     advancedFilterValidationMissingValue: '缺少值',
@@ -774,6 +775,10 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaPageSizeSelectorLabel: '每頁大小',
     ariaChartMenuClose: '關閉圖表編輯選單',
     ariaChartSelected: '已選擇',
+    ariaChartSeriesChartType: '${variable} 圖表類型',
+    ariaChartPalettePrevious: '上一個調色板',
+    ariaChartPaletteNext: '下一個調色板',
+    ariaChartPalettePage: '調色板 ${variable} / ${variable}',
     ariaSparklineChartDescription:
         '迷你圖 - ${chartType} 顯示 ${count} 個值，介於 ${min} 和 ${max} 之間。從 ${start} 開始，到 ${end} 結束。',
     ariaSparklineChartDescriptionSingleValue: '迷你圖 - ${chartType} 顯示 1 個數值：${value}。',
@@ -803,11 +808,17 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaLabelClose: '關閉',
     ariaLabelMaximize: '最大化',
     ariaLabelRestore: '還原',
+    ariaLabelColorPickerSpectrum: '飽和度與亮度',
+    ariaValueColorPickerSpectrum: '飽和度 ${variable}%，亮度 ${variable}%',
+    ariaLabelColorPickerHue: '色相',
+    ariaLabelColorPickerAlpha: '不透明度',
+    ariaLabelColorPickerHex: '十六進位色彩',
     ariaLabelColumnMenu: '欄位選單',
     ariaLabelColumnFilter: '欄位篩選器',
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
+    ariaLabelCellEditor: '單元格編輯器',
     ariaValidationErrorPrefix: '單元格編輯器驗證',
     ariaFullRowValidationError: '整行驗證：${variable}',
     ariaFullRowEditValidationFailed: '無法完成行編輯。${variable}',
@@ -837,6 +848,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaLabelAddFilterField: '新增篩選欄位',
     ariaLabelFilterCardDelete: '刪除篩選器',
     ariaLabelFilterCardHasEdits: '有編輯',
+    ariaLabelFilterCardType: '篩選類型',
     ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)

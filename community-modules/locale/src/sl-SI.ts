@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     advancedFilterCancel: 'Prekliči',
     advancedFilterClear: 'Počisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Manjka stolpec',
     advancedFilterValidationMissingOption: 'Manjka možnost',
     advancedFilterValidationMissingValue: 'Manjka vrednost',
@@ -791,6 +792,10 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaPageSizeSelectorLabel: 'Velikost strani',
     ariaChartMenuClose: 'Zapri meni za urejanje grafikona',
     ariaChartSelected: 'Izbrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
+    ariaChartPalettePrevious: 'Prejšnja paleta',
+    ariaChartPaletteNext: 'Naslednja paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Iskrivi grafikon - ${chartType} prikazuje ${count} vrednosti med ${min} in ${max}. Začne se pri ${start} in konča pri ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Iskrivi grafikon - ${chartType} prikazuje 1 vrednost, ${value}.',
@@ -823,6 +828,11 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelMaximize: 'Povečaj',
 
     ariaLabelRestore: 'Obnovi',
+    ariaLabelColorPickerSpectrum: 'Nasičenost in svetlost',
+    ariaValueColorPickerSpectrum: 'Nasičenost ${variable} %, svetlost ${variable} %',
+    ariaLabelColorPickerHue: 'Odtenek',
+    ariaLabelColorPickerAlpha: 'Prekrivnost',
+    ariaLabelColorPickerHex: 'Šestnajstiška barva',
 
     ariaLabelColumnMenu: 'Meni stolpca',
     ariaLabelColumnFilter: 'Filter stolpca',
@@ -830,6 +840,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelSelectField: 'Izberi polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Urejevalnik celic',
     ariaValidationErrorPrefix: 'Preverjanje veljavnosti urejevalnika celic',
     ariaFullRowValidationError: 'Preverjanje veljavnosti cele vrstice: ${variable}',
     ariaFullRowEditValidationFailed: 'Urejanja vrstice ni mogoče dokončati. ${variable}',
@@ -862,6 +873,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelAddFilterField: 'Dodaj polje filtra',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima spremembe',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ta celica ima opombo.',
 
     // Number Format (Status Bar, Pagination Panel)

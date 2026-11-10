@@ -50,11 +50,16 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
     public initialiseEditor(params: SelectCellEditorParams<any, TValue>): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const { eEditor, valueSvc, gos } = this;
+        const { eEditor, valueSvc, gos, beans } = this;
         const { values, value, eventKey } = params;
 
+        eEditor.setAriaLabel(
+            beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true) ||
+                this.getLocaleTextFunc()('ariaLabelSelectField', 'Select Field')
+        );
+
         if (_missing(values)) {
-            this.beans.log.warn(58);
+            beans.log.warn(58);
             return;
         }
 

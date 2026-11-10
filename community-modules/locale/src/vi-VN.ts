@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     advancedFilterCancel: 'Hủy bỏ',
     advancedFilterClear: 'Xóa',
     advancedFilterBuilder: 'Trình tạo',
+    advancedFilterPlaceholder: 'Bộ lọc Nâng cao',
     advancedFilterValidationMissingColumn: 'Thiếu cột',
     advancedFilterValidationMissingOption: 'Thiếu tùy chọn',
     advancedFilterValidationMissingValue: 'Thiếu giá trị',
@@ -776,6 +777,10 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaPageSizeSelectorLabel: 'Kích thước Trang',
     ariaChartMenuClose: 'Đóng Menu Chỉnh sửa Biểu đồ',
     ariaChartSelected: 'Đã chọn',
+    ariaChartSeriesChartType: 'Loại biểu đồ của ${variable}',
+    ariaChartPalettePrevious: 'Bảng màu trước',
+    ariaChartPaletteNext: 'Bảng màu tiếp theo',
+    ariaChartPalettePage: 'Bảng màu ${variable} trên ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} hiển thị ${count} giá trị trong khoảng từ ${min} đến ${max}. Bắt đầu tại ${start} và kết thúc tại ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} hiển thị 1 giá trị, ${value}.',
@@ -805,11 +810,17 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelClose: 'Đóng',
     ariaLabelMaximize: 'Phóng to',
     ariaLabelRestore: 'Khôi phục',
+    ariaLabelColorPickerSpectrum: 'Độ bão hòa và độ sáng',
+    ariaValueColorPickerSpectrum: 'Độ bão hòa ${variable}%, độ sáng ${variable}%',
+    ariaLabelColorPickerHue: 'Sắc độ',
+    ariaLabelColorPickerAlpha: 'Độ mờ đục',
+    ariaLabelColorPickerHex: 'Màu hex',
     ariaLabelColumnMenu: 'Menu Cột',
     ariaLabelColumnFilter: 'Bộ Lọc Cột',
     ariaLabelSelectField: 'Chọn Trường',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Trình chỉnh sửa ô',
     ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
     ariaFullRowValidationError: 'Xác thực toàn bộ hàng: ${variable}',
     ariaFullRowEditValidationFailed: 'Không thể hoàn tất chỉnh sửa hàng. ${variable}',
@@ -839,6 +850,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaLabelFilterCardType: 'Loại Bộ Lọc',
     ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)

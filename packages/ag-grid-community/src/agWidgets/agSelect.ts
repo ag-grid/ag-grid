@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponentSelector,
     AgCoreBean,
-    AgCoreBeanCollection,
     AgEvent,
     BaseEvents,
     BaseProperties,
@@ -9,9 +9,16 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy, _setAriaReadOnly } from 'ag-stack';
+import {
+    KeyCode,
+    _addManagedElementListeners,
+    _isElementOverflowingCallback,
+    _setAriaActiveDescendant,
+    _setAriaLabelledBy,
+    _setAriaReadOnly,
+} from 'ag-stack';
 
-import type { ListOption } from './agList';
+import type { AgListActiveItemChangedEvent, ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import type { AgPickerFieldParams } from './agPickerFieldParams';
@@ -30,18 +37,18 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     placeholder?: string;
     readOnly?: boolean;
 }
-type AgSelectEvent = 'selectedItem';
+type AgSelectEvent = 'selectedItem' | 'activeItemChanged';
 export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
     /** The keydown that committed the value, when committed via keyboard. Absent for mouse commits. */
     keyboardEvent?: KeyboardEvent;
 }
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgSelect<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TValue = string | null,
 > extends AgPickerField<
@@ -126,7 +133,7 @@ export class AgSelect<
             this.setReadOnly(readOnly);
         }
 
-        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -160,7 +167,7 @@ export class AgSelect<
         _setAriaLabelledBy(eListAriaEl, this.getAriaElement().id);
         this.setAriaControlsId(listId);
 
-        listComponent.addManagedElementListeners(listComponent.getGui(), {
+        _addManagedElementListeners(listComponent, listComponent.getGui(), {
             mousedown: (e) => {
                 e?.preventDefault();
             },
@@ -181,6 +188,9 @@ export class AgSelect<
                 this.setValue(this.listComponent.getValue()!, false, true);
                 this.hidePicker();
             },
+            activeItemChanged: ({ activeId }: AgListActiveItemChangedEvent) => {
+                _setAriaActiveDescendant(this.getAriaElement(), this.isPickerDisplayed ? activeId : null);
+            },
         });
     }
 
@@ -191,6 +201,7 @@ export class AgSelect<
 
     protected override beforeHidePicker(): void {
         this.listComponent?.hideItemTooltip();
+        _setAriaActiveDescendant(this.getAriaElement(), null);
         super.beforeHidePicker();
     }
 

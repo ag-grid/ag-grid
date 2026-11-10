@@ -8,6 +8,8 @@ import type { ChartOptionsService } from '../../services/chartOptionsService';
 import { DragDataPanel } from './dragDataPanel';
 
 export class SeriesDataPanel extends DragDataPanel {
+    private pairedModeToggle?: GridToggleButton;
+
     constructor(
         chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService,
@@ -32,7 +34,7 @@ export class SeriesDataPanel extends DragDataPanel {
             })
         );
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.groupComp.createManagedBean<GridToggleButton>(
+            this.pairedModeToggle = this.groupComp.createManagedBean<GridToggleButton>(
                 new AgToggleButton({
                     label: this.chartTranslation.translate('paired'),
                     labelAlignment: 'left',
@@ -45,10 +47,16 @@ export class SeriesDataPanel extends DragDataPanel {
                     },
                 })
             );
-            this.groupComp.addItem(pairedModeToggle);
+            this.groupComp.addItem(this.pairedModeToggle);
         }
 
-        this.createGroup(this.valueCols, this.generateGetSeriesLabel(this.valueCols), 'seriesAdd', 'seriesSelect');
+        this.createGroup(
+            this.valueCols,
+            this.generateGetSeriesLabel(this.valueCols),
+            'seriesAdd',
+            'seriesSelect',
+            this.title
+        );
 
         this.getGui().appendChild(this.groupComp.getGui());
     }
@@ -60,6 +68,7 @@ export class SeriesDataPanel extends DragDataPanel {
             valueCols.filter((col) => col.selected)
         );
         this.refreshValueSelect(valueCols);
+        this.pairedModeToggle?.setValue(this.chartOptionsService.getPairedMode(), true);
     }
 
     private generateGetSeriesLabel(valueCols: ColState[]): (col: ColState) => string {

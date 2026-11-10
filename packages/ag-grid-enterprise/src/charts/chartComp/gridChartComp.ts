@@ -6,6 +6,7 @@ import type {
 } from 'ag-charts-types';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _focusInto,
     _getAbsoluteHeight,
@@ -74,6 +75,7 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -153,7 +155,7 @@ export class GridChartComp extends Component {
 
         this.addMenu();
 
-        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        _addManagedElementListeners(this, this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
         this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
         this.addManagedPropertyListeners(
