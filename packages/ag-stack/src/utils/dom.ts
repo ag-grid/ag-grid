@@ -38,8 +38,7 @@ export function _isFocusableFormField(element: Element | null): boolean {
     if (!element) {
         return false;
     }
-    const isFocusable =
-        element.matches(FORM_FIELD_SELECTOR) || ('isContentEditable' in element && element.isContentEditable === true);
+    const isFocusable = element.matches(FORM_FIELD_SELECTOR);
     if (!isFocusable) {
         return false;
     }

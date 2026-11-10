@@ -10,7 +10,6 @@ interface WheelGesture {
     x: number;
     y: number;
     lastAxisInputTime: number;
-    targets: WeakSet<EventTarget>;
 }
 
 interface TouchGesture {
@@ -95,9 +94,6 @@ export class ScrollGestureFeature extends BeanStub {
             if (!isElement(element)) {
                 continue;
             }
-            if (element.classList.contains('ag-grid-viewport')) {
-                return true;
-            }
             const style = win.getComputedStyle(element);
             if (
                 (/auto|scroll/.test(style.overflowY) && element.scrollHeight > element.clientHeight) ||
@@ -122,18 +118,12 @@ export class ScrollGestureFeature extends BeanStub {
             this.wheelGesture = null;
             gesture = null;
         }
-        const target = event.target;
-        if (!target || !gesture?.targets.has(target)) {
-            if (this.hasNestedScroller(event, win)) {
-                this.wheelGesture = null;
-                return;
-            }
+        // Keep ownership when scrolling moves nested content under the pointer.
+        if (!gesture?.axis && this.hasNestedScroller(event, win)) {
+            this.wheelGesture = null;
+            return;
         }
-        gesture ??= { axis: null, x: 0, y: 0, lastAxisInputTime: time, targets: new WeakSet() };
-        if (target) {
-            // Cache checked targets without retaining cells detached by virtualisation.
-            gesture.targets.add(target);
-        }
+        gesture ??= { axis: null, x: 0, y: 0, lastAxisInputTime: time };
 
         let { deltaX: x, deltaY: y } = event;
         if (event.shiftKey && x === 0) {

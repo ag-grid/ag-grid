@@ -11,6 +11,8 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 
+import { scrollGestureTrackpad } from './fixtures/scrollGestureTrackpad';
+
 describe('scroll gestures', () => {
     const grids = new TestGridsManager({ modules: [ClientSideRowModelModule, PinnedRowModule, ScrollApiModule] });
 
@@ -263,6 +265,23 @@ describe('scroll gestures', () => {
         expect(viewport.scrollTop).toBe(0);
     });
 
+    test.each(['horizontal', 'vertical'] as const)(
+        'recorded trackpad input releases the %s lock without a full idle gap',
+        async (initialAxis) => {
+            const { viewport } = await createGrid({
+                columnDefs: [{ field: 'a', width: 2000 }],
+            });
+            vi.useFakeTimers();
+            const horizontal = initialAxis === 'horizontal';
+            for (const [gap, x, y] of scrollGestureTrackpad) {
+                await vi.advanceTimersByTimeAsync(gap);
+                wheel(viewport, horizontal ? x : y, horizontal ? y : x);
+            }
+            expect(horizontal ? viewport.scrollTop : viewport.scrollLeft).toBeGreaterThan(80);
+            expect(horizontal ? viewport.scrollLeft : viewport.scrollTop).toBeGreaterThan(400);
+        }
+    );
+
     test('moving across cells does not start a new wheel gesture', async () => {
         const { root, viewport } = await createGrid();
         vi.useFakeTimers();
@@ -412,6 +431,49 @@ describe('scroll gestures', () => {
         await vi.advanceTimersByTimeAsync(300);
         expect(viewport.scrollTop).toBe(40);
     });
+
+    test.each([false, true])('holding before a flick does not dilute momentum (resume=%s)', async (resume) => {
+        const { viewport } = await createGrid();
+        vi.useFakeTimers();
+        const momentum: number[] = [];
+        for (const hold of [2000, 10000]) {
+            touch(viewport, 'touchstart', 300, 400);
+            if (resume) {
+                await vi.advanceTimersByTimeAsync(16);
+                touch(viewport, 'touchmove', 300, 360);
+            }
+            await vi.advanceTimersByTimeAsync(hold);
+            touch(viewport, 'touchmove', 300, resume ? 320 : 360);
+            const released = viewport.scrollTop;
+            touch(viewport, 'touchend', 300, resume ? 320 : 360);
+            await vi.advanceTimersByTimeAsync(32);
+            momentum.push(viewport.scrollTop - released);
+        }
+        expect(momentum[0]).toBeGreaterThan(0);
+        expect(momentum[1]).toBeGreaterThan(0);
+        expect(Math.abs(momentum[0] - momentum[1])).toBeLessThanOrEqual(1);
+        expect(viewport.scrollLeft).toBe(0);
+    });
+
+    test.each(['horizontal', 'vertical'] as const)(
+        'sub-threshold touch reversals retain scroll ownership on the %s axis',
+        async (axis) => {
+            const { viewport } = await createGrid();
+            const horizontal = axis === 'horizontal';
+            const move = (distance: number) =>
+                touch(viewport, 'touchmove', horizontal ? 300 - distance : 300, horizontal ? 400 : 400 - distance);
+            touch(viewport, 'touchstart', 300, 400);
+            for (const distance of [1, -1, 0, 3]) {
+                expect(move(distance).defaultPrevented).toBe(true);
+                expect(viewport.scrollLeft).toBe(0);
+                expect(viewport.scrollTop).toBe(0);
+            }
+            expect(move(40).defaultPrevented).toBe(true);
+            expect(viewport.scrollLeft).toBe(horizontal ? 40 : 0);
+            expect(viewport.scrollTop).toBe(horizontal ? 0 : 40);
+            touch(viewport, 'touchcancel', 300, 400);
+        }
+    );
 
     test.each(['horizontal', 'vertical'] as const)('touch momentum follows a reversal on the %s axis', async (axis) => {
         const { viewport } = await createGrid();

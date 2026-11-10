@@ -32,7 +32,7 @@ class FullWidthInputRenderer implements ICellRendererComp {
     }
 }
 
-describe('Renderer form fields', () => {
+describe('Full width row form fields', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule],
     });
@@ -62,40 +62,4 @@ describe('Renderer form fields', () => {
 
         expect(document.activeElement).toBe(input);
     });
-
-    test.each([false, true])(
-        'clicking editable content keeps browser focus on its editor (fullWidth=%s)',
-        async (fullWidth) => {
-            const renderer = () => {
-                const editor = document.createElement('div');
-                editor.contentEditable = 'true';
-                const text = document.createElement('span');
-                text.textContent = 'Editable name';
-                editor.appendChild(text);
-                for (const eventName of DOWN_EVENT_NAMES) {
-                    editor.addEventListener(eventName, (event) => event.preventDefault());
-                }
-                return editor;
-            };
-            const api = await gridsManager.createGridAndWait('editable', {
-                columnDefs: [{ field: 'name', cellRenderer: renderer }],
-                rowData: [{ name: 'Alice' }],
-                enableCellTextSelection: true,
-                isFullWidthRow: () => fullWidth,
-                fullWidthCellRenderer: renderer,
-            });
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const editor = gridDiv.querySelector<HTMLElement>('[contenteditable]')!;
-            const text = editor.querySelector('span')!;
-            editor.focus();
-            expect(document.activeElement).toBe(editor);
-
-            for (const eventName of DOWN_EVENT_NAMES) {
-                text.dispatchEvent(new MouseEvent(eventName, { bubbles: true, cancelable: true }));
-            }
-            await asyncSetTimeout(0);
-
-            expect(document.activeElement).toBe(editor);
-        }
-    );
 });
