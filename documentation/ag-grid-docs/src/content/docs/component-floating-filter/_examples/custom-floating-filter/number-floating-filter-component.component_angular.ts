@@ -66,11 +66,12 @@ export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngu
             return;
         }
 
-        this.currentValue.set(Number(this.currentValue()));
+        const value = Number(this.currentValue());
+        this.currentValue.set(value);
         this.params.onModelChange({
             filterType: 'number',
             type: 'greaterThan',
-            filter: this.currentValue(),
+            filter: value,
         });
     }
 }
