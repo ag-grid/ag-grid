@@ -1,6 +1,6 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { ScrollGestureFeature } from './scrollGestureFeature';
+import { ScrollGestureService } from './scrollGestureService';
 
 /**
  * @feature Scrolling -> Scroll Gestures
@@ -9,5 +9,5 @@ import { ScrollGestureFeature } from './scrollGestureFeature';
 export const ScrollGestureModule: _ModuleWithoutApi = {
     moduleName: 'ScrollGesture',
     version: VERSION,
-    dynamicBeans: { scrollGestureFeature: ScrollGestureFeature },
+    beans: [ScrollGestureService],
 };
