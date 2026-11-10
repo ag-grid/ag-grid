@@ -93,6 +93,24 @@
             ]
         },
         {
+            "id": "",
+            "type": "white-section",
+            "modifiers": [],
+            "eyebrow": "Tiers",
+            "heading": "Choose the Gantt Tier That Fits",
+            "body_html": "<p>Bryntum Gantt comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): the Gantt chart with its task grid and timeline, drag-and-drop and resizing, cell editing and the basic task editor, dependencies, and the core date, progress, WBS and constraint columns.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds the full task editor, resource assignments, task calendars and non-working time, effort, slack and early and late date columns, the progress line, task grouping, and copy and paste.</li> <li><strong>Enterprise</strong> (commercial licence): adds critical paths, baselines, split tasks, Microsoft Project import, cost and time-phased data, the S-curve chart, PDF export and print, real-time updates and version history, AI features, and data sharing with Scheduler.</li> </ul>",
+            "body_text": "Bryntum Gantt comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): the Gantt chart with its task grid and timeline, drag-and-drop and resizing, cell editing and the basic task editor, dependencies, and the core date, progress, WBS and constraint columns. {{tier.core}} (commercial licence): adds the full task editor, resource assignments, task calendars and non-working time, effort, slack and early and late date columns, the progress line, task grouping, and copy and paste. Enterprise (commercial licence): adds critical paths, baselines, split tasks, Microsoft Project import, cost and time-phased data, the S-curve chart, PDF export and print, real-time updates and version history, AI features, and data sharing with Scheduler.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Compare tiers",
+                    "href": "/products/gantt/features#gantt-comparison-heading",
+                    "title": "Compare Gantt tiers"
+                }
+            ],
+            "media": []
+        },
+        {
             "id": "block_2c3c61d9aa0568d9d622dade60699342",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
@@ -288,8 +306,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Integrations",
             "heading": "Integrations and Export Options",
-            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-schedulerpro/\"><span style=\"font-weight: 400;\">Scheduler Pro</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
-            "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart . Push Gantt data to Microsoft Excel or to Microsoft Project , print it , or share it as PDF, PNG and ICS . Pair Gantt with other Bryntum components such as Scheduler Pro and Task Board .",
+            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-schedulerpro/\"><span style=\"font-weight: 400;\">Scheduler</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
+            "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart . Push Gantt data to Microsoft Excel or to Microsoft Project , print it , or share it as PDF, PNG and ICS . Pair Gantt with other Bryntum components such as Scheduler and Task Board .",
             "links": [
                 {
                     "text": "PERT chart",
@@ -316,7 +334,7 @@
                     "href": "https://bryntum.com/products/gantt/examples/export-to-ics/"
                 },
                 {
-                    "text": "Scheduler Pro",
+                    "text": "Scheduler",
                     "href": "https://bryntum.com/products/gantt/examples/gantt-schedulerpro/"
                 },
                 {
@@ -506,7 +524,7 @@
                 },
                 {
                     "heading": "Recent Releases",
-                    "href": "changelog/#release-7.3.0",
+                    "href": "/products/gantt/changelog/#release-8.0.0",
                     "body_text": "Complete changelog",
                     "media": null
                 },

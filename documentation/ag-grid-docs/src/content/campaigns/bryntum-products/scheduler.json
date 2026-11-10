@@ -110,14 +110,16 @@
             "id": "",
             "type": "white-section",
             "modifiers": [],
-            "eyebrow": "Pro Edition",
-            "heading": "Want Scheduling Logic Built In?",
-            "body_text": "Want Scheduling Logic Built In? Try Scheduler Pro Compare Features",
+            "eyebrow": "Tiers",
+            "heading": "Choose the Scheduler Tier That Fits",
+            "body_html": "<p>Bryntum Scheduler comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): horizontal and vertical timelines, drag-and-drop event editing, the event editor, dependency lines, context menus and tooltips, and backend sync with CrudManager.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds recurring events and time zone support, dependency editing, resource time ranges and non-working time, the timeline histogram, zoom and pan tools, undo and redo, and lazy loading.</li> <li><strong>Enterprise</strong> (commercial licence): adds the scheduling engine, with working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views, nested events and event segments, summaries, PDF export and print, AI features and Salesforce support.</li> </ul>",
+            "body_text": "Bryntum Scheduler comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): horizontal and vertical timelines, drag-and-drop event editing, the event editor, dependency lines, context menus and tooltips, and backend sync with CrudManager. {{tier.core}} (commercial licence): adds recurring events and time zone support, dependency editing, resource time ranges and non-working time, the timeline histogram, zoom and pan tools, undo and redo, and lazy loading. Enterprise (commercial licence): adds the scheduling engine, with working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views, nested events and event segments, summaries, PDF export and print, AI features and Salesforce support.",
+            "links": [],
             "ctas": [
                 {
-                    "text": "See Scheduler Pro",
-                    "href": "/products/scheduler-pro/",
-                    "title": "See Scheduler Pro"
+                    "text": "Compare tiers",
+                    "href": "/products/scheduler/features#scheduler-comparison-heading",
+                    "title": "Compare Scheduler tiers"
                 }
             ],
             "media": []
@@ -258,6 +260,108 @@
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-dependencies-svalbard-scaled.png"
                 }
             ]
+        },
+        {
+            "id": "block_86cff8bcd91213c53bcd78636afc0cd6",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Enterprise · Resource Management",
+            "heading": "Don’t Over-Allocate Your Resources",
+            "body_html": "<p>Track your team’s workload with a built-in histogram so you can decide faster and more fairly.</p> <ul> <li>Bright red highlights make over-capacity workloads obvious at a glance. No digging through tables or reports.</li> <li>Tweak task assignments to keep the plan balanced.</li> </ul>",
+            "body_text": "Track your team’s workload with a built-in histogram so you can decide faster and more fairly. Bright red highlights make over-capacity workloads obvious at a glance. No digging through tables or reports. Tweak task assignments to keep the plan balanced.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/scheduler/examples/resourcehistogram/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/schedulerpro-resourcehistogram-svalbard-2-scaled.png",
+                    "alt": "Scheduler with a resource histogram below the schedule, red bars marking over-allocated team members",
+                    "width": "1240",
+                    "height": "663",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-resourcehistogram-svalbard-2-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_b27deebef856877e482370a5bc9b1a9a",
+            "type": "text-media",
+            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Enterprise · Smart Assignment",
+            "heading": "Assign Tasks by Skill",
+            "body_html": "<p>Let the Enterprise tier handle the logic behind the scenes so planning stays efficient:</p> <ul> <li>Match the right tasks with the right people without fuss.</li> <li>Pair tasks with teammates based on skills and availability.</li> <li>Auto-schedule tasks or drag them into suggested time slots.</li> </ul>",
+            "body_text": "Let the Enterprise tier handle the logic behind the scenes so planning stays efficient: Match the right tasks with the right people without fuss. Pair tasks with teammates based on skills and availability. Auto-schedule tasks or drag them into suggested time slots.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples/skill-matching/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/scheduler/schedulerpro-skill-matching-zoom.mp4.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-skill-matching-zoom.mp4.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_db9616ac89f5620c3b5018eb7d1c9498",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Enterprise · Auto-Scheduling",
+            "heading": "Adaptive, Smarter Planning",
+            "body_html": "<p>Plan with confidence for real-world conditions:</p> <ul> <li>Spot peak activity windows and overloaded categories via the heatmap.</li> <li>Lean on <a href=\"/products/scheduler/examples/nestedevents/\">nested events</a> to make related-task handling simpler.</li> <li><a href=\"/products/scheduler/examples/travel-time/\">Factor travel time in</a> for tighter callout and field-routing planning.</li> <li>Settle <a href=\"/products/scheduler/examples/conflicts/\">scheduling conflicts</a> and keep the schedule intact.</li> </ul>",
+            "body_text": "Plan with confidence for real-world conditions: Spot peak activity windows and overloaded categories via the heatmap. Lean on nested events to make related-task handling simpler. Factor travel time in for tighter callout and field-routing planning. Settle scheduling conflicts and keep the schedule intact.",
+            "links": [
+                {
+                    "text": "nested events",
+                    "href": "/products/scheduler/examples/nestedevents/"
+                },
+                {
+                    "text": "Factor travel time in",
+                    "href": "/products/scheduler/examples/travel-time/"
+                },
+                {
+                    "text": "scheduling conflicts",
+                    "href": "/products/scheduler/examples/conflicts/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/scheduler/examples/tree-summary/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/schedulerpro-tree-summary-heatmap-svalbard-scaled.png",
+                    "alt": "Tree view with a heatmap of daily event counts per country and event category",
+                    "width": "1240",
+                    "height": "762",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-tree-summary-heatmap-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "live-demo",
+            "demo_product": "schedulerpro",
+            "modifiers": [],
+            "eyebrow": "Enterprise · Live Demo",
+            "heading": "Set Up Resource Shifts",
+            "body_text": "Define availability for each resource and watch the schedule honour shifts in real time, powered by the Bryntum Scheduler Enterprise scheduling engine below.",
+            "demo_src": null,
+            "media": []
         },
         {
             "id": "block_760c4c7cdc72f4963f0b44a291de9598",
@@ -455,7 +559,7 @@
                 },
                 {
                     "heading": "Recent Releases",
-                    "href": "changelog/#release-7.3.0",
+                    "href": "/products/scheduler/changelog/#release-8.0.0",
                     "body_text": "Complete changelog",
                     "media": null
                 },

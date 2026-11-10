@@ -13,8 +13,8 @@
             "type": "heroTBM",
             "modifiers": [],
             "heading": "Bryntum Complete",
-            "body_html": "<p>A power-packed component bundle that includes every feature of the Gantt, Scheduler, Scheduler Pro, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.</p>",
-            "body_text": "A power-packed component bundle that includes every feature of the Gantt, Scheduler, Scheduler Pro, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.",
+            "body_html": "<p>A power-packed component bundle that includes every feature of the Gantt, Scheduler, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.</p>",
+            "body_text": "A power-packed component bundle that includes every feature of the Gantt, Scheduler, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.",
             "ctas": [
                 {
                     "text": "Browse examples",
@@ -31,7 +31,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/bryntum-complete-v7-2.png",
-                    "alt": "bryntum-complete-v7-2",
+                    "alt": "Bryntum Complete components: Gantt, Scheduler, Calendar, Task Board and Grid",
                     "width": "768",
                     "height": "558",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/06/bryntum-complete-v7-2.png"
@@ -49,23 +49,41 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
+            "id": "",
+            "type": "white-section",
+            "modifiers": [],
+            "eyebrow": "Tiers",
+            "heading": "One API, Three Tiers",
+            "body_html": "<p>Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.</p>",
+            "body_text": "Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read the tiers FAQ",
+                    "href": "/tiers-faq/",
+                    "title": "Bryntum tiers FAQ"
+                }
+            ],
+            "media": []
+        },
+        {
             "id": "block_948f4b16be9cc9a1ee3a72452105c843",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
-            "eyebrow": "Pro Scheduler",
-            "heading": "A Scheduler Built for Pros",
-            "body_html": "<p>Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 &amp; TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
-            "body_text": "Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 & TypeScript, it drops cleanly into any React, Angular or Vue app.",
+            "eyebrow": "Scheduler Enterprise",
+            "heading": "Scheduling Logic Built In",
+            "body_html": "<p>The Enterprise tier of Scheduler adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views. Written in ES2020 &amp; TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
+            "body_text": "The Enterprise tier of Scheduler adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views. Written in ES2020 & TypeScript, it drops cleanly into any React, Angular or Vue app.",
             "links": [
                 {
-                    "text": "A Scheduler Built for Pros",
-                    "href": "/products/schedulerpro/"
+                    "text": "Scheduling Logic Built In",
+                    "href": "/products/scheduler/"
                 }
             ],
             "ctas": [
                 {
                     "text": "Learn More",
-                    "href": "/products/schedulerpro/",
+                    "href": "/products/scheduler/",
                     "title": "Learn More"
                 }
             ],
@@ -73,7 +91,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Scheduler-Pro-_-Transparent-_-Minimal-2.svg",
-                    "alt": "",
+                    "alt": "Bryntum Scheduler Enterprise: scheduling engine with calendars, constraints and dependencies",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Scheduler-Pro-_-Transparent-_-Minimal-2.svg"
@@ -235,18 +253,18 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Scheduler",
             "heading": "Schedule Just About Anything",
-            "body_html": "<p>Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options</p>",
-            "body_text": "Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options",
+            "body_html": "<p>Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a built-in scheduling engine for the most demanding planning needs.</p>",
+            "body_text": "Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a built-in scheduling engine for the most demanding planning needs.",
             "links": [
                 {
                     "text": "Schedule Just About Anything",
-                    "href": "alpha2-staging.kinsta.cloud/products/scheduler/"
+                    "href": "/products/scheduler/"
                 }
             ],
             "ctas": [
                 {
                     "text": "Learn More",
-                    "href": "/products/grid/",
+                    "href": "/products/scheduler/",
                     "title": "Learn More"
                 }
             ],
@@ -369,14 +387,14 @@
             "heading": "Demos",
             "items": [
                 {
-                    "heading": "gantt-schedulerpro-svalbard",
+                    "heading": "Gantt + Scheduler",
                     "href": "/products/gantt/examples/gantt-schedulerpro",
-                    "body_text": "Gantt + Scheduler Pro",
+                    "body_text": "Gantt + Scheduler",
                     "description": "Co-ordinate plans and resourcing across two synced timelines.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/complete/gantt-schedulerpro-svalbard-768x452.png",
-                        "alt": "gantt-schedulerpro-svalbard",
+                        "alt": "Gantt chart and Scheduler timeline side by side, sharing one project plan",
                         "width": "768",
                         "height": "452",
                         "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-schedulerpro-svalbard-768x452.png"
@@ -384,7 +402,7 @@
                 },
                 {
                     "heading": "gantt-taskboard-svalbard",
-                    "href": "/products/gantt/examples/gantt-taskboard/ ",
+                    "href": "/products/gantt/examples/gantt-taskboard/",
                     "body_text": "Gantt + Task Board",
                     "description": "Move tasks between project plan and Kanban with one click.",
                     "media": {
@@ -398,7 +416,7 @@
                 },
                 {
                     "heading": "gantt-calendar-scheduler-svalbard-crop",
-                    "href": " /products/calendar/examples/calendar-scheduler",
+                    "href": "/products/calendar/examples/calendar-scheduler",
                     "body_text": "Calendar + Scheduler",
                     "description": "Mix high-level calendar entries with detailed timeline views.",
                     "media": {

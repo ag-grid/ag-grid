@@ -69,6 +69,8 @@ export interface BryntumTextMediaSection extends BryntumSectionBase {
 
 export interface BryntumLiveDemoSection extends BryntumSectionBase {
     type: 'live-demo';
+    /** Live demo to embed (a `LIVE_DEMO_PRODUCT_CONFIG` key); defaults to the page's product slug. */
+    demo_product?: string;
     demo_src?: string | null;
     /** Optional supporting copy rendered between the heading and the live demo iframe. */
     body_text?: string;

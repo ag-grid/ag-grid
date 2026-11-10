@@ -118,6 +118,24 @@
             ]
         },
         {
+            "id": "",
+            "type": "white-section",
+            "modifiers": [],
+            "eyebrow": "Tiers",
+            "heading": "Choose the Calendar Tier That Fits",
+            "body_html": "<p>Bryntum Calendar comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows.</p> <ul> <li><strong>Community</strong> (free, MIT licence): day, week, month, year and agenda views, a view switcher and date picker, creating, dragging and resizing events, the event editor, and custom event rendering.</li> <li><strong>{{tier.core}}</strong> (commercial licence): adds the sidebar, recurring events, time ranges, copy and paste, undo and redo, dragging in events from external sources, and backend sync with CrudManager.</li> <li><strong>Enterprise</strong> (commercial licence): adds resource views, day and month agenda views, the month grid and year planner, event buffers for travel time, loading events on demand, print, AI features, charts and Salesforce support.</li> </ul>",
+            "body_text": "Bryntum Calendar comes in three tiers. Each tier includes everything in the one before it, and all three share the same API, so you can start free and move up as your application grows. Community (free, MIT licence): day, week, month, year and agenda views, a view switcher and date picker, creating, dragging and resizing events, the event editor, and custom event rendering. {{tier.core}} (commercial licence): adds the sidebar, recurring events, time ranges, copy and paste, undo and redo, dragging in events from external sources, and backend sync with CrudManager. Enterprise (commercial licence): adds resource views, day and month agenda views, the month grid and year planner, event buffers for travel time, loading events on demand, print, AI features, charts and Salesforce support.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Compare tiers",
+                    "href": "/products/calendar/features#calendar-comparison-heading",
+                    "title": "Compare Calendar tiers"
+                }
+            ],
+            "media": []
+        },
+        {
             "id": "block_0b3a2b388d8b3c162ad4de5e0fe504b2",
             "type": "text-media",
             "modifiers": ["video-file", "added-shadow"],
@@ -470,7 +488,7 @@
                 },
                 {
                     "heading": "Recent Releases",
-                    "href": "changelog/#release-7.3.0",
+                    "href": "/products/calendar/changelog/#release-8.0.0",
                     "body_text": "Complete changelog",
                     "media": null
                 },
