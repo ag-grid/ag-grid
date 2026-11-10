@@ -116,7 +116,8 @@ function initBeans<TBeans>(
 
 /**
  * Builds beans in dependency order, handing each declaring bean only what it declared. A declaring
- * bean's container is scoped to the same view, so beans it creates or looks up are narrowed too.
+ * bean's container looks beans up in the same view, but a bean it creates gets what that bean
+ * declares, or the whole collection if it declares nothing, as it would from the graph itself.
  *
  * Throws on a duplicate bean name, a missing required dependency, a cycle, or a bean another graph
  * already owns, naming the beans involved.
@@ -203,15 +204,15 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
 
     let destroyed = false;
 
+    // Resolved against the whole graph, not the creator's view: what a bean needs doesn't depend on who creates it.
     const createIn = <T extends AgBaseBean<TBeans>>(
-        source: Record<string, unknown>,
         bean: T,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeans>) => void
     ): T => {
         const { beanName = '(runtime bean)', deps, optionalDeps } = bean as Partial<AgDeclaredBean<TBeans>>;
         assertUnowned(beanName, bean);
-        requireDeps(beanName, deps, (dep) => source[dep] !== undefined);
-        initBeans([bean], () => viewFor({ deps, optionalDeps }, source) as TBeans, afterPreCreateCallback);
+        requireDeps(beanName, deps, isAvailable);
+        initBeans([bean], () => viewFor({ deps, optionalDeps }, built) as TBeans, afterPreCreateCallback);
         return bean;
     };
 
@@ -228,7 +229,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
             destroyBeans: (list) => base.destroyBeans(list),
             getBeans: () => view as TBeans,
             getBean: (name) => (view as TBeans)[name],
-            createBean: (bean, afterPreCreateCallback) => createIn(view, bean, afterPreCreateCallback),
+            createBean: (bean, afterPreCreateCallback) => createIn(bean, afterPreCreateCallback),
         };
     };
 
@@ -297,7 +298,7 @@ export function createBeanGraph<TBeans = Record<string, unknown>>({
         getBean: (name) => (built as TBeans)[name],
         getId: () => id,
         isDestroyed: () => destroyed,
-        createBean: (bean, afterPreCreateCallback) => createIn(built, bean, afterPreCreateCallback),
+        createBean: (bean, afterPreCreateCallback) => createIn(bean, afterPreCreateCallback),
         destroyBean(bean) {
             destroyOne(bean);
             return undefined;

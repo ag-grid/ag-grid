@@ -180,28 +180,39 @@ describe('a bean built after the graph', () => {
 describe('a bean created by a declared bean', () => {
     const build = () => {
         const a = bean('a');
+        const secret = bean('secret');
         const owner = bean('owner', ['a']);
-        createBeanGraph({ id: 'test', beans: [a, bean('secret'), owner] });
-        return { a, container: owner.wiredWith!.context as IContext<Record<string, unknown>> };
+        createBeanGraph({ id: 'test', beans: [a, secret, owner] });
+        return { a, secret, container: owner.wiredWith!.context as IContext<Record<string, unknown>> };
     };
 
-    it('is handed only what its creator was', () => {
-        const { a, container } = build();
+    it('is handed the whole collection when it declares nothing, whoever creates it', () => {
+        const { a, secret, container } = build();
         const child = bean('child');
 
         container.createBean(child);
 
         expect(child.wiredWith!.a).toBe(a);
-        expect(child.wiredWith!.secret).toBeUndefined();
+        expect(child.wiredWith!.secret).toBe(secret);
     });
 
-    it('cannot declare a bean its creator was not handed', () => {
+    it('is handed what it declares, even beans its creator was not', () => {
+        const { secret, container } = build();
+        const child = bean('child', ['secret']);
+
+        container.createBean(child);
+
+        expect(child.wiredWith!.secret).toBe(secret);
+        expect(child.wiredWith!.a).toBeUndefined();
+    });
+
+    it('is refused when it declares a bean the graph never built', () => {
         const { container } = build();
 
-        expect(() => container.createBean(bean('child', ['secret']))).toThrow(/'child'.*depends on 'secret'/);
+        expect(() => container.createBean(bean('child', ['missing']))).toThrow(/'child'.*depends on 'missing'/);
     });
 
-    it('cannot look one up through the container either', () => {
+    it('leaves its creator unable to look up what the creator did not declare', () => {
         const { container } = build();
 
         expect(container.getBean('secret')).toBeUndefined();
