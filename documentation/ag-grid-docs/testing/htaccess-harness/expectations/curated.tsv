@@ -89,6 +89,11 @@ www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 # --- AG-17694: Beyond the Prompt moved /campaigns/ -> /community/ ---
 www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
 
+# --- DM-80: Scheduler Pro retired into the Scheduler page; the .md twin follows it ---
+www	/campaigns/bryntum-scheduler-pro/	301	/campaigns/bryntum-scheduler/
+www	/campaigns/bryntum-scheduler-pro	301	/campaigns/bryntum-scheduler-pro/	hops=2
+www	/campaigns/bryntum-scheduler-pro.md	301	/campaigns/bryntum-scheduler.md
+
 # --- SE-166: framework whats-new must reach /whats-new/ in ONE hop, and never /whats-new// ---
 www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
 www	/vue-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/

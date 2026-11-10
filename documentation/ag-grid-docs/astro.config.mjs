@@ -392,6 +392,7 @@ export default defineConfig({
         agDemoTitleChecker(),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
+            disableMarkdownDocs: ['1', 'true'].includes(DISABLE_MARKDOWN_DOCS),
         }),
         agLinkChecker({
             include: CHECK_LINKS === 'true',
