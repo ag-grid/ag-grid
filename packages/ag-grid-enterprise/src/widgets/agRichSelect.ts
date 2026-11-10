@@ -244,10 +244,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private setupAriaProperties(): void {
-        const { eWrapper, gos } = this;
-
-        eWrapper.tabIndex = gos.get('tabIndex');
-
         const translate = this.getLocaleTextFunc();
         this.ariaDeleteSelection = translate('ariaLabelRichSelectDeleteSelection', 'Press DELETE to deselect item');
         this.ariaDeselectAllItems = translate(
