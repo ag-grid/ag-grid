@@ -504,8 +504,8 @@ export const AG_GRID_ERRORS = {
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
         `icon \`${iconName}\` function should return back a string or a dom object` as const,
-    134: ({ iconName, suggestions }: { iconName: string; suggestions: string[] }) =>
-        [`Did not find icon \`${iconName}\``, suggestions.length ? `Did you mean \`${suggestions.join('`, `')}\`?` : '']
+    134: ({ iconName, suggestions }: { iconName: string; suggestions?: string[] }) =>
+        [`Did not find icon \`${iconName}\``, suggestions?.length ? `Did you mean \`${suggestions.join('`, `')}\`?` : '']
             .filter(Boolean)
             .join('. '),
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
