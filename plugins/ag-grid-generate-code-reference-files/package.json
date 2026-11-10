@@ -6,7 +6,7 @@
     "@nx/devkit": "24.0.2",
     "@swc/helpers": "0.5.23",
     "ag-shared": "0.0.1",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",

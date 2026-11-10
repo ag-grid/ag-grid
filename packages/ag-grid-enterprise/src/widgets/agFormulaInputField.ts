@@ -138,7 +138,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             colRef && rowIndex != null && rowIndex !== undefined ? `${colRef}${rowIndex + 1}` : undefined;
 
         if (!editingCellRef) {
-            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined, undefined);
+            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined);
             return;
         }
 

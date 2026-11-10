@@ -23,6 +23,6 @@
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "jest-preset-angular": "^17.0.3",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3"
   }
 }

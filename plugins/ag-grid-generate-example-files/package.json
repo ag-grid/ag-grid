@@ -12,7 +12,7 @@
     "prettier": "3.9.10",
     "sucrase": "^3.35.1",
     "tinypool": "^2.2.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",
