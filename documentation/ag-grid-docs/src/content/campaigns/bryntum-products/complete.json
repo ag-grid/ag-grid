@@ -49,24 +49,6 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
-            "id": "",
-            "type": "white-section",
-            "modifiers": [],
-            "eyebrow": "Tiers",
-            "heading": "One API, Three Tiers",
-            "body_html": "<p>Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.</p>",
-            "body_text": "Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.",
-            "links": [],
-            "ctas": [
-                {
-                    "text": "Read the tiers FAQ",
-                    "href": "/tiers-faq/",
-                    "title": "Bryntum tiers FAQ"
-                }
-            ],
-            "media": []
-        },
-        {
             "id": "block_7279369cdb8981e50e221bd66736d060",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
@@ -99,55 +81,34 @@
             ]
         },
         {
-            "id": "block_d52edbe07e584bc8721052395c4ba60d",
+            "id": "block_29545995be5809df3ce8ee752d81e2a6",
             "type": "text-media",
-            "modifiers": ["image", "calendar", "added-shadow"],
-            "eyebrow": "Calendar",
-            "heading": "Tailorable Calendar",
-            "body_html": "<p>Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.</p>",
-            "body_text": "Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Scheduler",
+            "heading": "Schedule Just About Anything",
+            "body_html": "<p>Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.</p>",
+            "body_text": "Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.",
             "links": [
                 {
-                    "text": "Tailorable Calendar",
-                    "href": "/products/calendar/"
+                    "text": "Schedule Just About Anything",
+                    "href": "/products/scheduler/"
                 }
             ],
             "ctas": [
                 {
                     "text": "Learn More",
-                    "href": "/products/calendar/",
+                    "href": "/products/scheduler/",
                     "title": "Learn More"
                 }
             ],
             "media": [
                 {
                     "kind": "image",
-                    "src": "../assets/complete/Calendar-_-Transparent-_-Minimal-2.svg",
+                    "src": "../assets/complete/Scheduler-_-Transparent-_-Larger.svg",
                     "alt": "",
                     "width": "1",
                     "height": "1",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Calendar-_-Transparent-_-Minimal-2.svg"
-                }
-            ]
-        },
-        {
-            "id": "block_6c4410366c4202d5577375e4c860c979",
-            "type": "text-button",
-            "modifiers": ["variant-2"],
-            "eyebrow": "Get Started",
-            "heading": "Ready to dive in?",
-            "body_html": "",
-            "body_text": "",
-            "ctas": [
-                {
-                    "text": "Explore Examples",
-                    "href": "/examples",
-                    "title": "Explore Examples"
-                },
-                {
-                    "text": "Get in Touch",
-                    "href": "/contact/",
-                    "title": "Get in Touch"
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/Scheduler-_-Transparent-_-Larger.svg"
                 }
             ]
         },
@@ -184,9 +145,41 @@
             ]
         },
         {
+            "id": "block_d52edbe07e584bc8721052395c4ba60d",
+            "type": "text-media",
+            "modifiers": ["image", "calendar", "added-shadow"],
+            "eyebrow": "Calendar",
+            "heading": "Tailorable Calendar",
+            "body_html": "<p>Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.</p>",
+            "body_text": "Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.",
+            "links": [
+                {
+                    "text": "Tailorable Calendar",
+                    "href": "/products/calendar/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/calendar/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Calendar-_-Transparent-_-Minimal-2.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Calendar-_-Transparent-_-Minimal-2.svg"
+                }
+            ]
+        },
+        {
             "id": "block_f56f7ec18ae04336c9ab389bfcf96da0",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Task Board",
             "heading": "Kanban Task Board Component",
             "body_html": "<p>Our contemporary JS Kanban Task Board web component makes it easy to keep on top of day-to-day work. It supports swimlanes and lets you drag tasks across columns. A handful of config lines is enough to match your workflow with any number of columns &amp; swimlanes.</p>",
@@ -212,38 +205,6 @@
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Kanban-_-Transparent-_-Minimal-1.svg"
-                }
-            ]
-        },
-        {
-            "id": "block_29545995be5809df3ce8ee752d81e2a6",
-            "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
-            "eyebrow": "Scheduler",
-            "heading": "Schedule Just About Anything",
-            "body_html": "<p>Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.</p>",
-            "body_text": "Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.",
-            "links": [
-                {
-                    "text": "Schedule Just About Anything",
-                    "href": "/products/scheduler/"
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Learn More",
-                    "href": "/products/scheduler/",
-                    "title": "Learn More"
-                }
-            ],
-            "media": [
-                {
-                    "kind": "image",
-                    "src": "../assets/complete/Scheduler-_-Transparent-_-Larger.svg",
-                    "alt": "",
-                    "width": "1",
-                    "height": "1",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/Scheduler-_-Transparent-_-Larger.svg"
                 }
             ]
         },
@@ -280,6 +241,24 @@
             ]
         },
         {
+            "id": "",
+            "type": "white-section",
+            "modifiers": [],
+            "eyebrow": "Tiers",
+            "heading": "One API, Three Tiers",
+            "body_html": "<p>Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.</p>",
+            "body_text": "Every product in Bryntum Complete comes in Community, {{tier.core}} and Enterprise tiers that share one API, so you can start free and move up as your needs grow. To share data between Gantt and Scheduler, use the Enterprise tier of both.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read the tiers FAQ",
+                    "href": "/tiers-faq/",
+                    "title": "Bryntum tiers FAQ"
+                }
+            ],
+            "media": []
+        },
+        {
             "id": "block_5de00a582eb994795ddeece5d75822ea",
             "type": "text-media",
             "modifiers": ["video-file", "reverse", "added-shadow"],
@@ -300,50 +279,6 @@
                     "kind": "video",
                     "src": "../assets/complete/install-complete-edit-zoom.webm",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/06/install-complete-edit-zoom.webm"
-                }
-            ]
-        },
-        {
-            "id": "block_bc3a52d9a2ced50b318892e74a27f522",
-            "type": "brands",
-            "modifiers": [],
-            "eyebrow": "Trusted Worldwide",
-            "heading": "Used by the world’s most respected companies",
-            "items": [
-                {
-                    "href": "/company/customers/",
-                    "media": {
-                        "kind": "svg-file",
-                        "src": "brands/brand-1.svg"
-                    }
-                },
-                {
-                    "href": "/company/customers/",
-                    "media": {
-                        "kind": "svg-file",
-                        "src": "brands/brand-2.svg"
-                    }
-                },
-                {
-                    "href": "/company/customers/",
-                    "media": {
-                        "kind": "svg-file",
-                        "src": "brands/brand-3.svg"
-                    }
-                },
-                {
-                    "href": "/company/customers/",
-                    "media": {
-                        "kind": "svg-file",
-                        "src": "brands/brand-4.svg"
-                    }
-                },
-                {
-                    "href": "/company/customers/",
-                    "media": {
-                        "kind": "svg-file",
-                        "src": "brands/brand-5.svg"
-                    }
                 }
             ]
         },
@@ -399,10 +334,75 @@
             ]
         },
         {
+            "id": "block_bc3a52d9a2ced50b318892e74a27f522",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_6c4410366c4202d5577375e4c860c979",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Explore Examples",
+                    "href": "/examples",
+                    "title": "Explore Examples"
+                },
+                {
+                    "text": "Get in Touch",
+                    "href": "/contact/",
+                    "title": "Get in Touch"
+                }
+            ]
+        },
+        {
             "id": "block_6f1914f9c528e50e7e6df29301cda51b",
             "type": "columnsWithMedia",
             "modifiers": [],
-            "heading": "Demos",
+            "heading": "Reference",
             "items": [
                 {
                     "heading": "Demos",

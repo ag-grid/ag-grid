@@ -87,58 +87,6 @@
             ]
         },
         {
-            "id": "",
-            "type": "tiers",
-            "eyebrow": "Tiers",
-            "heading": "Choose the Task Board Tier That Fits",
-            "body_text": "Bryntum Task Board comes in three tiers that share one API, so you can start free and move up as your application grows.",
-            "items": [
-                {
-                    "heading": "Community",
-                    "licence": "Free, MIT licence",
-                    "features": [
-                        "Task board with rich card content",
-                        "Drag-and-drop and multi-select",
-                        "Task editor",
-                        "Menus and tooltips",
-                        "Column toolbars"
-                    ]
-                },
-                {
-                    "heading": "{{tier.core}}",
-                    "licence": "Commercial licence",
-                    "features": [
-                        "Swimlanes",
-                        "Filter bar and column filters",
-                        "Inline task editing",
-                        "Resource avatars",
-                        "Tags and checklists",
-                        "Renaming and resizing columns",
-                        "Zoom slider"
-                    ]
-                },
-                {
-                    "heading": "Enterprise",
-                    "licence": "Commercial licence",
-                    "features": [
-                        "Reordering columns and swimlanes by drag and drop",
-                        "Sorting, locking and searching columns",
-                        "Undo and redo",
-                        "Charts in cards",
-                        "AI features",
-                        "Salesforce support"
-                    ]
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Compare tiers",
-                    "href": "/products/taskboard/features#taskboard-comparison-heading",
-                    "title": "Compare Task Board tiers"
-                }
-            ]
-        },
-        {
             "id": "block_c57f051d24cd8095d56be8d6b7b4e1d6",
             "type": "text-media",
             "modifiers": ["video-file", "added-shadow"],
@@ -180,6 +128,93 @@
                     "kind": "video",
                     "src": "../assets/taskboard/taskboard-locked-column.mp4",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-locked-column.mp4"
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "live-demo",
+            "modifiers": [],
+            "eyebrow": "Live Demo",
+            "heading": "Have a Play Below",
+            "body_text": "Drag cards between columns, tailor swimlanes and edit task content live. The Bryntum Task Board is fully wired up below.",
+            "demo_src": null,
+            "media": []
+        },
+        {
+            "id": "block_0284d081fe88dec979b28b8edc99b607",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Familiar UX",
+            "heading": "Lean on Instantly Familiar UX",
+            "body_html": "<p class=\"p1\">Cut down on user admin with the Task Board’s welcoming, intuitive interactions:</p> <ul> <li>Confirm changes with <a href=\"/products/taskboard/examples/task-drag/\">confirmation dialogs</a></li> <li><a href=\"/products/taskboard/examples/scrolling/\">Auto-scroll to any swimlane or column</a> for fast navigation.</li> <li>Edit tasks in place with <a href=\"/products/taskboard/examples/simple-task-edit/\">inline editing</a>, or reach for the <a href=\"/products/taskboard/examples/task-edit/\">task editor</a> and <a href=\"/products/taskboard/examples/task-menu/\">context menu options</a>.</li> </ul>",
+            "body_text": "Cut down on user admin with the Task Board’s welcoming, intuitive interactions: Confirm changes with confirmation dialogs Auto-scroll to any swimlane or column for fast navigation. Edit tasks in place with inline editing , or reach for the task editor and context menu options .",
+            "links": [
+                {
+                    "text": "confirmation dialogs",
+                    "href": "/products/taskboard/examples/task-drag/"
+                },
+                {
+                    "text": "Auto-scroll to any swimlane or column",
+                    "href": "/products/taskboard/examples/scrolling/"
+                },
+                {
+                    "text": "inline editing",
+                    "href": "/products/taskboard/examples/simple-task-edit/"
+                },
+                {
+                    "text": "task editor",
+                    "href": "/products/taskboard/examples/task-edit/"
+                },
+                {
+                    "text": "context menu options",
+                    "href": "/products/taskboard/examples/task-menu/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/taskboard/examples/task-menu/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/taskboard/taskboard-task-menu-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "810",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-task-menu-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_efbed03a4634d73418579ac95db35f94",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Responsive Design",
+            "heading": "Great On Any Screen Size",
+            "body_html": "<p>Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.</p>",
+            "body_text": "Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.",
+            "links": [
+                {
+                    "text": "Great On Any Screen Size",
+                    "href": "/products/taskboard/examples/responsive"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/taskboard/examples/responsive",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/taskboard/taskboard-responsive-svalbard.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-responsive-svalbard.mp4"
                 }
             ]
         },
@@ -232,93 +267,6 @@
             ]
         },
         {
-            "id": "",
-            "type": "live-demo",
-            "modifiers": [],
-            "eyebrow": "Live Demo",
-            "heading": "Have a Play Below",
-            "body_text": "Drag cards between columns, tailor swimlanes and edit task content live. The Bryntum Task Board is fully wired up below.",
-            "demo_src": null,
-            "media": []
-        },
-        {
-            "id": "block_0284d081fe88dec979b28b8edc99b607",
-            "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
-            "eyebrow": "Familiar UX",
-            "heading": "Lean on Instantly Familiar UX",
-            "body_html": "<p class=\"p1\">Cut down on user admin with the Task Board’s welcoming, intuitive interactions:</p> <ul> <li>Confirm changes with <a href=\"/products/taskboard/examples/task-drag/\">confirmation dialogs</a></li> <li><a href=\"/products/taskboard/examples/scrolling/\">Auto-scroll to any swimlane or column</a> for fast navigation.</li> <li>Edit tasks in place with <a href=\"/products/taskboard/examples/simple-task-edit/\">inline editing</a>, or reach for the <a href=\"/products/taskboard/examples/task-edit/\">task editor</a> and <a href=\"/products/taskboard/examples/task-menu/\">context menu options</a>.</li> </ul>",
-            "body_text": "Cut down on user admin with the Task Board’s welcoming, intuitive interactions: Confirm changes with confirmation dialogs Auto-scroll to any swimlane or column for fast navigation. Edit tasks in place with inline editing , or reach for the task editor and context menu options .",
-            "links": [
-                {
-                    "text": "confirmation dialogs",
-                    "href": "/products/taskboard/examples/task-drag/"
-                },
-                {
-                    "text": "Auto-scroll to any swimlane or column",
-                    "href": "/products/taskboard/examples/scrolling/"
-                },
-                {
-                    "text": "inline editing",
-                    "href": "/products/taskboard/examples/simple-task-edit/"
-                },
-                {
-                    "text": "task editor",
-                    "href": "/products/taskboard/examples/task-edit/"
-                },
-                {
-                    "text": "context menu options",
-                    "href": "/products/taskboard/examples/task-menu/"
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Open demo",
-                    "href": "/products/taskboard/examples/task-menu/",
-                    "title": "Open demo"
-                }
-            ],
-            "media": [
-                {
-                    "kind": "image",
-                    "src": "../assets/taskboard/taskboard-task-menu-svalbard-scaled.png",
-                    "alt": "",
-                    "width": "1240",
-                    "height": "810",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-task-menu-svalbard-scaled.png"
-                }
-            ]
-        },
-        {
-            "id": "block_efbed03a4634d73418579ac95db35f94",
-            "type": "text-media",
-            "modifiers": ["video-file", "reverse", "added-shadow"],
-            "eyebrow": "Responsive Design",
-            "heading": "Great On Any Screen Size",
-            "body_html": "<p>Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.</p>",
-            "body_text": "Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.",
-            "links": [
-                {
-                    "text": "Great On Any Screen Size",
-                    "href": "/products/taskboard/examples/responsive"
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Open demo",
-                    "href": "/products/taskboard/examples/responsive",
-                    "title": "Open demo"
-                }
-            ],
-            "media": [
-                {
-                    "kind": "video",
-                    "src": "../assets/taskboard/taskboard-responsive-svalbard.mp4",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-responsive-svalbard.mp4"
-                }
-            ]
-        },
-        {
             "id": "block_b0ecec48d200798e5261d055bd3d0058",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
@@ -351,9 +299,61 @@
             ]
         },
         {
+            "id": "",
+            "type": "tiers",
+            "eyebrow": "Tiers",
+            "heading": "Choose the Task Board Tier That Fits",
+            "body_text": "Bryntum Task Board comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Task board with rich card content",
+                        "Drag-and-drop and multi-select",
+                        "Task editor",
+                        "Menus and tooltips",
+                        "Column toolbars"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Swimlanes",
+                        "Filter bar and column filters",
+                        "Inline task editing",
+                        "Resource avatars",
+                        "Tags and checklists",
+                        "Renaming and resizing columns",
+                        "Zoom slider"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Reordering columns and swimlanes by drag and drop",
+                        "Sorting, locking and searching columns",
+                        "Undo and redo",
+                        "Charts in cards",
+                        "AI features",
+                        "Salesforce support"
+                    ]
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Compare tiers",
+                    "href": "/products/taskboard/features#taskboard-comparison-heading",
+                    "title": "Compare Task Board tiers"
+                }
+            ]
+        },
+        {
             "id": "block_2a1afe0e84ff67bd07149cb448ead2cd",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": ["video-file", "reverse", "added-shadow"],
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Task Board straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
