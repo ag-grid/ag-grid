@@ -19,11 +19,15 @@ The Client-Side Row Model deals with client-side data. The Server-Side, Infinite
 
     This is the default. The grid will load all of the data into the grid in one go. The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in browser memory.
 
+    **Push data**: [`rowData`](./data-update-row-data/), [Transactions](./data-update-transactions/) and [single row updates](./data-update-single-row-cell/).
+
     [Show Loading Rows while client-side data is loading](./loading-rows/)
 
 - ## Infinite
 
     This will present the data to the user and load more data as the user scrolls down. Use this if you want to display a large, flat (not grouped) list of data.
+
+    **Pull data**: the datasource's `getRows`.
 
     [Go to Infinite Row Model](./infinite-scrolling)
 
@@ -31,11 +35,15 @@ The Client-Side Row Model deals with client-side data. The Server-Side, Infinite
 
     The Server-Side Row Model builds on the Infinite Row Model. In addition to lazy-loading the data as the user scrolls down, it also allows lazy-loading of grouped data with server-side grouping and aggregation. Advanced users will use Server-Side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
 
+    **Pull data**: the datasource's `getRows`. **Push data**: [Server-Side Transactions](./server-side-model-updating-transactions/) and [single row updates](./server-side-model-updating-single-row/).
+
     [Go to Server-Side Row Model](./server-side-model)
 
 - ## Viewport {% enterpriseIcon /%}
 
     The grid will inform the server exactly what data it is displaying (first and last row) and the server will provide data for exactly those rows only. Use this if you want the server to know exactly what the user is viewing, useful for updates in very large live datastreams where the server only sends updates to clients viewing the impacted rows.
+
+    **Pull data**: the grid calls the datasource's [`setViewportRange`](./viewport/#interface-iviewportdatasource) with the rows in view, so it needs no View Subscription. **Push data**: the datasource sends those rows, and their updates, with `setRowData`.
 
     [Go to Viewport Row Model](./viewport)
 
@@ -56,7 +64,6 @@ Here are more detailed rules of thumb.
 - If you are not sure, use default **Client-Side**. The grid can handle massive amounts of data (100k+ rows). The grid will only render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your server. You will not kill the grid with too much data - rather your browser will run out of memory before the grid gets into problems. So if you are unsure, go with Client-Side Row Model first and only change if you need to. With Client-Side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid. All of the examples in the documentation use the Client-Side model unless specified otherwise.
 - If you do not want to shift all the data from your server to your client, as the amount of data is too large to shift over the network or to extract from the underlying datasource, then use either Infinite, Server-Side or Viewport. Each one takes data from the server in different ways.
 - Use **[Infinite](./infinite-scrolling/)** or **[Server-Side](./server-side-model/)** to bring back a list of data one block at a time from the server. As the user scrolls, the grid will ask for more rows. Server-Side has more features than Infinite and will allow row grouping, aggregation, lazy-loading of groups and slice and dice of data.
-- Use **[Viewport](./viewport/)** if you want the server to know exactly what the user is looking at. This is best when you have a large amount of changing data and want to push updates to the client when the server-side data changes. Knowing exactly what the user is looking at means you only have to push updates to the relevant users. All the row models can receive updates but only the Viewport row model provides the server with the information of the rows the users currently see on screen without scrolling.
 
 ## Row Model Comparisons
 

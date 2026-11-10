@@ -1,0 +1,13 @@
+import type { _ModuleWithoutApi } from '../interfaces/iModule';
+import { VERSION } from '../version';
+import { ViewSubscriptionService } from './viewSubscriptionService';
+
+/**
+ * @feature API -> View Subscription
+ * @gridOption viewSubscription
+ */
+export const ViewSubscriptionModule: _ModuleWithoutApi = {
+    moduleName: 'ViewSubscription',
+    version: VERSION,
+    beans: [ViewSubscriptionService],
+};

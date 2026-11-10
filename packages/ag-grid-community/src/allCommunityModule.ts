@@ -43,6 +43,7 @@ import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { TooltipModule } from './tooltip/tooltipModule';
 import { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
+import { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 
 /**
  * @feature All Community Features
@@ -70,6 +71,7 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         QuickFilterModule,
         ExternalFilterModule,
         GridStateModule,
+        ViewSubscriptionModule,
         AlignedGridsModule,
         PaginationModule,
         PaginationPageNumbersModule,

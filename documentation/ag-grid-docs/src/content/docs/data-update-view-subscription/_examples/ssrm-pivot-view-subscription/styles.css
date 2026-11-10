@@ -1,0 +1,12 @@
+/* the toolbar lays out its items as flex, so the gap keeps each label apart from its value */
+.subscription-toggle,
+.toolbar-counter {
+    align-items: center;
+    gap: var(--ag-spacing);
+    padding: 0 calc(var(--ag-spacing) * 2);
+    white-space: nowrap;
+}
+
+.subscription-toggle input {
+    margin: 0;
+}
