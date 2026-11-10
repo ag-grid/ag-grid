@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
+import { resolveBryntumTierTokens } from '../../../ag-grid-docs/src/utils/bryntumTierTokens';
 import type { AlgoliaRecord } from '../types/algolia';
-import { BRYNTUM_CAMPAIGN_CONTENT_DIR } from '../utils/constants';
+import { BRYNTUM_CAMPAIGN_CONTENT_DIR, BRYNTUM_CAMPAIGN_TIERS_PATH } from '../utils/constants';
 
 interface CampaignContent {
     slug: string;
@@ -14,6 +15,7 @@ interface CampaignContent {
 export interface CampaignSource {
     contentDir: string;
     getPath: (slug: string) => string;
+    resolveContent?: (content: CampaignContent) => CampaignContent;
 }
 
 const BRYNTUM_SLUG_ALIASES: Record<string, string> = {
@@ -29,6 +31,8 @@ const CAMPAIGN_SOURCES: CampaignSource[] = [
     {
         contentDir: BRYNTUM_CAMPAIGN_CONTENT_DIR,
         getPath: (slug) => `/campaigns/bryntum-${BRYNTUM_SLUG_ALIASES[slug] ?? slug}/`,
+        resolveContent: (content) =>
+            resolveBryntumTierTokens(content, JSON.parse(fs.readFileSync(BRYNTUM_CAMPAIGN_TIERS_PATH, 'utf-8'))),
     },
 ];
 
@@ -62,7 +66,8 @@ function getRecordsForSource(source: CampaignSource, rankOffset: number): Algoli
 
     for (let i = 0; i < files.length; i++) {
         const filePath = path.join(source.contentDir, files[i]);
-        const content: CampaignContent = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        const raw: CampaignContent = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        const content = source.resolveContent?.(raw) ?? raw;
         const pagePath = source.getPath(content.slug);
 
         records.push({
