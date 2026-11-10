@@ -7,14 +7,14 @@ import type { ListenerUtils } from './listenerUtils';
 export class SortListener extends BeanStub implements NamedBean {
     beanName = 'ssrmSortSvc' as const;
 
-    private sortSvc: SortService;
-    private serverSideRowModel: ServerSideRowModel;
-    private listenerUtils: ListenerUtils;
+    #sortSvc: SortService;
+    #serverSideRowModel: ServerSideRowModel;
+    #listenerUtils: ListenerUtils;
 
     public wireBeans(beans: BeanCollection) {
-        this.sortSvc = beans.sortSvc!;
-        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
+        this.#sortSvc = beans.sortSvc!;
+        this.#serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.#listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
     }
 
     public postConstruct(): void {
@@ -23,21 +23,21 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedEventListeners({ sortChanged: this.onSortChanged.bind(this) });
+        this.addManagedEventListeners({ sortChanged: this.#onSortChanged.bind(this) });
     }
 
-    private onSortChanged(): void {
-        const storeParams = this.serverSideRowModel.getParams();
+    #onSortChanged(): void {
+        const storeParams = this.#serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
 
-        const newSortModel = _getSortModel(this.sortSvc);
+        const newSortModel = _getSortModel(this.#sortSvc);
         const oldSortModel = storeParams.sortModel;
 
-        const changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-        const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
-        const secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
+        const changedColumns = this.#findChangedColumnsInSort(newSortModel, oldSortModel);
+        const valueColChanged = this.#listenerUtils.isSortingWithValueColumn(changedColumns);
+        const secondaryColChanged = this.#listenerUtils.isSortingWithSecondaryColumn(changedColumns);
 
         const params: StoreRefreshAfterParams = {
             valueColChanged,
@@ -45,14 +45,14 @@ export class SortListener extends BeanStub implements NamedBean {
             changedColumns,
         };
 
-        this.serverSideRowModel.refreshAfterSort(newSortModel, params);
+        this.#serverSideRowModel.refreshAfterSort(newSortModel, params);
     }
 
     // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
     // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
     // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
     // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(newSortModel: SortModelItem[], oldSortModel: SortModelItem[]): string[] {
+    #findChangedColumnsInSort(newSortModel: SortModelItem[], oldSortModel: SortModelItem[]): string[] {
         let allColsInBothSorts: string[] = [];
 
         for (const sortModel of [newSortModel, oldSortModel]) {
