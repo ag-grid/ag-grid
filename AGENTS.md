@@ -138,8 +138,9 @@ The result shows on the PR as the `CI (manual)` status, linked to the run, and i
 Limits:
 
 - Your own branch only, never `latest` (the staging deploy gates on the ref alone, so it would deploy). `/ci` refuses forks, `ghabot-*` branches and PRs that aren't open drafts.
-- Jobs and steps that only run on `pull_request` (the PR preview) don't run.
-- `/ci` only sets `nx_command`, and `run_package_tests` defaults to off, so package tests don't run.
+- `/ci` also runs PR Preview (and updates its PR comment) and the Module Size Comparison, as marking the PR ready does. They run only when the PR is open, from this repo and on the dispatched branch; otherwise the run warns and skips them. By hand, add `-f pr_number=<N>` to the `gh workflow run` above, and dispatch `module-size-comparison.yml` the same way (`gh workflow run module-size-comparison.yml -R ag-grid/ag-grid --ref <branch> -f pr_number=<N>`).
+- CodeQL and the Codex review don't run. Comment `/pr-review` on the draft for the Codex review.
+- `/ci` only sets `nx_command`, and `run_package_tests` defaults to off, so package tests don't run. A PR run doesn't run them either.
 - The run tests the branch head, not the merge ref, so it can pass where the merge would fail.
 - Marking the PR ready re-runs CI only for those bases. On any other base (a stacked PR, say) no PR run starts, so a red `CI (manual)` stays on that commit. A new commit starts without the status.
 
