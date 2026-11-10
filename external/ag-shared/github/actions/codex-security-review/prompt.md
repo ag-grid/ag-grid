@@ -48,3 +48,11 @@ Server-side code (server-side rendering packages, docs site, APIs, serverless fu
 ## Output
 
 Return JSON matching the provided schema. For each finding give the exact file path relative to the repository root and the line of the vulnerable code, a concrete exploit scenario (who controls what input, and what they achieve), and a specific fix. Report each distinct root cause once; if the same bug repeats, report the first location and mention the others in the description.
+
+Findings are read in Slack by engineers triaging quickly, so write for scanning:
+
+- Title: under 80 characters, naming the vulnerability and where, e.g. "Prototype pollution via theme mode name in withParams".
+- Description: at most three short sentences.
+- Exploit scenario: two to five short steps, each one action or consequence.
+- Recommendation: one item per concrete change.
+- Wrap code in backticks: identifiers, property names, file names and payloads, e.g. `__proto__`, `withParams()`, `<img src=x onerror=alert(1)>`.

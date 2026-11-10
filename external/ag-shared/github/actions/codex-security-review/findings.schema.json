@@ -33,12 +33,20 @@
                     "title": { "type": "string", "description": "One-line summary of the vulnerability" },
                     "file": { "type": "string", "description": "Path relative to the repository root" },
                     "line": { "type": "integer", "description": "1-indexed line where the vulnerable code is" },
-                    "description": { "type": "string", "description": "What is wrong and why it is exploitable" },
-                    "exploit_scenario": {
+                    "description": {
                         "type": "string",
-                        "description": "Concrete attacker-controlled input or position and what it achieves"
+                        "description": "What is wrong and why it is exploitable, in at most three short sentences"
                     },
-                    "recommendation": { "type": "string", "description": "How to fix it" }
+                    "exploit_scenario": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "The attack as short ordered steps: who controls what input, what they send, and what it achieves"
+                    },
+                    "recommendation": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "The specific changes that fix it, one per item"
+                    }
                 }
             }
         }

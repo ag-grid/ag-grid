@@ -25,8 +25,9 @@ const MAX_RETRIES = 5;
 // Slack Web API errors worth retrying. The shared helper reports a network failure as an error
 // starting "Failed to send Slack message".
 const TRANSIENT_ERRORS = new Set(['internal_error', 'fatal_error', 'service_unavailable', 'request_timeout']);
-// Keeps each field well inside Slack's message size limit
-const MAX_FIELD_LENGTH = 3000;
+// Slack limits a section block to 3000 characters and a header to 150
+const MAX_FIELD_LENGTH = 2800;
+const MAX_HEADER_LENGTH = 150;
 
 if (!SEVERITIES.includes(MIN_SEVERITY)) {
     console.log(`::error::Unknown min-severity [${MIN_SEVERITY}] - expected one of ${SEVERITIES.join(', ')}`);
@@ -42,14 +43,14 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let lastPostAt = 0;
 
-async function post(text, threadTs) {
+async function post(text, threadTs, blocks) {
     for (let attempt = 0; ; attempt++) {
         await sleep(Math.max(0, lastPostAt + POST_INTERVAL_MS - Date.now()));
         lastPostAt = Date.now();
 
         const result = await sendSlackMessage({
             authToken: SLACK_BOT_OAUTH_TOKEN,
-            data: { channel: SLACK_CHANNEL, text, thread_ts: threadTs, unfurl_links: false, unfurl_media: false },
+            data: { channel: SLACK_CHANNEL, text, blocks, thread_ts: threadTs, unfurl_links: false, unfurl_media: false },
         });
         if (result.ok) {
             return result.ts;
@@ -132,21 +133,47 @@ try {
 }
 
 let unsent = 0;
+// Older output, or a model that ignores the schema, may give a string instead of a list
+const asList = (value) => (Array.isArray(value) ? value : [value]).map((item) => String(item ?? '').trim()).filter(Boolean);
+const section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });
+
+// Each finding is a header, a context line and one section per part, so it reads at a glance
+function findingBlocks(f, file, fileUrl) {
+    // Headers are plain text, so backticks would show literally
+    const title = `${SEVERITY_EMOJI[f.severity]} ${String(f.title ?? '').replace(/`/g, '')}`;
+    return [
+        {
+            type: 'header',
+            text: {
+                type: 'plain_text',
+                emoji: true,
+                text: title.length > MAX_HEADER_LENGTH ? `${title.slice(0, MAX_HEADER_LENGTH - 1)}…` : title,
+            },
+        },
+        {
+            type: 'context',
+            elements: [
+                {
+                    type: 'mrkdwn',
+                    text: `*${f.severity.toUpperCase()}* · ${escape(f.confidence)} confidence · ${field(f.category)} · <${fileUrl}|${escape(file)}:${f.line}> · shard ${escape(f.shard)}`,
+                },
+            ],
+        },
+        section(`*What*\n${field(f.description)}`),
+        section(`*Exploit*\n${field(asList(f.exploit_scenario).map((step, i) => `${i + 1}. ${step}`).join('\n'))}`),
+        section(`*Fix*\n${field(asList(f.recommendation).map((change) => `• ${change}`).join('\n'))}`),
+    ];
+}
+
 for (const f of reportable) {
     const file = String(f.file).replace(/^\.?\//, '');
     const fileUrl = `https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${encodeURI(file)}#L${f.line}`;
     try {
+        // text is the notification and fallback; blocks are what the thread shows
         await post(
-            [
-                `${SEVERITY_EMOJI[f.severity]} *${f.severity.toUpperCase()}* (${f.confidence} confidence) - ${field(f.category)}`,
-                `*${field(f.title)}*`,
-                `<${fileUrl}|${escape(file)}:${f.line}> (shard: ${escape(f.shard)})`,
-                '',
-                `*What:* ${field(f.description)}`,
-                `*Exploit:* ${field(f.exploit_scenario)}`,
-                `*Fix:* ${field(f.recommendation)}`,
-            ].join('\n'),
-            threadTs
+            `${f.severity.toUpperCase()}: ${field(f.title)} (${escape(file)}:${f.line})`,
+            threadTs,
+            findingBlocks(f, file, fileUrl)
         );
     } catch (error) {
         unsent++;
