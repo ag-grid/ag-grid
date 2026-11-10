@@ -67,38 +67,6 @@
             "media": []
         },
         {
-            "id": "block_948f4b16be9cc9a1ee3a72452105c843",
-            "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
-            "eyebrow": "Scheduler Enterprise",
-            "heading": "Scheduling Logic Built In",
-            "body_html": "<p>The Enterprise tier of Scheduler adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views. Written in ES2020 &amp; TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
-            "body_text": "The Enterprise tier of Scheduler adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views. Written in ES2020 & TypeScript, it drops cleanly into any React, Angular or Vue app.",
-            "links": [
-                {
-                    "text": "Scheduling Logic Built In",
-                    "href": "/products/scheduler/"
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Learn More",
-                    "href": "/products/scheduler/",
-                    "title": "Learn More"
-                }
-            ],
-            "media": [
-                {
-                    "kind": "image",
-                    "src": "../assets/complete/Scheduler-Pro-_-Transparent-_-Minimal-2.svg",
-                    "alt": "Bryntum Scheduler Enterprise: scheduling engine with calendars, constraints and dependencies",
-                    "width": "1",
-                    "height": "1",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Scheduler-Pro-_-Transparent-_-Minimal-2.svg"
-                }
-            ]
-        },
-        {
             "id": "block_7279369cdb8981e50e221bd66736d060",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
@@ -253,8 +221,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Scheduler",
             "heading": "Schedule Just About Anything",
-            "body_html": "<p>Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a built-in scheduling engine for the most demanding planning needs.</p>",
-            "body_text": "Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a built-in scheduling engine for the most demanding planning needs.",
+            "body_html": "<p>Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.</p>",
+            "body_text": "Bryntum Scheduler is a flexible scheduling component, loaded with features and options. Its Enterprise tier adds a full scheduling engine, handling working-time calendars, constraints, effort-driven scheduling and dependency types, plus resource histogram and utilisation views.",
             "links": [
                 {
                     "text": "Schedule Just About Anything",

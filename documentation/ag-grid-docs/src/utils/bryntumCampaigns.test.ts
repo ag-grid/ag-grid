@@ -22,6 +22,11 @@ const VISIBLE_TEXT_FIELDS = new Set([
 /** Pages that link to their own tier comparison table on bryntum.com. */
 const COMPARISON_PRODUCTS = ['calendar', 'gantt', 'scheduler', 'taskboard'];
 
+/** Bryntum is renaming its middle tier from Business to Core; copy must use only whichever one `bryntum-tiers.json` names. */
+const OTHER_MIDDLE_TIER_NAME = new RegExp(
+    `\\b(${['Business', 'Core'].filter((name) => name !== tiers.core).join('|')})\\b`
+);
+
 const campaigns = loadBryntumCampaigns();
 
 function collectStrings(value: unknown, key = '', out: { key: string; value: string }[] = []) {
@@ -58,13 +63,21 @@ describe('Bryntum campaign content', () => {
         ]);
     });
 
+    it('lists Scheduler as one product on the Complete page', () => {
+        const complete = campaigns.find(({ content }) => content.slug === 'complete')?.content;
+        const schedulerBlocks = complete?.sections.filter(
+            (section) => 'eyebrow' in section && /scheduler/i.test(String(section.eyebrow))
+        );
+        expect(schedulerBlocks).toHaveLength(1);
+    });
+
     describe.each(campaigns.map(({ content }) => [content.slug, content] as const))('%s', (slug, content) => {
         it('leaves no unresolved template tokens', () => {
             expect(collectStrings(content).filter(({ value }) => value.includes('{{'))).toEqual([]);
         });
 
-        it('does not use the retired Business tier name', () => {
-            expect(visibleText(content).filter((text) => /\bbusiness\b/i.test(text))).toEqual([]);
+        it('uses no middle-tier name other than the configured one', () => {
+            expect(visibleText(content).filter((text) => OTHER_MIDDLE_TIER_NAME.test(text))).toEqual([]);
         });
 
         it('does not present Scheduler Pro as a product', () => {
