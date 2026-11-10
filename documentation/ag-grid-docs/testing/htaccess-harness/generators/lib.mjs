@@ -382,7 +382,9 @@ export class Rows {
             return;
         }
         this.seen.add(key);
-        this.rows.push([host, path, String(status), loc, ...withRedirectChecks(host, path, Number(status), extra)].join('\t'));
+        this.rows.push(
+            [host, path, String(status), loc, ...withRedirectChecks(host, path, Number(status), extra)].join('\t')
+        );
     }
     section(title) {
         this.rows.push('', `# @category ${title}`);
