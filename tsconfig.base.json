@@ -7,7 +7,7 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "esModuleInterop": true,
-    "target": "ES2020",
+    "target": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "DOM", "dom.iterable"],
     "types": [],

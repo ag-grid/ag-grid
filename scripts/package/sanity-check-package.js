@@ -7,6 +7,8 @@ const glob = require('glob');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
+const { sanityCheckBuiltCode } = require('./sanity-check-built-code');
+
 const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --type [type] --allowed-ext [extention(s)]')
     .option('type', { type: 'string', default: 'core' })
@@ -144,6 +146,17 @@ function checkAllowedExtension(filename) {
     }
 }
 
+function checkBuiltCode(filename) {
+    if (!/\.(?:js|mjs|cjs)$/.test(filename)) {
+        return;
+    }
+
+    for (const problem of sanityCheckBuiltCode(fs.readFileSync(path.join(dir, filename), 'utf8'))) {
+        console.log(`[${packageJson.name}]: ${filename} ${problem}`);
+        exitStatus = 1;
+    }
+}
+
 function validatePackageVersions() {
     if (packageJson.version !== expectedGridVersion) {
         console.log(
@@ -189,6 +202,7 @@ function validateMandatoryNoneCodeFiles() {
 function validateCoreAllowedExtensions() {
     for (const file of packageContents) {
         checkAllowedExtension(file);
+        checkBuiltCode(file);
     }
 }
 

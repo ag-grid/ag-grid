@@ -1,9 +1,9 @@
-import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import { build } from 'vite';
 import zlib from 'zlib';
 
+import { sanityCheckBuiltCode } from '../../scripts/package/sanity-check-built-code.js';
 import { AllEnterpriseModules, AllGridCommunityModules, baseModule, moduleCombinations } from './moduleDefinitions';
 
 interface ModuleSizeResult {
@@ -74,25 +74,8 @@ function updateAppSource(source: string, modules: string[]): string {
 function createBuildConfig() {
     return {
         root: __dirname,
-        configFile: false as const,
+        configFile: path.join(__dirname, 'vite.config.mts'),
         logLevel: 'warn' as const,
-        plugins: [react()],
-        build: {
-            rollupOptions: {
-                output: {
-                    manualChunks: {
-                        react: ['react', 'react-dom'],
-                        agGridCommunityEnterprise: [
-                            'ag-grid-community',
-                            'ag-grid-enterprise',
-                            'ag-charts-enterprise',
-                            'ag-charts-community',
-                        ],
-                        agGridReact: ['ag-grid-react'],
-                    },
-                },
-            },
-        },
     };
 }
 
@@ -111,6 +94,10 @@ async function measureCombination(
 
     const distFilePath = files[0];
     const contents = fs.readFileSync(distFilePath);
+    const problems = sanityCheckBuiltCode(contents.toString('utf8'));
+    if (problems.length > 0) {
+        throw new Error(`${path.basename(distFilePath)} ${problems.join('; ')}`);
+    }
     const fileSizeInBytes = contents.length;
     const gzipSizeInBytes = zlib.gzipSync(contents).length;
 
