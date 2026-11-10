@@ -32,7 +32,7 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    SLACK_CHANNEL: '#ci-grid-gate'
+    SLACK_CHANNEL: '#ci-product-vulnerabilities'
 
 jobs:
     review:
