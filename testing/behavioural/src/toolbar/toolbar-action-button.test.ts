@@ -1,5 +1,5 @@
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
@@ -250,6 +250,29 @@ describe('Toolbar action button item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    test.each([
+        ['csvExport', 'csv'],
+        ['chartsMenuAdd', 'plus'],
+        ['search', 'search'],
+    ] as const)('icon %s renders without its owning module registered', (icon, cssIcon) => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        onTestFinished(() => {
+            vi.restoreAllMocks();
+        });
+
+        const api = gridMgr.createGrid(`icon-name-${icon}`, {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: { items: [{ key: 'iconButton', icon, action: () => {} }] },
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(gridDiv.querySelector(`.ag-toolbar-button .ag-icon-${cssIcon}`)).not.toBeNull();
+        expect(errorSpy).not.toHaveBeenCalled();
+        expect(warnSpy).not.toHaveBeenCalled();
     });
 });
 
