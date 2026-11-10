@@ -13,13 +13,39 @@ test.agExample(import.meta, () => {
                 const originalViewport = await viewport.elementHandle();
                 const position = () =>
                     viewport.evaluate((element) => ({ left: element.scrollLeft, top: element.scrollTop }));
+                // Native wheel scrolling can be animated (e.g. WebKit), so wait until the position stops changing
+                // before using it as the baseline for the next gesture.
+                const settledPosition = () =>
+                    viewport.evaluate(
+                        (element) =>
+                            new Promise<{ left: number; top: number }>((resolve) => {
+                                const read = () => ({ left: element.scrollLeft, top: element.scrollTop });
+                                let last = read();
+                                let unchangedFrames = 0;
+                                const tick = () => {
+                                    const current = read();
+                                    if (current.left === last.left && current.top === last.top) {
+                                        unchangedFrames++;
+                                    } else {
+                                        unchangedFrames = 0;
+                                        last = current;
+                                    }
+                                    if (unchangedFrames >= 10) {
+                                        resolve(current);
+                                    } else {
+                                        requestAnimationFrame(tick);
+                                    }
+                                };
+                                requestAnimationFrame(tick);
+                            })
+                    );
                 await expect(select).toHaveValue('native');
                 await expect(agIdFor.cell('0', 'c0')).toContainText('Row 1, column 1');
 
                 const modes = ['native', 'axisLocked', 'native'];
                 for (let i = 0; i < modes.length; i++) {
                     const mode = modes[i];
-                    const before = await position();
+                    const before = await settledPosition();
                     if (i > 0) {
                         await select.selectOption(mode);
                     }
