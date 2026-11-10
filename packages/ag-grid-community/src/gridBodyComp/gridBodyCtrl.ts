@@ -24,7 +24,6 @@ import type { PopupService } from '../widgets/popupService';
 import { INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { ROW_CONTAINER_NAMES } from './rowContainer/rowContainerCtrl';
-import type { ScrollGestureFeature } from './scrollGestureFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
@@ -93,7 +92,6 @@ export class GridBodyCtrl extends BeanStub {
     private pinnedRightWidth = -1;
 
     public scrollFeature: GridBodyScrollFeature;
-    private scrollGestureFeature?: ScrollGestureFeature;
 
     private columnWidthAnimationDepth = 0;
     private columnWidthAnimationTimeout: number | undefined;
@@ -130,8 +128,6 @@ export class GridBodyCtrl extends BeanStub {
         this.setGridRole();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
-        this.addManagedPropertyListener('scrollGestureMode', () => this.updateScrollGestureMode());
-        this.updateScrollGestureMode();
         // Mount before setPinnedRowsHeights: the top section has to reserve vertical space for the
         // advanced filter bar, so its height must be known by the time the section is measured.
         this.filterManager?.mountAdvFilterTopSectionComp({
@@ -149,26 +145,6 @@ export class GridBodyCtrl extends BeanStub {
         // and it is sized by this push rather than by asking.
         this.addManagedListeners(this.ctrlsSvc, { ready: () => this.updateWidths() });
         this.ctrlsSvc.register('gridBodyCtrl', this);
-    }
-
-    private updateScrollGestureMode(): void {
-        if (this.gos.get('scrollGestureMode') !== 'axisLocked') {
-            this.scrollGestureFeature = this.destroyBean(this.scrollGestureFeature);
-            return;
-        }
-        if (this.scrollGestureFeature) {
-            return;
-        }
-        const feature = this.beans.registry.createDynamicBean<ScrollGestureFeature>('scrollGestureFeature', false);
-        if (feature) {
-            this.scrollGestureFeature = this.createBean(feature);
-            feature.init(this.eGridBody, this.eGridViewport, this.scrollFeature);
-        }
-    }
-
-    public override destroy(): void {
-        this.scrollGestureFeature = this.destroyBean(this.scrollGestureFeature);
-        super.destroy();
     }
 
     private addEventListeners(): void {
@@ -651,7 +627,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onStickyWheel(e: WheelEvent): void {
-        if (this.scrollGestureFeature) {
+        if (this.beans.scrollGestureSvc?.isActive()) {
             return;
         }
         const { deltaY } = e;
