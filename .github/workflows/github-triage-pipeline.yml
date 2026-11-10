@@ -111,7 +111,7 @@ on:
             channel:
                 description: '@ag-grid/dev-prompts dist-tag'
                 type: choice
-                default: latest
+                default: canary
                 options: [latest, canary]
 
 permissions:
@@ -126,7 +126,8 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    # Defaults to `latest`; a workflow_dispatch overrides via inputs.channel.
+    # Defaults to `latest`; a workflow_dispatch uses inputs.channel (default `canary`;
+    # the `redispatch` job passes `latest` explicitly).
     #
     # For a repository_dispatch (the JIRA drag + the manual buttons) treat this as a
     # FALLBACK only — the effective value comes from the `resolve-channel` job below,
