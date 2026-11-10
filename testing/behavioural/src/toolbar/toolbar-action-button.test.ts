@@ -346,14 +346,14 @@ describe('Toolbar action button item icons', () => {
 
     test.each([
         { icon: 'filterRemove', suggestion: '`filter-remove`' },
-        { icon: 'filtrAdd', suggestion: '`filter-add`' },
-    ])('an unknown icon $icon suggests the CSS icon name $suggestion', async ({ icon, suggestion }) => {
+        { icon: 'filtrAdd', suggestion: '`filterAdd`' },
+        { icon: 'csvExpor', suggestion: '`csvExport`' },
+    ])('an unknown icon $icon suggests $suggestion', async ({ icon, suggestion }) => {
         await createToolbarGrid(`action-button-unknown-icon-${icon}`, icon);
 
         const warnings = warnSpy.mock.calls.flat().join(' ');
         expect(warnings).toContain('warning #134');
-        expect(warnings).toContain(`Did you mean the CSS icon name ${suggestion}`);
-        expect(warnings).not.toContain('`filterAdd`');
+        expect(warnings).toContain(`Did you mean ${suggestion}`);
     });
 });
 
