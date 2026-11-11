@@ -7,7 +7,7 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
-    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count']);
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     return {
         getData: function (request) {

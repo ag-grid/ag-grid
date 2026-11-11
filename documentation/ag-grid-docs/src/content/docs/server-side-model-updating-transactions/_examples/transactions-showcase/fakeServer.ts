@@ -4,7 +4,7 @@ function FakeServer() {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(data[0] ?? {}));
-    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count']);
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     let intervals = [];
     return {
