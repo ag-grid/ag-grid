@@ -46,44 +46,34 @@ async function pauseClock(page: Page, targetScrollTop: number) {
 }
 
 test.agExample(import.meta, () => {
-    for (const toggleBackOff of [false, true]) {
-        test.eachFramework(
-            toggleBackOff
-                ? 'restores immediate scrolling after disabling debounce'
-                : 'follows the vertical scrollbar immediately by default',
-            async ({ agIdFor, page }) => {
-                await ensureGridReady(page);
-                await waitForGridContent(page);
-                await expect(page.getByRole('checkbox', { name: 'Debounce vertical scroll' })).not.toBeChecked();
-                await expect(agIdFor.cell('0', 'row')).toContainText('1');
-                await expect(agIdFor.cell('0', 'name')).toContainText('Item 1');
+    test.eachFramework('restores immediate scrolling after disabling debounce', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+        await expect(page.getByRole('checkbox', { name: 'Debounce vertical scroll' })).toBeChecked();
+        await expect(agIdFor.cell('0', 'row')).toContainText('1');
+        await expect(agIdFor.cell('0', 'name')).toContainText('Item 1');
 
-                if (toggleBackOff) {
-                    await setDebounceEnabled(page, true);
-                    await setDebounceEnabled(page, false);
-                }
+        await setDebounceEnabled(page, false);
 
-                await pauseClock(page, 4000);
-                for (const top of [2000, 4000]) {
-                    await scrollVerticalScrollbar(page, top);
-                    expect(await scrollPositions(page)).toEqual({ scrollbar: top, viewport: top });
-                }
-                await page.clock.resume();
+        await pauseClock(page, 4000);
+        for (const top of [2000, 4000]) {
+            await scrollVerticalScrollbar(page, top);
+            expect(await scrollPositions(page)).toEqual({ scrollbar: top, viewport: top });
+        }
+        await page.clock.resume();
 
-                await expect(agIdFor.cell('100', 'row')).toContainText('101');
-                await expect(agIdFor.cell('100', 'name')).toContainText('Item 101');
-                await expect(agIdFor.cell('100', 'name')).toBeInViewport();
-                await expect(agIdFor.cell('0', 'name')).toHaveCount(0);
-            }
-        );
-    }
+        await expect(agIdFor.cell('100', 'row')).toContainText('101');
+        await expect(agIdFor.cell('100', 'name')).toContainText('Item 101');
+        await expect(agIdFor.cell('100', 'name')).toBeInViewport();
+        await expect(agIdFor.cell('0', 'name')).toHaveCount(0);
+    });
 
     test.eachFramework(
-        'waits for vertical scrollbar input to pause when debounce is enabled',
+        'waits for vertical scrollbar input to pause when debounce is enabled by default',
         async ({ agIdFor, page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
-            await setDebounceEnabled(page, true);
+            await expect(page.getByRole('checkbox', { name: 'Debounce vertical scroll' })).toBeChecked();
             await expect(agIdFor.cell('0', 'name')).toContainText('Item 1');
             await pauseClock(page, 6000);
 

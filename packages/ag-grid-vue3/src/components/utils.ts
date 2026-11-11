@@ -1596,10 +1596,12 @@ export interface Props<TData> {
          */
     scrollGestureMode?: 'native' | 'axisLocked',
     /** Set to `true` to always show the horizontal scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowHorizontalScroll?: boolean,
     /** Set to `true` to always show the vertical scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowVerticalScroll?: boolean,

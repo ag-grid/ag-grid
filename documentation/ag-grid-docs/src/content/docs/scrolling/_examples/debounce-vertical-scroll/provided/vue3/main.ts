@@ -35,7 +35,7 @@ const VueExample = defineComponent({
         </div>
     `,
     setup() {
-        const debounceVerticalScrollbar = ref(false);
+        const debounceVerticalScrollbar = ref(true);
         const columnDefs: ColDef[] = [{ field: 'row' }, { field: 'name' }];
         const defaultColDef: ColDef = { flex: 1 };
         const rowData = Array.from({ length: 1000 }, (_, index) => ({ row: index + 1, name: `Item ${index + 1}` }));

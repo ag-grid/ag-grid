@@ -1767,10 +1767,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public scrollGestureMode: 'native' | 'axisLocked' | undefined = undefined;
     /** Set to `true` to always show the horizontal scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public alwaysShowHorizontalScroll: boolean | undefined = undefined;
     /** Set to `true` to always show the vertical scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public alwaysShowVerticalScroll: boolean | undefined = undefined;
