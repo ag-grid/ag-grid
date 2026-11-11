@@ -277,14 +277,12 @@ describe('SSRM viewSubscription', () => {
             await nextAnimationFrame();
             await nextAnimationFrame();
 
-            // The subscription turned on by the gridPreDestroyed stop is stopped again once the api is unusable.
+            // Once gridPreDestroyed has fired, turning the subscription back on does not start it.
             expect(recorder.calls).toEqual([
                 { type: 'subscribe', ids: range(0, 5) },
                 { type: 'unsubscribe', ids: range(0, 5) },
-                { type: 'subscribe', ids: range(0, 5) },
-                { type: 'unsubscribe', ids: range(0, 5) },
             ]);
-            expect(warnings).toEqual([undefined, expect.stringContaining('warning #26')]);
+            expect(warnings).toEqual([undefined]);
             expect(recorder.subscribed.size).toBe(0);
             expect(recorder.violations).toEqual([]);
         });
@@ -299,10 +297,8 @@ describe('SSRM viewSubscription', () => {
             await nextAnimationFrame();
             await nextAnimationFrame();
 
-            expect(recorder.calls).toEqual([
-                { type: 'subscribe', ids: range(0, 5) },
-                { type: 'unsubscribe', ids: range(0, 5) },
-            ]);
+            // The grid's own gridPreDestroyed listener runs first, so the subscription is never turned back on.
+            expect(recorder.calls).toEqual([]);
             expect(recorder.subscribed.size).toBe(0);
             expect(recorder.violations).toEqual([]);
         });

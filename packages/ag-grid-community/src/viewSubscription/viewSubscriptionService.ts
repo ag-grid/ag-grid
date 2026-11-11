@@ -38,6 +38,8 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     beanName = 'viewSubSvc' as const;
 
     private sub: ActiveSubscription | undefined;
+    /** Set on `gridPreDestroyed`, after which a handler that turns the subscription back on cannot start it. */
+    private preDestroyed = false;
 
     public postConstruct(): void {
         const markDirty = () => this.schedule();
@@ -66,7 +68,10 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             sortChanged: markDirty,
             filterChanged: markDirty,
             pinnedRowsChanged: markDirty,
-            gridPreDestroyed: () => this.stop(),
+            gridPreDestroyed: () => {
+                this.preDestroyed = true;
+                this.stop();
+            },
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
@@ -76,7 +81,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
-        if (!options || this.gos.get('viewSubscriptionActive') === false) {
+        if (!options || this.gos.get('viewSubscriptionActive') === false || this.preDestroyed) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
             this.stop(options ?? previousOptions);
         } else if (!this.sub) {
