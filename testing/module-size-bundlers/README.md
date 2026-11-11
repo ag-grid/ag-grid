@@ -6,7 +6,7 @@ Vite 8 (Rolldown), webpack or esbuild.
 
 This project builds a small cross-section of apps with other bundlers: nothing registered, one community module, one
 enterprise module and all enterprise modules. Every build targets `es2020`, so the numbers reflect the grid's own code
-rather than a bundler's default syntax lowering.
+rather than a bundler's default syntax lowering. React is left external, so every size is AG Grid code only.
 
 ```
 npm run module-combinations
