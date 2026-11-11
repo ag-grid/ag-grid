@@ -17,10 +17,6 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 ## Breaking Changes
 
-### Build Output
-
-- The packages now target ES2022, so their output can contain ES2022 syntax such as `#private` class members. Your build tools must be able to parse it. A bundler set to a target older than ES2022 rewrites `#private` members into larger, slower helper code.
-
 {% if isFramework("react") %}
 
 ### Frameworks
