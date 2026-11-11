@@ -365,6 +365,12 @@ const isRegistered = api.isModuleRegistered('SetFilterModule');
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["isModuleRegistered"] /%}
 
+## Build Target
+
+Your bundler's build target controls how much syntax it rewrites for older browsers. Set the most modern target your application can support. AG Grid supports the two latest major versions of each browser, so you can usually go well beyond older defaults.
+
+Older tooling can default to a conservative target: Vite 5 and 6, for example, target Chrome 87 and Edge 88, which makes the bundler rewrite modern syntax such as optional chaining into longer equivalents. Raising the target to `es2020` or higher avoids this and reduces bundle size. See your bundler's documentation for how to set it.
+
 {% if isFramework("angular") %}
 
 ## Angular CLI Builders
