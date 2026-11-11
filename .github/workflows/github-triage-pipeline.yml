@@ -390,6 +390,8 @@ jobs:
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
                   jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
                   zendesk_subdomain: ${{ vars.ZENDESK_SUBDOMAIN }}
+                  zendesk_client_id: ${{ vars.ZENDESK_CLIENT_ID }}
+                  zendesk_client_secret: ${{ secrets.ZENDESK_CLIENT_SECRET }}
                   zendesk_oauth_token: ${{ secrets.ZENDESK_OAUTH_TOKEN }}
 
     # -------------------------------------------------- execute
@@ -610,6 +612,8 @@ jobs:
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
                   jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
                   zendesk_subdomain: ${{ vars.ZENDESK_SUBDOMAIN }}
+                  zendesk_client_id: ${{ vars.ZENDESK_CLIENT_ID }}
+                  zendesk_client_secret: ${{ secrets.ZENDESK_CLIENT_SECRET }}
                   zendesk_oauth_token: ${{ secrets.ZENDESK_OAUTH_TOKEN }}
 
     # -------------------------------------------------- verify-rebuild
