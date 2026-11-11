@@ -19,10 +19,22 @@ if (!baseFile || !prFile) {
     process.exit(1);
 }
 
+/**
+ * Results measured with another bundler (testing/module-size-bundlers) carry a `bundler`. Fold it into the
+ * module name so they are keyed, listed and reported as separate rows from the default Vite 5 results.
+ */
+function withBundlerLabel(result) {
+    if (!result.bundler) {
+        return result;
+    }
+    const names = result.modules.length === 0 ? 'no modules' : result.modules.join(', ');
+    return { ...result, modules: [`${result.bundler}: ${names}`] };
+}
+
 function loadResults(filePath) {
     try {
         const content = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(content);
+        return JSON.parse(content).map(withBundlerLabel);
     } catch (error) {
         console.error(`Failed to load ${filePath}:`, error.message);
         process.exit(1);
