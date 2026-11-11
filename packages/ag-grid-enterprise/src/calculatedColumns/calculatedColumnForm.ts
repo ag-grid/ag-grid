@@ -57,7 +57,7 @@ export const DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS = ['columns', 'functio
 
 const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
 const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
-const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = OPERATOR_VALUES.map((operator) => ({
+const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = /* #__PURE__ */ OPERATOR_VALUES.map((operator) => ({
     type: 'operator' as const,
     label: operator,
     value: operator,
