@@ -99,9 +99,7 @@ describe('Bryntum campaign content', () => {
         });
 
         it('links to the tier details on bryntum.com', () => {
-            const expected = COMPARISON_PRODUCTS.includes(slug)
-                ? `/products/${slug}/features#${slug}-comparison-heading`
-                : '/tiers-faq/';
+            const expected = COMPARISON_PRODUCTS.includes(slug) ? `/products/${slug}/features` : '/tiers-faq/';
             expect(ctaHrefs(content)).toContain(expected);
         });
 

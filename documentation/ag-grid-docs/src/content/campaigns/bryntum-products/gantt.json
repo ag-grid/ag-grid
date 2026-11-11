@@ -253,7 +253,7 @@
             "ctas": [
                 {
                     "text": "Open API Docs",
-                    "href": "/products/gantt/docs/",
+                    "href": "https://bryntum.com/docs/api/Gantt/view/Gantt",
                     "title": "Open API Docs"
                 }
             ],
@@ -266,7 +266,7 @@
             "modifiers": ["image", "added-shadow"],
             "eyebrow": "Integrations",
             "heading": "Integrations and Export Options",
-            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-schedulerpro/\"><span style=\"font-weight: 400;\">Scheduler</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
+            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-scheduler/\"><span style=\"font-weight: 400;\">Scheduler</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
             "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart . Push Gantt data to Microsoft Excel or to Microsoft Project , print it , or share it as PDF, PNG and ICS . Pair Gantt with other Bryntum components such as Scheduler and Task Board .",
             "links": [
                 {
@@ -295,7 +295,7 @@
                 },
                 {
                     "text": "Scheduler",
-                    "href": "https://bryntum.com/products/gantt/examples/gantt-schedulerpro/"
+                    "href": "https://bryntum.com/products/gantt/examples/gantt-scheduler/"
                 },
                 {
                     "text": "Task Board",
@@ -367,7 +367,7 @@
                         "Drag-and-drop and resizing",
                         "Cell editing and the basic task editor",
                         "Dependencies",
-                        "Date, progress, WBS and constraint columns"
+                        "Date, WBS, milestone and deadline columns"
                     ]
                 },
                 {
@@ -377,7 +377,7 @@
                         "Full task editor",
                         "Resource assignments",
                         "Task calendars and non-working time",
-                        "Effort, slack, and early and late date columns",
+                        "Progress, constraint, effort, slack, and early and late date columns",
                         "Progress line",
                         "Task grouping",
                         "Copy and paste"
@@ -403,7 +403,7 @@
             "ctas": [
                 {
                     "text": "Compare tiers",
-                    "href": "/products/gantt/features#gantt-comparison-heading",
+                    "href": "/products/gantt/features",
                     "title": "Compare Gantt tiers"
                 }
             ]
@@ -427,8 +427,7 @@
             "media": [
                 {
                     "kind": "video",
-                    "src": "../assets/gantt/npm-gantt-edit-3.webm",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-gantt-edit-3.webm"
+                    "src": "../assets/gantt/npm-gantt-v8.webm"
                 }
             ]
         },
