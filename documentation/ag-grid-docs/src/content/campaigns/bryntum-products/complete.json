@@ -31,7 +31,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/bryntum-complete-v7-2.png",
-                    "alt": "Bryntum Complete components: Gantt, Scheduler, Calendar, Task Board and Grid",
+                    "alt": "Bryntum Complete components: Gantt, Scheduler, Calendar, Task Board and Bryntum Grid",
                     "width": "768",
                     "height": "558",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/06/bryntum-complete-v7-2.png"
@@ -116,13 +116,13 @@
             "id": "block_2a6c70a402771bbc11de5d07f6290a54",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
-            "eyebrow": "Data Grid",
-            "heading": "Blazing-Fast Grid",
+            "eyebrow": "Bryntum Grid",
+            "heading": "Blazing-Fast Bryntum Grid",
             "body_html": "<p>Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.</p>",
             "body_text": "Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.",
             "links": [
                 {
-                    "text": "Blazing-Fast Grid",
+                    "text": "Blazing-Fast Bryntum Grid",
                     "href": "/products/grid/"
                 }
             ],
