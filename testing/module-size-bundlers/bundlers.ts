@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
+import { createRequire } from 'module';
 import path from 'path';
 import { build as viteBuild } from 'vite';
 import webpack from 'webpack';
@@ -14,6 +15,14 @@ export interface Bundler {
     /** Builds `entry` into `outDir` and returns the emitted JavaScript files. */
     build(entry: string, outDir: string): Promise<string[]>;
 }
+
+// packages/ag-grid-react has its own React 17 for development; without this its imports bundle a second copy of React.
+const REACT_ALIASES = Object.fromEntries(
+    ['react', 'react-dom'].map((name) => [
+        name,
+        path.dirname(createRequire(import.meta.url).resolve(`${name}/package.json`)),
+    ])
+);
 
 function listJavaScript(dir: string): string[] {
     return fs
@@ -35,6 +44,7 @@ const vite8: Bundler = {
             configFile: false,
             logLevel: 'error',
             plugins: [react()],
+            resolve: { alias: REACT_ALIASES },
             build: { target: 'es2020', outDir, emptyOutDir: true },
         });
         return listJavaScript(outDir);
@@ -50,7 +60,7 @@ const webpack5: Bundler = {
             context: path.dirname(entry),
             devtool: false,
             output: { path: outDir, filename: 'main.js', clean: true },
-            resolve: { extensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs'] },
+            resolve: { extensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs'], alias: REACT_ALIASES },
             module: {
                 rules: [
                     {
