@@ -43,7 +43,7 @@ function getSelect(id: string) {
 
 function onEnsureIndexVisible() {
     const position = getSelect('rowPosition').value as 'auto' | 'top' | 'middle' | 'bottom';
-    gridApi.ensureIndexVisible(Number(getInput('rowIndex').value), position === 'auto' ? undefined : position);
+    gridApi.ensureIndexVisible(Number(getInput('rowIndex').value), position);
 }
 
 function onEnsureColumnVisible() {
