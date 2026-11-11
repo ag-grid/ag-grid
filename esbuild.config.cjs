@@ -4,6 +4,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const postcss = require('postcss');
 const postcssPlugins = require('./postcss-plugins.cjs');
+const { pureToplevelPlugin } = require('./esbuild-plugin-pure-toplevel.cjs');
 const { superclassAliasPlugin } = require('./esbuild-plugin-superclass-alias.cjs');
 
 /** @type {import('esbuild').Plugin} */
@@ -157,11 +158,10 @@ if (isUmd) {
     };
 }
 
-// Only the published ESM needs this, and only when it is the artefact consumers get: UMD has no
-// tree shaking to preserve, and a watch build is never published. It parses the whole bundle, so
-// keeping it out of watch also keeps rebuilds quick. Must precede the minification plugin.
+// Published ESM only: UMD has no tree shaking to preserve and watch builds are never published (and
+// each parses the whole bundle). Must precede the minification plugin, which minifies what is on disk.
 if (!isUmd && !isWatch) {
-    plugins.push(superclassAliasPlugin);
+    plugins.push(superclassAliasPlugin, pureToplevelPlugin);
 }
 
 if (!isWatch) {
