@@ -185,7 +185,7 @@ Locale-specific sort only applies when both values are strings. Other values, su
 
 Toggle the buttons in the following example to see the difference between default sorting and locale-aware sorting. Note that:
 
-- With locale-aware sorting (`accentedSort: true`), the order is `a à ä b c z`, using the browser's locale.
+- With locale-aware sorting (`accentedSort: true`), the browser's locale is used. In most locales, such as English, the order is `a à ä b c z`.
 - With Swedish sorting (`accentedSort: { locales: 'sv' }`), `ä` is a separate letter of the alphabet, so the order is `a à b c z ä`.
 - With default sorting, the order is the Unicode order of `a b c z à ä`.
 
@@ -201,7 +201,7 @@ const gridOptions = {
 };
 ```
 
-Values that differ only in case, such as `AA`, `aa` and `Aa`, are then treated as equal, so they keep their original order. Accented letters are still sorted separately from unaccented ones. To also ignore accents, use `sensitivity: 'base'`.
+Values that differ only in case, such as `AA`, `aa` and `Aa`, are then treated as equal, so they keep their original order. Accented letters are still treated as different from unaccented ones, so `à` sorts after `a`. To also ignore accents, use `sensitivity: 'base'`.
 
 Toggle the buttons in the following example to compare case-insensitive sorting with the default sort. Note that with case-insensitive sorting, `aa` sorts before `AZ`, and `AA`, `aa` and `Aa` stay in the order of the row data.
 

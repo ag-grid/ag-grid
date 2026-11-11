@@ -1061,7 +1061,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
     /**
-     * Set to `true` to sort this column's strings taking accented characters into account, or provide an object to sort
+     * Set to `true` to sort this column's strings using locale-specific rules, so accented characters are taken into account, or provide an object to sort
      * using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
      * Set to `false` to turn locale-specific sorting off for this column.
      *
