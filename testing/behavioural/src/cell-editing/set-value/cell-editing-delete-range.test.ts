@@ -9,12 +9,26 @@ import {
     waitForInput,
 } from 'ag-test-utils';
 
-import { RowSelectionModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
+import {
+    RowSelectionModule,
+    TextEditorModule,
+    UndoRedoEditModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: delete and range clearing', () => {
     const gridMgr = new TestGridsManager({
-        modules: [CellSelectionModule, BatchEditModule, TextEditorModule, RowSelectionModule],
+        modules: [
+            CellSelectionModule,
+            BatchEditModule,
+            TextEditorModule,
+            RowSelectionModule,
+            RowNumbersModule,
+            UndoRedoEditModule,
+        ],
     });
 
     beforeAll(() => {
@@ -482,6 +496,9 @@ describe('Cell Editing: delete and range clearing', () => {
             getRowId: (params) => params.data.id,
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
+        const deleteEvents: string[] = [];
+        api.addEventListener('cellSelectionDeleteStart', (e) => deleteEvents.push(e.type));
+        api.addEventListener('cellSelectionDeleteEnd', (e) => deleteEvents.push(e.type));
         await asyncSetTimeout(0);
 
         const user = userEvent.setup({ skipHover: true });
@@ -497,6 +514,141 @@ describe('Cell Editing: delete and range clearing', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:null b:"B0"
             └── LEAF id:ROW_1 a:null b:"B1"
+        `);
+        expect(deleteEvents).toEqual(['cellSelectionDeleteStart', 'cellSelectionDeleteEnd']);
+    });
+
+    test('range delete started from a suppressing cell is undone in one step', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressedAnchorUndo', {
+            cellSelection: true,
+            undoRedoCellEditing: true,
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true, suppressKeyboardEvent: (params) => params.event.key === 'Delete' },
+            ],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
+        await user.keyboard('{Shift>}');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a')));
+        await user.keyboard('{/Shift}{Delete}');
+        await asyncSetTimeout(0);
+        api.undoCellEditing();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after undo of delete from suppressing cell').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
+    });
+
+    test('Delete on a suppressing cell outside the range leaves the range unchanged', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressedFocusOutsideRange', {
+            cellSelection: true,
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true, suppressKeyboardEvent: (params) => params.event.key === 'Delete' },
+            ],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0', c: 'C0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1', c: 'C1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'c')));
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a', 'b'] });
+        await user.keyboard('{Delete}');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after Delete outside the range').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0" c:"C0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1" c:"C1"
+        `);
+    });
+
+    test('Delete typed into an input inside a suppressing cell leaves the range unchanged', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressedRendererInput', {
+            cellSelection: true,
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                {
+                    field: 'c',
+                    editable: true,
+                    cellRenderer: (params: { value: string }) => {
+                        const eGui = document.createElement('div');
+                        eGui.textContent = params.value;
+                        const input = document.createElement('input');
+                        input.setAttribute('data-testid', 'renderer-input');
+                        eGui.appendChild(input);
+                        return eGui;
+                    },
+                    cellRendererParams: { suppressMouseEventHandling: () => true },
+                    suppressKeyboardEvent: (params) => params.event.key === 'Delete',
+                },
+            ],
+            rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0', c: 'C0' }],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        await user.keyboard('{Shift>}');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
+        await user.keyboard('{/Shift}');
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['c'] });
+        await user.click(getByTestId(gridDiv, 'renderer-input'));
+        await user.keyboard('{Delete}');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after Delete in a renderer input').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 a:"A0" b:"B0" c:"C0"
+        `);
+    });
+
+    test('range delete from a row number keeps cells whose column suppresses the key', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressFromRowNumber', {
+            cellSelection: true,
+            rowNumbers: true,
+            rowSelection: { mode: 'multiRow' },
+            defaultColDef: {
+                editable: true,
+                suppressKeyboardEvent: (params) => !params.editing && params.event.key === 'Delete',
+            },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0' }],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'ag-Grid-RowNumbersColumn')));
+        await user.keyboard('{Delete}');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after delete from row number').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 row-number:"1" a:"A0" b:"B0"
         `);
     });
 
