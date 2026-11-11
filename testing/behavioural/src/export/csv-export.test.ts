@@ -21,13 +21,18 @@ describe('CSV export sanitizeFormulas', () => {
         ['\tvalue', "'\tvalue"],
         ['\rvalue', "'\rvalue"],
         ['\nvalue', "'\nvalue"],
+        // Full-width forms (U+FF1D, U+FF0B, U+FF0D, U+FF20), which some locales also evaluate as formulas.
+        // '－1' starts with U+FF0D FULLWIDTH HYPHEN-MINUS, not the ASCII '-' (U+002D) of a negative number,
+        // so it is not exempt as a number.
         ['＝1+1', "'＝1+1"],
         ['＋1', "'＋1"],
         ['－1', "'－1"],
         ['＠A1', "'＠A1"],
+        // A bare sign is not a number
         ['-', "'-"],
         ['plain', 'plain'],
         ['', ''],
+        // Only the first character is checked
         ['a=b', 'a=b'],
     ];
     const INPUTS = CASES.map(([input]) => input);
@@ -56,6 +61,7 @@ describe('CSV export sanitizeFormulas', () => {
 
     test('leaves plain numbers unchanged', () => {
         const api = gridsManager.createGrid('csv-sanitize-numbers', {
+            // Text that is a plain number is left unchanged too, not only number cells
             columnDefs: [{ field: 'num' }, { field: 'text', cellDataType: 'text' }],
             rowData: [
                 { num: -5, text: '-5' },
@@ -75,7 +81,9 @@ describe('CSV export sanitizeFormulas', () => {
             columnDefs: [
                 { field: 'num', valueFormatter: () => '-1,000.50' },
                 { field: 'big', valueFormatter: () => '-£5' },
+                // The exemption depends on the underlying value being a number, not on how the text looks
                 { field: 'text', cellDataType: 'text', valueFormatter: () => '-1,000.50' },
+                // A number cell is only exempt when its formatted value starts with a sign
                 { field: 'formula', valueFormatter: () => '=1+1' },
             ],
             rowData: [{ num: -1000.5, big: BigInt(-5), text: '-1000.5', formula: 1 }],

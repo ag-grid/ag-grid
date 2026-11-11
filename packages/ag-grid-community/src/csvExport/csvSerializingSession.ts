@@ -15,6 +15,7 @@ const FORMULA_START_REGEX = /^[=+\-@\t\r\n＝＋－＠]/;
 const SIGN_START_REGEX = /^[+-]/;
 const PLAIN_NUMBER_REGEX = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 
+// `avg` and `count` aggregates produce objects with a `toNumber()` method rather than numbers
 function isNumberValue(value: any): boolean {
     return typeof value === 'number' || typeof value === 'bigint' || typeof value?.toNumber === 'function';
 }
