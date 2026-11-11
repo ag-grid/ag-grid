@@ -1,5 +1,5 @@
+import { moveViteClientToEndOfBody } from '@ag-website-shared/utils/moveViteClientToEndOfBody';
 import { getIsProduction } from '@utils/env';
-import { moveViteClientToEndOfBody } from '@utils/exampleModules/moveViteClientToEndOfBody';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
 import { parse } from 'node-html-parser';
