@@ -6,8 +6,8 @@ const read = (relativePath: string) => readFileSync(path.resolve(__dirname, rela
 describe('Angular example runner', () => {
     test('boilerplate bootstraps zoneless', () => {
         const main = read('../../../public/example-runner/grid-angular-boilerplate/main.ts');
-        expect(main).toContain('provideZonelessChangeDetection');
         expect(main).not.toContain('provideZoneChangeDetection');
+        expect(main).not.toContain('zone.js');
     });
 
     test('template does not load zone.js', () => {
