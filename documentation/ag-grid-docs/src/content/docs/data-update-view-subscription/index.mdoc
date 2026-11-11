@@ -100,7 +100,7 @@ The example below shows a portfolio of regions, sectors and stocks as [Tree Data
 The subscription starts when the grid is ready, unless `viewSubscriptionActive` is `false`.
 
 - Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured, for example while the grid is in an inactive tab. Setting it back to `true` subscribes the rows in view.
-- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the API is still usable in the handlers.
+- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
 - The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
 
 Bind `viewSubscriptionActive` to application state while the handlers stay as they are:
@@ -123,28 +123,15 @@ If the server loses the subscriptions, for example after a reconnect, re-send th
 
 ## Excluded Rows
 
-Only loaded rows in view are passed to the handlers. These rows are never passed:
+Only loaded rows in view are passed to the handlers. Loading and failed rows, detail rows, full width rows, total rows (group totals, the grand total and the pivot root row) and rows from `pinnedTopRowData` or `pinnedBottomRowData` are never passed.
 
-- [Loading placeholder rows](./server-side-model-loading-rows/) and [rows that failed to load](./server-side-model-retry/).
-- [Detail Rows](./master-detail/) and [Full Width Rows](./full-width-rows/).
-- [Group total (footer) rows and the grand total row](./aggregation-total-rows/), pinned or not, and the root row shown in [pivot mode](./pivoting/) without row groups.
-- Rows [provided](./row-pinning/#providing-pinned-row-data) with `pinnedTopRowData` or `pinnedBottomRowData`, which have no source row in the row model.
+Rows [pinned](./row-pinning/) by the user or with `isRowPinned` stay subscribed while pinned, wherever the grid is scrolled to. A sticky group row is unsubscribed once its own position scrolls above the view, even though it stays visible at the top of the grid.
 
-Rows [pinned](./row-pinning/) by the user or with `isRowPinned` are always in view, so they stay subscribed while their place in the grid is scrolled away. They are unsubscribed once they are neither pinned nor in view.
-
-Sticky group rows are unsubscribed once their row scrolls above the view, even while they stay stuck to the top of the grid.
-
-[Print layout](./printing/) renders every row, so no rows are subscribed while `domLayout` is `'print'`. Switching to it unsubscribes every row, and switching back subscribes the rows in view.
-
-With `domLayout: 'autoHeight'`, the grid is as tall as all of its rows and the page scrolls, so every row counts as in view and is subscribed. Keep the normal layout for grids with many rows.
+No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every row counts as in view, so keep the normal layout for grids with many rows.
 
 ## Debouncing
 
-The grid calls the handlers once the view has stopped moving for `debounceMs` milliseconds. Rows scrolled past quickly are never subscribed, and slow handlers cause one short pause once scrolling stops, with no lag while scrolling.
-
-- Raise `debounceMs` when each subscription is costly.
-- Lower it, down to `0`, to subscribe sooner. The handlers then run while scrolling, both possibly in the same frame, so keep each call under about 5 ms or scrolling lags.
-- Data changes, such as transactions, do not push a pending call back.
+The grid calls the handlers once the view has stopped moving for `debounceMs` milliseconds (default `50`), so rows scrolled past quickly are never subscribed. Raise it when each subscription is costly. Set it to `0` to subscribe while scrolling, and keep the handlers fast so scrolling doesn't lag.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
