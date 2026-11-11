@@ -734,6 +734,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaCalculatedColumn: 'Vypočítaný stĺpec',
     ariaColumnShowValuesAs: 'Zobrazovanie hodnôt ako',
     ariaColumnSelectAll: 'Prepínať viditeľnosť všetkých stĺpcov',
+    ariaColumnSelectExpandAll: 'Rozbaliť alebo zbaliť všetky skupiny stĺpcov',
     ariaDateFilterInput: 'Vstup Dátumového Filtra',
     ariaDefaultListName: 'Zoznam',
     ariaFilterColumnsInput: 'Vstup Filtra pre Stĺpce',

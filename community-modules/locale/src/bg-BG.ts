@@ -738,6 +738,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaCalculatedColumn: 'Изчислена колона',
     ariaColumnShowValuesAs: 'Показване на стойностите като',
     ariaColumnSelectAll: 'Превключване на видимостта на всички колони',
+    ariaColumnSelectExpandAll: 'Разгъване или свиване на всички групи колони',
     ariaDateFilterInput: 'Вход за филтър по дата',
     ariaDefaultListName: 'Списък',
     ariaFilterColumnsInput: 'Вход за филтриране на колони',

@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaCalculatedColumn: 'ستون محاسبه‌شده',
     ariaColumnShowValuesAs: 'در حال نمایش مقادیر به‌صورت',
     ariaColumnSelectAll: 'تغییر وضعیت نمایش تمام ستون‌ها',
+    ariaColumnSelectExpandAll: 'باز یا بسته کردن همه گروه‌های ستون',
     ariaDateFilterInput: 'ورودی فیلتر تاریخ',
     ariaDefaultListName: 'لیست',
     ariaFilterColumnsInput: 'ورودی فیلتر ستون‌ها',

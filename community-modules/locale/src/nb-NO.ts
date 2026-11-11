@@ -735,6 +735,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser verdier som',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
+    ariaColumnSelectExpandAll: 'Utvid eller skjul alle kolonnegrupper',
     ariaDateFilterInput: 'Inndata for datofilter',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',

@@ -750,6 +750,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaCalculatedColumn: 'Izračunani stolpec',
     ariaColumnShowValuesAs: 'Prikaz vrednosti kot',
     ariaColumnSelectAll: 'Preklopi vidnost vseh stolpcev',
+    ariaColumnSelectExpandAll: 'Razširi ali strni vse skupine stolpcev',
     ariaDateFilterInput: 'Vnos filtra datuma',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vnos filtra stolpcev',

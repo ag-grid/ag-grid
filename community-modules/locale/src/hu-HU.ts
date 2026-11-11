@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaCalculatedColumn: 'Számított oszlop',
     ariaColumnShowValuesAs: 'Értékek megjelenítése mint',
     ariaColumnSelectAll: 'Az összes oszlop láthatóságának váltása',
+    ariaColumnSelectExpandAll: 'Az összes oszlopcsoport kibontása vagy összecsukása',
     ariaDateFilterInput: 'Dátum szűrő bevitel',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Oszlopok szűrése bevitel',

@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaCalculatedColumn: 'Υπολογιζόμενη στήλη',
     ariaColumnShowValuesAs: 'Εμφάνιση τιμών ως',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
+    ariaColumnSelectExpandAll: 'Ανάπτυξη ή σύμπτυξη όλων των ομάδων στηλών',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
     ariaDefaultListName: 'Λίστα',
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',

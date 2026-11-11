@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaCalculatedColumn: 'Berechnete Spalte',
     ariaColumnShowValuesAs: 'Werte werden angezeigt als',
     ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
+    ariaColumnSelectExpandAll: 'Alle Spaltengruppen auf- oder zuklappen',
     ariaDateFilterInput: 'Datum-Filtereingang',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',

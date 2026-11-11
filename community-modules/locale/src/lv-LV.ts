@@ -752,6 +752,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaCalculatedColumn: 'Aprēķinātā kolonna',
     ariaColumnShowValuesAs: 'Rāda vērtības kā',
     ariaColumnSelectAll: 'Pārslēgt visu kolonnu redzamību',
+    ariaColumnSelectExpandAll: 'Izvērst vai sakļaut visas kolonnu grupas',
     ariaDateFilterInput: 'Datuma filtra ievade',
     ariaDefaultListName: 'Saraksts',
     ariaFilterColumnsInput: 'Kolonnu filtra ievade',

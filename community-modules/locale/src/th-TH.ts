@@ -749,6 +749,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaCalculatedColumn: 'คอลัมน์คำนวณ',
     ariaColumnShowValuesAs: 'กำลังแสดงค่าเป็น',
     ariaColumnSelectAll: 'สลับการมองเห็นทุกคอลัมน์',
+    ariaColumnSelectExpandAll: 'ขยายหรือยุบกลุ่มคอลัมน์ทั้งหมด',
     ariaDateFilterInput: 'ช่องป้อนตัวกรองวันที่',
     ariaDefaultListName: 'รายการ',
     ariaFilterColumnsInput: 'ช่องป้อนกรองคอลัมน์',

@@ -733,6 +733,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaCalculatedColumn: 'عمود محسوب',
     ariaColumnShowValuesAs: 'إظهار القيم كـ',
     ariaColumnSelectAll: 'تبديل ظهور كل الأعمدة',
+    ariaColumnSelectExpandAll: 'توسيع أو طي كل مجموعات الأعمدة',
     ariaDateFilterInput: 'إدخال فلتر التاريخ',
     ariaDefaultListName: 'قائمة',
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',

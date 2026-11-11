@@ -733,6 +733,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaCalculatedColumn: 'עמודה מחושבת',
     ariaColumnShowValuesAs: 'מציג ערכים בתור',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
+    ariaColumnSelectExpandAll: 'הרחב או כווץ את כל קבוצות העמודות',
     ariaDateFilterInput: 'קלט סינון תאריך',
     ariaDefaultListName: 'רשימה',
     ariaFilterColumnsInput: 'קלט סינון עמודות',

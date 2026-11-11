@@ -756,6 +756,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaCalculatedColumn: 'Kinalkulang column',
     ariaColumnShowValuesAs: 'Ipinapakita ang mga Halaga Bilang',
     ariaColumnSelectAll: 'I-toggle ang Visibility ng Lahat ng Column',
+    ariaColumnSelectExpandAll: 'I-expand o I-collapse ang Lahat ng Grupo ng Column',
     ariaDateFilterInput: 'Input ng Date Filter',
     ariaDefaultListName: 'Listahan',
     ariaFilterColumnsInput: 'Input ng Filter Columns',

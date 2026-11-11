@@ -733,6 +733,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '正在以此方式顯示值',
     ariaColumnSelectAll: '切換所有欄的可見性',
+    ariaColumnSelectExpandAll: '展開或摺疊所有欄組',
     ariaDateFilterInput: '日期篩選器輸入',
     ariaDefaultListName: '列表',
     ariaFilterColumnsInput: '篩選列輸入',
