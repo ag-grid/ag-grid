@@ -11,7 +11,8 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { LocalEventService } from './localEventService';
 
 /**
- * The global event service. Adds the properties service's common fields to every event it dispatches.
+ * The global event service. Adds the properties service's common fields to every event it dispatches,
+ * unless `addCommonToEvents` is turned off.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export class BaseEventService<
@@ -34,6 +35,9 @@ export class BaseEventService<
     public eventServiceType = 'global' as const;
 
     private readonly globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();
+
+    /** A host that adds the common fields only to what reaches consumer code turns this off. */
+    protected readonly addCommonToEvents: boolean = true;
 
     public addListener<TEventType extends keyof TGlobalEvents & string>(
         eventType: TEventType,
@@ -69,6 +73,6 @@ export class BaseEventService<
     }
 
     public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon>): void {
-        this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event));
+        this.globalSvc.dispatchEvent(this.addCommonToEvents ? this.gos.addCommon<any>(event) : event);
     }
 }
