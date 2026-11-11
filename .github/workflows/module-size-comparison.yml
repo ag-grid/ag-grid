@@ -121,6 +121,7 @@ jobs:
               - 'yarn.lock'
               - 'nx.json'
               - 'tsconfig.*.json'
+              - 'esbuild*.cjs'
               # module-size measurement infrastructure
               - 'testing/module-size/**'
               - 'testing/module-size-angular/**'
