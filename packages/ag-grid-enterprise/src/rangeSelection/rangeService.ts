@@ -911,6 +911,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             dispatchWrapperEvents,
             wrapperEventSource = 'deleteKey',
             restoreSourceInBatch,
+            isCellSuppressed,
         } = params;
 
         let { cellRanges } = params;
@@ -936,6 +937,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         try {
             changeDetectionSvc?.beginDeferred();
             this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
+                if (isCellSuppressed?.(rowNode, column)) {
+                    return;
+                }
                 if (restoreSourceInBatch && batch) {
                     editSvc?.batchResetToSourceValue({ rowNode, column });
                     return;

@@ -5,6 +5,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import type { CellCtrl } from './cellCtrl';
 
 function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
@@ -113,6 +114,13 @@ function onBackspaceOrDeleteKeyDown(
             rangeSvc.clearCellRangeCellValues({
                 dispatchWrapperEvents: true,
                 wrapperEventSource: 'deleteKey',
+                isCellSuppressed: function isCellSuppressingKey(node, column) {
+                    // The focused cell was checked before the key reached the grid.
+                    if (node === rowNode && column === cellCtrl.column) {
+                        return false;
+                    }
+                    return _isUserSuppressingKeyboardEvent(gos, event, node, column, false);
+                },
             });
         } else if (cellCtrl.isCellEditable()) {
             const deleteValue = beans.valueSvc.getDeleteValue(cellCtrl.column, rowNode);

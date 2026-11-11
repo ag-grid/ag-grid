@@ -9,12 +9,12 @@ import {
     waitForInput,
 } from 'ag-test-utils';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { RowSelectionModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 describe('Cell Editing: delete and range clearing', () => {
     const gridMgr = new TestGridsManager({
-        modules: [CellSelectionModule, BatchEditModule, TextEditorModule],
+        modules: [CellSelectionModule, BatchEditModule, TextEditorModule, RowSelectionModule],
     });
 
     beforeAll(() => {
@@ -431,5 +431,96 @@ describe('Cell Editing: delete and range clearing', () => {
             api.commitBatchEdit();
             await asyncSetTimeout(0);
         }
+    });
+
+    test('suppressKeyboardEvent applies to every cell when the range starts on the selection column', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressFromSelectionColumn', {
+            cellSelection: true,
+            rowSelection: { mode: 'multiRow' },
+            defaultColDef: {
+                editable: true,
+                suppressKeyboardEvent: (params) => !params.editing && params.event.key === 'Delete',
+            },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0' }],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'ag-Grid-SelectionColumn')));
+        await user.keyboard('{Shift>}');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
+        await user.keyboard('{/Shift}{Delete}');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after delete from selection column').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 a:"A0" b:"B0"
+        `);
+    });
+
+    test('range delete clears only the cells whose column does not suppress the key', async () => {
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressPerColumn', {
+            cellSelection: true,
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true, suppressKeyboardEvent: (params) => params.event.key === 'Delete' },
+            ],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        await user.keyboard('{Shift>}');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'b')));
+        await user.keyboard('{/Shift}{Delete}');
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after per-column suppressed delete').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:null b:"B0"
+            └── LEAF id:ROW_1 a:null b:"B1"
+        `);
+    });
+
+    test('range delete calls suppressKeyboardEvent once per cell', async () => {
+        const calls: string[] = [];
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressCallsPerCell', {
+            cellSelection: true,
+            defaultColDef: {
+                editable: true,
+                suppressKeyboardEvent: (params) => {
+                    if (params.event.key === 'Delete') {
+                        calls.push(`${params.node.id}:${params.column.getColId()}`);
+                    }
+                    return false;
+                },
+            },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [
+                { id: 'ROW_0', a: 'A0', b: 'B0' },
+                { id: 'ROW_1', a: 'A1', b: 'B1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        await user.keyboard('{Shift>}');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'b')));
+        await user.keyboard('{/Shift}{Delete}');
+        await asyncSetTimeout(0);
+
+        expect(calls).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a', 'ROW_1:b']);
     });
 });
