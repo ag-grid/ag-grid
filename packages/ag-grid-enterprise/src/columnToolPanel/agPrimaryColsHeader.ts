@@ -159,6 +159,10 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.dispatchLocalEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
     }
 
+    public focusFilter(): void {
+        this.eFilterTextField.getFocusableElement().focus();
+    }
+
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
 
