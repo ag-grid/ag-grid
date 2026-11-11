@@ -4,11 +4,10 @@ import {
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
-    ViewSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import { ToolbarModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
 import type { ServerMessage, Stock } from './fakeSocket';
 import { FakeSocket, fetchStocks } from './fakeSocket';

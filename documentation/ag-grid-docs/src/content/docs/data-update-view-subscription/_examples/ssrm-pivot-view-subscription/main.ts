@@ -18,7 +18,6 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     RowApiModule,
-    ViewSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -29,6 +28,7 @@ import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
     ToolbarModule,
+    ViewSubscriptionModule,
 } from 'ag-grid-enterprise';
 
 import type { GroupSubscription, ResultRow, ServerMessage } from './fakeSocket';

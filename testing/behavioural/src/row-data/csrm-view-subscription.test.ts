@@ -9,9 +9,8 @@ import {
     NumberFilterModule,
     PaginationModule,
     ScrollApiModule,
-    ViewSubscriptionModule,
 } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, TreeDataModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
 import { createRecorder, range, setActive, subscribe, tryApi } from './viewSubscriptionTestUtils';
 
@@ -233,6 +232,83 @@ describe('CSRM viewSubscription', () => {
     });
 
     describe('lifecycle', () => {
+        describe('pauseWhenHidden', () => {
+            let pageHidden = false;
+
+            function setPageHidden(hidden: boolean) {
+                pageHidden = hidden;
+                document.dispatchEvent(new Event('visibilitychange'));
+            }
+
+            beforeEach(() => {
+                pageHidden = false;
+                Object.defineProperty(document, 'hidden', { configurable: true, get: () => pageHidden });
+            });
+
+            afterEach(() => {
+                delete (document as { hidden?: boolean }).hidden;
+            });
+
+            test('hiding the page unsubscribes every row, and showing it subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                setPageHidden(true);
+                expect(recorder.subscribed.size).toBe(0);
+
+                setPageHidden(false);
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('a grid created while the page is hidden subscribes once the page is shown', async () => {
+                pageHidden = true;
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                expect(recorder.calls).toEqual([]);
+
+                setPageHidden(false);
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('with pauseWhenHidden set to false, the rows stay subscribed while the page is hidden', async () => {
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: { ...recorder.handlers, pauseWhenHidden: false } });
+
+                setPageHidden(true);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('setting pauseWhenHidden to false while the page is hidden subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+                setPageHidden(true);
+
+                api.setGridOption('viewSubscription', { ...recorder.handlers, pauseWhenHidden: false });
+
+                expect(recorder.ids()).toEqual(range(0, 5));
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('showing the page does not subscribe while viewSubscriptionActive is false', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+                setPageHidden(true);
+                setActive(api, false);
+
+                setPageHidden(false);
+
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.violations).toEqual([]);
+            });
+        });
+
         test('setting the option again with the same handlers makes no call', async () => {
             const recorder = createRecorder();
             const api = await createFlatGrid({ viewSubscription: recorder.handlers });

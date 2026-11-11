@@ -1,14 +1,15 @@
 ---
 title: "View Subscription"
+enterprise: true
 ---
 
 When a server pushes live updates, sending updates for rows the user cannot see is wasted work. The `viewSubscription` grid option tells your application which rows to subscribe to and unsubscribe from as rows enter and leave the view.
 
-View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}.
+View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/).
 
 The example below streams price updates for the subscribed stocks only, over a simulated websocket, and applies them with [Async Transactions](./data-update-high-frequency/).
 
-All examples on this page use the enterprise [Quick Access Toolbar](./toolbar/) {% enterpriseIcon /%} for their controls and counters.
+All examples on this page use the [Quick Access Toolbar](./toolbar/) for their controls and counters.
 
 - Scrolling produces subscribe and unsubscribe batches, logged to the console with their row count.
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
@@ -99,7 +100,8 @@ The example below shows a portfolio of regions, sectors and stocks as [Tree Data
 
 The subscription starts when the grid is ready, unless `viewSubscriptionActive` is `false`.
 
-- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured, for example while the grid is in an inactive tab. Setting it back to `true` subscribes the rows in view.
+- While the page is hidden, for example in a background browser tab or a minimised window, every row is unsubscribed. Once the page is shown again, the rows in view are subscribed. Set `pauseWhenHidden` to `false` to keep the rows subscribed while the page is hidden.
+- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured, for example while the grid is in an inactive tab of your application. Setting it back to `true` subscribes the rows in view. While it is `false`, nothing is subscribed, even when the page is shown.
 - Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
 - The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
 
@@ -111,12 +113,8 @@ const gridOptions = {
         subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
         unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
     },
-    viewSubscriptionActive: !document.hidden,
+    viewSubscriptionActive: isPricesTabSelected,
 };
-
-document.addEventListener('visibilitychange', () => {
-    api.setGridOption('viewSubscriptionActive', !document.hidden);
-});
 ```
 
 If the server loses the subscriptions, for example after a reconnect, re-send the row IDs you track, or set `viewSubscriptionActive` to `false` and back to `true` to subscribe the rows in view again.

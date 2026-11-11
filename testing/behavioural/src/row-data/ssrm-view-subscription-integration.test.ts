@@ -14,7 +14,6 @@ import {
     PinnedRowModule,
     RowSelectionModule,
     ScrollApiModule,
-    ViewSubscriptionModule,
 } from 'ag-grid-community';
 import {
     MasterDetailModule,
@@ -23,6 +22,7 @@ import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
     TreeDataModule,
+    ViewSubscriptionModule,
 } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';

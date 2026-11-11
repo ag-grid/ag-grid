@@ -7,18 +7,13 @@ import type {
     IToolbarItemComp,
     IToolbarItemParams,
 } from 'ag-grid-community';
-import {
-    HighlightChangesModule,
-    ModuleRegistry,
-    ViewSubscriptionModule,
-    createGrid,
-    enableDevValidations,
-} from 'ag-grid-community';
+import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
     ToolbarModule,
     TreeDataModule,
+    ViewSubscriptionModule,
 } from 'ag-grid-enterprise';
 
 import type { PortfolioRow, ServerMessage } from './fakeSocket';

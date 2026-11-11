@@ -52,7 +52,6 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'F
     UndoRedoEditModule: true,
     ValidationModule: true,
     ValueCacheModule: true,
-    ViewSubscriptionModule: true,
     FileInputOverlayModule: true,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true> = {
@@ -96,6 +95,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     ToolbarModule: true,
     TreeDataModule: true,
     ViewportRowModelModule: true,
+    ViewSubscriptionModule: true,
 };
 
 interface ModuleTest {

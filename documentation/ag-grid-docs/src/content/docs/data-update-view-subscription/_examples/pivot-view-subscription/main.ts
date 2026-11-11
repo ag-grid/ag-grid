@@ -20,11 +20,16 @@ import {
     NumberFilterModule,
     RowApiModule,
     TextFilterModule,
-    ViewSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
+import {
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingModule,
+    ToolbarModule,
+    ViewSubscriptionModule,
+} from 'ag-grid-enterprise';
 
 import type { GroupFilter, ServerMessage, Stock } from './fakeSocket';
 import { FakeSocket, fetchStocks, isInGroup } from './fakeSocket';

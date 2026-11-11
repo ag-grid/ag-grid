@@ -4,7 +4,8 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
 import type { ColDef, ViewRow, ViewRowRef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ViewSubscriptionModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
+import { ViewSubscriptionModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { createRecorder, range } from './viewSubscriptionTestUtils';

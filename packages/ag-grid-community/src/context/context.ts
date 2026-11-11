@@ -157,7 +157,6 @@ import type { ChangeDetectionService } from '../valueService/changeDetectionServ
 import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
-import type { ViewSubscriptionService } from '../viewSubscription/viewSubscriptionService';
 import type { PopupService } from '../widgets/popupService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -347,7 +346,6 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     globalListener: AgGlobalEventListener;
     globalSyncListener: AgGlobalEventListener;
     stateSvc?: StateService;
-    viewSubSvc?: ViewSubscriptionService;
     overlays?: OverlayService;
     errorOverlay?: ErrorOverlayService;
     issueEvents?: IssueEventService;
@@ -458,6 +456,7 @@ export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
+    | 'viewSubSvc'
     | 'advFilterExpSvc'
     | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'

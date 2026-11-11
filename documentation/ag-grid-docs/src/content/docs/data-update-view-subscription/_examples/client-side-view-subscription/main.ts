@@ -15,11 +15,10 @@ import {
     NumberFilterModule,
     RowApiModule,
     TextFilterModule,
-    ViewSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ToolbarModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
 import type { ServerMessage, Stock } from './fakeSocket';
 import { FakeSocket, fetchStocks } from './fakeSocket';

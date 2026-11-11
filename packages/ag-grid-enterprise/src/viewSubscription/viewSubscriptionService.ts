@@ -1,23 +1,25 @@
-import { _areEqual } from 'ag-stack';
+import { _areEqual, _getDocument } from 'ag-stack';
 
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, DisplayedRowsChangedEvent, PaginationChangedEvent } from '../events';
 import {
+    BeanStub,
     _addGridCommonParams,
     _getRowIdCallback,
     _isClientSideRowModel,
     _isDomLayout,
     _isServerSideRowModel,
-} from '../gridOptionsUtils';
+} from 'ag-grid-community';
 import type {
+    BodyScrollEvent,
+    DisplayedRowsChangedEvent,
+    NamedBean,
+    PaginationChangedEvent,
+    RowNode,
     ViewGroupRowRef,
     ViewRow,
     ViewRowRef,
     ViewSubscriptionOptions,
     ViewSubscriptionParams,
-} from '../interfaces/iViewSubscription';
+} from 'ag-grid-community';
 
 interface SubscribedRow {
     ref: ViewRowRef;
@@ -76,12 +78,18 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
+        this.addManagedListeners(_getDocument(this.beans), { visibilitychange: () => this.refresh() });
     }
 
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
-        if (!options || this.gos.get('viewSubscriptionActive') === false || this.preDestroyed) {
+        if (
+            !options ||
+            this.gos.get('viewSubscriptionActive') === false ||
+            this.preDestroyed ||
+            this.isPaused(options)
+        ) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
             this.stop(options ?? previousOptions);
         } else if (!this.sub) {
@@ -121,6 +129,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         if (refs.length) {
             options?.unsubscribeRows(refs, this.createParams());
         }
+    }
+
+    /** A hidden page gets no updates on screen, so its rows are unsubscribed until it is shown again. */
+    private isPaused(options: ViewSubscriptionOptions): boolean {
+        return options.pauseWhenHidden !== false && _getDocument(this.beans).hidden;
     }
 
     private getOptions(): ViewSubscriptionOptions | undefined {

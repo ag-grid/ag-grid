@@ -16,9 +16,14 @@ import {
     RowSelectionModule,
     ScrollApiModule,
     TextFilterModule,
-    ViewSubscriptionModule,
 } from 'ag-grid-community';
-import { MasterDetailModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import {
+    MasterDetailModule,
+    PivotModule,
+    RowGroupingModule,
+    TreeDataModule,
+    ViewSubscriptionModule,
+} from 'ag-grid-enterprise';
 
 import type { Recorder } from './viewSubscriptionTestUtils';
 import { createRecorder, range, setActive, subscribe } from './viewSubscriptionTestUtils';

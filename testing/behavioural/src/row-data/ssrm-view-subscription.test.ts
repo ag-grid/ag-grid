@@ -10,8 +10,13 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ScrollApiModule, ViewSubscriptionModule } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { ScrollApiModule } from 'ag-grid-community';
+import {
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    ViewSubscriptionModule,
+} from 'ag-grid-enterprise';
 
 import { createRecorder, range, setActive, subscribe, tryApi } from './viewSubscriptionTestUtils';
 

@@ -210,8 +210,7 @@ export type CommunityModuleName =
     | 'UndoRedoEdit'
     | 'Validation'
     | 'ValueCache'
-    | 'CellSpan'
-    | 'ViewSubscription';
+    | 'CellSpan';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -252,6 +251,7 @@ export type EnterpriseModuleName =
     | 'Toolbar'
     | 'TreeData'
     | 'ViewportRowModel'
+    | 'ViewSubscription'
     | 'Formula'
     | 'Notes'
     | 'RowGroupingEdit';
@@ -307,7 +307,6 @@ export type AgModuleName =
     | 'ValidationModule'
     | 'ValueCacheModule'
     | 'CellSpanModule'
-    | 'ViewSubscriptionModule'
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'
@@ -346,6 +345,7 @@ export type AgModuleName =
     | 'ToolbarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
+    | 'ViewSubscriptionModule'
     | 'FormulaModule'
     | 'NotesModule';
 

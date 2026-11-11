@@ -62,7 +62,8 @@ export interface ViewSubscriptionParams<TData = any, TContext = any> extends AgG
 export interface ViewSubscriptionOptions<TData = any, TContext = any> {
     /**
      * Called with rows that came into view and loaded. Each row is passed once, until it is passed to `unsubscribeRows`.
-     * Called when the grid is ready, or `viewSubscriptionActive` is set back to `true`, with the rows already in view, even if there are none.
+     * Called when the grid is ready, when `viewSubscriptionActive` is set back to `true`, or when a hidden page is shown again,
+     * with the rows already in view, even if there are none.
      * Called synchronously, and a returned promise is not awaited, so queue slow work and return straight away.
      */
     subscribeRows(rows: ViewRow<TData>[], params: ViewSubscriptionParams<TData, TContext>): void;
@@ -79,4 +80,10 @@ export interface ViewSubscriptionOptions<TData = any, TContext = any> {
      * @default 50
      */
     debounceMs?: number;
+    /**
+     * Unsubscribe every row while the page is hidden, for example in a background browser tab or a minimised window,
+     * and subscribe the rows in view again once it is shown. Set to `false` to keep the rows subscribed while the page is hidden.
+     * @default true
+     */
+    pauseWhenHidden?: boolean;
 }

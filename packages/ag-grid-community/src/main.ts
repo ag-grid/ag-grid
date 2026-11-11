@@ -1190,7 +1190,6 @@ export type { AgModuleName, Module } from './interfaces/iModule';
 export { EventApiModule } from './misc/apiEvents/apiEventModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { GridStateModule } from './misc/state/stateModule';
-export { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 export { ModuleRegistry } from './modules/moduleRegistry';
 export { PaginationModule } from './pagination/paginationModule';
 export { PaginationPageNumbersModule } from './pagination/paginationPageNumbersModule';
