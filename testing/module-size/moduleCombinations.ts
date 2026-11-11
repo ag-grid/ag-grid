@@ -78,6 +78,7 @@ function createBuildConfig() {
         logLevel: 'warn' as const,
         plugins: [react()],
         build: {
+            target: 'es2020',
             rollupOptions: {
                 output: {
                     manualChunks: {

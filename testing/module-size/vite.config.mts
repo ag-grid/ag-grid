@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [react()],
     build: {
+        target: 'es2020',
         rollupOptions: {
             output: {
                 manualChunks: {
