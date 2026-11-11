@@ -4,6 +4,7 @@ import { isRowNumberCol } from '../../columns/columnUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
+import type { IRangeService } from '../../interfaces/IRangeService';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import type { CellCtrl } from './cellCtrl';
@@ -111,17 +112,7 @@ function onBackspaceOrDeleteKeyDown(
         !editSvc?.isEditing(cellCtrl, { withOpenEditor: true })
     ) {
         if (rangeSvc && _isCellSelectionEnabled(gos)) {
-            rangeSvc.clearCellRangeCellValues({
-                dispatchWrapperEvents: true,
-                wrapperEventSource: 'deleteKey',
-                isCellSuppressed: function isCellSuppressingKey(node, column) {
-                    // The focused cell was checked before the key reached the grid.
-                    if (node === rowNode && column === cellCtrl.column) {
-                        return false;
-                    }
-                    return _isUserSuppressingKeyboardEvent(gos, event, node, column, false);
-                },
-            });
+            clearCellRangeOnDeleteKey(beans, rangeSvc, cellCtrl, event, false);
         } else if (cellCtrl.isCellEditable()) {
             const deleteValue = beans.valueSvc.getDeleteValue(cellCtrl.column, rowNode);
             rowNode.setDataValue(cellCtrl.column, deleteValue, 'cellClear');
@@ -131,6 +122,44 @@ function onBackspaceOrDeleteKeyDown(
     }
 
     eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
+}
+
+/** Handles a keydown that the focused cell's `suppressKeyboardEvent` stopped the grid acting on. */
+export function _onSuppressedCellKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
+    const { gos, rangeSvc, eventSvc } = beans;
+    if (
+        !rangeSvc ||
+        !_isCellSelectionEnabled(gos) ||
+        !rangeSvc.isMoreThanOneCell() ||
+        !_isDeleteKey(event.key, gos.get('enableCellEditingOnBackspace'))
+    ) {
+        return;
+    }
+
+    eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
+    clearCellRangeOnDeleteKey(beans, rangeSvc, cellCtrl, event, true);
+    eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
+}
+
+function clearCellRangeOnDeleteKey(
+    beans: BeanCollection,
+    rangeSvc: IRangeService,
+    cellCtrl: CellCtrl,
+    event: KeyboardEvent,
+    focusedCellSuppressed: boolean
+): void {
+    const { gos } = beans;
+    const { rowNode: focusedRowNode, column: focusedColumn } = cellCtrl;
+    rangeSvc.clearCellRangeCellValues({
+        dispatchWrapperEvents: true,
+        wrapperEventSource: 'deleteKey',
+        isCellSuppressed: function isCellSuppressingKey(node, column) {
+            if (node === focusedRowNode && column === focusedColumn) {
+                return focusedCellSuppressed;
+            }
+            return _isUserSuppressingKeyboardEvent(gos, event, node, column, false);
+        },
+    });
 }
 
 function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {

@@ -433,7 +433,7 @@ describe('Cell Editing: delete and range clearing', () => {
         }
     });
 
-    test('suppressKeyboardEvent applies to every cell when the range starts on the selection column', async () => {
+    test('range delete from the selection column keeps suppressed cells and fires no delete events', async () => {
         const api = await gridMgr.createGridAndWait('cellEditingSuppressFromSelectionColumn', {
             cellSelection: true,
             rowSelection: { mode: 'multiRow' },
@@ -446,6 +446,9 @@ describe('Cell Editing: delete and range clearing', () => {
             getRowId: (params) => params.data.id,
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
+        const deleteEvents: string[] = [];
+        api.addEventListener('cellSelectionDeleteStart', (e) => deleteEvents.push(e.type));
+        api.addEventListener('cellSelectionDeleteEnd', (e) => deleteEvents.push(e.type));
         await asyncSetTimeout(0);
 
         const user = userEvent.setup({ skipHover: true });
@@ -459,10 +462,14 @@ describe('Cell Editing: delete and range clearing', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ROW_0 a:"A0" b:"B0"
         `);
+        expect(deleteEvents).toEqual([]);
     });
 
-    test('range delete clears only the cells whose column does not suppress the key', async () => {
-        const api = await gridMgr.createGridAndWait('cellEditingSuppressPerColumn', {
+    test.each([
+        ['ROW_0:a', 'ROW_1:b'],
+        ['ROW_1:b', 'ROW_0:a'],
+    ])('range delete from %s to %s clears only the cells whose column does not suppress the key', async (from, to) => {
+        const api = await gridMgr.createGridAndWait(`cellEditingSuppressPerColumn-${from}`, {
             cellSelection: true,
             columnDefs: [
                 { field: 'a', editable: true },
@@ -478,13 +485,15 @@ describe('Cell Editing: delete and range clearing', () => {
         await asyncSetTimeout(0);
 
         const user = userEvent.setup({ skipHover: true });
-        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        const [fromRow, fromCol] = from.split(':');
+        const [toRow, toCol] = to.split(':');
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell(fromRow, fromCol)));
         await user.keyboard('{Shift>}');
-        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'b')));
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell(toRow, toCol)));
         await user.keyboard('{/Shift}{Delete}');
         await asyncSetTimeout(0);
 
-        await new GridRows(api, 'after per-column suppressed delete').check(`
+        await new GridRows(api, `after per-column suppressed delete from ${from}`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:null b:"B0"
             └── LEAF id:ROW_1 a:null b:"B1"
