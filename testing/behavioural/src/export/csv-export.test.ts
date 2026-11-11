@@ -21,9 +21,8 @@ describe('CSV export sanitizeFormulas', () => {
         ['\tvalue', "'\tvalue"],
         ['\rvalue', "'\rvalue"],
         ['\nvalue', "'\nvalue"],
-        // Full-width forms (U+FF1D, U+FF0B, U+FF0D, U+FF20), which some locales also evaluate as formulas.
-        // '－1' starts with U+FF0D FULLWIDTH HYPHEN-MINUS, not the ASCII '-' (U+002D) of a negative number,
-        // so it is not exempt as a number.
+        // Full-width forms, which some locales also evaluate as formulas. '－1' starts with
+        // U+FF0D FULLWIDTH HYPHEN-MINUS, not the ASCII '-' of a negative number, so it is not exempt.
         ['＝1+1', "'＝1+1"],
         ['＋1', "'＋1"],
         ['－1', "'－1"],
