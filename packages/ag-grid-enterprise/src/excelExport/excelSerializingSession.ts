@@ -389,12 +389,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             currentRow.collapsed = !isExpanded;
         }
 
-        currentRow.hidden =
-            // always show the node if there is no parent to be expanded
-            !!node.parent &&
-            // or if it is a child of the root node
-            node.parent.level !== -1 &&
-            (collapseAll || this.isAnyParentCollapsed(node.parent));
+        currentRow.hidden = this.hasCollapsedExportedParent(node.parent, collapseAll);
     }
 
     /**
@@ -418,12 +413,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return level;
     }
 
-    private isAnyParentCollapsed(node?: RowNode | null): boolean {
+    private hasCollapsedExportedParent(node: RowNode | null | undefined, collapseAll: boolean): boolean {
         const gos = this.gos;
 
         while (node && node.level !== -1) {
             // a hidden single-child group is not exported, so it has no row to expand its child
-            if (!node.expanded && !_isHiddenSingleChildGroup(gos, node)) {
+            if ((collapseAll || !node.expanded) && !_isHiddenSingleChildGroup(gos, node)) {
                 return true;
             }
 
