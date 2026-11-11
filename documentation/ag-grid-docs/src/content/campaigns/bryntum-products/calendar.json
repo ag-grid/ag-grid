@@ -366,7 +366,7 @@
             "ctas": [
                 {
                     "text": "Compare tiers",
-                    "href": "/products/calendar/features#calendar-comparison-heading",
+                    "href": "/products/calendar/features",
                     "title": "Compare Calendar tiers"
                 }
             ]
@@ -390,8 +390,7 @@
             "media": [
                 {
                     "kind": "video",
-                    "src": "../assets/calendar/npm-calendar-edit-2.webm",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-calendar-edit-2.webm"
+                    "src": "../assets/calendar/npm-calendar-v8.webm"
                 }
             ]
         },

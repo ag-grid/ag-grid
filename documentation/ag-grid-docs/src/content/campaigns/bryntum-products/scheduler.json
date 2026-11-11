@@ -56,11 +56,11 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Feature Set",
             "heading": "Feature-Packed",
-            "body_html": "<p>Built on our <a href=\"/products/grid\">Grid component</a>, Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports:</p> <ul> <li>Drag-and-drop event resizing</li> <li>A handy event editor and keyboard navigation</li> <li><a href=\"/products/scheduler/examples/export/\">PDF, PNG,</a> <a href=\"/products/scheduler/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/scheduler/examples/exporttoics/\">ICS</a> and <a href=\"/products/scheduler/examples/print/\">print</a> data exports</li> <li><a href=\"/products/scheduler/examples/responsive/\">Responsive layout</a></li> <li><a href=\"/products/scheduler/examples/dragfromgrid/\">Drag-and-drop event assignment</a></li> </ul> <p>PDF, PNG and print exports come with Scheduler Enterprise.</p>",
-            "body_text": "Built on our Grid component , Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports: Drag-and-drop event resizing A handy event editor and keyboard navigation PDF, PNG, Excel , ICS and print data exports Responsive layout Drag-and-drop event assignment PDF, PNG and print exports come with Scheduler Enterprise.",
+            "body_html": "<p>Built on <a href=\"/products/grid\">Bryntum Grid</a>, Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports:</p> <ul> <li>Drag-and-drop event resizing</li> <li>A handy event editor and keyboard navigation</li> <li><a href=\"/products/scheduler/examples/export/\">PDF, PNG,</a> <a href=\"/products/scheduler/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/scheduler/examples/exporttoics/\">ICS</a> and <a href=\"/products/scheduler/examples/print/\">print</a> data exports</li> <li><a href=\"/products/scheduler/examples/responsive/\">Responsive layout</a></li> <li><a href=\"/products/scheduler/examples/dragfromgrid/\">Drag-and-drop event assignment</a></li> </ul> <p>PDF, PNG and print exports come with Scheduler Enterprise.</p>",
+            "body_text": "Built on Bryntum Grid , Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports: Drag-and-drop event resizing A handy event editor and keyboard navigation PDF, PNG, Excel , ICS and print data exports Responsive layout Drag-and-drop event assignment PDF, PNG and print exports come with Scheduler Enterprise.",
             "links": [
                 {
-                    "text": "Grid component",
+                    "text": "Bryntum Grid",
                     "href": "/products/grid"
                 },
                 {
@@ -223,7 +223,7 @@
             "ctas": [
                 {
                     "text": "Open demo",
-                    "href": "/products/schedulerpro/examples/resourcehistogram/",
+                    "href": "/products/scheduler/examples/resourcehistogram/",
                     "title": "Open demo"
                 }
             ],
@@ -250,7 +250,7 @@
             "ctas": [
                 {
                     "text": "Open demo",
-                    "href": "/products/schedulerpro/examples/skill-matching/",
+                    "href": "/products/scheduler/examples/skill-matching/",
                     "title": "Open demo"
                 }
             ],
@@ -268,20 +268,20 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Auto-Scheduling",
             "heading": "Plan for the Real World",
-            "body_html": "<p>Enterprise keeps the plan realistic as conditions change:</p> <ul> <li>Spot peak activity windows and overloaded categories via the heatmap.</li> <li>Lean on <a href=\"/products/schedulerpro/examples/nested-events-dependencies/\">nested events</a> to make related-task handling simpler.</li> <li><a href=\"/products/schedulerpro/examples/travel-time/\">Factor travel time in</a> for tighter callout and field-routing planning.</li> <li>Settle <a href=\"/products/schedulerpro/examples/conflicts/\">scheduling conflicts</a> and keep the schedule intact.</li> </ul>",
+            "body_html": "<p>Enterprise keeps the plan realistic as conditions change:</p> <ul> <li>Spot peak activity windows and overloaded categories via the heatmap.</li> <li>Lean on <a href=\"/products/scheduler/examples/nested-events-dependencies/\">nested events</a> to make related-task handling simpler.</li> <li><a href=\"/products/scheduler/examples/travel-time/\">Factor travel time in</a> for tighter callout and field-routing planning.</li> <li>Settle <a href=\"/products/scheduler/examples/conflicts/\">scheduling conflicts</a> and keep the schedule intact.</li> </ul>",
             "body_text": "Enterprise keeps the plan realistic as conditions change: Spot peak activity windows and overloaded categories via the heatmap. Lean on nested events to make related-task handling simpler. Factor travel time in for tighter callout and field-routing planning. Settle scheduling conflicts and keep the schedule intact.",
             "links": [
                 {
                     "text": "nested events",
-                    "href": "/products/schedulerpro/examples/nested-events-dependencies/"
+                    "href": "/products/scheduler/examples/nested-events-dependencies/"
                 },
                 {
                     "text": "Factor travel time in",
-                    "href": "/products/schedulerpro/examples/travel-time/"
+                    "href": "/products/scheduler/examples/travel-time/"
                 },
                 {
                     "text": "scheduling conflicts",
-                    "href": "/products/schedulerpro/examples/conflicts/"
+                    "href": "/products/scheduler/examples/conflicts/"
                 }
             ],
             "ctas": [
@@ -409,7 +409,7 @@
                         "Recurring events and time zone support",
                         "Dependency editing",
                         "Resource time ranges and non-working time",
-                        "Timeline histogram",
+                        "Event filtering, copy and paste",
                         "Zoom and pan tools",
                         "Undo and redo",
                         "Lazy loading"
@@ -420,7 +420,7 @@
                     "licence": "Commercial licence",
                     "features": [
                         "Scheduling engine with working-time calendars, constraints, effort-driven scheduling and dependency types",
-                        "Resource histogram and utilisation views",
+                        "Resource and timeline histograms, utilisation views",
                         "Nested events and event segments",
                         "Summaries",
                         "PDF export and print",
@@ -432,7 +432,7 @@
             "ctas": [
                 {
                     "text": "Compare tiers",
-                    "href": "/products/scheduler/features#scheduler-comparison-heading",
+                    "href": "/products/scheduler/features",
                     "title": "Compare Scheduler tiers"
                 }
             ]
@@ -456,8 +456,7 @@
             "media": [
                 {
                     "kind": "video",
-                    "src": "../assets/scheduler/installing-scheduler-trial-3.webm",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/installing-scheduler-trial-3.webm"
+                    "src": "../assets/scheduler/npm-scheduler-v8.webm"
                 }
             ]
         },
