@@ -44,7 +44,7 @@ Consider using JavaScript Cell Renderers instead of Angular Cell Renderers to se
 If you are using Angular Components as Cell Renderers, consider using [OnPush](https://angular.dev/api/core/ChangeDetectionStrategy) change detection strategy. This is recommend by Angular as outlined in their docs: [Best Practices > Performance](https://angular.dev/best-practices/skipping-subtrees).
 
 {% note %}
-Angular supports coalescing of multiple change detection cycles into a single cycle which can lead to significant performance improvements. This can be achieved via `provideZoneChangeDetection` as described [here](./angular-ngzone/#recommended-ngzoneoptions).
+In zone-based applications, Angular supports coalescing of multiple change detection cycles into a single cycle which can lead to significant performance improvements. This can be achieved via `provideZoneChangeDetection` as described [here](./angular-ngzone/#recommended-ngzoneoptions). This does not apply to zoneless applications, the default from Angular 21.
 {% /note %}
 
 {% /if %}

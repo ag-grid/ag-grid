@@ -32,6 +32,10 @@ const received = (service: { addListener(t: any, l: any, a?: boolean): void }): 
     return events;
 };
 
+class EventServiceWithoutCommon extends BaseEventService<any, any, Events, Common, any> {
+    protected override readonly addCommonToEvents = false;
+}
+
 describe('BaseEventService', () => {
     it('adds the common fields on the way out', () => {
         const service = wire(new BaseEventService<any, any, Events, Common, any>());
@@ -40,5 +44,14 @@ describe('BaseEventService', () => {
         service.dispatchEvent({ type: 'somethingHappened', widgetId: 'w1' });
 
         expect(events).toEqual([{ type: 'somethingHappened', widgetId: 'w1', api, context: appContext }]);
+    });
+
+    it('dispatches events as given when the host turns the common fields off', () => {
+        const service = wire(new EventServiceWithoutCommon());
+        const events = received(service);
+
+        service.dispatchEvent({ type: 'somethingHappened', widgetId: 'w1' });
+
+        expect(events).toEqual([{ type: 'somethingHappened', widgetId: 'w1' }]);
     });
 });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
@@ -28,7 +28,7 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
                     <button id="reloadGridButton" (click)="reloadGrid()">Reload Grid</button>
                 </div>
             </div>
-            @if (isVisible) {
+            @if (isVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
                     [columnDefs]="columnDefs"
@@ -40,7 +40,7 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     `,
 })
 export class AppComponent {
-    public isVisible = true;
+    public isVisible = signal(true);
     private gridApi!: GridApi;
     public columnDefs: ColDef[] = [
         { field: 'name', headerName: 'Athlete', width: 250 },
@@ -54,8 +54,8 @@ export class AppComponent {
     public rowData: any[] | null = getData();
 
     reloadGrid() {
-        this.isVisible = false;
-        setTimeout(() => (this.isVisible = true), 1);
+        this.isVisible.set(false);
+        setTimeout(() => this.isVisible.set(true), 1);
     }
 
     onGridReady(params: GridReadyEvent) {

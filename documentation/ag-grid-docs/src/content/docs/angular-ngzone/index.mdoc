@@ -3,13 +3,34 @@ title: "AG Grid and NgZone"
 frameworks: ["angular"]
 ---
 
-Recommended NgZoneOptions and details of AG Grid's performance optimisations to avoid [Zone Pollution](https://angular.dev/best-practices/zone-pollution).
+AG Grid works with zoneless Angular applications, the default from Angular 21, without any configuration. This page also covers the recommended NgZoneOptions and AG Grid's performance optimisations for avoiding [Zone Pollution](https://angular.dev/best-practices/zone-pollution) in zone-based applications.
 
-{% note %}
-From Angular 21, new applications are zoneless by default. The optimisations on this page only apply to Zone based applications. See [Angular Zoneless](https://angular.dev/guide/zoneless) for more details.
-{% /note %}
+## Zoneless Change Detection (Default)
 
-## Recommended NgZoneOptions
+From Angular 21, applications created with `bootstrapApplication` are [zoneless](https://angular.dev/guide/zoneless) by default, so `zone.js` and `provideZoneChangeDetection` are not required. AG Grid needs no additional configuration. See [Zoneless Support](./compatibility/#zoneless-support) for more details.
+
+Custom components (cell renderers, filters, headers etc.) must meet Angular's [requirements for zoneless compatibility](https://angular.dev/guide/zoneless#requirements-for-zoneless-compatibility). In particular, when the grid calls methods on your component such as `refresh()`, `setModel()` or `onParentModelChanged()`, update any state used by the template via signals, or call `ChangeDetectorRef.markForCheck()`, so that Angular schedules change detection.
+
+```ts
+export class MyCellRenderer implements ICellRendererAngularComp {
+    value = signal('');
+
+    agInit(params: ICellRendererParams): void {
+        this.value.set(params.value);
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        this.value.set(params.value);
+        return true;
+    }
+}
+```
+
+## Zone-Based Applications (Opt-In)
+
+The remainder of this page applies only to applications that opt in to zone-based change detection. This requires adding `zone.js` to your application and providing `provideZoneChangeDetection()`.
+
+### Recommended NgZoneOptions
 
 Angular supports coalescing of change detection cycles via [NgZoneOptions](https://angular.dev/api/core/NgZoneOptions). This can be set via `provideZoneChangeDetection` when bootstrapping your application. We recommend enabling `eventCoalescing` and `runCoalescing` for optimal AG Grid performance.
 
@@ -28,17 +49,17 @@ bootstrapApplication(AppComponent, {
 The above application configuration is recommended for optimal AG Grid performance.
 {% /note %}
 
-## NgZone and Change Detection
+### NgZone and Change Detection
 
 Angular uses Zone.js to manage change detection by capturing all asynchronous operations and scheduling change detection to run when they complete. However, if an application / library uses asynchronous operations that do not require change detection to run, it can be beneficial to run these operations outside of NgZone.
 
 The official term for this is [Zone Pollution](https://angular.dev/best-practices/zone-pollution) as documented by Angular.
 
-## AG Grid Features Run In / Out of NgZone
+### AG Grid Features Run In / Out of NgZone
 
 AG Grid minimises unnecessary change detection by running all internal operations outside of NgZone while ensuring that wherever AG Grid may trigger a change in the Angular application that this code will be executed inside NgZone. This behaviour should be invisible to the vast majority of developers.
 
-### Operations Run Inside NgZone
+#### Operations Run Inside NgZone
 
 The majority of application code run by AG Grid will be executed inside NgZone including:
 
@@ -57,7 +78,7 @@ onCellClicked(event: CellClickedEvent) {
 <ag-grid-angular (cellClicked)="onCellClicked($event)">
 ```
 
-### Operations Run Outside NgZone
+#### Operations Run Outside NgZone
 
 For performance gains the following operations are run outside of NgZone:
 

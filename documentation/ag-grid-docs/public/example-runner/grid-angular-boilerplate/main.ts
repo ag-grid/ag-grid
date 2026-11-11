@@ -1,6 +1,6 @@
 import '@angular/compiler';
 import { provideHttpClient } from '@angular/common/http';
-import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
+import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -10,7 +10,7 @@ if (new URLSearchParams(window.location.search).get('prod') !== 'false') {
 }
 
 const app = bootstrapApplication(AppComponent, {
-    providers: [provideZoneChangeDetection(), provideHttpClient()],
+    providers: [provideHttpClient()],
 });
 /** TEAR DOWN START **/
 app.then((appRef) => {
