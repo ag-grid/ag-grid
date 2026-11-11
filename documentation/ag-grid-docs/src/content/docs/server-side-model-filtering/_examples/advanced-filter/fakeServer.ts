@@ -95,7 +95,7 @@ export function FakeServer(allData) {
                 params.push('%' + item.filter);
                 return key + ' LIKE ?';
             case 'blank':
-                return key + ' IS NULL or ' + key + " = ''";
+                return '(' + key + ' IS NULL OR ' + key + " = '')";
             case 'notBlank':
                 return key + ' IS NOT NULL and ' + key + " != ''";
             default:
