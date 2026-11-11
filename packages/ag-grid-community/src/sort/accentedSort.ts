@@ -5,8 +5,8 @@ import type { AccentedSortOptions } from '../interfaces/iSort';
 /** `accentedSort: true`: `localeCompare` with the browser's default locale. */
 const localeStringComparator: StringComparator = (valueA, valueB) => valueA.localeCompare(valueB);
 
-/** One comparator per distinct locale and collator options, so each `Intl.Collator` is built once. */
-const collatorComparators = new Map<string, StringComparator>();
+/** One comparator per options object, so each `Intl.Collator` is built once and released with its options. */
+const collatorComparators = new WeakMap<AccentedSortOptions, StringComparator>();
 
 const createCollatorComparator = (
     locales: string | string[] | undefined,
@@ -38,12 +38,10 @@ export function _getStringComparator(
     if (accentedSort === true) {
         return localeStringComparator;
     }
-    const { locales, options } = accentedSort;
-    const key = JSON.stringify([locales, options]);
-    let comparator = collatorComparators.get(key);
+    let comparator = collatorComparators.get(accentedSort);
     if (!comparator) {
-        comparator = createCollatorComparator(locales, options);
-        collatorComparators.set(key, comparator);
+        comparator = createCollatorComparator(accentedSort.locales, accentedSort.options);
+        collatorComparators.set(accentedSort, comparator);
     }
     return comparator;
 }

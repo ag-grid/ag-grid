@@ -156,23 +156,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return false;
     }
 
-    /**
-     * Sorts the values again when the effective `accentedSort` changed, e.g. through the grid option.
-     * Returns whether the loaded values were sorted again.
-     */
-    public refreshOrder(): boolean {
-        const oldStringComparator = this.stringComparator;
-        this.updateParams(this.params);
-        if (this.stringComparator === oldStringComparator) {
-            return false;
-        }
-        return this.sortLoadedValues();
-    }
-
     /** The loaded values, the API's included, are sorted again; a load still pending sorts when it answers. */
-    private sortLoadedValues(): boolean {
+    private sortLoadedValues(): void {
         if (!this.current?.answered) {
-            return false;
+            return;
         }
         const keys = this.sortKeys(this.allValues);
         const available = this.availableKeys;
@@ -186,7 +173,6 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         this.allKeys = AgPromise.resolve(keys);
         this.availableKeys = nextAvailable;
         this.updateDisplayableKeys(keys);
-        return true;
     }
 
     /** The one writer of the values used, so their kind always matches them; `undefined` reads the rows. */

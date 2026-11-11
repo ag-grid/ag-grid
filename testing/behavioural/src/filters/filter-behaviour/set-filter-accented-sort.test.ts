@@ -86,6 +86,27 @@ describe('Set Filter list order follows accentedSort', () => {
         expect(filter.setFilterItemLabels()).toEqual(unicodeOrder);
     });
 
+    test('changing the grid option at runtime keeps the filter model', async () => {
+        const api = await createGrid({ accentedSort: { locales: 'sv' } });
+        await api.setColumnFilterModel('name', { filterType: 'set', values: ['Åsa', 'Zoe'] });
+        api.onFilterChanged();
+
+        api.setGridOption('accentedSort', { locales: 'de' });
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('name')).toEqual({ filterType: 'set', values: ['Åsa', 'Zoe'] });
+        expect(await listOrder(api)).toEqual(germanOrder);
+    });
+
+    test('changing the grid option does not reorder a column with its own accentedSort', async () => {
+        const api = await createGrid({ accentedSort: { locales: 'sv' }, column: { accentedSort: { locales: 'de' } } });
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        expect(filter.setFilterItemLabels()).toEqual(germanOrder);
+
+        api.setGridOption('accentedSort', false);
+        await asyncSetTimeout(0);
+        expect(filter.setFilterItemLabels()).toEqual(germanOrder);
+    });
+
     test('changing colDef.accentedSort at runtime sorts the list again', async () => {
         const api = await createGrid({});
         const filter = await ColumnFilterHarness.open(api, 'name');
