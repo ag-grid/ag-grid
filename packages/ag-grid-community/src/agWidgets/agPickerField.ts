@@ -16,6 +16,7 @@ import {
     _getInnerHeight,
     _isNothingFocused,
     _setAriaControls,
+    _setAriaDisabled,
     _setAriaExpanded,
     _setAriaRole,
     _setElementWidth,
@@ -175,12 +176,36 @@ export abstract class AgPickerField<
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
 
-        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex')!.toString());
+        this.refreshFocusability();
 
         _setAriaExpanded(ariaEl, false);
 
         if (this.ariaRole) {
             _setAriaRole(ariaEl, this.ariaRole);
+        }
+    }
+
+    public override setDisabled(disabled: boolean): this {
+        super.setDisabled(disabled);
+        this.refreshFocusability();
+        return this;
+    }
+
+    private refreshFocusability(): void {
+        const disabled = this.isDisabled();
+        const tabIndex = disabled ? '-1' : this.gos.get('tabIndex')!.toString();
+        const { eWrapper } = this;
+        const ariaEl = this.getAriaElement();
+
+        ariaEl.setAttribute('tabindex', tabIndex);
+        if (eWrapper !== ariaEl) {
+            eWrapper.setAttribute('tabindex', tabIndex);
+        }
+
+        if (disabled) {
+            _setAriaDisabled(ariaEl, true);
+        } else {
+            ariaEl.removeAttribute('aria-disabled');
         }
     }
 

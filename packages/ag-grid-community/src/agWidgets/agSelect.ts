@@ -116,7 +116,6 @@ export class AgSelect<
         );
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = this.gos.get('tabIndex')!;
 
         const { options, value, placeholder, readOnly } = this.config;
         if (options != null) {

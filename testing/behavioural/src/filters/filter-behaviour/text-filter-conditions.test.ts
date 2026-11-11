@@ -461,6 +461,47 @@ describe('Text Filter — conditions coverage', () => {
         expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
     });
 
+    test('the inactive second condition operator combobox is out of the Tab order and exposed as disabled', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { debounceMs: 0, numAlwaysVisibleConditions: 2 },
+                },
+            ],
+            rowData: [{ name: 'Apple' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+
+        const comboboxes = () =>
+            Array.from(
+                document.querySelectorAll<HTMLElement>('.ag-filter-menu .ag-filter-select .ag-picker-field-wrapper')
+            );
+        expect(comboboxes()).toHaveLength(2);
+
+        const [first, second] = comboboxes();
+        expect(first.getAttribute('tabindex')).toBe('0');
+        expect(first.getAttribute('aria-disabled')).toBeNull();
+        expect(second.getAttribute('tabindex')).toBe('-1');
+        expect(second.getAttribute('aria-disabled')).toBe('true');
+
+        await filter.setText('app');
+        await asyncSetTimeout(0);
+
+        const [, activeSecond] = comboboxes();
+        expect(activeSecond.getAttribute('tabindex')).toBe('0');
+        expect(activeSecond.getAttribute('aria-disabled')).toBeNull();
+
+        await filter.setText('');
+        await asyncSetTimeout(0);
+
+        const [, inactiveSecond] = comboboxes();
+        expect(inactiveSecond.getAttribute('tabindex')).toBe('-1');
+        expect(inactiveSecond.getAttribute('aria-disabled')).toBe('true');
+    });
+
     test('trimInput:true also trims the values a Custom Filter Option takes', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
