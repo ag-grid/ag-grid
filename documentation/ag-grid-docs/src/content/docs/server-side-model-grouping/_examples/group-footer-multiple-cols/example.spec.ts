@@ -21,7 +21,13 @@ test.agExample(import.meta, () => {
             // footer after the group's children.
             await groupRow('United States').locator('.ag-group-contracted').first().click();
             // Zimbabwe → Swimming is also open by default, so wait for a US-only sport before scrolling.
-            await expect(page.locator('.ag-row-level-1').filter({ hasNotText: 'Swimming' }).first()).toBeVisible();
+            await expect(
+                page
+                    .locator('.ag-row-level-1:not(.ag-row-loading) .ag-group-value')
+                    .filter({ hasText: /\S/ })
+                    .filter({ hasNotText: 'Swimming' })
+                    .first()
+            ).toBeVisible();
 
             const footer = page.locator('.ag-row-footer').filter({ hasText: 'Total United States' }).first();
             const viewport = page.locator('.ag-grid-viewport').first();
