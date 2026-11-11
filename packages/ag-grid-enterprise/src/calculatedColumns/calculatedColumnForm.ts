@@ -10,6 +10,8 @@ import {
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaInvalid,
+    _setAriaLabel,
+    _setAriaRole,
     _setDisplayed,
 } from 'ag-stack';
 
@@ -285,6 +287,9 @@ export class CalculatedColumnForm extends Component {
         const pickerButtons = [this.eColumns, this.eFunctions, this.eOperators];
         for (const button of pickerButtons) {
             button.setAttribute('tabindex', tabIndex);
+            // combobox, not button: only a combobox can expose the highlighted option via aria-activedescendant
+            _setAriaRole(button, 'combobox');
+            _setAriaLabel(button, button.textContent);
             _setAriaHasPopup(button, 'listbox');
             _setAriaExpanded(button, false);
         }
@@ -358,6 +363,7 @@ export class CalculatedColumnForm extends Component {
                 _addManagedElementListeners(this, button, {
                     mousedown: () => this.rememberExpressionSelection(),
                     click: () => this.openPicker(suggestionType, button),
+                    keydown: (event: KeyboardEvent) => this.onPickerButtonKeyDown(event, suggestionType, button),
                 });
             }
         }
@@ -371,6 +377,19 @@ export class CalculatedColumnForm extends Component {
                 click: () => this.onCancel(),
             });
         }
+    }
+
+    private onPickerButtonKeyDown(
+        event: KeyboardEvent,
+        type: ColumnSuggestion['type'],
+        button: HTMLButtonElement
+    ): void {
+        if (this.autocompleteList || (event.key !== KeyCode.UP && event.key !== KeyCode.DOWN)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        this.openPicker(type, button);
     }
 
     private addFormListeners(): void {
@@ -560,19 +579,20 @@ export class CalculatedColumnForm extends Component {
         const listId = this.autocompleteList.getListId();
         const expressionInputEl = this.eExpression.getInputElement();
         const isInline = this.suggestionSourceType === 'inline';
-        const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
+        const activeOptionId = this.autocompleteList.getActiveOptionId();
         const renderedActiveOptionId =
             activeOptionId && _getElementRootNode(expressionInputEl).getElementById(activeOptionId)
                 ? activeOptionId
                 : null;
 
         _setAriaControls(expressionInputEl, isInline ? listId : null);
-        _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
+        _setAriaActiveDescendant(expressionInputEl, isInline ? renderedActiveOptionId : null);
 
         for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
             const isButtonSource = this.suggestionSourceType === 'picker' && this.suggestionSource === buttons;
             _setAriaExpanded(buttons, isButtonSource);
             _setAriaControls(buttons, isButtonSource ? listId : null);
+            _setAriaActiveDescendant(buttons, isButtonSource ? renderedActiveOptionId : null);
         }
     }
 
@@ -584,6 +604,7 @@ export class CalculatedColumnForm extends Component {
         for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
             _setAriaExpanded(buttons, false);
             _setAriaControls(buttons, null);
+            _setAriaActiveDescendant(buttons, null);
         }
     }
 
