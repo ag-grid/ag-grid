@@ -46,7 +46,7 @@ test.agExample(import.meta, () => {
             await after.click();
             await page.keyboard.press('Shift+Tab');
             await expect(dialog).toContainText('Columns');
-            expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+            await expect.poll(() => dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
 
             await dialog.evaluate((element) => {
                 element.querySelector<HTMLElement>(':scope > .ag-tab-guard-bottom')!.focus();
