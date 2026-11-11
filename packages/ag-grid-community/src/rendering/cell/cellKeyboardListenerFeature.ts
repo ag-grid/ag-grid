@@ -128,10 +128,12 @@ function onBackspaceOrDeleteKeyDown(
 export function _onSuppressedCellKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const { gos, rangeSvc, eventSvc } = beans;
     if (
+        event.target !== cellCtrl.eGui ||
         !rangeSvc ||
         !_isCellSelectionEnabled(gos) ||
+        !_isDeleteKey(event.key, gos.get('enableCellEditingOnBackspace')) ||
         !rangeSvc.isMoreThanOneCell() ||
-        !_isDeleteKey(event.key, gos.get('enableCellEditingOnBackspace'))
+        !rangeSvc.isCellInAnyRange(cellCtrl.cellPosition)
     ) {
         return;
     }

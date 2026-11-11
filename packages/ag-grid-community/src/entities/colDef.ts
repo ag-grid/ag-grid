@@ -451,6 +451,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressNoteActions?: boolean | SuppressNoteActionsCallback<TData, TValue>;
     /**
      * Allows the user to suppress certain keyboard events in the grid cell.
+     * When the Delete key clears a cell range, this is called for each editable cell in the range, and returning `true` keeps that cell's value.
      * @default false
      */
     suppressKeyboardEvent?: SuppressKeyboardEventFunc<TData, TValue>;
