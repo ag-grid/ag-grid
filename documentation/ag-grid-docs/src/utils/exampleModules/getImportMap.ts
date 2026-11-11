@@ -162,6 +162,7 @@ export const getImportMap = ({
         for (const chartsPackage of [
             'ag-charts-types',
             'ag-charts-core',
+            'ag-charts-locale',
             'ag-charts-community',
             'ag-charts-enterprise',
         ]) {
