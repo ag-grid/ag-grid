@@ -42,6 +42,8 @@ async function run() {
             fs.writeFileSync(entry, appSource(app));
 
             const { fileSize, gzipSize } = measure(await bundler.build(entry, path.join(appDir, 'dist')));
+            // The baseline app reports its full size, as in testing/module-size, so shared-code regressions stay visible.
+            const subtract = base ?? { fileSize: 0, gzipSize: 0 };
             base ??= { fileSize, gzipSize };
 
             console.log(
@@ -50,8 +52,8 @@ async function run() {
             results.push({
                 modules: appName(app),
                 bundler: bundler.name,
-                selfSize: parseFloat((fileSize - base.fileSize).toFixed(2)),
-                gzipSelfSize: parseFloat((gzipSize - base.gzipSize).toFixed(2)),
+                selfSize: parseFloat((fileSize - subtract.fileSize).toFixed(2)),
+                gzipSelfSize: parseFloat((gzipSize - subtract.gzipSize).toFixed(2)),
                 fileSize,
                 gzipSize,
             });
