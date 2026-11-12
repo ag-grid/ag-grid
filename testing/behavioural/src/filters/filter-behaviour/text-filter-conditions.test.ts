@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -426,6 +427,79 @@ describe('Text Filter — conditions coverage', () => {
 
         const body = document.querySelector('.ag-filter-menu .ag-filter-body');
         expect(body?.getAttribute('role')).toBe('presentation');
+    });
+
+    test('the operator combobox aria-activedescendant follows the highlighted option and is cleared on close', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+            rowData: [{ name: 'Apple' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'name');
+
+        const combobox = document.querySelector<HTMLElement>(
+            '.ag-filter-menu .ag-filter-select .ag-picker-field-wrapper'
+        )!;
+        const activeOptionText = () => {
+            const option = document.getElementById(combobox.getAttribute('aria-activedescendant')!);
+            expect(option?.getAttribute('role')).toBe('option');
+            return option?.textContent?.trim();
+        };
+
+        expect(combobox.getAttribute('aria-label')).toBe('Filtering operator');
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(activeOptionText()).toBe('Contains');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Does not contain');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Equals');
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(combobox.getAttribute('aria-expanded')).toBe('false');
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+    });
+
+    test('the inactive second condition operator combobox is out of the Tab order and exposed as disabled', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { debounceMs: 0, numAlwaysVisibleConditions: 2 },
+                },
+            ],
+            rowData: [{ name: 'Apple' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+
+        const comboboxes = () =>
+            Array.from(
+                document.querySelectorAll<HTMLElement>('.ag-filter-menu .ag-filter-select .ag-picker-field-wrapper')
+            );
+        expect(comboboxes()).toHaveLength(2);
+
+        const [first, second] = comboboxes();
+        expect(first.getAttribute('tabindex')).toBe('0');
+        expect(first.getAttribute('aria-disabled')).toBeNull();
+        expect(second.getAttribute('tabindex')).toBe('-1');
+        expect(second.getAttribute('aria-disabled')).toBe('true');
+
+        await filter.setText('app');
+        await asyncSetTimeout(0);
+
+        const [, activeSecond] = comboboxes();
+        expect(activeSecond.getAttribute('tabindex')).toBe('0');
+        expect(activeSecond.getAttribute('aria-disabled')).toBeNull();
+
+        await filter.setText('');
+        await asyncSetTimeout(0);
+
+        const [, inactiveSecond] = comboboxes();
+        expect(inactiveSecond.getAttribute('tabindex')).toBe('-1');
+        expect(inactiveSecond.getAttribute('aria-disabled')).toBe('true');
     });
 
     test('trimInput:true also trims the values a Custom Filter Option takes', async () => {

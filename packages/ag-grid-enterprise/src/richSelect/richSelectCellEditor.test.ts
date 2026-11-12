@@ -32,7 +32,10 @@ function createBaseParams(
 function createEditor(params?: Partial<RichCellEditorParams<any, TestValue>>) {
     const editor = new RichSelectCellEditor<any, TestValue, any>() as any;
     editor.params = createBaseParams(params);
-    editor.beans = { log: { warn: vi.fn(), error: vi.fn(), deprecated: vi.fn() } };
+    editor.beans = {
+        log: { warn: vi.fn(), error: vi.fn(), deprecated: vi.fn() },
+        colNames: { getDisplayNameForColumn: vi.fn(() => 'Column') },
+    };
     editor.gos = {
         addCommon: (value: any) => value,
         get: vi.fn(() => undefined),
@@ -59,6 +62,7 @@ function createRichSelectMock() {
 
     const richSelect = {
         addCss: vi.fn(),
+        setAriaLabel: vi.fn(),
         showPicker: vi.fn(),
         getFocusableElement: vi.fn(() => document.createElement('input')),
         setValueList,
@@ -290,6 +294,7 @@ describe('RichSelectCellEditor', () => {
 
         const richSelect = {
             addCss: vi.fn(),
+            setAriaLabel: vi.fn(),
             showPicker: vi.fn(),
             setValueList: vi.fn(),
             setAsyncValuesSource: vi.fn(),

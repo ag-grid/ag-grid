@@ -18,12 +18,6 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-  SNYK-JS-FFLATE-20883305:
-    - 'ag-grid-community@0.0.0-use.local > ag-stack@0.0.0-use.local > compression-streams-polyfill@0.1.7 > fflate@0.8.2':
-        reason: >-
-            Used in build & dev - not included in final production build
-        expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-10-23T10:11:14.000Z
   SNYK-JS-MODELCONTEXTPROTOCOLSDK-21369529:
     - '@angular/cli@20.3.35 > @modelcontextprotocol/sdk@1.30.0':
         reason: >-

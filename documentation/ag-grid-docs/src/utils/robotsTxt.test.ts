@@ -166,6 +166,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         ['/campaigns/bryntum-gantt.md', 'allow', 'allow'],
         ['/campaigns/bryntum-gantt.md?utm_source=x', 'allow', 'allow'],
         ['/campaigns/bryntum-scheduler-pro/', 'allow', 'allow'],
+        ['/campaigns/bryntum-scheduler-pro.md', 'allow', 'allow'],
 
         // SE-183: search-result variants are crawl waste, for every group.
         ['/changelog/?searchQuery=filter', 'block', 'block'],

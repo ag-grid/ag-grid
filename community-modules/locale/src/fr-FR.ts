@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     advancedFilterCancel: 'Annuler',
     advancedFilterClear: 'Effacer',
     advancedFilterBuilder: 'Constructeur',
+    advancedFilterPlaceholder: 'Filtre avancé',
     advancedFilterValidationMissingColumn: 'La colonne est manquante',
     advancedFilterValidationMissingOption: "L'option est manquante",
     advancedFilterValidationMissingValue: 'La valeur est manquante',
@@ -741,6 +742,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaCalculatedColumn: 'Colonne calculée',
     ariaColumnShowValuesAs: 'Affichage des valeurs en tant que',
     ariaColumnSelectAll: 'Basculer la visibilité de toutes les colonnes',
+    ariaColumnSelectExpandAll: 'Développer ou réduire tous les groupes de colonnes',
     ariaDateFilterInput: 'Entrée de filtre de date',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Entrée de filtre de colonnes',
@@ -828,6 +830,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelSelectField: 'Champ de sélection',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Éditeur de cellule',
     ariaValidationErrorPrefix: "Validation de l'éditeur de cellule",
     ariaFullRowValidationError: 'Validation de la ligne complète : ${variable}',
     ariaFullRowEditValidationFailed: 'Impossible de terminer la modification de la ligne. ${variable}',
@@ -858,6 +861,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelAddFilterField: 'Ajouter un champ de filtre',
     ariaLabelFilterCardDelete: 'Supprimer le filtre',
     ariaLabelFilterCardHasEdits: 'A des modifications',
+    ariaLabelFilterCardType: 'Type de filtre',
     ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)

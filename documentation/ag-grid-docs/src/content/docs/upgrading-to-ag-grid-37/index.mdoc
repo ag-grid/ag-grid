@@ -25,6 +25,18 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 {% /if %}
 
+{% if isFramework("angular") %}
+
+### Frameworks
+
+- Angular 20 support is no longer available due to reaching its end of life. The minimum Angular version is now v21. To keep using Angular 20, stay on AG Grid v36.
+
+{% /if %}
+
+### TypeScript
+
+- The minimum TypeScript version is now 5.9.3.
+
 ### Filtering
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.

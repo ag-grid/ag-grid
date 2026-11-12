@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterAngularComp } from 'ag-grid-angular';
@@ -25,7 +25,7 @@ import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
 })
 export class NumberFilterComponent implements IFilterAngularComp {
     filterParams!: IFilterParams;
-    filterText: number | null | string = null;
+    filterText = signal<number | null | string>(null);
 
     agInit(params: IFilterParams): void {
         this.filterParams = params;
@@ -41,15 +41,15 @@ export class NumberFilterComponent implements IFilterAngularComp {
         const value = this.filterParams.getValue(node);
 
         if (value == null) return false;
-        return Number(value) > Number(this.filterText);
+        return Number(value) > Number(this.filterText());
     }
 
     isFilterActive() {
         return (
-            this.filterText !== null &&
-            this.filterText !== undefined &&
-            this.filterText !== '' &&
-            this.isNumeric(this.filterText)
+            this.filterText() !== null &&
+            this.filterText() !== undefined &&
+            this.filterText() !== '' &&
+            this.isNumeric(this.filterText())
         );
     }
 
@@ -58,16 +58,16 @@ export class NumberFilterComponent implements IFilterAngularComp {
     }
 
     getModel() {
-        return this.isFilterActive() ? Number(this.filterText) : null;
+        return this.isFilterActive() ? Number(this.filterText()) : null;
     }
 
     setModel(model: any) {
-        this.filterText = model;
+        this.filterText.set(model);
         this.filterParams.filterChangedCallback();
     }
 
     myMethodForTakingValueFromFloatingFilter(value: any) {
-        this.filterText = value;
+        this.filterText.set(value);
         this.filterParams.filterChangedCallback();
     }
 

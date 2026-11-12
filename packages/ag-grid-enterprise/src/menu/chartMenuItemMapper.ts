@@ -306,7 +306,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     ],
                 },
             ],
-            icon: _createIconNoSpan('chart', this.beans, undefined),
+            icon: _createIconNoSpan('chart', this.beans),
         };
     }
 
@@ -566,7 +566,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _key: 'rangeCombinationChart',
                 },
             ],
-            icon: _createIconNoSpan('chart', this.beans, undefined),
+            icon: _createIconNoSpan('chart', this.beans),
         };
     }
 

@@ -1,3 +1,4 @@
+import type { AgDropShadowOptions } from 'ag-charts-types';
 import * as fs from 'fs';
 
 import type { ChartModel } from 'ag-grid-community';
@@ -103,6 +104,33 @@ describe('chartModelMigration', () => {
 
             const upgradedChartModel = upgradeChartModel(legacyChartModel as ChartModel);
             expect(upgradedChartModel.chartType).toEqual('donut');
+        });
+    });
+
+    describe('shadow colour', () => {
+        function upgradeShadow(shadow: AgDropShadowOptions) {
+            const chartModel: ChartModel = {
+                version: '36.3.0',
+                modelType: 'range',
+                chartId: 'id-1',
+                chartType: 'groupedColumn',
+                cellRange: { rowStartIndex: null, rowEndIndex: null, columns: [] },
+                chartOptions: { bar: { series: { shadow } } },
+            };
+
+            return upgradeChartModel(chartModel).chartOptions.bar?.series?.shadow;
+        }
+
+        it('moves the deprecated colour to the fill', () => {
+            expect(upgradeShadow({ enabled: true, color: 'red', blur: 5 })).toEqual({
+                enabled: true,
+                fill: 'red',
+                blur: 5,
+            });
+        });
+
+        it('keeps the fill and drops the colour when both are set', () => {
+            expect(upgradeShadow({ color: 'red', fill: 'blue' })).toEqual({ fill: 'blue' });
         });
     });
 

@@ -15,8 +15,5 @@ export const ColumnHeaderEditModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [ColumnHeaderEditService],
     dependsOn: [EnterpriseCoreModule, _PopupModule],
-    icons: {
-        columnHeaderEdit: 'edit',
-    },
     css: [columnHeaderEditCSS],
 };

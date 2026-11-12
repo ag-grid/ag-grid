@@ -1758,11 +1758,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ViewportRowModelModule`
      */
     @Input() public viewportRowModelBufferSize: number | undefined = undefined;
+    /** Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+     * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+     * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+     * Keyboard, API scrolling and scrollbar dragging are unaffected.
+     * @default 'native'
+     * @agModule `ScrollGestureModule`
+     */
+    @Input() public scrollGestureMode: 'native' | 'axisLocked' | undefined = undefined;
     /** Set to `true` to always show the horizontal scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public alwaysShowHorizontalScroll: boolean | undefined = undefined;
     /** Set to `true` to always show the vertical scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public alwaysShowVerticalScroll: boolean | undefined = undefined;

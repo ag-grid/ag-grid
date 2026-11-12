@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -27,7 +27,7 @@ ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelMod
     template: `<ag-grid-angular
         style="width: 100%; height: 100%;"
         [columnDefs]="columnDefs"
-        [rowData]="rowData"
+        [rowData]="rowData()"
         [toolbar]="toolbar"
         (gridReady)="onGridReady($event)"
     /> `,
@@ -43,7 +43,7 @@ export class AppComponent {
         { field: 'silver', minWidth: 100 },
         { field: 'bronze', minWidth: 100 },
     ];
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
 
     toolbar = {
         items: ['agFindToolbarItem' as const],
@@ -54,6 +54,6 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent) {
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

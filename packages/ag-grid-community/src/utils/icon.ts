@@ -1,8 +1,10 @@
+import type { IconValue } from 'ag-stack';
 import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _createElement } from './element';
+import { ICON_NAME_TO_VALUE } from './iconNameToValue';
 
 //
 // IMPORTANT NOTE!
@@ -204,7 +206,7 @@ export function _createIconNoSpan(
         beans.log.warn(133, { iconName });
         return undefined;
     } else {
-        const iconValue = beans.registry.getIcon(iconName);
+        const iconValue: IconValue | undefined = ICON_NAME_TO_VALUE[iconName];
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }

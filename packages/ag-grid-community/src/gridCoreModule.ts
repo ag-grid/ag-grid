@@ -81,10 +81,6 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         ColumnViewportService,
         IconService,
     ],
-    icons: {
-        // icon on select dropdowns (select cell editor, charts tool panels)
-        selectOpen: 'small-down',
-    },
     apiFunctions: {
         getGridId,
         getGridElement,

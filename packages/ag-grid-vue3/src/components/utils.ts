@@ -1587,11 +1587,21 @@ export interface Props<TData> {
          * @agModule `ViewportRowModelModule`
          */
     viewportRowModelBufferSize?: number,
+    /** Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+         * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+         * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+         * Keyboard, API scrolling and scrollbar dragging are unaffected.
+         * @default 'native'
+         * @agModule `ScrollGestureModule`
+         */
+    scrollGestureMode?: 'native' | 'axisLocked',
     /** Set to `true` to always show the horizontal scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowHorizontalScroll?: boolean,
     /** Set to `true` to always show the vertical scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowVerticalScroll?: boolean,
@@ -2486,6 +2496,7 @@ export function getProps() {
         viewportDatasource: undefined,
         viewportRowModelPageSize: undefined,
         viewportRowModelBufferSize: undefined,
+        scrollGestureMode: undefined,
         alwaysShowHorizontalScroll: undefined,
         alwaysShowVerticalScroll: undefined,
         debounceVerticalScrollbar: undefined,

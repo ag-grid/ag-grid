@@ -74,7 +74,7 @@ bryntumDemoInit('scheduler', 'live-scheduler-demo', function (api) {
                     align: 'b-t',
                     rootElement: document.body,
                     forElement: context.element,
-                    cls: 'b-popup b-sch-event-tooltip',
+                    cls: 'b-popup b-sch-event-tooltip b-unplanned-drag-tip',
                 });
             }
         }
@@ -344,7 +344,7 @@ bryntumDemoInit('scheduler', 'live-scheduler-demo', function (api) {
         endDate: new Date(2025, 11, 1, 18),
         flex: 4,
         resourceImagePath: 'https://bryntum.com/examples/scheduler-next/_shared/images/transparent-users/',
-        crudManager: {
+        project: {
             autoLoad: true,
             validateResponse: true,
             eventStore: { modelClass: Task },
