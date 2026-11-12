@@ -15,8 +15,6 @@ View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-s
 
 This page covers what is different with the Server-Side Row Model: rows that load in blocks, group rows loaded from the server, and aggregated values the server calculates.
 
-All subscriptions and updates share one simulated websocket, however many rows are subscribed.
-
 ## Loading and Refreshing
 
 A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers.
