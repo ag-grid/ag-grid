@@ -523,10 +523,24 @@
     .ag-find-active-match {
         color: var(--ag-find-active-match-color);
         background-color: var(--ag-find-active-match-background-color);
-        box-shadow: inset 0 -2px 0 currentcolor;
+        position: relative;
+
+        // Drawn on the cell background below the highlight, so it takes the cell text colour, not the match colour.
+        &::after {
+            content: '';
+            position: absolute;
+            inset-inline: 0;
+            top: 100%;
+            height: 2px;
+            background-color: var(--ag-data-color);
+        }
 
         @media (forced-colors: active) {
             text-decoration: underline 2px;
+
+            &::after {
+                display: none;
+            }
         }
     }
 }
