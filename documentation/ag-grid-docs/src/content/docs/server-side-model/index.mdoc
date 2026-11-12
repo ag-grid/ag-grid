@@ -16,6 +16,8 @@ Using the SSRM to view a large dataset is demonstrated below:
 
 Before diving into the details of how to use the SSRM, the next section provides an overview and explains when it should be used instead of the default [Client-Side Row Model](./row-models/#client-side).
 
+The grid infers [Cell Data Types](./cell-data-types/#inferring-data-types) from the first block of leaf rows the datasource returns, so columns get typed editors, filters and formatters without declaring `cellDataType`. Inference resolves once; a response with no rows leaves the columns pending until one arrives, and with row grouping it waits for the leaf rows served when a group is first expanded.
+
 ## Overview
 
 When designing a grid-based application, one of the key considerations is how much data needs to be sent from the server to the client. The answer to this determines which Row Model should be selected for the grid.

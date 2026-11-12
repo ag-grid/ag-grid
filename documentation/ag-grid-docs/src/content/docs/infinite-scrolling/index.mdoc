@@ -28,6 +28,8 @@ When the grid scrolls to a position where there is no corresponding block of row
 uses the provided datasource to get the rows for the requested block. In the diagram, the datasource
 is getting the rows from a database in a remote server.
 
+The grid infers [Cell Data Types](./cell-data-types/#inferring-data-types) from the first block of rows the datasource returns, so columns get typed editors, filters and formatters without declaring `cellDataType`. Inference resolves once, and a response with no rows leaves the columns pending until one arrives.
+
 ## Turning On Infinite Scrolling
 
 To turn on infinite scrolling, you must a) set the grid property `rowModelType` to `'infinite'` and b) provide a datasource.

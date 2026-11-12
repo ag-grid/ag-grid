@@ -1,0 +1,25 @@
+/* the component host has auto height, so the wrapper below needs it to fill the example frame */
+my-app {
+    display: block;
+    height: 100%;
+}
+
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.example-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.grid {
+    flex: 1 1 0px;
+    width: 100%;
+    min-height: 0;
+}
