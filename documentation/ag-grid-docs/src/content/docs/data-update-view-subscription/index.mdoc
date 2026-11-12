@@ -1,11 +1,11 @@
 ---
-title: "Client-Side Data - View Subscription"
+title: "View Subscription"
 enterprise: true
 ---
 
 When a server pushes live updates, sending updates for rows the user cannot see is wasted work. The `viewSubscription` grid option tells your application which rows to subscribe to and unsubscribe from as rows enter and leave the view.
 
-View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/). Without `getRowId`, the grid logs a warning and never calls the handlers. It is supported by the Client-Side and Server-Side Row Models only. This page covers the [Client-Side Row Model](./row-models/#client-side). For the Server-Side Row Model, see [SSRM View Subscription](./server-side-model-updating-view-subscription/). To load only the rows in view from your server, rather than stream updates for them, see the [Viewport Row Model](./viewport/).
+View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/). Without `getRowId`, the grid logs a warning and never calls the handlers. It is supported by the Client-Side and Server-Side Row Models only. This page covers the behaviour both row models share, and the [Client-Side Row Model](./row-models/#client-side). For what differs with the Server-Side Row Model, see [SSRM View Subscription](./server-side-model-updating-view-subscription/). To load only the rows in view from your server, rather than stream updates for them, see the [Viewport Row Model](./viewport/).
 
 The example below streams price updates for the subscribed stocks only, over a simulated websocket, and applies them with [Async Transactions](./data-update-high-frequency/). Note the following:
 
