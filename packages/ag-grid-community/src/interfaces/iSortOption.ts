@@ -15,4 +15,16 @@ export interface SortOption {
     descending: boolean;
     /** `type === 'absolute'`, precomputed to avoid a per-comparison string compare. Filled by `_resolveSortOptions`. */
     absolute: boolean;
+    /** `colComparator` is a user's comparator rather than one the grid provides. Filled by `_resolveSortOptions`. */
+    userComparator: boolean;
+    /** The comparator for leaf rows (`colComparator`, else `leafComparator`) is a user's. Filled by `_resolveSortOptions`. */
+    userLeafComparator: boolean;
+    /**
+     * The column's `sortMissingValues` as the result for a missing value against a present one: `-1` for `'first'`,
+     * `1` for `'last'`, otherwise `0`, so missing values sort as the smallest values. Not used for rows compared with
+     * a user comparator. Filled by `_resolveSortOptions`.
+     */
+    missingValues: number;
+    /** `true` when the column can hold formula error values, which sort like `NaN`. Filled by `_resolveSortOptions`. */
+    formulaErrors: boolean;
 }

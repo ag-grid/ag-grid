@@ -717,8 +717,12 @@ export class ChartDataModel extends BeanStub {
                     type: _normalizeSortType(column.getSortDef()?.type),
                     colComparator: undefined,
                     leafComparator: undefined,
+                    userComparator: false,
+                    userLeafComparator: false,
                     descending: false,
                     absolute: false,
+                    missingValues: 0,
+                    formulaErrors: false,
                 });
             }
         });
