@@ -120,6 +120,7 @@
       "testing/e2e",
       "testing/typedoc-links",
       "testing/module-size",
+      "testing/module-size-bundlers",
       "testing/module-size-angular",
       "testing/angular-package-tests",
       "testing/react-package-tests",

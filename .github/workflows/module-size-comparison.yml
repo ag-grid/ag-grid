@@ -142,6 +142,7 @@ jobs:
               # module-size measurement infrastructure
               - 'testing/module-size/**'
               - 'testing/module-size-angular/**'
+              - 'testing/module-size-bundlers/**'
               - '.github/workflows/module-size-comparison.yml'
               - '.github/actions/module-size-test/**'
               - 'scripts/ci/*module-size*'
@@ -212,6 +213,7 @@ jobs:
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-pr
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
+          bundlers: 'true'
 
   # Build and run module size tests on the merge base (sharded) - only if cache miss
   module-size-base:
@@ -240,6 +242,7 @@ jobs:
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
           base-ref: ${{ needs.prepare.outputs.base-ref }}
           actions-ref: ${{ needs.prepare.outputs.head-sha }}
+          bundlers: 'true'
 
   # Merge base shards and save to cache (only when we had to build)
   cache-base-results:
