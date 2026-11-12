@@ -6,13 +6,7 @@ import type { SetFilter } from 'ag-grid-enterprise';
 
 describe('Virtual list accessible name (AG-19324)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [
-            ClientSideRowModelModule,
-            LocaleModule,
-            TextFilterModule,
-            SetFilterModule,
-            AdvancedFilterModule,
-        ],
+        modules: [ClientSideRowModelModule, LocaleModule, TextFilterModule, SetFilterModule, AdvancedFilterModule],
     });
 
     afterEach(() => gridsManager.reset());
