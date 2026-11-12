@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     advancedFilterCancel: 'रद्द करें',
     advancedFilterClear: 'साफ़ करें',
     advancedFilterBuilder: 'बिल्डर',
+    advancedFilterPlaceholder: 'उन्नत फ़िल्टर',
     advancedFilterValidationMissingColumn: 'कॉलम गायब है',
     advancedFilterValidationMissingOption: 'विकल्प गायब है',
     advancedFilterValidationMissingValue: 'मान गायब है',
@@ -751,6 +752,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaCalculatedColumn: 'गणना किया गया कॉलम',
     ariaColumnShowValuesAs: 'मान इस रूप में दिखा रहा है',
     ariaColumnSelectAll: 'सभी कॉलम दृश्यता टॉगल करें',
+    ariaColumnSelectExpandAll: 'सभी कॉलम समूहों को विस्तृत या संक्षिप्त करें',
     ariaDateFilterInput: 'दिनांक फ़िल्टर इनपुट',
     ariaDefaultListName: 'सूची',
     ariaFilterColumnsInput: 'फ़िल्टर कॉलम इनपुट',
@@ -874,6 +876,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',
     ariaLabelFilterCardDelete: 'फ़िल्टर हटाएं',
     ariaLabelFilterCardHasEdits: 'संपादन हैं',
+    ariaLabelFilterCardType: 'फ़िल्टर प्रकार',
     ariaHasNote: 'इस सेल में एक नोट है।',
 
     // Number Format (Status Bar, Pagination Panel)

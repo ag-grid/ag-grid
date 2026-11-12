@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     advancedFilterCancel: '취소',
     advancedFilterClear: '지우기',
     advancedFilterBuilder: '생성기',
+    advancedFilterPlaceholder: '고급 필터',
     advancedFilterValidationMissingColumn: '열이 누락되었습니다',
     advancedFilterValidationMissingOption: '옵션이 누락되었습니다',
     advancedFilterValidationMissingValue: '값이 누락되었습니다',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaCalculatedColumn: '계산된 열',
     ariaColumnShowValuesAs: '값 표시 형식',
     ariaColumnSelectAll: '모든 열 가시성 전환',
+    ariaColumnSelectExpandAll: '모든 열 그룹 펼치기 또는 접기',
     ariaDateFilterInput: '날짜 필터 입력',
     ariaDefaultListName: '목록',
     ariaFilterColumnsInput: '열 필터 입력',
@@ -848,6 +850,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaLabelFilterCardType: '필터 유형',
     ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     advancedFilterCancel: 'Ακύρωση',
     advancedFilterClear: 'Καθαρισμός',
     advancedFilterBuilder: 'Κατασκευαστής',
+    advancedFilterPlaceholder: 'Προχωρημένο Φίλτρο',
     advancedFilterValidationMissingColumn: 'Η στήλη λείπει',
     advancedFilterValidationMissingOption: 'Η επιλογή λείπει',
     advancedFilterValidationMissingValue: 'Η τιμή λείπει',
@@ -739,6 +740,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaCalculatedColumn: 'Υπολογιζόμενη στήλη',
     ariaColumnShowValuesAs: 'Εμφάνιση τιμών ως',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
+    ariaColumnSelectExpandAll: 'Ανάπτυξη ή σύμπτυξη όλων των ομάδων στηλών',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
     ariaDefaultListName: 'Λίστα',
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',
@@ -854,6 +856,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaLabelFilterCardType: 'Τύπος Φίλτρου',
     ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)

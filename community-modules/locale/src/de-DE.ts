@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     advancedFilterCancel: 'Abbrechen',
     advancedFilterClear: 'Löschen',
     advancedFilterBuilder: 'Ersteller',
+    advancedFilterPlaceholder: 'Erweiterter Filter',
     advancedFilterValidationMissingColumn: 'Spalte fehlt',
     advancedFilterValidationMissingOption: 'Option fehlt',
     advancedFilterValidationMissingValue: 'Wert fehlt',
@@ -739,6 +740,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaCalculatedColumn: 'Berechnete Spalte',
     ariaColumnShowValuesAs: 'Werte werden angezeigt als',
     ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
+    ariaColumnSelectExpandAll: 'Alle Spaltengruppen auf- oder zuklappen',
     ariaDateFilterInput: 'Datum-Filtereingang',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',
@@ -856,6 +858,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',
     ariaLabelFilterCardDelete: 'Filter löschen',
     ariaLabelFilterCardHasEdits: 'Hat Änderungen',
+    ariaLabelFilterCardType: 'Filtertyp',
     ariaHasNote: 'Diese Zelle hat eine Notiz.',
 
     // Number Format (Status Bar, Pagination Panel)

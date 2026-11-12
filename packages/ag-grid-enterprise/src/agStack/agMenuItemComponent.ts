@@ -288,7 +288,8 @@ export class AgMenuItemComponent<
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', role: 'presentation' });
+        const isPanel = !!this.childComponent;
+        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', role: isPanel ? 'dialog' : 'presentation' });
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {
@@ -376,7 +377,7 @@ export class AgMenuItemComponent<
             eChild: ePopup,
             positionCallback,
             anchorToElement: this.eGui,
-            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
+            ariaLabel: isPanel ? this.params.name : translate('ariaLabelSubMenu', 'SubMenu'),
             afterGuiAttached,
         });
 

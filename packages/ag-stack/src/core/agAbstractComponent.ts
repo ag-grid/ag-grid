@@ -19,7 +19,6 @@ import {
     _loadTemplate,
     _setDisplayed,
     _setVisible,
-    _throttleToFrame,
 } from '../utils/dom';
 import { AgAbstractBean } from './agAbstractBean';
 
@@ -415,11 +414,6 @@ export class AgAbstractComponent<
 
     public toggleCss(className: string, addOrRemove: boolean): void {
         this.cssManager.toggleCss(className, addOrRemove);
-    }
-
-    /** Wraps `callback` so calls within one animation frame run it once, and never after destroy. */
-    protected throttleToFrame(callback: () => void): () => void {
-        return _throttleToFrame(this, () => this.beans, callback);
     }
 
     protected registerCSS(css: string): void {

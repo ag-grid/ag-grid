@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     advancedFilterCancel: 'ביטול',
     advancedFilterClear: 'נקה',
     advancedFilterBuilder: 'בונה',
+    advancedFilterPlaceholder: 'סינון מתקדם',
     advancedFilterValidationMissingColumn: 'עמודה חסרה',
     advancedFilterValidationMissingOption: 'אפשרות חסרה',
     advancedFilterValidationMissingValue: 'ערך חסר',
@@ -732,6 +733,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaCalculatedColumn: 'עמודה מחושבת',
     ariaColumnShowValuesAs: 'מציג ערכים בתור',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
+    ariaColumnSelectExpandAll: 'הרחב או כווץ את כל קבוצות העמודות',
     ariaDateFilterInput: 'קלט סינון תאריך',
     ariaDefaultListName: 'רשימה',
     ariaFilterColumnsInput: 'קלט סינון עמודות',
@@ -847,6 +849,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaLabelFilterCardType: 'סוג מסנן',
     ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)

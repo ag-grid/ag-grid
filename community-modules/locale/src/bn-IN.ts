@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     advancedFilterCancel: 'বাতিল করুন',
     advancedFilterClear: 'পরিষ্কার করুন',
     advancedFilterBuilder: 'বিল্ডার',
+    advancedFilterPlaceholder: 'অ্যাডভান্সড ফিল্টার',
     advancedFilterValidationMissingColumn: 'কলাম অনুপস্থিত',
     advancedFilterValidationMissingOption: 'অপশন অনুপস্থিত',
     advancedFilterValidationMissingValue: 'মান অনুপস্থিত',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaCalculatedColumn: 'গণনাকৃত কলাম',
     ariaColumnShowValuesAs: 'মান দেখানো হচ্ছে হিসেবে',
     ariaColumnSelectAll: 'সব কলামের দৃশ্যমানতা টগল করুন',
+    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত বা সংকুচিত করুন',
     ariaDateFilterInput: 'তারিখ ফিল্টার ইনপুট',
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'কলাম ফিল্টার ইনপুট',
@@ -872,6 +874,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',
     ariaLabelFilterCardDelete: 'ফিল্টার মুছুন',
     ariaLabelFilterCardHasEdits: 'পরিবর্তন আছে',
+    ariaLabelFilterCardType: 'ফিল্টারের ধরন',
     ariaHasNote: 'এই সেলে একটি নোট আছে।',
 
     // Number Format (Status Bar, Pagination Panel)

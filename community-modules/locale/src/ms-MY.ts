@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Kosongkan',
     advancedFilterBuilder: 'Pembina',
+    advancedFilterPlaceholder: 'Penapis Lanjutan',
     advancedFilterValidationMissingColumn: 'Lajur tiada',
     advancedFilterValidationMissingOption: 'Pilihan tiada',
     advancedFilterValidationMissingValue: 'Nilai tiada',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaCalculatedColumn: 'Lajur dikira',
     ariaColumnShowValuesAs: 'Memaparkan Nilai Sebagai',
     ariaColumnSelectAll: 'Togol Keterlihatan Semua Lajur',
+    ariaColumnSelectExpandAll: 'Kembangkan atau Kuncupkan Semua Kumpulan Lajur',
     ariaDateFilterInput: 'Input Penapis Tarikh',
     ariaDefaultListName: 'Senarai',
     ariaFilterColumnsInput: 'Input Tapis Lajur',
@@ -876,6 +878,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelAddFilterField: 'Tambah Medan Penapis',
     ariaLabelFilterCardDelete: 'Padam Penapis',
     ariaLabelFilterCardHasEdits: 'Mempunyai Suntingan',
+    ariaLabelFilterCardType: 'Jenis Penapis',
     ariaHasNote: 'Sel ini mempunyai nota.',
 
     // Number Format (Status Bar, Pagination Panel)

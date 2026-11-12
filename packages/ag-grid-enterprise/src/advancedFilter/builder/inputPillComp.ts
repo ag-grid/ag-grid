@@ -109,6 +109,7 @@ export class InputPillComp extends PillComp<InputPillCompEvent> {
         // eslint-disable-next-line sonarjs/new-operator-misuse -- false positive: Comp is a class constructor from inputComponentDescriptors
         const instance = this.createBean(new Comp());
         postConstruct?.(instance);
+        instance.setInputAriaLabel(this.params.ariaLabel);
         return instance;
     }
 

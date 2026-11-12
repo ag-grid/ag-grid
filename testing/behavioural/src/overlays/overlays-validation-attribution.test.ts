@@ -1,6 +1,6 @@
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, IconName } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -62,15 +62,15 @@ describe('dev validation diagnostic attribution', () => {
     test('attributes a non-colDef validation diagnostic to its own grid', () => {
         enableDevValidations({ showOverlayOn: ['warning', 'error'] });
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
-        const apiDeprecated = gridsManager.createGrid('deprecatedGrid', { columnDefs, rowData } as GridOptions);
+        const apiInvalidIcon = gridsManager.createGrid('invalidIconGrid', { columnDefs, rowData } as GridOptions);
 
         // validateIcon fires from deferred header/cell rendering, outside the creation scope — a different
         // emit method than colDef validation, so this guards the whole validation-service attribution.
-        const DEPRECATED_ICON_ID = 43;
-        beansOf(apiDeprecated).validation.validateIcon('colorPicker');
+        const UNKNOWN_ICON_ID = 134;
+        beansOf(apiInvalidIcon).validation.validateIcon('notARealIcon' as IconName);
 
-        expect(capturedIds(apiDeprecated)).toContain(DEPRECATED_ICON_ID);
-        expect(capturedIds(apiClean)).not.toContain(DEPRECATED_ICON_ID);
+        expect(capturedIds(apiInvalidIcon)).toContain(UNKNOWN_ICON_ID);
+        expect(capturedIds(apiClean)).not.toContain(UNKNOWN_ICON_ID);
     });
 
     test('attributes an async-transaction row-data diagnostic to its own grid', () => {

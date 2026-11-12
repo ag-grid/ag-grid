@@ -5,7 +5,14 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { AgEvent } from '../interfaces/agEvent';
 import type { AgEventHandlers, IContext } from '../interfaces/iContext';
 import type { AgEventService } from '../interfaces/iEvent';
-import type { IAgEventEmitter, IEventEmitter, IEventListener, ListenerTarget } from '../interfaces/iEventEmitter';
+import type {
+    AgListenerOptions,
+    AgListenerOptionsForEvent,
+    IAgEventEmitter,
+    IEventEmitter,
+    IEventListener,
+    ListenerTarget,
+} from '../interfaces/iEventEmitter';
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 import type {
     AgPropertyChangedEvent,
@@ -16,6 +23,7 @@ import type {
 } from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
 import { _getLocaleTextFunc } from '../utils/locale';
+import type { AgBeansFor, AgDeclaredDeps } from './agBeanGraph';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgBeanStubEvent = 'destroyed';
@@ -33,6 +41,8 @@ export abstract class AgAbstractBean<
     TGlobalEvents,
     TPropertiesService extends IPropertiesService<TProperties>,
     TLocalEventType extends string = AgBeanStubEvent,
+    TDeps extends AgDeclaredDeps<TBeanCollection> = readonly [],
+    TOptional extends AgDeclaredDeps<TBeanCollection> = readonly [],
 >
     implements
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
@@ -42,7 +52,19 @@ export abstract class AgAbstractBean<
     // prototype (see below), not per instance: Vue reads it via a normal property access that walks the chain.
     declare public __v_skip: boolean;
 
-    protected beans: TBeanCollection = null!;
+    /** Read by `createBeanGraph`; a bean that declares none receives the whole collection. */
+    declare readonly deps?: TDeps;
+    declare readonly optionalDeps?: TOptional;
+
+    // The base reads the kernel keys whatever a bean declared, so they are never narrowed away. Picked
+    // from the host's collection, which may type them more narrowly than the stack does.
+    protected beans: AgBeansFor<TBeanCollection, TDeps, TOptional> &
+        // `IContext` is invariant in its collection, so the host's `context` would make `createBean` uncallable here.
+        Pick<
+            TBeanCollection,
+            Exclude<keyof AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>, 'context'>
+        > &
+        Pick<AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>, 'context'> = null!;
     protected gos: TPropertiesService = null!;
     protected eventSvc: TBeanCollection['eventSvc'] = null!;
 
@@ -114,14 +136,16 @@ export abstract class AgAbstractBean<
 
     public addManagedListeners<TEvent extends string>(
         object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents>,
-        handlers: AgEventHandlers<TEvent>
+        handlers: AgEventHandlers<TEvent>,
+        optionsForEvent?: AgListenerOptionsForEvent
     ) {
-        return this._setupListeners<TEvent>(object, handlers);
+        return this._setupListeners<TEvent>(object, handlers, optionsForEvent);
     }
 
     private _setupListeners<TEvent extends string>(
         object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents>,
-        handlers: AgEventHandlers<TEvent>
+        handlers: AgEventHandlers<TEvent>,
+        optionsForEvent?: AgListenerOptionsForEvent
     ) {
         const destroyFuncs: (() => null)[] = [];
         const keys = Object.keys(handlers);
@@ -129,16 +153,17 @@ export abstract class AgAbstractBean<
             const k = keys[i];
             const handler = handlers[k as TEvent];
             if (handler) {
-                destroyFuncs.push(this._setupListener(object, k, handler));
+                destroyFuncs.push(this._setupListener(object, k, handler, optionsForEvent?.(k)));
             }
         }
         return destroyFuncs;
     }
 
-    protected _setupListener<const T extends string>(
+    private _setupListener<const T extends string>(
         object: ListenerTarget | IEventEmitter<T> | IAgEventEmitter<T> | AgEventService<TGlobalEvents>,
         event: T,
-        listener: (event?: any) => void
+        listener: (event?: any) => void,
+        options?: Readonly<AgListenerOptions>
     ): () => null {
         if (this.destroyed) {
             return () => null;
@@ -156,6 +181,8 @@ export abstract class AgAbstractBean<
             const objIsEventService = isEventService<TGlobalEvents>(object);
             if (objIsEventService) {
                 object.addListener(event as any, listener);
+            } else if (options) {
+                (object as ListenerTarget).addEventListener(event, listener, options);
             } else {
                 (object as ListenerTarget).addEventListener(event, listener);
             }
@@ -278,7 +305,7 @@ export abstract class AgAbstractBean<
     }
 
     /** Register a destroy func and return an unregister callback that removes it if called before destroy. */
-    protected registerDestroyFunc(destroyFunc: () => null): () => null {
+    private registerDestroyFunc(destroyFunc: () => null): () => null {
         this.pushDestroyFunc(destroyFunc);
         return () => {
             destroyFunc();

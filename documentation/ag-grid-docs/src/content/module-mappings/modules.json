@@ -306,6 +306,11 @@
             "name": "Interactivity",
             "children": [
                 {
+                    "moduleName": "ScrollGestureModule",
+                    "name": "Scroll Gestures",
+                    "path": "scrolling/#scroll-gestures"
+                },
+                {
                     "moduleName": "LocaleModule",
                     "name": "Localisation",
                     "path": "localisation"

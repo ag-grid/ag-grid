@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     advancedFilterCancel: 'Atcelt',
     advancedFilterClear: 'Notīrīt',
     advancedFilterBuilder: 'Konstruktors',
+    advancedFilterPlaceholder: 'Papildu filtrs',
     advancedFilterValidationMissingColumn: 'Trūkst kolonnas',
     advancedFilterValidationMissingOption: 'Trūkst opcijas',
     advancedFilterValidationMissingValue: 'Trūkst vērtības',
@@ -751,6 +752,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaCalculatedColumn: 'Aprēķinātā kolonna',
     ariaColumnShowValuesAs: 'Rāda vērtības kā',
     ariaColumnSelectAll: 'Pārslēgt visu kolonnu redzamību',
+    ariaColumnSelectExpandAll: 'Izvērst vai sakļaut visas kolonnu grupas',
     ariaDateFilterInput: 'Datuma filtra ievade',
     ariaDefaultListName: 'Saraksts',
     ariaFilterColumnsInput: 'Kolonnu filtra ievade',
@@ -874,6 +876,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelAddFilterField: 'Pievienot filtra lauku',
     ariaLabelFilterCardDelete: 'Dzēst filtru',
     ariaLabelFilterCardHasEdits: 'Ir izmaiņas',
+    ariaLabelFilterCardType: 'Filtra tips',
     ariaHasNote: 'Šai šūnai ir piezīme.',
 
     // Number Format (Status Bar, Pagination Panel)

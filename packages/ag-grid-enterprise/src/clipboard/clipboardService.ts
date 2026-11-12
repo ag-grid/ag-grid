@@ -123,7 +123,10 @@ function removeHtmlComments(html: string): string {
 }
 
 // An empty table cell may contain a paragraph with only a line break.
-const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`, 'i');
+const HTML_EMPTY_PARAGRAPH_REGEX = /* #__PURE__ */ new RegExp(
+    String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`,
+    'i'
+);
 
 function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';

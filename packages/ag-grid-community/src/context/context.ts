@@ -41,6 +41,7 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
+import type { ScrollGestureService } from '../gridBodyComp/scrollGestureService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -354,6 +355,7 @@ interface CoreBeanCollection extends AgBeanCollection<
     clipboardSvc?: IClipboardService;
     cellNavigation?: CellNavigationService;
     scrollVisibleSvc: ScrollVisibleService;
+    scrollGestureSvc?: ScrollGestureService;
     pinnedCols?: PinnedColumnService;
     expressionSvc?: ExpressionService;
     autoWidthCalc?: AutoWidthCalculator;

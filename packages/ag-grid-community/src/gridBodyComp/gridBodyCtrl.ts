@@ -627,6 +627,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onStickyWheel(e: WheelEvent): void {
+        if (this.beans.scrollGestureSvc?.isActive()) {
+            return;
+        }
         const { deltaY } = e;
 
         const scrolled = this.scrollVertically(deltaY);

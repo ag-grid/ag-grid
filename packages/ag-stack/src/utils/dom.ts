@@ -26,7 +26,10 @@ export function _radioCssClass(element: HTMLElement, elementClass: string | null
     }
 }
 
-export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const FORM_FIELD_SELECTOR = 'input, select, button, textarea';
+
+export const FOCUSABLE_SELECTOR = `[tabindex], ${FORM_FIELD_SELECTOR}, [href]`;
 // ag-hidden subtrees are excluded even where CSS keeps them visible (e.g. a tool panel animating closed)
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *, .ag-hidden, .ag-hidden *';
 
@@ -35,7 +38,7 @@ export function _isFocusableFormField(element: Element | null): boolean {
     if (!element) {
         return false;
     }
-    const isFocusable = element.matches('input, select, button, textarea');
+    const isFocusable = element.matches(FORM_FIELD_SELECTOR);
     if (!isFocusable) {
         return false;
     }
@@ -486,6 +489,7 @@ type TagName<SelectorType extends string> = keyof HTMLElementTagNameMap | Lowerc
 type RoleType =
     | 'button'
     | 'columnheader'
+    | 'dialog'
     | 'gridcell'
     | 'heading'
     | 'listbox'

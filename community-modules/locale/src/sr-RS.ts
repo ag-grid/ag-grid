@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     advancedFilterCancel: 'Откажи',
     advancedFilterClear: 'Обриши',
     advancedFilterBuilder: 'Градитељ',
+    advancedFilterPlaceholder: 'Напредни филтер',
     advancedFilterValidationMissingColumn: 'Недостаје колона',
     advancedFilterValidationMissingOption: 'Недостаје опција',
     advancedFilterValidationMissingValue: 'Недостаје вредност',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaCalculatedColumn: 'Израчуната колона',
     ariaColumnShowValuesAs: 'Приказивање вредности као',
     ariaColumnSelectAll: 'Укључи/искључи видљивост свих колона',
+    ariaColumnSelectExpandAll: 'Прошири или скупи све групе колона',
     ariaDateFilterInput: 'Унос филтера датума',
     ariaDefaultListName: 'Листа',
     ariaFilterColumnsInput: 'Унос за филтрирање колона',
@@ -872,6 +874,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelAddFilterField: 'Додај поље филтера',
     ariaLabelFilterCardDelete: 'Обриши филтер',
     ariaLabelFilterCardHasEdits: 'Има измене',
+    ariaLabelFilterCardType: 'Тип филтера',
     ariaHasNote: 'Ова ћелија има напомену.',
 
     // Number Format (Status Bar, Pagination Panel)

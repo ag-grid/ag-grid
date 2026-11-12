@@ -40,6 +40,12 @@ Header set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -lt 400 && !( %{REQU
 Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 
 
+# Permanent redirects of current www paths with no query string: CloudFront caches a day, browsers
+# revalidate. Invalidated by cache tag on every live docs deploy. Excludes /archive/<v>/.
+Header always set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header always set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+
+
 # Archived markdown variants: noindex, as the archived HTML is by its robots meta tag.
 Header set X-Robots-Tag "noindex" "expr=%{CONTENT_TYPE} =~ m#^text/markdown# && %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]#"
 
@@ -3013,6 +3019,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /core-data-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /vuejs-charts/ https://www.ag-grid.com/charts/
     Redirect 301 /campaigns/beyond-the-prompt/ /community/beyond-the-prompt/
+    Redirect 301 /campaigns/bryntum-scheduler-pro/ /campaigns/bryntum-scheduler/
+    Redirect 301 /campaigns/bryntum-scheduler-pro.md /campaigns/bryntum-scheduler.md
     RedirectMatch 301 "^/gallery/(.*)" "https://www.ag-grid.com/charts/gallery/$1"
     RedirectMatch 301 "^/options(/.*)?" "https://www.ag-grid.com/charts/options/"
     RedirectMatch 301 "^/vuejs-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"

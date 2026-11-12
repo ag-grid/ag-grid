@@ -58,7 +58,7 @@ export class PieChartProxy extends ChartProxy<AgStandaloneChartOptions, 'pie' | 
                     calloutLabelKey: category.id,
                 };
 
-                if (this.chartType === 'donut' || this.chartType === 'doughnut') {
+                if (this.chartType === 'donut') {
                     const { outerRadiusOffset, innerRadiusOffset } = calculateOffsets(offset);
                     const title = f.displayName
                         ? {

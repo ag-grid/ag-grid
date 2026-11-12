@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     advancedFilterCancel: 'Loobu',
     advancedFilterClear: 'Tühjenda',
     advancedFilterBuilder: 'Koostaja',
+    advancedFilterPlaceholder: 'Täpsem filter',
     advancedFilterValidationMissingColumn: 'Veerg on puudu',
     advancedFilterValidationMissingOption: 'Valik on puudu',
     advancedFilterValidationMissingValue: 'Väärtus on puudu',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaCalculatedColumn: 'Arvutatud veerg',
     ariaColumnShowValuesAs: 'Näitab väärtusi kui',
     ariaColumnSelectAll: 'Lülita kõikide veergude nähtavus',
+    ariaColumnSelectExpandAll: 'Laienda või ahenda kõik veerurühmad',
     ariaDateFilterInput: 'Kuupäevafiltri sisend',
     ariaDefaultListName: 'Loend',
     ariaFilterColumnsInput: 'Filtri veergude sisend',
@@ -872,6 +874,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelAddFilterField: 'Filtrivälja lisamine',
     ariaLabelFilterCardDelete: 'Kustuta filter',
     ariaLabelFilterCardHasEdits: 'Sisaldab muudatusi',
+    ariaLabelFilterCardType: 'Filtri tüüp',
     ariaHasNote: 'Sellel lahtril on märkus.',
 
     // Number Format (Status Bar, Pagination Panel)

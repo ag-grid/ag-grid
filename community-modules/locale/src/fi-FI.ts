@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     advancedFilterCancel: 'Peruuta',
     advancedFilterClear: 'Tyhjennä',
     advancedFilterBuilder: 'Rakentaja',
+    advancedFilterPlaceholder: 'Tarkennettu suodatin',
     advancedFilterValidationMissingColumn: 'Sarake puuttuu',
     advancedFilterValidationMissingOption: 'Valinta puuttuu',
     advancedFilterValidationMissingValue: 'Arvo puuttuu',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaCalculatedColumn: 'Laskettu sarake',
     ariaColumnShowValuesAs: 'Näytetään arvot muodossa',
     ariaColumnSelectAll: 'Vaihda kaikkien sarakkeiden näkyvyys',
+    ariaColumnSelectExpandAll: 'Laajenna tai tiivistä kaikki sarakeryhmät',
     ariaDateFilterInput: 'Päivämäärän suodattimen syöte',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Suodata sarakkeiden syöte',
@@ -853,6 +855,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaLabelFilterCardType: 'Suodattimen tyyppi',
     ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)

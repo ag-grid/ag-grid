@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpar',
     advancedFilterBuilder: 'Construtor',
+    advancedFilterPlaceholder: 'Filtro Avançado',
     advancedFilterValidationMissingColumn: 'Coluna está faltando',
     advancedFilterValidationMissingOption: 'Opção está faltando',
     advancedFilterValidationMissingValue: 'Valor está faltando',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaCalculatedColumn: 'Coluna calculada',
     ariaColumnShowValuesAs: 'Mostrando valores como',
     ariaColumnSelectAll: 'Alternar Visibilidade de Todas as Colunas',
+    ariaColumnSelectExpandAll: 'Expandir ou recolher todos os grupos de colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Colunas de Filtro',
@@ -854,6 +856,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Tem Edições',
+    ariaLabelFilterCardType: 'Tipo de Filtro',
     ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)

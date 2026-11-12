@@ -1,4 +1,4 @@
-import type { AgBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import type { AgBeanCollection, AgEvent, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
     AgAbstractComponent,
     KeyCode,
@@ -18,7 +18,11 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+export type AgListEvent = 'fieldValueChanged' | 'selectedItem' | 'activeItemChanged';
+
+export interface AgListActiveItemChangedEvent extends AgEvent<'activeItemChanged'> {
+    activeId: string | null;
+}
 
 const TYPE_AHEAD_TIMEOUT_MS = 1000;
 
@@ -282,9 +286,7 @@ export class AgList<
             return;
         }
 
-        this.clearHighlighted();
-        item.setHighlighted(true);
-        this.highlightedItem = item;
+        this.setHighlightedItem(item);
 
         const eGui = this.getGui();
 
@@ -321,8 +323,31 @@ export class AgList<
     }
 
     private clearHighlighted(): void {
-        this.highlightedItem?.setHighlighted(false);
-        this.highlightedItem = null;
+        this.setHighlightedItem(null);
+    }
+
+    private setHighlightedItem(
+        item: AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        > | null
+    ): void {
+        const previousItem = this.highlightedItem;
+        previousItem?.setHighlighted(false);
+        item?.setHighlighted(true);
+        this.highlightedItem = item;
+
+        if (previousItem !== item) {
+            this.dispatchLocalEvent<AgListActiveItemChangedEvent>({
+                type: 'activeItemChanged',
+                activeId: item?.getId() ?? null,
+            });
+        }
     }
 
     private renderOption(value: TValue, text: string): void {

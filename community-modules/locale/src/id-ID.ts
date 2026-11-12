@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Bersihkan',
     advancedFilterBuilder: 'Pembuat',
+    advancedFilterPlaceholder: 'Filter Lanjutan',
     advancedFilterValidationMissingColumn: 'Kolom tidak ada',
     advancedFilterValidationMissingOption: 'Opsi tidak ada',
     advancedFilterValidationMissingValue: 'Nilai tidak ada',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaCalculatedColumn: 'Kolom terhitung',
     ariaColumnShowValuesAs: 'Menampilkan Nilai Sebagai',
     ariaColumnSelectAll: 'Alihkan Visibilitas Semua Kolom',
+    ariaColumnSelectExpandAll: 'Perluas atau Ciutkan Semua Grup Kolom',
     ariaDateFilterInput: 'Input Filter Tanggal',
     ariaDefaultListName: 'Daftar',
     ariaFilterColumnsInput: 'Input Filter Kolom',
@@ -875,6 +877,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelAddFilterField: 'Tambah Bidang Filter',
     ariaLabelFilterCardDelete: 'Hapus Filter',
     ariaLabelFilterCardHasEdits: 'Memiliki Perubahan',
+    ariaLabelFilterCardType: 'Jenis Filter',
     ariaHasNote: 'Sel ini memiliki catatan.',
 
     // Number Format (Status Bar, Pagination Panel)

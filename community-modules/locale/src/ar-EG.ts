@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     advancedFilterCancel: 'إلغاء',
     advancedFilterClear: 'مسح',
     advancedFilterBuilder: 'المنشئ',
+    advancedFilterPlaceholder: 'الفلترة المتقدمة',
     advancedFilterValidationMissingColumn: 'العمود مفقود',
     advancedFilterValidationMissingOption: 'الخيار مفقود',
     advancedFilterValidationMissingValue: 'القيمة مفقودة',
@@ -732,6 +733,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaCalculatedColumn: 'عمود محسوب',
     ariaColumnShowValuesAs: 'إظهار القيم كـ',
     ariaColumnSelectAll: 'تبديل ظهور كل الأعمدة',
+    ariaColumnSelectExpandAll: 'توسيع أو طي كل مجموعات الأعمدة',
     ariaDateFilterInput: 'إدخال فلتر التاريخ',
     ariaDefaultListName: 'قائمة',
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',
@@ -847,6 +849,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaLabelFilterCardType: 'نوع الفلتر',
     ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)

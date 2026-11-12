@@ -61,7 +61,7 @@ export class AgListItem<
     public tooltipFeature: ITooltipFeature;
 
     constructor(
-        cssIdentifier: string,
+        private readonly cssIdentifier: string,
         private readonly label: string,
         private readonly value: TValue
     ) {
@@ -69,6 +69,7 @@ export class AgListItem<
     }
 
     public postConstruct() {
+        this.getGui().id = `ag-${this.cssIdentifier}-list-item-${this.getCompId()}`;
         this.createTooltip();
         this.addEventListeners();
     }
@@ -81,6 +82,10 @@ export class AgListItem<
             type: 'itemHighlighted',
             highlighted,
         });
+    }
+
+    public getId(): string {
+        return this.getGui().id;
     }
 
     public getHeight(): number {

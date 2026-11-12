@@ -1148,6 +1148,7 @@ export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateCol
 export { FileInputOverlayModule } from './rendering/overlays/fileInputOverlayModule';
 export { forEachColDef } from './columns/columnUtils';
 export { RowApiModule, ScrollApiModule } from './api/apiModule';
+export { ScrollGestureModule } from './gridBodyComp/scrollGestureModule';
 export { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';

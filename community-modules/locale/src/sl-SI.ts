@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     advancedFilterCancel: 'Prekliči',
     advancedFilterClear: 'Počisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Manjka stolpec',
     advancedFilterValidationMissingOption: 'Manjka možnost',
     advancedFilterValidationMissingValue: 'Manjka vrednost',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaCalculatedColumn: 'Izračunani stolpec',
     ariaColumnShowValuesAs: 'Prikaz vrednosti kot',
     ariaColumnSelectAll: 'Preklopi vidnost vseh stolpcev',
+    ariaColumnSelectExpandAll: 'Razširi ali strni vse skupine stolpcev',
     ariaDateFilterInput: 'Vnos filtra datuma',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vnos filtra stolpcev',
@@ -872,6 +874,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelAddFilterField: 'Dodaj polje filtra',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima spremembe',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ta celica ima opombo.',
 
     // Number Format (Status Bar, Pagination Panel)

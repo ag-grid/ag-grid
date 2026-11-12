@@ -2347,13 +2347,13 @@ describe('Column Features', () => {
             await asyncSetTimeout(0);
             api.startEditingCell({ rowIndex: 0, colKey: 'c60' });
             await asyncSetTimeout(0);
-            expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+            expect(api.getEditingCells().map((cell) => cell.colId)).toEqual(['c60']);
 
             api.ensureColumnVisible('c0');
             await asyncSetTimeout(0);
 
             expect(cellFor(api, 'c60')).not.toBeNull();
-            expect(api.getEditingCells().map((cell) => cell.column?.getColId())).toEqual(['c60']);
+            expect(api.getEditingCells().map((cell) => cell.colId)).toEqual(['c60']);
         });
 
         test('a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits', async () => {

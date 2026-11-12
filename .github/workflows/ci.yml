@@ -30,6 +30,14 @@ on:
         options:
           - 'affected'
           - 'run-many'
+      pr_number:
+        description: >-
+          PR number, to run the jobs that otherwise run only on a pull_request (PR Preview and its comment).
+          Must be an open PR from this repo whose head branch is the one you dispatch on; otherwise those
+          jobs are skipped with a warning. Leave empty to skip them.
+        type: string
+        required: false
+        default: ''
 env:
   # Disable git's post-fetch background gc/maintenance for every git invocation in this
   # workflow (via git's GIT_CONFIG_* protocol); otherwise it rewrites .git/shallow
@@ -66,14 +74,32 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     name: Detect Changes
+    # pull-requests: read is for the dispatch lookup in pr-context.
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
     outputs:
       run_code_ci: ${{ steps.decide.outputs.run_code_ci }}
       run_docs_ci: ${{ steps.decide.outputs.run_docs_ci }}
+      pr_present: ${{ steps.pr.outputs.present }}
+      pr_same_repo: ${{ steps.pr.outputs.same_repo }}
+      pr_number: ${{ steps.pr.outputs.number }}
+      pr_head_sha: ${{ steps.pr.outputs.head_sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
+
+      # The PR this run acts for: the event's on a pull_request, or on a manual run the one named by
+      # `pr_number`, if it is open, from this repo and on this branch. Otherwise the PR-only jobs skip.
+      - name: Resolve PR context
+        id: pr
+        uses: ./external/ag-shared/github/actions/pr-context
+        with:
+          pr-number: ${{ github.event.inputs.pr_number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Detect file changes (PR only)
         id: filter
@@ -437,7 +463,7 @@ jobs:
       # import-map builder — see ag-dev-prompts docs/pr-plnkr-v2-plan.md.
       - name: Build UMD bundles for PR preview
         id: build_umd
-        if: github.event_name == 'pull_request' && steps.build.outcome == 'success'
+        if: needs.detect-changes.outputs.pr_present == 'true' && steps.build.outcome == 'success'
         run: |
           yarn nx run-many -t build:umd -c staging -p ag-grid-community ag-grid-enterprise
 
@@ -445,16 +471,16 @@ jobs:
       # the site's own import-map builder through the `@utils`/`@constants` aliases.
       - name: Stage PR preview payload
         id: build_preview
-        if: github.event_name == 'pull_request' && steps.build_umd.outcome == 'success'
+        if: needs.detect-changes.outputs.pr_present == 'true' && steps.build_umd.outcome == 'success'
         working-directory: documentation/ag-grid-docs
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ needs.detect-changes.outputs.pr_number }}
+          HEAD_SHA: ${{ needs.detect-changes.outputs.pr_head_sha }}
         run: |
           npx tsx scripts/pr-preview-manifest.ts --pr "$PR_NUMBER" --sha "$HEAD_SHA" --out ../../dist/pr-preview
 
       - name: Upload PR preview payload
-        if: github.event_name == 'pull_request' && steps.build_preview.outcome == 'success'
+        if: needs.detect-changes.outputs.pr_present == 'true' && steps.build_preview.outcome == 'success'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: pr-preview
@@ -468,11 +494,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     name: PR Preview
-    needs: [ build ]
-    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
+    needs: [ detect-changes, build ]
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml. A manual run
+    # qualifies when pr-context resolved a PR for it (see `detect-changes`).
     if: |
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.detect-changes.outputs.pr_present == 'true' &&
+      needs.detect-changes.outputs.pr_same_repo == 'true' &&
       needs.build.outputs.build == 'success'
     permissions:
       contents: write
@@ -484,10 +511,10 @@ jobs:
     # cleanup. Keep this group string byte-identical to the one in `gh_pages_cleanup`
     # (pr-cleanup.yml).
     concurrency:
-      group: pr-preview-gh-pages-${{ github.event.pull_request.number }}
+      group: pr-preview-gh-pages-${{ needs.detect-changes.outputs.pr_number }}
       cancel-in-progress: false
     env:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_NUMBER: ${{ needs.detect-changes.outputs.pr_number }}
     steps:
       # Needed for the local shared action below; same-repo gate (job if) is the guard.
       - name: Checkout
@@ -522,8 +549,17 @@ jobs:
           node scripts/ci/check-pr-preview.mjs "$PREVIEW_DIR"
           echo "publish=true" >> "$GITHUB_OUTPUT"
 
+      # A manual run is slow: don't let it overwrite a newer run's preview or comment, or re-create
+      # what the close-time cleanup removed, once the PR head has moved on or the PR has closed.
+      - name: Check the PR head is current
+        id: head
+        uses: ./external/ag-shared/github/actions/pr-head-guard
+        with:
+          pr-number: ${{ env.PR_NUMBER }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish PR preview to gh-pages
-        if: steps.stage.outputs.publish == 'true'
+        if: steps.stage.outputs.publish == 'true' && steps.head.outputs.current == 'true'
         uses: ./external/ag-shared/github/actions/pr-preview-publish
         with:
           pr_number: ${{ env.PR_NUMBER }}
@@ -532,10 +568,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Post sticky PR comment
-        if: steps.stage.outputs.publish == 'true'
+        if: steps.stage.outputs.publish == 'true' && steps.head.outputs.current == 'true'
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: pr-preview-umd
+          # A manual run has no pull_request payload for the action to find the PR in.
+          number: ${{ env.PR_NUMBER }}
           message: |
             ### Live-test this PR in Plunker
 

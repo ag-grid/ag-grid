@@ -2,6 +2,10 @@ export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
 export { AgAbstractBean } from './core/agAbstractBean';
+export { createBeanGraph } from './core/agBeanGraph';
+export { createBeanList } from './core/agBeanList';
+export type { AgBeanSource } from './core/agBeanList';
+export type { AgBeanGraph, AgBeansFor, AgBeanView, AgDeclaredDeps, AgGraphBean } from './core/agBeanGraph';
 export type { AgBeanStubEvent } from './core/agAbstractBean';
 export { AgAbstractComponent } from './core/agAbstractComponent';
 export { AgContext } from './core/agContext';
@@ -229,6 +233,7 @@ export {
     _setScrollLeft,
     _setVisible,
     _throttleToFrame,
+    FORM_FIELD_SELECTOR,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';

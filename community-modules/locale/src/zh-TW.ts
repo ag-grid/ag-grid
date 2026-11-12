@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '構建器',
+    advancedFilterPlaceholder: '進階篩選',
     advancedFilterValidationMissingColumn: '缺少欄位',
     advancedFilterValidationMissingOption: '缺少選項',
     advancedFilterValidationMissingValue: '缺少值',
@@ -732,6 +733,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaCalculatedColumn: '計算欄',
     ariaColumnShowValuesAs: '正在以此方式顯示值',
     ariaColumnSelectAll: '切換所有列的可見性',
+    ariaColumnSelectExpandAll: '展開或摺疊所有欄組',
     ariaDateFilterInput: '日期篩選輸入',
     ariaDefaultListName: '列表',
     ariaFilterColumnsInput: '篩選欄輸入',
@@ -847,6 +849,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaLabelAddFilterField: '新增篩選欄位',
     ariaLabelFilterCardDelete: '刪除篩選器',
     ariaLabelFilterCardHasEdits: '有編輯',
+    ariaLabelFilterCardType: '篩選類型',
     ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -1,6 +1,7 @@
 import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
+import { formatJiraNotes } from '@ag-website-shared/components/changelog/formatJiraNotes';
 import { linkifyUrls } from '@ag-website-shared/components/changelog/linkifyUrls';
 import { transformVersion } from '@ag-website-shared/components/changelog/transformVersion';
 import { useSearchQuery } from '@ag-website-shared/components/changelog/useSearchQuery';
@@ -224,13 +225,13 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
         }
 
         const moreInfo = params.data.moreInformation
-            ? produceHTML('More Information', params.data.moreInformation)
+            ? produceHTML('More Information', formatJiraNotes(params.data.moreInformation))
             : '';
         const deprecationNotes = params.data.deprecationNotes
-            ? produceHTML('Deprecation Notes', params.data.deprecationNotes)
+            ? produceHTML('Deprecation Notes', formatJiraNotes(params.data.deprecationNotes))
             : '';
         const breakingChangesNotes = params.data.breakingChangesNotes
-            ? produceHTML('Breaking Changes', params.data.breakingChangesNotes)
+            ? produceHTML('Breaking Changes', formatJiraNotes(params.data.breakingChangesNotes))
             : '';
         const linkToDocumentation = params.data.documentationUrl
             ? produceHTML('Link to Documentation', params.data.documentationUrl)

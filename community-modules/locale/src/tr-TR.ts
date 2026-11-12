@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     advancedFilterCancel: 'İptal',
     advancedFilterClear: 'Temizle',
     advancedFilterBuilder: 'Oluşturucu',
+    advancedFilterPlaceholder: 'Gelişmiş Filtre',
     advancedFilterValidationMissingColumn: 'Sütun eksik',
     advancedFilterValidationMissingOption: 'Seçenek eksik',
     advancedFilterValidationMissingValue: 'Değer eksik',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaCalculatedColumn: 'Hesaplanan sütun',
     ariaColumnShowValuesAs: 'Değerler Şu Şekilde Gösteriliyor',
     ariaColumnSelectAll: 'Tüm Sütunların Görünürlüğünü Değiştir',
+    ariaColumnSelectExpandAll: 'Tüm sütun gruplarını genişlet veya daralt',
     ariaDateFilterInput: 'Tarih Filtre Girişi',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Sütunları Filtrele Girişi',
@@ -853,6 +855,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaLabelFilterCardType: 'Filtre Türü',
     ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)

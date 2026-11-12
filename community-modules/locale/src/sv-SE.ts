@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Rensa',
     advancedFilterBuilder: 'Byggare',
+    advancedFilterPlaceholder: 'Avancerat filter',
     advancedFilterValidationMissingColumn: 'Kolumn saknas',
     advancedFilterValidationMissingOption: 'Alternativ saknas',
     advancedFilterValidationMissingValue: 'Värde saknas',
@@ -736,6 +737,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaCalculatedColumn: 'Beräknad kolumn',
     ariaColumnShowValuesAs: 'Visar värden som',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
+    ariaColumnSelectExpandAll: 'Expandera eller fäll ihop alla kolumngrupper',
     ariaDateFilterInput: 'Datumfilterinmatning',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',
@@ -852,6 +854,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
+    ariaLabelFilterCardType: 'Filtertyp',
     ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
