@@ -1,3 +1,4 @@
+import type { StringComparator } from 'ag-stack';
 import { _defaultComparator } from 'ag-stack';
 
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
@@ -11,6 +12,7 @@ import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEnti
 import type { IFormulaService } from '../interfaces/formulas';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ValueService } from '../valueService/valueService';
+import { _getStringComparator } from './accentedSort';
 
 // this logic is used by both SSRM and CSRM
 
@@ -18,7 +20,8 @@ import type { ValueService } from '../valueService/valueService';
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private accentedSort: boolean = false;
+    /** String comparator from the `accentedSort` grid option; a column's own `accentedSort` overrides it. */
+    private gridStringComparator: StringComparator | undefined;
     private primaryColumnsSortGroups: boolean = false;
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
@@ -36,7 +39,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const updateOptions = () => {
             const gos = this.gos;
-            this.accentedSort = !!gos.get('accentedSort');
+            this.gridStringComparator = _getStringComparator(gos.get('accentedSort'));
             this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
         };
 
@@ -63,7 +66,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
-        const accentedCompare = this.accentedSort;
+        const gridStringComparator = this.gridStringComparator;
 
         // Iterate columns, return the first that doesn't match. Comparators are resolved up front
         // (see _resolveSortOptions): a col comparator applies to every row; a row-group display col falls back
@@ -79,14 +82,16 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             let result: number;
             if (comparator) {
                 result = comparator(valueA, valueB, nodeA, nodeB, descending);
-            } else if (sortOption.absolute) {
-                result = _defaultComparator(
-                    absoluteValueTransformer(valueA),
-                    absoluteValueTransformer(valueB),
-                    accentedCompare
-                );
             } else {
-                result = _defaultComparator(valueA, valueB, accentedCompare);
+                const colStringComparator = sortOption.stringComparator;
+                const stringComparator = colStringComparator === undefined ? gridStringComparator : colStringComparator;
+                result = sortOption.absolute
+                    ? _defaultComparator(
+                          absoluteValueTransformer(valueA),
+                          absoluteValueTransformer(valueB),
+                          stringComparator
+                      )
+                    : _defaultComparator(valueA, valueB, stringComparator);
             }
 
             // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.

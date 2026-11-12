@@ -7,7 +7,7 @@ import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams, TooltipDefinition } from '../tooltip/tooltipComponent';
@@ -1060,6 +1060,16 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `< 0` Sort valueA before valueB
      */
     comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
+    /**
+     * Set to `true` to sort this column's strings using locale-specific rules, so accented characters are taken into account, or provide an object to sort
+     * using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Set to `false` to turn locale-specific sorting off for this column.
+     *
+     * When set, overrides the `accentedSort` grid option for this column. Set it on `defaultColDef` to apply it to all columns.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
+     * Not used when a `comparator` is provided.
+     */
+    accentedSort?: boolean | AccentedSortOptions;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false

@@ -5,6 +5,7 @@ import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../e
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
+import { validateAccentedSort } from './accentedSortValidation';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
@@ -285,6 +286,9 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return `initialSort must be of non-null type (SortDirection | SortDef), currently it is ${typeof _options.initialSort === 'object' ? JSON.stringify(_options.initialSort) : toStringWithNullUndefined(_options.initialSort)}`;
             },
         },
+        accentedSort: {
+            validate: ({ accentedSort }) => validateAccentedSort('colDef.accentedSort', accentedSort),
+        },
         sortingOrder: {
             validate: (_options) => {
                 const sortingOrder = _options.sortingOrder;
@@ -552,6 +556,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     valueFormatter: undefined,
     valueParser: undefined,
     comparator: undefined,
+    accentedSort: undefined,
     equals: undefined,
     pivotComparator: undefined,
     suppressKeyboardEvent: undefined,

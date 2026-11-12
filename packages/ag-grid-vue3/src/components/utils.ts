@@ -1,6 +1,7 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
+    AccentedSortOptions,
     AlignedGrid,
     AlwaysPassFilter,
     AutoGenerateColumnDefsOptions,
@@ -1724,10 +1725,15 @@ export interface Props<TData> {
          * @deprecated v33 Use `defaultColDef.sortingOrder` instead
          */
     sortingOrder?: SortDirection[],
-    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+    /** Set to `true` to sort strings using locale-specific rules, so accented characters are taken into account. If this feature is turned on the sort will be slower.
+         *
+         * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+         * Only applies when both values are strings. Also orders the values in the Set Filter list.
+         *
+         * Can be overridden per column with `colDef.accentedSort`.
          * @default false
          */
-    accentedSort?: boolean,
+    accentedSort?: boolean | AccentedSortOptions,
     /** Set to `true` to show the 'no sort' icon.
          * @default false
          * @deprecated v33 Use `defaultColDef.unSortIcon` instead

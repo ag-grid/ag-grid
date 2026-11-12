@@ -892,7 +892,7 @@ export type {
     ValueParserLiteFunc,
     ValueParserLiteParams,
 } from './entities/dataType';
-export type { SortDef, SortDirection, SortType } from './interfaces/iSort';
+export type { AccentedSortOptions, SortDef, SortDirection, SortType } from './interfaces/iSort';
 
 // Grid Configuration
 export type {

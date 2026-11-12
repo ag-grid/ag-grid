@@ -1,3 +1,4 @@
+import type { StringComparator } from 'ag-stack';
 import { _defaultComparator } from 'ag-stack';
 
 import type {
@@ -11,7 +12,7 @@ import type {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import { AgPromise, BeanStub, _addGridCommonParams } from 'ag-grid-community';
+import { AgPromise, BeanStub, _addGridCommonParams, _getStringComparator } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
 import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } from './setFilterUtils';
@@ -71,6 +72,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
+    /** The column's effective `accentedSort`, used when the values are sorted without a user comparator. */
+    private stringComparator: StringComparator | undefined;
+    /** The grid's default comparator, using the column's `accentedSort`. */
+    private defaultComparator: (a: any, b: any) => number;
     private valueComparator: (a: TValue | null, b: TValue | null) => number;
     private compareByValue: boolean;
 
@@ -123,6 +128,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
         const values = handlerParams.filterParams.values;
         const oldHandlerParams = this.params.handlerParams;
+        const oldStringComparator = this.stringComparator;
         // the params change only with the column definition, so the API's values never read as its own
         const valuesChanged = (values ?? null) !== (oldHandlerParams.filterParams.values ?? null);
 
@@ -144,22 +150,29 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             this.colDefLoad = this.updateAllValues(true);
             return true;
         }
-        // the loaded values, the API's included, are sorted again; a load still pending sorts when it answers
-        if (this.current?.answered && isOrderChanged(oldHandlerParams, handlerParams)) {
-            const keys = this.sortKeys(this.allValues);
-            const available = this.availableKeys;
-            const nextAvailable = new Set<string | null>();
-            for (let i = 0, len = keys.length; i < len; ++i) {
-                const key = keys[i];
-                if (available.has(key)) {
-                    nextAvailable.add(key);
-                }
-            }
-            this.allKeys = AgPromise.resolve(keys);
-            this.availableKeys = nextAvailable;
-            this.updateDisplayableKeys(keys);
+        if (isOrderChanged(oldHandlerParams, handlerParams) || this.stringComparator !== oldStringComparator) {
+            this.sortLoadedValues();
         }
         return false;
+    }
+
+    /** The loaded values, the API's included, are sorted again; a load still pending sorts when it answers. */
+    private sortLoadedValues(): void {
+        if (!this.current?.answered) {
+            return;
+        }
+        const keys = this.sortKeys(this.allValues);
+        const available = this.availableKeys;
+        const nextAvailable = new Set<string | null>();
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const key = keys[i];
+            if (available.has(key)) {
+                nextAvailable.add(key);
+            }
+        }
+        this.allKeys = AgPromise.resolve(keys);
+        this.availableKeys = nextAvailable;
+        this.updateDisplayableKeys(keys);
     }
 
     /** The one writer of the values used, so their kind always matches them; `undefined` reads the rows. */
@@ -206,18 +219,25 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             csrmValuesExtractor.getValue = getValue;
         }
 
+        const stringComparator = _getStringComparator(colDef.accentedSort ?? this.gos.get('accentedSort'));
+        const defaultComparator = stringComparator
+            ? (a: any, b: any) => _defaultComparator(a, b, stringComparator)
+            : _defaultComparator;
+        this.stringComparator = stringComparator;
+        this.defaultComparator = defaultComparator;
+
         const keyComparator = comparator ?? (colDef.comparator as (a: any, b: any) => number);
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
         let valueComparator: (a: TValue | null, b: TValue | null) => number;
         if (treeDataOrGrouping && !keyComparator) {
-            valueComparator = treeDataOrGroupingComparator as any;
+            valueComparator = (a, b) => treeDataOrGroupingComparator(a as any, b as any, defaultComparator);
         } else if (treeList && !treeListPathGetter && !keyComparator) {
-            valueComparator = _defaultComparator;
+            valueComparator = defaultComparator;
         } else {
             valueComparator = keyComparator;
         }
         this.valueComparator = valueComparator;
-        this.keyComparator = (keyComparator as any) ?? _defaultComparator;
+        this.keyComparator = (keyComparator as any) ?? defaultComparator;
         // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
         // Also if tree data, grouping, or date with tree list, then need to do value sort
         this.compareByValue = !!(
@@ -587,7 +607,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
 
         if (keyOnlyKeys) {
-            const sortedKeyOnlyKeys = Array.from(keyOnlyKeys).sort(_defaultComparator);
+            const sortedKeyOnlyKeys = Array.from(keyOnlyKeys).sort(this.defaultComparator);
             for (let i = 0, len = sortedKeyOnlyKeys.length; i < len; ++i) {
                 const key = sortedKeyOnlyKeys[i];
                 if (key !== null || !blankLast) {

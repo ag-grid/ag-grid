@@ -466,6 +466,13 @@ export class SetFilterHandler<TValue = string>
 
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
+        this.addManagedPropertyListeners(['accentedSort'], () => {
+            const { colDef, column } = this.params;
+            if (colDef.accentedSort !== undefined) {
+                return;
+            }
+            this.beans.colFilter?.filterParamsChanged(column.getColId());
+        });
 
         const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({
