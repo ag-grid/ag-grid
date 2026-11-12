@@ -68,6 +68,20 @@ describe('inlineSqlHelpers', () => {
         expect(result).not.toContain('File header');
     });
 
+    test('picks up an edit to sql.ts made after it was first read', async () => {
+        const folderPath = await createExample();
+        const sqlPath = path.join(folderPath, '..', '..', '..', '..', '..', 'example-fake-servers', 'sql.ts');
+        const importQuote = `import { quote } from '@example-fake-servers/sql';\n`;
+
+        expect(await inline(folderPath, importQuote)).toContain(`'"' + name + '"'`);
+
+        await fs.writeFile(sqlPath, SQL_SOURCE.replace(`'"' + name + '"'`, `'[' + name + ']'`));
+        const later = new Date(Date.now() + 5000);
+        await fs.utimes(sqlPath, later, later);
+
+        expect(await inline(folderPath, importQuote)).toContain(`'[' + name + ']'`);
+    });
+
     test('rejects an import of a name sql.ts does not declare', async () => {
         const folderPath = await createExample();
 

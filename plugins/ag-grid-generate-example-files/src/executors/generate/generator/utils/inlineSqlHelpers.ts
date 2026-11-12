@@ -13,7 +13,7 @@ interface SqlHelper {
     dependencies: string[];
 }
 
-const helpersByFile = new Map<string, Promise<Map<string, SqlHelper>>>();
+const helpersByFile = new Map<string, { mtimeMs: number; helpers: Map<string, SqlHelper> }>();
 
 function parseSqlHelpers(sqlFilePath: string, source: string): Map<string, SqlHelper> {
     const sourceFile = ts.createSourceFile(sqlFilePath, source, ts.ScriptTarget.Latest, true);
@@ -68,13 +68,17 @@ function getCommentsStart(source: string, declaration: ts.Node): number {
     return start;
 }
 
-function loadSqlHelpers(folderPath: string): Promise<Map<string, SqlHelper>> {
+async function loadSqlHelpers(folderPath: string): Promise<Map<string, SqlHelper>> {
     const sqlFilePath = path.join(getExampleFakeServersDir(folderPath), 'sql.ts');
-    let helpers = helpersByFile.get(sqlFilePath);
-    if (!helpers) {
-        helpers = fs.readFile(sqlFilePath, 'utf-8').then((source) => parseSqlHelpers(sqlFilePath, source));
-        helpersByFile.set(sqlFilePath, helpers);
+    // Keyed on mtime so a long-lived generator worker picks up edits to sql.ts
+    const { mtimeMs } = await fs.stat(sqlFilePath);
+    const cached = helpersByFile.get(sqlFilePath);
+    if (cached?.mtimeMs === mtimeMs) {
+        return cached.helpers;
     }
+
+    const helpers = parseSqlHelpers(sqlFilePath, await fs.readFile(sqlFilePath, 'utf-8'));
+    helpersByFile.set(sqlFilePath, { mtimeMs, helpers });
     return helpers;
 }
 
