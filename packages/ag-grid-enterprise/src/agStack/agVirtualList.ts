@@ -157,7 +157,7 @@ export class AgVirtualList<
 
     private refreshAriaProperties(): void {
         const translate = this.getLocaleTextFunc();
-        const listName = translate('ariaDefaultListName', this.listName || 'List');
+        const listName = this.listName || translate('ariaDefaultListName', 'List');
         const ariaEl = this.eContainer;
 
         _setAriaRole(
