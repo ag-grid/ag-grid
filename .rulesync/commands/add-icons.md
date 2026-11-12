@@ -38,7 +38,7 @@ All under `packages/ag-grid-community/src/theming/parts/icon-set/`:
 
 ## 4. Docs
 
-1. Copy each legacy font SVG to `documentation/ag-grid-docs/public/theme-icons/<theme>/<name>.svg`. The folders are `alpine`, `balham`, `material`, `quartz`, and `base` for Classic. These files are identical copies of the step 1 SVGs.
+1. Copy each legacy font SVG to `documentation/ag-grid-docs/public/theme-icons/<theme>/<name>.svg`. The folders are `alpine`, `balham`, `material`, `quartz`. These files are identical copies of the step 1 SVGs.
 2. Rebuild `<theme>-icons.zip` in each of those folders, holding that folder's SVGs at the top level.
 3. Add the name to `ICON_NAMES` in `documentation/ag-grid-docs/src/components/icon/iconsData.ts`.
 
