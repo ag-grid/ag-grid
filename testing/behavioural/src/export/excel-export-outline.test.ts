@@ -11,6 +11,9 @@ const getXmlAttributes = (tag: string): Record<string, string> =>
 const getRowOutlineLevels = (sheetXml: string): (string | undefined)[] =>
     [...sheetXml.matchAll(/<row [^>]*>/g)].map((match) => getXmlAttributes(match[0]).outlineLevel);
 
+const getRowHiddenFlags = (sheetXml: string): (string | undefined)[] =>
+    [...sheetXml.matchAll(/<row [^>]*>/g)].map((match) => getXmlAttributes(match[0]).hidden);
+
 const getSheetFormatPr = (sheetXml: string): Record<string, string> =>
     getXmlAttributes(sheetXml.match(/<sheetFormatPr [^>]*\/>/)![0]);
 
@@ -104,6 +107,136 @@ describe('Excel export outlines', () => {
         const sheetXml = api.getSheetDataForExcel()!;
         // header row, Ireland leaf (hidden parent, level 0), Spain group, 2 leaves
         expect(getRowOutlineLevels(sheetXml)).toEqual([undefined, undefined, undefined, '1', '1']);
+    });
+
+    test('shows rows of parents hidden by groupHideParentOfSingleChild when matching collapsed grid state', async () => {
+        const api = gridsManager.createGrid('excel-hidden-parent-match-state', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Ireland', sport: 'Golf' },
+                { country: 'Spain', sport: 'Tennis' },
+                { country: 'Spain', sport: 'Football' },
+            ],
+        });
+        // Ireland leaf is shown in place of its hidden parent, Spain is a collapsed group
+        await waitForDisplayedRowCount(api, 2);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+        // header row, Ireland leaf, Spain group, 2 collapsed Spain leaves
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '0', '1', '1']);
+    });
+
+    test('hides rows of parents hidden by groupHideParentOfSingleChild under a collapsed group when matching grid state', async () => {
+        const api = gridsManager.createGrid('excel-hidden-nested-parent-match-state', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport', rowGroup: true }, { field: 'player' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Spain', sport: 'Tennis', player: 'Nadal' },
+                { country: 'Spain', sport: 'Football', player: 'Xavi' },
+                { country: 'Spain', sport: 'Football', player: 'Iniesta' },
+            ],
+        });
+        // only the collapsed Spain group is displayed
+        await waitForDisplayedRowCount(api, 1);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+        // header row, Spain, Tennis leaf (hidden parent), Football group, 2 Football leaves: all under collapsed Spain
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '1', '1', '1', '1']);
+    });
+
+    test('shows rows under an expanded group when a hidden parent sits between it and the rows', async () => {
+        const api = gridsManager.createGrid('excel-hidden-parent-under-expanded', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport', rowGroup: true }, { field: 'player' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Spain', sport: 'Tennis', player: 'Nadal' },
+                { country: 'Spain', sport: 'Football', player: 'Xavi' },
+                { country: 'Spain', sport: 'Football', player: 'Iniesta' },
+            ],
+        });
+        await waitForDisplayedRowCount(api, 1);
+        api.forEachNode((node) => {
+            if (node.key === 'Spain') {
+                api.setRowNodeExpanded(node, true);
+            }
+        });
+        await waitForDisplayedRowCount(api, 3);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+        // header row, Spain, Nadal (hidden Tennis parent), Football group (collapsed), 2 collapsed Football leaves
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '0', '0', '1', '1']);
+    });
+
+    describe('when the only child of a hidden parent is itself a group', () => {
+        const createGrid = (id: string, groupHideParentOfSingleChild: true | 'leafGroupsOnly') =>
+            gridsManager.createGrid(id, {
+                columnDefs: [
+                    { field: 'country', rowGroup: true },
+                    { field: 'city', rowGroup: true },
+                    { field: 'player' },
+                ],
+                groupHideParentOfSingleChild,
+                rowData: [
+                    { country: 'Ireland', city: 'Dublin', player: 'Niall' },
+                    { country: 'Ireland', city: 'Dublin', player: 'John' },
+                    { country: 'Spain', city: 'Madrid', player: 'Xavi' },
+                    { country: 'Spain', city: 'Seville', player: 'Nadal' },
+                ],
+            });
+
+        test('exports only the groups the grid displays and keeps their rows collapsed', async () => {
+            const api = createGrid('excel-hidden-group-parent-collapsed', true);
+            // Ireland is hidden as its only child is Dublin, so Dublin and Spain are the displayed groups
+            await waitForDisplayedRowCount(api, 2);
+
+            const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+            // header row, Dublin, 2 leaves, Spain, then its 2 leaves (Madrid and Seville are hidden single-child groups)
+            expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '1', '1', '0', '1', '1']);
+            expect(getRowOutlineLevels(sheetXml)).toEqual([undefined, undefined, '1', '1', undefined, '1', '1']);
+        });
+
+        test('shows the rows of a group the user expanded in the grid', async () => {
+            const api = createGrid('excel-hidden-group-parent-expanded', true);
+            await waitForDisplayedRowCount(api, 2);
+            api.forEachNode((node) => {
+                if (node.key === 'Dublin') {
+                    api.setRowNodeExpanded(node, true);
+                }
+            });
+            await waitForDisplayedRowCount(api, 4);
+
+            const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+            // header row, Dublin and its 2 leaves are visible, Spain is visible with its 2 leaves collapsed
+            expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '0', '0', '0', '1', '1']);
+        });
+
+        test('only skips groups directly above a leaf group when set to leafGroupsOnly', async () => {
+            const api = createGrid('excel-hidden-group-parent-leaf-groups-only', 'leafGroupsOnly');
+            // Ireland is not a leaf group so it stays displayed
+            await waitForDisplayedRowCount(api, 2);
+
+            const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'match' })!;
+            // header row, Ireland, Dublin, 2 leaves, Spain, then its 2 leaves (Madrid and Seville are hidden leaf groups)
+            expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '1', '1', '1', '0', '1', '1']);
+        });
+    });
+
+    test('keeps rows with no exported parent visible when collapsing every group', async () => {
+        const api = gridsManager.createGrid('excel-hidden-parent-collapsed-state', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }],
+            groupHideParentOfSingleChild: true,
+            rowData: [
+                { country: 'Ireland', sport: 'Golf' },
+                { country: 'Spain', sport: 'Tennis' },
+                { country: 'Spain', sport: 'Football' },
+            ],
+        });
+        await waitForDisplayedRowCount(api, 2);
+
+        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'collapsed' })!;
+        // header row, Ireland leaf, Spain group, 2 collapsed Spain leaves
+        expect(getRowHiddenFlags(sheetXml)).toEqual(['0', '0', '0', '1', '1']);
     });
 
     test('creates per-column outline levels for collapsible column groups, preserving widths', async () => {

@@ -408,7 +408,7 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isHiddenSingleChildGroup(gos: GridOptionsService, node: RowNode): boolean {
-    return node.allChildrenCount === 1 && node.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, node);
+    return node.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, node);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
