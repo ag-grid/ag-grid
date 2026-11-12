@@ -3,6 +3,7 @@ import type { AgBeanCollection, AgSingletonBeanClass, ClassImp, IAriaAnnouncemen
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
+import type { AutoGenerateColumnsService } from '../autoGenerateColumns/autoGenerateColumnsService';
 import type { FilterStage } from '../clientSideRowModel/filterStage';
 import type { SortStage } from '../clientSideRowModel/sortStage';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
@@ -329,6 +330,7 @@ interface CoreBeanCollection extends AgBeanCollection<
     selectionColSvc?: SelectionColService;
     rowNumbersSvc?: IRowNumbersService;
     colDefFactory?: ColumnDefFactory;
+    autoGenColsSvc?: AutoGenerateColumnsService;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IRowGroupColsService;
     valueColsSvc?: IValueColsService;
@@ -455,7 +457,6 @@ type UntypedBeanNames =
     | 'advFilterExpSvc'
     | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'
-    | 'autoGenColsSvc'
     | 'agChartsExports'
     | 'chartCrossFilterSvc'
     | 'chartMenuItemMapper'
