@@ -107,8 +107,7 @@ describe('Advanced Filter model column identity', () => {
         await asyncSetTimeout(0);
         api.setColumnsVisible(['other'], false);
         await asyncSetTimeout(0);
-        expect(api.getAdvancedFilterModel()?.colId).not.toBe('nation');
-        expect(getDisplayedNames(api)).not.toEqual(NATION_ROWS);
+        expectFilter(api, null, ALL_ROWS);
     });
 
     test('a join naming an unavailable and an available column with the same header is not applied to one column twice', async () => {
