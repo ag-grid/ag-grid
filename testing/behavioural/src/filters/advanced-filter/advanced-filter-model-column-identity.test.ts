@@ -1,8 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { AdvancedFilterHarness, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AdvancedFilterModel, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { AdvancedFilterModel, ColDef, GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, TextFilterModule } from 'ag-grid-community';
-import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 interface Row {
     name: string;
@@ -181,6 +182,29 @@ describe('Advanced Filter model column identity', () => {
         api.setGridOption('rowData', ROW_DATA);
         await asyncSetTimeout(0);
         expectFilter(api, null, ALL_ROWS);
+    });
+
+    test('the Server-Side Row Model is not asked to filter the colliding column', async () => {
+        const requests: unknown[] = [];
+        const api = gridsManager.createGrid(
+            'grid',
+            {
+                rowModelType: 'serverSide',
+                columnDefs: [NAME_COL, { field: 'country' }, NATION_AS_COUNTRY],
+                enableAdvancedFilter: true,
+                initialState: { filter: { advancedFilterModel: containsE('country') } },
+                serverSideDatasource: {
+                    getRows: (params: IServerSideGetRowsParams) => {
+                        requests.push(params.request.filterModel);
+                        params.success({ rowData: ROW_DATA, rowCount: ROW_DATA.length });
+                    },
+                },
+            },
+            { modules: [ServerSideRowModelModule] }
+        );
+
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(ROW_DATA.length));
+        expect({ model: api.getAdvancedFilterModel(), requests }).toEqual({ model: null, requests: [null] });
     });
 
     test('text the user applies still resolves its columns by header name', async () => {
