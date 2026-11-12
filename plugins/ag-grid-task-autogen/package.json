@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-task-autogen",
-  "version": "36.3.0-beta.20261111.119",
+  "version": "36.3.0-beta.20261112.158",
   "private": true,
   "dependencies": {
     "@nx/devkit": "24.0.2",
