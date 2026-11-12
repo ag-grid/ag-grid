@@ -19,7 +19,7 @@ The Client-Side Row Model deals with client-side data. The Server-Side, Infinite
 
     This is the default. The grid will load all of the data into the grid in one go. The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in browser memory.
 
-    **Push data**: [`rowData`](./data-update-row-data/), [Transactions](./data-update-transactions/) and [single row updates](./data-update-single-row-cell/).
+    **Push data**: [`rowData`](./data-update-row-data/), [Transactions](./data-update-transactions/) and [single row updates](./data-update-single-row-cell/), with [View Subscription](./data-update-view-subscription/) {% enterpriseIcon /%} to push updates for the rows in view only.
 
     [Show Loading Rows while client-side data is loading](./loading-rows/)
 
@@ -35,7 +35,7 @@ The Client-Side Row Model deals with client-side data. The Server-Side, Infinite
 
     The Server-Side Row Model builds on the Infinite Row Model. In addition to lazy-loading the data as the user scrolls down, it also allows lazy-loading of grouped data with server-side grouping and aggregation. Advanced users will use Server-Side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
 
-    **Pull data**: the datasource's `getRows`. **Push data**: [Server-Side Transactions](./server-side-model-updating-transactions/) and [single row updates](./server-side-model-updating-single-row/).
+    **Pull data**: the datasource's `getRows`. **Push data**: [Server-Side Transactions](./server-side-model-updating-transactions/) and [single row updates](./server-side-model-updating-single-row/), with [View Subscription](./server-side-model-updating-view-subscription/) {% enterpriseIcon /%} to push updates for the rows in view only.
 
     [Go to Server-Side Row Model](./server-side-model)
 
