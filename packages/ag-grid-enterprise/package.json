@@ -117,12 +117,12 @@
     "ag-stack": "36.3.0-beta.20261111.119"
   },
   "optionalDependencies": {
-    "ag-charts-community": "14.3.0-beta.20261108",
-    "ag-charts-enterprise": "14.3.0-beta.20261108"
+    "ag-charts-community": "14.3.0-beta.20261112",
+    "ag-charts-enterprise": "14.3.0-beta.20261112"
   },
   "devDependencies": {
-    "ag-charts-community": "14.3.0-beta.20261108",
-    "ag-charts-enterprise": "14.3.0-beta.20261108",
+    "ag-charts-community": "14.3.0-beta.20261112",
+    "ag-charts-enterprise": "14.3.0-beta.20261112",
     "canvas": "^3.2.3"
   }
 }
