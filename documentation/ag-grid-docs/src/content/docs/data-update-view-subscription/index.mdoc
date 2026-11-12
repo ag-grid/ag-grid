@@ -19,7 +19,7 @@ All subscriptions and updates share one simulated websocket, however many rows a
 
 In the example below, note the following:
 
-- Scrolling produces subscribe and unsubscribe batches, logged to the console with their row count.
+- Scrolling unsubscribes the rows that leave the view and subscribes the rows that enter it, so **Subscribed rows** stays about the same.
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
 
 {% gridExampleRunner title="View Subscription with Flat Data" name="flat-view-subscription" exampleHeight=615 /%}

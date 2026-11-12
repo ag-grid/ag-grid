@@ -110,14 +110,12 @@ const gridOptions: GridOptions<Stock> = {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.add(id));
             socket.send({ type: 'subscribe', ids });
-            console.log(`subscribe ${rows.length}`);
             renderCount();
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.delete(id));
             socket.send({ type: 'unsubscribe', ids });
-            console.log(`unsubscribe ${rows.length}`);
             renderCount();
         },
     },
