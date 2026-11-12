@@ -7,13 +7,12 @@ With the Server-Side Row Model, the `viewSubscription` grid option tells your ap
 
 View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-side-model-configuration/#providing-row-ids).
 
-The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/), loaded over a simulated websocket that also streams updates for the subscribed rows. Region and sector rows show the total value of their stocks, which the server streams whenever one of those stocks moves. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route. Note the following:
+The example below loads 1,000 stocks in blocks over a simulated websocket, which also streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates). Note the following:
 
-- Scrolling, expanding groups and loading blocks produce subscribe and unsubscribe batches.
-- **Purge** reloads all rows. The old rows are unsubscribed, and the new rows subscribed as they load.
-- With **Subscription active** cleared, rows still load over the socket, but no updates stream.
+- Only the loaded rows in view are subscribed. Scrolling to rows in a new block subscribes them once the block has loaded.
+- Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
 
-{% gridExampleRunner title="View Subscription with Server-Side Tree Data" name="server-side-view-subscription" exampleHeight=615 /%}
+{% gridExampleRunner title="View Subscription with the Server-Side Row Model" name="ssrm-flat-view-subscription" exampleHeight=615 /%}
 
 View subscription works the same way as with the Client-Side Row Model, so start with [View Subscription](./data-update-view-subscription/) for:
 
@@ -38,6 +37,16 @@ Rows have the same `type` values as with the [Client-Side Row Model](./data-upda
 
 - `'group'`: a group row the server loaded, with its `data`. [`getRowId`](./server-side-model-configuration/#providing-row-ids) is called for group rows too, so give them an ID from their route.
 - `'tree'`: a row in [Tree Data](./server-side-model-tree-data/). `hasChildren` is `true` for expandable rows, and only expandable rows have a `route`.
+
+### Tree Data {% enterpriseIcon /%} {% #tree-data %}
+
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/), loaded over a simulated websocket that also streams updates for the subscribed rows. Region and sector rows show the total value of their stocks, which the server streams whenever one of those stocks moves. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route. Note the following:
+
+- Scrolling, expanding groups and loading blocks produce subscribe and unsubscribe batches.
+- **Purge** reloads all rows. The old rows are unsubscribed, and the new rows subscribed as they load.
+- With **Subscription active** cleared, rows still load over the socket, but no updates stream.
+
+{% gridExampleRunner title="View Subscription with Server-Side Tree Data" name="server-side-view-subscription" exampleHeight=615 /%}
 
 ## Aggregating on the Server
 
