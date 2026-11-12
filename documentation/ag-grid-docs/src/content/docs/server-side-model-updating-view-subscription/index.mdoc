@@ -15,12 +15,6 @@ View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-s
 
 This page covers what is different with the Server-Side Row Model: rows that load in blocks, group rows loaded from the server, and aggregated values the server calculates.
 
-The examples on this page use the [Quick Access Toolbar](./toolbar/) for their controls and counters:
-
-- **Subscribed rows** is the number of rows subscribed through the handlers.
-- **Streamed rows**, in the [Pivoting on the Server](#pivoting-on-the-server) example, is the number of rows the server sends updates for.
-- **Updates sent** is the total number of row updates the server has sent.
-
 All subscriptions and updates share one simulated websocket, however many rows are subscribed.
 
 ## Loading and Refreshing
