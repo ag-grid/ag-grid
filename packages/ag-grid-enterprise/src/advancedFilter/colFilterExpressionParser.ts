@@ -40,11 +40,15 @@ class ColumnParser implements Parser {
     public hasEndChar = false;
     private colName: string = '';
     private colId: string;
+    private readonly modelColId: string | undefined;
 
     constructor(
         private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number
-    ) {}
+    ) {
+        const modelColumns = params.modelColumns;
+        this.modelColId = modelColumns?.colIds[modelColumns.next++];
+    }
 
     public parse(char: string, position: number): boolean | undefined {
         if (char === COL_FILTER_EXPRESSION_START_CHAR && !this.colName) {
@@ -91,7 +95,7 @@ class ColumnParser implements Parser {
 
     private parseColumn(fromComplete: boolean, endPosition: number): boolean {
         this.endPosition = endPosition;
-        const colValue = this.params.advFilterExpSvc.getColId(this.colName);
+        const colValue = this.resolveColumn();
         if (colValue && this.hasStartChar) {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
@@ -107,6 +111,25 @@ class ColumnParser implements Parser {
         }
         this.baseCellDataType = 'text';
         return false;
+    }
+
+    private resolveColumn(): { colId: string; columnName: string } | null {
+        const { modelColId, colName } = this;
+        const advFilterExpSvc = this.params.advFilterExpSvc;
+        if (modelColId === undefined) {
+            return advFilterExpSvc.getColId(colName);
+        }
+        // a column the Advanced Filter does not offer must not resolve to another whose name matches its colId
+        const columnName = advFilterExpSvc.getOfferedColumnName(modelColId);
+        if (columnName == null) {
+            return null;
+        }
+        const upperCaseName = colName.toLocaleUpperCase();
+        if (upperCaseName === columnName.toLocaleUpperCase()) {
+            return { colId: modelColId, columnName };
+        }
+        // kept as written: the rest of the expression is read at positions taken before any rewrite
+        return upperCaseName === modelColId.toLocaleUpperCase() ? { colId: modelColId, columnName: colName } : null;
     }
 }
 

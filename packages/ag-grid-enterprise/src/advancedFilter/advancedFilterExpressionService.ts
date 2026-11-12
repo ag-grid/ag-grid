@@ -269,16 +269,17 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColumnDisplayValue(colId: string): string | undefined {
-        const columnEntries = this.getColumnAutocompleteEntries();
-        const columnEntry = columnEntries.find(({ key }) => key === colId);
-        let columnName;
-        if (columnEntry) {
-            columnName = columnEntry.displayValue!;
-            this.columnNameToIdMap[columnName.toLocaleUpperCase()] = { colId, columnName };
-        } else {
-            columnName = colId;
+        const columnName = this.getOfferedColumnName(colId);
+        if (columnName == null) {
+            return colId;
         }
+        this.columnNameToIdMap[columnName.toLocaleUpperCase()] = { colId, columnName };
         return columnName;
+    }
+
+    /** The name the Advanced Filter offers a column under, or undefined where it does not offer it. */
+    public getOfferedColumnName(colId: string): string | undefined {
+        return this.getColumnAutocompleteEntries().find(({ key }) => key === colId)?.displayValue;
     }
 
     /**

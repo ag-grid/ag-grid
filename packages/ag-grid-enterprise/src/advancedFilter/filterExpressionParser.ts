@@ -16,10 +16,18 @@ export class FilterExpressionParser {
     constructor(private readonly params: FilterExpressionParserParams) {}
 
     public parseExpression(): string {
-        this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);
+        const params = this.params;
+        const modelColumns = params.modelColumns;
+        if (modelColumns) {
+            modelColumns.next = 0;
+        }
+        this.joinExpressionParser = new JoinFilterExpressionParser(params, 0);
         const i = this.joinExpressionParser.parseExpression();
-        this.valid = i >= this.params.expression.length - 1 && this.joinExpressionParser.isValid();
-        return this.params.expression;
+        this.valid = i >= params.expression.length - 1 && this.joinExpressionParser.isValid();
+        const expression = params.expression;
+        // a parse may rewrite a token to its column's current name, which is still the model's text
+        modelColumns?.texts.add(expression);
+        return expression;
     }
 
     public isValid(): boolean {

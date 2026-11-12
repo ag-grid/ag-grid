@@ -21,6 +21,7 @@ import type {
     ExpressionProxy,
     FilterExpressionFunction,
     FilterExpressionFunctionParams,
+    ModelColumnBinding,
 } from './filterExpressionUtils';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
 
@@ -65,6 +66,12 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private appliedTextUnresolved = false;
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
+    /**
+     * The colIds of the model the shown and the requested text were written from. Text written for a column the
+     * Advanced Filter does not offer names its colId, which may match another column's name.
+     */
+    private shownBinding: ModelColumnBinding | null = null;
+    private requestedBinding: ModelColumnBinding | null = null;
     /** Models set through the API before cell data types are inferred, which parsing them needs, in call order. */
     private pendingModels: { model: AdvancedFilterModel | null; source: FilterChangedEventSourceType }[] = [];
     private expressionFunction: FilterExpressionFunction | null;
@@ -155,27 +162,50 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return cloneModel(this.appliedBuilderModel);
     }
 
-    /** The expression text a model is written as. */
-    private modelToExpression(model: AdvancedFilterModel, isFirstParent?: boolean): string | null {
+    /** The expression text a model is written as, collecting the colId of each condition in the order written. */
+    private modelToExpression(model: AdvancedFilterModel, colIds: string[], isFirstParent?: boolean): string | null {
         if (model.filterType === 'join') {
             const operator = this.advFilterExpSvc.parseJoinOperator(model);
             const expression = model.conditions
-                .map((condition) => this.modelToExpression(condition))
+                .map((condition) => this.modelToExpression(condition, colIds))
                 // A join with no conditions of its own writes nothing, which would join as a stray operator.
                 .filter((condition) => condition != null && condition !== '')
                 .join(` ${operator} `);
             return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
         }
+        colIds.push(model.colId);
         return this.advFilterExpSvc.parseColumnFilterModel(model);
     }
 
-    /** The expression a model is written as, recording whether any set value had to fall back to its key. */
+    /**
+     * The expression a model is written as, recording whether any set value had to fall back to its key,
+     * and binding it to the model's colIds as the shown text.
+     */
     private writeExpression(model: AdvancedFilterModel | null): string | null {
         const advFilterExpSvc = this.advFilterExpSvc;
         advFilterExpSvc.wroteUnresolvedSetValue = false;
-        const expression = model ? this.modelToExpression(model, true) : null;
+        const colIds: string[] = [];
+        const expression = model ? this.modelToExpression(model, colIds, true) : null;
         this.appliedTextUnresolved = advFilterExpSvc.wroteUnresolvedSetValue;
+        this.shownBinding = expression ? { texts: new Set([expression]), colIds, next: 0 } : null;
         return expression;
+    }
+
+    /** The model binding for text written from a model; text the user wrote resolves its columns by name. */
+    private getBinding(expression: string | null): ModelColumnBinding | null {
+        if (expression == null) {
+            return null;
+        }
+        const { shownBinding, requestedBinding } = this;
+        if (shownBinding?.texts.has(expression)) {
+            return shownBinding;
+        }
+        return requestedBinding?.texts.has(expression) ? requestedBinding : null;
+    }
+
+    private setRequestedExpression(expression: string | null): void {
+        this.requestedExpression = expression;
+        this.requestedBinding = this.getBinding(expression);
     }
 
     /**
@@ -197,7 +227,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         if (expression !== this.expression) {
             this.expression = expression;
             this.appliedExpression = expression;
-            this.requestedExpression = expression;
+            this.setRequestedExpression(expression);
         }
         // Refreshed even where the text is unchanged: a value that now resolves clears the fault it reported,
         // and a blank is written the same way whether or not it resolved.
@@ -267,6 +297,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             valueSvc: this.valueSvc,
             advFilterExpSvc: this.advFilterExpSvc,
             advFilterSetSvc: this.advFilterSetSvc,
+            modelColumns: this.getBinding(expression) ?? undefined,
         });
     }
 
@@ -300,7 +331,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.enabled = isEnabled;
         if (!isEnabled) {
             this.expressionConfirmed = false;
-            this.requestedExpression = null;
+            this.setRequestedExpression(null);
             this.pendingModels.length = 0;
         }
         if (!silent && isEnabled !== previousValue) {
@@ -320,7 +351,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         const expression = this.expression;
         this.expressionConfirmed = true;
         this.applyExpressionFromParser(this.parseExpression(expression), expression);
-        this.requestedExpression = this.appliedExpression;
+        this.setRequestedExpression(this.appliedExpression);
     }
 
     private parseExpression(expression: string | null): FilterExpressionParser | null {
@@ -370,7 +401,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         const pendingParser = this.expressionConfirmed && shown !== wasApplied ? this.parseExpression(shown) : null;
         if (pendingParser?.isValid() && !pendingParser.getValidationMessage()) {
             this.applyExpressionFromParser(pendingParser, shown);
-            this.requestedExpression = shown;
+            this.setRequestedExpression(shown);
         } else {
             const applied = this.requestedExpression;
             const appliedParser = this.parseExpression(applied);

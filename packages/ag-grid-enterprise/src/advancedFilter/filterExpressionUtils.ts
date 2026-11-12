@@ -170,6 +170,16 @@ export interface FilterExpressionParserParams {
      * removed once it is, since deleting characters mid-parse would shift every position read after them.
      */
     redundantSeparators?: { startPosition: number; endPosition: number }[];
+    /** Set when the text was written from a model, so each column token resolves to that model's colId, not by name. */
+    modelColumns?: ModelColumnBinding;
+}
+
+/** The colIds a model's text was written for, in the order its column tokens appear. */
+export interface ModelColumnBinding {
+    /** The texts written for these colIds, including any a parse has rewritten them to. */
+    readonly texts: Set<string>;
+    readonly colIds: string[];
+    next: number;
 }
 
 export interface AutocompleteUpdate {
