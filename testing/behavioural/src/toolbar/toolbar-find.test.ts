@@ -220,6 +220,13 @@ describe('Toolbar find item', () => {
             await waitFor(() => expect(announcement.textContent).toBe(text));
         }
 
+        // the announcement is debounced and then written on a second timer
+        async function settleAnnouncement(): Promise<void> {
+            for (let i = 0; i < 3; ++i) {
+                await asyncSetTimeout(0);
+            }
+        }
+
         function activeMarks(gridDiv: HTMLElement): HTMLElement[] {
             return Array.from(gridDiv.querySelectorAll<HTMLElement>('mark.ag-find-active-match'));
         }
@@ -271,7 +278,7 @@ describe('Toolbar find item', () => {
 
             announcement.textContent = '';
             api.applyTransaction({ update: [{ name: 'Bob', age: 41 }] });
-            await asyncSetTimeout(20);
+            await settleAnnouncement();
             expect(announcement.textContent).toBe('');
 
             api.findNext();
@@ -296,7 +303,7 @@ describe('Toolbar find item', () => {
             });
 
             await waitFor(() => expect(matchCount.textContent).toBe('0/3'));
-            await asyncSetTimeout(20);
+            await settleAnnouncement();
             expect(announcement.textContent).toBe('');
         });
 
