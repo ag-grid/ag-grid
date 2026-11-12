@@ -67,8 +67,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
     /**
-     * The colIds of the model the shown and the requested text were written from. Text written for a column the
-     * Advanced Filter does not offer names its colId, which may match another column's name.
+     * The columns of the model the shown and the requested text were written from, until the user edits it. Text
+     * written for a column the Advanced Filter does not offer names its colId, which may match another column's name.
      */
     private shownBinding: ModelColumnBinding | null = null;
     private requestedBinding: ModelColumnBinding | null = null;
@@ -162,19 +162,25 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return cloneModel(this.appliedBuilderModel);
     }
 
-    /** The expression text a model is written as, collecting the colId of each condition in the order written. */
-    private modelToExpression(model: AdvancedFilterModel, colIds: string[], isFirstParent?: boolean): string | null {
+    /** The expression text a model is written as, collecting the column of each condition in the order written. */
+    private modelToExpression(
+        model: AdvancedFilterModel,
+        columns: ModelColumnBinding['columns'],
+        isFirstParent?: boolean
+    ): string | null {
         if (model.filterType === 'join') {
             const operator = this.advFilterExpSvc.parseJoinOperator(model);
             const expression = model.conditions
-                .map((condition) => this.modelToExpression(condition, colIds))
+                .map((condition) => this.modelToExpression(condition, columns))
                 // A join with no conditions of its own writes nothing, which would join as a stray operator.
                 .filter((condition) => condition != null && condition !== '')
                 .join(` ${operator} `);
             return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
         }
-        colIds.push(model.colId);
-        return this.advFilterExpSvc.parseColumnFilterModel(model);
+        const advFilterExpSvc = this.advFilterExpSvc;
+        const colId = model.colId;
+        columns.push({ colId, writtenAsColId: advFilterExpSvc.getOfferedColumnName(colId) == null });
+        return advFilterExpSvc.parseColumnFilterModel(model);
     }
 
     /**
@@ -184,28 +190,22 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private writeExpression(model: AdvancedFilterModel | null): string | null {
         const advFilterExpSvc = this.advFilterExpSvc;
         advFilterExpSvc.wroteUnresolvedSetValue = false;
-        const colIds: string[] = [];
-        const expression = model ? this.modelToExpression(model, colIds, true) : null;
+        const columns: ModelColumnBinding['columns'] = [];
+        const expression = model ? this.modelToExpression(model, columns, true) : null;
         this.appliedTextUnresolved = advFilterExpSvc.wroteUnresolvedSetValue;
-        this.shownBinding = expression ? { texts: new Set([expression]), colIds, next: 0 } : null;
+        this.shownBinding = expression ? { columns, next: 0 } : null;
         return expression;
     }
 
-    /** The model binding for text written from a model; text the user wrote resolves its columns by name. */
-    private getBinding(expression: string | null): ModelColumnBinding | null {
-        if (expression == null) {
-            return null;
-        }
-        const { shownBinding, requestedBinding } = this;
-        if (shownBinding?.texts.has(expression)) {
-            return shownBinding;
-        }
-        return requestedBinding?.texts.has(expression) ? requestedBinding : null;
-    }
-
+    /** The requested text is always the shown text, so it keeps the shown text's binding. */
     private setRequestedExpression(expression: string | null): void {
         this.requestedExpression = expression;
-        this.requestedBinding = this.getBinding(expression);
+        this.requestedBinding = expression == null ? null : this.shownBinding;
+    }
+
+    /** The user has edited the shown text, so it resolves its columns by name, even where it reads as before. */
+    public releaseModelBinding(): void {
+        this.shownBinding = null;
     }
 
     /**
@@ -285,7 +285,15 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return this.appliedExpression === this.expression;
     }
 
+    /** A parser for the text in the input. */
     public createExpressionParser(expression: string | null): FilterExpressionParser | null {
+        return this.createParser(expression, this.shownBinding);
+    }
+
+    private createParser(
+        expression: string | null,
+        modelColumns: ModelColumnBinding | null
+    ): FilterExpressionParser | null {
         if (!expression) {
             return null;
         }
@@ -297,7 +305,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             valueSvc: this.valueSvc,
             advFilterExpSvc: this.advFilterExpSvc,
             advFilterSetSvc: this.advFilterSetSvc,
-            modelColumns: this.getBinding(expression) ?? undefined,
+            modelColumns: modelColumns ?? undefined,
         });
     }
 
@@ -354,8 +362,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.setRequestedExpression(this.appliedExpression);
     }
 
-    private parseExpression(expression: string | null): FilterExpressionParser | null {
-        const expressionParser = this.createExpressionParser(expression);
+    private parseExpression(
+        expression: string | null,
+        modelColumns = this.shownBinding
+    ): FilterExpressionParser | null {
+        const expressionParser = this.createParser(expression, modelColumns);
         expressionParser?.parseExpression();
         return expressionParser;
     }
@@ -404,7 +415,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             this.setRequestedExpression(shown);
         } else {
             const applied = this.requestedExpression;
-            const appliedParser = this.parseExpression(applied);
+            const appliedParser = this.parseExpression(applied, this.requestedBinding);
             // Valid and still reporting a fault is the advisory case: an unresolved value reads back as the
             // text it was written as, so re-applying would rebuild the filter from that instead of its key.
             if (appliedParser?.isValid() && appliedParser.getValidationMessage()) {

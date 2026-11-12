@@ -216,6 +216,17 @@ describe('Advanced Filter model column identity', () => {
         expectFilter(api, containsE('nation'), NATION_ROWS);
     });
 
+    test('text the user retypes to read as the model text resolves its columns by header name', async () => {
+        const api = await createGrid([NAME_COL, { field: 'country' }, { ...NATION_AS_COUNTRY, headerName: 'country' }]);
+        setModel(api, containsE('country'));
+
+        const harness = AdvancedFilterHarness.get(api);
+        await harness.type('');
+        await harness.applyExpression('[country] contains "e"');
+        await asyncSetTimeout(0);
+        expectFilter(api, containsE('nation'), NATION_ROWS);
+    });
+
     test('a dropped condition re-applies once its column is offered, whatever its header', async () => {
         const api = await createGrid([
             NAME_COL,
@@ -232,6 +243,13 @@ describe('Advanced Filter model column identity', () => {
 
     test('a condition on a column whose header contains a closing bracket round-trips', async () => {
         const api = await createGrid([NAME_COL, { field: 'country', headerName: 'Country [x]', filter: true }]);
+
+        setModel(api, containsE('country'));
+        expectFilter(api, containsE('country'), COUNTRY_ROWS);
+    });
+
+    test('a condition on a column whose header is its colId, a closing bracket and more round-trips', async () => {
+        const api = await createGrid([NAME_COL, { field: 'country', headerName: 'Country] (legacy)', filter: true }]);
 
         setModel(api, containsE('country'));
         expectFilter(api, containsE('country'), COUNTRY_ROWS);

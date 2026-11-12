@@ -231,7 +231,11 @@ export class AdvancedFilterComp extends Component {
 
     private onValueChanged(value: string | null): void {
         value = _makeNull(value);
-        this.expressionParser = this.advancedFilter.createExpressionParser(value);
+        const advancedFilter = this.advancedFilter;
+        if (value !== advancedFilter.getExpressionDisplayValue()) {
+            advancedFilter.releaseModelBinding();
+        }
+        this.expressionParser = advancedFilter.createExpressionParser(value);
         let updatedExpression = this.expressionParser?.parseExpression() ?? null;
         const caretPosition = this.eAutocomplete.getCaretPosition();
         const stripped = this.stripRedundantSeparators(caretPosition);
@@ -245,7 +249,7 @@ export class AdvancedFilterComp extends Component {
             value = updatedExpression;
             this.eAutocomplete.setValue({ value, position, silent: true, restoreFocus: true });
         }
-        this.advancedFilter.setExpressionDisplayValue(value);
+        advancedFilter.setExpressionDisplayValue(value);
     }
 
     /**
@@ -289,6 +293,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onOptionSelected(position: number, updateEntry: AutocompleteEntry, type?: string): void {
+        this.advancedFilter.releaseModelBinding();
         const { updatedValue, updatedPosition, hideAutocomplete } = this.updateExpression(position, updateEntry, type);
         this.eAutocomplete.setValue({
             value: updatedValue,

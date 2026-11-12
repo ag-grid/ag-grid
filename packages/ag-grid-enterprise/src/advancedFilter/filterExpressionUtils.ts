@@ -174,11 +174,10 @@ export interface FilterExpressionParserParams {
     modelColumns?: ModelColumnBinding;
 }
 
-/** The colIds a model's text was written for, in the order its column tokens appear. */
+/** The columns a model's text was written for, in the order its column tokens appear. */
 export interface ModelColumnBinding {
-    /** The texts written for these colIds, including any a parse has rewritten them to. */
-    readonly texts: Set<string>;
-    readonly colIds: string[];
+    /** `writtenAsColId` where the column was not offered when written, so its token names the colId. */
+    readonly columns: { colId: string; writtenAsColId: boolean }[];
     next: number;
 }
 

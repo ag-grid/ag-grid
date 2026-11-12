@@ -24,10 +24,7 @@ export class FilterExpressionParser {
         this.joinExpressionParser = new JoinFilterExpressionParser(params, 0);
         const i = this.joinExpressionParser.parseExpression();
         this.valid = i >= params.expression.length - 1 && this.joinExpressionParser.isValid();
-        const expression = params.expression;
-        // a parse may rewrite a token to its column's current name, which is still the model's text
-        modelColumns?.texts.add(expression);
-        return expression;
+        return params.expression;
     }
 
     public isValid(): boolean {

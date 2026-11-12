@@ -40,14 +40,14 @@ class ColumnParser implements Parser {
     public hasEndChar = false;
     private colName: string = '';
     private colId: string;
-    private readonly modelColId: string | undefined;
+    private readonly modelColumn: { colId: string; writtenAsColId: boolean } | undefined;
 
     constructor(
         private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {
         const modelColumns = params.modelColumns;
-        this.modelColId = modelColumns?.colIds[modelColumns.next++];
+        this.modelColumn = modelColumns?.columns[modelColumns.next++];
     }
 
     public parse(char: string, position: number): boolean | undefined {
@@ -114,11 +114,12 @@ class ColumnParser implements Parser {
     }
 
     private resolveColumn(): { colId: string; columnName: string } | null {
-        const { modelColId, colName } = this;
+        const { modelColumn, colName } = this;
         const advFilterExpSvc = this.params.advFilterExpSvc;
-        if (modelColId === undefined) {
+        if (modelColumn === undefined) {
             return advFilterExpSvc.getColId(colName);
         }
+        const { colId: modelColId, writtenAsColId } = modelColumn;
         // a column the Advanced Filter does not offer must not resolve to another whose name matches its colId
         const columnName = advFilterExpSvc.getOfferedColumnName(modelColId);
         if (columnName == null) {
@@ -128,8 +129,11 @@ class ColumnParser implements Parser {
         if (upperCaseName === columnName.toLocaleUpperCase()) {
             return { colId: modelColId, columnName };
         }
-        // kept as written: the rest of the expression is read at positions taken before any rewrite
-        return upperCaseName === modelColId.toLocaleUpperCase() ? { colId: modelColId, columnName: colName } : null;
+        // Only a token written as the colId can name it, else a prefix of a header holding a closing bracket would
+        // match. Kept as written: the rest of the expression is read at positions taken before any rewrite.
+        return writtenAsColId && upperCaseName === modelColId.toLocaleUpperCase()
+            ? { colId: modelColId, columnName: colName }
+            : null;
     }
 }
 
