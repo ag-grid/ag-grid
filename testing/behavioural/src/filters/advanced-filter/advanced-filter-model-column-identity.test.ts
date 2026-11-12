@@ -135,7 +135,7 @@ describe('Advanced Filter model column identity', () => {
         };
 
         setModel(api, model);
-        expectFilter(api, model, ['A', 'B', 'C']);
+        expectFilter(api, model, ALL_ROWS);
 
         api.setColumnsVisible(['other'], false);
         await asyncSetTimeout(0);
