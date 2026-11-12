@@ -373,7 +373,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     refData?: RefData;
     /**
      * Function to return a string key for a value.
-     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
+     * This string is used for grouping and Set filtering.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
      */
     keyCreator?: KeyCreatorFunc<TData, TValue>;

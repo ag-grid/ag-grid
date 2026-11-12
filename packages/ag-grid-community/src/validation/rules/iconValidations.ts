@@ -1,7 +1,5 @@
 import type { IconValue } from 'ag-stack';
 
-import type { IconName } from '../../utils/icon';
-
 export const ICON_VALUES: Record<IconValue, 1> = {
     expanded: 1,
     contracted: 1,
@@ -78,16 +76,3 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     fx: 1,
     'values-as': 1,
 };
-
-export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
-    'colorPicker',
-    'smallUp',
-    'checkboxChecked',
-    'checkboxIndeterminate',
-    'checkboxUnchecked',
-    'radioButtonOn',
-    'radioButtonOff',
-    'smallDown',
-    'smallLeft',
-    'smallRight',
-]);

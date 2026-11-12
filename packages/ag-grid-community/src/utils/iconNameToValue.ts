@@ -41,8 +41,6 @@ export const ICON_NAME_TO_VALUE: Record<IconName, IconValue> = {
     last: 'last',
     linked: 'linked',
     unlinked: 'unlinked',
-    /** @deprecated v33 */
-    colorPicker: 'color-picker',
     groupLoading: 'loading',
     overlayLoading: 'loading',
     overlayExporting: 'loading',
@@ -87,22 +85,14 @@ export const ICON_NAME_TO_VALUE: Record<IconName, IconValue> = {
     csvExport: 'csv',
     excelExport: 'excel',
     pdfExport: 'pdf',
-    /** @deprecated v33 */
-    smallDown: 'small-down',
     selectOpen: 'small-down',
     richSelectOpen: 'small-down',
     richSelectRemove: 'cancel',
     richSelectLoading: 'loading',
-    /** @deprecated v33 */
-    smallLeft: 'small-left',
-    /** @deprecated v33 */
-    smallRight: 'small-right',
     panelDelimiter: 'small-right',
     panelDelimiterRtl: 'small-left',
     subMenuOpen: 'small-right',
     subMenuOpenRtl: 'small-left',
-    /** @deprecated v33 */
-    smallUp: 'small-up',
     sortAscending: 'asc',
     sortDescending: 'desc',
     sortAbsoluteAscending: 'aasc',
@@ -128,14 +118,4 @@ export const ICON_NAME_TO_VALUE: Record<IconName, IconValue> = {
     search: 'search',
     document: 'document',
     calculatedColumnsHeader: 'fx',
-    /** @deprecated v33 */
-    checkboxChecked: 'small-up',
-    /** @deprecated v33 */
-    checkboxIndeterminate: 'checkbox-indeterminate',
-    /** @deprecated v33 */
-    checkboxUnchecked: 'checkbox-unchecked',
-    /** @deprecated v33 */
-    radioButtonOn: 'radio-button-on',
-    /** @deprecated v33 */
-    radioButtonOff: 'radio-button-off',
 };

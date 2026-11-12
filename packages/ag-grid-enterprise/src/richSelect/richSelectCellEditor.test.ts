@@ -151,29 +151,6 @@ describe('RichSelectCellEditor', () => {
         expect(callback?.([{ id: 1, label: 'one' } as TestValue])).toEqual(['[object Object]']);
     });
 
-    it('supports complex object search via keyCreator', () => {
-        const editor = createEditor({
-            column: { getColId: () => 'value' } as any,
-            node: { id: 'row-1' } as any,
-            data: { key: 'row-data' } as any,
-            colDef: {
-                keyCreator: ({ value }: any) => `key-${value.id}`,
-            } as any,
-        });
-
-        const callback = (editor as any).getSearchStringCallback([
-            { id: 1, label: 'one' },
-            { id: 2, label: 'two' },
-        ]);
-
-        expect(
-            callback?.([
-                { id: 1, label: 'one' },
-                { id: 2, label: 'two' },
-            ])
-        ).toEqual(['key-1', 'key-2']);
-    });
-
     it('keeps typing enabled for multi-select while preserving full-async search wiring', () => {
         const valuesFn = vi.fn(() => Promise.resolve([] as TestValue[]));
         const editor = createEditor({

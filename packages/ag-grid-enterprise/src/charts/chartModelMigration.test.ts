@@ -88,6 +88,23 @@ describe('chartModelMigration', () => {
             );
             expect(isCurrentOrNextVersion).toEqual(true);
         });
+
+        it(`should rename the legacy 'doughnut' chart type saved after 26.2.0 to 'donut'`, () => {
+            const legacyChartModel: Omit<ChartModel, 'chartType'> & { chartType: string } = {
+                version: '30.0.0',
+                modelType: 'range',
+                chartId: 'id-1',
+                chartType: 'doughnut',
+                cellRange: { rowStartIndex: null, rowEndIndex: null, columns: ['country', 'gold'] },
+                chartThemeName: 'ag-default',
+                chartOptions: { donut: {} },
+                suppressChartRanges: false,
+                unlinkChart: false,
+            };
+
+            const upgradedChartModel = upgradeChartModel(legacyChartModel as ChartModel);
+            expect(upgradedChartModel.chartType).toEqual('donut');
+        });
     });
 
     describe('shadow colour', () => {

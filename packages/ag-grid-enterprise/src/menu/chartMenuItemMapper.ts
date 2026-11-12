@@ -328,7 +328,6 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 _key: 'pivotPieChart',
                 pie: 'pivotPie',
                 donut: 'pivotDonut',
-                doughnut: 'pivotDonut',
             },
             lineGroup: {
                 _key: 'pivotLineChart',
@@ -589,7 +588,6 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 _key: 'rangePieChart',
                 pie: 'rangePie',
                 donut: 'rangeDonut',
-                doughnut: 'rangeDonut',
             },
             lineGroup: {
                 _key: 'rangeLineChart',
