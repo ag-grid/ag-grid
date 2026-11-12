@@ -79,7 +79,7 @@ If the stream only has updates for leaf rows, skip group rows and tree data rows
 
 ### Row Grouping {% enterpriseIcon /%} {% #row-grouping %}
 
-The example below [groups](./grouping/) stocks by sector, and the handlers subscribe the stocks only. Each expanded group row [aggregates](./aggregation/) the largest change and the total volume of its stocks, and updates as the stocks in view stream. To keep a group row current while its stocks are out of view, subscribe to the group row, as in the [Pivoting](#pivoting) example.
+The example below [groups](./grouping/) stocks by sector, and the handlers subscribe the stocks only. Each group row [aggregates](./aggregation/) the largest change and the total volume of every stock in the group, so its values fall behind while some of those stocks are out of view. See [Group Aggregates](#group-aggregates) for how to keep them current.
 
 - Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
 - **New Row Data** gives every stock a new ID, so the old stocks are unsubscribed and the new ones subscribed.
@@ -140,6 +140,36 @@ const gridOptions = {
     },
 };
 ```
+
+## Group Aggregates
+
+A group row can be in view while the rows it [aggregates](./aggregation/) are not. The handlers are only passed the rows in view, so an application that streams updates for those rows alone can show a group row whose aggregates are out of date. How to keep them current depends on which row model calculates them.
+
+Take five sector groups of 20 stocks each, with every group collapsed. Five group rows are in view, and `subscribeRows` is called with those five rows only.
+
+### Aggregating in the Grid
+
+With the Client-Side Row Model, the grid calculates each group row from the leaf rows it holds, so all 100 stocks feed the five group rows in view. Suppose the volume of a stock out of view changes on the server from 10 to 15. If that stock is not streamed, the grid still holds 10, and the total volume of its sector is 5 too low. With nested groups, every group above it is too low as well. Expanding the group doesn't fix the total: it was wrong while the group was collapsed, and stays wrong until the stock is updated.
+
+Updates for the rows in view are enough when no group row in view shows an aggregate, or when the application keeps every leaf row current some other way. Otherwise, stream updates for every leaf row under each subscribed group row. The group row's `route` holds its group keys, which the server can use to find those leaf rows.
+
+The [Client-Side Row Model pivoting example](#client-side-row-model) does this. With pivot mode on, five sector rows are in view, so **Subscribed rows** shows 5 and **Streamed stocks** shows 100.
+
+### Aggregating on the Server
+
+With the Server-Side Row Model, the server calculates the group rows. It can keep each group's aggregates current as its stocks change, and send the recalculated group row to the client. The client then needs updates for the five group rows only, and doesn't load any of the 100 stocks until a group is expanded.
+
+The [Server-Side Row Model pivoting example](#server-side-row-model) does this. With pivot mode on, **Subscribed rows** and **Streamed rows** both show 5, while the server tracks the 100 stocks behind them.
+
+### What the Counters Measure
+
+The examples count three different things:
+
+- **Subscribed rows**: the rows passed to `subscribeRows` that are not yet unsubscribed. There is one subscription for each row in view.
+- **Streamed stocks** or **Streamed rows**: the rows the server streams updates for because of those subscriptions. A subscribed group row can stream many stocks, as in the Client-Side Row Model example, or only itself, as in the Server-Side Row Model example.
+- **Updates sent**: the number of rows the server has sent in updates so far. It keeps rising, as a streamed row is updated many times.
+
+Every example sends all of its subscriptions and updates over one simulated websocket. Streaming 100 stocks doesn't take 100 connections: one connection carries the updates for every subscription.
 
 ## Pivoting
 
