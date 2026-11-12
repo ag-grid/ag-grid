@@ -44,6 +44,15 @@ describe('resolveSharedFakeServer', () => {
         expect(result.sharedFiles).toEqual({ 'fakeServer.ts': 'export function FakeServer() {}\n' });
     });
 
+    test('rejects an entry file that imports the SQL helpers', async () => {
+        const folderPath = await createExample();
+        const entryFile = `import { limitSql } from '@example-fake-servers/sql';\n`;
+
+        await expect(resolveSharedFakeServer({ folderPath, entryFile, sourceFileList: ['main.ts'] })).rejects.toThrow(
+            'shared SQL helpers'
+        );
+    });
+
     test('rejects an example that imports two shared servers', async () => {
         const folderPath = await createExample();
         const entryFile = `import { A } from '@example-fake-servers/standard';\nimport { B } from '@example-fake-servers/pivot';\n`;

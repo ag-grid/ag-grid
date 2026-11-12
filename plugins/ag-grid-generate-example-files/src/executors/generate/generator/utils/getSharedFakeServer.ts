@@ -5,6 +5,8 @@ import type { FileContents } from '../types';
 
 export const SHARED_FAKE_SERVER_FILE_NAME = 'fakeServer.ts';
 
+const SQL_HELPERS_NAME = 'sql';
+
 const SHARED_FAKE_SERVER_IMPORT = /(from\s+)(['"])@example-fake-servers\/([\w-]+)\2/g;
 
 const DOCS_CONTENT_SEGMENT = path.join('src', 'content', 'docs');
@@ -38,6 +40,11 @@ export async function resolveSharedFakeServer({
     const serverNames = new Set([...entryFile.matchAll(SHARED_FAKE_SERVER_IMPORT)].map((match) => match[3]));
     if (serverNames.size === 0) {
         return { entryFile, sharedFiles: {} };
+    }
+    if (serverNames.has(SQL_HELPERS_NAME)) {
+        throw new Error(
+            `The entry file imports the shared SQL helpers, which are only inlined into other files. Import them from a ${SHARED_FAKE_SERVER_FILE_NAME} instead: ${folderPath}`
+        );
     }
     if (serverNames.size > 1) {
         throw new Error(

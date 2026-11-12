@@ -1,11 +1,5 @@
-// SQL helpers shared by the example fake servers.
-//
-// An example imports the helpers it needs from '@example-fake-servers/sql'. The example generator copies
-// just those functions, and any helper they call, into the example's own file, so the code viewer and
-// exported examples show a single self-contained file.
-//
-// Every export must be a top-level function declaration that depends only on its arguments and other
-// helpers in this file. The generator rejects anything else.
+// Shared SQL helpers, inlined into each example that imports them by the example generator.
+// Every export must be a top-level function that depends only on its arguments and other helpers here.
 
 // Throws for a column the data doesn't hold, so only known column names reach the query text.
 export function checkColumn(knownColumns, colId) {
