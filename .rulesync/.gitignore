@@ -21,6 +21,7 @@ mcp.json
 /commands/*.md
 /commands/docs/
 !/commands/manual-test.md
+!/commands/add-icons.md
 
 # Plugin-delivered rules — allowlist local-only rules (ag-grid-specific).
 # The ag-grid flavours of benchmarks/docs-pages/examples/testing share filenames
