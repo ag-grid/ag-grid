@@ -10,6 +10,17 @@ const SHARED_FAKE_SERVER_IMPORT = /(from\s+)(['"])@example-fake-servers\/([\w-]+
 const DOCS_CONTENT_SEGMENT = path.join('src', 'content', 'docs');
 
 /**
+ * The docs site's `src/example-fake-servers` folder, found from an example's folder path.
+ */
+export function getExampleFakeServersDir(folderPath: string): string {
+    const docsContentIndex = folderPath.lastIndexOf(DOCS_CONTENT_SEGMENT);
+    if (docsContentIndex === -1) {
+        throw new Error(`Unable to locate the shared fake servers from example path: ${folderPath}`);
+    }
+    return path.join(folderPath.slice(0, docsContentIndex), 'src', 'example-fake-servers');
+}
+
+/**
  * Examples import a shared fake server through the `@example-fake-servers/<name>` alias so the
  * example source type-checks in place. The generated output gets a local `fakeServer.ts` instead,
  * imported as `./fakeServer`, so the code viewer and the exported Plunker/CodeSandbox projects
@@ -40,16 +51,7 @@ export async function resolveSharedFakeServer({
     }
 
     const [serverName] = serverNames;
-    const docsContentIndex = folderPath.lastIndexOf(DOCS_CONTENT_SEGMENT);
-    if (docsContentIndex === -1) {
-        throw new Error(`Unable to locate the shared fake servers from example path: ${folderPath}`);
-    }
-    const sharedServerPath = path.join(
-        folderPath.slice(0, docsContentIndex),
-        'src',
-        'example-fake-servers',
-        `${serverName}.ts`
-    );
+    const sharedServerPath = path.join(getExampleFakeServersDir(folderPath), `${serverName}.ts`);
 
     return {
         entryFile: entryFile.replace(SHARED_FAKE_SERVER_IMPORT, "$1'./fakeServer'"),

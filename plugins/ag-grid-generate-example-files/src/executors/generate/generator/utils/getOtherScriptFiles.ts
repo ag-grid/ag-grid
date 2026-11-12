@@ -3,6 +3,7 @@ import { readAsJsFile } from '../transformation-scripts/parser-utils';
 import type { FileContents, InternalFramework, TransformTsFileExt } from '../types';
 import { FRAMEWORKS } from '../types';
 import { convertTsxToJsx, getFileList } from './fileUtils';
+import { inlineSqlHelpers } from './inlineSqlHelpers';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
@@ -45,6 +46,9 @@ const getOtherTsGeneratedFiles = async ({
         })),
         ...sharedFiles,
     };
+    for (const [fileName, contents] of Object.entries(tsFileContents)) {
+        tsFileContents[fileName] = await inlineSqlHelpers({ folderPath, fileName, contents });
+    }
 
     const generatedFiles = {} as FileContents;
     Object.keys(tsFileContents).forEach((tsFileName) => {
