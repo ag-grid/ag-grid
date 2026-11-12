@@ -38,7 +38,18 @@ Rows have the same `type` values as with the [Client-Side Row Model](./data-upda
 - `'group'`: a group row the server loaded, with its `data`. [`getRowId`](./server-side-model-configuration/#providing-row-ids) is called for group rows too, so give them an ID from their route.
 - `'tree'`: a row in [Tree Data](./server-side-model-tree-data/). `hasChildren` is `true` for expandable rows, and only expandable rows have a `route`.
 
-### Tree Data {% enterpriseIcon /%} {% #tree-data %}
+### Grouping on the Server {% enterpriseIcon /%} {% #grouping-on-the-server %}
+
+The example below groups stocks by sector on the server. The server sends each sector row with its aggregated values, and loads a sector's stocks when it is expanded. Note the following:
+
+- With every sector collapsed, only the 5 sector rows are subscribed. The server recalculates a subscribed sector row whenever one of its stocks moves, and sends the updated row.
+- Expanding a sector loads its stocks, and subscribes the ones in view once their block has loaded.
+
+{% gridExampleRunner title="View Subscription with Server-Side Row Grouping" name="ssrm-grouping-view-subscription" exampleHeight=615 /%}
+
+For the Client-Side Row Model, see [Row Grouping](./data-update-view-subscription/#row-grouping).
+
+### Tree Data on the Server {% enterpriseIcon /%} {% #tree-data-on-the-server %}
 
 The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/), loaded over a simulated websocket that also streams updates for the subscribed rows. Region and sector rows show the total value of their stocks, which the server streams whenever one of those stocks moves. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route. Note the following:
 
@@ -48,13 +59,15 @@ The example below shows a portfolio of regions, sectors and stocks as [Tree Data
 
 {% gridExampleRunner title="View Subscription with Server-Side Tree Data" name="server-side-view-subscription" exampleHeight=615 /%}
 
+For the Client-Side Row Model, see [Tree Data](./data-update-view-subscription/#tree-data).
+
 ## Aggregating on the Server
 
 The server calculates the [aggregated values](./server-side-model-grouping/) of group rows, so the grid does not need the leaf rows to show them. To keep a subscribed group row current, recalculate its aggregated values on the server when its leaf rows change, and send the updated group row.
 
 For example, suppose 100 stocks are grouped into 5 sectors, and every group is collapsed. Only the 5 group rows are in view, so only they are subscribed, and the server sends updates for those 5 rows. The stocks are not loaded until a group is expanded.
 
-The [Pivoting on the Server](#pivoting-on-the-server) example below sends the updated group rows, so 5 subscribed group rows stream 5 rows.
+The [Grouping on the Server](#grouping-on-the-server) example above does this: with every sector collapsed, only the 5 sector rows are subscribed, and the server sends their recalculated values.
 
 The Client-Side Row Model calculates aggregated values in the grid, so it also needs updates for the leaf rows. See [Group Aggregates](./data-update-view-subscription/#group-aggregates).
 

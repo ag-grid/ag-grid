@@ -98,7 +98,18 @@ The example below [groups](./grouping/) stocks by sector, and the handlers subsc
 
 {% gridExampleRunner title="View Subscription with Row Grouping" name="client-side-view-subscription" exampleHeight=615 /%}
 
-For an example with tree data loaded in blocks, see [SSRM Tree Data](./server-side-model-updating-view-subscription/#tree-data).
+For the Server-Side Row Model, see [Grouping on the Server](./server-side-model-updating-view-subscription/#grouping-on-the-server).
+
+### Tree Data {% enterpriseIcon /%} {% #tree-data %}
+
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./tree-data/). The grid creates the region and sector rows from each stock's path, and each of them shows the total value of the stocks under it. Note the following:
+
+- A region or sector row in view is subscribed with its `route`, and the server streams every stock under it, so its total stays current. A stock row in view is subscribed with its ID.
+- Scrolling unsubscribes the rows that leave the view and subscribes the rows that enter it.
+
+{% gridExampleRunner title="View Subscription with Tree Data" name="tree-data-view-subscription" exampleHeight=615 /%}
+
+For the Server-Side Row Model, see [Tree Data on the Server](./server-side-model-updating-view-subscription/#tree-data-on-the-server).
 
 ## Lifecycle
 
