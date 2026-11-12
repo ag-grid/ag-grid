@@ -19,3 +19,4 @@ tsconfig.types.json
 !dist/types/src
 *.map
 .snyk
+.build-staging-*

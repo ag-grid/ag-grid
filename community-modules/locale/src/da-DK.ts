@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     advancedFilterCancel: 'Annuller',
     advancedFilterClear: 'Ryd',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Avanceret Filter',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Valgmulighed mangler',
     advancedFilterValidationMissingValue: 'Værdi mangler',
@@ -736,6 +737,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser værdier som',
     ariaColumnSelectAll: 'Skift synlighed for alle kolonner',
+    ariaColumnSelectExpandAll: 'Udvid eller skjul alle kolonnegrupper',
     ariaDateFilterInput: 'Dato Filter Input',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer Kolonner Input',
@@ -821,6 +823,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelSelectField: 'Vælg felt',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering af hele rækken: ${variable}',
     ariaFullRowEditValidationFailed: 'Rækkeredigeringen kan ikke fuldføres. ${variable}',
@@ -850,6 +853,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)

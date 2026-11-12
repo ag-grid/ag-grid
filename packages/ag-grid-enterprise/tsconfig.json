@@ -1,19 +1,24 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "../../node_modules/.cache/tsc-editor/ag-grid-enterprise",
+    "types": ["vite/client", "vitest/globals", "node"]
+  },
+  "include": ["src/**/*.ts", "vitest.config.ts", "vitest.setup.ts"],
+  "exclude": [],
   "references": [
     {
-      "path": "../ag-grid-community/tsconfig.lib.json"
+      "path": "../ag-stack"
     },
     {
-      "path": "./tsconfig.lib.json"
+      "path": "../ag-grid-community"
     },
     {
-      "path": "./tsconfig.umd.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
+      "path": "../../testing/shared/vitest"
     }
   ]
 }

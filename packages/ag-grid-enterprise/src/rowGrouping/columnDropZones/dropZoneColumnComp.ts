@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -395,7 +395,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+        const [focusoutListener] = _addManagedElementListeners(this, ePopup, {
             focusout: (e: FocusEvent) => {
                 if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
                     addPopupRes.hideFunc();

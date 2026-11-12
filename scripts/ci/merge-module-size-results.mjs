@@ -18,8 +18,10 @@ if (!shardsDir || !outputFile) {
     process.exit(1);
 }
 
-function getModuleKey(modules) {
-    return modules.length === 0 ? '__base__' : modules.sort().join('+');
+// Results from testing/module-size-bundlers name the bundler that built them, and each bundler has its own base.
+function getModuleKey({ modules, bundler }) {
+    const key = modules.length === 0 ? '__base__' : modules.sort().join('+');
+    return bundler ? `${bundler}:${key}` : key;
 }
 
 // Find all JSON files in the shards directory
@@ -46,7 +48,7 @@ for (const file of files) {
     console.log(`  - ${file}: ${results.length} entries`);
 
     for (const result of results) {
-        const key = getModuleKey(result.modules);
+        const key = getModuleKey(result);
         // Keep the first occurrence (all shards should have consistent base values)
         if (!mergedMap.has(key)) {
             mergedMap.set(key, result);
@@ -59,9 +61,9 @@ const merged = Array.from(mergedMap.values());
 
 // Sort: base module first, then by module name
 merged.sort((a, b) => {
-    if (a.modules.length === 0) return -1;
-    if (b.modules.length === 0) return 1;
-    return getModuleKey(a.modules).localeCompare(getModuleKey(b.modules));
+    if (a.modules.length === 0 && !a.bundler) return -1;
+    if (b.modules.length === 0 && !b.bundler) return 1;
+    return getModuleKey(a).localeCompare(getModuleKey(b));
 });
 
 // Write merged results

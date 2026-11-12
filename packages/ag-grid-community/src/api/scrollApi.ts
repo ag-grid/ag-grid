@@ -24,7 +24,7 @@ export function ensureColumnVisible(
 export function ensureIndexVisible(
     beans: BeanCollection,
     index: number,
-    position?: 'top' | 'bottom' | 'middle' | null
+    position?: 'auto' | 'top' | 'bottom' | 'middle' | null
 ) {
     beans.frameworkOverrides.wrapIncoming(
         () => beans.ctrlsSvc.getScrollFeature().ensureIndexVisible(index, position),
@@ -35,7 +35,7 @@ export function ensureIndexVisible(
 export function ensureNodeVisible<TData = any>(
     beans: BeanCollection,
     nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
-    position: 'top' | 'bottom' | 'middle' | null = null
+    position: 'auto' | 'top' | 'bottom' | 'middle' | null = null
 ) {
     beans.frameworkOverrides.wrapIncoming(
         () => beans.ctrlsSvc.getScrollFeature().ensureNodeVisible(nodeSelector, position),

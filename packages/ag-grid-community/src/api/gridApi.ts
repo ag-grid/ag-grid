@@ -311,37 +311,48 @@ export interface _ScrollGridApi<TData> {
     getHorizontalPixelRange(): { left: number; right: number };
 
     /**
-     *  Ensures the column is visible by scrolling the table if needed.
+     * Horizontally scrolls the grid until the provided column is inside the visible viewport.
+     * This will have no effect before the `firstDataRendered` event has fired.
      *
-     * This will have no effect before the firstDataRendered event has fired.
-     *
-     * @param key - The column to ensure visible
-     * @param position - Where the column will be positioned. Defaults to `auto`
+     * The optional `position` sets where the column is placed in the viewport.
      * - `auto` - Scrolls the minimum amount to make sure the column is visible.
      * - `start` - Scrolls the column to the start of the viewport.
      * - `middle` - Scrolls the column to the middle of the viewport.
      * - `end` - Scrolls the column to the end of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
     ensureColumnVisible(key: string | Column, position?: 'auto' | 'start' | 'middle' | 'end'): void;
 
     /**
      * Vertically scrolls the grid until the provided row index is inside the visible viewport.
-     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
-     * This will have no effect before the firstDataRendered event has fired.
+     * This will have no effect before the `firstDataRendered` event has fired.
+     *
+     * The optional `position` sets where the row is placed in the viewport.
+     * - `auto` - Scrolls the minimum amount to make sure the row is visible. `null` is equivalent.
+     * - `top` - Scrolls the row to the top of the viewport.
+     * - `middle` - Scrolls the row to the middle of the viewport.
+     * - `bottom` - Scrolls the row to the bottom of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
-    ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null): void;
+    ensureIndexVisible(index: number, position?: 'auto' | 'top' | 'bottom' | 'middle' | null): void;
 
     /**
      * Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.
-     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
-     * This will have no effect before the firstDataRendered event has fired.
+     * This will have no effect before the `firstDataRendered` event has fired.
+     *
+     * The optional `position` sets where the row is placed in the viewport.
+     * - `auto` - Scrolls the minimum amount to make sure the row is visible. `null` is equivalent.
+     * - `top` - Scrolls the row to the top of the viewport.
+     * - `middle` - Scrolls the row to the middle of the viewport.
+     * - `bottom` - Scrolls the row to the bottom of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
     ensureNodeVisible(
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
-        position?: 'top' | 'bottom' | 'middle' | null
+        position?: 'auto' | 'top' | 'bottom' | 'middle' | null
     ): void;
 }
 

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     advancedFilterCancel: 'Отказ',
     advancedFilterClear: 'Изчисти',
     advancedFilterBuilder: 'Създател',
+    advancedFilterPlaceholder: 'Разширен филтър',
     advancedFilterValidationMissingColumn: 'Колоната липсва',
     advancedFilterValidationMissingOption: 'Опцията липсва',
     advancedFilterValidationMissingValue: 'Стойността липсва',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaCalculatedColumn: 'Изчислена колона',
     ariaColumnShowValuesAs: 'Показване на стойностите като',
     ariaColumnSelectAll: 'Превключване на видимостта на всички колони',
+    ariaColumnSelectExpandAll: 'Разгъване или свиване на всички групи колони',
     ariaDateFilterInput: 'Вход за филтър по дата',
     ariaDefaultListName: 'Списък',
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
@@ -823,6 +825,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaLabelSelectField: 'Избор на поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор на клетки',
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
     ariaFullRowValidationError: 'Валидация на целия ред: ${variable}',
     ariaFullRowEditValidationFailed: 'Редактирането на реда не може да бъде завършено. ${variable}',
@@ -853,6 +856,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaLabelFilterCardType: 'Тип филтър',
     ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)

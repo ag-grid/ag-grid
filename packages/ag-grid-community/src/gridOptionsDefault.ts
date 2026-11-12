@@ -147,6 +147,7 @@ export const GRID_OPTION_DEFAULTS = {
     viewportRowModelBufferSize: 5,
     alwaysShowHorizontalScroll: false,
     alwaysShowVerticalScroll: false,
+    scrollGestureMode: 'native',
     debounceVerticalScrollbar: false,
     suppressHorizontalScroll: false,
     suppressScrollOnNewData: false,

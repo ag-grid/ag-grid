@@ -2,7 +2,7 @@ import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../col
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
@@ -245,22 +245,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return null;
                 }
                 return 'headerValueGetter must be a function or a valid string expression';
-            },
-        },
-        icons: {
-            validate: ({ icons }) => {
-                if (icons) {
-                    if (icons['smallDown']) {
-                        return _errMsg(262);
-                    }
-                    if (icons['smallLeft']) {
-                        return _errMsg(263);
-                    }
-                    if (icons['smallRight']) {
-                        return _errMsg(264);
-                    }
-                }
-                return null;
             },
         },
         sort: {

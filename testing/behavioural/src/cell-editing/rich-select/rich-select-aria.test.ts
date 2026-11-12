@@ -71,3 +71,59 @@ describe('Rich Select combobox aria-controls (WCAG 4.1.2)', () => {
         expect(document.getElementById(controlsId!)).toBeNull();
     });
 });
+
+describe('Rich Select combobox accessible name (WCAG 4.1.2)', () => {
+    const gridMgr = new TestGridsManager({
+        includeDefaultModules: true,
+        modules: [RichSelectModule],
+    });
+
+    beforeEach(() => {
+        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+    });
+
+    afterEach(() => gridMgr.reset());
+
+    const editAndGetFocusedCombobox = async (colDef: object, editorParams: object): Promise<HTMLElement> => {
+        const api = await gridMgr.createGridAndWait('grid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: { values: ['Alpha', 'Beta', 'Gamma'], ...editorParams },
+                    ...colDef,
+                },
+            ],
+            rowData: [{ id: '0', a: 'Alpha' }],
+            getRowId: (p) => p.data.id,
+        } as GridOptions);
+
+        api.setFocusedCell(0, 'a');
+        api.startEditingCell({ rowIndex: 0, colKey: 'a', key: 'Enter' });
+
+        return waitFor(() => {
+            const el = document.activeElement as HTMLElement;
+            expect(el.getAttribute('role')).toBe('combobox');
+            return el;
+        });
+    };
+
+    test.each([
+        ['default (wrapper)', {}],
+        ['allowTyping (input)', { allowTyping: true }],
+        ['multiSelect', { multiSelect: true }],
+        ['allowTyping + multiSelect', { allowTyping: true, multiSelect: true }],
+    ])('%s: the focused combobox is named with the column header', async (_label, editorParams) => {
+        const combobox = await editAndGetFocusedCombobox({ headerName: 'Rich Select Editor' }, editorParams);
+
+        expect(combobox.getAttribute('aria-label')).toBe('Rich Select Editor');
+        expect(combobox.hasAttribute('aria-labelledby')).toBe(false);
+    });
+
+    test('falls back to the generic name when the header is empty', async () => {
+        const combobox = await editAndGetFocusedCombobox({ headerName: '' }, {});
+
+        expect(combobox.getAttribute('aria-label')).toBe('Rich Select Field');
+    });
+});

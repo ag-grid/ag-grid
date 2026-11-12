@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IFloatingFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -28,7 +28,7 @@ export interface CustomParams {
 export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngularComp {
     params!: FloatingFilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>> &
         CustomParams;
-    currentValue: number | null | string = null;
+    currentValue = signal<number | null | string>(null);
     style: any;
 
     agInit(
@@ -51,26 +51,27 @@ export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngu
         if (params.source !== 'ui') {
             const model = params.model;
             if (model == null) {
-                this.currentValue = null;
+                this.currentValue.set(null);
             } else {
                 const value = isCombinedFilterModel(model) ? model.conditions[0]?.filter : model.filter;
-                this.currentValue = String(value);
+                this.currentValue.set(String(value));
             }
         }
     }
 
     onInputBoxChanged() {
-        if (!this.currentValue) {
+        if (!this.currentValue()) {
             // Remove the filter
             this.params.onModelChange(null);
             return;
         }
 
-        this.currentValue = Number(this.currentValue);
+        const value = Number(this.currentValue());
+        this.currentValue.set(value);
         this.params.onModelChange({
             filterType: 'number',
             type: 'greaterThan',
-            filter: this.currentValue,
+            filter: value,
         });
     }
 }

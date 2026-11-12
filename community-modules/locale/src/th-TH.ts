@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     advancedFilterCancel: 'ยกเลิก',
     advancedFilterClear: 'ล้าง',
     advancedFilterBuilder: 'ตัวสร้าง',
+    advancedFilterPlaceholder: 'ตัวกรองขั้นสูง',
     advancedFilterValidationMissingColumn: 'ไม่มีคอลัมน์',
     advancedFilterValidationMissingOption: 'ไม่มีตัวเลือก',
     advancedFilterValidationMissingValue: 'ไม่มีค่า',
@@ -748,6 +749,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaCalculatedColumn: 'คอลัมน์คำนวณ',
     ariaColumnShowValuesAs: 'กำลังแสดงค่าเป็น',
     ariaColumnSelectAll: 'สลับการมองเห็นทุกคอลัมน์',
+    ariaColumnSelectExpandAll: 'ขยายหรือยุบกลุ่มคอลัมน์ทั้งหมด',
     ariaDateFilterInput: 'ช่องป้อนตัวกรองวันที่',
     ariaDefaultListName: 'รายการ',
     ariaFilterColumnsInput: 'ช่องป้อนกรองคอลัมน์',
@@ -838,6 +840,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelSelectField: 'เลือกฟิลด์',
 
     // Cell Editor
+    ariaLabelCellEditor: 'ตัวแก้ไขเซลล์',
     ariaValidationErrorPrefix: 'การตรวจสอบตัวแก้ไขเซลล์',
     ariaFullRowValidationError: 'การตรวจสอบทั้งแถว: ${variable}',
     ariaFullRowEditValidationFailed: 'ไม่สามารถแก้ไขแถวให้สมบูรณ์ได้ ${variable}',
@@ -870,6 +873,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelAddFilterField: 'ฟิลด์เพิ่มตัวกรอง',
     ariaLabelFilterCardDelete: 'ลบตัวกรอง',
     ariaLabelFilterCardHasEdits: 'มีการแก้ไข',
+    ariaLabelFilterCardType: 'ประเภทตัวกรอง',
     ariaHasNote: 'เซลล์นี้มีบันทึกช่วยจำ',
 
     // Number Format (Status Bar, Pagination Panel)

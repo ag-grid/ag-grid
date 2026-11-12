@@ -59,7 +59,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [enableRowPinning]="true"
                     [suppressColumnMoveAnimation]="true"
                     [ensureDomOrder]="true"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     [initialState]="initialState"
                     [gridOptions]="gridOptions"
                     (stateUpdated)="onStateUpdated($event)"
@@ -107,7 +107,7 @@ export class AppComponent {
         mode: 'multiRow',
     };
     public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] };
-    public rowData?: IOlympicData[];
+    public rowData = signal<IOlympicData[] | undefined>(undefined);
     public gridVisible = signal(true);
     public initialState?: GridState;
     public gridOptions: GridOptions = {
@@ -143,7 +143,7 @@ export class AppComponent {
     private recreateGrid(initialState?: GridState): void {
         this.gridVisible.set(false);
         this.initialState = initialState;
-        this.rowData = undefined;
+        this.rowData.set(undefined);
         setTimeout(() => {
             this.gridVisible.set(true);
         });
@@ -161,6 +161,6 @@ export class AppComponent {
         this.gridApi = params.api;
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

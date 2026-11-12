@@ -25,10 +25,5 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
         showNoRowsOverlay,
         hideOverlay,
     },
-    icons: {
-        // rotating spinner shown by the loading overlay
-        overlayLoading: 'loading',
-        overlayExporting: 'loading',
-    },
     beans: [OverlayService],
 };

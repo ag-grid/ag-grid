@@ -1,4 +1,10 @@
-import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaRole } from 'ag-stack';
+import {
+    _addManagedElementListeners,
+    _focusInto,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _setAriaRole,
+} from 'ag-stack';
 
 import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
 import { AgPromise, KeyCode, TabGuardComp, _createElement } from 'ag-grid-community';
@@ -111,8 +117,6 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         filter: SharedFilterUi,
         name: string
     ): AgPromise<MenuItemComponent> {
-        const eGui = comp.getGui();
-        _setAriaRole(eGui, 'dialog');
         const menuItem = this.createBean(new MenuItemComponent());
         const childComponent = {
             getGui: () => comp.getGui(),
@@ -149,6 +153,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             })
             .then(() => {
                 menuItem.setParentComponent(this);
+                _setAriaRole(menuItem.getGui(), 'button');
 
                 this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
@@ -163,7 +168,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 });
 
                 const menuItemGui = menuItem.getGui();
-                menuItem.addManagedElementListeners(menuItemGui, {
+                _addManagedElementListeners(menuItem, menuItemGui, {
                     // `AgMenuList` normally handles keyboard navigation, so need to do here
                     keydown: (e: KeyboardEvent) => {
                         const { key } = e;

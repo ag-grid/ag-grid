@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgStylesChangedEvent, BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IEnvironment } from '../interfaces/iEnvironment';
@@ -15,7 +15,7 @@ import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _observeResize } from '../utils/dom';
-import { AgBeanStub } from './agBeanStub';
+import { AgAbstractBean } from './agAbstractBean';
 
 const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     changeKey: 'listItemHeight',
@@ -23,20 +23,27 @@ const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
     defaultValue: 24,
 };
 
+// The instance id goes on the root element (and drag images) so that an event can tell this instance from one
+// nested inside it, as with master/detail grids: copy/paste and the like must run on one instance only.
+const INSTANCE_DOM_KEY = '__ag_grid_instance';
+type InstanceTaggedElement = Element & { [INSTANCE_DOM_KEY]?: number };
+let instanceSequence = 0;
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseEnvironment<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IEnvironment
 {
     beanName = 'environment' as const;
 
+    private readonly instanceId = instanceSequence++;
     protected eRootDiv: HTMLElement;
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
@@ -67,9 +74,26 @@ export abstract class BaseEnvironment<
 
     protected abstract varError(cssName: string, defaultValue: number): void;
 
+    public setInstanceDomData(element: HTMLElement): void {
+        (element as InstanceTaggedElement)[INSTANCE_DOM_KEY] = this.instanceId;
+    }
+
+    /** True when the nearest tagged ancestor of `element` belongs to this instance. */
+    public isElementInThisInstance(element: Element): boolean {
+        let pointer: Element | null = element;
+        while (pointer) {
+            const instanceId = (pointer as InstanceTaggedElement)[INSTANCE_DOM_KEY];
+            if (instanceId != null) {
+                return instanceId === this.instanceId;
+            }
+            pointer = pointer.parentElement;
+        }
+        return false;
+    }
+
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
-        gos.setInstanceDomData(eRootDiv);
+        this.setInstanceDomData(eRootDiv);
         const themeStyleContainer = gos.get('themeStyleContainer');
         const hasShadowRootGlobal = typeof ShadowRoot !== 'undefined';
         const isShadowRoot = hasShadowRootGlobal && eRootDiv.getRootNode() instanceof ShadowRoot;

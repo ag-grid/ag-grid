@@ -64,7 +64,7 @@ api.stopEditing();
 const cellDefs = api.getEditingCells();
 cellDefs.forEach(cellDef => {
     console.log(cellDef.rowIndex);
-    console.log(cellDef.column.getId());
+    console.log(cellDef.colId);
     console.log(cellDef.rowPinned);
 });
 ```

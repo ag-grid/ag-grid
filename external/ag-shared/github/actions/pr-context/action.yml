@@ -1,0 +1,143 @@
+name: pr-context
+description: >-
+    Resolve the pull request a workflow run is acting for, so PR-only jobs run the same way on a
+    `pull_request` event and on a `workflow_dispatch` given a `pr_number`. On a `pull_request`
+    event the outputs come from the event payload. On a dispatch they come from the API, and only
+    when the PR is open, its head is in this repository and its head ref is the ref the run was
+    dispatched on. Fails open for CI, closed for PR-only jobs: anything missing, malformed or
+    mismatched emits a `::warning::` and `present` is `false`, so the caller skips its PR-only jobs
+    and carries on. A PR is never guessed from the branch name.
+
+inputs:
+    pr-number:
+        description: >-
+            PR number from the workflow's `pr_number` dispatch input (empty by default). Ignored on
+            a `pull_request` event.
+        required: false
+        default: ''
+    github-token:
+        description: 'Token with pull-requests: read, used for the dispatch lookup.'
+        required: true
+    quiet:
+        description: >-
+            Set to `true` to suppress the warnings for a missing, invalid, closed, fork or
+            mismatched PR, for a second call in the same run that would only repeat the first.
+            A failed lookup always warns.
+        required: false
+        default: 'false'
+
+outputs:
+    present:
+        description: '`true` when a PR was resolved, otherwise `false`.'
+        value: ${{ steps.resolve.outputs.present }}
+    number:
+        description: 'PR number. Empty when `present` is `false`.'
+        value: ${{ steps.resolve.outputs.number }}
+    base_ref:
+        description: 'Name of the PR base branch, for example `latest` or `b13.0.0`.'
+        value: ${{ steps.resolve.outputs.base_ref }}
+    base_sha:
+        description: 'Commit the PR base branch pointed at when the PR was resolved.'
+        value: ${{ steps.resolve.outputs.base_sha }}
+    head_sha:
+        description: >-
+            PR head commit. On a dispatch it is `github.sha`, the commit the run is building, which
+            can differ from the PR head if the branch has moved since.
+        value: ${{ steps.resolve.outputs.head_sha }}
+    same_repo:
+        description: >-
+            `true` when the PR head is in this repository. Always `true` on a dispatch that
+            resolved. On a `pull_request` event from a fork it is `false` while `present` is still
+            `true`, so callers that must not run for forks gate on both.
+        value: ${{ steps.resolve.outputs.same_repo }}
+
+runs:
+    using: composite
+    steps:
+        - name: Resolve PR context
+          id: resolve
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github-token }}
+              INPUT_PR_NUMBER: ${{ inputs.pr-number }}
+              QUIET: ${{ inputs.quiet }}
+              EVENT_NAME: ${{ github.event_name }}
+              REPO: ${{ github.repository }}
+              REF: ${{ github.ref }}
+              REF_NAME: ${{ github.ref_name }}
+              RUN_SHA: ${{ github.sha }}
+              EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+              EVENT_BASE_REF: ${{ github.event.pull_request.base.ref }}
+              EVENT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+              EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+              EVENT_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          run: |
+              set -uo pipefail
+
+              emit() { echo "$1=$2" >> "$GITHUB_OUTPUT"; }
+              absent() {
+                  if [[ "${QUIET}" != "true" || "${2:-}" == "always" ]]; then
+                      echo "::warning title=PR context::$1 PR-only jobs (PR Preview, Snapshot Review, L10n Review, PR comments) will be skipped."
+                  fi
+                  emit present false
+                  emit number ''
+                  emit base_ref ''
+                  emit base_sha ''
+                  emit head_sha ''
+                  emit same_repo false
+                  exit 0
+              }
+
+              if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+                  emit present true
+                  emit number "${EVENT_PR_NUMBER}"
+                  emit base_ref "${EVENT_BASE_REF}"
+                  emit base_sha "${EVENT_BASE_SHA}"
+                  emit head_sha "${EVENT_HEAD_SHA}"
+                  [[ "${EVENT_HEAD_REPO}" == "${REPO}" ]] && emit same_repo true || emit same_repo false
+                  exit 0
+              fi
+
+              if [[ "${EVENT_NAME}" != "workflow_dispatch" ]]; then
+                  # push, schedule, ...: there is no PR to act for, and nothing to warn about.
+                  QUIET=true
+                  absent ''
+              fi
+
+              pr="${INPUT_PR_NUMBER}"
+              if [[ -z "${pr}" ]]; then
+                  absent "No pr_number input was given."
+              fi
+              if [[ ! "${pr}" =~ ^[1-9][0-9]{0,8}$ ]]; then
+                  # The value is attacker-influenced text: keep it out of the annotation.
+                  absent "pr_number is not a positive integer."
+              fi
+
+              if ! pull=$(gh api "repos/${REPO}/pulls/${pr}" 2>"${RUNNER_TEMP}/pr-context.err"); then
+                  echo "gh api failed: $(head -c 300 "${RUNNER_TEMP}/pr-context.err")"
+                  absent "Could not read PR #${pr}." always
+              fi
+
+              # `-` stands in for a null head repo (deleted fork): read would collapse an empty tab field.
+              if ! fields=$(jq -r '[.number, .state, .head.repo.full_name // "-", .head.ref, .head.sha, .base.ref, .base.sha] | @tsv' <<< "${pull}"); then
+                  absent "Could not parse PR #${pr}." always
+              fi
+              IFS=$'\t' read -r number state head_repo head_ref pr_head_sha base_ref base_sha <<< "${fields}"
+
+              [[ "${number}" == "${pr}" ]] || absent "PR #${pr} did not resolve."
+              [[ "${state}" == "open" ]] || absent "PR #${pr} is not open."
+              [[ "${head_repo}" == "${REPO}" ]] || absent "PR #${pr} is from a fork, not ${REPO}."
+              [[ "${REF}" == "refs/heads/${head_ref}" && "${REF_NAME}" == "${head_ref}" ]] \
+                  || absent "PR #${pr} has head ref ${head_ref}, but this run is on ${REF_NAME}."
+
+              if [[ "${pr_head_sha}" != "${RUN_SHA}" ]]; then
+                  echo "::notice title=PR context::PR #${pr} head is ${pr_head_sha}, this run is on ${RUN_SHA}."
+              fi
+              echo "Resolved PR #${pr} (base ${base_ref}) for ${REF_NAME} at ${RUN_SHA}."
+
+              emit present true
+              emit number "${pr}"
+              emit base_ref "${base_ref}"
+              emit base_sha "${base_sha}"
+              emit head_sha "${RUN_SHA}"
+              emit same_repo true

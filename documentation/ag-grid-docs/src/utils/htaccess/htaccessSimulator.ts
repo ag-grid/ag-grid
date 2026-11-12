@@ -136,6 +136,12 @@ export interface ResponseContext {
     onSuccess?: boolean;
     /** Vary entries mod_rewrite added while routing. */
     varyFromRewrite?: string[];
+    /** The Host header, for %{HTTP_HOST}. Defaults to www.ag-grid.com. */
+    host?: string;
+    /** %{QUERY_STRING}, without the '?'. Defaults to none. */
+    query?: string;
+    /** Whether the request came in on the https listener (%{SERVER_PORT} 443, else 80). Defaults to true. */
+    https?: boolean;
 }
 
 // The flags this model implements. Any other flag ([B], [QSA], [PT], [UnsafeAllow3F], ...) changes
@@ -1003,6 +1009,9 @@ export function responseHeaders(files: CompiledHtaccess[], response: ResponseCon
         REQUEST_URI: response.uri,
         CONTENT_TYPE: response.contentType ?? '',
         REQUEST_STATUS: String(response.status),
+        HTTP_HOST: response.host ?? 'www.ag-grid.com',
+        QUERY_STRING: response.query ?? '',
+        SERVER_PORT: response.https === false ? '80' : '443',
     };
     const onSuccess =
         response.onSuccess ?? ((response.status >= 200 && response.status < 300) || response.status === 304);

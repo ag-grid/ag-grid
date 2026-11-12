@@ -3,7 +3,6 @@ import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColum
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
-import { _errMsg } from '../logging';
 import type {
     Deprecations,
     OptionsValidator,
@@ -155,6 +154,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
+    scrollGestureMode: ({ scrollGestureMode }) => (scrollGestureMode === 'axisLocked' ? 'ScrollGesture' : null),
     sendToClipboard: 'Clipboard',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',
@@ -404,22 +404,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
                 for (const k of Object.keys(groupHierarchyConfig)) {
                     beans.validation?.validateColDef(groupHierarchyConfig[k]);
-                }
-                return null;
-            },
-        },
-        icons: {
-            validate: ({ icons }) => {
-                if (icons) {
-                    if (icons['smallDown']) {
-                        return _errMsg(262);
-                    }
-                    if (icons['smallLeft']) {
-                        return _errMsg(263);
-                    }
-                    if (icons['smallRight']) {
-                        return _errMsg(264);
-                    }
                 }
                 return null;
             },
@@ -735,6 +719,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
                 return null;
+            },
+        },
+        scrollGestureMode: {
+            validate: ({ scrollGestureMode }) => {
+                const allowed = ['native', 'axisLocked'];
+                return scrollGestureMode != null && !allowed.includes(scrollGestureMode)
+                    ? _createValidationWarning(320, {
+                          property: 'scrollGestureMode',
+                          allowed,
+                          value: scrollGestureMode,
+                      })
+                    : null;
             },
         },
         renderingMode: {

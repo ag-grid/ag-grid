@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     advancedFilterCancel: 'منسوخ کریں',
     advancedFilterClear: 'صاف کریں',
     advancedFilterBuilder: 'بلڈر',
+    advancedFilterPlaceholder: 'ایڈوانسڈ فلٹر',
     advancedFilterValidationMissingColumn: 'کالم غائب ہے',
     advancedFilterValidationMissingOption: 'آپشن غائب ہے',
     advancedFilterValidationMissingValue: 'قدر غائب ہے',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaCalculatedColumn: 'حساب شدہ کالم',
     ariaColumnShowValuesAs: 'اقدار کو اس طور دکھایا جا رہا ہے',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
+    ariaColumnSelectExpandAll: 'تمام کالم گروپس کو پھیلائیں یا سکیڑیں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
     ariaDefaultListName: 'فہرست',
     ariaFilterColumnsInput: 'کالمز فلٹر انپٹ',
@@ -818,6 +820,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelSelectField: 'فیلڈ منتخب کریں',
 
     // Cell Editor
+    ariaLabelCellEditor: 'سیل ایڈیٹر',
     ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaFullRowValidationError: 'مکمل صف کی توثیق: ${variable}',
     ariaFullRowEditValidationFailed: 'صف کی ترمیم مکمل نہیں ہو سکتی۔ ${variable}',
@@ -847,6 +850,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
+    ariaLabelFilterCardType: 'فلٹر کی قسم',
     ariaHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)

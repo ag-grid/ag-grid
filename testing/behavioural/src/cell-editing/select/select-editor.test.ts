@@ -282,4 +282,42 @@ describe('Select cell editor', () => {
             expect(getOptionLabels()).toEqual(['0', '20']);
         });
     });
+
+    describe('combobox accessible name (WCAG 4.1.2)', () => {
+        test.each([
+            ['the header name', { headerName: 'Sport Type' }, 'Sport Type'],
+            ['the generated header name', {}, 'A'],
+            ['the generic name when the header is empty', { headerName: '' }, 'Select Field'],
+        ])('names the focused combobox with %s', async (_label, colDefOverrides, expectedName) => {
+            const api = await createGrid({
+                columnDefs: [{ ...baseColDef(), ...colDefOverrides }],
+                rowData: [{ id: '0', a: 'Alpha' }],
+                getRowId: (p) => p.data.id,
+            });
+
+            await openEditor(api, 0, 'a');
+
+            const combobox = document.activeElement as HTMLElement;
+            expect(combobox.getAttribute('role')).toBe('combobox');
+            expect(combobox.getAttribute('aria-label')).toBe(expectedName);
+            expect(combobox.hasAttribute('aria-labelledby')).toBe(false);
+        });
+    });
+
+    test('combobox aria-activedescendant follows the highlighted option while the list is open', async () => {
+        const api = await createGrid({ columnDefs: [baseColDef()], rowData: [{ a: 'Alpha' }] });
+        await openEditor(api, 0, 'a');
+        const combobox = getGridElement(api)!.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+        const activeOptionText = () =>
+            document.getElementById(combobox.getAttribute('aria-activedescendant')!)?.textContent?.trim();
+
+        expect(activeOptionText()).toBe('Alpha');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Beta');
+        fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+        expect(activeOptionText()).toBe('Gamma');
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+    });
 });
