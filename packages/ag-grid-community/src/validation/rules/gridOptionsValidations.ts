@@ -1,4 +1,3 @@
-import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
@@ -70,33 +69,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '32.2',
         message:
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
-    },
-
-    groupRemoveSingleChildren: {
-        version: '33',
-        message: 'Use `groupHideParentOfSingleChild` instead.',
-    },
-    groupRemoveLowestSingleChildren: {
-        version: '33',
-        message: 'Use `groupHideParentOfSingleChild: "leafGroupsOnly"` instead.',
-    },
-
-    suppressRowGroupHidesColumns: {
-        version: '33',
-        message: 'Use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.',
-    },
-    suppressMakeColumnVisibleAfterUnGroup: {
-        version: '33',
-        message: 'Use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.',
-    },
-
-    unSortIcon: { version: '33', message: 'Use `defaultColDef.unSortIcon` instead.' },
-    sortingOrder: { version: '33', message: 'Use `defaultColDef.sortingOrder` instead.' },
-
-    suppressPropertyNamesCheck: {
-        version: '33',
-        message:
-            '`gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.',
     },
 
     suppressAdvancedFilterEval: {
@@ -424,18 +396,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 groupHideOpenParents: { required: [undefined, false] },
             },
         },
-        groupRemoveLowestSingleChildren: {
-            dependencies: {
-                groupHideOpenParents: { required: [undefined, false] },
-                groupRemoveSingleChildren: { required: [undefined, false] },
-            },
-        },
-        groupRemoveSingleChildren: {
-            dependencies: {
-                groupHideOpenParents: { required: [undefined, false] },
-                groupRemoveLowestSingleChildren: { required: [undefined, false] },
-            },
-        },
         groupSelectsChildren: {
             dependencies: {
                 rowSelection: { required: ['multiple'] },
@@ -645,21 +605,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         serverSideSortAllLevels: {
             supportedRowModels: ['serverSide'],
-        },
-        sortingOrder: {
-            validate: (_options) => {
-                const sortingOrder = _options.sortingOrder;
-
-                if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
-                    if (invalidItems.length > 0) {
-                        return _createValidationWarning(324, { property: 'sortingOrder', invalidItems });
-                    }
-                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return _createValidationWarning(325, { property: 'sortingOrder', value: sortingOrder });
-                }
-                return null;
-            },
         },
         stickyRowsMaxViewportRatio: {
             validate({ stickyRowsMaxViewportRatio: ratio }) {

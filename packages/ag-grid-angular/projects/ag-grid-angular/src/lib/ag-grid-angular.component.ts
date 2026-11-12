@@ -231,7 +231,6 @@ import type {
     SendToClipboard,
     SideBarDef,
     SortChangedEvent,
-    SortDirection,
     StateUpdatedEvent,
     StatusBar,
     StoreRefreshedEvent,
@@ -655,17 +654,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public suppressGroupChangesColumnVisibility:
         boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined = undefined;
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-     */
-    @Input({ transform: booleanAttribute }) public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined =
-        undefined;
-    /** If `true`, when you drag a column into a row group panel the column is not hidden.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-     */
-    @Input({ transform: booleanAttribute }) public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
      */
     @Input() public colResizeDefault: 'shift' | undefined = undefined;
@@ -1048,11 +1036,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressBrowserResizeObserver: boolean | undefined = undefined;
-    /** @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-     * @default false
-     * @initial
-     */
-    @Input({ transform: booleanAttribute }) public suppressPropertyNamesCheck: boolean | undefined = undefined;
     /** Disables change detection.
      * @default false
      */
@@ -1529,16 +1512,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule`
      */
     @Input() public groupHideParentOfSingleChild: boolean | 'leafGroupsOnly' | undefined = undefined;
-    /** Set to `true` to collapse groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-     */
-    @Input({ transform: booleanAttribute }) public groupRemoveSingleChildren: boolean | undefined = undefined;
-    /** Set to `true` to collapse lowest level groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-     */
-    @Input({ transform: booleanAttribute }) public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
      * @agModule `RowGroupingModule`
@@ -1890,20 +1863,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
      */
     @Input({ transform: booleanAttribute }) public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default ['asc', 'desc', null]
-     * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-     */
-    @Input() public sortingOrder: SortDirection[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public accentedSort: boolean | undefined = undefined;
-    /** Set to `true` to show the 'no sort' icon.
-     * @default false
-     * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-     */
-    @Input({ transform: booleanAttribute }) public unSortIcon: boolean | undefined = undefined;
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
      */
