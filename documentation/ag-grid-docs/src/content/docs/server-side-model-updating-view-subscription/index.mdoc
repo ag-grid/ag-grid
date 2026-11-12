@@ -3,7 +3,7 @@ title: "SSRM View Subscription"
 enterprise: true
 ---
 
-When a server pushes live updates, sending updates for rows the user cannot see is wasted work. The `viewSubscription` grid option tells your application which loaded rows to subscribe to and unsubscribe from as rows enter and leave the view.
+With the Server-Side Row Model, the `viewSubscription` grid option tells your application which loaded rows are in view, so the server only pushes updates for those rows.
 
 View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-side-model-configuration/#providing-row-ids). It works the same way as with the Client-Side Row Model, so start with [View Subscription](./data-update-view-subscription/) for:
 
@@ -11,8 +11,17 @@ View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-s
 - [Lifecycle](./data-update-view-subscription/#lifecycle): starting, pausing and stopping the subscription.
 - [Excluded Rows](./data-update-view-subscription/#excluded-rows): rows that are never passed to the handlers.
 - [Debouncing](./data-update-view-subscription/#debouncing): waiting for scrolling to stop before calling the handlers.
+- [API Reference](./data-update-view-subscription/#api-reference): the `viewSubscription` and `viewSubscriptionActive` grid options.
 
-This page covers what is different with the Server-Side Row Model: rows that load in blocks, group rows loaded from the server, and aggregates the server calculates.
+This page covers what is different with the Server-Side Row Model: rows that load in blocks, group rows loaded from the server, and aggregated values the server calculates.
+
+The examples on this page use the [Quick Access Toolbar](./toolbar/) for their controls and counters:
+
+- **Subscribed rows** is the number of rows subscribed through the handlers.
+- **Streamed rows**, in the [Pivoting on the Server](#pivoting-on-the-server) example, is the number of rows the server sends updates for.
+- **Updates sent** is the total number of row updates the server has sent.
+
+All subscriptions and updates share one simulated websocket, however many rows are subscribed.
 
 ## Loading and Refreshing
 
@@ -21,7 +30,7 @@ A row is subscribed once it is in view and its block has loaded. Loading rows an
 - A [refresh](./server-side-model-updating-refresh/) without a purge keeps the rows whose IDs are unchanged. A kept row stays subscribed, even when its data changes.
 - A refresh with `purge: true` unsubscribes every row, then subscribes them again as they reload.
 - A row whose ID changes, through a refresh or a [transaction](./server-side-model-updating-transactions/), is unsubscribed with its old ID and subscribed with the new one.
-## Row Types
+## Group and Tree Rows
 
 Rows have the same `type` values as with the [Client-Side Row Model](./data-update-view-subscription/#row-types), with these differences:
 
@@ -38,27 +47,17 @@ The example below shows a portfolio of regions, sectors and stocks as [Tree Data
 
 {% gridExampleRunner title="View Subscription with Server-Side Tree Data" name="server-side-view-subscription" exampleHeight=615 /%}
 
-## Group Aggregates
+## Aggregating on the Server
 
-A group row can be in view while the rows it aggregates are not. Take five sector groups of 20 stocks each, with every group collapsed. Five group rows are in view, and `subscribeRows` is called with those five rows only.
+The server calculates the [aggregated values](./server-side-model-grouping/) of group rows, so the grid does not need the leaf rows to show them. To keep a subscribed group row current, recalculate its aggregated values on the server when its leaf rows change, and send the updated group row.
 
-With the Server-Side Row Model, the server calculates the group rows. It can keep each group's aggregates current as its stocks change, and send the recalculated group row to the client. The client then needs updates for the five group rows only, and doesn't load any of the 100 stocks until a group is expanded.
+For example, suppose 100 stocks are grouped into 5 sectors, and every group is collapsed. Only the 5 group rows are in view, so only they are subscribed, and the server sends updates for those 5 rows. The stocks are not loaded until a group is expanded.
 
-This differs from the Client-Side Row Model, where the grid calculates the group rows from the stocks it holds, and so needs updates for all 100 stocks to keep the five totals current. See [Group Aggregates](./data-update-view-subscription/#group-aggregates).
+The [Pivoting on the Server](#pivoting-on-the-server) example below sends the updated group rows, so 5 subscribed group rows stream 5 rows.
 
-The [pivoting example](#pivoting) below sends whole group rows. With pivot mode on, **Subscribed rows** and **Streamed rows** both show 5, while the server tracks the 100 stocks behind them.
+The Client-Side Row Model calculates aggregated values in the grid, so it also needs updates for the leaf rows. See [Group Aggregates](./data-update-view-subscription/#group-aggregates).
 
-### What the Counters Measure
-
-The examples count three different things:
-
-- **Subscribed rows**: the rows passed to `subscribeRows` that are not yet unsubscribed. There is one subscription for each row in view.
-- **Streamed rows**: the rows the server streams updates for because of those subscriptions. The server sends each subscribed group row whole, so there is one streamed row for each subscribed row.
-- **Updates sent**: the number of rows the server has sent in updates so far. It keeps rising, as a streamed row is updated many times.
-
-Every example sends all of its subscriptions and updates over one simulated websocket. Streaming rows for many subscriptions doesn't take many connections: one connection carries the updates for every subscription.
-
-## Pivoting
+## Pivoting on the Server
 
 In [pivot mode](./server-side-model-pivoting/), each row in view is a group row, passed with `type: 'group'`. Each of its cells aggregates the leaf rows under it for one pivot result column. A subscription covers the whole row, including result columns scrolled out of view, so the server sends updates for everything the row aggregates.
 
@@ -71,7 +70,3 @@ The example below has the same stocks, controls and pausing rules as the [Client
 - The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route.
 
 {% gridExampleRunner title="View Subscription with Server-Side Pivoting" name="ssrm-pivot-view-subscription" exampleHeight=615 /%}
-
-## API Reference
-
-{% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["viewSubscription", "viewSubscriptionActive"] /%}

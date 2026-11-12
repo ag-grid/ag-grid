@@ -9,7 +9,15 @@ View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/
 
 The example below streams price updates for the subscribed stocks only, over a simulated websocket, and applies them with [Async Transactions](./data-update-high-frequency/).
 
-All examples on this page use the [Quick Access Toolbar](./toolbar/) for their controls and counters.
+All examples on this page use the [Quick Access Toolbar](./toolbar/) for their controls and counters:
+
+- **Subscribed rows** is the number of rows subscribed through the handlers.
+- **Streamed stocks**, in the [Pivoting](#pivoting) example, is the number of stocks the server sends updates for.
+- **Updates sent** is the total number of row updates the server has sent.
+
+All subscriptions and updates share one simulated websocket, however many rows are subscribed.
+
+In the example below, note the following:
 
 - Scrolling produces subscribe and unsubscribe batches, logged to the console with their row count.
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
@@ -79,7 +87,7 @@ const gridOptions = {
 
 If the stream only has updates for leaf rows, skip group rows and tree data rows that have children in `subscribeRows`, and ignore the IDs you did not subscribe to in `unsubscribeRows`.
 
-The Server-Side Row Model also passes group rows loaded from the server, with their `data`. See [SSRM Row Types](./server-side-model-updating-view-subscription/#row-types).
+The Server-Side Row Model also passes group rows loaded from the server, with their `data`. See [SSRM Group and Tree Rows](./server-side-model-updating-view-subscription/#group-and-tree-rows).
 
 ### Row Grouping {% enterpriseIcon /%} {% #row-grouping %}
 
@@ -139,27 +147,15 @@ const gridOptions = {
 
 ## Group Aggregates
 
-A group row can be in view while the rows it [aggregates](./aggregation/) are not. The handlers are only passed the rows in view, so an application that streams updates for those rows alone can show a group row whose aggregates are out of date.
+The grid calculates the [aggregated values](./aggregation/) of a group row from all of its leaf rows, including leaf rows that are not in view. Only the rows in view are passed to `subscribeRows`, so updates for the leaf rows of a subscribed group row need to be requested separately.
 
-Take five sector groups of 20 stocks each, with every group collapsed. Five group rows are in view, and `subscribeRows` is called with those five rows only. The grid calculates each group row from the leaf rows it holds, so all 100 stocks feed the five group rows in view.
+For example, suppose 100 stocks are grouped into 5 sectors, and every group is collapsed. Only the 5 group rows are in view, so only they are subscribed. If the application streams updates for the subscribed rows only, the stocks are never updated, and the aggregated values of each sector, and of every group above it, become out of date.
 
-Suppose the volume of a stock out of view changes on the server from 10 to 15. If that stock is not streamed, the grid still holds 10, and the total volume of its sector is 5 too low. With nested groups, every group above it is too low as well. Expanding the group doesn't fix the total: it was wrong while the group was collapsed, and stays wrong until the stock is updated.
+To keep the aggregated values current, use the `route` of each subscribed group row to stream updates for every leaf row in the group. This is not needed when the group rows in view show no aggregated values, or when the leaf rows are kept up to date in another way.
 
-Updates for the rows in view are enough when no group row in view shows an aggregate, or when the application keeps every leaf row current some other way. Otherwise, stream updates for every leaf row under each subscribed group row. The group row's `route` holds its group keys, which the server can use to find those leaf rows.
+The [Pivoting](#pivoting) example below streams every stock in each subscribed group row, so 5 subscribed group rows stream 100 stocks.
 
-The [pivoting example](#pivoting) below does this. With pivot mode on, five sector rows are in view, so **Subscribed rows** shows 5 and **Streamed stocks** shows 100.
-
-With the Server-Side Row Model, the server calculates the group rows and can send each one already up to date, so the client only needs the five group rows. See [SSRM Group Aggregates](./server-side-model-updating-view-subscription/#group-aggregates).
-
-### What the Counters Measure
-
-The examples count up to three different things:
-
-- **Subscribed rows**: the rows passed to `subscribeRows` that are not yet unsubscribed. There is one subscription for each row in view.
-- **Streamed stocks**: the stocks the server streams updates for because of those subscriptions. A subscribed group row streams every stock in its group.
-- **Updates sent**: the number of rows the server has sent in updates so far. It keeps rising, as a streamed row is updated many times.
-
-Every example sends all of its subscriptions and updates over one simulated websocket. Streaming 100 stocks doesn't take 100 connections: one connection carries the updates for every subscription.
+The Server-Side Row Model calculates aggregated values on the server, so subscribing to the group rows is enough. See [Aggregating on the Server](./server-side-model-updating-view-subscription/#aggregating-on-the-server).
 
 ## Pivoting
 
@@ -179,7 +175,7 @@ The application decides which data a subscribed row needs. Here a stream runs on
 
 {% gridExampleRunner title="View Subscription with Pivoting" name="pivot-view-subscription" exampleHeight=615 /%}
 
-For the same example with the server grouping, pivoting and aggregating the stocks, see [SSRM Pivoting](./server-side-model-updating-view-subscription/#pivoting).
+For the same example with the server grouping, pivoting and aggregating the stocks, see [Pivoting on the Server](./server-side-model-updating-view-subscription/#pivoting-on-the-server).
 
 ## API Reference
 
