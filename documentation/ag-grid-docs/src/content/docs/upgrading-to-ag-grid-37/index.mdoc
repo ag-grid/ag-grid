@@ -49,8 +49,8 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 ### Validation
 
-- With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag. [Suppressing the codes](./dev-validation/#suppressing-diagnostics) only hides them from the overlay.
-- Until custom data is moved, `enableDevValidations({ suppress: [307, 310] })` keeps these warnings out of the validation overlay and stops `throwOn` from throwing on them. This is not the same as the removed option: suppressed warnings are still logged to the console. See [Suppressing Diagnostics](./dev-validation/#suppressing-diagnostics).
+- With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
+- Until custom data is moved into `context`, `enableDevValidations({ suppress: [307, 310] })` keeps these warnings out of the validation overlay and stops `throwOn` from throwing on them but they are still logged to the console. See [Suppressing Diagnostics](./dev-validation/#suppressing-diagnostics).
 
 ### Status Bar
 
