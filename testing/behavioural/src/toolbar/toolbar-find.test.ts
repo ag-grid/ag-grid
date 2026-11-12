@@ -317,6 +317,18 @@ describe('Toolbar find item', () => {
             await expectAnnouncement(announcement, '0/3');
         });
 
+        test('a silent update cancels a pending announcement with the same text', async () => {
+            const { api, input, announcement } = await createFindGrid('find-announce-silent-cancel');
+
+            input.focus();
+            api.setGridOption('findSearchValue', 'a');
+            input.blur();
+            api.findRefresh();
+
+            await settleAnnouncement();
+            expect(announcement.textContent).toBe('');
+        });
+
         test('row number counts pinned top rows', async () => {
             const { input, announcement } = await createFindGrid('find-announce-pinned', {
                 pinnedTopRowData: [{ name: 'Zed', age: 1 }],

@@ -185,16 +185,13 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     }
 
     private updateAnnouncement(announcement: string, announce: boolean): void {
-        if (announcement === this.lastAnnouncement) {
-            return;
+        const ariaAnnounce = this.beans.ariaAnnounce;
+        if (!announcement || !announce) {
+            ariaAnnounce?.cancelAnnouncement('find');
+        } else if (announcement !== this.lastAnnouncement) {
+            ariaAnnounce?.announceValue(announcement, 'find');
         }
         this.lastAnnouncement = announcement;
-        const ariaAnnounce = this.beans.ariaAnnounce;
-        if (announcement && announce) {
-            ariaAnnounce?.announceValue(announcement, 'find');
-        } else {
-            ariaAnnounce?.cancelAnnouncement('find');
-        }
     }
 
     private getAnnouncement(
