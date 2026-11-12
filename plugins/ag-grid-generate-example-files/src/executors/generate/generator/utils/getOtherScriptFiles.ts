@@ -7,11 +7,16 @@ import { convertTsxToJsx, getFileList } from './fileUtils';
 const getOtherTsGeneratedFiles = async ({
     folderPath,
     sourceFileList,
+    sharedFiles,
     transformTsFileExt,
     internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
+    /**
+     * TypeScript files shared between examples, generated as if they were in the example folder
+     */
+    sharedFiles: FileContents;
     /**
      * File extension for .ts files to be converted to
      */
@@ -33,10 +38,13 @@ const getOtherTsGeneratedFiles = async ({
             return !toExclude.some((framework) => fileName.includes('_' + framework));
         });
 
-    const tsFileContents = await getFileList({
-        folderPath,
-        fileList: otherTsFiles,
-    });
+    const tsFileContents = {
+        ...(await getFileList({
+            folderPath,
+            fileList: otherTsFiles,
+        })),
+        ...sharedFiles,
+    };
 
     const generatedFiles = {} as FileContents;
     Object.keys(tsFileContents).forEach((tsFileName) => {
@@ -137,17 +145,20 @@ const getComponentFiles = ({
 export const getOtherScriptFiles = async ({
     folderPath,
     sourceFileList,
+    sharedFiles = {},
     transformTsFileExt,
     internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
+    sharedFiles?: FileContents;
     transformTsFileExt?: TransformTsFileExt;
     internalFramework: InternalFramework;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
         sourceFileList,
+        sharedFiles,
         transformTsFileExt,
         internalFramework,
     });
