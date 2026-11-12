@@ -138,6 +138,11 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         return true;
     }
 
+    public override destroy(): void {
+        this.beans.ariaAnnounce?.cancelAnnouncement('find');
+        super.destroy();
+    }
+
     private navigate(backwards: boolean): void {
         const findSvc = this.beans.findSvc;
         if (!findSvc) {
@@ -185,10 +190,10 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         }
         this.lastAnnouncement = announcement;
         const ariaAnnounce = this.beans.ariaAnnounce;
-        if (!announcement) {
-            ariaAnnounce?.cancelAnnouncement('find');
-        } else if (announce) {
+        if (announcement && announce) {
             ariaAnnounce?.announceValue(announcement, 'find');
+        } else {
+            ariaAnnounce?.cancelAnnouncement('find');
         }
     }
 

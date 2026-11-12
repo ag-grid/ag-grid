@@ -44,6 +44,7 @@ export class FindRenderer implements ICellRendererComp {
                 element.classList.add('ag-find-match');
                 if (activeMatch) {
                     element.classList.add('ag-find-active-match');
+                    element.setAttribute('aria-current', 'true');
                 }
                 eGui.appendChild(element);
             } else {
