@@ -27,10 +27,10 @@ export function combineConditionsSql(mapper, key, item, params) {
 export function textFilterSql(key, item, params) {
     switch (item.type) {
         case 'equals':
-            params.push(item.filter);
+            params.push(String(item.filter));
             return key + ' = ?';
         case 'notEqual':
-            params.push(item.filter);
+            params.push(String(item.filter));
             return key + ' != ?';
         case 'contains':
             params.push('%' + item.filter + '%');

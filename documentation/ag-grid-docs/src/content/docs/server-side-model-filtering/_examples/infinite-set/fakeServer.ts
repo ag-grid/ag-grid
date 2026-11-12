@@ -3,6 +3,15 @@
 // To keep things simple it does the bare minimum to support the example.
 // Request values are bound as `?` parameters, and column names and sort directions are
 // checked against allow-lists of known values.
+import {
+    checkColumn,
+    combineConditionsSql,
+    limitSql,
+    orderBySql,
+    setFilterSql,
+    textFilterSql,
+} from '@example-fake-servers/sql';
+
 export function FakeServer(allData) {
     alasql.options.cache = false;
 
@@ -29,7 +38,7 @@ export function FakeServer(allData) {
         getCountries: function (sportFilter) {
             const params = [allData];
             const textFilter = sportFilter?.filterModels[0]
-                ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0], params)
+                ? ' WHERE ' + textFilterSql('sport', sportFilter.filterModels[0], params)
                 : '';
             const sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
 
@@ -45,7 +54,7 @@ export function FakeServer(allData) {
             const where = countries ? ' WHERE countryCode IN (' + placeholders(countries, params) + ')' : '';
             const operator = countries ? ' AND ' : ' WHERE ';
             const textFilter = sportFilter?.filterModels[0]
-                ? operator + textFilterMapper('sport', sportFilter.filterModels[0], params)
+                ? operator + textFilterSql('sport', sportFilter.filterModels[0], params)
                 : '';
             const sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
 
@@ -65,14 +74,19 @@ export function FakeServer(allData) {
     }
 
     function buildSql(request, params) {
-        return 'SELECT * FROM ?' + whereSql(request, params) + orderBySql(request) + limitSql(request);
+        return (
+            'SELECT * FROM ?' +
+            whereSql(request, params) +
+            orderBySql(
+                request.sortModel.map((s) => ({ ...s, colId: mapColumnKey(s.colId) })),
+                knownColumns
+            ) +
+            limitSql(request)
+        );
     }
 
     function column(colId) {
-        if (!knownColumns.has(colId)) {
-            throw new Error('Unknown column: ' + colId);
-        }
-        return colId;
+        return checkColumn(knownColumns, colId);
     }
 
     function mapColumnKey(columnKey) {
@@ -85,41 +99,6 @@ export function FakeServer(allData) {
         return values.map(() => '?').join(', ');
     }
 
-    function textFilterMapper(key, item, params) {
-        switch (item.type) {
-            case 'equals':
-                params.push(String(item.filter));
-                return key + ' = ?';
-            case 'notEqual':
-                params.push(String(item.filter));
-                return key + ' != ?';
-            case 'contains':
-                params.push('%' + item.filter + '%');
-                return key + ' LIKE ?';
-            case 'notContains':
-                params.push('%' + item.filter + '%');
-                return key + ' NOT LIKE ?';
-            case 'startsWith':
-                params.push(item.filter + '%');
-                return key + ' LIKE ?';
-            case 'endsWith':
-                params.push('%' + item.filter);
-                return key + ' LIKE ?';
-            default:
-                console.log('unknown text filter type: ' + item.type);
-        }
-    }
-
-    function createFilterSql(mapper, key, item, params) {
-        if (item.operator) {
-            const conditions = item.conditions.map((condition) => mapper(key, condition, params));
-
-            return '(' + conditions.join(item.operator === 'OR' ? ' OR ' : ' AND ') + ')';
-        }
-
-        return mapper(key, item, params);
-    }
-
     function whereSql(request, params) {
         const whereParts = [];
         const filterModel = request.filterModel;
@@ -129,14 +108,12 @@ export function FakeServer(allData) {
                 const filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
-                    whereParts.push(
-                        column(mapColumnKey(columnKey)) + ' IN (' + placeholders(filter.values, params) + ')'
-                    );
+                    whereParts.push(setFilterSql(column(mapColumnKey(columnKey)), filter, params));
                     return;
                 }
 
                 if (filter.filterType === 'text') {
-                    whereParts.push(createFilterSql(textFilterMapper, column(columnKey), filter, params));
+                    whereParts.push(combineConditionsSql(textFilterSql, column(columnKey), filter, params));
                     return;
                 }
 
@@ -147,13 +124,11 @@ export function FakeServer(allData) {
                             switch (model.filterType) {
                                 case 'text':
                                     whereParts.push(
-                                        createFilterSql(textFilterMapper, column(columnKey), model, params)
+                                        combineConditionsSql(textFilterSql, column(columnKey), model, params)
                                     );
                                     break;
                                 case 'set':
-                                    whereParts.push(
-                                        column(columnKey) + ' IN (' + placeholders(model.values, params) + ')'
-                                    );
+                                    whereParts.push(setFilterSql(column(columnKey), model, params));
                                     break;
                                 default:
                                     console.log('unknown filter type: ' + model.filterType, model);
@@ -173,32 +148,6 @@ export function FakeServer(allData) {
         }
 
         return '';
-    }
-
-    function orderBySql(request) {
-        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
-        const sortModel = request.sortModel.filter(function (s) {
-            return knownColumns.has(mapColumnKey(s.colId));
-        });
-
-        if (sortModel.length === 0) return '';
-
-        const sorts = sortModel.map(function (s) {
-            return column(mapColumnKey(s.colId)) + (s.sort === 'desc' ? ' DESC' : ' ASC');
-        });
-
-        return ' ORDER BY ' + sorts.join(', ');
-    }
-
-    function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) {
-            return '';
-        }
-        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
-        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
-        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
-
-        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function getLastRowIndex(request) {

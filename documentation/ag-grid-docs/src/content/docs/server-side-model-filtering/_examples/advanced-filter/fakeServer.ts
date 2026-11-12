@@ -3,6 +3,8 @@
 // To keep things simple it does the bare minimum to support the example.
 // Request values are bound as `?` parameters, and column names and sort directions are
 // checked against allow-lists of known values.
+import { checkColumn, limitSql, numberFilterSql, orderBySql, textFilterSql } from '@example-fake-servers/sql';
+
 export function FakeServer(allData) {
     alasql.options.cache = false;
 
@@ -36,14 +38,16 @@ export function FakeServer(allData) {
     }
 
     function buildSql(request, params) {
-        return 'SELECT * FROM ?' + whereSql(request, params) + orderBySql(request) + limitSql(request);
+        return (
+            'SELECT * FROM ?' +
+            whereSql(request, params) +
+            orderBySql(request.sortModel, knownColumns) +
+            limitSql(request)
+        );
     }
 
     function column(colId) {
-        if (!knownColumns.has(colId)) {
-            throw new Error('Unknown column: ' + colId);
-        }
-        return colId;
+        return checkColumn(knownColumns, colId);
     }
 
     function whereSql(request, params) {
@@ -62,44 +66,15 @@ export function FakeServer(allData) {
             return '(' + model.conditions.map((condition) => createFilterSql(condition, params)).join(join) + ')';
         } else {
             if (model.filterType === 'text') {
-                return textFilterMapper(column(model.colId), model, params);
+                return textFilterSql(column(model.colId), model, params);
             } else if (model.filterType === 'number') {
-                return numberFilterMapper(column(model.colId), model, params);
+                return numberFilterSql(column(model.colId), model, params);
             } else if (model.filterType === 'set') {
                 return setFilterMapper(column(model.colId), model, params);
             } else {
                 console.log('filter type not implemented: ' + model.filterType);
                 return ' 1 = 1 ';
             }
-        }
-    }
-
-    function textFilterMapper(key, item, params) {
-        switch (item.type) {
-            case 'equals':
-                params.push(String(item.filter));
-                return key + ' = ?';
-            case 'notEqual':
-                params.push(String(item.filter));
-                return key + ' != ?';
-            case 'contains':
-                params.push('%' + item.filter + '%');
-                return key + ' LIKE ?';
-            case 'notContains':
-                params.push('%' + item.filter + '%');
-                return key + ' NOT LIKE ?';
-            case 'startsWith':
-                params.push(item.filter + '%');
-                return key + ' LIKE ?';
-            case 'endsWith':
-                params.push('%' + item.filter);
-                return key + ' LIKE ?';
-            case 'blank':
-                return '(' + key + ' IS NULL OR ' + key + " = '')";
-            case 'notBlank':
-                return key + ' IS NOT NULL and ' + key + " != ''";
-            default:
-                console.log('unknown text filter type: ' + item.type);
         }
     }
 
@@ -113,64 +88,6 @@ export function FakeServer(allData) {
         const operator = item.type === 'isNoneOf' ? ' NOT IN (' : ' IN (';
 
         return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values.join(', ') + ')';
-    }
-
-    function numberFilterMapper(key, item, params) {
-        switch (item.type) {
-            case 'equals':
-                params.push(item.filter);
-                return key + ' = ?';
-            case 'notEqual':
-                params.push(item.filter);
-                return key + ' != ?';
-            case 'greaterThan':
-                params.push(item.filter);
-                return key + ' > ?';
-            case 'greaterThanOrEqual':
-                params.push(item.filter);
-                return key + ' >= ?';
-            case 'lessThan':
-                params.push(item.filter);
-                return key + ' < ?';
-            case 'lessThanOrEqual':
-                params.push(item.filter);
-                return key + ' <= ?';
-            case 'inRange':
-                params.push(item.filter, item.filterTo);
-                return '(' + key + ' >= ? and ' + key + ' <= ?)';
-            case 'blank':
-                return key + ' IS NULL';
-            case 'notBlank':
-                return key + ' IS NOT NULL';
-            default:
-                console.log('unknown number filter type: ' + item.type);
-        }
-    }
-
-    function orderBySql(request) {
-        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
-        const sortModel = request.sortModel.filter(function (s) {
-            return knownColumns.has(s.colId);
-        });
-
-        if (sortModel.length === 0) return '';
-
-        const sorts = sortModel.map(function (s) {
-            return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
-        });
-
-        return ' ORDER BY ' + sorts.join(', ');
-    }
-
-    function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) {
-            return '';
-        }
-        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
-        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
-        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
-
-        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function getLastRowIndex(request) {
