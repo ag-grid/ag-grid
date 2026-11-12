@@ -91,7 +91,7 @@
         "viewport": false
     },
     {
-        "feature": "[View Subscription](./data-update-view-subscription) (Push)",
+        "feature": "View Subscription ([Client-Side](./data-update-view-subscription), [Server-Side](./server-side-model-updating-view-subscription)) (Push)",
         "clientSide": true,
         "infinite": false,
         "serverSide": true,

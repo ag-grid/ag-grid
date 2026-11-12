@@ -62,6 +62,13 @@ class FakeServer {
 
     receive({ type, ids }: ClientMessage): void {
         ids.forEach((id) => (type === 'subscribe' ? this.subscribedIds.add(id) : this.subscribedIds.delete(id)));
+        if (type === 'subscribe') {
+            // the client's copy can be out of date, so send the current values before streaming changes
+            const rows = ids.map((id) => stocks.get(id)).filter((stock): stock is Stock => !!stock);
+            if (rows.length) {
+                this.send({ type: 'update', rows });
+            }
+        }
 
         // only stream while something is subscribed
         if (this.subscribedIds.size && !this.timer) {

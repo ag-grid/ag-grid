@@ -25,11 +25,13 @@ This page covers what is different with the Server-Side Row Model: rows that loa
 
 ## Loading and Refreshing
 
-A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers.
+A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers. When the grid is ready, `subscribeRows` is called with an empty array, as no block has loaded yet.
+
+A row's values come from its block, and changes made between the block loading and the row being subscribed are not streamed. Have the server send the current values of a newly subscribed row first, then stream its changes.
 
 - A [refresh](./server-side-model-updating-refresh/) without a purge keeps the rows whose IDs are unchanged. A kept row stays subscribed, even when its data changes.
 - A refresh with `purge: true` unsubscribes every row, then subscribes them again as they reload.
-- A row whose ID changes, through a refresh or a [transaction](./server-side-model-updating-transactions/), is unsubscribed with its old ID and subscribed with the new one.
+- Rows removed by a refresh or a [transaction](./server-side-model-updating-transactions/) are unsubscribed, and added rows in view are subscribed once loaded.
 
 ## Group and Tree Rows
 
@@ -37,6 +39,8 @@ Rows have the same `type` values as with the [Client-Side Row Model](./data-upda
 
 - `'group'`: a group row the server loaded, with its `data`. [`getRowId`](./server-side-model-configuration/#providing-row-ids) is called for group rows too, so give them an ID from their route.
 - `'tree'`: a row in [Tree Data](./server-side-model-tree-data/). `hasChildren` is `true` for expandable rows, and only expandable rows have a `route`.
+
+To apply an update to a subscribed row, pass its `parentKeys` as the `route` of [`applyServerSideTransactionAsync`](./server-side-model-updating-transactions/#asynchronous-updates). Store them when the row is subscribed, so updates that arrive later can still find the row's store.
 
 ### Grouping on the Server {% enterpriseIcon /%} {% #grouping-on-the-server %}
 
@@ -80,7 +84,7 @@ Turning pivot mode on or off, or changing the pivot columns, reloads the rows. E
 The example below has the same stocks, controls and pausing rules as the [Client-Side Row Model pivoting example](./data-update-view-subscription/#pivoting), with these differences:
 
 - The server groups, pivots and aggregates the stocks, and sends the pivot result fields with each block, so the grid creates the pivot result columns. `getRowId` gives group rows an ID from their route.
-- The server sends each subscribed group row whole, recalculated whenever one of its stocks moves, so **Streamed rows** equals **Subscribed rows** while no stream is paused.
+- **Streamed rows** shows the number of rows the server sends updates for. The server sends each subscribed group row whole, recalculated whenever one of its stocks moves, so **Streamed rows** equals **Subscribed rows** while no stream is paused.
 - The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route.
 
 {% gridExampleRunner title="View Subscription with Server-Side Pivoting" name="ssrm-pivot-view-subscription" exampleHeight=615 /%}

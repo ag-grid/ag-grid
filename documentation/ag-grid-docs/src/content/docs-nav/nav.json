@@ -1237,7 +1237,8 @@
                         {
                             "type": "item",
                             "title": "View Subscription",
-                            "path": "data-update-view-subscription"
+                            "path": "data-update-view-subscription",
+                            "isEnterprise": true
                         }
                     ]
                 },

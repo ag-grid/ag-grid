@@ -81,6 +81,18 @@ class FakeServer {
                 break;
         }
 
+        if (message.type === 'subscribe' || message.type === 'subscribeRoutes') {
+            // the client's copy can be out of date, so send the current values before streaming changes
+            const rows = [...holdings.values()].filter((holding) =>
+                message.type === 'subscribe'
+                    ? message.ids.includes(holding.id)
+                    : message.routes.some((route) => isUnder(holding, route))
+            );
+            if (rows.length) {
+                this.send({ type: 'update', rows });
+            }
+        }
+
         // only stream while something is subscribed
         const subscribedCount = this.subscribedIds.size + this.subscribedRoutes.size;
         if (subscribedCount && !this.timer) {
