@@ -1,7 +1,7 @@
 export default {
     template: `<span>
         <template v-for="part in parts">
-            <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']">{{ part.value }}</mark>
+            <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']" :aria-current="part.activeMatch ? 'true' : undefined">{{ part.value }}</mark>
             <template v-if="!part.match">{{ part.value }}</template>
         </template>
       </span>`,

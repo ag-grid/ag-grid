@@ -10,9 +10,11 @@ import type { FindPart, ICellRendererParams } from 'ag-grid-community';
         <span>
             @for (part of parts(); track $index) {
                 @if (part.match) {
-                    <mark [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }">{{
-                        part.value
-                    }}</mark>
+                    <mark
+                        [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }"
+                        [attr.aria-current]="part.activeMatch ? 'true' : null"
+                        >{{ part.value }}</mark
+                    >
                 } @else {
                     <ng-container>{{ part.value }}</ng-container>
                 }
