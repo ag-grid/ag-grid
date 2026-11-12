@@ -1821,6 +1821,12 @@
                                             "title": "Transactions",
                                             "path": "server-side-model-updating-transactions",
                                             "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "View Subscription",
+                                            "path": "server-side-model-updating-view-subscription",
+                                            "isEnterprise": true
                                         }
                                     ]
                                 },
