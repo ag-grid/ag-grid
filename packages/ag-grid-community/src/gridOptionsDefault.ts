@@ -77,6 +77,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressBrowserResizeObserver: false,
     suppressChangeDetection: false,
     debug: false,
+    suppressLoadingOverlay: false,
     suppressNoRowsOverlay: false,
     pagination: false,
     paginationPageSize: 100,

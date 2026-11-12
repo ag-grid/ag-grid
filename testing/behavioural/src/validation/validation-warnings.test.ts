@@ -152,12 +152,12 @@ describe('ag-grid validation warnings', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
-                onCalculatedColumnExpressionChanged: () => {},
+                suppressLoadingOverlay: true,
             } as GridOptions);
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #306'),
-                expect.stringContaining('`onCalculatedColumnExpressionChanged` is deprecated'),
+                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
                 expect.any(String)
             );
         });
@@ -166,7 +166,7 @@ describe('ag-grid validation warnings', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
-                onCalculatedColumnExpressionChanged: () => {},
+                suppressLoadingOverlay: true,
             } as GridOptions);
             await new GridColumns(api, `warns only once for same deprecated property setup`).checkColumns(``);
             await new GridRows(api, `warns only once for same deprecated property setup`).check(`
@@ -175,13 +175,13 @@ describe('ag-grid validation warnings', () => {
 
             const deprecationWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes('`onCalculatedColumnExpressionChanged` is deprecated')
+                    args.join(' ').includes('`suppressLoadingOverlay` is deprecated')
                 );
 
             expect(deprecationWarnings()).toHaveLength(1);
 
             // Re-process with same option — should not warn again
-            api.updateGridOptions({ onCalculatedColumnExpressionChanged: () => {} } as GridOptions);
+            api.updateGridOptions({ suppressLoadingOverlay: true } as GridOptions);
 
             expect(deprecationWarnings()).toHaveLength(1);
             await new GridRows(api, `warns only once for same deprecated property final state`).check(`

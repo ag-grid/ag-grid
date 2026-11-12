@@ -1074,6 +1074,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * -     **Prefer using `overlayComponentParams`**
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
+    /** Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

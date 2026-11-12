@@ -36,6 +36,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     overlayComponent: true,
     suppressOverlays: true,
     loadingOverlayComponent: true,
+    suppressLoadingOverlay: true,
     noRowsOverlayComponent: true,
     paginateChildRows: true,
     pivotPanelShow: true,

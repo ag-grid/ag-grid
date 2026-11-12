@@ -5,7 +5,7 @@ import { ExportingOverlayComponent } from './exportingOverlayComponent';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
 import { NoMatchingRowsOverlayComponent } from './noMatchingRowsOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
-import { hideOverlay, showNoRowsOverlay } from './overlayApi';
+import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
 import { OverlayService } from './overlayService';
 
 /**
@@ -22,6 +22,7 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
         agExportingOverlay: ExportingOverlayComponent,
     },
     apiFunctions: {
+        showLoadingOverlay,
         showNoRowsOverlay,
         hideOverlay,
     },

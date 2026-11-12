@@ -67,6 +67,31 @@ describe('ag-grid overlays state', () => {
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
+    describe('deprecation warnings', () => {
+        test('showLoadingOverlay', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            await new GridColumns(api, `showLoadingOverlay setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `showLoadingOverlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            api.showLoadingOverlay();
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+            await new GridRows(api, `showLoadingOverlay final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('suppressLoadingOverlay initial property', () => {
+            gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true });
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+        });
+    });
+
     describe('with loading unset, classic behaviour', () => {
         test('without rows should show the loading overlay', () => {
             gridsManager.createGrid('myGrid', { columnDefs });
@@ -223,11 +248,17 @@ describe('ag-grid overlays state', () => {
             });
         });
 
-        describe('with suppressOverlays loading', () => {
+        describe('with suppressLoadingOverlay', () => {
+            test('should not show loading overlay with initial empty rows', () => {
+                gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true, rowData: [] });
+                expect(hasLoadingOverlay()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
+            });
+
             test('should show no-rows overlay', async () => {
                 const api = gridsManager.createGrid('myGrid', {
                     columnDefs,
-                    suppressOverlays: ['loading'],
+                    suppressLoadingOverlay: true,
                 });
                 await new GridColumns(api, `should show no-rows overlay setup`).checkColumns(`
                     CENTER
@@ -527,6 +558,51 @@ describe('ag-grid overlays state', () => {
             `);
         });
 
+        test('loading=true has higher priority than suppressLoadingOverlay', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true, suppressLoadingOverlay: true });
+            await new GridColumns(api, `loading=true has higher priority than suppressLoadingOverlay setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `loading=true has higher priority than suppressLoadingOverlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            api.showNoRowsOverlay();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            await new GridRows(api, `loading=true has higher priority than suppressLoadingOverlay final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+        });
+
+        test('Calls to api.showLoadingOverlay() will have no effect', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
+            await new GridColumns(api, `Calls to api.showLoadingOverlay() will have no effect setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `Calls to api.showLoadingOverlay() will have no effect setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            api.showLoadingOverlay();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            api.hideOverlay();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            await new GridRows(api, `Calls to api.showLoadingOverlay() will have no effect final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
         test('Calls to api.showNoRowsOverlay() will have no effect', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
             await new GridColumns(api, `Calls to api.showNoRowsOverlay() will have no effect setup`).checkColumns(`
@@ -604,6 +680,25 @@ describe('ag-grid overlays state', () => {
             gridsManager.createGrid('myGrid', { columnDefs, loading: false, rowData: [{}] });
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+
+        test('Calls to api.showLoadingOverlay() will have no effect', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: false });
+            await new GridColumns(api, `Calls to api.showLoadingOverlay() will have no effect setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `Calls to api.showLoadingOverlay() will have no effect setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            api.showLoadingOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            await new GridRows(api, `Calls to api.showLoadingOverlay() will have no effect final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('Calls to api.showNoRowsOverlay() will work normally and the no rows overlay shown', async () => {
@@ -909,6 +1004,73 @@ describe('ag-grid overlays state', () => {
             `);
             expect(hasLoadingOverlay()).toBeFalsy();
         });
+
+        test('suppressLoadingOverlay has less priority', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true, suppressLoadingOverlay: true });
+            await new GridColumns(api, `suppressLoadingOverlay has less priority setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `suppressLoadingOverlay has less priority setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', undefined);
+            await new GridColumns(api, `suppressLoadingOverlay has less priority after setGridOption loading`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `suppressLoadingOverlay has less priority after setGridOption loading`).check(`
+                ROOT id:ROOT_NODE_ID
+            `); // undefined is coerced to false
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            await new GridColumns(api, `suppressLoadingOverlay has less priority after setGridOption loading #2`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `suppressLoadingOverlay has less priority after setGridOption loading #2`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+            setRowDataChecked(api, []);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            setRowDataChecked(api, [{}]);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            await new GridColumns(api, `suppressLoadingOverlay has less priority after setGridOption loading #3`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `suppressLoadingOverlay has less priority after setGridOption loading #3`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `
+            );
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+        });
     });
 
     // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
@@ -1150,6 +1312,50 @@ describe('ag-grid overlays state', () => {
             `); // undefined is coerced to false
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+
+        test('suppressLoadingOverlay has no effect', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: false, suppressLoadingOverlay: true });
+            await new GridColumns(api, `suppressLoadingOverlay has no effect setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `suppressLoadingOverlay has no effect setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            await new GridColumns(api, `suppressLoadingOverlay has no effect after setGridOption loading`).checkColumns(
+                `
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `
+            );
+            await new GridRows(api, `suppressLoadingOverlay has no effect after setGridOption loading`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            await new GridColumns(api, `suppressLoadingOverlay has no effect after setGridOption loading #2`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `suppressLoadingOverlay has no effect after setGridOption loading #2`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
         });
 
         test('suppressNoRowsOverlay has priority', async () => {

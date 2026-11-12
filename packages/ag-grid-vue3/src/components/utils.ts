@@ -907,6 +907,12 @@ export interface Props<TData> {
          * -     **Prefer using `overlayComponentParams`**
          */
     loadingOverlayComponentParams?: any,
+    /** Disables the 'loading' overlay.
+         * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
+         * @default false
+         * @initial
+         */
+    suppressLoadingOverlay?: boolean,
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -2328,6 +2334,7 @@ export function getProps() {
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,
+        suppressLoadingOverlay: undefined,
         overlayNoRowsTemplate: undefined,
         noRowsOverlayComponent: undefined,
         noRowsOverlayComponentParams: undefined,

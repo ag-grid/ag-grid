@@ -222,6 +222,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressMultiSort',
     'alwaysMultiSort',
     'singleClickEdit',
+    'suppressLoadingOverlay',
     'suppressNoRowsOverlay',
     'suppressAutoSize',
     'skipHeaderOnAutoSize',

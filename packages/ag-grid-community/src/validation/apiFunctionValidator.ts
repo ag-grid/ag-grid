@@ -51,6 +51,11 @@ const deprecatedFunctions: {
         message?: string;
     };
 } = {
+    showLoadingOverlay: {
+        version: 'v32',
+        message:
+            '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
+    },
     clearRangeSelection: {
         version: 'v32.2',
         message: 'Use `clearCellSelection` instead.',

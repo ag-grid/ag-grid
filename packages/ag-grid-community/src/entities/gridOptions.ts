@@ -1053,6 +1053,13 @@ export interface GridOptions<TData = any> {
      * - **Prefer using `overlayComponentParams`**
      */
     loadingOverlayComponentParams?: any;
+    /**
+     * Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
+     * @default false
+     * @initial
+     */
+    suppressLoadingOverlay?: boolean;
 
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.

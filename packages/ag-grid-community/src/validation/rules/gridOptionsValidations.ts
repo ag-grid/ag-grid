@@ -21,6 +21,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '36.3',
         message: 'Use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression` instead.',
     },
+    suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
     enableFillHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
     enableRangeHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },

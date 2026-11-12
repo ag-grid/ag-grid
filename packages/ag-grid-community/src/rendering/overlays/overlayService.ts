@@ -51,7 +51,10 @@ const LoadingOverlayDef: OverlayDef = {
     exclusive: true,
     compKey: 'loadingOverlayComponent',
     paramsKey: 'loadingOverlayComponentParams',
-    isSuppressed: (gos: GridOptionsService) => gos.get('loading') === false,
+    isSuppressed: (gos: GridOptionsService) => {
+        const isLoading = gos.get('loading');
+        return isLoading === false || (!!gos.get('suppressLoadingOverlay') && !isLoading);
+    },
 } as const;
 
 const NoRowsOverlayDef: OverlayDef = {
@@ -226,6 +229,22 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
         this.devErrorOverlayActive = active;
         this.updateOverlay(false);
+    }
+
+    public showLoadingOverlay(): void {
+        this.showInitialOverlay = false;
+        const gos = this.gos;
+        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive || _isClientSideLoadingRows(gos)) {
+            return;
+        }
+        if (this.isDisabled(LoadingOverlayDef)) {
+            return;
+        }
+        const loading = gos.get('loading');
+        if (!loading && loading !== undefined) {
+            return;
+        }
+        this.doShowOverlay(LoadingOverlayDef);
     }
 
     public showNoRowsOverlay(): void {
