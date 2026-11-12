@@ -769,6 +769,8 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaRowSelect: 'Натисніть SPACE для вибору цього рядка',
     ariaRowSelectionDisabled: 'Вибір рядка відключено для цього рядка',
     ariaSearch: 'Пошук',
+    ariaFindActiveMatch: 'Збіг ${variable} з ${variable}, ${variable}, рядок ${variable}',
+    ariaFindActiveMatchRow: 'Збіг ${variable} з ${variable}, рядок ${variable}',
     ariaSortPriority: 'Пріоритет сортування ${priority} із ${count}',
     ariaSortableColumn: 'Натисніть ENTER для сортування',
     ariaSortableColumnWithCellSelection: 'Натисніть ALT ENTER для сортування',

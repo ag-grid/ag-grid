@@ -1,14 +1,14 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 
-import type { ToolbarBuiltInItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import type { GridOptions, ToolbarBuiltInItemDef } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 describe('Toolbar find item', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, FindModule, ToolbarModule],
+        modules: [ClientSideRowModelModule, FindModule, PinnedRowModule, ToolbarModule],
     });
 
     afterEach(() => {
@@ -188,6 +188,156 @@ describe('Toolbar find item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    describe('current match announcement', () => {
+        const rowData = [
+            { name: 'Alice', age: 30 },
+            { name: 'Anna', age: 25 },
+            { name: 'Bob', age: 40 },
+        ];
+
+        async function createFindGrid(id: string, options: Partial<GridOptions> = {}) {
+            const api = gridMgr.createGrid(id, {
+                columnDefs: [{ field: 'name' }, { field: 'age' }],
+                rowData,
+                toolbar: { items: ['agFindToolbarItem'] },
+                ...options,
+            });
+            await waitForEvent('firstDataRendered', api);
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+            const announcement = gridDiv.querySelector<HTMLElement>('.ag-aria-description-container')!;
+            const matchCount = gridDiv.querySelector<HTMLLabelElement>('.ag-toolbar-find-match-count')!;
+            return { api, gridDiv, input, announcement, matchCount };
+        }
+
+        function pressEnter(input: HTMLInputElement, shiftKey = false): void {
+            fireEvent.keyDown(input, { key: 'Enter', shiftKey });
+        }
+
+        async function expectAnnouncement(announcement: HTMLElement, text: string): Promise<void> {
+            await waitFor(() => expect(announcement.textContent).toBe(text));
+        }
+
+        function activeMarks(gridDiv: HTMLElement): HTMLElement[] {
+            return Array.from(gridDiv.querySelectorAll<HTMLElement>('mark.ag-find-active-match'));
+        }
+
+        test('announces the match position, column and row as the user navigates', async () => {
+            const { api, gridDiv, input, announcement, matchCount } = await createFindGrid('find-announce-navigate');
+            await new GridRows(api, 'announces the match position setup').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Alice" age:30
+                ├── LEAF id:1 name:"Anna" age:25
+                └── LEAF id:2 name:"Bob" age:40
+            `);
+
+            input.value = 'a';
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Match 1 of 3, Name, row 1');
+            expect(matchCount.textContent).toBe('1/3');
+
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Match 2 of 3, Name, row 2');
+
+            pressEnter(input, true);
+            await expectAnnouncement(announcement, 'Match 1 of 3, Name, row 1');
+
+            gridDiv.querySelectorAll<HTMLButtonElement>('.ag-toolbar-find-button')[1].click();
+            await expectAnnouncement(announcement, 'Match 2 of 3, Name, row 2');
+        });
+
+        test('match count label is not a live region', async () => {
+            const { input, matchCount } = await createFindGrid('find-match-count-not-live');
+
+            input.value = 'a';
+            pressEnter(input);
+
+            await waitFor(() => expect(matchCount.textContent).toBe('1/3'));
+            expect(matchCount.tagName).toBe('LABEL');
+            expect(matchCount.getAttribute('for')).toBe(input.id);
+            expect(matchCount.hasAttribute('aria-live')).toBe(false);
+        });
+
+        test('does not re-announce when findChanged fires without the match moving', async () => {
+            const { api, input, announcement } = await createFindGrid('find-announce-gated', {
+                getRowId: (params) => params.data.name,
+            });
+
+            input.value = 'a';
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Match 1 of 3, Name, row 1');
+
+            announcement.textContent = '';
+            api.applyTransaction({ update: [{ name: 'Bob', age: 41 }] });
+            await asyncSetTimeout(20);
+            expect(announcement.textContent).toBe('');
+
+            api.findNext();
+            await expectAnnouncement(announcement, 'Match 2 of 3, Name, row 2');
+        });
+
+        test('re-announces a single match when navigation wraps onto it', async () => {
+            const { input, announcement } = await createFindGrid('find-announce-single');
+
+            input.value = 'bob';
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Match 1 of 1, Name, row 3');
+
+            announcement.textContent = '';
+            pressEnter(input);
+            await waitFor(() => expect(announcement.textContent).toContain('Match 1 of 1, Name, row 3'));
+        });
+
+        test('does not announce an initial findSearchValue on load', async () => {
+            const { announcement, matchCount } = await createFindGrid('find-announce-initial', {
+                findSearchValue: 'a',
+            });
+
+            await waitFor(() => expect(matchCount.textContent).toBe('0/3'));
+            await asyncSetTimeout(20);
+            expect(announcement.textContent).toBe('');
+        });
+
+        test('announces the match count while the user types', async () => {
+            const { input, announcement } = await createFindGrid('find-announce-typing');
+
+            input.focus();
+            input.value = 'a';
+            input.dispatchEvent(new Event('input'));
+
+            await expectAnnouncement(announcement, '0/3');
+        });
+
+        test('row number counts pinned top rows', async () => {
+            const { input, announcement } = await createFindGrid('find-announce-pinned', {
+                pinnedTopRowData: [{ name: 'Zed', age: 1 }],
+            });
+
+            input.value = 'bob';
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Match 1 of 1, Name, row 4');
+        });
+
+        test('marks only the active match with aria-current', async () => {
+            const { api, gridDiv } = await createFindGrid('find-aria-current', { findSearchValue: 'a' });
+
+            api.findNext();
+            await waitFor(() => expect(activeMarks(gridDiv)).toHaveLength(1));
+            const first = activeMarks(gridDiv)[0];
+            expect(first.getAttribute('aria-current')).toBe('true');
+            const others = Array.from(gridDiv.querySelectorAll('mark.ag-find-match:not(.ag-find-active-match)'));
+            expect(others.length).toBeGreaterThan(0);
+            for (const mark of others) {
+                expect(mark.hasAttribute('aria-current')).toBe(false);
+            }
+
+            api.findNext();
+            await waitFor(() => expect(activeMarks(gridDiv)[0]).not.toBe(first));
+            expect(activeMarks(gridDiv)[0].getAttribute('aria-current')).toBe('true');
+            expect(gridDiv.querySelectorAll('mark[aria-current]')).toHaveLength(1);
+        });
     });
 
     describe('missing FindModule', () => {

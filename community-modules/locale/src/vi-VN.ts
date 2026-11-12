@@ -767,6 +767,8 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaRowSelect: 'Nhấn SPACE để chọn hàng này',
     ariaRowSelectionDisabled: 'Chọn hàng bị vô hiệu hoá cho hàng này',
     ariaSearch: 'Tìm kiếm',
+    ariaFindActiveMatch: 'Kết quả khớp ${variable}/${variable}, ${variable}, hàng ${variable}',
+    ariaFindActiveMatchRow: 'Kết quả khớp ${variable}/${variable}, hàng ${variable}',
     ariaSortPriority: 'Mức ưu tiên sắp xếp ${priority} trên ${count}',
     ariaSortableColumn: 'Nhấn ENTER để sắp xếp',
     ariaSortableColumnWithCellSelection: 'Nhấn ALT ENTER để sắp xếp',

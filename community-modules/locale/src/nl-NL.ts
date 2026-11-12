@@ -769,6 +769,8 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',
     ariaRowSelectionDisabled: 'Rijselectie is uitgeschakeld voor deze rij',
     ariaSearch: 'Zoeken',
+    ariaFindActiveMatch: 'Overeenkomst ${variable} van ${variable}, ${variable}, rij ${variable}',
+    ariaFindActiveMatchRow: 'Overeenkomst ${variable} van ${variable}, rij ${variable}',
     ariaSortPriority: 'Sorteerprioriteit ${priority} van ${count}',
     ariaSortableColumn: 'Druk op ENTER om te sorteren',
     ariaSortableColumnWithCellSelection: 'Druk op ALT ENTER om te sorteren',

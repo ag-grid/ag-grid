@@ -774,6 +774,8 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',
     ariaRowSelectionDisabled: 'A sor kiválasztása le van tiltva ehhez a sorhoz',
     ariaSearch: 'Keresés',
+    ariaFindActiveMatch: 'Találat: ${variable}/${variable}, ${variable}, ${variable}. sor',
+    ariaFindActiveMatchRow: 'Találat: ${variable}/${variable}, ${variable}. sor',
     ariaSortPriority: 'Rendezési prioritás: ${priority}, összesen ${count}',
     ariaSortableColumn: 'Nyomja meg az ENTER billentyűt a rendezéshez',
     ariaSortableColumnWithCellSelection: 'Nyomja meg az ALT ENTER billentyűt a rendezéshez',
