@@ -771,6 +771,8 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaRowSelect: 'Paina VÄLILYÖNTI valitaksesi tämän rivin',
     ariaRowSelectionDisabled: 'Rivin valinta on poistettu käytöstä tälle riville',
     ariaSearch: 'Haku',
+    ariaFindActiveMatch: 'Osuma ${variable}/${variable}, ${variable}, rivi ${variable}',
+    ariaFindActiveMatchRow: 'Osuma ${variable}/${variable}, rivi ${variable}',
     ariaSortPriority: 'Lajittelun prioriteetti ${priority}, yhteensä ${count}',
     ariaSortableColumn: 'Paina ENTER lajitellaksesi',
     ariaSortableColumnWithCellSelection: 'Paina ALT ENTER lajitellaksesi',

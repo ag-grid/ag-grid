@@ -782,6 +782,8 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaRowSelect: 'এই রো নির্বাচন করতে SPACE চাপুন',
     ariaRowSelectionDisabled: 'এই রোয়ের জন্য রো নির্বাচন নিষ্ক্রিয়',
     ariaSearch: 'সার্চ',
+    ariaFindActiveMatch: 'মিল ${variable} / ${variable}, ${variable}, সারি ${variable}',
+    ariaFindActiveMatchRow: 'মিল ${variable} / ${variable}, সারি ${variable}',
     ariaSortPriority: 'সাজানোর অগ্রাধিকার ${count}টির মধ্যে ${priority}',
     ariaSortableColumn: 'সর্ট করতে ENTER চাপুন',
     ariaSortableColumnWithCellSelection: 'সর্ট করতে ALT ENTER চাপুন',

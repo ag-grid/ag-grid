@@ -78,7 +78,7 @@ When providing a custom cell component, the component is responsible for highlig
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetNumMatches", "findGetParts"] /%}
 
-The following example demonstrates a custom cell component in the `Year` column that implements match highlighting using the methods above. The find input is provided by the toolbar. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
+The following example demonstrates a custom cell component in the `Year` column that implements match highlighting using the methods above. The find input is provided by the toolbar. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component. To match the default grid cell component for assistive technologies, also set `aria-current="true"` on the element wrapping the active match.
 
 {% gridExampleRunner title="Find with Cell Components" name="find-cell-components" /%}
 
@@ -182,3 +182,11 @@ When using [Row Pagination](./row-pagination/), searching will be performed acro
 See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.
 
 If data is mutated outside of the grid (e.g. not via grid options or API methods), Find will not re-run automatically. This would apply to situations where `api.refreshCells()` or `api.redrawRows()` are being used. To get Find to update, `api.findRefresh()` should be called after either of these API methods.
+
+## Accessibility
+
+The active match is shown with a bar along its bottom edge as well as a different colour, so it can be told apart from other matches without relying on colour. The default grid cell component also sets `aria-current="true"` on the active match.
+
+When the Find input in the [Quick Access Toolbar](./toolbar/) is used, the grid announces the position of the active match to screen readers each time it changes, for example "Match 1 of 20, Athlete, row 1".
+
+When providing your own Find input and navigating with the grid API (e.g. `findNext`), the grid does not make this announcement; your application is responsible for announcing the active match. Use `findGetActiveMatch` or the `findChanged` event to get the active match's row node and column.

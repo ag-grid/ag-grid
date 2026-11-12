@@ -771,6 +771,8 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',
     ariaRowSelectionDisabled: 'Selecția rândului este dezactivată pentru acest rând',
     ariaSearch: 'Căutare',
+    ariaFindActiveMatch: 'Potrivirea ${variable} din ${variable}, ${variable}, rândul ${variable}',
+    ariaFindActiveMatchRow: 'Potrivirea ${variable} din ${variable}, rândul ${variable}',
     ariaSortPriority: 'Prioritate de sortare ${priority} din ${count}',
     ariaSortableColumn: 'Apăsați ENTER pentru a sorta',
     ariaSortableColumnWithCellSelection: 'Apăsați ALT ENTER pentru a sorta',

@@ -771,6 +771,8 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaRowSelect: 'Press SPACE to select this row',
     ariaRowSelectionDisabled: 'Row Selection is disabled for this row',
     ariaSearch: 'Search',
+    ariaFindActiveMatch: 'Match ${variable} of ${variable}, ${variable}, row ${variable}',
+    ariaFindActiveMatchRow: 'Match ${variable} of ${variable}, row ${variable}',
     ariaSortPriority: 'Sort priority ${priority} of ${count}',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaSortableColumnWithCellSelection: 'Press ALT ENTER to sort',

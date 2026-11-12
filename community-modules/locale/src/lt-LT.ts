@@ -786,6 +786,8 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaRowSelect: 'Spauskite SPACE, kad pažymėtumėte šią eilutę',
     ariaRowSelectionDisabled: 'Eilutės pasirinkimas šioje eilutėje išjungtas',
     ariaSearch: 'Paieška',
+    ariaFindActiveMatch: 'Atitikmuo ${variable} iš ${variable}, ${variable}, eilutė ${variable}',
+    ariaFindActiveMatchRow: 'Atitikmuo ${variable} iš ${variable}, eilutė ${variable}',
     ariaSortPriority: 'Rikiavimo prioritetas ${priority} iš ${count}',
     ariaSortableColumn: 'Spauskite ENTER, kad rikiuotumėte',
     ariaSortableColumnWithCellSelection: 'Spauskite ALT ENTER, kad rikiuotumėte',

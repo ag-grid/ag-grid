@@ -12,4 +12,11 @@
 .ag-find-active-match {
     color: var(--ag-find-active-match-color);
     background-color: var(--ag-find-active-match-background-color);
+    box-shadow: inset 0 -2px 0 currentcolor;
+}
+
+@media (forced-colors: active) {
+    .ag-find-active-match {
+        text-decoration: underline 2px;
+    }
 }
