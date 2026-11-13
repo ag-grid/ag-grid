@@ -114,7 +114,13 @@ export default defineConfig({
     projects: [
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: {
+                ...devices['Desktop Chrome'],
+                // Locally, run the installed Chrome with its sandbox on: Playwright's bundled Chromium lags behind
+                // Chrome's security fixes and launches without the sandbox by default. CI keeps the bundled browser.
+                ...(process.env.CI ? {} : { channel: 'chrome' }),
+                launchOptions: { chromiumSandbox: !process.env.CI },
+            },
             testIgnore: BROWSER_IGNORED_TESTS,
         },
         {
@@ -133,6 +139,10 @@ export default defineConfig({
             name: 'page-verification',
             use: {
                 ...devices['Desktop Chrome'],
+                // Locally, run the installed Chrome with its sandbox on: Playwright's bundled Chromium lags behind
+                // Chrome's security fixes and launches without the sandbox by default. CI keeps the bundled browser.
+                ...(process.env.CI ? {} : { channel: 'chrome' }),
+                launchOptions: { chromiumSandbox: !process.env.CI },
                 // Well under the test timeout, so a navigation that really is stuck fails saying
                 // which URL never committed, instead of spending the whole test budget and
                 // reporting only "Test timeout of 60000ms exceeded". The spec navigates on
