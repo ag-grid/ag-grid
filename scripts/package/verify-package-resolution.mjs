@@ -1,4 +1,4 @@
-// Type-checks an extracted package as installed, under each module resolution with `skipLibCheck` off.
+// Type-checks an extracted package as installed, under node16 and bundler resolution with `skipLibCheck` off.
 // Usage: verify-package-resolution.mjs [--dom-free <subpath>...] -- <extracted package dir>
 import fs from 'node:fs';
 import os from 'node:os';
@@ -8,7 +8,6 @@ import ts from 'typescript';
 const DOM_LIB = ['lib.es2023.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts'];
 const DOM_FREE_LIB = ['lib.es2022.d.ts', 'lib.webworker.d.ts'];
 const RESOLUTIONS = [
-    { label: 'node10', moduleResolution: ts.ModuleResolutionKind.Node10, module: ts.ModuleKind.CommonJS },
     { label: 'node16', moduleResolution: ts.ModuleResolutionKind.Node16, module: ts.ModuleKind.Node16 },
     { label: 'bundler', moduleResolution: ts.ModuleResolutionKind.Bundler, module: ts.ModuleKind.ESNext },
 ];
@@ -30,7 +29,7 @@ for (const subpath of domFreeSubpaths) {
     }
 }
 
-const errors = subpaths.filter((subpath) => subpath !== '').flatMap(checkStub);
+const errors = [];
 
 const consumerDir = fs.mkdtempSync(path.join(os.tmpdir(), 'verify-package-resolution-'));
 try {
@@ -64,21 +63,6 @@ function parseArgs(args) {
         fail('usage: verify-package-resolution.mjs [--dom-free <subpath>...] -- <extracted package dir>');
     }
     return { packageDir: dir, domFreeSubpaths: options.slice(1) };
-}
-
-function checkStub(subpath) {
-    const stubPath = path.join(packageDir, subpath, 'package.json');
-    if (!fs.existsSync(stubPath)) {
-        return [`[${name}/${subpath}] missing ${subpath}/package.json for node10 resolution`];
-    }
-    const stub = JSON.parse(fs.readFileSync(stubPath, 'utf8'));
-    return ['types', 'main', 'module'].flatMap((field) => {
-        if (typeof stub[field] !== 'string') {
-            return [`[${name}/${subpath}] ${subpath}/package.json has no "${field}"`];
-        }
-        const target = path.join(packageDir, subpath, stub[field]);
-        return fs.existsSync(target) ? [] : [`[${name}/${subpath}] "${field}" points at missing ${stub[field]}`];
-    });
 }
 
 function typeCheck(dir, { label, moduleResolution, module }, specifiers, lib) {

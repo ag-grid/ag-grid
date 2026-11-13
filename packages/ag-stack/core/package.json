@@ -1,5 +1,0 @@
-{
-  "types": "../dist/types/src/main-core.d.ts",
-  "main": "../dist/core/main-core.cjs.js",
-  "module": "../dist/core/main-core.esm.mjs"
-}
