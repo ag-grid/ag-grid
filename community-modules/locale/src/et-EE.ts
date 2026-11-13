@@ -869,6 +869,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Veergude loend',
     ariaFilterPanelList: 'Filtrite loend',
+    ariaFilterPanelExpandAll: 'Laienda kõik filtrirühmad',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filtrivälja lisamine',

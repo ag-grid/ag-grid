@@ -846,6 +846,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonneliste',
     ariaFilterPanelList: 'Filterliste',
+    ariaFilterPanelExpandAll: 'Utvid Alle Filtergrupper',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Legg til filterfelt',

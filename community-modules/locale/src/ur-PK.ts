@@ -845,6 +845,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'کالم کی فہرست',
     ariaFilterPanelList: 'فلٹر کی فہرست',
+    ariaFilterPanelExpandAll: 'تمام فلٹر گروپس کو پھیلائیں',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',

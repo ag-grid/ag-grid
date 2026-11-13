@@ -850,6 +850,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista kolumn',
     ariaFilterPanelList: 'Lista filtrów',
+    ariaFilterPanelExpandAll: 'Rozwiń Wszystkie Grupy Filtrów',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj pole filtru',

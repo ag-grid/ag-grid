@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'فهرست ستون‌ها',
     ariaFilterPanelList: 'فهرست فیلترها',
+    ariaFilterPanelExpandAll: 'باز کردن همه گروه‌های فیلتر',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',

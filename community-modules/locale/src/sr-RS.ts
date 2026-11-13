@@ -869,6 +869,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Листа колона',
     ariaFilterPanelList: 'Листа филтера',
+    ariaFilterPanelExpandAll: 'Прошири све групе филтера',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Додај поље филтера',

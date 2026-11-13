@@ -59,6 +59,10 @@
 .ag-filter-toolpanel-expand {
     margin-right: var(--ag-spacing);
     cursor: pointer;
+
+    &:focus-visible {
+        box-shadow: var(--ag-focus-shadow);
+    }
 }
 
 .ag-filter-toolpanel-group-title-bar,
