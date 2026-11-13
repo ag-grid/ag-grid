@@ -415,9 +415,7 @@ export class StateService extends BeanStub implements NamedBean {
         // reset sidebar as it could have updated when columns changed
         updateCachedState('sideBar', this.getSideBarState());
         updateCachedState('focusedCell', this.getFocusedCellState());
-        const cellSelection = this.getRangeSelectionState();
-        updateCachedState('rangeSelection', cellSelection);
-        updateCachedState('cellSelection', cellSelection);
+        updateCachedState('cellSelection', this.getCellSelectionState());
         updateCachedState('scroll', this.getScrollState());
         updateCachedState('find', this.getFindState());
     }
@@ -432,9 +430,7 @@ export class StateService extends BeanStub implements NamedBean {
             cellFocusCleared: updateFocusState,
             cellSelectionChanged: (event) => {
                 if (event.finished) {
-                    const cellSelection = this.getRangeSelectionState();
-                    updateCachedState('rangeSelection', cellSelection);
-                    updateCachedState('cellSelection', cellSelection);
+                    updateCachedState('cellSelection', this.getCellSelectionState());
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
@@ -790,7 +786,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.setFilterState(state, source);
     }
 
-    private getRangeSelectionState(): CellSelectionState | undefined {
+    private getCellSelectionState(): CellSelectionState | undefined {
         const cellRanges = this.beans.rangeSvc?.getCellRanges().map((cellRange) => {
             const { id, type, startRow, endRow, columns, startColumn } = cellRange;
             return {

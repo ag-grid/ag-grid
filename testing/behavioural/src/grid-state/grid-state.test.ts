@@ -1686,6 +1686,78 @@ describe('StateService - Grid State Management', () => {
             `);
         });
 
+        test('should restore a legacy rangeSelection from initialState without returning it from getState', async () => {
+            const legacyState = {
+                rangeSelection: {
+                    cellRanges: [
+                        {
+                            startRow: { rowIndex: 0, rowPinned: null },
+                            endRow: { rowIndex: 1, rowPinned: null },
+                            colIds: ['name'],
+                            startColId: 'name',
+                        },
+                    ],
+                },
+            } as GridState;
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                cellSelection: true,
+                initialState: legacyState,
+            });
+
+            await waitFor(() =>
+                expect(api.getCellRanges()?.map((range) => range.columns.map((col) => col.getColId()))).toEqual([
+                    ['name'],
+                ])
+            );
+            expect(api.getState().cellSelection?.cellRanges[0]).toMatchObject({
+                startRow: { rowIndex: 0 },
+                endRow: { rowIndex: 1 },
+                colIds: ['name'],
+            });
+            expect('rangeSelection' in api.getState()).toBe(false);
+        });
+
+        test('should prefer cellSelection over a legacy rangeSelection in setState and not return the latter', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                cellSelection: true,
+            });
+
+            api.setState({
+                version: '36.0.0',
+                cellSelection: {
+                    cellRanges: [
+                        {
+                            startRow: { rowIndex: 2, rowPinned: null },
+                            endRow: { rowIndex: 3, rowPinned: null },
+                            colIds: ['age'],
+                            startColId: 'age',
+                        },
+                    ],
+                },
+                rangeSelection: {
+                    cellRanges: [
+                        {
+                            startRow: { rowIndex: 0, rowPinned: null },
+                            endRow: { rowIndex: 1, rowPinned: null },
+                            colIds: ['name'],
+                            startColId: 'name',
+                        },
+                    ],
+                },
+            } as GridState);
+
+            await waitFor(() =>
+                expect(api.getCellRanges()?.map((range) => range.columns.map((col) => col.getColId()))).toEqual([
+                    ['age'],
+                ])
+            );
+            expect('rangeSelection' in api.getState()).toBe(false);
+        });
+
         test('should capture scroll state', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,

@@ -90,7 +90,6 @@ describe('Grid State Full Snapshot', () => {
                     pageSize: 100,
                 },
                 pivot: undefined,
-                rangeSelection: undefined,
                 rowGroup: undefined,
                 rowGroupExpansion: {
                     collapsedRowGroupIds: [],

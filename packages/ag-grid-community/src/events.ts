@@ -53,7 +53,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDataUpdated: RowDataUpdatedEvent<TData, TContext>;
         pinnedRowDataChanged: PinnedRowDataChangedEvent<TData, TContext>;
         pinnedRowsChanged: PinnedRowsChangedEvent<TData, TContext>;
-        rangeSelectionChanged: RangeSelectionChangedEvent<TData, TContext>;
         cellSelectionChanged: CellSelectionChangedEvent<TData, TContext>;
         chartCreated: ChartCreatedEvent<TData, TContext>;
         chartRangeSelectionChanged: ChartRangeSelectionChangedEvent<TData, TContext>;
@@ -75,8 +74,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         fillEnd: FillEndEvent<TData, TContext>;
         cellSelectionDeleteStart: CellSelectionDeleteStartEvent<TData, TContext>;
         cellSelectionDeleteEnd: CellSelectionDeleteEndEvent<TData, TContext>;
-        rangeDeleteStart: RangeDeleteStartEvent<TData, TContext>;
-        rangeDeleteEnd: RangeDeleteEndEvent<TData, TContext>;
         undoStarted: UndoStartedEvent<TData, TContext>;
         undoEnded: UndoEndedEvent<TData, TContext>;
         redoStarted: RedoStartedEvent<TData, TContext>;
@@ -819,22 +816,6 @@ export interface CellSelectionDeleteEndEvent<TData = any, TContext = any> extend
     source: 'deleteKey';
 }
 
-export interface RangeDeleteStartEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rangeDeleteStart',
-    TData,
-    TContext
-> {
-    source: 'deleteKey';
-}
-
-export interface RangeDeleteEndEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rangeDeleteEnd',
-    TData,
-    TContext
-> {
-    source: 'deleteKey';
-}
-
 export interface UndoStartedEvent<TData = any, TContext = any> extends AgGlobalEvent<'undoStarted', TData, TContext> {
     /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
     source: 'api' | 'ui';
@@ -879,18 +860,6 @@ export interface FirstDataRenderedEvent<TData = any, TContext = any> extends AgG
     firstRow: number;
     /** Index of the last rendered row */
     lastRow: number;
-}
-
-export interface RangeSelectionChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
-    'rangeSelectionChanged',
-    TData,
-    TContext
-> {
-    id?: string;
-    /** True for the first change event, otherwise false */
-    started: boolean;
-    /** True for the last change event, otherwise false */
-    finished: boolean;
 }
 
 export interface CellSelectionChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<

@@ -53,16 +53,8 @@ export interface CellSelectionCellState {
     startColId: string;
 }
 
-/** @deprecated v32.2 Use `CellSelectionCellState` instead. */
-export interface RangeSelectionCellState extends CellSelectionCellState {}
-
 export interface CellSelectionState {
     cellRanges: CellSelectionCellState[];
-}
-
-/** @deprecated v32.2 Use `CellSelectionState` instead. */
-export interface RangeSelectionState {
-    cellRanges: RangeSelectionCellState[];
 }
 
 export interface ScrollState {
@@ -286,11 +278,6 @@ export interface GridState {
     pivot?: PivotState;
     /** Currently selected cell ranges */
     cellSelection?: CellSelectionState;
-    /**
-     * Includes currently selected cell ranges
-     * @deprecated v32.2 Use `cellSelection` instead.
-     */
-    rangeSelection?: RangeSelectionState;
     /** Current Row Group Columns (column state) */
     rowGroup?: RowGroupState;
     /** Currently expanded group rows */
@@ -328,4 +315,4 @@ export interface GridState {
     partialColumnState?: boolean;
 }
 
-export type GridStateKey = Exclude<keyof GridState, 'version' | 'partialColumnState' | 'rangeSelection'>;
+export type GridStateKey = Exclude<keyof GridState, 'version' | 'partialColumnState'>;

@@ -89,9 +89,6 @@ import type {
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
-    RangeDeleteEndEvent,
-    RangeDeleteStartEvent,
-    RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
     RowClickedEvent,
@@ -141,7 +138,6 @@ import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColumns';
 import type {
     DoesExternalFilterPass,
-    FillOperation,
     FocusGridInnerElement,
     FullRowEditValidationParams,
     GetBusinessKeyForNode,
@@ -1967,49 +1963,12 @@ export interface GridOptions<TData = any> {
     rowNumbers?: boolean | RowNumbersOptions;
 
     /**
-     * If `true`, only a single range can be selected.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
-     */
-    suppressMultiRangeSelection?: boolean;
-    /**
      * Set to `true` to be able to select the text within cells.
      *
      * **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
      * @default false
      */
     enableCellTextSelection?: boolean;
-    /**
-     * Set to `true` to enable Range Selection.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection = true` instead
-     * @agModule `CellSelectionModule`
-     */
-    enableRangeSelection?: boolean;
-    /**
-     * Set to `true` to enable the Range Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.handle` instead
-     */
-    enableRangeHandle?: boolean;
-    /**
-     * Set to `true` to enable the Fill Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.handle` instead
-     */
-    enableFillHandle?: boolean;
-    /**
-     * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
-     * @default 'xy'
-     * @deprecated v32.2 Use `cellSelection.handle.direction` instead
-     */
-    fillHandleDirection?: 'x' | 'y' | 'xy';
-    /**
-     * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
-     */
-    suppressClearOnFillReduction?: boolean;
 
     // *** Sorting *** //
     /**
@@ -2495,11 +2454,6 @@ export interface GridOptions<TData = any> {
      * @agModule `MasterDetailModule`
      */
     isRowMaster?: IsRowMaster<TData>;
-    /**
-     * Callback to fill values instead of simply copying values or increasing number values using linear progression.
-     * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
-     */
-    fillOperation?: FillOperation<TData>;
 
     // *** Sorting *** //
     /**
@@ -2770,18 +2724,6 @@ export interface GridOptions<TData = any> {
      * Cell selection delete operation (cell clear) has ended.
      */
     onCellSelectionDeleteEnd?(event: CellSelectionDeleteEndEvent<TData>): void;
-    /**
-     * Range delete operation (cell clear) has started.
-     *
-     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
-     */
-    onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
-    /**
-     * Range delete operation (cell clear) has ended.
-     *
-     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
-     */
-    onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 
     /**
      * Fill operation has started.
@@ -3056,12 +2998,6 @@ export interface GridOptions<TData = any> {
      * Cell is right clicked.
      */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
-    /**
-     * A change to range selection has occurred.
-     *
-     * @deprecated v32.2 Use `onCellSelectionChanged` instead
-     */
-    onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
     /**
      * A change to cell selection has occurred.
      */

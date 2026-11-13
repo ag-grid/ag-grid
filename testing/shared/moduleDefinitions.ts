@@ -78,7 +78,6 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     MultiFilterModule: true,
     NewFiltersToolPanelModule: true,
     PivotModule: true,
-    RangeSelectionModule: true,
     RichSelectModule: true,
     RowNumbersModule: true,
     NotesModule: true,

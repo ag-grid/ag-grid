@@ -82,7 +82,7 @@ export class RowNumbersService
             },
             cellFocused: this.onGridCellFocused.bind(this),
             modelUpdated: (params) => onRowsChanged_debounced(!params.keepRenderedRows),
-            rangeSelectionChanged: () => this.refreshCells(true),
+            cellSelectionChanged: () => this.refreshCells(true),
             pinnedRowsChanged: () => onRowsChanged_debounced(true),
         });
 

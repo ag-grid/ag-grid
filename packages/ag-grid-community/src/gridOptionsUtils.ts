@@ -459,45 +459,20 @@ export function _getHideDisabledCheckboxes(selection: RowSelectionOptions): bool
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isUsingNewCellSelectionAPI(gos: GridOptionsService): boolean {
-    return gos.get('cellSelection') !== undefined;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
-    const useNewAPI = selection !== undefined;
-
-    if (!useNewAPI) {
-        return gos.get('suppressMultiRangeSelection');
-    }
-
-    return typeof selection !== 'boolean' ? (selection?.suppressMultiRanges ?? false) : false;
+    return typeof selection === 'object' && !!selection?.suppressMultiRanges;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
-    const selection = gos.get('cellSelection');
-    const useNewAPI = selection !== undefined;
-
-    return useNewAPI ? !!selection : gos.get('enableRangeSelection');
+    return !!gos.get('cellSelection');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
     const selection = gos.get('cellSelection');
-    const useNewAPI = selection !== undefined;
-
-    if (!useNewAPI) {
-        return {
-            mode: 'fill',
-            setFillValue: gos.get('fillOperation'),
-            direction: gos.get('fillHandleDirection'),
-            suppressClearOnFillReduction: gos.get('suppressClearOnFillReduction'),
-        };
-    }
-
-    return typeof selection !== 'boolean' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
+    return typeof selection === 'object' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -1,0 +1,21 @@
+{
+    "version": "36.0.0",
+    "cellSelection": {
+        "cellRanges": []
+    },
+    "rangeSelection": {
+        "cellRanges": [
+            {
+                "id": "legacy-range",
+                "type": "VALUE",
+                "startRow": { "rowIndex": 0, "rowPinned": null },
+                "endRow": { "rowIndex": 1, "rowPinned": null },
+                "colIds": ["a"],
+                "startColId": "a"
+            }
+        ]
+    },
+    "sort": {
+        "sortModel": []
+    }
+}

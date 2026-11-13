@@ -24,7 +24,6 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
-    GridOptionsService,
     ICellRangeFeature,
     IHeaderCellComp,
     IRangeService,
@@ -55,7 +54,6 @@ import {
     _isCellSelectionEnabled,
     _isRowBefore,
     _isSameRow,
-    _isUsingNewCellSelectionAPI,
 } from 'ag-grid-community';
 
 import type { AgFillHandle } from './agFillHandle';
@@ -862,7 +860,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
-        if (!this.verifyCellRanges(this.gos)) {
+        if (!this.verifyCellRanges()) {
             return;
         }
 
@@ -920,10 +918,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                 type: 'cellSelectionDeleteStart',
                 source: wrapperEventSource,
             });
-            eventSvc.dispatchEvent({
-                type: 'rangeDeleteStart',
-                source: wrapperEventSource,
-            });
         }
 
         cellRanges ??= this.cellRanges;
@@ -951,10 +945,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({
                 type: 'cellSelectionDeleteEnd',
-                source: wrapperEventSource,
-            });
-            eventSvc.dispatchEvent({
-                type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
             });
         }
@@ -1004,7 +994,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public addCellRange(params: CellRangeParams): CellRange | undefined {
         const gos = this.gos;
-        if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges(gos)) {
+        if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges()) {
             return;
         }
 
@@ -1352,9 +1342,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             : undefined;
     }
 
-    private verifyCellRanges(gos: GridOptionsService): boolean {
+    private verifyCellRanges(): boolean {
         const { suppressMultiRanges } = this.getMultiRangeContext();
-        const invalid = _isUsingNewCellSelectionAPI(gos) && suppressMultiRanges && this.cellRanges.length > 1;
+        const invalid = suppressMultiRanges && this.cellRanges.length > 1;
         if (invalid) {
             this.warn(93);
         }
@@ -1438,12 +1428,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         this.eventSvc.dispatchEvent({
             type: 'cellSelectionChanged',
-            started,
-            finished,
-            id,
-        });
-        this.eventSvc.dispatchEvent({
-            type: 'rangeSelectionChanged',
             started,
             finished,
             id,
