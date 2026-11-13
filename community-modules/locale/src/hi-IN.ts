@@ -759,6 +759,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaFilterFromValue: 'से मान फ़िल्टर करें',
     ariaFilterFromValueForColumn: '${variable} को मान से फ़िल्टर करें',
     ariaFilterInput: 'फ़िल्टर इनपुट',
+    ariaFilterInputForColumn: '${variable} का फ़िल्टर इनपुट',
     ariaLabelInputClear: 'साफ़ करें',
     ariaFilterList: 'फ़िल्टर सूची',
     ariaFilterToValue: 'तक मान फ़िल्टर करें',

@@ -747,6 +747,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaFilterFromValue: 'Szűrés értéktől',
     ariaFilterFromValueForColumn: '${variable} oszlop szűrése értéktől',
     ariaFilterInput: 'Szűrő bevitel',
+    ariaFilterInputForColumn: '${variable} oszlop szűrőbevitele',
     ariaLabelInputClear: 'Törlés',
     ariaFilterList: 'Szűrő lista',
     ariaFilterToValue: 'Szűrés értékig',

@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaFilterFromValue: 'Filtrovat od hodnoty',
     ariaFilterFromValueForColumn: 'Filtrovat sloupec ${variable} od hodnoty',
     ariaFilterInput: 'Vstup filtru',
+    ariaFilterInputForColumn: 'Vstup filtru sloupce ${variable}',
     ariaLabelInputClear: 'Vymazat',
     ariaFilterList: 'Seznam filtrů',
     ariaFilterToValue: 'Filtrovat do hodnoty',

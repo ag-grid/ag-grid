@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaFilterFromValue: 'Filter od vrednosti',
     ariaFilterFromValueForColumn: 'Filter stolpca ${variable} od vrednosti',
     ariaFilterInput: 'Vnos filtra',
+    ariaFilterInputForColumn: 'Vnos filtra stolpca ${variable}',
     ariaLabelInputClear: 'Počisti',
     ariaFilterList: 'Seznam filtrov',
     ariaFilterToValue: 'Filter do vrednosti',

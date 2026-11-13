@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaFilterFromValue: '値からフィルター',
     ariaFilterFromValueForColumn: '${variable}を値からフィルター',
     ariaFilterInput: 'フィルター入力',
+    ariaFilterInputForColumn: '${variable}のフィルター入力',
     ariaLabelInputClear: 'クリア',
     ariaFilterList: 'フィルターリスト',
     ariaFilterToValue: '値までフィルター',

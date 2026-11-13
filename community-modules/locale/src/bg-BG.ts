@@ -745,6 +745,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaFilterFromValue: 'Филтър от стойност',
     ariaFilterFromValueForColumn: 'Филтър на колона ${variable} от стойност',
     ariaFilterInput: 'Вход за филтър',
+    ariaFilterInputForColumn: 'Вход за филтър на колона ${variable}',
     ariaLabelInputClear: 'Изчисти',
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',

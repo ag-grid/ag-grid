@@ -759,6 +759,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaFilterFromValue: 'Filtrēt no vērtības',
     ariaFilterFromValueForColumn: 'Filtrēt kolonnu ${variable} no vērtības',
     ariaFilterInput: 'Filtra ievade',
+    ariaFilterInputForColumn: 'Kolonnas ${variable} filtra ievade',
     ariaLabelInputClear: 'Notīrīt',
     ariaFilterList: 'Filtru saraksts',
     ariaFilterToValue: 'Filtrēt līdz vērtībai',

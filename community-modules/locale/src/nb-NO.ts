@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaFilterFromValue: 'Filtrer fra verdi',
     ariaFilterFromValueForColumn: 'Filtrer ${variable} fra verdi',
     ariaFilterInput: 'Filterinndata',
+    ariaFilterInputForColumn: 'Filterinndata for ${variable}',
     ariaLabelInputClear: 'Tøm',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',

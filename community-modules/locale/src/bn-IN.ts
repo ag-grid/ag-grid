@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaFilterFromValue: 'মান থেকে ফিল্টার করুন',
     ariaFilterFromValueForColumn: 'মান থেকে ${variable} ফিল্টার করুন',
     ariaFilterInput: 'ফিল্টার ইনপুট',
+    ariaFilterInputForColumn: '${variable} এর ফিল্টার ইনপুট',
     ariaLabelInputClear: 'পরিষ্কার করুন',
     ariaFilterList: 'ফিল্টার তালিকা',
     ariaFilterToValue: 'মান পর্যন্ত ফিল্টার করুন',

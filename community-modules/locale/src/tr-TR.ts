@@ -745,6 +745,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaFilterFromValue: 'Değerden filtrele',
     ariaFilterFromValueForColumn: '${variable} sütununu değerden filtrele',
     ariaFilterInput: 'Filtre Girişi',
+    ariaFilterInputForColumn: '${variable} sütunu filtre girişi',
     ariaLabelInputClear: 'Temizle',
     ariaFilterList: 'Filtre Listesi',
     ariaFilterToValue: 'Değere filtrele',

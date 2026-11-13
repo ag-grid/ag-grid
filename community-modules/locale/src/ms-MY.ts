@@ -760,6 +760,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaFilterFromValue: 'Tapis dari nilai',
     ariaFilterFromValueForColumn: 'Tapis ${variable} dari nilai',
     ariaFilterInput: 'Input Penapis',
+    ariaFilterInputForColumn: 'Input Penapis ${variable}',
     ariaLabelInputClear: 'Kosongkan',
     ariaFilterList: 'Senarai Penapis',
     ariaFilterToValue: 'Tapis hingga nilai',

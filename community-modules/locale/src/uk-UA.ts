@@ -744,6 +744,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaFilterFromValue: 'Фільтрувати від значення',
     ariaFilterFromValueForColumn: 'Фільтрувати стовпець ${variable} від значення',
     ariaFilterInput: 'Ввід фільтру',
+    ariaFilterInputForColumn: 'Ввід фільтру стовпця ${variable}',
     ariaLabelInputClear: 'Очистити',
     ariaFilterList: 'Список фільтрів',
     ariaFilterToValue: 'Фільтрувати до значення',

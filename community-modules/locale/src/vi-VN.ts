@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaFilterFromValue: 'Lọc từ giá trị',
     ariaFilterFromValueForColumn: 'Lọc ${variable} từ giá trị',
     ariaFilterInput: 'Đầu vào Bộ lọc',
+    ariaFilterInputForColumn: 'Đầu vào Bộ lọc của ${variable}',
     ariaLabelInputClear: 'Xóa',
     ariaFilterList: 'Danh sách Lọc',
     ariaFilterToValue: 'Lọc đến giá trị',

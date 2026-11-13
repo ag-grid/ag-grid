@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaFilterFromValue: 'Filtreeri väärtusest',
     ariaFilterFromValueForColumn: 'Filtreeri veergu ${variable} väärtusest',
     ariaFilterInput: 'Filtri sisend',
+    ariaFilterInputForColumn: 'Veeru ${variable} filtri sisend',
     ariaLabelInputClear: 'Tühjenda',
     ariaFilterList: 'Filtriloend',
     ariaFilterToValue: 'Filtreeri väärtuseni',

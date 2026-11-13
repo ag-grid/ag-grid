@@ -745,6 +745,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaFilterFromValue: 'Filtr od wartości',
     ariaFilterFromValueForColumn: 'Filtr kolumny ${variable} od wartości',
     ariaFilterInput: 'Wejście Filtra',
+    ariaFilterInputForColumn: 'Wejście Filtra kolumny ${variable}',
     ariaLabelInputClear: 'Wyczyść',
     ariaFilterList: 'Lista Filtrowania',
     ariaFilterToValue: 'Filtr do wartości',

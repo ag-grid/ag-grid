@@ -760,6 +760,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaFilterFromValue: 'Filter dari nilai',
     ariaFilterFromValueForColumn: 'Filter ${variable} dari nilai',
     ariaFilterInput: 'Input Filter',
+    ariaFilterInputForColumn: 'Input Filter ${variable}',
     ariaLabelInputClear: 'Bersihkan',
     ariaFilterList: 'Daftar Filter',
     ariaFilterToValue: 'Filter ke nilai',
