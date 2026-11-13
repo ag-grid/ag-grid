@@ -7,8 +7,7 @@ test.agExample(import.meta, () => {
             await waitForGridContent(page);
 
             const count = page.locator('#subscribedCount');
-            const subscriptionToggle = page.locator('.subscription-toggle');
-            const subscriptionCheckbox = subscriptionToggle.getByRole('checkbox');
+            const subscriptionCheckbox = page.locator('#subscriptionActive');
 
             // the five collapsed sector rows are in view
             await expect(count).toHaveText('5');
@@ -19,11 +18,11 @@ test.agExample(import.meta, () => {
             await expect(async () => expect(Number(await count.textContent())).toBeGreaterThan(5)).toPass();
 
             await subscriptionCheckbox.uncheck();
-            await expect(subscriptionToggle).toHaveText('Subscription disabled');
             await expect(count).toHaveText('0');
+            // no rows are subscribed, so the updates sent count starts again
+            await expect(page.locator('#updatesSent')).toHaveText('0');
 
             await subscriptionCheckbox.check();
-            await expect(subscriptionToggle).toHaveText('Subscription active');
             await expect(count).not.toHaveText('0');
         }
     );

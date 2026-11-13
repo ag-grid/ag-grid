@@ -34,7 +34,13 @@ export function fetchHoldings(): Holding[] {
                     const price = Math.round((1 + Math.random() * 99) * 100) / 100;
                     const shares = 10 * Math.ceil(Math.random() * 100);
                     const id = String(holdings.size);
-                    holdings.set(id, { id, path: [region, sector, symbol], price, shares, value: getValue(price, shares) });
+                    holdings.set(id, {
+                        id,
+                        path: [region, sector, symbol],
+                        price,
+                        shares,
+                        value: getValue(price, shares),
+                    });
                 }
             }
         }

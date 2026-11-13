@@ -17,10 +17,20 @@ async function expectStopped(counter: Locator) {
         .toBe(true);
 }
 
-/** Waits until the count grows: the server is streaming again. */
+/** Waits until the count grows between two reads: the server is streaming again. The count resets while no row is subscribed. */
 async function expectStreaming(counter: Locator) {
-    const before = Number(await counter.textContent());
-    await expect.poll(async () => Number(await counter.textContent())).toBeGreaterThan(before);
+    let last = Number(await counter.textContent());
+    await expect
+        .poll(
+            async () => {
+                const now = Number(await counter.textContent());
+                const grew = now > last;
+                last = now;
+                return grew;
+            },
+            { intervals: [1500] }
+        )
+        .toBe(true);
 }
 
 test.agExample(import.meta, () => {
@@ -32,8 +42,7 @@ test.agExample(import.meta, () => {
             const count = page.locator('#subscribedCount');
             const updates = page.locator('#updatesSent');
             const streamed = page.locator('#streamedCount');
-            const subscriptionToggle = page.locator('.subscription-toggle');
-            const subscriptionCheckbox = subscriptionToggle.getByRole('checkbox');
+            const subscriptionCheckbox = page.locator('#subscriptionActive');
 
             // the five sector group rows are subscribed, and the server streams each one whole
             await expect(count).toHaveText('5');
@@ -79,12 +88,12 @@ test.agExample(import.meta, () => {
             await expect(count).toHaveText('5');
 
             await subscriptionCheckbox.uncheck();
-            await expect(subscriptionToggle).toHaveText('Subscription disabled');
             await expect(count).toHaveText('0');
+            // no rows are subscribed, so the updates sent count starts again
+            await expect(page.locator('#updatesSent')).toHaveText('0');
             await expect(streamed).toHaveText('0');
 
             await subscriptionCheckbox.check();
-            await expect(subscriptionToggle).toHaveText('Subscription active');
             await expect(count).toHaveText('5');
             await expect(streamed).toHaveText('5');
             await expectStreaming(updates);

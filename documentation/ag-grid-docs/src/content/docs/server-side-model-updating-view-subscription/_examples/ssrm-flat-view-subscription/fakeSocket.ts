@@ -15,8 +15,7 @@ export type ClientMessage =
     | { type: 'getRows'; requestId: number; request: IServerSideGetRowsRequest };
 
 export type ServerMessage =
-    | { type: 'rows'; requestId: number; rowData: Stock[]; rowCount: number }
-    | { type: 'update'; rows: Stock[] };
+    { type: 'rows'; requestId: number; rowData: Stock[]; rowCount: number } | { type: 'update'; rows: Stock[] };
 
 const LATENCY_MS = 150;
 const MIN_UPDATE_INTERVAL_MS = 300;

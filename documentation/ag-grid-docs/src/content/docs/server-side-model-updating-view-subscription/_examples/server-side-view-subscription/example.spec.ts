@@ -12,8 +12,7 @@ test.agExample(import.meta, () => {
                 expect(() => expect(logs.some((l) => l.startsWith(prefix))).toBe(true)).toPass();
 
             const count = page.locator('#subscribedCount');
-            const subscriptionToggle = page.locator('.subscription-toggle');
-            const subscriptionCheckbox = subscriptionToggle.getByRole('checkbox');
+            const subscriptionCheckbox = page.locator('#subscriptionActive');
 
             await expect(count).not.toHaveText('0');
             expect(Number(await count.textContent())).toBeLessThan(40);
@@ -36,13 +35,13 @@ test.agExample(import.meta, () => {
 
             logs.length = 0;
             await subscriptionCheckbox.uncheck();
-            await expect(subscriptionToggle).toHaveText('Subscription disabled');
             await expectLogged('unsubscribe ');
             await expect(count).toHaveText('0');
+            // no rows are subscribed, so the updates sent count starts again
+            await expect(page.locator('#updatesSent')).toHaveText('0');
 
             logs.length = 0;
             await subscriptionCheckbox.check();
-            await expect(subscriptionToggle).toHaveText('Subscription active');
             await expectLogged('subscribe ');
             await expect(count).not.toHaveText('0');
         }

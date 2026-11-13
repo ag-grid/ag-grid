@@ -5,8 +5,6 @@ import type {
     IAggFuncParams,
     IServerSideDatasource,
     IServerSideGetRowsParams,
-    IToolbarItemComp,
-    IToolbarItemParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
 import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
@@ -14,10 +12,10 @@ import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
-    ToolbarModule,
     ViewSubscriptionModule,
 } from 'ag-grid-enterprise';
 
+import { recordSubscribed, recordUnsubscribed, recordUpdates } from './counters';
 import type { Row, ServerMessage } from './fakeSocket';
 import { FakeSocket } from './fakeSocket';
 
@@ -31,10 +29,10 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
-    ToolbarModule,
     ViewSubscriptionModule,
 ]);
 
+let gridApi: GridApi<Row>;
 // the subscribed stock rows, by id, with the parent keys that route a transaction to the row
 const subscribedStocks = new Map<string, string[]>();
 // the subscribed sector group rows, by sector
@@ -42,58 +40,7 @@ const subscribedSectors = new Set<string>();
 // getRows requests waiting for their reply, by request id
 const pendingRequests = new Map<number, IServerSideGetRowsParams<Row>>();
 let nextRequestId = 0;
-let updatesSent = 0;
 const socket = new FakeSocket();
-
-interface CounterParams {
-    label: string;
-    // the id of the element holding the count, which renderCount updates
-    id: string;
-}
-
-/** A toolbar checkbox that turns the subscription on and off, and says which it is. */
-class SubscriptionToggleToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLLabelElement;
-
-    init(params: IToolbarItemParams) {
-        this.eGui = document.createElement('label');
-        this.eGui.className = 'ag-toolbar-item subscription-toggle';
-        const eCheckbox = document.createElement('input');
-        eCheckbox.type = 'checkbox';
-        eCheckbox.checked = params.api.getGridOption('viewSubscriptionActive') !== false;
-        const eText = document.createElement('span');
-        const render = () => (eText.textContent = eCheckbox.checked ? 'Subscription active' : 'Subscription disabled');
-        render();
-        eCheckbox.addEventListener('change', () => {
-            render();
-            params.api.setGridOption('viewSubscriptionActive', eCheckbox.checked);
-        });
-        this.eGui.append(eCheckbox, eText);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
-
-/** A toolbar item that shows a count, as `Label: value`. */
-class CounterToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLElement;
-
-    init(params: IToolbarItemParams<any, any, CounterParams>) {
-        const { label, id } = params.toolbarItemParams!;
-        this.eGui = document.createElement('span');
-        this.eGui.className = 'ag-toolbar-item toolbar-counter';
-        const eCount = document.createElement('b');
-        eCount.id = id;
-        eCount.textContent = '0';
-        this.eGui.append(`${label}:`, eCount);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
 
 const gridOptions: GridOptions<Row> = {
     columnDefs: [
@@ -114,21 +61,6 @@ const gridOptions: GridOptions<Row> = {
     defaultColDef: { flex: 1, minWidth: 100 },
     autoGroupColumnDef: { minWidth: 200 },
     rowModelType: 'serverSide',
-    toolbar: {
-        items: [
-            { toolbarItem: SubscriptionToggleToolbarItem },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Subscribed rows', id: 'subscribedCount' },
-                alignment: 'right',
-            },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Updates sent', id: 'updatesSent' },
-                alignment: 'right',
-            },
-        ],
-    },
     // the server aggregates the group rows, so the grid only needs to know the name
     aggFuncs: { maxAbs: maxAbs },
     getRowId: getRowId,
@@ -148,7 +80,7 @@ const gridOptions: GridOptions<Row> = {
             }
             socket.send({ type: 'subscribe', ids });
             socket.send({ type: 'subscribeSectors', sectors });
-            renderCount();
+            recordSubscribed(rows.length, subscribedStocks.size + subscribedSectors.size);
         },
         unsubscribeRows: (rows) => {
             const ids: string[] = [];
@@ -164,7 +96,7 @@ const gridOptions: GridOptions<Row> = {
             }
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeSectors', sectors });
-            renderCount();
+            recordUnsubscribed(rows.length, subscribedStocks.size + subscribedSectors.size);
         },
     },
     onGridReady: (params) => {
@@ -172,6 +104,11 @@ const gridOptions: GridOptions<Row> = {
         params.api.setGridOption('serverSideDatasource', createDatasource());
     },
 };
+
+function onSubscriptionActiveChanged() {
+    const checked = document.querySelector<HTMLInputElement>('#subscriptionActive')!.checked;
+    gridApi.setGridOption('viewSubscriptionActive', checked);
+}
 
 function formatNumber(params: ValueFormatterParams<Row>) {
     return params.value == null ? '' : Number(params.value).toFixed(2);
@@ -201,16 +138,6 @@ function createDatasource(): IServerSideDatasource<Row> {
     };
 }
 
-function renderCount() {
-    const subscribedCount = document.querySelector('#subscribedCount');
-    const updatesSentCount = document.querySelector('#updatesSent');
-    // the toolbar can be removed before the grid is destroyed, which unsubscribes the remaining rows
-    if (subscribedCount && updatesSentCount) {
-        subscribedCount.textContent = String(subscribedStocks.size + subscribedSectors.size);
-        updatesSentCount.textContent = String(updatesSent);
-    }
-}
-
 function onServerMessage(api: GridApi<Row>, message: ServerMessage) {
     if (message.type === 'rows') {
         const { requestId, rowData, rowCount } = message;
@@ -219,12 +146,13 @@ function onServerMessage(api: GridApi<Row>, message: ServerMessage) {
         return;
     }
 
-    updatesSent += message.stocks.length + message.sectors.length;
+    let updates = 0;
     // ignore updates that were already on their way when their rows were unsubscribed
     for (const stock of message.stocks) {
         const route = subscribedStocks.get(stock.id);
         if (route) {
             api.applyServerSideTransactionAsync({ route, update: [stock] });
+            updates++;
         }
     }
     const sectors = message.sectors.filter((row) => subscribedSectors.has(row.sector));
@@ -232,11 +160,11 @@ function onServerMessage(api: GridApi<Row>, message: ServerMessage) {
         // the sector rows are at the top level, so the route is empty
         api.applyServerSideTransactionAsync({ route: [], update: sectors });
     }
-    renderCount();
+    recordUpdates(updates + sectors.length);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

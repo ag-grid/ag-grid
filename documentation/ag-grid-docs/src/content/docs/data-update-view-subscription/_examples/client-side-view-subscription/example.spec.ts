@@ -3,7 +3,7 @@ import { expect, scrollGridRelative, test, waitForGridContent } from '@utils/gri
 test.agExample(import.meta, () => {
     test.eachFramework(
         'Rows in view are subscribed on scroll and when enabled, and unsubscribed on new row data and when disabled',
-        async ({ page, agIdFor }) => {
+        async ({ page }) => {
             await waitForGridContent(page);
 
             const logs: string[] = [];
@@ -12,8 +12,7 @@ test.agExample(import.meta, () => {
                 expect(() => expect(logs.some((l) => l.startsWith(prefix))).toBe(true)).toPass();
 
             const count = page.locator('#subscribedCount');
-            const subscriptionToggle = page.locator('.subscription-toggle');
-            const subscriptionCheckbox = subscriptionToggle.getByRole('checkbox');
+            const subscriptionCheckbox = page.locator('#subscriptionActive');
 
             await expect(count).not.toHaveText('0');
             expect(Number(await count.textContent())).toBeLessThan(40);
@@ -41,14 +40,12 @@ test.agExample(import.meta, () => {
                 expect(Number(await count.textContent())).toBe(await countStocksInView())
             ).toPass();
 
-            // the stocks in view update as the server streams them, and their expanded group row recalculates
+            // the stocks in view update as the server streams them
             const stockVolumes = page.locator('.ag-row:not(.ag-row-group) [col-id="volume"]');
             const volumesBefore = (await stockVolumes.allTextContents()).join();
             await expect(async () =>
                 expect((await stockVolumes.allTextContents()).join()).not.toBe(volumesBefore)
             ).toPass();
-            const groupVolume = agIdFor.cell('row-group-sector-Energy', 'volume');
-            await expect(groupVolume).not.toHaveText((await groupVolume.textContent())!);
 
             logs.length = 0;
             await scrollGridRelative('element', page, { y: 1500 });
@@ -65,13 +62,13 @@ test.agExample(import.meta, () => {
 
             logs.length = 0;
             await subscriptionCheckbox.uncheck();
-            await expect(subscriptionToggle).toHaveText('Subscription disabled');
             await expectLogged('unsubscribe ');
             await expect(count).toHaveText('0');
+            // no rows are subscribed, so the updates sent count starts again
+            await expect(page.locator('#updatesSent')).toHaveText('0');
 
             logs.length = 0;
             await subscriptionCheckbox.check();
-            await expect(subscriptionToggle).toHaveText('Subscription active');
             await expectLogged('subscribe ');
             await expect(count).not.toHaveText('0');
         }

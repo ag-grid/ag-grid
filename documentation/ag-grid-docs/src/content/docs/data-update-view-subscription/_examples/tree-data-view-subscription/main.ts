@@ -1,4 +1,4 @@
-import type { GetRowIdParams, GridApi, GridOptions, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -7,8 +7,9 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { ToolbarModule, TreeDataModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
+import { TreeDataModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
+import { recordSubscribed, recordUnsubscribed, recordUpdates } from './counters';
 import type { Holding, ServerMessage } from './fakeSocket';
 import { FakeSocket, fetchHoldings, isUnder } from './fakeSocket';
 
@@ -21,66 +22,15 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ClientSideRowModelApiModule,
     HighlightChangesModule,
-    ToolbarModule,
     TreeDataModule,
     ViewSubscriptionModule,
 ]);
 
+let gridApi: GridApi<Holding>;
 const subscribedIds = new Set<string>();
 // the subscribed parent rows, by row id, with their route
 const subscribedRoutes = new Map<string, string[]>();
-let updatesSent = 0;
 const socket = new FakeSocket();
-
-interface CounterParams {
-    label: string;
-    // the id of the element holding the count, which renderCount updates
-    id: string;
-}
-
-/** A toolbar checkbox that turns the subscription on and off, and says which it is. */
-class SubscriptionToggleToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLLabelElement;
-
-    init(params: IToolbarItemParams) {
-        this.eGui = document.createElement('label');
-        this.eGui.className = 'ag-toolbar-item subscription-toggle';
-        const eCheckbox = document.createElement('input');
-        eCheckbox.type = 'checkbox';
-        eCheckbox.checked = params.api.getGridOption('viewSubscriptionActive') !== false;
-        const eText = document.createElement('span');
-        const render = () => (eText.textContent = eCheckbox.checked ? 'Subscription active' : 'Subscription disabled');
-        render();
-        eCheckbox.addEventListener('change', () => {
-            render();
-            params.api.setGridOption('viewSubscriptionActive', eCheckbox.checked);
-        });
-        this.eGui.append(eCheckbox, eText);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
-
-/** A toolbar item that shows a count, as `Label: value`. */
-class CounterToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLElement;
-
-    init(params: IToolbarItemParams<any, any, CounterParams>) {
-        const { label, id } = params.toolbarItemParams!;
-        this.eGui = document.createElement('span');
-        this.eGui.className = 'ag-toolbar-item toolbar-counter';
-        const eCount = document.createElement('b');
-        eCount.id = id;
-        eCount.textContent = '0';
-        this.eGui.append(`${label}:`, eCount);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
 
 const gridOptions: GridOptions<Holding> = {
     columnDefs: [
@@ -100,21 +50,6 @@ const gridOptions: GridOptions<Holding> = {
     // the grid creates the region and sector rows from each stock's path
     getDataPath: (data) => data.path,
     groupDefaultExpanded: -1,
-    toolbar: {
-        items: [
-            { toolbarItem: SubscriptionToggleToolbarItem },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Subscribed rows', id: 'subscribedCount' },
-                alignment: 'right',
-            },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Updates sent', id: 'updatesSent' },
-                alignment: 'right',
-            },
-        ],
-    },
     getRowId: (params: GetRowIdParams<Holding>) => params.data.id,
     viewSubscription: {
         subscribeRows: (rows) => {
@@ -132,7 +67,7 @@ const gridOptions: GridOptions<Holding> = {
             }
             socket.send({ type: 'subscribe', ids });
             socket.send({ type: 'subscribeRoutes', routes });
-            renderCount();
+            recordSubscribed(rows.length, subscribedIds.size + subscribedRoutes.size);
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id).filter((id) => subscribedIds.delete(id));
@@ -145,7 +80,7 @@ const gridOptions: GridOptions<Holding> = {
                 });
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeRoutes', routes });
-            renderCount();
+            recordUnsubscribed(ids.length + routes.length, subscribedIds.size + subscribedRoutes.size);
         },
     },
     onGridReady: (params) => {
@@ -154,33 +89,27 @@ const gridOptions: GridOptions<Holding> = {
     },
 };
 
+function onSubscriptionActiveChanged() {
+    const checked = document.querySelector<HTMLInputElement>('#subscriptionActive')!.checked;
+    gridApi.setGridOption('viewSubscriptionActive', checked);
+}
+
 /** Whether the holding is still subscribed, itself or through a parent row. */
 function isStreamed(holding: Holding): boolean {
     return subscribedIds.has(holding.id) || [...subscribedRoutes.values()].some((route) => isUnder(holding, route));
 }
 
-function renderCount() {
-    const subscribedCount = document.querySelector('#subscribedCount');
-    const updatesSentCount = document.querySelector('#updatesSent');
-    // the toolbar can be removed before the grid is destroyed, which unsubscribes the remaining rows
-    if (subscribedCount && updatesSentCount) {
-        subscribedCount.textContent = String(subscribedIds.size + subscribedRoutes.size);
-        updatesSentCount.textContent = String(updatesSent);
-    }
-}
-
 function onServerMessage(api: GridApi<Holding>, message: ServerMessage) {
-    updatesSent += message.rows.length;
     // ignore updates that were already on their way when their rows were unsubscribed
     const update = message.rows.filter(isStreamed);
     if (update.length) {
         api.applyTransactionAsync({ update });
     }
-    renderCount();
+    recordUpdates(update.length);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

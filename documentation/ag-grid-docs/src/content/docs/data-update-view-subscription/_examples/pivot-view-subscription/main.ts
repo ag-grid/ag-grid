@@ -6,8 +6,6 @@ import type {
     GridApi,
     GridOptions,
     IAggFuncParams,
-    IToolbarItemComp,
-    IToolbarItemParams,
     ValueFormatterParams,
     ViewGroupRowRef,
 } from 'ag-grid-community';
@@ -23,14 +21,9 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import {
-    ColumnsToolPanelModule,
-    PivotModule,
-    RowGroupingModule,
-    ToolbarModule,
-    ViewSubscriptionModule,
-} from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
+import { recordStreamed, recordSubscribed, recordUnsubscribed, recordUpdates } from './counters';
 import type { GroupFilter, ServerMessage, Stock } from './fakeSocket';
 import { FakeSocket, fetchStocks, isInGroup } from './fakeSocket';
 
@@ -50,69 +43,18 @@ ModuleRegistry.registerModules([
     RowApiModule,
     RowGroupingModule,
     TextFilterModule,
-    ToolbarModule,
     ViewSubscriptionModule,
 ]);
 
+let gridApi: GridApi<Stock>;
 const subscribed = new Set<string>();
 // the subscribed group rows, by id, with the stocks each one aggregates
 const subscribedGroups = new Map<string, GroupFilter>();
 // the server streams only the data a row displays, so streams pause while no column shows it
 let stocksStreamed = true;
 let groupsStreamed = true;
-let updatesSent = 0;
 const STREAMED_FIELDS: (keyof Stock)[] = ['price', 'change', 'volume'];
 const socket = new FakeSocket();
-
-interface CounterParams {
-    label: string;
-    // the id of the element holding the count, which renderCount updates
-    id: string;
-}
-
-/** A toolbar checkbox that turns the subscription on and off, and says which it is. */
-class SubscriptionToggleToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLLabelElement;
-
-    init(params: IToolbarItemParams) {
-        this.eGui = document.createElement('label');
-        this.eGui.className = 'ag-toolbar-item subscription-toggle';
-        const eCheckbox = document.createElement('input');
-        eCheckbox.type = 'checkbox';
-        eCheckbox.checked = params.api.getGridOption('viewSubscriptionActive') !== false;
-        const eText = document.createElement('span');
-        const render = () => (eText.textContent = eCheckbox.checked ? 'Subscription active' : 'Subscription disabled');
-        render();
-        eCheckbox.addEventListener('change', () => {
-            render();
-            params.api.setGridOption('viewSubscriptionActive', eCheckbox.checked);
-        });
-        this.eGui.append(eCheckbox, eText);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
-
-/** A toolbar item that shows a count, as `Label: value`. */
-class CounterToolbarItem implements IToolbarItemComp {
-    private eGui!: HTMLElement;
-
-    init(params: IToolbarItemParams<any, any, CounterParams>) {
-        const { label, id } = params.toolbarItemParams!;
-        this.eGui = document.createElement('span');
-        this.eGui.className = 'ag-toolbar-item toolbar-counter';
-        const eCount = document.createElement('b');
-        eCount.id = id;
-        eCount.textContent = '0';
-        this.eGui.append(`${label}:`, eCount);
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-}
 
 const gridOptions: GridOptions<Stock> = {
     columnDefs: [
@@ -142,28 +84,6 @@ const gridOptions: GridOptions<Stock> = {
     defaultColDef: { flex: 1, minWidth: 100, enableRowGroup: true },
     pivotMode: true,
     sideBar: 'columns',
-    toolbar: {
-        items: [
-            { toolbarItem: SubscriptionToggleToolbarItem },
-            'separator',
-            { label: 'New Row Data', action: (params) => resetData(params.api) },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Subscribed rows', id: 'subscribedCount' },
-                alignment: 'right',
-            },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Streamed stocks', id: 'streamedCount' },
-                alignment: 'right',
-            },
-            {
-                toolbarItem: CounterToolbarItem,
-                toolbarItemParams: { label: 'Updates sent', id: 'updatesSent' },
-                alignment: 'right',
-            },
-        ],
-    },
     // custom aggregations, also offered in the column menu
     aggFuncs: { maxAbs: maxAbs, minAbs: minAbs },
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
@@ -189,7 +109,8 @@ const gridOptions: GridOptions<Stock> = {
                 socket.send({ type: 'subscribeGroups', groups });
             }
             console.log(`subscribe ${rows.length}`);
-            renderCount(params.api);
+            recordSubscribed(rows.length, subscribed.size + subscribedGroups.size);
+            recordStreamed(() => countStreamedStocks(params.api));
         },
         unsubscribeRows: (rows, params) => {
             const ids = rows.map((row) => row.id).filter((id) => subscribed.delete(id));
@@ -197,7 +118,8 @@ const gridOptions: GridOptions<Stock> = {
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeGroups', ids: groupIds });
             console.log(`unsubscribe ${ids.length + groupIds.length}`);
-            renderCount(params.api);
+            recordUnsubscribed(ids.length + groupIds.length, subscribed.size + subscribedGroups.size);
+            recordStreamed(() => countStreamedStocks(params.api));
         },
     },
     // the columns shown decide which streams are needed
@@ -209,6 +131,11 @@ const gridOptions: GridOptions<Stock> = {
         params.api.setGridOption('rowData', fetchStocks());
     },
 };
+
+function onSubscriptionActiveChanged() {
+    const checked = document.querySelector<HTMLInputElement>('#subscriptionActive')!.checked;
+    gridApi.setGridOption('viewSubscriptionActive', checked);
+}
 
 /** The value furthest from zero, keeping its sign, so a group shows its biggest move up or down. */
 function maxAbs(params: IAggFuncParams<Stock>) {
@@ -284,7 +211,7 @@ function updateStreams(api: GridApi<Stock>) {
             socket.send({ type: 'unsubscribeGroups', ids: [...subscribedGroups.keys()] });
         }
     }
-    renderCount(api);
+    recordStreamed(() => countStreamedStocks(api));
 }
 
 function onColumnValueChanged(event: ColumnValueChangedEvent<Stock>) {
@@ -310,37 +237,25 @@ function countStreamedStocks(api: GridApi<Stock>): number {
     return count;
 }
 
-function renderCount(api: GridApi<Stock>) {
-    const subscribedCount = document.querySelector('#subscribedCount');
-    const streamedCount = document.querySelector('#streamedCount');
-    const updatesSentCount = document.querySelector('#updatesSent');
-    // the toolbar can be removed before the grid is destroyed, which unsubscribes the remaining rows
-    if (subscribedCount && streamedCount && updatesSentCount) {
-        subscribedCount.textContent = String(subscribed.size + subscribedGroups.size);
-        streamedCount.textContent = String(countStreamedStocks(api));
-        updatesSentCount.textContent = String(updatesSent);
-    }
-}
-
 function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
-    updatesSent += message.rows.length;
     // ignore updates that were already on their way when their rows, or the groups holding them, were unsubscribed.
     // A group row keeps its id when new row data arrives, so also skip stocks the new row data replaced
     const update = message.rows.filter((row) => isStreamed(row) && api.getRowNode(row.id) !== undefined);
     if (update.length) {
         api.applyTransactionAsync({ update });
     }
-    renderCount(api);
+    recordUpdates(update.length);
+    recordStreamed(() => countStreamedStocks(api));
 }
 
-function resetData(api: GridApi<Stock>) {
+function onNewRowData() {
     // apply the queued updates while their stocks are still in the grid
-    api.flushAsyncTransactions();
-    api.setGridOption('rowData', fetchStocks());
+    gridApi.flushAsyncTransactions();
+    gridApi.setGridOption('rowData', fetchStocks());
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });
