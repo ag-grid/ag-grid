@@ -3,13 +3,7 @@ src
 !dist/types/src
 .npmignore
 project.json
-tsconfig.json
-tsconfig.lib.json
-tsconfig.umd.json
-tsconfig.spec.json
-tsconfig.types.json
-tsconfig.types.watch.json
-tsconfig.watch.json
+tsconfig*.json
 webpack.config.js
 main.d.ts.src
 updateMainTsWithCoreExports.js
