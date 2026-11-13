@@ -55,6 +55,10 @@ Selection checkboxes now require `rowSelection` to be set to an options object.
 - `SelectionEventSourceType` no longer includes `'apiSelectAllFiltered'` or `'apiSelectAllCurrentPage'`.
 - The `HeaderCheckboxSelectionCallback`, `HeaderCheckboxSelectionCallbackParams`, `GroupCheckboxSelectionCallback` and `GroupCheckboxSelectionCallbackParams` types have been removed. `CheckboxSelectionCallback` is still available for use with `rowSelection.checkboxes`.
 
+### Grid State
+
+- `api.getState()`, and the `state` of the `stateUpdated` event, no longer contain `rangeSelection`. Use `cellSelection` instead. States saved by older versions that contain `rangeSelection` can still be restored.
+
 ## Behaviour Changes
 
 ### Filtering
@@ -107,20 +111,47 @@ The following deprecated APIs have now been removed.
         - `'single'` - `{ mode: 'singleRow', checkboxes: false, enableClickSelection: true, copySelectedRows: true }`
     - In `singleRow` mode, `api.selectAll()` and its filtered and current page variants do nothing, and log a warning.
     - String values passed at runtime (for example from JavaScript) now disable row selection. When `ValidationModule` is registered, a validation message is reported.
+- `enableRangeSelection` - removed, use `cellSelection: true` instead.
+- `suppressMultiRangeSelection` - removed, use `cellSelection.suppressMultiRanges` instead.
+- `enableRangeHandle` - removed, use `cellSelection.handle` with `mode: 'range'` instead.
+- `enableFillHandle` - removed, use `cellSelection.handle` with `mode: 'fill'` instead.
+- `fillHandleDirection` - removed, use `cellSelection.handle.direction` instead.
+- `suppressClearOnFillReduction` - removed as a grid option, use `cellSelection.handle.suppressClearOnFillReduction` instead.
+- `fillOperation` - removed, use `cellSelection.handle.setFillValue` instead.
+- `onRangeSelectionChanged` - removed, use `onCellSelectionChanged` instead.
+- `onRangeDeleteStart` - removed, use `onCellSelectionDeleteStart` instead.
+- `onRangeDeleteEnd` - removed, use `onCellSelectionDeleteEnd` instead.
 
 ### Column Definitions
 
 - `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
 - Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
 
+### Grid Events
+
+- `rangeSelectionChanged` - removed, use `cellSelectionChanged` instead.
+- `rangeDeleteStart` - removed, use `cellSelectionDeleteStart` instead.
+- `rangeDeleteEnd` - removed, use `cellSelectionDeleteEnd` instead.
+
+### Grid API
+
+- `api.clearRangeSelection()` - removed, use `api.clearCellSelection()` instead.
+
+### Grid State
+
+- `rangeSelection` - removed, use `cellSelection` instead.
+
 ### Interfaces and Types
 
+- `RangeSelectionState` and `RangeSelectionCellState` - removed, please use `CellSelectionState` and `CellSelectionCellState` instead.
+- `RangeSelectionChangedEvent`, `RangeDeleteStartEvent` and `RangeDeleteEndEvent` - removed, please use `CellSelectionChangedEvent`, `CellSelectionDeleteStartEvent` and `CellSelectionDeleteEndEvent` instead.
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
 - `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
 
 ### Modules
 
 - `GridChartsModule` - removed, please use `IntegratedChartsModule` instead.
+- `RangeSelectionModule` - removed, please use `CellSelectionModule` instead.
 
 ### Icons
 

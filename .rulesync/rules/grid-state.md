@@ -24,4 +24,5 @@ JSDoc on a state member is what a user reads on the docs page, so write it for t
   page.
 - Changing what a section carries: re-read its JSDoc. A description of the old contents is worse than
   none.
-- Deprecating one: mark it `@deprecated` with the version and the replacement, as `rangeSelection` is.
+- Deprecating one: mark it `@deprecated` with the version and the replacement, and keep reading the
+  old key in `stateModelMigration.ts` so saved states still restore.

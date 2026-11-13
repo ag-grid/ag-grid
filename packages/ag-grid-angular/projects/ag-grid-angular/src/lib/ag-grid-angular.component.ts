@@ -99,7 +99,6 @@ import type {
     ExcelStyle,
     ExpandOrCollapseAllEvent,
     FillEndEvent,
-    FillOperation,
     FillStartEvent,
     FilterChangedEvent,
     FilterHandlers,
@@ -198,9 +197,6 @@ import type {
     ProcessUnpinnedColumns,
     QuickFilterMatcher,
     QuickFilterParser,
-    RangeDeleteEndEvent,
-    RangeDeleteStartEvent,
-    RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
     RowClassRules,
@@ -1790,43 +1786,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowNumbersModule`
      */
     @Input() public rowNumbers: boolean | RowNumbersOptions | undefined = undefined;
-    /** If `true`, only a single range can be selected.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
-     */
-    @Input({ transform: booleanAttribute }) public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
      *
      *     **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public enableCellTextSelection: boolean | undefined = undefined;
-    /** Set to `true` to enable Range Selection.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection = true` instead
-     * @agModule `CellSelectionModule`
-     */
-    @Input({ transform: booleanAttribute }) public enableRangeSelection: boolean | undefined = undefined;
-    /** Set to `true` to enable the Range Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.handle` instead
-     */
-    @Input({ transform: booleanAttribute }) public enableRangeHandle: boolean | undefined = undefined;
-    /** Set to `true` to enable the Fill Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.handle` instead
-     */
-    @Input({ transform: booleanAttribute }) public enableFillHandle: boolean | undefined = undefined;
-    /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
-     * @default 'xy'
-     * @deprecated v32.2 Use `cellSelection.handle.direction` instead
-     */
-    @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
-    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
-     * @default false
-     * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
-     */
-    @Input({ transform: booleanAttribute }) public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      * @default false
      */
@@ -2176,10 +2141,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `MasterDetailModule`
      */
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
-    /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
-     * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
-     */
-    @Input() public fillOperation: FillOperation<TData> | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.
      *
      * When configured, `deltaSort` is ignored.
@@ -2455,20 +2416,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellSelectionDeleteEnd: EventEmitter<CellSelectionDeleteEndEvent<TData>> = new EventEmitter<
         CellSelectionDeleteEndEvent<TData>
     >();
-    /** Range delete operation (cell clear) has started.
-     *
-     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
-     */
-    @Output() public rangeDeleteStart: EventEmitter<RangeDeleteStartEvent<TData>> = new EventEmitter<
-        RangeDeleteStartEvent<TData>
-    >();
-    /** Range delete operation (cell clear) has ended.
-     *
-     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
-     */
-    @Output() public rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>> = new EventEmitter<
-        RangeDeleteEndEvent<TData>
-    >();
     /** Fill operation has started.
      */
     @Output() public fillStart: EventEmitter<FillStartEvent<TData>> = new EventEmitter<FillStartEvent<TData>>();
@@ -2726,13 +2673,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<
         CellContextMenuEvent<TData>
-    >();
-    /** A change to range selection has occurred.
-     *
-     * @deprecated v32.2 Use `onCellSelectionChanged` instead
-     */
-    @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<
-        RangeSelectionChangedEvent<TData>
     >();
     /** A change to cell selection has occurred.
      */
