@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/pivot';
+
 import type {
     ColDef,
     ColGroupDef,
@@ -15,8 +17,6 @@ import {
     RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

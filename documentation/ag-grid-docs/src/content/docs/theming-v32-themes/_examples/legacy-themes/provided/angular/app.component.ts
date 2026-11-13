@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
@@ -41,7 +41,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     style="height: 100%"
                     [theme]="'legacy'"
                     [columnDefs]="columnDefs"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     (gridReady)="onGridReady($event)"
                 />
             </div>
@@ -59,7 +59,7 @@ export class AppComponent {
         { field: 'total' },
     ];
 
-    rowData!: IOlympicData[];
+    rowData = signal<IOlympicData[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -70,6 +70,6 @@ export class AppComponent {
     onGridReady(_params: GridReadyEvent<IOlympicData>) {
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

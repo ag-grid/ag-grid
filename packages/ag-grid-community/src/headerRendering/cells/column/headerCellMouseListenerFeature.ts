@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _getEnableColumnSelection } from '../../../gridOptionsUtils';
@@ -13,7 +15,7 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
     }
 
     public postConstruct() {
-        this.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(this, this.eGui, {
             click: (e) => e && this.onClick(e),
         });
 

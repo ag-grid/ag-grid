@@ -25,6 +25,18 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 {% /if %}
 
+{% if isFramework("angular") %}
+
+### Frameworks
+
+- Angular 20 support is no longer available due to reaching its end of life. The minimum Angular version is now v21. To keep using Angular 20, stay on AG Grid v36.
+
+{% /if %}
+
+### TypeScript
+
+- The minimum TypeScript version is now 5.9.3.
+
 ### Filtering
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
@@ -34,6 +46,11 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### Filtering
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
+
+### Validation
+
+- With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
+- Until custom data is moved into `context`, `enableDevValidations({ suppress: [307, 310] })` keeps these warnings out of the validation overlay and stops `throwOn` from throwing on them but they are still logged to the console. See [Suppressing Diagnostics](./dev-validation/#suppressing-diagnostics).
 
 ### Status Bar
 
@@ -49,12 +66,19 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 ## Removal of Deprecated APIs
 
-The following APIs have been deprecated and have now been removed.
+The following deprecated APIs have now been removed.
 
 {% expandingSection headerText="Removed Deprecated APIs" %}
 
 ### Grid Options
 
+- `groupRemoveSingleChildren` - removed, use `groupHideParentOfSingleChild: true` instead.
+- `groupRemoveLowestSingleChildren` - removed, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
+- `suppressRowGroupHidesColumns` - removed, use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
+- `suppressMakeColumnVisibleAfterUnGroup` - removed, use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+- `sortingOrder` - removed, use `defaultColDef.sortingOrder` instead.
+- `unSortIcon` - removed, use `defaultColDef.unSortIcon` instead.
+- `suppressPropertyNamesCheck` - removed, put custom data in `context` instead.
 - `rowMultiSelectWithClick` - removed, use `rowSelection.enableSelectionWithoutKeys` instead.
 - `suppressRowDeselection` - removed, use `rowSelection.enableClickSelection` instead (for example `enableClickSelection: 'enableSelection'`).
 - `suppressRowClickSelection` - removed, use `rowSelection.enableClickSelection` instead.
@@ -69,6 +93,42 @@ The following APIs have been deprecated and have now been removed.
         - `'single'` - `{ mode: 'singleRow', checkboxes: false, enableClickSelection: true, copySelectedRows: true }`
     - In `singleRow` mode, `api.selectAll()` and its filtered and current page variants do nothing, and log a warning.
     - String values passed at runtime (for example from JavaScript) now disable row selection. When `ValidationModule` is registered, a validation message is reported.
+
+### Column Definitions
+
+- `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
+- Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
+
+### Interfaces and Types
+
+- `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
+- `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
+
+### Modules
+
+- `GridChartsModule` - removed, please use `IntegratedChartsModule` instead.
+
+### Icons
+
+The following icon keys have been removed. Setting them in the `icons` grid option or `colDef.icons` now has no effect.
+
+- `smallDown` - removed, use:
+    - `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
+    - `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
+    - `richSelectOpen` for Rich Select cell editor.
+- `smallLeft` - removed, use:
+    - `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
+    - `subMenuOpenRtl` for sub-menus.
+- `smallRight` - removed, use:
+    - `panelDelimiter` for Row Group Panel / Pivot Panel.
+    - `subMenuOpen` for sub-menus.
+- `smallUp` - removed, please use the icon CSS name `small-up` instead.
+- `colorPicker` - removed, please use the icon CSS name `color-picker` instead.
+- `checkboxChecked` - removed, please use the icon CSS name `checkbox-checked` instead.
+- `checkboxIndeterminate` - removed, please use the icon CSS name `checkbox-indeterminate` instead.
+- `checkboxUnchecked` - removed, please use the icon CSS name `checkbox-unchecked` instead.
+- `radioButtonOn` - removed, please use the icon CSS name `radio-button-on` instead.
+- `radioButtonOff` - removed, please use the icon CSS name `radio-button-off` instead.
 
 {% /expandingSection %}
 

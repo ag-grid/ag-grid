@@ -1,4 +1,5 @@
 import {
+    _addManagedElementListeners,
     _camelCaseToHumanText,
     _findFocusableElements,
     _isNothingFocused,
@@ -1260,7 +1261,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             const focusableElements = _findFocusableElements(form.getGui());
             (focusableElements[0] ?? dialog.getGui()).focus({ preventScroll: true });
         }
-        const destroyDialogMouseListeners = this.addManagedElementListeners(dialog.getGui(), {
+        const destroyDialogMouseListeners = _addManagedElementListeners(this, dialog.getGui(), {
             mousedown: () => form.hideSuggestions(),
         });
         dialog.addDestroyFunc(() => {

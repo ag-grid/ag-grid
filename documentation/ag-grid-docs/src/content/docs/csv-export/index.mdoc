@@ -25,7 +25,25 @@ The CSV export will be enabled by default. If you want to disable it, you can se
 
 ## Security Concerns
 
-When opening CSV files, spreadsheet applications like Excel, Apple Numbers, Google Sheets and others will automatically execute cell values that start with the following symbols as formulas: `+`, `-`, `=`, `@`, `Tab (0x09)` and `Carriage Return (0x0D)`. In order to prevent any malicious content from being exported we recommend using the `callback` methods shown in the [CSV Export Params](./csv-export/#csvexportparams) to modify the exported cell values so that they do NOT start with any of the characters listed above. This way the applications will not execute the cell value directly if it starts with the characters listed above. If you'd like to keep the cell values unchanged when exporting, please allow exporting to Excel only.
+When opening CSV files, spreadsheet applications like Excel, Apple Numbers, Google Sheets and others will automatically execute cell values that start with the following symbols as formulas: `+`, `-`, `=`, `@`, `Tab (0x09)`, `Carriage Return (0x0D)` and `Line Feed (0x0A)`. Some locales also treat the full-width forms `＝`, `＋`, `－` and `＠` as formulas. In order to prevent any malicious content from being exported we recommend using the `callback` methods shown in the [CSV Export Params](./csv-export/#csvexportparams) to modify the exported cell values so that they do NOT start with any of the characters listed above. This way the applications will not execute the cell value directly if it starts with the characters listed above. If you'd like to keep the cell values unchanged when exporting, please allow exporting to Excel only.
+
+Alternatively, set `sanitizeFormulas: true` in the [CSV Export Params](./csv-export/#csvexportparams). The grid then prefixes a single quote (`'`) to cell values, header names and `CsvCell` custom content that start with any of these characters.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultCsvExportParams: {
+        sanitizeFormulas: true,
+    },
+};
+```
+
+When using this option:
+
+- Numbers such as `-5` and number cells formatted with a leading sign such as `-1,000.50` stay unchanged. A number cell's formatter must not add untrusted text after the sign.
+- The results of `processCellCallback` are prefixed too, including formulas you return on purpose.
+- Strings passed to `prependContent`, `appendContent` and `getCustomContentBelowRow` are written as given.
+- `sanitizeFormulas` checks only the start of each value. With `suppressQuotes: true`, a value containing the column separator or a line break is split into several cells when opened, and the later cells are not checked.
+- The prefix becomes part of the exported value, which affects anything else that reads the file.
 
 {% note %}
 Detailed info regarding CSV Injection can be found in the [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection) website.

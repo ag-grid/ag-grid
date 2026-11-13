@@ -106,6 +106,7 @@ class PointerEventPolyfill extends MouseEvent implements PointerEvent {
     public isPrimary: boolean;
     public altitudeAngle: number;
     public azimuthAngle: number;
+    public persistentDeviceId: number = 0;
 
     constructor(type: string, eventInitDict: PointerEventInit = {}) {
         const mouseInit: MouseEventInit = {

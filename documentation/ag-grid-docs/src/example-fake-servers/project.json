@@ -1,0 +1,11 @@
+{
+  "name": "ag-grid-docs-example-fake-servers",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "targets": {
+    "generate": {
+      "executor": "nx:noop",
+      "dependsOn": [{ "projects": "ag-grid-docs", "target": "generate-examples" }]
+    }
+  }
+}

@@ -69,6 +69,8 @@ export interface BryntumTextMediaSection extends BryntumSectionBase {
 
 export interface BryntumLiveDemoSection extends BryntumSectionBase {
     type: 'live-demo';
+    /** Live demo to embed (a `LIVE_DEMO_PRODUCT_CONFIG` key); defaults to the page's product slug. */
+    demo_product?: string;
     demo_src?: string | null;
     /** Optional supporting copy rendered between the heading and the live demo iframe. */
     body_text?: string;
@@ -113,6 +115,18 @@ export interface BryntumTextButtonSection extends BryntumSectionBase {
     ctas?: BryntumCta[];
 }
 
+export interface BryntumTiersSection extends BryntumSectionBase {
+    type: 'tiers';
+    body_text?: string;
+    /** Ordered lowest to highest; each tier includes everything in the one before it. */
+    items: Array<{
+        heading: string;
+        licence: string;
+        features: string[];
+    }>;
+    ctas?: BryntumCta[];
+}
+
 export interface BryntumPartnershipSection extends BryntumSectionBase {
     type: 'partnership';
     body_html?: string;
@@ -146,6 +160,7 @@ export type BryntumSection =
     | BryntumColumnsWithMediaSection
     | BryntumBrandsSection
     | BryntumTextButtonSection
+    | BryntumTiersSection
     | BryntumPartnershipSection
     | BryntumTextMiniDemoSection
     | BryntumIntroVideoSection;

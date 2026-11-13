@@ -1,5 +1,6 @@
 import type { HighlightTooltipEventType, VerticalDirection } from 'ag-stack';
 import {
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
@@ -92,7 +93,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const eGui = this.getGui();
         const eListAriaEl = this.getAriaElement();
 
-        this.addManagedListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             mousemove: this.onMouseMove.bind(this),
             mouseout: this.onMouseOut.bind(this),
             mousedown: this.onMouseDown.bind(this),

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     advancedFilterCancel: 'Annuleren',
     advancedFilterClear: 'Wissen',
     advancedFilterBuilder: 'Bouwer',
+    advancedFilterPlaceholder: 'Geavanceerde Filter',
     advancedFilterValidationMissingColumn: 'Kolom ontbreekt',
     advancedFilterValidationMissingOption: 'Optie ontbreekt',
     advancedFilterValidationMissingValue: 'Waarde ontbreekt',
@@ -735,6 +736,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaCalculatedColumn: 'Berekende kolom',
     ariaColumnShowValuesAs: 'Waarden worden weergegeven als',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
+    ariaColumnSelectExpandAll: 'Alle kolomgroepen uit- of samenvouwen',
     ariaDateFilterInput: 'Datum Filter Invoer',
     ariaDefaultListName: 'Lijst',
     ariaFilterColumnsInput: 'Filter Kolommen Invoer',
@@ -821,6 +823,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelSelectField: 'Selectievak',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaFullRowValidationError: 'Validatie van volledige rij: ${variable}',
     ariaFullRowEditValidationFailed: 'Kan het bewerken van de rij niet voltooien. ${variable}',
@@ -850,6 +853,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)

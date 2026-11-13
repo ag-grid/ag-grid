@@ -623,6 +623,104 @@
     color: var(--color-fg-secondary);
 }
 
+.tiersGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-6;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1080px;
+    list-style: none;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.tierCard {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-primary);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-50);
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.tierName {
+    margin: 0;
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-display-xl);
+}
+
+.tierLicence {
+    margin: $spacing-size-1 0 0;
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-body-sm);
+    color: var(--color-fg-secondary);
+}
+
+.tierDetails {
+    margin-top: $spacing-size-4;
+    padding-top: $spacing-size-4;
+    border-top: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.tierIncludes {
+    margin: 0 0 $spacing-size-3;
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-body-sm);
+    font-weight: var(--text-semibold);
+}
+
+.tierFeatures {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        gap: $spacing-size-2;
+        margin: 0;
+        font-size: var(--text-fs-sm);
+        line-height: var(--text-lh-body-sm);
+        color: var(--color-fg-secondary);
+    }
+
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --icon-color: var(--color-util-brand-600);
+
+        flex-shrink: 0;
+
+        #{$selector-darkmode} & {
+            --icon-color: var(--color-util-brand-900);
+        }
+    }
+}
+
+.tiersCtas {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-size-8;
+
+    a {
+        --icon-size: 1.1em;
+    }
+}
+
 .sectionHeading {
     text-align: center;
     font-size: var(--text-fs-2xl);
@@ -979,85 +1077,6 @@
 
     :global(.scheduler-progress-block) {
         animation: bryntumFadeInOverlay 0.6s ease-out 1.6s both;
-    }
-}
-
-// ----- Scheduler Pro ---------------------------------------------------------
-//
-// Resources (avatar + name on the left rail) fade up row-by-row, then their
-// task blocks slide in from the left a beat later. Cross-resource dependency
-// arrows draw between tasks once both rows have settled.
-
-.heroMedia :global(svg.schedulerpro) {
-    // The Scheduler Pro hero packs in more rows and longer labels than the
-    // other Bryntum hero illustrations, so the default 600px cap leaves the
-    // text feeling cramped. Allow it to render slightly larger.
-    max-width: 720px;
-
-    :global(.schedulerpro-robert-name),
-    :global(.schedulerpro-lindsey-name),
-    :global(.schedulerpro-christopher-name),
-    :global(.schedulerpro-anika-name) {
-        animation: bryntumFadeInUp 0.5s ease-out both;
-    }
-    :global(.schedulerpro-robert-name) {
-        animation-delay: 0.2s;
-    }
-    :global(.schedulerpro-lindsey-name) {
-        animation-delay: 0.4s;
-    }
-    :global(.schedulerpro-christopher-name) {
-        animation-delay: 0.6s;
-    }
-    :global(.schedulerpro-anika-name) {
-        animation-delay: 0.8s;
-    }
-
-    :global(.schedulerpro-robert-meeting1),
-    :global(.schedulerpro-robert-meeting2),
-    :global(.schedulerpro-lindsey),
-    :global(.schedulerpro-christopher),
-    :global(.schedulerpro-anika) {
-        animation: bryntumSlideInLeft 0.5s ease-out both;
-    }
-    :global(.schedulerpro-robert-meeting1) {
-        animation-delay: 0.55s;
-    }
-    :global(.schedulerpro-robert-meeting2) {
-        animation-delay: 0.7s;
-    }
-    :global(.schedulerpro-lindsey) {
-        animation-delay: 0.75s;
-    }
-    :global(.schedulerpro-christopher) {
-        animation-delay: 0.95s;
-    }
-    :global(.schedulerpro-anika) {
-        animation-delay: 1.15s;
-    }
-
-    :global(.schedulerpro-robert-stroke) {
-        stroke-dasharray: 100;
-        stroke-dashoffset: 100;
-        animation: bryntumDrawLine 0.45s ease-out 0.85s both;
-    }
-    :global(.schedulerpro-robert-arrow) {
-        transform-box: fill-box;
-        transform-origin: center;
-        animation: bryntumPopIn 0.35s ease-out 1.25s both;
-    }
-    :global(.schedulerpro-lindsey-stroke) {
-        stroke-dasharray: 240;
-        stroke-dashoffset: 240;
-        animation: bryntumDrawLine 0.75s ease-out 1.45s both;
-    }
-    :global(.schedulerpro-lindsey-arrow) {
-        transform-box: fill-box;
-        transform-origin: center;
-        animation: bryntumPopIn 0.4s ease-out 2.15s both;
-    }
-    :global(.schedulerpro-lindsey-stroke-fake) {
-        animation: bryntumFadeIn 0.4s ease-out 1.3s both;
     }
 }
 

@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { GridApi, GridOptions, GridState } from 'ag-grid-community';
+import type { CalculatedUserColumnState, GridApi, GridOptions, GridState } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
 import {
@@ -372,6 +372,175 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         warn.mockRestore();
     });
 
+    test('restoring userColumns that lift a tombstone keeps a declared duplicate-field column apart from a created column holding its suffixed id', async () => {
+        const api = createGrid('state-lifted-tombstone-suffixed-id', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [
+                { field: 'a', headerName: 'A0' },
+                { field: 'a', headerName: 'A1' },
+                { field: 'b', headerName: 'B' },
+            ],
+        });
+        const created: CalculatedUserColumnState = {
+            colId: 'a_1',
+            created: true,
+            parentGroupId: null,
+            properties: [
+                { property: 'calculatedExpression', value: '[b] * 100' },
+                { property: 'headerName', value: 'DYN' },
+            ],
+        };
+        api.setState({ userColumns: [{ colId: 'a', removed: true }, created] });
+        await waitFor(() => expect(api.getColumns()!.map((col) => col.getColDef().headerName)).toContain('DYN'));
+
+        api.setState({ userColumns: [created] });
+
+        const columns = api.getColumns()!;
+        expect({
+            ids: new Set(columns.map((col) => col.getColId())).size,
+            headers: columns.map((col) => col.getColDef().headerName).sort(),
+        }).toEqual({ ids: columns.length, headers: ['A0', 'A1', 'B', 'DYN'] });
+    });
+
+    test('a column without colId or field keeps its column and width when the user removes the column before it', async () => {
+        const api = createGrid('state-removed-before-anonymous', {
+            rowData: [{ id: 'r1', a: 1 }],
+            columnDefs: [{ field: 'a' }, { headerName: 'X' }],
+        });
+        const column = api.getColumn('0')!;
+        api.applyColumnState({ state: [{ colId: '0', width: 333 }] });
+
+        api.setState({ userColumns: [{ colId: 'a', removed: true }] });
+
+        await waitFor(() => expect(api.getColumns()!.map((col) => col.getColId())).toEqual(['0']));
+        expect(api.getColumn('0')).toBe(column);
+        expect(column.getActualWidth()).toBe(333);
+    });
+
+    test('a created entry with no calculated expression leaves a declared column its generated id and state', () => {
+        const api = createGrid('state-created-no-expression', {
+            rowData: [{ id: 'r1', b: 2 }],
+            columnDefs: [
+                { field: 'b', headerName: 'B0' },
+                { field: 'b', headerName: 'B1' },
+            ],
+        });
+        api.applyColumnState({ state: [{ colId: 'b_1', width: 333 }] });
+
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'b_1',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'headerName', value: 'DYN' }],
+                },
+            ],
+        });
+
+        expect(
+            api.getColumns()!.map((col) => `${col.getColId()} ${col.getColDef().headerName} ${col.getActualWidth()}`)
+        ).toEqual(['b B0 200', 'b_1 B1 333']);
+    });
+
+    test('turning calculated columns off frees a calculated column’s id for a new declared column', () => {
+        const api = createGrid('state-created-then-off', {
+            rowData: [{ id: 'r1', b: 2 }],
+            columnDefs: [{ field: 'b', headerName: 'B0' }],
+        });
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'b_1',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'calculatedExpression', value: '1 + 1' }],
+                },
+            ],
+        });
+        api.setGridOption('calculatedColumns', false);
+
+        api.setGridOption('columnDefs', [
+            { field: 'b', headerName: 'B0' },
+            { field: 'b', headerName: 'B1' },
+        ]);
+
+        expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getColDef().headerName}`)).toEqual([
+            'b B0',
+            'b_1 B1',
+        ]);
+    });
+
+    test.each([
+        ['getColumnDefs() saved with it', (api: GridApi): GridOptions['columnDefs'] => api.getColumnDefs(), '1 + 1'],
+        [
+            'a declared column at its colId',
+            (): GridOptions['columnDefs'] => [{ field: 'a' }, { colId: 'restored' }],
+            undefined,
+        ],
+        [
+            'a declared field equal to its colId',
+            (): GridOptions['columnDefs'] => [{ field: 'a' }, { field: 'restored' }],
+            undefined,
+        ],
+    ])(
+        'setting columnDefs to %s gives the id of the created column the update drops',
+        (_name, nextDefs, expression) => {
+            const api = createGrid('state-created-dropped-id', {
+                rowData: [{ id: 'r1', a: 2 }],
+                columnDefs: [{ field: 'a' }],
+            });
+            api.setState({
+                userColumns: [
+                    {
+                        colId: 'restored',
+                        created: true,
+                        parentGroupId: null,
+                        properties: [{ property: 'calculatedExpression', value: '1 + 1' }],
+                    },
+                ],
+            });
+            expect(order(api)).toEqual(['a', 'restored']);
+
+            api.setGridOption('columnDefs', nextDefs(api));
+
+            expect({
+                order: order(api),
+                expression: api.getColumn('restored')?.getColDef().calculatedExpression,
+            }).toEqual({
+                order: ['a', 'restored'],
+                expression,
+            });
+        }
+    );
+
+    test('a created column restored while calculated columns are off leaves a declared column its generated id', () => {
+        const api = createGrid('state-created-at-generated-id-off', {
+            calculatedColumns: false,
+            rowData: [{ id: 'r1', b: 2 }],
+            columnDefs: [
+                { field: 'b', headerName: 'B0' },
+                { field: 'b', headerName: 'B1' },
+            ],
+        });
+
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'b_1',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'calculatedExpression', value: '1 + 1' }],
+                },
+            ],
+        });
+
+        expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getColDef().headerName}`)).toEqual([
+            'b B0',
+            'b_1 B1',
+        ]);
+    });
+
     // `userColumns` is a record of the user's own choices, not a second route into `columnDefs`. A
     // hand-authored entry naming a property no dialog offers is dropped, so state cannot define columns
     // behind `columnDefs`' back, nor contend with the sections that own width/visibility/sort/order.
@@ -407,6 +576,26 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         expect(cellValue(api, 'declared')).toBe(13);
         // The dropped properties must not come back on a re-save either.
         expect(Object.keys(propertiesOf(api.getState(), 'declared')!)).toEqual(['headerName']);
+    });
+
+    test('an override keyed by field keeps the declared column and its width', async () => {
+        const api = createGrid('state-override-field-keyed', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        const colB = api.getColumn('b');
+        api.applyColumnState({ state: [{ colId: 'b', width: 111 }] });
+
+        api.setState({
+            ...api.getState(),
+            userColumns: [{ colId: 'b', properties: [{ property: 'headerName', value: 'Renamed' }] }],
+        });
+
+        await waitFor(() => expect(api.getColumn('b')!.getColDef().headerName).toBe('Renamed'));
+        expect(order(api)).toEqual(['a', 'b', 'declared']);
+        expect(api.getColumn('b')).toBe(colB);
+        expect(api.getColumn('b')!.getActualWidth()).toBe(111);
     });
 
     test('a created entry only applies the properties the dialog can produce', async () => {

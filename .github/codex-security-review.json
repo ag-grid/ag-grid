@@ -1,0 +1,35 @@
+{
+    "context": "AG Grid is an open-source (community) and commercial (enterprise) JavaScript data grid library published to npm as ag-grid-community, ag-grid-enterprise and framework wrappers for React, Angular and Vue. Customers embed it in their own web applications, where it renders data that frequently comes from their end users or third parties, so any path from grid data or column configuration to script execution affects every application using it. The repository also contains the documentation website (www.ag-grid.com), build and release scripts, and GitHub Actions workflows that hold publishing and cloud credentials. The repository is public and accepts pull requests from forks.",
+    "shards": [
+        {
+            "name": "community",
+            "paths": ["packages/ag-grid-community/src", "community-modules"],
+            "focus": "Rendering of cell values, headers, tooltips, overlays and other text into the DOM; HTML-accepting options and how escaping is applied; option and column definition merging; state, clipboard and CSV handling."
+        },
+        {
+            "name": "enterprise",
+            "paths": ["packages/ag-grid-enterprise/src"],
+            "focus": "Excel export (formula and XML injection), clipboard paste, menus, set filter and advanced filter expression parsing, server-side row model data handling, integrated charts, and licence key handling."
+        },
+        {
+            "name": "frameworks",
+            "paths": [
+                "packages/ag-grid-react",
+                "packages/ag-grid-angular",
+                "packages/ag-grid-vue3",
+                "packages/ag-stack"
+            ],
+            "focus": "How framework components and props reach the DOM (dangerouslySetInnerHTML, innerHTML, v-html, bypassSecurityTrust*)."
+        },
+        {
+            "name": "docs-site",
+            "paths": ["documentation", "external/ag-website-shared"],
+            "focus": "Server-side code and API routes, redirects, search integration, rendering of untrusted content, and any secrets in the site or its build. Ignore example code under _examples. external/ag-website-shared holds the site components, layouts and scripts shared by the AG Grid, AG Charts and AG Studio sites."
+        },
+        {
+            "name": "build-and-ci",
+            "paths": [".github", "scripts", "plugins", "external/ag-shared/github", "external/ag-shared/scripts"],
+            "focus": "Workflow injection, fork-triggered runs with secrets, pull_request_target and workflow_run safety, command injection in release and deployment scripts, and secrets in logs or artifacts."
+        }
+    ]
+}

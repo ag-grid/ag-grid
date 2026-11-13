@@ -10,10 +10,28 @@ import type {
 import type { CsvCustomContent } from '../interfaces/exportParams';
 
 const LINE_SEPARATOR = '\r\n';
+// Spreadsheet applications can evaluate a value starting with any of these, including the full-width forms, as a formula
+const FORMULA_START_REGEX = /^[=+\-@\t\r\n＝＋－＠]/;
+const SIGN_START_REGEX = /^[+-]/;
+const PLAIN_NUMBER_REGEX = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+
+// `avg` and `count` aggregates produce objects with a `toNumber()` method rather than numbers
+function isNumberValue(value: any): boolean {
+    return typeof value === 'number' || typeof value === 'bigint' || typeof value?.toNumber === 'function';
+}
+
+/** Prefixes `'` to text a spreadsheet application could evaluate as a formula, unless it is a number or a formatted number with a leading sign. */
+function prefixFormula(text: string, sourceValue: unknown): string {
+    if (!FORMULA_START_REGEX.test(text) || PLAIN_NUMBER_REGEX.test(text)) {
+        return text;
+    }
+    return isNumberValue(sourceValue) && SIGN_START_REGEX.test(text) ? text : `'${text}`;
+}
 
 interface CsvSerializingParams extends GridSerializingParams {
     suppressQuotes: boolean;
     columnSeparator: string;
+    sanitizeFormulas: boolean;
 }
 
 export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
@@ -21,14 +39,16 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     private result: string = '';
     private readonly suppressQuotes: boolean;
     private readonly columnSeparator: string;
+    private readonly sanitizeFormulas: boolean;
 
     constructor(private readonly config: CsvSerializingParams) {
         super(config);
 
-        const { suppressQuotes, columnSeparator } = config;
+        const { suppressQuotes, columnSeparator, sanitizeFormulas } = config;
 
         this.suppressQuotes = suppressQuotes;
         this.columnSeparator = columnSeparator;
+        this.sanitizeFormulas = sanitizeFormulas;
     }
 
     public addCustomContent(content: CsvCustomContent) {
@@ -113,32 +133,36 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             type: 'csv',
             useRawFormula: false,
         });
-        this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
+        this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value, rowCellValue.value);
     }
 
-    private putInQuotes(value: any): string {
+    private putInQuotes(value: any, sourceValue?: unknown): string {
+        const csvValue =
+            this.sanitizeFormulas && value != null ? prefixFormula(this.toCsvString(value), sourceValue) : value;
+
         if (this.suppressQuotes) {
-            return value;
+            return csvValue;
         }
 
-        if (value === null || value === undefined) {
+        if (csvValue === null || csvValue === undefined) {
             return '""';
         }
 
-        let stringValue: string;
-        if (typeof value === 'string') {
-            stringValue = value;
-        } else if (typeof value.toString === 'function') {
-            stringValue = value.toString();
-        } else {
-            this.log.warn(53);
-            stringValue = '';
-        }
-
         // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        const valueEscaped = stringValue.replace(/"/g, '""');
+        const valueEscaped = this.toCsvString(csvValue).replace(/"/g, '""');
 
         return '"' + valueEscaped + '"';
+    }
+
+    private toCsvString(value: any): string {
+        if (typeof value === 'string') {
+            return value;
+        }
+        if (typeof value.toString === 'function') {
+            return value.toString();
+        }
+        this.log.warn(53);
+        return '';
     }
 
     public parse(): string {

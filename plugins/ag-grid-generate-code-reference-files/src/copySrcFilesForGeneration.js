@@ -13,8 +13,11 @@ function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
             fs.mkdirSync(targetDir);
         }
 
-        // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
-        const modifiedContent = `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-nocheck\n${data}`;
+        // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors.
+        // Type-only imports are dropped too: `@ts-nocheck` doesn't stop TypeScript following them, and
+        // they would pull core sources outside this project's rootDir into its build type-check.
+        const withoutTypeImports = data.replace(/^import type [^;]+;\n/gm, '');
+        const modifiedContent = `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-nocheck\n${withoutTypeImports}`;
         fs.writeFile(
             `${targetDir}/${destinationFile}`,
             modifiedContent,
