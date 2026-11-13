@@ -681,8 +681,12 @@ export abstract class SimpleFilter<
 
             const placeholderKey =
                 index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
-            const ariaLabelId =
-                index === 0 && numberOfInputs > 1 ? 'filterFromValue' : index === 0 ? 'filterValue' : 'filterToValue';
+            let ariaLabelId: ColumnFilterLabelId = 'filterValue';
+            if (index > 0) {
+                ariaLabelId = 'filterToValue';
+            } else if (numberOfInputs > 1) {
+                ariaLabelId = 'filterFromValue';
+            }
 
             const filterOptionKey = eTypes[position].getValue() as FilterOptionKey;
             const placeholderText = getPlaceholderText(

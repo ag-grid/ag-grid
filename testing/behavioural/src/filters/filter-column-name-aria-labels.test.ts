@@ -97,6 +97,7 @@ describe('Filter controls name their column', () => {
 
         await waitFor(() => expect(operatorLabel()).toBe('Nation Filtering Operator'));
         expect(harness.input('text').getAttribute('aria-label')).toBe('Nation Filter Value');
+        expect(popup().getAttribute('aria-label')).toBe('Nation Column Filter');
         expect(await floatingFilterButtonLabel(api, 'value')).toBe('Open Nation Filter Menu');
     });
 
