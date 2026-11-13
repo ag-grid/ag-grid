@@ -245,6 +245,7 @@
       ],
       "inputs": [
         "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*",
+        "{workspaceRoot}/documentation/ag-grid-docs/src/example-fake-servers/**/*",
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.spec.*",
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.test.*",
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*",

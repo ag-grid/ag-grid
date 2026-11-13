@@ -3,6 +3,18 @@
 // To keep things simple it does the bare minimum to support the example.
 // Request values are bound as `?` parameters, and column names, sort directions and
 // aggregation functions are checked against allow-lists of known values.
+import {
+    checkColumn,
+    combineConditionsSql,
+    limitSql,
+    numberFilterSql,
+    orderBySql,
+    textFilterSql,
+} from '@example-fake-servers/sql';
+
+// The ID AG Grid uses for the grand total row. Exported as GRAND_TOTAL_ROW_ID from 'ag-grid-community'
+const GRAND_TOTAL_ROW_ID = 'rowGroupFooter_ROOT_NODE_ID';
+
 export function FakeServer(allData) {
     alasql.options.cache = false;
 
@@ -10,20 +22,22 @@ export function FakeServer(allData) {
     const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     return {
-        getData: function (request) {
-            const results = executeQuery(request);
+        getData: function (request, needsGrandTotal) {
+            const rows = executeQuery(request);
+            const grandTotalData = needsGrandTotal ? computeGrandTotal(request) : undefined;
 
             return {
                 success: true,
-                rows: results,
+                rows,
                 lastRow: getLastRowIndex(request),
+                grandTotalData,
             };
         },
-        getAthletes: function () {
-            const sql = 'SELECT DISTINCT athlete FROM ? ORDER BY athlete ASC';
+        getDistinctValues: function (field) {
+            const id = column(field);
 
-            return alasql(sql, [allData]).map(function (x) {
-                return x.athlete;
+            return alasql('SELECT DISTINCT ' + id + ' FROM ? ORDER BY ' + id + ' ASC', [allData]).map(function (row) {
+                return row[id];
             });
         },
     };
@@ -31,10 +45,34 @@ export function FakeServer(allData) {
     function executeQuery(request) {
         const params = [allData];
         const sql = buildSql(request, params);
-
         console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
-
         return alasql(sql, params);
+    }
+
+    function computeGrandTotal(request) {
+        const valueCols = request.valueCols ?? [];
+        // If no value columns are configured there is nothing meaningful to aggregate.
+        if (valueCols.length === 0) {
+            return { id: GRAND_TOTAL_ROW_ID };
+        }
+
+        // Aggregate across the entire filtered dataset, ignoring group keys — the grand total
+        // represents the totals the user would see if all groups were expanded.
+        const selects = valueCols.map((col) => {
+            const id = column(col.id);
+            return `${aggFunc(col.aggFunc)}(${id}) AS ${id}`;
+        });
+        const params = [allData];
+        const sql = `SELECT ${selects.join(', ')} FROM ?` + whereSql({ ...request, groupKeys: [] }, params);
+        console.log('[FakeServer] - about to execute grand total query:', sql, params.slice(1));
+        const result = alasql(sql, params)[0] ?? {};
+        for (const col of valueCols) {
+            // the sum of no rows is 0, where SQL gives null
+            if (col.aggFunc === 'sum') {
+                result[col.id] ??= 0;
+            }
+        }
+        return { id: GRAND_TOTAL_ROW_ID, ...result };
     }
 
     function buildSql(request, params) {
@@ -43,16 +81,13 @@ export function FakeServer(allData) {
             ' FROM ?' +
             whereSql(request, params) +
             groupBySql(request) +
-            orderBySql(request) +
+            orderBySql(request.sortModel, knownColumns) +
             limitSql(request)
         );
     }
 
     function column(colId) {
-        if (!knownColumns.has(colId)) {
-            throw new Error('Unknown column: ' + colId);
-        }
-        return colId;
+        return checkColumn(knownColumns, colId);
     }
 
     function aggFunc(name) {
@@ -69,7 +104,7 @@ export function FakeServer(allData) {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            const colsToSelect = [column(rowGroupCol.id)];
+            const colsToSelect = [column(rowGroupCol.id), 'count(*) AS childCount'];
 
             valueCols.forEach(function (valueCol) {
                 const id = column(valueCol.id);
@@ -85,6 +120,7 @@ export function FakeServer(allData) {
     function whereSql(request, params) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
+        const filterModel = request.filterModel;
         const whereParts = [];
 
         if (groupKeys) {
@@ -94,10 +130,26 @@ export function FakeServer(allData) {
             });
         }
 
+        if (filterModel) {
+            Object.keys(filterModel).forEach(function (key) {
+                const item = filterModel[key];
+                switch (item.filterType) {
+                    case 'text':
+                        whereParts.push(combineConditionsSql(textFilterSql, column(key), item, params));
+                        break;
+                    case 'number':
+                        whereParts.push(combineConditionsSql(numberFilterSql, column(key), item, params));
+                        break;
+                    default:
+                        console.log('unknown filter type: ' + item.filterType);
+                        break;
+                }
+            });
+        }
+
         if (whereParts.length > 0) {
             return ' WHERE ' + whereParts.join(' AND ');
         }
-
         return '';
     }
 
@@ -107,42 +159,9 @@ export function FakeServer(allData) {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-
             return ' GROUP BY ' + column(rowGroupCol.id) + ' HAVING count(*) > 0';
         }
-
         return '';
-    }
-
-    function orderBySql(request) {
-        const sortModel = request.sortModel;
-
-        if (sortModel.length === 0) return '';
-
-        // sorting on a column the data doesn't hold (e.g. the auto group column) has no effect
-        const sorts = sortModel
-            .filter(function (s) {
-                return knownColumns.has(s.colId);
-            })
-            .map(function (s) {
-                return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
-            });
-
-        if (sorts.length === 0) return '';
-
-        return ' ORDER BY ' + sorts.join(', ');
-    }
-
-    function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) {
-            return '';
-        }
-
-        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
-        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
-        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
-
-        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {
