@@ -7,6 +7,7 @@ let lastChange: { subscribed: number; unsubscribed: number } | undefined;
 
 /** Records rows the grid subscribed, and the number of rows now subscribed. */
 export function recordSubscribed(count: number, totalSubscribed: number) {
+    console.log(`subscribe ${count}`);
     addToLastChange(count, 0);
     subscribedCount = totalSubscribed;
     render();
@@ -14,6 +15,7 @@ export function recordSubscribed(count: number, totalSubscribed: number) {
 
 /** Records rows the grid unsubscribed, and the number of rows still subscribed. */
 export function recordUnsubscribed(count: number, totalSubscribed: number) {
+    console.log(`unsubscribe ${count}`);
     addToLastChange(0, count);
     subscribedCount = totalSubscribed;
     if (totalSubscribed === 0) {

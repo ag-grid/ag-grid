@@ -108,7 +108,6 @@ const gridOptions: GridOptions<Stock> = {
             if (groupsStreamed) {
                 socket.send({ type: 'subscribeGroups', groups });
             }
-            console.log(`subscribe ${rows.length}`);
             recordSubscribed(rows.length, subscribed.size + subscribedGroups.size);
             recordStreamed(() => countStreamedStocks(params.api));
         },
@@ -117,7 +116,6 @@ const gridOptions: GridOptions<Stock> = {
             const groupIds = rows.map((row) => row.id).filter((id) => subscribedGroups.delete(id));
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeGroups', ids: groupIds });
-            console.log(`unsubscribe ${ids.length + groupIds.length}`);
             recordUnsubscribed(ids.length + groupIds.length, subscribed.size + subscribedGroups.size);
             recordStreamed(() => countStreamedStocks(params.api));
         },

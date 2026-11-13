@@ -62,8 +62,6 @@ function round(value: number): number {
 
 function aggregate(values: number[], aggFunc: string): number {
     switch (aggFunc) {
-        case 'maxAbs':
-            return values.reduce((result, value) => (Math.abs(value) > Math.abs(result) ? value : result), 0);
         case 'avg':
             return round(values.reduce((sum, value) => sum + value, 0) / values.length);
         case 'min':

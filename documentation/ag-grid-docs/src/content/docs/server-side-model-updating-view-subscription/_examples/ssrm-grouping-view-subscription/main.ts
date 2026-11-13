@@ -2,10 +2,8 @@ import type {
     GetRowIdParams,
     GridApi,
     GridOptions,
-    IAggFuncParams,
     IServerSideDatasource,
     IServerSideGetRowsParams,
-    ValueFormatterParams,
 } from 'ag-grid-community';
 import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
@@ -47,22 +45,14 @@ const gridOptions: GridOptions<Row> = {
         { field: 'sector', rowGroup: true, hide: true },
         { field: 'symbol' },
         // the average price of different stocks means nothing, so group rows leave it blank
-        { field: 'price', valueFormatter: formatNumber, enableCellChangeFlash: true },
-        // the sector's biggest move, up or down, which the server calculates
-        {
-            field: 'change',
-            headerName: 'Change %',
-            aggFunc: 'maxAbs',
-            valueFormatter: formatNumber,
-            enableCellChangeFlash: true,
-        },
+        { field: 'price', enableCellChangeFlash: true },
+        // the sector's biggest rise, which the server calculates
+        { field: 'change', headerName: 'Change %', aggFunc: 'max', enableCellChangeFlash: true },
         { field: 'volume', aggFunc: 'sum', enableCellChangeFlash: true },
     ],
     defaultColDef: { flex: 1, minWidth: 100 },
     autoGroupColumnDef: { minWidth: 200 },
     rowModelType: 'serverSide',
-    // the server aggregates the group rows, so the grid only needs to know the name
-    aggFuncs: { maxAbs: maxAbs },
     getRowId: getRowId,
     viewSubscription: {
         subscribeRows: (rows) => {
@@ -108,18 +98,6 @@ const gridOptions: GridOptions<Row> = {
 function onSubscriptionActiveChanged() {
     const checked = document.querySelector<HTMLInputElement>('#subscriptionActive')!.checked;
     gridApi.setGridOption('viewSubscriptionActive', checked);
-}
-
-function formatNumber(params: ValueFormatterParams<Row>) {
-    return params.value == null ? '' : Number(params.value).toFixed(2);
-}
-
-/** The value furthest from zero, keeping its sign. */
-function maxAbs(params: IAggFuncParams<Row>) {
-    return params.values.reduce(
-        (result, value) => (result == null || Math.abs(value) > Math.abs(result) ? value : result),
-        null
-    );
 }
 
 /** A stock row has its own id. A sector group row has none, so its id comes from its sector. */

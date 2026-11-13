@@ -6,10 +6,8 @@ import type {
     GetRowIdParams,
     GridApi,
     GridOptions,
-    IAggFuncParams,
     IServerSideDatasource,
     IServerSideGetRowsParams,
-    ValueFormatterParams,
 } from 'ag-grid-community';
 import {
     ColumnApiModule,
@@ -68,14 +66,13 @@ const gridOptions: GridOptions<ResultRow> = {
         { field: 'exchange', pivot: true, enablePivot: true },
         { field: 'symbol' },
         // the average price of different stocks means nothing, so group rows leave it blank
-        { field: 'price', valueFormatter: formatNumber, enableCellChangeFlash: true },
+        { field: 'price', enableCellChangeFlash: true },
         {
             field: 'change',
             headerName: 'Change %',
-            // the group's biggest move, up or down, which the server computes
-            aggFunc: 'maxAbs',
+            // the group's biggest rise, which the server computes
+            aggFunc: 'max',
             enableValue: true,
-            valueFormatter: formatNumber,
             enableCellChangeFlash: true,
         },
         { field: 'volume', aggFunc: 'sum', enableValue: true, enableCellChangeFlash: true },
@@ -88,8 +85,6 @@ const gridOptions: GridOptions<ResultRow> = {
     // the server sends the pivot result fields, and the grid creates a column for each one
     serverSidePivotResultFieldSeparator: '_',
     processPivotResultColDef: processPivotResultColDef,
-    // the server aggregates the rows, so the grid only needs to know the name
-    aggFuncs: { maxAbs: maxAbs },
     getRowId: getRowId,
     viewSubscription: {
         subscribeRows: (rows, params) => {
@@ -111,7 +106,6 @@ const gridOptions: GridOptions<ResultRow> = {
             if (groupsStreamed && groups.length) {
                 socket.send({ type: 'subscribeGroups', groups });
             }
-            console.log(`subscribe ${rows.length}`);
             recordSubscribed(rows.length, subscribed.size + subscribedGroups.size);
         },
         unsubscribeRows: (rows) => {
@@ -119,7 +113,6 @@ const gridOptions: GridOptions<ResultRow> = {
             const groupIds = rows.map((row) => row.id).filter((id) => subscribedGroups.delete(id));
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeGroups', ids: groupIds });
-            console.log(`unsubscribe ${ids.length + groupIds.length}`);
             recordUnsubscribed(ids.length + groupIds.length, subscribed.size + subscribedGroups.size);
         },
     },
@@ -136,18 +129,6 @@ const gridOptions: GridOptions<ResultRow> = {
 function onSubscriptionActiveChanged() {
     const checked = document.querySelector<HTMLInputElement>('#subscriptionActive')!.checked;
     gridApi.setGridOption('viewSubscriptionActive', checked);
-}
-
-function formatNumber(params: ValueFormatterParams<ResultRow>) {
-    return params.value == null ? '' : Number(params.value).toFixed(2);
-}
-
-/** The value furthest from zero, keeping its sign. */
-function maxAbs(params: IAggFuncParams<ResultRow>) {
-    return params.values.reduce(
-        (result, value) => (result == null || Math.abs(value) > Math.abs(result) ? value : result),
-        null
-    );
 }
 
 function processPivotResultColDef(colDef: ColDef<ResultRow>) {

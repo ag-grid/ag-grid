@@ -12,7 +12,7 @@ export interface Stock {
 /** A sector group row, with the aggregates the server calculates from its stocks. */
 export interface SectorRow {
     sector: string;
-    // the biggest move of the sector's stocks, up or down
+    // the biggest rise of the sector's stocks
     change: number;
     // the total shares traded
     volume: number;
@@ -143,7 +143,7 @@ class FakeServer {
         const stocks = this.stocks.filter((s) => s.sector === sector);
         return {
             sector,
-            change: stocks.reduce((result, s) => (Math.abs(s.change) > Math.abs(result) ? s.change : result), 0),
+            change: Math.max(...stocks.map((s) => s.change)),
             volume: stocks.reduce((sum, s) => sum + s.volume, 0),
         };
     }

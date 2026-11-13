@@ -1626,7 +1626,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     @Input() public rowModelType: RowModelType | undefined = undefined;
-    /** Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
+    /** Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
      * so that a server stream only sends updates for rows the user can see.
      * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
      * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid

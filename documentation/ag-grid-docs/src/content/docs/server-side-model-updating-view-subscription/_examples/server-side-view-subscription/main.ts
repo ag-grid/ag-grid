@@ -59,13 +59,11 @@ const gridOptions: GridOptions<PortfolioRow> = {
         subscribeRows: (rows) => {
             rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
             socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
-            console.log(`subscribe ${rows.length}`);
             recordSubscribed(rows.length, subscribed.size);
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id).filter((id) => subscribed.delete(id));
             socket.send({ type: 'unsubscribe', ids });
-            console.log(`unsubscribe ${ids.length}`);
             recordUnsubscribed(ids.length, subscribed.size);
         },
     },

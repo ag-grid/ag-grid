@@ -55,13 +55,11 @@ const gridOptions: GridOptions<Stock> = {
             const ids = rows.filter((row) => row.type === 'leaf').map((row) => row.id);
             ids.forEach((id) => subscribed.add(id));
             socket.send({ type: 'subscribe', ids });
-            console.log(`subscribe ${ids.length}`);
             recordSubscribed(ids.length, subscribed.size);
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id).filter((id) => subscribed.delete(id));
             socket.send({ type: 'unsubscribe', ids });
-            console.log(`unsubscribe ${ids.length}`);
             recordUnsubscribed(ids.length, subscribed.size);
         },
     },
