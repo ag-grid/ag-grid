@@ -70,6 +70,7 @@ import type {
     IsRowMaster,
     IsRowPinnable,
     IsRowPinned,
+    IsRowDraggableCallback,
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
@@ -2029,6 +2030,14 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: IsFullWidthRow<TData>,
+    /** Callback to decide, per row, whether a row drag can start on that row, from any drag handle or from the entire row.
+         * When it returns `false`, row drag handles on that row are hidden (keeping their space) and the row is left out of multi-row drags.
+         * Other rows can still be dropped around it. Re-evaluated when the row data changes.
+         * When set, the result of a `colDef.rowDrag` callback is ignored.
+         * If not set, all rows can be dragged.
+         * @agModule `RowDragModule`
+         */
+    isRowDraggable?: IsRowDraggableCallback<TData>,
     /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
          * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
          * @agModule `RowDragModule`
@@ -2513,6 +2522,7 @@ export function getProps() {
         getRowClass: undefined,
         getRowHeight: undefined,
         isFullWidthRow: undefined,
+        isRowDraggable: undefined,
         isRowValidDropPosition: undefined,
 
 // @END_DEFAULTS@

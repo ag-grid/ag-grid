@@ -16,6 +16,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
+import type { RowDragService } from './rowDragService';
 import type {
     RowDraggingEvent,
     RowDropTargetPosition,
@@ -718,19 +719,23 @@ const compareRowIndex = (a: IRowNode, b: IRowNode): number =>
 export const getRowDragMultiRowNodes = (
     rowNode: RowNode,
     gos: GridOptionsService,
-    selectionSvc: ISelectionService | undefined
+    selectionSvc: ISelectionService | undefined,
+    rowDragSvc: RowDragService | undefined
 ): RowNode[] => {
     if (!gos.get('rowDragMultiRow') || !selectionSvc || !rowNode.isSelected()) {
         return [rowNode];
     }
+    let nodes: RowNode[] | null = null;
     if (gos.get('treeData') && _isClientSideRowModel(gos)) {
-        const bestCost = selectionSvc.getBestCostNodeSelection();
-        if (bestCost?.length) {
-            return bestCost;
-        }
+        nodes = selectionSvc.getBestCostNodeSelection() ?? null;
     }
-    const selection = selectionSvc.getSelectedNodes();
-    return selection.length ? selection : [rowNode];
+    if (!nodes?.length) {
+        nodes = selectionSvc.getSelectedNodes();
+    }
+    if (rowDragSvc && gos.exists('isRowDraggable')) {
+        nodes = nodes.filter((node) => node === rowNode || rowDragSvc.isRowDraggable(node));
+    }
+    return nodes.length ? nodes : [rowNode];
 };
 
 const setRowNodesDragging = (rowNodes: IRowNode[] | null | undefined, dragging: boolean): void => {
