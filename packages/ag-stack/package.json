@@ -19,13 +19,6 @@
       "default": "./dist/core/main-core.cjs.js"
     }
   },
-  "typesVersions": {
-    "*": {
-      "core": [
-        "./dist/types/src/main-core.d.ts"
-      ]
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
