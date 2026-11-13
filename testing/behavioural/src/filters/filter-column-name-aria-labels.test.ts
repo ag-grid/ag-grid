@@ -1,4 +1,4 @@
-import { getByTestId, waitFor } from '@testing-library/dom';
+import { findByTestId, waitFor } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     TestGridsManager,
@@ -36,10 +36,10 @@ describe('Filter controls name their column', () => {
 
     const ROW_DATA = [{ value: 'Ireland', total: 3, awarded: '2024-01-01' }];
 
-    const floatingFilterButtonLabel = (api: GridApi, colId: string) =>
-        getByTestId(getGridElement(api)! as HTMLElement, agTestIdFor.floatingFilterButton(colId)).getAttribute(
-            'aria-label'
-        );
+    const floatingFilterButtonLabel = async (api: GridApi, colId: string) => {
+        const button = await findByTestId(getGridElement(api)! as HTMLElement, agTestIdFor.floatingFilterButton(colId));
+        return button.getAttribute('aria-label');
+    };
     const popup = () => document.querySelector<HTMLElement>('.ag-filter-menu')!;
     const operatorLabel = () =>
         popup().querySelector('.ag-filter-select .ag-picker-field-wrapper')!.getAttribute('aria-label');
@@ -53,7 +53,7 @@ describe('Filter controls name their column', () => {
             rowData: ROW_DATA,
         });
         const colId = colDef.field!;
-        expect(floatingFilterButtonLabel(api, colId)).toBe('Open Country Filter Menu');
+        expect(await floatingFilterButtonLabel(api, colId)).toBe('Open Country Filter Menu');
 
         const harness = await ColumnFilterHarness.open(api, colId, 'floatingFilter');
 
@@ -97,7 +97,7 @@ describe('Filter controls name their column', () => {
 
         await waitFor(() => expect(operatorLabel()).toBe('Nation Filtering Operator'));
         expect(harness.input('text').getAttribute('aria-label')).toBe('Nation Filter Value');
-        expect(floatingFilterButtonLabel(api, 'value')).toBe('Open Nation Filter Menu');
+        expect(await floatingFilterButtonLabel(api, 'value')).toBe('Open Nation Filter Menu');
     });
 
     test('a column with no header name keeps the unnamed labels', async () => {
@@ -105,7 +105,7 @@ describe('Filter controls name their column', () => {
             columnDefs: [{ field: 'value', headerName: '', filter: 'agTextColumnFilter', floatingFilter: true }],
             rowData: ROW_DATA,
         });
-        expect(floatingFilterButtonLabel(api, 'value')).toBe('Open Filter Menu');
+        expect(await floatingFilterButtonLabel(api, 'value')).toBe('Open Filter Menu');
 
         const harness = await ColumnFilterHarness.open(api, 'value', 'floatingFilter');
 
