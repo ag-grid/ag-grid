@@ -10,6 +10,7 @@ View subscription requires the `ViewSubscriptionModule` and [Row IDs](./server-s
 The example below loads 1,000 stocks in blocks over a simulated websocket, which also streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates). Note the following:
 
 - Only the loaded rows in view are subscribed. Scrolling to rows in a new block subscribes them once the block has loaded.
+- **Subscribed rows**, **Last change** and **Updates sent** count as in the [Client-Side Row Model example](./data-update-view-subscription/).
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
 
 {% gridExampleRunner title="View Subscription with the Server-Side Row Model" name="ssrm-flat-view-subscription" exampleHeight=615 /%}
@@ -27,7 +28,7 @@ This page covers what is different with the Server-Side Row Model: rows that loa
 
 A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers. When the grid is ready, `subscribeRows` is called with an empty array, as no block has loaded yet.
 
-A row's values come from its block, and changes made between the block loading and the row being subscribed are not streamed. Have the server send the current values of a newly subscribed row first, then stream its changes.
+A row's values come from its block, which can have loaded before the row came into view. When a row is subscribed, have the server send its current values first, then stream its changes.
 
 - A [refresh](./server-side-model-updating-refresh/) without a purge keeps the rows whose IDs are unchanged. A kept row stays subscribed, even when its data changes.
 - A refresh with `purge: true` unsubscribes every row, then subscribes them again as they reload.
