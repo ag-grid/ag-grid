@@ -1,10 +1,8 @@
-import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
-import { _errMsg } from '../logging';
 import type {
     Deprecations,
     OptionsValidator,
@@ -73,33 +71,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
     },
 
-    groupRemoveSingleChildren: {
-        version: '33',
-        message: 'Use `groupHideParentOfSingleChild` instead.',
-    },
-    groupRemoveLowestSingleChildren: {
-        version: '33',
-        message: 'Use `groupHideParentOfSingleChild: "leafGroupsOnly"` instead.',
-    },
-
-    suppressRowGroupHidesColumns: {
-        version: '33',
-        message: 'Use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.',
-    },
-    suppressMakeColumnVisibleAfterUnGroup: {
-        version: '33',
-        message: 'Use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.',
-    },
-
-    unSortIcon: { version: '33', message: 'Use `defaultColDef.unSortIcon` instead.' },
-    sortingOrder: { version: '33', message: 'Use `defaultColDef.sortingOrder` instead.' },
-
-    suppressPropertyNamesCheck: {
-        version: '33',
-        message:
-            '`gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.',
-    },
-
     suppressAdvancedFilterEval: {
         version: '34',
         message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
@@ -140,6 +111,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
     findSearchValue: 'Find',
+    formulaDataSource: 'Formula',
+    formulaFuncs: 'Formula',
     getFullRowEditValidationErrors: 'EditCore',
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
@@ -158,18 +131,23 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDefaultExpanded: 'MasterDetail',
-    masterDetail: (_options, gridOptions) =>
-        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
+    masterDetail: 'MasterDetail',
     notesDataSource: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',
     pivotMode: (_options, gridOptions) => (gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'Pivot'),
     pivotPanelShow: 'RowGroupingPanel',
+    processCellForClipboard: 'Clipboard',
+    processCellFromClipboard: 'Clipboard',
+    processDataFromClipboard: 'Clipboard',
+    processGroupHeaderForClipboard: 'Clipboard',
+    processHeaderForClipboard: 'Clipboard',
     quickFilterText: 'QuickFilter',
     rowClass: 'RowStyle',
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
+    rowDragEntireRow: 'RowDrag',
     rowDragManaged: 'RowDrag',
     refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
@@ -177,6 +155,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
+    scrollGestureMode: ({ scrollGestureMode }) => (scrollGestureMode === 'axisLocked' ? 'ScrollGesture' : null),
+    sendToClipboard: 'Clipboard',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
@@ -416,18 +396,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 groupHideOpenParents: { required: [undefined, false] },
             },
         },
-        groupRemoveLowestSingleChildren: {
-            dependencies: {
-                groupHideOpenParents: { required: [undefined, false] },
-                groupRemoveSingleChildren: { required: [undefined, false] },
-            },
-        },
-        groupRemoveSingleChildren: {
-            dependencies: {
-                groupHideOpenParents: { required: [undefined, false] },
-                groupRemoveLowestSingleChildren: { required: [undefined, false] },
-            },
-        },
         groupSelectsChildren: {
             dependencies: {
                 rowSelection: { required: ['multiple'] },
@@ -437,22 +405,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
                 for (const k of Object.keys(groupHierarchyConfig)) {
                     beans.validation?.validateColDef(groupHierarchyConfig[k]);
-                }
-                return null;
-            },
-        },
-        icons: {
-            validate: ({ icons }) => {
-                if (icons) {
-                    if (icons['smallDown']) {
-                        return _errMsg(262);
-                    }
-                    if (icons['smallLeft']) {
-                        return _errMsg(263);
-                    }
-                    if (icons['smallRight']) {
-                        return _errMsg(264);
-                    }
                 }
                 return null;
             },
@@ -654,21 +606,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         serverSideSortAllLevels: {
             supportedRowModels: ['serverSide'],
         },
-        sortingOrder: {
-            validate: (_options) => {
-                const sortingOrder = _options.sortingOrder;
-
-                if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
-                    if (invalidItems.length > 0) {
-                        return _createValidationWarning(324, { property: 'sortingOrder', invalidItems });
-                    }
-                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return _createValidationWarning(325, { property: 'sortingOrder', value: sortingOrder });
-                }
-                return null;
-            },
-        },
         stickyRowsMaxViewportRatio: {
             validate({ stickyRowsMaxViewportRatio: ratio }) {
                 if (ratio == null || (typeof ratio === 'number' && ratio >= 0 && ratio <= 1)) {
@@ -783,6 +720,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
                 return null;
+            },
+        },
+        scrollGestureMode: {
+            validate: ({ scrollGestureMode }) => {
+                const allowed = ['native', 'axisLocked'];
+                return scrollGestureMode != null && !allowed.includes(scrollGestureMode)
+                    ? _createValidationWarning(320, {
+                          property: 'scrollGestureMode',
+                          allowed,
+                          value: scrollGestureMode,
+                      })
+                    : null;
             },
         },
         renderingMode: {

@@ -4,7 +4,7 @@ export interface ChartGroupsDef {
     // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
-    pieGroup?: ('pie' | 'donut' | 'doughnut')[];
+    pieGroup?: ('pie' | 'donut')[];
     lineGroup?: ('line' | 'stackedLine' | 'normalizedLine')[];
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
     scatterGroup?: ('scatter' | 'bubble')[];
@@ -63,8 +63,7 @@ export interface ChartToolPanelsDef {
     defaultToolPanel?: ChartToolPanelName;
 }
 
-export type CrossFilterChartType =
-    'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'donut' | 'doughnut' | 'area';
+export type CrossFilterChartType = 'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'donut' | 'area';
 
 export type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';
 export type ChartToolbarMenuItemOptions = 'chartLink' | 'chartUnlink' | 'chartDownload' | 'chartMenu';
@@ -91,7 +90,6 @@ export type ChartType =
     | 'bubble'
     | 'pie'
     | 'donut'
-    | 'doughnut'
     | 'area'
     | 'stackedArea'
     | 'normalizedArea'

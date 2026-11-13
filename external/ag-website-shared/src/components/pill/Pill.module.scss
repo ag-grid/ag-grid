@@ -3,7 +3,6 @@
 .pill {
     text-transform: capitalize;
     font-size: var(--text-fs-xs);
-    font-weight: var(--text-fw-medium);
     padding: $spacing-size-1 $spacing-size-2;
     display: inline-block;
     font-weight: var(--text-semibold);
@@ -78,26 +77,6 @@
 
             &::before {
                 background-color: var(--color-green-300);
-            }
-        }
-    }
-
-    &.red {
-        color: var(--color-error);
-        background-color: var(--color-red-100);
-        border: 1px solid var(--color-error);
-
-        &::before {
-            background-color: var(--color-error);
-        }
-
-        #{$selector-darkmode} & {
-            background-color: color-mix(in srgb, var(--color-red-950) 50%, transparent);
-            border-color: color-mix(in srgb, var(--color-red-600) 30%, transparent);
-            color: var(--color-red-300);
-
-            &::before {
-                background-color: var(--color-red-300);
             }
         }
     }

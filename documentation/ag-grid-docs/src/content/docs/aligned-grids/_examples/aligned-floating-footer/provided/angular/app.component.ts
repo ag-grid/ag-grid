@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
@@ -46,7 +46,7 @@ ModuleRegistry.registerModules([
             <ag-grid-angular
                 style="flex: 1 1 auto;"
                 #topGrid
-                [rowData]="rowData"
+                [rowData]="rowData()"
                 [gridOptions]="topOptions"
                 [alignedGrids]="[bottomGrid]"
                 [columnDefs]="columnDefs"
@@ -65,7 +65,7 @@ ModuleRegistry.registerModules([
 })
 export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
     topOptions: GridOptions = {
         defaultColDef: {
             filter: true,
@@ -123,7 +123,7 @@ export class AppComponent {
 
     ngOnInit() {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe((data) => {
-            this.rowData = data as any[];
+            this.rowData.set(data as any[]);
         });
     }
 }

@@ -43,7 +43,7 @@ describe('markdown endpoints agree with the registry, without a build', () => {
     const SAMPLE_PARAMS = {
         framework: 'react',
         pageName: 'getting-started',
-        bryntumProduct: 'bryntum-scheduler-pro',
+        bryntumProduct: 'bryntum-task-board',
         slug: sessionSlug(recordedSession.title),
     };
     // AGENTS.md is a standalone file, and index.md is the homepage's twin, negotiated by its own rule.

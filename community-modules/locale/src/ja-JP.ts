@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     advancedFilterCancel: 'キャンセル',
     advancedFilterClear: 'クリア',
     advancedFilterBuilder: 'ビルダー',
+    advancedFilterPlaceholder: '高度なフィルター',
     advancedFilterValidationMissingColumn: '列が欠落しています',
     advancedFilterValidationMissingOption: 'オプションが欠落しています',
     advancedFilterValidationMissingValue: '値が欠落しています',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
+    ariaColumnSelectExpandAll: 'すべての列グループを展開または折りたたむ',
     ariaDateFilterInput: '日付フィルター入力',
     ariaDefaultListName: 'リスト',
     ariaFilterColumnsInput: 'フィルター列入力',
@@ -818,6 +820,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelSelectField: 'フィールドを選択',
 
     // Cell Editor
+    ariaLabelCellEditor: 'セルエディタ',
     ariaValidationErrorPrefix: 'セルエディタの検証',
     ariaFullRowValidationError: '行全体の検証: ${variable}',
     ariaFullRowEditValidationFailed: '行の編集を完了できません。${variable}',
@@ -847,6 +850,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaLabelFilterCardType: 'フィルタータイプ',
     ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)

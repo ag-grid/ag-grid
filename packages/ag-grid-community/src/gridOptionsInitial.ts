@@ -31,7 +31,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     enableCellExpressions: true,
     suppressTouch: true,
     suppressBrowserResizeObserver: true,
-    suppressPropertyNamesCheck: true,
     debug: true,
     dragAndDropImageComponent: true,
     overlayComponent: true,

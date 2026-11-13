@@ -1,4 +1,4 @@
-import { RefPlaceholder, _clearElement } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _clearElement } from 'ag-stack';
 
 import type { GridOptions } from '../../entities/gridOptions';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
@@ -120,7 +120,7 @@ export class FileInputOverlayComponent
             cls: 'ag-file-input-input',
             attrs: { type: 'file', style: 'display:none' },
         });
-        this.addManagedElementListeners(eFileInput, { change: () => this.onFileInputChange(eFileInput) });
+        _addManagedElementListeners(this, eFileInput, { change: () => this.onFileInputChange(eFileInput) });
         parent.appendChild(eFileInput);
 
         const eButton = _createElement<HTMLButtonElement>({
@@ -129,7 +129,7 @@ export class FileInputOverlayComponent
             attrs: { type: 'button' },
             children: localeTextFunc('fileInputOverlayBrowse', 'Browse files'),
         });
-        this.addManagedElementListeners(eButton, { click: () => eFileInput.click() });
+        _addManagedElementListeners(this, eButton, { click: () => eFileInput.click() });
         parent.appendChild(eButton);
     }
 
@@ -154,7 +154,7 @@ export class FileInputOverlayComponent
     private setupDragListeners(): void {
         const eGui = this.getGui();
 
-        this.addManagedElementListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             dragenter: (e: DragEvent) => {
                 if (!this.isFileDrag(e)) {
                     return;

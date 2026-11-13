@@ -164,8 +164,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0 success
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -370,8 +370,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-bar suc
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -486,8 +486,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-doughnu
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -606,8 +606,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-doughnu
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -724,8 +724,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-pie suc
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -844,8 +844,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-pie-cal
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -1211,8 +1211,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 23.0.0 success
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -1440,8 +1440,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 24.0.0 success
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -1672,8 +1672,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 25.0.0 success
         "lineDashOffset": 0,
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -1930,8 +1930,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 25.0.0-line su
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -2177,8 +2177,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 26.0.0 success
         "lineDashOffset": 0,
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -2641,8 +2641,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 26.1.0 success
         "lineDashOffset": 0,
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -3003,8 +3003,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 26.2.0 success
         },
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -3366,8 +3366,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 27.0.0 success
         "lineDashOffset": 0,
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },
@@ -3725,8 +3725,8 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 28.0.0 success
         "lineDashOffset": 0,
         "shadow": {
           "blur": 5,
-          "color": "rgba(0, 0, 0, 0.5)",
           "enabled": false,
+          "fill": "rgba(0, 0, 0, 0.5)",
           "xOffset": 3,
           "yOffset": 3,
         },

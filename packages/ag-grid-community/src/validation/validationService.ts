@@ -13,11 +13,11 @@ import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _reportMissingModule, provideValidationServiceLogger } from './logging';
+import { provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { ICON_VALUES } from './rules/iconValidations';
 import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
@@ -159,23 +159,8 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     private checkIcon(iconName: IconName): void {
-        if (DEPRECATED_ICONS_V33.has(iconName)) {
-            this.warn(43, { iconName });
-        }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
-            return;
-        }
-        const moduleName = ICON_MODULES[iconName];
-        if (moduleName) {
-            _reportMissingModule({
-                // Same context source as GridOptionsService so a batch's combined message keeps the right
-                // registration form (AgGridProvider / UMD) regardless of which report leads the batch.
-                ...this.gos.getModuleErrorParams(),
-                reasonOrId: `icon \`${iconName}\``,
-                moduleName,
-                additionalText: 'Alternatively, use the CSS icon name directly.',
-            });
             return;
         }
         this.warn(134, { iconName });
@@ -202,7 +187,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
 
         // Check uncached property names: emit one-time warnings and record validity
-        const checkPropertyNames = this.gridOptions.suppressPropertyNamesCheck !== true;
         let hasInvalidName = false;
         for (const name of optionKeys) {
             if (isValidMap.has(name)) {
@@ -231,13 +215,11 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (!allValidNames.has(name)) {
-                if (checkPropertyNames) {
-                    const suggestions = _fuzzySuggestions({
-                        inputValue: name,
-                        allSuggestions: allProperties,
-                    }).values.slice(0, 8);
-                    log.warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
-                }
+                const suggestions = _fuzzySuggestions({
+                    inputValue: name,
+                    allSuggestions: allProperties,
+                }).values.slice(0, 8);
+                log.warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
                 hasInvalidName = true;
                 isValidMap.set(name, false);
                 continue;
@@ -246,7 +228,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             isValidMap.set(name, true);
         }
 
-        if (hasInvalidName && docsUrl && checkPropertyNames) {
+        if (hasInvalidName && docsUrl) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             log.warn(310, { objectName, url });
         }

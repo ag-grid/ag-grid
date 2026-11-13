@@ -2,9 +2,10 @@
 // example's app.css. It is loaded only when that product's live demo is on the
 // page (see BryntumCampaign.astro) so its generic `.b-*` rules don't leak onto
 // other product demos that render the same Bryntum classes.
-export const LIVE_DEMO_PRODUCT_CONFIG: Record<string, { mountId: string; demoCss?: string }> = {
+// `bundleSlug` (default: the key) must match the namespace the demo script passes to `bryntumDemoInit`.
+export const LIVE_DEMO_PRODUCT_CONFIG: Record<string, { mountId: string; bundleSlug?: string; demoCss?: string }> = {
     gantt: { mountId: 'live-gantt-demo' },
     scheduler: { mountId: 'live-scheduler-demo', demoCss: '/styles/bryntum-scheduler-demo.css' },
-    schedulerpro: { mountId: 'live-schedulerpro-demo' },
+    schedulerpro: { mountId: 'live-schedulerpro-demo', bundleSlug: 'scheduler' },
     taskboard: { mountId: 'live-taskboard-demo', demoCss: '/styles/bryntum-taskboard-demo.css' },
 };

@@ -1,4 +1,4 @@
-import { RefPlaceholder, _clearElement } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _clearElement } from 'ag-stack';
 
 import type { BeanCollection, ChartToolbarMenuItemOptions, IconName } from 'ag-grid-community';
 import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
@@ -52,7 +52,7 @@ export class ChartToolbar extends Component {
             }
 
             this.buttonListenersDestroyFuncs.push(
-                ...this.addManagedElementListeners(buttonEl, {
+                ..._addManagedElementListeners(this, buttonEl, {
                     click: (event: MouseEvent) => callback(event.currentTarget as HTMLElement),
                 })
             );

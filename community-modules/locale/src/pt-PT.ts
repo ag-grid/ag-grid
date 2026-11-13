@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpar',
     advancedFilterBuilder: 'Construtor',
+    advancedFilterPlaceholder: 'Filtro Avançado',
     advancedFilterValidationMissingColumn: 'Coluna ausente',
     advancedFilterValidationMissingOption: 'Opção ausente',
     advancedFilterValidationMissingValue: 'Valor ausente',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaCalculatedColumn: 'Coluna calculada',
     ariaColumnShowValuesAs: 'A mostrar valores como',
     ariaColumnSelectAll: 'Alternar visibilidade de todas as colunas',
+    ariaColumnSelectExpandAll: 'Expandir ou recolher todos os grupos de colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtro de Colunas',
@@ -823,6 +825,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaLabelSelectField: 'Selecionar Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de Célula',
     ariaValidationErrorPrefix: 'Validação do Editor de Célula',
     ariaFullRowValidationError: 'Validação da linha completa: ${variable}',
     ariaFullRowEditValidationFailed: 'Não é possível concluir a edição da linha. ${variable}',
@@ -852,6 +855,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Possui Edições',
+    ariaLabelFilterCardType: 'Tipo de Filtro',
     ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)

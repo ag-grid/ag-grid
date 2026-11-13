@@ -1,8 +1,9 @@
 import type {
-    AgCoreBeanCollection,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     WithoutCommon,
 } from 'ag-stack';
@@ -24,11 +25,11 @@ type AgMenuListEvent = AgMenuItemComponentEvent;
 const NO_FOCUS_RING_CLASS = 'ag-menu-list-no-focus-ring';
 
 export class AgMenuList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgTabGuardComp<

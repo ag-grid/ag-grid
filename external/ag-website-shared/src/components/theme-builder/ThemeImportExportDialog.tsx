@@ -450,7 +450,7 @@ const Textarea = styled('textarea')`
 
     &:focus {
         outline: none;
-        border-color: var(--color-brand);
+        border-color: var(--color-input-border-hover);
     }
 `;
 

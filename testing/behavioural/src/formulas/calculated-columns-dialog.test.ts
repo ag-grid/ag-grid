@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { onTestFinished, vi } from 'vitest';
@@ -567,6 +567,7 @@ describe('ag-grid calculated columns', () => {
         expect(list).toHaveAttribute('role', 'listbox');
         expect(list.querySelectorAll('[role="option"]')).toHaveLength(0);
         expect(list).not.toHaveAttribute('aria-activedescendant');
+        expect(button).not.toHaveAttribute('aria-activedescendant');
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
         expect(getExpressionInput().value).toBe('[Revenue]');
@@ -1082,6 +1083,139 @@ describe('ag-grid calculated columns', () => {
             expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
             expect(document.querySelector('.ag-select-list')).toBeFalsy();
         });
+    });
+
+    test.each(['Columns', 'Functions', 'Operators'])(
+        'picker %s exposes the highlighted entry via aria-activedescendant',
+        async (label) => {
+            const api = createGrid(`calculated-dialog-picker-activedescendant-${label}`, {
+                rowData: [{ id: 'r1', age: 23, medals: 8, year: 2008 }],
+                columnDefs: [{ field: 'age' }, { field: 'medals' }, { field: 'year' }],
+            });
+
+            showColumnMenu(api, 'age');
+            await clickMenuOption('Add Calculated Column');
+            await waitFor(() => getExpressionInput());
+
+            const button = getByRole(getCalculatedColumnDialog(), 'combobox', { name: label });
+            expect(button).toBe(getDialogButton(label));
+            expect(button).toHaveAttribute('aria-expanded', 'false');
+            expect(button).not.toHaveAttribute('aria-activedescendant');
+
+            const activeOption = () => document.getElementById(button.getAttribute('aria-activedescendant') ?? '');
+
+            button.focus();
+            button.click();
+            const list = document.getElementById(button.getAttribute('aria-controls')!)!;
+            expect(button).toHaveAttribute('aria-expanded', 'true');
+            const first = await waitFor(() => {
+                const option = activeOption();
+                expect(option).toHaveAttribute('role', 'option');
+                expect(option).toHaveAttribute('aria-selected', 'true');
+                expect(list).toContainElement(option);
+                return option!;
+            });
+
+            button.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+            button.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+            await waitFor(() => {
+                const option = activeOption();
+                expect(option).not.toBe(first);
+                expect(option).toHaveAttribute('aria-selected', 'true');
+                expect(list).toContainElement(option);
+            });
+            expect(first).toHaveAttribute('aria-selected', 'false');
+            expect(button).toHaveFocus();
+
+            button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            expect(button).toHaveAttribute('aria-expanded', 'false');
+            expect(button).not.toHaveAttribute('aria-activedescendant');
+        }
+    );
+
+    test('switching from a picker to another picker or inline suggestions clears its aria-activedescendant', async () => {
+        const api = createGrid('calculated-dialog-picker-activedescendant-switch', {
+            rowData: [{ id: 'r1', revenue: 10, revenueTax: 2 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'revenueTax' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        const input = await waitFor(() => getExpressionInput());
+        const functions = getDialogButton('Functions');
+        const operators = getDialogButton('Operators');
+
+        functions.focus();
+        functions.click();
+        await waitFor(() => expect(functions).toHaveAttribute('aria-activedescendant'));
+
+        operators.focus();
+        operators.click();
+        await waitFor(() => expect(operators).toHaveAttribute('aria-activedescendant'));
+        expect(functions).not.toHaveAttribute('aria-activedescendant');
+        expect(functions).toHaveAttribute('aria-expanded', 'false');
+
+        input.focus();
+        input.value = '[Revenue';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await waitFor(() => expect(input).toHaveAttribute('aria-activedescendant'));
+        expect(operators).not.toHaveAttribute('aria-activedescendant');
+        expect(operators).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('ArrowDown on a collapsed picker opens its list with the first option active', async () => {
+        const api = createGrid('calculated-dialog-picker-arrow-open', {
+            rowData: [{ id: 'r1', age: 23 }],
+            columnDefs: [{ field: 'age' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getExpressionInput());
+        const functions = getDialogButton('Functions');
+        functions.focus();
+
+        const keydown = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true });
+        functions.dispatchEvent(keydown);
+        expect(keydown.defaultPrevented).toBe(true);
+        expect(functions).toHaveAttribute('aria-expanded', 'true');
+        await waitFor(() => {
+            const option = document.getElementById(functions.getAttribute('aria-activedescendant') ?? '');
+            expect(option).toHaveAttribute('aria-posinset', '1');
+            expect(option).toHaveAttribute('aria-selected', 'true');
+        });
+        expect(functions).toHaveFocus();
+    });
+
+    test('type picker combobox aria-activedescendant follows the highlighted option', async () => {
+        const api = createGrid('calculated-dialog-type-activedescendant', {
+            rowData: [{ id: 'r1', age: 23 }],
+            columnDefs: [{ field: 'age' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getExpressionInput());
+
+        const combobox = getCalculatedColumnDialog().querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!;
+        const activeOption = () => document.getElementById(combobox.getAttribute('aria-activedescendant') ?? '');
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await waitFor(() => expect(combobox).toHaveAttribute('aria-expanded', 'true'));
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        const first = activeOption();
+        expect(first).toHaveAttribute('role', 'option');
+        expect(first).toHaveClass('ag-active-item');
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        const second = activeOption();
+        expect(second).toHaveClass('ag-active-item');
+        expect(second).not.toBe(first);
+
+        combobox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await waitFor(() => expect(combobox).not.toHaveAttribute('aria-activedescendant'));
     });
 
     test('in a grid inside a shadow root, moving focus within the calculated column form keeps the suggestions open', async () => {

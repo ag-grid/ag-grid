@@ -6,7 +6,7 @@ import { pathJoin } from '@utils/pathJoin';
 
 export type ImportMap = Record<string, string>;
 
-const DEFAULT_ANGULAR_VERSION = '20.0.0';
+const DEFAULT_ANGULAR_VERSION = '21.0.0';
 const DEFAULT_REACT_VERSION = '19.2.1';
 const DEFAULT_VUE_VERSION = '3.5.17';
 
@@ -31,6 +31,16 @@ export const DEVELOPMENT_FLAGS: DevFlags = { query: '?dev', appended: '&dev', su
 
 export const FRAMEWORK_VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
 
+/** Angular 21 moved `fesm2022/primitives/<name>.mjs` to `fesm2022/primitives-<name>.mjs`; the client resolves this once the version is known. */
+export const ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER = '~ag-angular-primitives-separator~';
+
+const getAngularPrimitivesSeparator = (version: string) => {
+    if (version === FRAMEWORK_VERSION_PLACEHOLDER) {
+        return ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER;
+    }
+    return parseInt(version, 10) >= 21 ? '-' : '/';
+};
+
 export const DEV_FLAG_PLACEHOLDERS: DevFlags = {
     query: '?ag-dev-query',
     appended: '&ag-dev-appended',
@@ -51,6 +61,8 @@ const vueImports = (version: string, { suffix }: DevFlags): ImportMap => ({
 const angularImports = (version: string): ImportMap => {
     const angularPackage = (name: string, entryPoint = name) =>
         `${NPM_CDN}/@angular/${name}@${version}/fesm2022/${entryPoint}.mjs`;
+    const primitives = (name: string) =>
+        angularPackage('core', `primitives${getAngularPrimitivesSeparator(version)}${name}`);
 
     return {
         '@angular/animations': angularPackage('animations'),
@@ -59,9 +71,9 @@ const angularImports = (version: string): ImportMap => {
         '@angular/common/http': angularPackage('common', 'http'),
         '@angular/compiler': angularPackage('compiler'),
         '@angular/core': angularPackage('core'),
-        '@angular/core/primitives/di': angularPackage('core', 'primitives/di'),
-        '@angular/core/primitives/event-dispatch': angularPackage('core', 'primitives/event-dispatch'),
-        '@angular/core/primitives/signals': angularPackage('core', 'primitives/signals'),
+        '@angular/core/primitives/di': primitives('di'),
+        '@angular/core/primitives/event-dispatch': primitives('event-dispatch'),
+        '@angular/core/primitives/signals': primitives('signals'),
         '@angular/forms': angularPackage('forms'),
         '@angular/platform-browser': angularPackage('platform-browser'),
         '@angular/platform-browser/animations': angularPackage('platform-browser', 'animations'),
@@ -150,6 +162,7 @@ export const getImportMap = ({
         for (const chartsPackage of [
             'ag-charts-types',
             'ag-charts-core',
+            'ag-charts-locale',
             'ag-charts-community',
             'ag-charts-enterprise',
         ]) {

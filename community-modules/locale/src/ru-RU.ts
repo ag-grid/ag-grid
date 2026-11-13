@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     advancedFilterCancel: 'Отмена',
     advancedFilterClear: 'Очистить',
     advancedFilterBuilder: 'Конструктор',
+    advancedFilterPlaceholder: 'Расширенный фильтр',
     advancedFilterValidationMissingColumn: 'Отсутствует столбец',
     advancedFilterValidationMissingOption: 'Отсутствует вариант',
     advancedFilterValidationMissingValue: 'Отсутствует значение',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaCalculatedColumn: 'Вычисляемый столбец',
     ariaColumnShowValuesAs: 'Показ значений как',
     ariaColumnSelectAll: 'Переключить видимость всех столбцов',
+    ariaColumnSelectExpandAll: 'Развернуть или свернуть все группы столбцов',
     ariaDateFilterInput: 'Поле ввода фильтра по дате',
     ariaDefaultListName: 'Список',
     ariaFilterColumnsInput: 'Поле ввода для фильтрации столбцов',
@@ -842,6 +844,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelSelectField: 'Выберите поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор ячейки',
     ariaValidationErrorPrefix: 'Проверка редактора ячейки',
     ariaFullRowValidationError: 'Проверка всей строки: ${variable}',
     ariaFullRowEditValidationFailed: 'Не удалось завершить редактирование строки. ${variable}',
@@ -875,6 +878,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelAddFilterField: 'Поле добавления фильтра',
     ariaLabelFilterCardDelete: 'Удалить фильтр',
     ariaLabelFilterCardHasEdits: 'Есть изменения',
+    ariaLabelFilterCardType: 'Тип фильтра',
     ariaHasNote: 'У этой ячейки есть заметка.',
 
     // Number Format (Status Bar, Pagination Panel)

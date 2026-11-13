@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     advancedFilterCancel: 'Hủy bỏ',
     advancedFilterClear: 'Xóa',
     advancedFilterBuilder: 'Trình tạo',
+    advancedFilterPlaceholder: 'Bộ lọc Nâng cao',
     advancedFilterValidationMissingColumn: 'Thiếu cột',
     advancedFilterValidationMissingOption: 'Thiếu tùy chọn',
     advancedFilterValidationMissingValue: 'Thiếu giá trị',
@@ -734,6 +735,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaCalculatedColumn: 'Cột được tính toán',
     ariaColumnShowValuesAs: 'Đang hiển thị giá trị dưới dạng',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
+    ariaColumnSelectExpandAll: 'Mở rộng hoặc thu gọn tất cả nhóm cột',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
     ariaDefaultListName: 'Danh sách',
     ariaFilterColumnsInput: 'Đầu vào Lọc Cột',
@@ -819,6 +821,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelSelectField: 'Chọn Trường',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Trình chỉnh sửa ô',
     ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
     ariaFullRowValidationError: 'Xác thực toàn bộ hàng: ${variable}',
     ariaFullRowEditValidationFailed: 'Không thể hoàn tất chỉnh sửa hàng. ${variable}',
@@ -848,6 +851,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaLabelFilterCardType: 'Loại Bộ Lọc',
     ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)

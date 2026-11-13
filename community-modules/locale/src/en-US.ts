@@ -164,6 +164,7 @@ export const AG_GRID_LOCALE_EN_US = {
     advancedFilterCancel: 'Cancel',
     advancedFilterClear: 'Clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaCalculatedColumn: 'Calculated column',
     ariaColumnShowValuesAs: 'Showing Values As',
     ariaColumnSelectAll: 'Toggle All Columns Visibility',
+    ariaColumnSelectExpandAll: 'Expand or Collapse All Column Groups',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
     ariaFilterColumnsInput: 'Filter Columns Input',
@@ -828,6 +830,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaLabelSelectField: 'Select Field',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Cell Editor Validation',
     ariaFullRowValidationError: 'Full Row Validation: ${variable}',
     ariaFullRowEditValidationFailed: 'Cannot complete row edit. ${variable}',
@@ -860,6 +863,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaLabelFilterCardType: 'Filter Type',
     ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)

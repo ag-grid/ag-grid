@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
@@ -55,5 +56,69 @@ describe('paginationPageSize combobox aria-controls (WCAG 4.1.2)', () => {
         const controlsId = wrapper.getAttribute('aria-controls');
         expect(controlsId).toBeTruthy();
         expect(document.getElementById(controlsId!)).not.toBeNull();
+    });
+});
+
+describe('paginationPageSize combobox aria-activedescendant (WCAG 4.1.2)', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, PaginationModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    function getActiveOptionText(combobox: HTMLElement): string | null {
+        const activeId = combobox.getAttribute('aria-activedescendant');
+        if (activeId == null) {
+            return null;
+        }
+        const option = document.getElementById(activeId);
+        expect(option?.getAttribute('role')).toBe('option');
+        expect(option?.getAttribute('aria-selected')).toBe('true');
+        return option!.textContent!.trim();
+    }
+
+    test('references the highlighted option while the list is open', () => {
+        const api = createPaginationGrid(gridsManager, { paginationPageSize: 100 });
+        const combobox = getGridElement(api)!.querySelector<HTMLElement>(
+            '.ag-paging-page-size .ag-picker-field-wrapper'
+        )!;
+
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+
+        fireEvent.keyDown(combobox, { key: 'Enter' });
+        expect(combobox.getAttribute('aria-expanded')).toBe('true');
+        expect(getActiveOptionText(combobox)).toBe('100');
+
+        const options = Array.from(document.querySelectorAll<HTMLElement>('.ag-select-list [role=option]'));
+        const ids = options.map((option) => option.id);
+        expect(ids.every((id) => id.length > 0)).toBe(true);
+        expect(new Set(ids).size).toBe(options.length);
+
+        const steps: [string, string][] = [
+            ['ArrowUp', '50'],
+            ['ArrowUp', '20'],
+            ['ArrowDown', '50'],
+            ['Home', '10'],
+            ['End', '100'],
+        ];
+        for (const [key, expected] of steps) {
+            fireEvent.keyDown(combobox, { key });
+            expect(getActiveOptionText(combobox)).toBe(expected);
+        }
+
+        fireEvent.mouseOver(options.find((option) => option.textContent?.trim() === '20')!);
+        expect(getActiveOptionText(combobox)).toBe('20');
+
+        fireEvent.mouseLeave(document.querySelector<HTMLElement>('.ag-select-list')!);
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
+
+        fireEvent.keyDown(combobox, { key: 'ArrowUp' });
+        expect(getActiveOptionText(combobox)).toBe('100');
+
+        fireEvent.keyDown(combobox, { key: 'Escape' });
+        expect(combobox.getAttribute('aria-expanded')).toBe('false');
+        expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
     });
 });

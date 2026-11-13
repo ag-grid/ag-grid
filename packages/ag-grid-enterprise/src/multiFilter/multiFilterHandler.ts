@@ -77,7 +77,7 @@ export class MultiFilterHandler
         const model = params.model;
         const hasChildModel = (wrapper: HandlerWrapper | undefined, i: number) =>
             !!wrapper && getFilterModelForIndex(model, i) != null;
-        if (model == null || this.handlerWrappers.some(hasChildModel)) {
+        if (model == null || this.handlerWrappers.some((w, j) => hasChildModel(w, j))) {
             return false;
         }
         this.params = { ...params, model: null };

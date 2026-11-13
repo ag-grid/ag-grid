@@ -1,8 +1,10 @@
+import type { IconValue } from 'ag-stack';
 import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _createElement } from './element';
+import { ICON_NAME_TO_VALUE } from './iconNameToValue';
 
 //
 // IMPORTANT NOTE!
@@ -47,7 +49,6 @@ export type IconName =
     | 'last'
     | 'linked'
     | 'unlinked'
-    | 'colorPicker' // deprecated v33
     | 'groupLoading'
     | 'overlayLoading'
     | 'overlayExporting'
@@ -92,18 +93,14 @@ export type IconName =
     | 'csvExport'
     | 'excelExport'
     | 'pdfExport'
-    | 'smallDown' // deprecated v33
     | 'selectOpen'
     | 'richSelectOpen'
     | 'richSelectRemove'
     | 'richSelectLoading'
-    | 'smallLeft' // deprecated v33
-    | 'smallRight' // deprecated v33
     | 'panelDelimiter'
     | 'panelDelimiterRtl'
     | 'subMenuOpen'
     | 'subMenuOpenRtl'
-    | 'smallUp' // deprecated v33
     | 'sortAscending'
     | 'sortDescending'
     | 'sortAbsoluteAscending'
@@ -128,12 +125,7 @@ export type IconName =
     | 'ensureColumnVisible'
     | 'search'
     | 'document'
-    | 'calculatedColumnsHeader'
-    | 'checkboxChecked' // deprecated v33
-    | 'checkboxIndeterminate' // deprecated v33
-    | 'checkboxUnchecked' // deprecated v33
-    | 'radioButtonOn' // deprecated v33
-    | 'radioButtonOff'; // deprecated v33
+    | 'calculatedColumnsHeader';
 
 export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 
@@ -175,14 +167,6 @@ export function _createIconNoSpan(
 ): Element | undefined {
     let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
-    if (iconName === 'smallDown') {
-        beans.log.warn(262);
-    } else if (iconName === 'smallLeft') {
-        beans.log.warn(263);
-    } else if (iconName === 'smallRight') {
-        beans.log.warn(264);
-    }
-
     // check col for icon first
     const icons: any = column?.colDef.icons;
 
@@ -222,7 +206,7 @@ export function _createIconNoSpan(
         beans.log.warn(133, { iconName });
         return undefined;
     } else {
-        const iconValue = beans.registry.getIcon(iconName);
+        const iconValue: IconValue | undefined = ICON_NAME_TO_VALUE[iconName];
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }

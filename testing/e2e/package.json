@@ -1,13 +1,13 @@
 {
   "name": "ag-e2e-testing",
-  "version": "36.3.0",
+  "version": "36.3.0-beta.20261113.107",
   "private": true,
   "description": "Real-browser Playwright e2e tests for AG Grid behaviour",
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@types/node": "^24.19.2",
-    "ag-grid-community": "36.3.0",
-    "ag-grid-enterprise": "36.3.0",
+    "ag-grid-community": "36.3.0-beta.20261113.107",
+    "ag-grid-enterprise": "36.3.0-beta.20261113.107",
     "playwright-ctrf-json-reporter": "0.2.0"
   },
   "repository": {

@@ -65,6 +65,7 @@
     },
     "dev": {
       "command": "ASTRO_DEV_BACKGROUND=${ASTRO_DEV_BACKGROUND-0} astro dev --port=${PORT} --host",
+      "cache": false,
       "options": {
         "cwd": "{projectRoot}"
       },
@@ -79,6 +80,7 @@
         }
       ],
       "command": "ASTRO_PREVIEW_BACKGROUND=${ASTRO_PREVIEW_BACKGROUND-0} astro preview --port=${PORT}",
+      "cache": false,
       "options": {
         "cwd": "{projectRoot}"
       },
@@ -95,6 +97,7 @@
         }
       ],
       "command": "tsx scripts/csp/preview-csp.ts --port=${PORT}",
+      "cache": false,
       "options": {
         "cwd": "{projectRoot}"
       },
@@ -133,7 +136,7 @@
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest", "test:validate-example-specs", "test:validate-example-dev-validations"],
-      "inputs": [],
+      "inputs": ["default", "buildOutputExcludes", "^production", "generators", "exampleSpecs"],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}"
@@ -174,6 +177,7 @@
     },
     "test:e2e": {
       "command": "npx vitest",
+      "inputs": ["default", "^default", "generators"],
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
       "dependsOn": ["^pack", "test:htaccess"],
       "options": {
@@ -241,6 +245,7 @@
       ],
       "inputs": [
         "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*",
+        "{workspaceRoot}/documentation/ag-grid-docs/src/example-fake-servers/**/*",
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.spec.*",
         "!{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.test.*",
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*",
@@ -356,5 +361,13 @@
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "ag-grid-angular"],
-  "tags": ["website"]
+  "tags": ["website"],
+  "namedInputs": {
+    "generators": [
+      "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/**/*",
+      "{workspaceRoot}/plugins/ag-grid-generate-code-reference-files/src/**/*",
+      "{workspaceRoot}/plugins/ag-grid-task-autogen/src/**/*"
+    ],
+    "exampleSpecs": ["{workspaceRoot}/documentation/ag-grid-docs/src/content/docs/**/_examples/*/*.spec.*"]
+  }
 }

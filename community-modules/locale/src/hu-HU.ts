@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     advancedFilterCancel: 'Mégsem',
     advancedFilterClear: 'Törlés',
     advancedFilterBuilder: 'Szűrő Készítő',
+    advancedFilterPlaceholder: 'Speciális szűrő',
     advancedFilterValidationMissingColumn: 'Oszlop hiányzik',
     advancedFilterValidationMissingOption: 'Opció hiányzik',
     advancedFilterValidationMissingValue: 'Érték hiányzik',
@@ -739,6 +740,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaCalculatedColumn: 'Számított oszlop',
     ariaColumnShowValuesAs: 'Értékek megjelenítése mint',
     ariaColumnSelectAll: 'Az összes oszlop láthatóságának váltása',
+    ariaColumnSelectExpandAll: 'Az összes oszlopcsoport kibontása vagy összecsukása',
     ariaDateFilterInput: 'Dátum szűrő bevitel',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Oszlopok szűrése bevitel',
@@ -826,6 +828,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelSelectField: 'Mező kiválasztása',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cella szerkesztő',
     ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
     ariaFullRowValidationError: 'Teljes sor érvényesítése: ${variable}',
     ariaFullRowEditValidationFailed: 'A sor szerkesztése nem fejezhető be. ${variable}',
@@ -855,6 +858,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaLabelFilterCardType: 'Szűrő típusa',
     ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
