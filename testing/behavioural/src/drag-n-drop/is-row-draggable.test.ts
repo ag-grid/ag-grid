@@ -184,6 +184,41 @@ describe('isRowDraggable', () => {
         expect(rowOrder(api)).toEqual(['1', '2', '3', '4', '5', '6']);
     });
 
+    test('multi-row drag from the entire row leaves non-draggable selected rows behind', async () => {
+        const api = createGrid({
+            columnDefs: [{ field: 'name' }],
+            rowDragEntireRow: true,
+            rowSelection: { mode: 'multiRow' },
+            rowDragMultiRow: true,
+        });
+        await asyncSetTimeout(0);
+        await clickRowSelectionCheckbox(api, ['1', '2', '3']);
+        await asyncSetTimeout(0);
+
+        const outcome = await dragCell(api, '1', '6');
+        expect(outcome.ends).toHaveLength(1);
+        expect(outcome.ends[0].nodes.map((node) => node.id)).toEqual(['1', '3']);
+        expect(rowOrder(api)).toEqual(['2', '4', '5', '6', '1', '3']);
+    });
+
+    test('other rows can be dropped around a non-draggable row', async () => {
+        const api = createGrid({});
+        await asyncSetTimeout(0);
+
+        const outcome = await dragHandle(api, '1', '2');
+        expect(outcome.ends).toHaveLength(1);
+        expect(rowOrder(api)).toEqual(['2', '1', '3', '4', '5', '6']);
+        expect(api.getRowNode('2')!.rowIndex).toBe(0);
+    });
+
+    test('suppressRowDrag keeps handles hidden whatever isRowDraggable returns', async () => {
+        const api = createGrid({ suppressRowDrag: true });
+        await asyncSetTimeout(0);
+
+        expect(handleClasses(api, '1').hidden).toBe(true);
+        expect(handleClasses(api, '2').hidden).toBe(true);
+    });
+
     test('data updates and option changes re-evaluate handles and drag gating', async () => {
         const api = createGrid({});
         await asyncSetTimeout(0);
