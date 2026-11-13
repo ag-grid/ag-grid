@@ -141,8 +141,9 @@ export class AgListItem<
             return;
         }
 
-        this.addGuiEventListener('mouseover', () => {
-            parentComponent.highlightItem(this);
+        // Not `mouseover`: that also fires when the list opens or scrolls under a still pointer.
+        this.addGuiEventListener('mousemove', (e: MouseEvent) => {
+            parentComponent.onItemMouseMove(this, e);
         });
 
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
