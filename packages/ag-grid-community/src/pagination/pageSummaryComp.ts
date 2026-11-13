@@ -219,6 +219,9 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
+        const strPage = localeTextFunc('page', 'Page');
+        // An unknown total is left out rather than read as "of more".
+        const strOfTotal = lastPageFound ? ` ${localeTextFunc('of', 'of')} ${lbTotalStr}` : '';
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -231,18 +234,13 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
-            _setAriaLabel(
-                eInput,
-                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
-            );
+            _setAriaLabel(eInput, `${strPage} ${localeTextFunc('number', 'number')}, ${lbCurrentValue}${strOfTotal}`);
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
-        const strPage = localeTextFunc('page', 'Page');
-        const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
+        this.ariaStatus = `${strPage} ${lbCurrent}${strOfTotal}`;
     }
 
     private formatNumber(value: number): string {

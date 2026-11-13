@@ -783,6 +783,12 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaVisible: 'visibile',
     ariaSearchFilterValues: 'Cerca valori del filtro',
     ariaPageSizeSelectorLabel: 'Dimensione della Pagina',
+    ariaPageSizeSelectorDescription:
+        'La modifica della dimensione della pagina aggiorna le righe mostrate nella griglia',
+    ariaPaginationRowSummary: 'Visualizzazione dei record da ${variable} a ${variable} di ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'Visualizzazione dei record da ${variable} a ${variable}, totale sconosciuto',
+    ariaPaginationRowSummaryLoading: 'Caricamento dei record a partire da ${variable}',
+    ariaPaginationPanelLabel: 'Paginazione della griglia',
     ariaChartMenuClose: 'Chiudi Menu Modifica Grafico',
     ariaChartSelected: 'Selezionato',
     ariaChartSeriesChartType: 'Tipo di grafico per ${variable}',
