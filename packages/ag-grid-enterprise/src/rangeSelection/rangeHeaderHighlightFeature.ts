@@ -12,10 +12,10 @@ export class RangeHeaderHighlightFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        const onRangeSelectionChanged = this.onRangeSelectionChanged.bind(this);
+        const onCellSelectionChanged = this.onCellSelectionChanged.bind(this);
         this.addManagedEventListeners({
-            rangeSelectionChanged: onRangeSelectionChanged,
-            displayedColumnsChanged: onRangeSelectionChanged,
+            cellSelectionChanged: onCellSelectionChanged,
+            displayedColumnsChanged: onCellSelectionChanged,
         });
         this.addManagedPropertyListener('cellSelection', this.refreshActive.bind(this));
         this.refreshActive();
@@ -44,13 +44,13 @@ export class RangeHeaderHighlightFeature extends BeanStub {
 
         this.isActive = isActive;
         if (isActive) {
-            this.onRangeSelectionChanged();
+            this.onCellSelectionChanged();
         } else {
             this.comp.toggleCss('ag-header-range-highlight', false);
         }
     }
 
-    private onRangeSelectionChanged(): void {
+    private onCellSelectionChanged(): void {
         if (!this.isActive) {
             return;
         }
