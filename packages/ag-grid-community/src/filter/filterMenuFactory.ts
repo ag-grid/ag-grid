@@ -16,6 +16,7 @@ import { _setColMenuVisible } from '../misc/menu/menuService';
 import { Component } from '../widgets/component';
 import { STOP_PROPAGATION_CALLBACKS } from '../widgets/managedFocusFeature';
 import type { PopupService } from '../widgets/popupService';
+import { translateColumnFilterLabel } from './filterAriaLabels';
 import { FilterComp } from './filterComp';
 
 export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
@@ -192,7 +193,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const ariaLabel =
             isLegacyMenuEnabled && containerType !== 'columnFilter'
                 ? translate('ariaLabelColumnMenu', 'Column Menu')
-                : translate('ariaLabelColumnFilter', 'Column Filter');
+                : translateColumnFilterLabel(this.beans, column, translate, 'columnFilter');
 
         const addPopupRes = this.popupSvc?.addPopup({
             modal: true,

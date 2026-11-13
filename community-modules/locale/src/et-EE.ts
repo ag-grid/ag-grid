@@ -755,14 +755,19 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaDefaultListName: 'Loend',
     ariaFilterColumnsInput: 'Filtri veergude sisend',
     ariaFilterFromValue: 'Filtreeri väärtusest',
+    ariaFilterFromValueForColumn: 'Filtreeri veergu ${variable} väärtusest',
     ariaFilterInput: 'Filtri sisend',
     ariaLabelInputClear: 'Tühjenda',
     ariaFilterList: 'Filtriloend',
     ariaFilterToValue: 'Filtreeri väärtuseni',
+    ariaFilterToValueForColumn: 'Filtreeri veergu ${variable} väärtuseni',
     ariaFilterValue: 'Filtri väärtus',
+    ariaFilterValueForColumn: 'Veeru ${variable} filtri väärtus',
     ariaNotInCurrentData: 'pole praegustes andmetes',
     ariaFilterMenuOpen: 'Ava filtrimenüü',
+    ariaFilterMenuOpenForColumn: 'Ava veeru ${variable} filtrimenüü',
     ariaFilteringOperator: 'Filtreerimisoperaator',
+    ariaFilteringOperatorForColumn: 'Veeru ${variable} filtreerimisoperaator',
     ariaHidden: 'peidetud',
     ariaIndeterminate: 'määramata',
     ariaInputEditor: 'Sisendredaktor',
@@ -837,6 +842,7 @@ export const AG_GRID_LOCALE_ET_EE = {
 
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',
+    ariaLabelColumnFilterForColumn: 'Veeru ${variable} filter',
 
     ariaLabelSelectField: 'Väljavalik',
 
