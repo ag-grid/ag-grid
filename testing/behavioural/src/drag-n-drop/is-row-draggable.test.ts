@@ -211,6 +211,22 @@ describe('isRowDraggable', () => {
         expect(api.getRowNode('2')!.rowIndex).toBe(0);
     });
 
+    test('a drag in progress completes when its row becomes non-draggable', async () => {
+        const api = createGrid({});
+        await asyncSetTimeout(0);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('1');
+        await dispatcher.move('3', { yOffsetPercent: 0.5 });
+        applyTransactionChecked(api, { update: [{ id: '1', name: 'A', locked: true }] });
+        await dispatcher.move('6', { yOffsetPercent: 0.8 });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        expect(rowOrder(api)).toEqual(['2', '3', '4', '5', '6', '1']);
+        expect(handleClasses(api, '1')).toEqual(LOCKED);
+    });
+
     test('suppressRowDrag keeps handles hidden whatever isRowDraggable returns', async () => {
         const api = createGrid({ suppressRowDrag: true });
         await asyncSetTimeout(0);
