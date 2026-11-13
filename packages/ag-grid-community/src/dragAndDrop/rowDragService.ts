@@ -29,10 +29,9 @@ export class RowDragService extends BeanStub implements NamedBean {
             ['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'],
             refreshVisibility
         );
-        this.addManagedPropertyListener('isRowDraggable', () => {
-            this.visibility = this.computeVisibility();
-            this.eventSvc.dispatchEvent({ type: 'rowDragVisibilityChanged' });
-        });
+        this.addManagedPropertyListener('isRowDraggable', () =>
+            this.eventSvc.dispatchEvent({ type: 'rowDragVisibilityChanged' })
+        );
 
         this.addManagedEventListeners({
             newColumnsLoaded: refreshVisibility,
