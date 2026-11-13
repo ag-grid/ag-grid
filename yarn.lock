@@ -13789,7 +13789,6 @@ __metadata:
     cheerio: "npm:^1.2.0"
     classnames: "npm:^2.5.1"
     codesandbox-import-utils: "npm:2.2.3"
-    dompurify: "npm:^3.4.17"
     downshift: "npm:^9.4.0"
     esprima-next: "npm:^6.0.3"
     gif-frames: "npm:^1.0.1"
@@ -17536,18 +17535,6 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/406b5f0f9c9dcbc80016367d33e73585b6a6f440815228d7e9cbe8abe71058183b1f4cb4207b79b8473637de4a106fc055eb6da271ef9db353d29679b891ecbc
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.4.17":
-  version: 3.4.17
-  resolution: "dompurify@npm:3.4.17"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: 10c0/6a12251ef5e700fc91b6d96d33e9f8b5fd590c55276f632cf42d182c5808e9f48d5bef435ab26eac235dfcc05ed8fe95e1c8308dcc502bf1050e561f14d0361a
   languageName: node
   linkType: hard
 

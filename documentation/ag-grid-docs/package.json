@@ -70,7 +70,6 @@
     "cheerio": "^1.2.0",
     "classnames": "^2.5.1",
     "codesandbox-import-utils": "2.2.3",
-    "dompurify": "^3.4.17",
     "downshift": "^9.4.0",
     "esprima-next": "^6.0.3",
     "gif-frames": "^1.0.1",
