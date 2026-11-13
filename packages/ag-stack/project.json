@@ -256,7 +256,8 @@
       "inputs": ["allOutputs"],
       "options": {
         "commands": [
-          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package",
+          "node scripts/package/verify-package-resolution.mjs --dom-free core -- dist/artifacts/contents/{projectRoot}/package"
         ]
       },
       "configurations": {
