@@ -12,6 +12,7 @@ import {
 
 import type { GridApi, GridOptions, RowDragEndEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
+import { CellSelectionModule } from 'ag-grid-enterprise';
 
 interface Athlete {
     id: string;
@@ -92,7 +93,7 @@ const dragHandle = (api: GridApi, fromId: string, toId: string) => dragFrom(api,
 
 describe('isRowDraggable', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule],
+        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, CellSelectionModule],
     });
 
     beforeAll(() => {
@@ -225,6 +226,16 @@ describe('isRowDraggable', () => {
 
         expect(rowOrder(api)).toEqual(['2', '3', '4', '5', '6', '1']);
         expect(handleClasses(api, '1')).toEqual(LOCKED);
+    });
+
+    test('with cell selection a non-draggable row handle starts no row drag', async () => {
+        const api = createGrid({ cellSelection: true });
+        await asyncSetTimeout(0);
+
+        const outcome = await dragHandle(api, '2', '6');
+        expect(outcome.enter).toBe(0);
+        expect(outcome.ends).toHaveLength(0);
+        expect(rowOrder(api)).toEqual(['1', '2', '3', '4', '5', '6']);
     });
 
     test('suppressRowDrag keeps handles hidden whatever isRowDraggable returns', async () => {
