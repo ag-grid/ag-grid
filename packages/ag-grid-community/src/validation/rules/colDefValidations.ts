@@ -219,24 +219,18 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         headerCheckboxSelection: {
             supportedRowModels: ['clientSide', 'serverSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelection is only supported with rowSelection=multiple',
+            validate: () =>
+                'headerCheckboxSelection has no effect with the rowSelection object, use rowSelection.headerCheckbox instead',
         },
         headerCheckboxSelectionCurrentPageOnly: {
             supportedRowModels: ['clientSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
+            validate: () =>
+                'headerCheckboxSelectionCurrentPageOnly has no effect with the rowSelection object, use rowSelection.selectAll instead',
         },
         headerCheckboxSelectionFilteredOnly: {
             supportedRowModels: ['clientSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
+            validate: () =>
+                'headerCheckboxSelectionFilteredOnly has no effect with the rowSelection object, use rowSelection.selectAll instead',
         },
         headerValueGetter: {
             validate: (_options: AbstractColDef) => {

@@ -635,7 +635,7 @@ export const AG_GRID_ERRORS = {
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 
     202: () =>
-        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`rowSelection.groupSelects\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     203: () =>
         'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove `getRowHeight()` callback or b) remove `maxBlocksInCache` property. Purging has been disabled.' as const,
     204: () =>

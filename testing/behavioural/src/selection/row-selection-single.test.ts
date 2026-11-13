@@ -4,6 +4,7 @@ import type { RowSelectedEvent } from 'ag-grid-community';
 import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { columnDefs, createGrid, createGridAndWait, rowData, setupRowSelectionSuite } from './rowSelectionHarness';
+import { pressSpaceKey } from './utils';
 
 const clickToggleSelection = { modules: [_createInternalFeatureFlagsModule({ clickToggleSelection: true })] };
 
@@ -494,6 +495,23 @@ describe('Row Selection Grid Options', () => {
                 actions.toggleCheckboxByIndex(0);
                 assertSelectedRowsByIndex([0], api);
             });
+        });
+    });
+
+    describe('rowSelection unset', () => {
+        setupRowSelectionSuite();
+
+        test('clicking a row or pressing Space on a cell selects nothing', async () => {
+            const [api, actions] = await createGridAndWait({ columnDefs, rowData });
+
+            actions.clickRowByIndex(2);
+            assertSelectedRowsByIndex([], api);
+
+            const cell = actions.getCellByPosition(3, 'sport')!;
+            cell.focus();
+            pressSpaceKey(cell);
+            assertSelectedRowsByIndex([], api);
+            expect(document.querySelectorAll('#myGrid .ag-row-selected')).toHaveLength(0);
         });
     });
 });
