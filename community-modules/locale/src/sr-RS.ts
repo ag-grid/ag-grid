@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaFilterFromValue: 'Филтрирај од вредности',
     ariaFilterFromValueForColumn: 'Филтрирај колону ${variable} од вредности',
     ariaFilterInput: 'Унос филтера',
+    ariaFilterInputForColumn: 'Унос филтера колоне ${variable}',
     ariaLabelInputClear: 'Обриши',
     ariaFilterList: 'Листа филтера',
     ariaFilterToValue: 'Филтрирај до вредности',

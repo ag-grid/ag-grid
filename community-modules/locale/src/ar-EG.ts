@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaFilterFromValue: 'الفلترة من القيمة',
     ariaFilterFromValueForColumn: 'الفلترة من القيمة لعمود ${variable}',
     ariaFilterInput: 'إدخال الفلترة',
+    ariaFilterInputForColumn: 'إدخال الفلترة لعمود ${variable}',
     ariaLabelInputClear: 'مسح',
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',

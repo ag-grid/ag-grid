@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaFilterFromValue: 'Filtriraj od vrednosti',
     ariaFilterFromValueForColumn: 'Filtriraj kolonu ${variable} od vrednosti',
     ariaFilterInput: 'Unos filtera',
+    ariaFilterInputForColumn: 'Unos filtera kolone ${variable}',
     ariaLabelInputClear: 'Obriši',
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrednosti',

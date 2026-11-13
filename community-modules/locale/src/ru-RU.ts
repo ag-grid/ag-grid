@@ -760,6 +760,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaFilterFromValue: 'Фильтровать от значения',
     ariaFilterFromValueForColumn: 'Фильтровать столбец ${variable} от значения',
     ariaFilterInput: 'Поле ввода фильтра',
+    ariaFilterInputForColumn: 'Поле ввода фильтра столбца ${variable}',
     ariaLabelInputClear: 'Очистить',
     ariaFilterList: 'Список фильтра',
     ariaFilterToValue: 'Фильтровать до значения',

@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaFilterFromValue: '过滤从值',
     ariaFilterFromValueForColumn: '${variable}的过滤起始值',
     ariaFilterInput: '过滤器输入',
+    ariaFilterInputForColumn: '${variable}的过滤器输入',
     ariaLabelInputClear: '清除',
     ariaFilterList: '过滤器列表',
     ariaFilterToValue: '过滤至值',

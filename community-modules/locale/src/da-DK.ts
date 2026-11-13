@@ -744,6 +744,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaFilterFromValue: 'Filtrer fra værdi',
     ariaFilterFromValueForColumn: 'Filtrer ${variable} fra værdi',
     ariaFilterInput: 'Filter Input',
+    ariaFilterInputForColumn: 'Filter Input for ${variable}',
     ariaLabelInputClear: 'Ryd',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til værdi',

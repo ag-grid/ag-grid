@@ -106,6 +106,7 @@ describe('Filter controls name their column', () => {
             rowData: ROW_DATA,
         });
         expect(await floatingFilterButtonLabel(api, 'value')).toBe('Open Filter Menu');
+        expect(document.querySelector('.ag-floating-filter input')!.getAttribute('aria-label')).toBe('Filter Input');
 
         const harness = await ColumnFilterHarness.open(api, 'value', 'floatingFilter');
 

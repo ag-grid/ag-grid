@@ -4,7 +4,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 
 export type ColumnFilterLabelId =
-    'filterValue' | 'filterFromValue' | 'filterToValue' | 'filteringOperator' | 'filterMenuOpen' | 'columnFilter';
+    | 'filterInput'
+    | 'filterValue'
+    | 'filterFromValue'
+    | 'filterToValue'
+    | 'filteringOperator'
+    | 'filterMenuOpen'
+    | 'columnFilter';
 
 type ColumnFilterLabel = readonly [
     key: string,
@@ -14,6 +20,7 @@ type ColumnFilterLabel = readonly [
 ];
 
 const COLUMN_FILTER_LABELS: Record<ColumnFilterLabelId, ColumnFilterLabel> = {
+    filterInput: ['ariaFilterInputForColumn', (name) => `${name} Filter Input`, 'ariaFilterInput', 'Filter Input'],
     filterValue: ['ariaFilterValueForColumn', (name) => `${name} Filter Value`, 'ariaFilterValue', 'Filter Value'],
     filterFromValue: [
         'ariaFilterFromValueForColumn',

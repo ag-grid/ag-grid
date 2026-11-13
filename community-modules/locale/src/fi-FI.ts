@@ -746,6 +746,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaFilterFromValue: 'Suodata arvosta',
     ariaFilterFromValueForColumn: 'Suodata saraketta ${variable} arvosta',
     ariaFilterInput: 'Suodattimen syöte',
+    ariaFilterInputForColumn: 'Sarakkeen ${variable} suodattimen syöte',
     ariaLabelInputClear: 'Tyhjennä',
     ariaFilterList: 'Suodatinlista',
     ariaFilterToValue: 'Suodata arvoon',

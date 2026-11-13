@@ -763,6 +763,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaFilterFromValue: 'I-filter mula sa halaga',
     ariaFilterFromValueForColumn: 'I-filter ang ${variable} mula sa halaga',
     ariaFilterInput: 'Input ng Filter',
+    ariaFilterInputForColumn: 'Input ng Filter para sa ${variable}',
     ariaLabelInputClear: 'I-clear',
     ariaFilterList: 'Listahan ng Filter',
     ariaFilterToValue: 'I-filter hanggang sa halaga',

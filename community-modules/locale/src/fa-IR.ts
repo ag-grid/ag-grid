@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaFilterFromValue: 'فیلتر از مقدار',
     ariaFilterFromValueForColumn: 'فیلتر از مقدار برای ${variable}',
     ariaFilterInput: 'ورودی فیلتر',
+    ariaFilterInputForColumn: 'ورودی فیلتر برای ${variable}',
     ariaLabelInputClear: 'پاک کردن',
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',

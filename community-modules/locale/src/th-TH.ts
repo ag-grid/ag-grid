@@ -756,6 +756,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaFilterFromValue: 'กรองจากค่า',
     ariaFilterFromValueForColumn: 'กรอง ${variable} จากค่า',
     ariaFilterInput: 'ช่องป้อนตัวกรอง',
+    ariaFilterInputForColumn: 'ช่องป้อนตัวกรองของ ${variable}',
     ariaLabelInputClear: 'ล้าง',
     ariaFilterList: 'รายการตัวกรอง',
     ariaFilterToValue: 'กรองถึงค่า',

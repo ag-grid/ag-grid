@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaFilterFromValue: '從值篩選',
     ariaFilterFromValueForColumn: '${variable}的篩選起始值',
     ariaFilterInput: '篩選器輸入',
+    ariaFilterInputForColumn: '${variable}的篩選器輸入',
     ariaLabelInputClear: '清除',
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',

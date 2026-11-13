@@ -760,6 +760,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaFilterFromValue: 'Filtruoti nuo reikšmės',
     ariaFilterFromValueForColumn: 'Filtruoti stulpelį ${variable} nuo reikšmės',
     ariaFilterInput: 'Filtro laukas',
+    ariaFilterInputForColumn: 'Stulpelio ${variable} filtro laukas',
     ariaLabelInputClear: 'Išvalyti',
     ariaFilterList: 'Filtrų sąrašas',
     ariaFilterToValue: 'Filtruoti iki reikšmės',

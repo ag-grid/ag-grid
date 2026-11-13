@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaFilterFromValue: 'قدر سے فلٹر کریں',
     ariaFilterFromValueForColumn: '${variable} کو قدر سے فلٹر کریں',
     ariaFilterInput: 'فلٹر انپٹ',
+    ariaFilterInputForColumn: '${variable} کا فلٹر انپٹ',
     ariaLabelInputClear: 'صاف کریں',
     ariaFilterList: 'فلٹر فہرست',
     ariaFilterToValue: 'قدر تک فلٹر کریں',
