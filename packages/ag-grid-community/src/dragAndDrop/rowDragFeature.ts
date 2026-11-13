@@ -726,16 +726,45 @@ export const getRowDragMultiRowNodes = (
         return [rowNode];
     }
     let nodes: RowNode[] | null = null;
+    let bestCost = false;
     if (gos.get('treeData') && _isClientSideRowModel(gos)) {
         nodes = selectionSvc.getBestCostNodeSelection() ?? null;
+        bestCost = !!nodes?.length;
     }
     if (!nodes?.length) {
         nodes = selectionSvc.getSelectedNodes();
     }
     if (rowDragSvc && gos.exists('isRowDraggable')) {
-        nodes = nodes.filter((node) => node === rowNode || rowDragSvc.isRowDraggable(node));
+        nodes = filterDraggableNodes(nodes, rowNode, rowDragSvc, bestCost);
     }
     return nodes.length ? nodes : [rowNode];
+};
+
+/** Keeps the draggable nodes. A best-cost selection stands in for its selected descendants, so a
+ * non-draggable node there is replaced by its draggable selected descendants rather than dropping the branch. */
+const filterDraggableNodes = (
+    nodes: RowNode[],
+    rowNode: RowNode,
+    rowDragSvc: RowDragService,
+    bestCost: boolean
+): RowNode[] => {
+    const result: RowNode[] = [];
+    const collect = (list: RowNode[], selectedOnly: boolean): void => {
+        for (let i = 0, len = list.length; i < len; ++i) {
+            const node = list[i];
+            if (selectedOnly && !node.isSelected()) {
+                continue;
+            }
+            const children = node.childrenAfterGroup;
+            if (node === rowNode || rowDragSvc.isRowDraggable(node)) {
+                result.push(node);
+            } else if (bestCost && children) {
+                collect(children, true);
+            }
+        }
+    };
+    collect(nodes, false);
+    return result;
 };
 
 const setRowNodesDragging = (rowNodes: IRowNode[] | null | undefined, dragging: boolean): void => {

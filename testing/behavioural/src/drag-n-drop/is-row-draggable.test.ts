@@ -12,12 +12,13 @@ import {
 
 import type { GridApi, GridOptions, RowDragEndEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
-import { CellSelectionModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface Athlete {
     id: string;
     name: string;
     locked?: boolean;
+    children?: Athlete[];
 }
 
 const createRowData = (): Athlete[] => [
@@ -89,11 +90,12 @@ const dragFrom = async (api: GridApi, source: Element, toId: string): Promise<Dr
 const dragCell = (api: GridApi, fromId: string, toId: string) =>
     dragFrom(api, rowElement(api, fromId).querySelector('[col-id="name"]')!, toId);
 
-const dragHandle = (api: GridApi, fromId: string, toId: string) => dragFrom(api, handleOf(api, fromId), toId);
+const dragHandle = (api: GridApi, fromId: string, toId: string, colId?: string) =>
+    dragFrom(api, handleOf(api, fromId, colId), toId);
 
 describe('isRowDraggable', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, CellSelectionModule],
+        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, CellSelectionModule, TreeDataModule],
     });
 
     beforeAll(() => {
@@ -272,6 +274,58 @@ describe('isRowDraggable', () => {
         await asyncSetTimeout(0);
         expect(handleClasses(api, '3')).toEqual(VISIBLE);
         expect(handleClasses(api, '5')).toEqual(LOCKED);
+    });
+
+    test('tree data multi-row drag keeps draggable selected children of a non-draggable parent', async () => {
+        const api = createGrid({
+            columnDefs: [],
+            autoGroupColumnDef: { field: 'name', rowDrag: true },
+            treeData: true,
+            treeDataChildrenField: 'children',
+            groupDefaultExpanded: -1,
+            rowData: [
+                {
+                    id: 'P',
+                    name: 'P',
+                    locked: true,
+                    children: [
+                        { id: 'pc1', name: 'PC1' },
+                        { id: 'pc2', name: 'PC2' },
+                    ],
+                },
+                {
+                    id: 'Q',
+                    name: 'Q',
+                    children: [
+                        { id: 'qc1', name: 'QC1' },
+                        { id: 'qc2', name: 'QC2' },
+                    ],
+                },
+                { id: 'T', name: 'T' },
+            ],
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowDragMultiRow: true,
+        });
+        await asyncSetTimeout(0);
+        api.setNodesSelected({ nodes: [api.getRowNode('P')!, api.getRowNode('qc1')!], newValue: true });
+        await asyncSetTimeout(0);
+
+        const outcome = await dragHandle(api, 'pc1', 'T', 'ag-Grid-AutoColumn');
+        expect(outcome.ends).toHaveLength(1);
+        expect(outcome.ends[0].nodes.map((node) => node.id).sort()).toEqual(['pc1', 'pc2', 'qc1']);
+    });
+
+    test('redrawRows re-evaluates a callback that reads external state', async () => {
+        const lockedIds = new Set<string>();
+        const api = createGrid({ isRowDraggable: (params) => !lockedIds.has(params.node.id!) });
+        await asyncSetTimeout(0);
+        expect(handleClasses(api, '1')).toEqual(VISIBLE);
+
+        lockedIds.add('1');
+        api.redrawRows();
+        await asyncSetTimeout(0);
+        expect(handleClasses(api, '1')).toEqual(LOCKED);
+        expect((await dragHandle(api, '1', '6')).enter).toBe(0);
     });
 
     test('entire-row drag gating follows data updates', async () => {
