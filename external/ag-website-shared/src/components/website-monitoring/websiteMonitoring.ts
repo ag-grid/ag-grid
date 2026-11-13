@@ -1,6 +1,7 @@
 import type { CspViolationReporter } from '@ag-website-shared/components/website-monitoring/cspViolationReporter';
 import { createCspViolationReporter } from '@ag-website-shared/components/website-monitoring/cspViolationReporter';
 import { WEBSITE_MONITORING_QUEUE } from '@ag-website-shared/components/website-monitoring/gtmTags';
+import { startSlowInteractionReporting } from '@ag-website-shared/components/website-monitoring/slowInteractionReporter';
 import type * as Dash0 from '@dash0/sdk-web';
 
 type EventAttributes = Record<string, string | number | boolean>;
@@ -44,6 +45,7 @@ let state: 'stopped' | 'starting' | 'running' = 'stopped';
 let sdk: typeof Dash0 | undefined;
 let cspViolations: CspViolationReporter | undefined;
 let stopTrackingPageViews: (() => void) | undefined;
+let stopReportingSlowInteractions: (() => void) | undefined;
 // The SDK puts the URL the document loaded on, query string included, in its navigation timing log
 // without passing it through the URL scrubber. An error page's query can hold data from the
 // visitor's grid, so monitoring never starts in a document that loaded on one, even after the
@@ -61,11 +63,13 @@ let loadedOnErrorPage = false;
  * while it is still loading cancels the start. Once initialised it has no way to stop, so `stop`
  * then ends the session and reloads the page, which leaves it uninitialised.
  *
- * Also reports the page's CSP violations, which the SDK does not.
+ * Also reports the page's CSP violations, which the SDK does not, and its slow interactions with
+ * what made them slow, including those inside same-origin iframes such as the docs examples, of
+ * which the SDK's INP sees only part (see ./slowInteractionReporter).
  *
  * Does not start in a document that loaded on an error page, see `loadedOnErrorPage`.
  *
- * @returns a function that stops listening for CSP violations and page navigations
+ * @returns a function that stops listening for CSP violations, page navigations and interactions
  */
 export function initWebsiteMonitoring(config: WebsiteMonitoringConfig): () => void {
     loadedOnErrorPage = ERROR_PAGE_PATH.test(window.location.pathname);
@@ -81,6 +85,7 @@ export function initWebsiteMonitoring(config: WebsiteMonitoringConfig): () => vo
     return () => {
         cspViolations?.dispose();
         stopTrackingPageViews?.();
+        stopReportingSlowInteractions?.();
     };
 }
 
@@ -125,6 +130,9 @@ async function startMonitoring({
         state = 'running';
         cspViolations?.start();
         stopTrackingPageViews = trackVirtualPageViews(dash0);
+        stopReportingSlowInteractions = startSlowInteractionReporting((attributes) =>
+            trackMonitoringEvent('slow_interaction', attributes)
+        );
     } catch (error) {
         // Let the next start retry, e.g. after a transient network failure loading the SDK
         if (state === 'starting') {
