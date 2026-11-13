@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { ToolbarItemComponentName } from '../context/context';
-import type { IconName } from '../utils/icon';
+import type { IconKey } from '../utils/icon';
 import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { AgGridCommon } from './iCommon';
 import type { DefaultMenuItem, MenuItemDef } from './menuItem';
@@ -60,8 +60,8 @@ export interface ToolbarButtonItemDef<TData = any, TContext = any> extends Toolb
     label?: string;
     /** Hover tooltip and `aria-label`. Falls back to `label` when omitted. */
     tooltip?: string;
-    /** Icon displayed on the default button. */
-    icon?: IconName;
+    /** Icon displayed on the default button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. A grid icon name also picks up any override set for it in the `icons` grid option. */
+    icon?: IconKey;
     /** Function invoked when the default button is clicked. */
     action?: (params: ToolbarItemActionParams<TData, TContext>) => void;
     /** Not used for action buttons — set `toolbarItem` to use a built-in or custom component instead. */
@@ -106,8 +106,8 @@ export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends 
     label?: string;
     /** Hover tooltip and `aria-label`. Falls back to `label`, then to the locale "Menu" text. */
     tooltip?: string;
-    /** Icon displayed on the button. Defaults to the `menu` icon. */
-    icon?: IconName;
+    /** Icon displayed on the button: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. A grid icon name also picks up any override set for it in the `icons` grid option. Defaults to the `menu` icon. */
+    icon?: IconKey;
     /** Not used for menu items. */
     action?: never;
 }
@@ -192,7 +192,7 @@ export interface IToolbarItemParams<TData = any, TContext = any, TParams = any> 
     /** Tooltip / aria-label, when set on the item definition. */
     tooltip?: string;
     /** Icon name, when set on the item definition. */
-    icon?: IconName;
+    icon?: IconKey;
     /** Action callback, when using the action-button shorthand. */
     action?: (params: ToolbarItemActionParams<TData, TContext>) => void;
 }

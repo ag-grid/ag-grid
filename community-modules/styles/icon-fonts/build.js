@@ -79,6 +79,7 @@ const nameToCodepoint = {
     'chevron-left': 0xf142,
     'chevron-right': 0xf143,
     'filter-add': 0xf144,
+    'filter-remove': 0xf14b,
     edit: 0xf145,
     search: 0xf146,
     document: 0xf147,

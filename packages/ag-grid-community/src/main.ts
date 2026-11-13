@@ -1262,7 +1262,7 @@ export {
 export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
-export type { IconName, Icons } from './utils/icon';
+export type { IconKey, IconName, Icons } from './utils/icon';
 
 // Testing
 export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

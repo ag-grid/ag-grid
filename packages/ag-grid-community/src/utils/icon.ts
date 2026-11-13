@@ -130,6 +130,13 @@ export type IconName =
 export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 
 /**
+ * A provided icon's CSS name (e.g. `'filter-remove'`), a grid icon name (e.g. `'csvExport'`),
+ * or a custom key from the `icons` grid option. A grid icon name picks up any override set for it
+ * in the `icons` grid option.
+ */
+export type IconKey = IconName | IconValue | (string & {});
+
+/**
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme.
  * Technically `iconName` could be any string, if using user-provided icons map.
