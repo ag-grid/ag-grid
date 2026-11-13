@@ -1,5 +1,13 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, KeyCode, _clearElement, _isVisible, _last, _setAriaRole } from 'ag-stack';
+import type { AgBeanCollection, AgEvent, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import {
+    AgAbstractComponent,
+    KeyCode,
+    _addManagedElementListeners,
+    _clearElement,
+    _isVisible,
+    _last,
+    _setAriaRole,
+} from 'ag-stack';
 
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
@@ -10,18 +18,22 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+export type AgListEvent = 'fieldValueChanged' | 'selectedItem' | 'activeItemChanged';
+
+export interface AgListActiveItemChangedEvent extends AgEvent<'activeItemChanged'> {
+    activeId: string | null;
+}
 
 export class AgList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TEventType extends string = AgListEvent,
     TValue = string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -61,7 +73,7 @@ export class AgList<
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        _addManagedElementListeners(this, eGui, { mouseleave: () => this.clearHighlighted() });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -196,9 +208,7 @@ export class AgList<
             return;
         }
 
-        this.clearHighlighted();
-        item.setHighlighted(true);
-        this.highlightedItem = item;
+        this.setHighlightedItem(item);
 
         const eGui = this.getGui();
 
@@ -229,8 +239,31 @@ export class AgList<
     }
 
     private clearHighlighted(): void {
-        this.highlightedItem?.setHighlighted(false);
-        this.highlightedItem = null;
+        this.setHighlightedItem(null);
+    }
+
+    private setHighlightedItem(
+        item: AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        > | null
+    ): void {
+        const previousItem = this.highlightedItem;
+        previousItem?.setHighlighted(false);
+        item?.setHighlighted(true);
+        this.highlightedItem = item;
+
+        if (previousItem !== item) {
+            this.dispatchLocalEvent<AgListActiveItemChangedEvent>({
+                type: 'activeItemChanged',
+                activeId: item?.getId() ?? null,
+            });
+        }
     }
 
     private renderOption(value: TValue, text: string): void {

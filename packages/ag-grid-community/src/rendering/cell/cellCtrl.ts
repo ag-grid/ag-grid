@@ -424,7 +424,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
-        // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
+        // if node is stub, and no group data for this node (rowSelection.groupSelects can populate group data)
         const isLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         const colDef = column.colDef;
 

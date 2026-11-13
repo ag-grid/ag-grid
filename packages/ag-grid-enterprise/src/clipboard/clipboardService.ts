@@ -123,7 +123,10 @@ function removeHtmlComments(html: string): string {
 }
 
 // An empty table cell may contain a paragraph with only a line break.
-const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`, 'i');
+const HTML_EMPTY_PARAGRAPH_REGEX = /* #__PURE__ */ new RegExp(
+    String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`,
+    'i'
+);
 
 function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';
@@ -1111,39 +1114,31 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyCells(cellSelection?: GridOptions['cellSelection'], rowSelection?: GridOptions['rowSelection']) {
-        const { rangeSvc, selectionSvc, gos } = this.beans;
+        const { rangeSvc, selectionSvc } = this.beans;
         if (!rangeSvc || rangeSvc.isEmpty()) {
             return false;
         }
 
         if (cellSelection) {
-            // If `cellSelection` is defined, user is using the new cell selection API, so we only copy
-            // cells by default.
-            const shouldCopyRowsInstead =
-                typeof rowSelection === 'object' && rowSelection.copySelectedRows && !selectionSvc?.isEmpty();
+            const shouldCopyRowsInstead = rowSelection?.copySelectedRows && !selectionSvc?.isEmpty();
             return !shouldCopyRowsInstead;
-        } else {
-            // If user is using the deprecated API, we preserve the previous behaviour
-            const suppressCopySingleCellRanges = gos.get('suppressCopySingleCellRanges');
-            const shouldSkip = !rangeSvc.isMoreThanOneCell() && suppressCopySingleCellRanges;
-            return !shouldSkip;
         }
+
+        return true;
     }
 
     private shouldCopyRows(rowSelection?: GridOptions['rowSelection']) {
-        const { selectionSvc, gos } = this.beans;
+        const { selectionSvc } = this.beans;
         if (selectionSvc?.isEmpty() ?? true) {
             return false;
         }
 
-        if (rowSelection && typeof rowSelection !== 'string') {
-            // If `rowSelection` is defined as an object, user is using the new selection API, so we determine
-            // behaviour based on `copySelectedRows`
-            return rowSelection.copySelectedRows ?? false;
-        } else {
-            // If user is using the deprecated API, we preserve the previous behaviour
-            return !gos.get('suppressCopyRowsToClipboard');
+        // a selection can outlive `rowSelection` being unset (SSRM), and those rows are still copied
+        if (rowSelection === undefined) {
+            return true;
         }
+
+        return rowSelection.copySelectedRows ?? false;
     }
 
     public copiesRangeOrSelectedRows(): boolean {

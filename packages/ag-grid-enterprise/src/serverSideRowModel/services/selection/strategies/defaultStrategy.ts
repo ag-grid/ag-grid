@@ -5,7 +5,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection, _isUsingNewRowSelectionAPI } from 'ag-grid-community';
+import { BeanStub, ROOT_NODE_ID, _isMultiRowSelection } from 'ag-grid-community';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -87,7 +87,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         });
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size + (rootSelected ? 1 : 0) > 1;
-        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
+        if (!_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
             this.warn(130);
             return;
         }

@@ -46,7 +46,7 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 
 - **Vitest**: Unit, integration, and behavioural testing (`testing/angular-tests` still uses Jest)
 - **Playwright**: E2E testing, and the browser behavioural benchmarks run in (`./benches.sh`)
-- **happy-dom**: DOM simulation for every Vitest project (`testing/angular-tests` still uses jsdom, via Jest)
+- **happy-dom**: DOM simulation for the Vitest package and behavioural projects (the `community-modules/locale`, `documentation/ag-grid-docs` and `external/ag-website-shared` projects run in `node`; `testing/angular-tests` still uses jsdom, via Jest)
 
 ## Code Style
 

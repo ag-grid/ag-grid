@@ -1,6 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { AgBeanStub } from 'ag-stack';
+import { AgAbstractBean } from 'ag-stack';
 import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
 
@@ -118,7 +118,7 @@ describe('Rich Select cell editor', () => {
             getRowId: (p) => p.data.id,
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
-        const addDestroyFunc = vi.spyOn(AgBeanStub.prototype, 'addDestroyFunc');
+        const addDestroyFunc = vi.spyOn(AgAbstractBean.prototype, 'addDestroyFunc');
         try {
             const popup = await openEditor(api, gridDiv, 0, 'a');
             await waitFor(() => expect(getRowLabels(popup)).toEqual(['Alpha', 'Beta', 'Gamma', 'Gadget']));
@@ -207,8 +207,8 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(getRowLabels(popup)).toEqual(['Beta']), { timeout: 2000 });
     });
 
-    // 4. Object values with keyCreator + formatValue: display text and committed value are correct.
-    test('object values with keyCreator + formatValue commit the object and display formatted text', async () => {
+    // 4. Object values with formatValue: display text and committed value are correct.
+    test('object values with formatValue commit the object and display formatted text', async () => {
         type Country = { code: string; name: string };
         const values: Country[] = [
             { code: 'IE', name: 'Ireland' },
@@ -222,7 +222,6 @@ describe('Rich Select cell editor', () => {
                     editable: true,
                     cellDataType: false,
                     cellEditor: 'agRichSelectCellEditor',
-                    keyCreator: (p: { value: Country }) => p.value.code,
                     cellEditorParams: {
                         values,
                         formatValue: (value: Country) => value?.name ?? '',
@@ -240,6 +239,46 @@ describe('Rich Select cell editor', () => {
 
         await commitByClick(popup, 'France');
         await waitFor(() => expect(getAllRows(api)[0].data.a).toEqual({ code: 'FR', name: 'France' }));
+    });
+
+    // 4b. Without cellEditorParams.formatValue, object values are searched by their formatted text.
+    test('object values are searched by formatted text and colDef.keyCreator is ignored', async () => {
+        type Country = { code: string; name: string };
+        const values: Country[] = [
+            { code: 'IE', name: 'Ireland' },
+            { code: 'FR', name: 'France' },
+            { code: 'DE', name: 'Germany' },
+        ];
+        const keyCreator = vi.fn(({ value }: { value: Country }) => `code-${value.code}`);
+
+        const api = await createGrid({
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    cellDataType: false,
+                    keyCreator,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values,
+                        filterList: true,
+                        searchType: 'match',
+                    },
+                    valueFormatter: (p: { value?: Country }) => p.value?.name ?? '',
+                },
+            ],
+            rowData: [{ id: '0', a: values[0] }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const popup = await openEditor(api, gridDiv, 0, 'a');
+
+        pressKey(gridDiv, 'F');
+        pressKey(gridDiv, 'r');
+        pressKey(gridDiv, 'a');
+
+        await waitFor(() => expect(getRowLabels(popup)).toEqual(['France']));
+        expect(keyCreator).not.toHaveBeenCalled();
     });
 
     // 5. Async values promise populates the list.

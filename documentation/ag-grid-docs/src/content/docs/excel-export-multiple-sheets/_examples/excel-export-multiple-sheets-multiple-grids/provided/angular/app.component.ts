@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -94,7 +94,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
                             [suppressMoveWhenRowDragging]="true"
-                            [rowData]="leftRowData"
+                            [rowData]="leftRowData()"
                             [columnDefs]="leftColumns"
                             (gridReady)="onGridReady($event, 0)"
                         />
@@ -110,7 +110,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             [defaultColDef]="defaultColDef"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
-                            [rowData]="rightRowData"
+                            [rowData]="rightRowData()"
                             [columnDefs]="rightColumns"
                             (gridReady)="onGridReady($event, 1)"
                         />
@@ -122,8 +122,8 @@ export class SportRenderer implements ICellRendererAngularComp {
 })
 export class AppComponent {
     rawData: any[] = [];
-    leftRowData: any[] = [];
-    rightRowData: any[] = [];
+    leftRowData = signal<any[]>([]);
+    rightRowData = signal<any[]>([]);
     leftApi!: GridApi;
     rightApi!: GridApi;
 
@@ -198,8 +198,8 @@ export class AppComponent {
     }
 
     loadGrids = () => {
-        this.leftRowData = [...this.rawData.slice(0, this.rawData.length / 2)];
-        this.rightRowData = [...this.rawData.slice(this.rawData.length / 2)];
+        this.leftRowData.set([...this.rawData.slice(0, this.rawData.length / 2)]);
+        this.rightRowData.set([...this.rawData.slice(this.rawData.length / 2)]);
     };
 
     reset = () => {

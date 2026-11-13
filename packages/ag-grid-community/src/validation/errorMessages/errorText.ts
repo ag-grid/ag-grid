@@ -322,8 +322,7 @@ export const AG_GRID_ERRORS = {
     41: () =>
         "Browser did not allow `document.execCommand('copy')`. Ensure `api.copySelectedRowsToClipboard()` is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
     42: () => "Browser does not support `document.execCommand('copy')` for clipboard operations" as const,
-    43: ({ iconName }: { iconName: string }) =>
-        `As of v33, icon \`${iconName}\` is deprecated. Use the icon CSS name instead.` as const,
+    // 43: retired (deprecated icon name warning)
     44: () =>
         'Data type definition hierarchies (via the `extendsDataType` property) cannot contain circular references.' as const,
     45: ({ parentCellDataType }: { parentCellDataType: string }) =>
@@ -636,7 +635,7 @@ export const AG_GRID_ERRORS = {
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 
     202: () =>
-        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`rowSelection.groupSelects\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     203: () =>
         'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove `getRowHeight()` callback or b) remove `maxBlocksInCache` property. Purging has been disabled.' as const,
     204: () =>
@@ -745,16 +744,10 @@ export const AG_GRID_ERRORS = {
             usesAgGridProvider,
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
-    262: () =>
-        'As of v33, icon key `smallDown` is deprecated. Use `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown, `selectOpen` for Select cell editor and dropdowns (e.g. Integrated Charts menu), `richSelectOpen` for Rich Select cell editor.' as const,
-    263: () =>
-        'As of v33, icon key `smallLeft` is deprecated. Use `panelDelimiterRtl` for Row Group Panel / Pivot Panel, `subMenuOpenRtl` for sub-menus.' as const,
-    264: () =>
-        'As of v33, icon key `smallRight` is deprecated. Use `panelDelimiter` for Row Group Panel / Pivot Panel, `subMenuOpen` for sub-menus.' as const,
+    // 262-264: retired (deprecated icon key warnings)
     265: ({ colId }: { colId: string }) =>
         `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${getValidationDocLink()}/integrated-charts-range-chart#coldefchartdatatype .` as const,
-    266: () =>
-        'As of v33.1, using `keyCreator` with the Rich Select Editor has been deprecated. It now requires the `formatValue` callback to convert complex data to strings.' as const,
+    // 266: retired (Rich Select `keyCreator` warning)
     267: () =>
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
     268: () => "Transactions aren't supported with tree data when using `treeDataChildrenField`" as const,
@@ -890,8 +883,7 @@ export const AG_GRID_ERRORS = {
         `One or more \`${objectName}\` properties are not recognised. For more info see: ${url}`,
     311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
         `\`api.${functionName}\` can only be called when \`gridOptions.rowModelType\` is ${(rowModels ?? []).join(' or ')}.`,
-    312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>
-        `The chart type \`${chartType}\` has been deprecated. Please use \`${renamedChartType}\` instead.`,
+    // 312: retired (deprecated chart type warning)
     313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
         `Unexpected property supplied. \`${paramsType}\` does not contain: \`${property}\`.`,
     314: ({
@@ -958,8 +950,7 @@ export const AG_GRID_ERRORS = {
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
     333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
-    334: () =>
-        `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
+    // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
     336: ({ colId, properties }: { colId: string; properties: string[] }) =>
@@ -972,6 +963,10 @@ export const AG_GRID_ERRORS = {
         `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
     340: ({ field }: { field: string }) =>
         `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
+    341: ({ colId }: { colId: string }) =>
+        `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
+    342: ({ colId }: { colId: string }) =>
+        `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -987,7 +982,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 340;
+export const MAX_ERROR_ID = 342;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

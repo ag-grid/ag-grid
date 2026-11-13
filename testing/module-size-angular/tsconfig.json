@@ -10,6 +10,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "types": ["jasmine"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,

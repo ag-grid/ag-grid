@@ -60,10 +60,10 @@ export function getPackageJson({ isLocale, internalFramework, isIntegratedCharts
     };
 
     if (internalFramework === 'angular') {
-        addDependency('@angular/core', '20.0.0');
-        addDependency('@angular/common', '20.0.0');
-        addDependency('@angular/forms', '20.0.0');
-        addDependency('@angular/platform-browser', '20.0.0');
+        addDependency('@angular/core', '21.0.0');
+        addDependency('@angular/common', '21.0.0');
+        addDependency('@angular/forms', '21.0.0');
+        addDependency('@angular/platform-browser', '21.0.0');
     }
 
     if (internalFramework === 'vue3') {

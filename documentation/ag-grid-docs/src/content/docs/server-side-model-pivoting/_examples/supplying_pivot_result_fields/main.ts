@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/pivot';
+
 import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
@@ -8,8 +10,6 @@ import {
     RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

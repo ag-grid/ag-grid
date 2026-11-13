@@ -70,7 +70,6 @@ import type {
     IsRowMaster,
     IsRowPinnable,
     IsRowPinned,
-    IsRowSelectable,
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefault,
@@ -113,7 +112,6 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
-    SortDirection,
     StatusBar,
     TabToNextCell,
     TabToNextGridContainer,
@@ -373,16 +371,6 @@ export interface Props<TData> {
          * @agModule `ClipboardModule`
          */
     clipboardDelimiter?: string,
-    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
-         */
-    suppressCopyRowsToClipboard?: boolean,
-    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
-         */
-    suppressCopySingleCellRanges?: boolean,
     /** Set to `true` to always remove a trailing empty line from pasted data.
          * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
          * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
@@ -491,16 +479,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup',
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-         */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean,
-    /** If `true`, when you drag a column into a row group panel the column is not hidden.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-         */
-    suppressRowGroupHidesColumns?: boolean,
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
          */
     colResizeDefault?: 'shift',
@@ -880,11 +858,6 @@ export interface Props<TData> {
          * @initial
          */
     suppressBrowserResizeObserver?: boolean,
-    /** @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-         * @default false
-         * @initial
-         */
-    suppressPropertyNamesCheck?: boolean,
     /** Disables change detection.
          * @default false
          */
@@ -1303,11 +1276,6 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupMaintainOrder?: boolean,
-    /** When `true`, if you select a group, the children of the group will also be selected.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.groupSelects` instead
-         */
-    groupSelectsChildren?: boolean,
     /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
          * @default 0
          * @initial
@@ -1345,11 +1313,6 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
     groupSuppressBlankHeader?: boolean,
-    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.groupSelects` instead
-         */
-    groupSelectsFiltered?: boolean,
     /** Shows the open group in the group column for non-group rows.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1360,16 +1323,6 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly',
-    /** Set to `true` to collapse groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-         */
-    groupRemoveSingleChildren?: boolean,
-    /** Set to `true` to collapse lowest level groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-         */
-    groupRemoveLowestSingleChildren?: boolean,
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1587,11 +1540,21 @@ export interface Props<TData> {
          * @agModule `ViewportRowModelModule`
          */
     viewportRowModelBufferSize?: number,
+    /** Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+         * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+         * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+         * Keyboard, API scrolling and scrollbar dragging are unaffected.
+         * @default 'native'
+         * @agModule `ScrollGestureModule`
+         */
+    scrollGestureMode?: 'native' | 'axisLocked',
     /** Set to `true` to always show the horizontal scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowHorizontalScroll?: boolean,
     /** Set to `true` to always show the vertical scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowVerticalScroll?: boolean,
@@ -1631,29 +1594,14 @@ export interface Props<TData> {
          * @initial
          */
     scrollbarWidth?: number,
-    /** Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
+    /** Use the `RowSelectionOptions` object to configure row selection.
          * @agModule `RowSelectionModule`
          */
-    rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple',
+    rowSelection?: RowSelectionOptions<TData>,
     /** Configure cell selection.
          * @agModule `CellSelectionModule`
          */
     cellSelection?: boolean | CellSelectionOptions<TData>,
-    /** Set to `true` to allow multiple rows to be selected using single click.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.enableSelectionWithoutKeys` instead
-         */
-    rowMultiSelectWithClick?: boolean,
-    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
-         */
-    suppressRowDeselection?: boolean,
-    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
-         * @default false
-         * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
-         */
-    suppressRowClickSelection?: boolean,
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
          * @default false
          */
@@ -1709,20 +1657,10 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
          */
     suppressClearOnFillReduction?: boolean,
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default ['asc', 'desc', null]
-         * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-         */
-    sortingOrder?: SortDirection[],
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
          * @default false
          */
     accentedSort?: boolean,
-    /** Set to `true` to show the 'no sort' icon.
-         * @default false
-         * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-         */
-    unSortIcon?: boolean,
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
          * @default false
          */
@@ -2064,10 +2002,6 @@ export interface Props<TData> {
     /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
          */
     processRowPostCreate?: ProcessRowPostCreate<TData>,
-    /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-         * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
-         */
-    isRowSelectable?: IsRowSelectable<TData>,
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
          * @agModule `MasterDetailModule`
          */
@@ -2249,8 +2183,6 @@ export function getProps() {
         copyHeadersToClipboard: undefined,
         copyGroupHeadersToClipboard: undefined,
         clipboardDelimiter: undefined,
-        suppressCopyRowsToClipboard: undefined,
-        suppressCopySingleCellRanges: undefined,
         suppressLastEmptyLineOnPaste: undefined,
         suppressClipboardPaste: undefined,
         suppressClipboardApi: undefined,
@@ -2277,8 +2209,6 @@ export function getProps() {
         suppressMoveWhenColumnDragging: undefined,
         suppressDragLeaveHidesColumns: undefined,
         suppressGroupChangesColumnVisibility: undefined,
-        suppressMakeColumnVisibleAfterUnGroup: undefined,
-        suppressRowGroupHidesColumns: undefined,
         colResizeDefault: undefined,
         suppressAutoSize: undefined,
         autoSizePadding: undefined,
@@ -2355,7 +2285,6 @@ export function getProps() {
         suppressTouch: undefined,
         suppressFocusAfterRefresh: undefined,
         suppressBrowserResizeObserver: undefined,
-        suppressPropertyNamesCheck: undefined,
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
@@ -2432,7 +2361,6 @@ export function getProps() {
         masterDefaultExpanded: undefined,
         autoGroupColumnDef: undefined,
         groupMaintainOrder: undefined,
-        groupSelectsChildren: undefined,
         groupLockGroupColumns: undefined,
         groupAggFiltering: undefined,
         groupTotalRow: undefined,
@@ -2440,11 +2368,8 @@ export function getProps() {
         alwaysShowGrandTotalRow: undefined,
         suppressStickyTotalRow: undefined,
         groupSuppressBlankHeader: undefined,
-        groupSelectsFiltered: undefined,
         showOpenedGroup: undefined,
         groupHideParentOfSingleChild: undefined,
-        groupRemoveSingleChildren: undefined,
-        groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
         groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
@@ -2486,6 +2411,7 @@ export function getProps() {
         viewportDatasource: undefined,
         viewportRowModelPageSize: undefined,
         viewportRowModelBufferSize: undefined,
+        scrollGestureMode: undefined,
         alwaysShowHorizontalScroll: undefined,
         alwaysShowVerticalScroll: undefined,
         debounceVerticalScrollbar: undefined,
@@ -2498,9 +2424,6 @@ export function getProps() {
         scrollbarWidth: undefined,
         rowSelection: undefined,
         cellSelection: undefined,
-        rowMultiSelectWithClick: undefined,
-        suppressRowDeselection: undefined,
-        suppressRowClickSelection: undefined,
         suppressCellFocus: undefined,
         suppressHeaderFocus: undefined,
         selectionColumnDef: undefined,
@@ -2512,9 +2435,7 @@ export function getProps() {
         enableFillHandle: undefined,
         fillHandleDirection: undefined,
         suppressClearOnFillReduction: undefined,
-        sortingOrder: undefined,
         accentedSort: undefined,
-        unSortIcon: undefined,
         suppressMultiSort: undefined,
         alwaysMultiSort: undefined,
         multiSortKey: undefined,
@@ -2585,7 +2506,6 @@ export function getProps() {
         autoGenerateColumnDefs: undefined,
         processAutoGeneratedColumnDefs: undefined,
         processRowPostCreate: undefined,
-        isRowSelectable: undefined,
         isRowMaster: undefined,
         fillOperation: undefined,
         postSortRows: undefined,

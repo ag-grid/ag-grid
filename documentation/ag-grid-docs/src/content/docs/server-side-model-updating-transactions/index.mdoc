@@ -44,6 +44,17 @@ The following example demonstrates add / update and remove operations via the Se
 
 {% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
 
+### Rows That Cannot Be Added
+
+The grid skips a row to add when it cannot work out where the row belongs, or when the row would duplicate one already loaded:
+
+- No `addIndex` is provided while the store's row count is unknown.
+- `addIndex` is past the end of the store.
+- A row with the same ID is already loaded.
+- A later row in `add` has the same ID. Only the last of these rows is added.
+
+Skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`. Applying the same transaction again skips them again. If a skipped row exists on the server, it is shown once the block containing it is loaded, for example after a [refresh](./server-side-model-updating-refresh/). To show it straight away, check whether a row with that ID is loaded using `api.getRowNode(id)`. If it is, apply the row again with `update`. If not, apply it again with an `addIndex` that is within the loaded rows.
+
 ## Row Grouping
 
 To use transactions while using row grouping, transactions need to be applied to the specific row group. This is done by providing a `route` when applying the transaction. It is also necessary to inform the grid when group rows are updated, added or removed.

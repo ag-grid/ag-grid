@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     advancedFilterCancel: 'Zrušit',
     advancedFilterClear: 'Vymazat',
     advancedFilterBuilder: 'Stavitel',
+    advancedFilterPlaceholder: 'Pokročilý filtr',
     advancedFilterValidationMissingColumn: 'Chybí sloupec',
     advancedFilterValidationMissingOption: 'Chybí možnost',
     advancedFilterValidationMissingValue: 'Chybí hodnota',
@@ -734,6 +735,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaCalculatedColumn: 'Vypočítaný sloupec',
     ariaColumnShowValuesAs: 'Zobrazování hodnot jako',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
+    ariaColumnSelectExpandAll: 'Rozbalit nebo sbalit všechny skupiny sloupců',
     ariaDateFilterInput: 'Vstup datového filtru',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vstup filtru sloupců',
@@ -819,6 +821,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor buňky',
     ariaValidationErrorPrefix: 'Ověření editoru buňky',
     ariaFullRowValidationError: 'Validace celého řádku: ${variable}',
     ariaFullRowEditValidationFailed: 'Úpravu řádku nelze dokončit. ${variable}',
@@ -848,6 +851,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtru',
     ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

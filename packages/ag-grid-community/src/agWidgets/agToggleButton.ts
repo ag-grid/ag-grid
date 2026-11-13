@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 
 import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';
@@ -18,11 +12,11 @@ export interface AgToggleButtonParams<
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgToggleButton<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgCheckbox<
     TBeanCollection,

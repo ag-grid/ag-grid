@@ -1,4 +1,10 @@
-import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _isIOSUserAgent,
+    _isMacOsUserAgent,
+    _throttleToFrame,
+} from 'ag-stack';
 
 import type { BodyScrollEvent } from '../events';
 import type { ElementParams } from '../utils/element';
@@ -22,7 +28,11 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
     public abstract setScrollPosition(value: number): void;
-    private readonly queueSetScrollVisible = this.throttleToFrame(() => this.setScrollVisible());
+    private readonly queueSetScrollVisible = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.setScrollVisible()
+    );
 
     constructor(
         template: ElementParams,
@@ -67,7 +77,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         const eGui = this.getGui();
         const onActivate = () => this.toggleCss('ag-scrollbar-active', true);
         const onDeactivate = () => this.toggleCss('ag-scrollbar-active', false);
-        this.addManagedListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             mouseenter: onActivate,
             mousedown: onActivate,
             touchstart: onActivate,
@@ -103,6 +113,6 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     }
 
     public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.eViewport, { scroll: fn });
+        _addManagedElementListeners(this, this.eViewport, { scroll: fn });
     }
 }

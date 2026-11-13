@@ -73,6 +73,6 @@ export class AppComponent {
 
 {% if isFramework("angular") %}
 {% warning %}
-Javascript components are run outside of NgZone. If they initiate calls into your Angular application you may need to wrap these calls within `ngZone.run()` for Change Detection to correctly run.
+In zone-based applications, Javascript components are run outside of NgZone. If they initiate calls into your Angular application you may need to wrap these calls within `ngZone.run()` for Change Detection to correctly run. In zoneless applications (the default from Angular 21), update state via signals or call `ChangeDetectorRef.markForCheck()` instead.
 {% /warning %}
 {% /if %}

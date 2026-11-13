@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     advancedFilterCancel: 'বাতিল করুন',
     advancedFilterClear: 'পরিষ্কার করুন',
     advancedFilterBuilder: 'বিল্ডার',
+    advancedFilterPlaceholder: 'অ্যাডভান্সড ফিল্টার',
     advancedFilterValidationMissingColumn: 'কলাম অনুপস্থিত',
     advancedFilterValidationMissingOption: 'অপশন অনুপস্থিত',
     advancedFilterValidationMissingValue: 'মান অনুপস্থিত',
@@ -747,6 +748,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaCalculatedColumn: 'গণনাকৃত কলাম',
     ariaColumnShowValuesAs: 'মান দেখানো হচ্ছে হিসেবে',
     ariaColumnSelectAll: 'সব কলামের দৃশ্যমানতা টগল করুন',
+    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত বা সংকুচিত করুন',
     ariaDateFilterInput: 'তারিখ ফিল্টার ইনপুট',
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'ফিল্টার কলাম ইনপুট',
@@ -837,6 +839,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaLabelSelectField: 'ফিল্ড নির্বাচন করুন',
 
     // Cell Editor
+    ariaLabelCellEditor: 'সেল সম্পাদক',
     ariaValidationErrorPrefix: 'সেল সম্পাদক যাচাইকরণ',
     ariaFullRowValidationError: 'সম্পূর্ণ সারি যাচাইকরণ: ${variable}',
     ariaFullRowEditValidationFailed: 'সারি সম্পাদনা সম্পূর্ণ করা যাচ্ছে না। ${variable}',
@@ -869,6 +872,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',
     ariaLabelFilterCardDelete: 'ফিল্টার মুছুন',
     ariaLabelFilterCardHasEdits: 'সম্পাদনা করা হয়েছে',
+    ariaLabelFilterCardType: 'ফিল্টারের ধরন',
     ariaHasNote: 'এই সেলে একটি নোট আছে।',
 
     // Number Format (Status Bar, Pagination Panel)

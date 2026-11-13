@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     advancedFilterCancel: 'Avbryt',
     advancedFilterClear: 'Tøm',
     advancedFilterBuilder: 'Bygger',
+    advancedFilterPlaceholder: 'Avansert filter',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Alternativ mangler',
     advancedFilterValidationMissingValue: 'Verdi mangler',
@@ -734,6 +735,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser verdier som',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
+    ariaColumnSelectExpandAll: 'Utvid eller skjul alle kolonnegrupper',
     ariaDateFilterInput: 'Inndata for datofilter',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',
@@ -819,6 +821,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaLabelSelectField: 'Velg Felt',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celle redigerer',
     ariaValidationErrorPrefix: 'Celle redigerer validering',
     ariaFullRowValidationError: 'Validering av hele raden: ${variable}',
     ariaFullRowEditValidationFailed: 'Kan ikke fullføre radredigeringen. ${variable}',
@@ -848,6 +851,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaLabelAddFilterField: 'Legg til filterfelt',
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)

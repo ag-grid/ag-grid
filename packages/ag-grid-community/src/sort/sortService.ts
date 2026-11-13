@@ -189,7 +189,7 @@ export class SortService extends BeanStub implements NamedBean {
         currentSortDef: SortDef | null,
         cachedIndex = 0
     ): { sortDef: SortDef; index: number } {
-        const sortingOrder = getSortingOrder(this.gos, column);
+        const sortingOrder = getSortingOrder(column);
         const len = sortingOrder.length;
         if (len === 0) {
             return { sortDef: getSortDefFromInput(), index: 0 };

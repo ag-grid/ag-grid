@@ -892,7 +892,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const closeRange = (rowNode: RowNode): boolean => {
             finished = true;
 
-            // if the final node was a group node, and we're doing groupSelectsChildren
+            // if the final node was a group node, and groups select their descendants
             // make the exception to select all of it's descendants too
             if (groupsSelectChildren && rowNode.group) {
                 addAllLeafs(result, rowNode);
