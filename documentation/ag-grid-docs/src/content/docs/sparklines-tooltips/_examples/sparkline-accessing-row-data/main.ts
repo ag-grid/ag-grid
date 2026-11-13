@@ -5,8 +5,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ClipboardModule, ContextMenuModule, SparklinesModule } from 'ag-grid-enterprise';
 
-import { getData } from './data';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -46,7 +44,6 @@ const gridOptions: GridOptions = {
         flex: 1,
         minWidth: 100,
     },
-    rowData: getData(),
     rowHeight: 50,
 };
 
@@ -60,4 +57,8 @@ function tooltipRenderer(params: any) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/sparklines-data.json')
+        .then((response) => response.json())
+        .then((data: any[]) => gridApi.setGridOption('rowData', data));
 });
