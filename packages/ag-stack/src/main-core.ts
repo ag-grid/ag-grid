@@ -28,13 +28,18 @@ export { _isValidDate, _parseDateTimeFromString, _serialiseDate } from './utils/
 export { _camelCaseToHumanText } from './utils/string';
 export type { IconValue } from './interfaces/iIcon';
 export type { IEventListener } from './interfaces/iEventEmitter';
+export type { Part } from './theming/part';
 export type { SharedThemeParams } from './theming/shared/shared-css';
+export type { Theme } from './theming/theme';
 export type {
     BorderValue,
+    ColorSchemeValue,
     ColorValue,
     FontFamilyValue,
     FontWeightValue,
     ImageValue,
     LengthValue,
+    ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
 } from './theming/themeTypes';
