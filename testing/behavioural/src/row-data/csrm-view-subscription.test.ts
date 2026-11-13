@@ -309,6 +309,74 @@ describe('CSRM viewSubscription', () => {
             });
         });
 
+        describe('grid scrolled off screen', () => {
+            const OriginalIntersectionObserver = window.IntersectionObserver;
+            let observers: { callback: IntersectionObserverCallback; disconnected: boolean }[] = [];
+
+            /** Reports whether the grid is in the browser viewport, as the browser does on scroll. */
+            function setOnScreen(onScreen: boolean) {
+                for (const observer of observers) {
+                    if (!observer.disconnected) {
+                        observer.callback([{ isIntersecting: onScreen } as IntersectionObserverEntry], {} as any);
+                    }
+                }
+            }
+
+            beforeEach(() => {
+                observers = [];
+                (window as any).IntersectionObserver = class {
+                    private readonly entry;
+                    constructor(callback: IntersectionObserverCallback) {
+                        this.entry = { callback, disconnected: false };
+                        observers.push(this.entry);
+                    }
+                    observe() {}
+                    disconnect() {
+                        this.entry.disconnected = true;
+                    }
+                };
+            });
+
+            afterEach(() => {
+                window.IntersectionObserver = OriginalIntersectionObserver;
+            });
+
+            test('scrolling the grid off screen unsubscribes every row, and back on screen subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                setOnScreen(false);
+                expect(recorder.subscribed.size).toBe(0);
+
+                setOnScreen(true);
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('with pauseWhenHidden set to false, the rows stay subscribed while the grid is off screen', async () => {
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: { ...recorder.handlers, pauseWhenHidden: false } });
+
+                setOnScreen(false);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('destroying the grid stops observing whether it is on screen', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                api.destroy();
+
+                expect(observers.length).toBeGreaterThan(0);
+                expect(observers.every((observer) => observer.disconnected)).toBe(true);
+            });
+        });
+
         test('setting the option again with the same handlers makes no call', async () => {
             const recorder = createRecorder();
             const api = await createFlatGrid({ viewSubscription: recorder.handlers });
@@ -807,11 +875,12 @@ describe('CSRM viewSubscription', () => {
             return api;
         }
 
-        test('a sticky group row is unsubscribed once its row scrolls above the rows in view', async () => {
+        test('a sticky group row stays subscribed while it is stuck over the view, and is unsubscribed once it scrolls away', async () => {
             const api = await createGroupedGrid({ groupDefaultExpanded: 1 });
             const recorder = createRecorder();
             subscribe(api, recorder);
             const ireland = api.getDisplayedRowAtIndex(0)!.id!;
+            const spain = api.getDisplayedRowAtIndex(11)!.id!;
             expect(recorder.ids()).toContain(ireland);
 
             api.ensureIndexVisible(6, 'top');
@@ -820,6 +889,26 @@ describe('CSRM viewSubscription', () => {
             await waitFor(() =>
                 expect(document.querySelector(`[class*="sticky-top"] [row-id="${ireland}"]`)).not.toBeNull()
             );
+            expect(recorder.ids()).toContain(ireland);
+            expect(recorder.unsubscribedRefs.map((ref) => ref.id)).not.toContain(ireland);
+
+            // Past the last Ireland row, the Spain group row is stuck over the view in its place.
+            api.ensureIndexVisible(13, 'top');
+
+            await waitFor(() => expect(recorder.ids()).not.toContain(ireland));
+            expect(recorder.ids()).toContain(spain);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('with suppressGroupRowsSticky, a group row is unsubscribed once it scrolls above the rows in view', async () => {
+            const api = await createGroupedGrid({ groupDefaultExpanded: 1, suppressGroupRowsSticky: true });
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            const ireland = api.getDisplayedRowAtIndex(0)!.id!;
+
+            api.ensureIndexVisible(6, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('Ireland-5'));
             expect(recorder.ids()).not.toContain(ireland);
             expect(recorder.violations).toEqual([]);
         });

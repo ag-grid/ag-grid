@@ -1,4 +1,4 @@
-import { _areEqual, _getDocument } from 'ag-stack';
+import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
 
 import {
     BeanStub,
@@ -42,6 +42,8 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     private sub: ActiveSubscription | undefined;
     /** Set on `gridPreDestroyed`, after which a handler that turns the subscription back on cannot start it. */
     private preDestroyed = false;
+    /** Set while the grid is scrolled out of the browser viewport, or not displayed. */
+    private offscreen = false;
 
     public postConstruct(): void {
         const markDirty = () => this.schedule();
@@ -79,6 +81,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.addManagedListeners(_getDocument(this.beans), { visibilitychange: () => this.refresh() });
+        this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
+            const stopObserving = _observeIntersection(this.beans, gridBodyCtrl.eGridViewport, (entry) =>
+                this.setOffscreen(!entry.isIntersecting)
+            );
+            this.addDestroyFunc(stopObserving);
+        });
+    }
+
+    private setOffscreen(offscreen: boolean): void {
+        if (this.offscreen !== offscreen) {
+            this.offscreen = offscreen;
+            this.refresh();
+        }
     }
 
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
@@ -131,9 +146,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         }
     }
 
-    /** A hidden page gets no updates on screen, so its rows are unsubscribed until it is shown again. */
+    /** Rows on a hidden page, or in a grid scrolled off screen, are unsubscribed until they can be seen again. */
     private isPaused(options: ViewSubscriptionOptions): boolean {
-        return options.pauseWhenHidden !== false && _getDocument(this.beans).hidden;
+        return options.pauseWhenHidden !== false && (this.offscreen || _getDocument(this.beans).hidden);
     }
 
     private getOptions(): ViewSubscriptionOptions | undefined {
@@ -242,7 +257,10 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         return [first, last];
     }
 
-    /** The subscribable rows in view, and the source rows of rows the user has pinned, as those are always in view, by row ID. */
+    /**
+     * The subscribable rows in view, by row ID, including the sticky rows over the view
+     * and the source rows of rows the user has pinned, as those are always in view.
+     */
     private getViewportRows(): Map<string, RowNode> {
         const inView = new Map<string, RowNode>();
         // Print layout renders every row to print the grid, so no row is subscribed.
@@ -250,7 +268,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             return inView;
         }
         const [first, last] = this.getRange();
-        const { rowModel, pinnedRowModel } = this.beans;
+        const { rowModel, pinnedRowModel, rowRenderer } = this.beans;
         const addIfSubscribable = (node: RowNode | undefined) => {
             const id = node?.id;
             if (node && id != null && !inView.has(id) && this.isSubscribable(node)) {
@@ -259,6 +277,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         };
         for (let i = first; i <= last; ++i) {
             addIfSubscribable(rowModel.getRow(i));
+        }
+        // A sticky row stays on screen after its own position scrolls out of view.
+        for (const ctrl of rowRenderer.getStickyTopRowCtrls()) {
+            addIfSubscribable(ctrl.rowNode);
+        }
+        for (const ctrl of rowRenderer.getStickyBottomRowCtrls()) {
+            addIfSubscribable(ctrl.rowNode);
         }
         if (pinnedRowModel?.isManual()) {
             const addSource = (pinned: RowNode) => {

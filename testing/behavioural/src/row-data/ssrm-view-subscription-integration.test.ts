@@ -285,6 +285,25 @@ describe('SSRM viewSubscription integration', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('a sticky group row stays subscribed while its leaf rows scroll under it', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+
+            api.ensureIndexVisible(6, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('Ireland/Ireland-5'));
+            await waitFor(() =>
+                expect(document.querySelector('[class*="sticky-top"] [row-id="Ireland"]')).not.toBeNull()
+            );
+            expect(recorder.ids()).toContain('Ireland');
+            expect(recorder.unsubscribedRefs.map((ref) => ref.id)).not.toContain('Ireland');
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('changing the group column unsubscribes the old groups', async () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
