@@ -284,7 +284,7 @@ describe('isRowDraggable', () => {
 
     describe('colDef.rowDrag callback deprecation', () => {
         const callbackWarnings = (warn: ReturnType<typeof vi.spyOn>) =>
-            warn.mock.calls.filter((args) => args.join(' ').includes('colDef.rowDrag callback'));
+            warn.mock.calls.filter((args: unknown[]) => args.join(' ').includes('colDef.rowDrag callback'));
 
         test('warns once for several callback columns', async () => {
             suppressRowDragDeprecation();
