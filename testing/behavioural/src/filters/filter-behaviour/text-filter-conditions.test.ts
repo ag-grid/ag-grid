@@ -446,7 +446,7 @@ describe('Text Filter — conditions coverage', () => {
             return option?.textContent?.trim();
         };
 
-        expect(combobox.getAttribute('aria-label')).toBe('Filtering operator');
+        expect(combobox.getAttribute('aria-label')).toBe('Name Filtering Operator');
         expect(combobox.getAttribute('aria-activedescendant')).toBeNull();
 
         fireEvent.keyDown(combobox, { key: 'Enter' });
