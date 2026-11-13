@@ -41,6 +41,20 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
 
+### Row Selection
+
+Selection checkboxes now require `rowSelection` to be set to an options object.
+
+- `colDef.checkboxSelection` has been removed. Use `rowSelection.checkboxes` instead.
+- `colDef.showDisabledCheckboxes` has been removed. Use `rowSelection.hideDisabledCheckboxes` instead, noting that its meaning is inverted.
+- `colDef.headerCheckboxSelection` has been removed. Use `rowSelection.headerCheckbox` instead.
+- `colDef.headerCheckboxSelectionFilteredOnly` and `colDef.headerCheckboxSelectionCurrentPageOnly` have been removed. Use `rowSelection.selectAll: 'filtered'` or `rowSelection.selectAll: 'currentPage'` instead.
+- The Group Cell Renderer `cellRendererParams.checkbox` has been removed. Use `rowSelection.checkboxes` together with `rowSelection.checkboxLocation` instead.
+- `api.selectAllFiltered()` and `api.deselectAllFiltered()` have been removed. Use `api.selectAll('filtered')` and `api.deselectAll('filtered')` instead.
+- `api.selectAllOnCurrentPage()` and `api.deselectAllOnCurrentPage()` have been removed. Use `api.selectAll('currentPage')` and `api.deselectAll('currentPage')` instead.
+- `SelectionEventSourceType` no longer includes `'apiSelectAllFiltered'` or `'apiSelectAllCurrentPage'`.
+- The `HeaderCheckboxSelectionCallback`, `HeaderCheckboxSelectionCallbackParams`, `GroupCheckboxSelectionCallback` and `GroupCheckboxSelectionCallbackParams` types have been removed. `CheckboxSelectionCallback` is still available for use with `rowSelection.checkboxes`.
+
 ## Behaviour Changes
 
 ### Filtering

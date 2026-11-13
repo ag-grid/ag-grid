@@ -417,20 +417,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     tooltipComponentSelector?: TooltipComponentSelectorFunc<TData, TValue>;
 
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
-     *
-     * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
-     * @default false
-     */
-    checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
-    /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
-     *
-     * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
-     * @default false
-     */
-    showDisabledCheckboxes?: boolean;
-    /**
      * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
      * @initial
      * */
@@ -683,26 +669,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `ContextMenuModule`
      */
     contextMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
-    /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
-     *
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
-     */
-    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
-    /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
-     *
-     * If `true`, the header checkbox selection will only select filtered items.
-     * @default false
-     */
-    headerCheckboxSelectionFilteredOnly?: boolean;
-    /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
-     *
-     * If `true`, the header checkbox selection will only select nodes on the current page.
-     * @default false
-     */
-    headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
 
@@ -1216,16 +1182,6 @@ export interface SuppressNoteActionsCallbackParams<
 > extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressNoteActionsCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNoteActionsCallbackParams<TData, TValue, TContext>
-) => boolean;
-export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
-    TData,
-    TContext
-> {
-    column: Column<TValue>;
-    colDef: ColDef<TData, TValue>;
-}
-export type HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
-    params: HeaderCheckboxSelectionCallbackParams<TData, TValue, TContext>
 ) => boolean;
 
 interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {

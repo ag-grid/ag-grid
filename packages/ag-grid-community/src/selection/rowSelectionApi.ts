@@ -51,32 +51,6 @@ export function deselectAll(
     beans.selectionSvc?.deselectAllRowNodes({ source, selectAll });
 }
 
-/** @deprecated v33 */
-export function selectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionSvc?.selectAllRowNodes({ source, selectAll: 'filtered' });
-}
-
-/** @deprecated v33 */
-export function deselectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionSvc?.deselectAllRowNodes({ source, selectAll: 'filtered' });
-}
-
-/** @deprecated v33 */
-export function selectAllOnCurrentPage(
-    beans: BeanCollection,
-    source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
-) {
-    beans.selectionSvc?.selectAllRowNodes({ source, selectAll: 'currentPage' });
-}
-
-/** @deprecated v33 */
-export function deselectAllOnCurrentPage(
-    beans: BeanCollection,
-    source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
-) {
-    beans.selectionSvc?.deselectAllRowNodes({ source, selectAll: 'currentPage' });
-}
-
 export function getSelectedNodes<TData = any>(beans: BeanCollection): IRowNode<TData>[] {
     return beans.selectionSvc?.getSelectedNodes() ?? [];
 }
