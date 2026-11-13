@@ -8,6 +8,7 @@ import type { BeanCollection, DynamicBeanName, UserComponentName } from '../cont
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -116,6 +117,34 @@ export class ValidationService extends BeanStub implements NamedBean {
         const replacements = _findLegacyOnlyVariables(eRootDiv);
         if (replacements.length > 0) {
             this.warn(332, { replacements });
+        }
+    }
+
+    /** Warns once per colId in an applied Advanced Filter model that the filter cannot apply. */
+    public checkAdvancedFilterModel(
+        model: AdvancedFilterModel | null,
+        isColumnOffered: (colId: string) => boolean
+    ): void {
+        if (!model) {
+            return;
+        }
+        const colIds = new Set<string>();
+        this.collectAdvancedFilterColIds(model, colIds);
+        colIds.forEach((colId) => {
+            if (!isColumnOffered(colId)) {
+                this.warn(this.beans.colModel.getNonPivotColById(colId) ? 342 : 341, { colId });
+            }
+        });
+    }
+
+    private collectAdvancedFilterColIds(model: AdvancedFilterModel, colIds: Set<string>): void {
+        if (model.filterType !== 'join') {
+            colIds.add(model.colId);
+            return;
+        }
+        const conditions = model.conditions;
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            this.collectAdvancedFilterColIds(conditions[i], colIds);
         }
     }
 

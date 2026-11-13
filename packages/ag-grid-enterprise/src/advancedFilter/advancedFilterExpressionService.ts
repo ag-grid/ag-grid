@@ -139,8 +139,6 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     /** Whether the last model written held a set value the column's values could not spell. Caller-reset. */
     public wroteUnresolvedSetValue = false;
-    /** Collects, while set, the colIds written that the Advanced Filter does not offer. Caller-reset. */
-    public unavailableColIds: Set<string> | null = null;
 
     private readonly filterOperandGetters: Record<
         BaseCellDataType,
@@ -279,7 +277,6 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             this.columnNameToIdMap[columnName.toLocaleUpperCase()] = { colId, columnName };
         } else {
             columnName = colId;
-            this.unavailableColIds?.add(colId);
         }
         return columnName;
     }
