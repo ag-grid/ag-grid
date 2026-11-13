@@ -19,7 +19,7 @@ export class DragListenerFeature extends BeanStub {
         const enableFeature = dragSvc.addDragSource.bind(dragSvc, params);
         const disableFeature = dragSvc.removeDragSource.bind(dragSvc, params);
 
-        this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
+        this.addManagedPropertyListener('cellSelection', () => {
             if (_isCellSelectionEnabled(gos)) {
                 enableFeature();
             } else {

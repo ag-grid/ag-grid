@@ -1650,12 +1650,6 @@ export interface _CellSelectionGridApi {
     addCellRange(params: CellRangeParams): void;
 
     /**
-     * Clears the selected ranges.
-     * @deprecated v32.2 Use `clearCellSelection` instead
-     */
-    clearRangeSelection(): void;
-
-    /**
      * Clears the selected cell ranges.
      * @agModule `CellSelectionModule`
      */

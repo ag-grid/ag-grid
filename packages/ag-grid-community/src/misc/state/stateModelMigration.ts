@@ -14,14 +14,16 @@ export function migrateGridStateModel(state: GridState): GridState {
         state = migrateV32_1(state);
     }
 
+    // `rangeSelection` was removed in v37, but states saved by v32.1 - v36 can still contain it
+    delete (state as Record<string, unknown>).rangeSelection;
+
     state.version = VERSION;
 
     return state;
 }
 
 /**
- * Copies `rangeSelection` (deprecated) to `cellSelection`, but doesn't remove the former
- * for backwards compatibility
+ * Copies `rangeSelection` (removed in v37) to `cellSelection`
  */
 function migrateV32_1(state: GridState): GridState {
     state.cellSelection = jsonGet(state, 'rangeSelection');

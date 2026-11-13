@@ -160,7 +160,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 'detailCellRenderer',
                 'detailCellRendererParams',
 
-                'enableRangeSelection',
                 'enableCellTextSelection',
             ],
             () => this.redrawRows()
@@ -370,7 +369,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.eventSvc.removeListener('cellSelectionChanged', onCellSelectionChanged);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
-        this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
+        this.addManagedPropertyListener('cellSelection', () => {
             const isEnabled = _isCellSelectionEnabled(this.gos);
             if (isEnabled) {
                 addCellSelectionListeners();

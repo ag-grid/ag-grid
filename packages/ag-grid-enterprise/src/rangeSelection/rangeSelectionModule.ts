@@ -1,4 +1,4 @@
-import type { _CellSelectionGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
+import type { _CellSelectionGridApi, _ModuleWithApi } from 'ag-grid-community';
 import { _DragModule, _KeyboardNavigationModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -6,7 +6,7 @@ import { VERSION } from '../version';
 import { AgFillHandle } from './agFillHandle';
 import { AgRangeHandle } from './agRangeHandle';
 import rangeSelectionCSS from './rangeSelection.css';
-import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelectionApi';
+import { addCellRange, clearCellSelection, getCellRanges } from './rangeSelectionApi';
 import { RangeService } from './rangeService';
 
 /**
@@ -21,18 +21,8 @@ export const CellSelectionModule: _ModuleWithApi<_CellSelectionGridApi> = {
     apiFunctions: {
         getCellRanges,
         addCellRange,
-        clearRangeSelection,
-        clearCellSelection: clearRangeSelection,
+        clearCellSelection,
     },
     dependsOn: [EnterpriseCoreModule, _KeyboardNavigationModule, _DragModule],
     css: [rangeSelectionCSS],
-};
-
-/**
- * @deprecated v33 Use `CellSelectionModule` instead
- */
-export const RangeSelectionModule: _ModuleWithoutApi = {
-    moduleName: 'RangeSelection',
-    version: VERSION,
-    dependsOn: [CellSelectionModule],
 };

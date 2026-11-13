@@ -725,8 +725,6 @@ export type {
     PivotSortModelItem,
     PivotState,
     QuickFilterState,
-    RangeSelectionCellState,
-    RangeSelectionState,
     RowGroupState,
     RowPinningState,
     ScrollState,

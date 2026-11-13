@@ -23,23 +23,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     },
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
-    enableFillHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
-    enableRangeHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
-    enableRangeSelection: { version: '32.2', message: 'Use `cellSelection = true` instead.' },
-    suppressMultiRangeSelection: {
-        version: '32.2',
-        message: 'Use `cellSelection.suppressMultiRanges` instead.',
-    },
-    suppressClearOnFillReduction: {
-        version: '32.2',
-        message: 'Use `cellSelection.handle.suppressClearOnFillReduction` instead.',
-    },
-    fillHandleDirection: { version: '32.2', message: 'Use `cellSelection.handle.direction` instead.' },
-    fillOperation: { version: '32.2', message: 'Use `cellSelection.handle.setFillValue` instead.' },
-    onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
-    onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
-    onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
-
     suppressBrowserResizeObserver: {
         version: '32.2',
         message: "The grid always uses the browser's ResizeObserver, this grid option has no effect.",
@@ -88,7 +71,6 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     enableAdvancedFilter: 'AdvancedFilter',
     enableCellSpan: 'CellSpan',
     enableCharts: 'IntegratedCharts',
-    enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
     findSearchValue: 'Find',
     formulaDataSource: 'Formula',
@@ -269,23 +251,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
 
-        enableFillHandle: {
-            dependencies: {
-                enableRangeSelection: { required: [true] },
-            },
-        },
-        enableRangeHandle: {
-            dependencies: {
-                enableRangeSelection: { required: [true] },
-            },
-        },
         enableCellSpan: {
             supportedRowModels: ['clientSide', 'serverSide'],
-        },
-        enableRangeSelection: {
-            dependencies: {
-                rowDragEntireRow: { required: [false, undefined] },
-            },
         },
         enableRowPinning: {
             supportedRowModels: ['clientSide'],

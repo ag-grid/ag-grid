@@ -15,8 +15,6 @@ const IGNORED_MODULES = [
     'AllEnterpriseModule',
     // Deprecated
     'MenuModule',
-    // Deprecated
-    'RangeSelectionModule',
 ];
 const MODULE_SETUP_PAGE_URL = 'https://www.ag-grid.com/javascript-data-grid/modules/#selecting-modules';
 

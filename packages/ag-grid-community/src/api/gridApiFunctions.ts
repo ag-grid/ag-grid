@@ -400,7 +400,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_CellSelectionGridApi>('CellSelection', {
         getCellRanges: 0,
         addCellRange: 0,
-        clearRangeSelection: 0,
         clearCellSelection: 0,
     }),
 

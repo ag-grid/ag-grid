@@ -24,9 +24,6 @@ describe('Grid State Migration', () => {
             cellSelection: {
                 cellRanges: [],
             },
-            rangeSelection: {
-                cellRanges: [],
-            },
             sort: {
                 sortModel: [],
             },

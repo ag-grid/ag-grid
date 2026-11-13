@@ -8,6 +8,6 @@ export function addCellRange(beans: BeanCollection, params: CellRangeParams): vo
     beans.rangeSvc?.addCellRange(params);
 }
 
-export function clearRangeSelection(beans: BeanCollection): void {
+export function clearCellSelection(beans: BeanCollection): void {
     beans.rangeSvc?.removeAllCellRanges();
 }
