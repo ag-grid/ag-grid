@@ -24,7 +24,6 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
-    GridOptionsService,
     ICellRangeFeature,
     IHeaderCellComp,
     IRangeService,
@@ -861,7 +860,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return;
         }
 
-        if (!this.verifyCellRanges(this.gos)) {
+        if (!this.verifyCellRanges()) {
             return;
         }
 
@@ -995,7 +994,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public addCellRange(params: CellRangeParams): CellRange | undefined {
         const gos = this.gos;
-        if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges(gos)) {
+        if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges()) {
             return;
         }
 
@@ -1343,7 +1342,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             : undefined;
     }
 
-    private verifyCellRanges(gos: GridOptionsService): boolean {
+    private verifyCellRanges(): boolean {
         const { suppressMultiRanges } = this.getMultiRangeContext();
         const invalid = suppressMultiRanges && this.cellRanges.length > 1;
         if (invalid) {
