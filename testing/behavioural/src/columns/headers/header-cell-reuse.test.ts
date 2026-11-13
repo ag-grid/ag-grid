@@ -38,9 +38,9 @@ describe('header cell reuse', () => {
                             styleCalls.push(`${column!.getColId()}:${floatingFilter}:${pinned}`);
                             return { '--pinned-side': String(pinned) };
                         },
-                        headerClass: ({ column }) => {
+                        headerClass: ({ column, floatingFilter }) => {
                             const pinned = column!.getPinned() ?? 'none';
-                            classCalls.push(`${column!.getColId()}:${pinned}`);
+                            classCalls.push(`${column!.getColId()}:${floatingFilter}:${pinned}`);
                             return `pinned-${pinned}`;
                         },
                     },
@@ -75,16 +75,19 @@ describe('header cell reuse', () => {
                     `b:false:${side}`,
                     `b:true:${side}`,
                 ]);
-                expect(classCalls.sort()).toEqual([`a:${side}`, `b:${side}`]);
+                expect(classCalls.sort()).toEqual([
+                    `a:false:${side}`,
+                    `a:true:${side}`,
+                    `b:false:${side}`,
+                    `b:true:${side}`,
+                ]);
                 for (const header of headers) {
                     expect(root.contains(header)).toBe(true);
                     const expectedSide = header.getAttribute('col-id') === 'c' ? 'none' : side;
                     expect(header.style.getPropertyValue('--pinned-side')).toBe(expectedSide);
-                    if (!header.classList.contains('ag-floating-filter')) {
-                        expect(Array.from(header.classList).filter((name) => name.startsWith('pinned-'))).toEqual([
-                            `pinned-${expectedSide}`,
-                        ]);
-                    }
+                    expect(Array.from(header.classList).filter((name) => name.startsWith('pinned-'))).toEqual([
+                        `pinned-${expectedSide}`,
+                    ]);
                 }
             }
         }
