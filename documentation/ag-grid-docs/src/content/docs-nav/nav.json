@@ -591,17 +591,6 @@
                 },
                 {
                     "type": "group",
-                    "title": "Scheduler Pro",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "See Bryntum Scheduler Pro",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro/"
-                        }
-                    ]
-                },
-                {
-                    "type": "group",
                     "title": "Task Board",
                     "children": [
                         {
@@ -1276,6 +1265,11 @@
                             "type": "item",
                             "title": "Keyboard Navigation",
                             "path": "keyboard-navigation"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Scrolling",
+                            "path": "scrolling"
                         },
                         {
                             "type": "item",

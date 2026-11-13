@@ -132,54 +132,6 @@
             ]
         },
         {
-            "id": "block_a6810390858a4124774049b1a0e766c8",
-            "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
-            "eyebrow": "Customisation",
-            "heading": "Fully Shape Your Component",
-            "body_html": "<p>Get creative with the many ways you can style the Task Board:</p> <ul> <li>Pick from <a href=\"/products/taskboard/examples/themes\">five built-in themes</a> or roll your own using CSS variables.</li> <li>Render custom text or markup in cards via the <a href=\"/products/taskboard/docs/#TaskBoard/view/TaskBoardBase#config-taskRenderer\"><code>taskRenderer</code></a> method.</li> <li>Choose which elements appear on each card with <a href=\"/products/taskboard/docs/#TaskBoard/view/mixin/TaskItems#config-bodyItems\"><code>bodyItems</code></a>.</li> <li>Drop in <a href=\"/products/taskboard/examples/task-items\">icons, tags, images and progress bars</a> with ease.</li> </ul>",
-            "body_text": "Get creative with the many ways you can style the Task Board: Pick from five built-in themes or roll your own using CSS variables. Render custom text or markup in cards via the taskRenderer method. Choose which elements appear on each card with bodyItems . Drop in icons, tags, images and progress bars with ease.",
-            "links": [
-                {
-                    "text": "Fully Shape Your Component",
-                    "href": "/products/taskboard/examples/themes"
-                },
-                {
-                    "text": "five built-in themes",
-                    "href": "/products/taskboard/examples/themes"
-                },
-                {
-                    "text": "taskRenderer",
-                    "href": "/products/taskboard/docs/#TaskBoard/view/TaskBoardBase#config-taskRenderer"
-                },
-                {
-                    "text": "bodyItems",
-                    "href": "/products/taskboard/docs/#TaskBoard/view/mixin/TaskItems#config-bodyItems"
-                },
-                {
-                    "text": "icons, tags, images and progress bars",
-                    "href": "/products/taskboard/examples/task-items"
-                }
-            ],
-            "ctas": [
-                {
-                    "text": "Open demo",
-                    "href": "/products/taskboard/examples/themes",
-                    "title": "Open demo"
-                }
-            ],
-            "media": [
-                {
-                    "kind": "image",
-                    "src": "../assets/taskboard/taskboard-themes-dark-scaled.png",
-                    "alt": "",
-                    "width": "1240",
-                    "height": "771",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-themes-dark-scaled.png"
-                }
-            ]
-        },
-        {
             "id": "",
             "type": "live-demo",
             "modifiers": [],
@@ -192,7 +144,7 @@
         {
             "id": "block_0284d081fe88dec979b28b8edc99b607",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Familiar UX",
             "heading": "Lean on Instantly Familiar UX",
             "body_html": "<p class=\"p1\">Cut down on user admin with the Task Board’s welcoming, intuitive interactions:</p> <ul> <li>Confirm changes with <a href=\"/products/taskboard/examples/task-drag/\">confirmation dialogs</a></li> <li><a href=\"/products/taskboard/examples/scrolling/\">Auto-scroll to any swimlane or column</a> for fast navigation.</li> <li>Edit tasks in place with <a href=\"/products/taskboard/examples/simple-task-edit/\">inline editing</a>, or reach for the <a href=\"/products/taskboard/examples/task-edit/\">task editor</a> and <a href=\"/products/taskboard/examples/task-menu/\">context menu options</a>.</li> </ul>",
@@ -240,7 +192,7 @@
         {
             "id": "block_efbed03a4634d73418579ac95db35f94",
             "type": "text-media",
-            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "modifiers": ["video-file", "added-shadow"],
             "eyebrow": "Responsive Design",
             "heading": "Great On Any Screen Size",
             "body_html": "<p>Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.</p>",
@@ -267,13 +219,61 @@
             ]
         },
         {
+            "id": "block_a6810390858a4124774049b1a0e766c8",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Customisation",
+            "heading": "Fully Shape Your Component",
+            "body_html": "<p>Get creative with the many ways you can style the Task Board:</p> <ul> <li>Pick from <a href=\"/products/taskboard/examples/themes\">five built-in themes</a> or roll your own using CSS variables.</li> <li>Render custom text or markup in cards via the <a href=\"https://bryntum.com/docs/api/TaskBoard/view/TaskBoardBase#config-taskRenderer\"><code>taskRenderer</code></a> method.</li> <li>Choose which elements appear on each card with <a href=\"https://bryntum.com/docs/api/TaskBoard/view/mixin/TaskItems#config-bodyItems\"><code>bodyItems</code></a>.</li> <li>Drop in <a href=\"/products/taskboard/examples/task-items\">icons, tags, images and progress bars</a> with ease.</li> </ul>",
+            "body_text": "Get creative with the many ways you can style the Task Board: Pick from five built-in themes or roll your own using CSS variables. Render custom text or markup in cards via the taskRenderer method. Choose which elements appear on each card with bodyItems . Drop in icons, tags, images and progress bars with ease.",
+            "links": [
+                {
+                    "text": "Fully Shape Your Component",
+                    "href": "/products/taskboard/examples/themes"
+                },
+                {
+                    "text": "five built-in themes",
+                    "href": "/products/taskboard/examples/themes"
+                },
+                {
+                    "text": "taskRenderer",
+                    "href": "https://bryntum.com/docs/api/TaskBoard/view/TaskBoardBase#config-taskRenderer"
+                },
+                {
+                    "text": "bodyItems",
+                    "href": "https://bryntum.com/docs/api/TaskBoard/view/mixin/TaskItems#config-bodyItems"
+                },
+                {
+                    "text": "icons, tags, images and progress bars",
+                    "href": "/products/taskboard/examples/task-items"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/taskboard/examples/themes",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/taskboard/taskboard-themes-dark-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "771",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-themes-dark-scaled.png"
+                }
+            ]
+        },
+        {
             "id": "block_b0ecec48d200798e5261d055bd3d0058",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
             "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
-            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/taskboard/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>lists, menus, toggles, sliders and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
-            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in lists, menus, toggles, sliders and more alongside the Bryntum Calendar. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/taskboard/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>lists, menus, toggles, sliders and more</strong> alongside the Bryntum Task Board.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in lists, menus, toggles, sliders and more alongside the Bryntum Task Board. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
             "links": [
                 {
                     "text": "broad set of UI elements",
@@ -299,9 +299,61 @@
             ]
         },
         {
+            "id": "",
+            "type": "tiers",
+            "eyebrow": "Tiers",
+            "heading": "Choose the Task Board Tier That Fits",
+            "body_text": "Bryntum Task Board comes in three tiers that share one API, so you can start free and move up as your application grows.",
+            "items": [
+                {
+                    "heading": "Community",
+                    "licence": "Free, MIT licence",
+                    "features": [
+                        "Task board with rich card content",
+                        "Drag-and-drop and multi-select",
+                        "Task editor",
+                        "Menus and tooltips",
+                        "Column toolbars"
+                    ]
+                },
+                {
+                    "heading": "{{tier.core}}",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Swimlanes",
+                        "Filter bar, column filters and column search",
+                        "Inline task editing",
+                        "Resource avatars",
+                        "Tags and checklists",
+                        "Renaming and resizing columns",
+                        "Zoom slider"
+                    ]
+                },
+                {
+                    "heading": "Enterprise",
+                    "licence": "Commercial licence",
+                    "features": [
+                        "Reordering columns and swimlanes by drag and drop",
+                        "Sorting and locking columns",
+                        "Undo and redo",
+                        "Charts in cards",
+                        "AI features",
+                        "Salesforce support"
+                    ]
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Compare tiers",
+                    "href": "/products/taskboard/features",
+                    "title": "Compare Task Board tiers"
+                }
+            ]
+        },
+        {
             "id": "block_2a1afe0e84ff67bd07149cb448ead2cd",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": ["video-file", "reverse", "added-shadow"],
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Task Board straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
@@ -317,8 +369,7 @@
             "media": [
                 {
                     "kind": "video",
-                    "src": "../assets/taskboard/npm-taskboard-edit-2.webm",
-                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-taskboard-edit-2.webm"
+                    "src": "../assets/taskboard/npm-taskboard-v8.webm"
                 }
             ]
         },
@@ -452,7 +503,7 @@
                 },
                 {
                     "heading": "Recent Releases",
-                    "href": "changelog/#release-7.3.0",
+                    "href": "/products/taskboard/changelog/#release-8.0.0",
                     "body_text": "Complete changelog",
                     "media": null
                 },

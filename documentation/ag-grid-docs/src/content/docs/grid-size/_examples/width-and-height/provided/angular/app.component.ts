@@ -1,7 +1,7 @@
 import { NgStyle } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
@@ -21,17 +21,19 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     imports: [AgGridAngular, NgStyle],
     selector: 'my-app',
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="margin-bottom: 5px;">
-                <button (click)="fillLarge()">Fill 100%</button>
-                <button (click)="fillMedium()">Fill 60%</button>
-                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <button (click)="fillLarge()">Fill 100%</button>
+                    <button (click)="fillMedium()">Fill 60%</button>
+                    <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+                </div>
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular
                     style="width: 100%; height:100%;"
                     #agGrid
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     [columnDefs]="columnDefs"
                 />
             </div>
@@ -59,7 +61,7 @@ export class AppComponent implements OnInit {
         { field: 'bronze', width: 100 },
         { field: 'total', width: 100 },
     ];
-    public rowData!: IOlympicData[];
+    public rowData = signal<IOlympicData[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -67,7 +69,7 @@ export class AppComponent implements OnInit {
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => {
-                this.rowData = data;
+                this.rowData.set(data);
             });
     }
 

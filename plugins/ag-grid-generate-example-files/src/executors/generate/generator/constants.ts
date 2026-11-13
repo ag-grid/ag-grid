@@ -11,3 +11,8 @@ export const ANGULAR_GENERATED_MAIN_FILE_NAME = 'app.component.ts';
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update documentation/ag-grid-docs/src/constants.ts if this value is changed
 export const integratedChartsUsesChartsEnterprise = false;
+
+/**
+ * The shared example-controls stylesheet generated into every example and linked from its `index.html`
+ */
+export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';

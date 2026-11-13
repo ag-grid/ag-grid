@@ -1,9 +1,8 @@
-import type { ClassImp, IconValue } from 'ag-stack';
+import type { ClassImp } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
-import type { IconName } from '../utils/icon';
 import type { ErrorId } from '../validation/errorMessages/errorText';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
@@ -64,12 +63,6 @@ export interface Module {
     userComponents?: Partial<Record<UserComponentName, ComponentMeta>>;
     /** selectors for grid components that can be defined in templates and created by AG stack */
     selectors?: ComponentSelector[];
-    /**
-     * icon mappings
-     * *** IMPORTANT NOTE! ***
-     * If you change the icons, copy/paste the new content into the docs page custom-icons
-     */
-    icons?: Partial<Record<IconName, IconValue>>;
     rowModels?: RowModelType[];
     dependsOn?: Module[];
     css?: string[];
@@ -203,6 +196,7 @@ export type CommunityModuleName =
     | 'RowSelection'
     | 'RowStyle'
     | 'ScrollApi'
+    | 'ScrollGesture'
     | 'SelectEditor'
     | 'TextEditor'
     | 'TextFilter'
@@ -227,7 +221,6 @@ export type EnterpriseModuleName =
     | 'ExcelExport'
     | 'FiltersToolPanel'
     | 'Find'
-    | 'GridCharts'
     | 'IntegratedCharts'
     | 'GroupFilter'
     | 'MasterDetail'
@@ -299,6 +292,7 @@ export type AgModuleName =
     | 'RowSelectionModule'
     | 'RowStyleModule'
     | 'ScrollApiModule'
+    | 'ScrollGestureModule'
     | 'SelectEditorModule'
     | 'TextEditorModule'
     | 'TextFilterModule'
@@ -321,7 +315,6 @@ export type AgModuleName =
     | 'ExcelExportModule'
     | 'FiltersToolPanelModule'
     | 'FindModule'
-    | 'GridChartsModule'
     | 'IntegratedChartsModule'
     | 'GroupFilterModule'
     | 'MasterDetailModule'

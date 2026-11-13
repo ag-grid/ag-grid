@@ -1,5 +1,5 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -23,7 +23,7 @@ const ROW_DATA: Row[] = [
 ];
 
 /** A grid container in the given DOM shape, with the grid's root and where focus outside the grid lives. */
-function mountGridDiv(mode: 'light' | 'open' | 'closed' | 'nested') {
+function mountGridDiv(mode: 'light' | 'open' | 'closed' | 'nested' | 'nested closed') {
     const host = document.body.appendChild(document.createElement('div'));
     onTestFinished(() => host.remove());
     if (mode === 'light') {
@@ -35,9 +35,10 @@ function mountGridDiv(mode: 'light' | 'open' | 'closed' | 'nested') {
             outsideRoot: root,
         };
     }
-    const outer = mode === 'nested' ? host.attachShadow({ mode: 'open' }) : null;
+    const closed = mode === 'closed' || mode === 'nested closed';
+    const outer = mode.startsWith('nested') ? host.attachShadow({ mode: closed ? 'closed' : 'open' }) : null;
     const gridRoot = (outer ? outer.appendChild(document.createElement('div')) : host).attachShadow({
-        mode: mode === 'closed' ? 'closed' : 'open',
+        mode: closed ? 'closed' : 'open',
     });
     const outsideRoot: Document | ShadowRoot = outer ?? document;
     return {
@@ -212,6 +213,349 @@ describe('cell ctrl lifecycle', () => {
 
         expect(api.getFocusedCell()?.column.getColId()).toBe('c0');
         expect(cellFor(api, 0, 'c0')).not.toBeNull();
+    });
+
+    test.each([
+        ['nothing', 'takes focus back once'],
+        ['nothing, with suppressFocusAfterRefresh', 'leaves focus on the body'],
+        ['a click inside the grid', 'takes focus back once'],
+        ['a click outside the grid, on an element stopping its propagation', 'leaves focus on the body'],
+        ['focus moved to an input outside the grid stopping its propagation, then left', 'leaves focus on the body'],
+    ] as const)(
+        'a focused cell removed while holding focus, drawn again however later after %s, %s',
+        async (meanwhile, outcome) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+                suppressFocusAfterRefresh: meanwhile === 'nothing, with suppressFocusAfterRefresh',
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            api.setFocusedCell(0, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(cellFor(api, 0, 'a'));
+
+            api.setColumnsVisible(['a'], false);
+            await vi.advanceTimersByTimeAsync(1000);
+            expect(document.activeElement).toBe(document.body);
+            const outside = document.body.appendChild(document.createElement('input'));
+            onTestFinished(() => outside.remove());
+            for (const type of ['pointerdown', 'focusin']) {
+                outside.addEventListener(type, (event) => event.stopPropagation());
+            }
+            const pointerDown = new Event('pointerdown', { bubbles: true, composed: true });
+            if (meanwhile === 'a click inside the grid') {
+                TestGridsManager.getHTMLElement(api)!.querySelector('.ag-root')!.dispatchEvent(pointerDown);
+            } else if (meanwhile === 'a click outside the grid, on an element stopping its propagation') {
+                outside.dispatchEvent(pointerDown);
+            } else if (meanwhile === 'focus moved to an input outside the grid stopping its propagation, then left') {
+                outside.focus();
+                outside.blur();
+            }
+            api.setColumnsVisible(['a'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(
+                outcome === 'takes focus back once' ? cellFor(api, 0, 'a') : document.body
+            );
+
+            cellFor(api, 0, 'a')!.blur();
+            api.redrawRows();
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(document.body);
+        }
+    );
+
+    test.each(['light', 'open', 'closed', 'nested closed'] as const)(
+        'in a %s grid, a focused cell removed while holding focus takes focus back after a press inside the grid, not after one beside it stopping its propagation',
+        async (mode) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const { gridDiv, gridRoot, outside } = mountGridDiv(mode);
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            const beside = outside.appendChild(document.createElement('div'));
+            onTestFinished(() => beside.remove());
+            beside.addEventListener('pointerdown', (event) => event.stopPropagation());
+            const unfocused = gridRoot === document ? document.body : null;
+
+            for (const pressed of [gridDiv.querySelector('.ag-root')!, beside]) {
+                api.setFocusedCell(0, 'a');
+                await vi.advanceTimersByTimeAsync(0);
+                expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+                api.setColumnsVisible(['a'], false);
+                await vi.advanceTimersByTimeAsync(0);
+                expect(gridRoot.activeElement).toBe(unfocused);
+                pressed.dispatchEvent(new Event('pointerdown', { bubbles: true, composed: true }));
+                api.setColumnsVisible(['a'], true);
+                await vi.advanceTimersByTimeAsync(0);
+                expect({ pressed: pressed.className, active: gridRoot.activeElement }).toEqual({
+                    pressed: pressed.className,
+                    active: pressed === beside ? unfocused : cellFor(api, 0, 'a'),
+                });
+            }
+        }
+    );
+
+    test.each(['light', 'open', 'closed', 'nested closed'] as const)(
+        'in a %s grid, a focused cell removed while a focus trap around the grid caught focus stays unfocused once the user tabbed from the trap to an input beside it and left that input',
+        async (mode) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const { gridDiv, gridRoot } = mountGridDiv(mode);
+            const parent = gridDiv.parentNode!;
+            const trap = parent.appendChild(document.createElement('div'));
+            trap.tabIndex = -1;
+            trap.appendChild(gridDiv);
+            const input = parent.appendChild(document.createElement('input'));
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            api.setFocusedCell(0, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+            api.setColumnsVisible(['a'], false);
+            await vi.advanceTimersByTimeAsync(0);
+            trap.focus();
+            expect(gridRoot.activeElement).toBe(trap);
+
+            input.focus();
+            input.blur();
+            api.setColumnsVisible(['a'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(gridRoot === document ? document.body : null);
+        }
+    );
+
+    test.each(['open', 'nested'] as const)(
+        'in a %s shadow root, a focused cell removed while holding focus stays unfocused after a press beside the grid in its root, its host stopping the press as it captures it',
+        async (mode) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const { gridDiv, gridRoot } = mountGridDiv(mode);
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            const beside = gridRoot.appendChild(document.createElement('div'));
+            (gridRoot as ShadowRoot).host.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
+            api.setFocusedCell(0, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+            api.setColumnsVisible(['a'], false);
+            await vi.advanceTimersByTimeAsync(0);
+
+            beside.dispatchEvent(new Event('pointerdown', { bubbles: true, composed: true }));
+            api.setColumnsVisible(['a'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(null);
+        }
+    );
+
+    test.each(['light', 'nested closed'] as const)(
+        'in a %s grid, destroyed while owing focus to a removed focused cell, no listener is left on the document or its shadow roots',
+        async (mode) => {
+            const { gridDiv, gridRoot, outsideRoot } = mountGridDiv(mode);
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await asyncSetTimeout(0);
+            api.setFocusedCell(0, 'a');
+            await asyncSetTimeout(0);
+            expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+
+            // what each root still listens for: the event type, the capture flag and the listener, as removal matches them
+            const listening: [EventTarget, string, boolean, unknown][] = [];
+            const isCapture = (options?: boolean | EventListenerOptions) =>
+                typeof options === 'boolean' ? options : !!options?.capture;
+            for (const root of new Set<EventTarget>([document, gridRoot, outsideRoot])) {
+                const { addEventListener, removeEventListener } = root;
+                const add = vi.spyOn(root, 'addEventListener').mockImplementation((type, listener, options) => {
+                    listening.push([root, type, isCapture(options), listener]);
+                    addEventListener.call(root, type, listener, options);
+                });
+                const remove = vi.spyOn(root, 'removeEventListener').mockImplementation((type, listener, options) => {
+                    const capture = isCapture(options);
+                    const index = listening.findIndex(
+                        (l) => l[0] === root && l[1] === type && l[2] === capture && l[3] === listener
+                    );
+                    if (index >= 0) {
+                        listening.splice(index, 1);
+                    }
+                    removeEventListener.call(root, type, listener, options);
+                });
+                onTestFinished(() => {
+                    add.mockRestore();
+                    remove.mockRestore();
+                });
+            }
+            api.setColumnsVisible(['a'], false);
+            await asyncSetTimeout(0);
+            expect(listening.length).toBeGreaterThan(0);
+
+            api.destroy();
+            expect(listening.map(([root, type]) => [root === document ? 'document' : 'shadow root', type])).toEqual([]);
+        }
+    );
+
+    test.each(['cell', 'full width row'] as const)(
+        'a focused %s rebuilt and then redrawn in one tick takes focus back',
+        async (kind) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+                isFullWidthRow: (params) => params.rowNode.data?.id === 'r2',
+                fullWidthCellRenderer: () => 'full width',
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            const focused = () =>
+                kind === 'cell'
+                    ? cellFor(api, 0, 'a')
+                    : TestGridsManager.getHTMLElement(api)!.querySelector('.ag-full-width-row[row-index="1"]');
+            api.setFocusedCell(kind === 'cell' ? 0 : 1, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(focused());
+
+            if (kind === 'cell') {
+                api.setColumnsVisible(['a'], false);
+                api.setColumnsVisible(['a'], true);
+            } else {
+                const rowNodes = [api.getDisplayedRowAtIndex(1)!];
+                api.refreshCells({ rowNodes, force: true });
+                api.refreshCells({ rowNodes, force: true });
+            }
+            api.redrawRows();
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(focused());
+        }
+    );
+
+    test('a focused row turning full width keeps focus, and a later blur and redraw leave focus on the body', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: ROW_DATA,
+            getRowId: (params) => params.data.id,
+            isFullWidthRow: (params) => !!params.rowNode.data?.fullWidth,
+            fullWidthCellRenderer: () => 'full width',
+        });
+        await asyncSetTimeout(0);
+        api.setFocusedCell(1, 'a');
+        await asyncSetTimeout(0);
+        const fullWidthRow = () =>
+            TestGridsManager.getHTMLElement(api)!.querySelector('.ag-full-width-row[row-index="1"]');
+
+        api.getRowNode('r2')!.setData({ ...ROW_DATA[1], fullWidth: true });
+        await asyncSetTimeout(0);
+        expect(document.activeElement).toBe(fullWidthRow());
+
+        (document.activeElement as HTMLElement).blur();
+        api.redrawRows();
+        await asyncSetTimeout(0);
+        expect(document.activeElement).toBe(document.body);
+    });
+
+    test('a focused cell or full width row redrawn while focus is outside the grid is drawn focused without taking focus', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: ROW_DATA,
+            isFullWidthRow: (params) => params.rowNode.data?.id === 'r2',
+            fullWidthCellRenderer: () => 'full width',
+        });
+        await asyncSetTimeout(0);
+        const input = document.body.appendChild(document.createElement('input'));
+        onTestFinished(() => input.remove());
+        const fullWidthRow = () =>
+            TestGridsManager.getHTMLElement(api)!.querySelector('.ag-full-width-row[row-index="1"]');
+
+        for (const [rowIndex, focused, focusClass] of [
+            [0, () => cellFor(api, 0, 'a'), 'ag-cell-focus'],
+            [1, fullWidthRow, 'ag-full-width-focus'],
+        ] as const) {
+            api.setFocusedCell(rowIndex, 'a');
+            await asyncSetTimeout(0);
+            input.focus();
+            api.redrawRows();
+            await asyncSetTimeout(0);
+            expect({ active: document.activeElement, classes: [...focused()!.classList] }).toEqual({
+                active: input,
+                classes: expect.arrayContaining([focusClass]),
+            });
+        }
+    });
+
+    test('a focused cell removed while holding focus does not take focus back once another cell was focused and left', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: ROW_DATA,
+        });
+        await vi.advanceTimersByTimeAsync(0);
+        api.setFocusedCell(0, 'a');
+        await vi.advanceTimersByTimeAsync(0);
+        api.setColumnsVisible(['a'], false);
+        await vi.advanceTimersByTimeAsync(0);
+
+        api.setFocusedCell(1, 'b');
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement).toBe(cellFor(api, 1, 'b'));
+        cellFor(api, 1, 'b')!.blur();
+        api.redrawRows();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement).toBe(document.body);
+    });
+
+    test('a focused row redrawn as a full width row below another, and back, keeps focus', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        let fullWidth = false;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: ROW_DATA,
+            getRowId: (params) => params.data.id,
+            isFullWidthRow: () => fullWidth,
+            fullWidthCellRenderer: () => 'full width',
+        });
+        await vi.advanceTimersByTimeAsync(0);
+        api.setFocusedCell(1, 'a');
+        await vi.advanceTimersByTimeAsync(0);
+        const fullWidthRow = () =>
+            TestGridsManager.getHTMLElement(api)!.querySelector('.ag-full-width-row[row-index="1"]');
+
+        fullWidth = true;
+        api.redrawRows();
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(document.activeElement).toBe(fullWidthRow());
+        expect(fullWidthRow()!.classList).toContain('ag-full-width-focus');
+
+        fullWidth = false;
+        api.redrawRows();
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(document.activeElement).toBe(cellFor(api, 1, 'a'));
+        expect(cellFor(api, 1, 'a')!.classList).toContain('ag-cell-focus');
     });
 
     test.each(['light', 'open', 'closed', 'nested'] as const)(

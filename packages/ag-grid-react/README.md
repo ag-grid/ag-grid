@@ -182,7 +182,6 @@ We've created several demos to showcase AG Grid's rich feature set across differ
 <!-- START QUICK START DESCRIPTION -->
 
 AG Grid is easy to set up - all you need to do is provide your data and define your column structure.
-
 <!-- END QUICK START DESCRIPTION -->
 
 ### Installation

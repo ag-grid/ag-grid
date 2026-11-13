@@ -2,17 +2,6 @@
 version: v1.25.1
 
 ignore:
-    SNYK-JS-FFLATE-20883305:
-        - 'ag-grid-community@0.0.0-use.local > ag-stack@0.0.0-use.local > compression-streams-polyfill@0.1.7 > fflate@0.8.2':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: '2027-03-02T00:00:00.000Z'
-              created: 2026-10-23T10:11:14.000Z
-        - 'ag-grid-enterprise@0.0.0-use.local > ag-grid-community@0.0.0-use.local > ag-stack@0.0.0-use.local > compression-streams-polyfill@0.1.7 > fflate@0.8.2':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: '2027-03-02T00:00:00.000Z'
-              created: 2026-10-23T10:11:14.000Z
     SNYK-JS-PICOMATCH-21248802:
         - 'ag-grid-enterprise@0.0.0-use.local > canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
               reason: >-
@@ -85,19 +74,19 @@ ignore:
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T10:22:59.751Z
     SNYK-JS-BRACEEXPANSION-20244952:
-        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T09:31:45.147Z
     SNYK-JS-BRACEEXPANSION-20244948:
-        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-10-12T09:30:45.984Z
     SNYK-JS-AJV-15274295:
-        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv-formats@3.0.1 > ajv@8.17.1:
+        - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > ajv-formats@3.0.1 > ajv@8.17.1':
               reason: >-
                   Used in build & dev - not included in final production build
               expires: '2027-03-02T00:00:00.000Z'

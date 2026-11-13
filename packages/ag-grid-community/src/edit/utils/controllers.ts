@@ -1,4 +1,4 @@
-import { _getTabIndex } from 'ag-stack';
+import { _addManagedElementListeners, _getTabIndex } from 'ag-stack';
 
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -112,7 +112,7 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            gos.isElementInThisInstance(elementWithFocus);
+            beans.environment.isElementInThisInstance(elementWithFocus);
 
         if (!clickInsideGrid) {
             clickInsideGrid =
@@ -127,7 +127,7 @@ export function _addStopEditingWhenGridLosesFocus(
     };
 
     for (const viewport of viewports) {
-        bean.addManagedElementListeners(viewport, { focusout: focusOutListener });
+        _addManagedElementListeners(bean, viewport, { focusout: focusOutListener });
     }
 }
 

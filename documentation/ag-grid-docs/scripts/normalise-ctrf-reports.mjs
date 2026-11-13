@@ -4,7 +4,7 @@
 // The playwright-ctrf-json-reporter records each test's `name` as the innermost test title,
 // which for the example tests is just the framework (e.g. "angular", "reactFunctionalTs").
 // The information that actually identifies the failure - the doc page, the example and the
-// browser - is buried in the `suite` string, and `filePath` points at the shared
+// browser - is buried in the `suite` path, and `filePath` points at the shared
 // test-utils.ts helper rather than the example spec. That makes the combined report a wall of
 // identically-named rows with no indication of which page/example broke.
 //
@@ -75,15 +75,16 @@ function normaliseTest(test, framework) {
     return true;
 }
 
-// Suites look like:
-//   "chromium > page/_examples/example/example.spec.ts > page/example > The test title"
+// Suites look like (an array from reporter 0.2+, a ' > '-joined string before that):
+//   ["chromium", "page/_examples/example/example.spec.ts", "page/example", "The test title"]
 // Returns the browser, the example spec path, a "page/example" id and the test title.
 function parseSuite(suite) {
-    if (typeof suite !== 'string') {
+    const rawParts = Array.isArray(suite) ? suite : typeof suite === 'string' ? suite.split(' > ') : null;
+    if (!rawParts) {
         return null;
     }
 
-    const parts = suite.split(' > ').map((part) => part.trim());
+    const parts = rawParts.map((part) => String(part).trim());
     if (parts.length < 2) {
         return null;
     }

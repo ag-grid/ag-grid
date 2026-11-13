@@ -392,19 +392,12 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
     if (isSkippingGroups === 'leafGroupsOnly' && node.leafGroup) {
         return true;
     }
-    // deprecated
-    if (gos.get('groupRemoveSingleChildren')) {
-        return true;
-    }
-    if (gos.get('groupRemoveLowestSingleChildren') && node.leafGroup) {
-        return true;
-    }
     return false;
 }
 
 /**
  * Returns true when a single-child group row is hidden from the UI (and from exports)
- * due to `groupHideParentOfSingleChild` (or its deprecated equivalents).
+ * due to `groupHideParentOfSingleChild`.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isHiddenSingleChildGroup(gos: GridOptionsService, node: RowNode): boolean {
@@ -428,16 +421,6 @@ export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, is
         return false;
     }
     if (!isGrouped && preventVisibilityChanges === 'suppressShowOnUngroup') {
-        return false;
-    }
-
-    const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
-    if (isGrouped && legacySuppressOnGroup) {
-        return false;
-    }
-
-    const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
-    if (!isGrouped && legacySuppressOnUngroup) {
         return false;
     }
 

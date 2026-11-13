@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     advancedFilterCancel: 'Ακύρωση',
     advancedFilterClear: 'Καθαρισμός',
     advancedFilterBuilder: 'Κατασκευαστής',
+    advancedFilterPlaceholder: 'Προχωρημένο Φίλτρο',
     advancedFilterValidationMissingColumn: 'Η στήλη λείπει',
     advancedFilterValidationMissingOption: 'Η επιλογή λείπει',
     advancedFilterValidationMissingValue: 'Η τιμή λείπει',
@@ -739,6 +740,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaCalculatedColumn: 'Υπολογιζόμενη στήλη',
     ariaColumnShowValuesAs: 'Εμφάνιση τιμών ως',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
+    ariaColumnSelectExpandAll: 'Ανάπτυξη ή σύμπτυξη όλων των ομάδων στηλών',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
     ariaDefaultListName: 'Λίστα',
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',
@@ -781,6 +783,10 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaPageSizeSelectorLabel: 'Μέγεθος Σελίδας',
     ariaChartMenuClose: 'Κλείσιμο Μενού Επεξεργασίας Γραφήματος',
     ariaChartSelected: 'Επιλεγμένο',
+    ariaChartSeriesChartType: 'Τύπος γραφήματος για ${variable}',
+    ariaChartPalettePrevious: 'Προηγούμενη παλέτα',
+    ariaChartPaletteNext: 'Επόμενη παλέτα',
+    ariaChartPalettePage: 'Παλέτα ${variable} από ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} που εμφανίζει ${count} τιμές μεταξύ ${min} και ${max}. Ξεκινά από ${start} και τελειώνει στο ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} εμφανίζει 1 τιμή, ${value}.',
@@ -810,11 +816,17 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelClose: 'Κλείσιμο',
     ariaLabelMaximize: 'Μεγιστοποίηση',
     ariaLabelRestore: 'Επαναφορά',
+    ariaLabelColorPickerSpectrum: 'Κορεσμός και φωτεινότητα',
+    ariaValueColorPickerSpectrum: 'Κορεσμός ${variable}%, φωτεινότητα ${variable}%',
+    ariaLabelColorPickerHue: 'Απόχρωση',
+    ariaLabelColorPickerAlpha: 'Αδιαφάνεια',
+    ariaLabelColorPickerHex: 'Δεκαεξαδικό χρώμα',
     ariaLabelColumnMenu: 'Μενού Στήλης',
     ariaLabelColumnFilter: 'Φίλτρο Στήλης',
     ariaLabelSelectField: 'Επιλογή Πεδίου',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
     ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
     ariaFullRowValidationError: 'Επικύρωση ολόκληρης της γραμμής: ${variable}',
     ariaFullRowEditValidationFailed: 'Δεν είναι δυνατή η ολοκλήρωση της επεξεργασίας γραμμής. ${variable}',
@@ -844,6 +856,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaLabelFilterCardType: 'Τύπος Φίλτρου',
     ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)

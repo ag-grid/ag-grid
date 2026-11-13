@@ -1,20 +1,41 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
-import { RefPlaceholder, _areEqual, _clearElement, _getAbsoluteWidth, _radioCssClass, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _areEqual,
+    _clearElement,
+    _getAbsoluteWidth,
+    _radioCssClass,
+    _setAriaHidden,
+    _setAriaLabel,
+    _setAriaRole,
+    _setDisplayed,
+} from 'ag-stack';
 
+import type { BeanCollection } from 'ag-grid-community';
 import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
+    private chartTranslation: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslation = beans.chartTranslation as ChartTranslationService;
+    }
+
     private readonly eMiniChartsContainer: HTMLElement = RefPlaceholder;
     private readonly eNavBar: HTMLElement = RefPlaceholder;
     private readonly eCardSelector: HTMLElement = RefPlaceholder;
     private readonly ePrevBtn: HTMLElement = RefPlaceholder;
     private readonly eNextBtn: HTMLElement = RefPlaceholder;
+    private readonly ePrevButton: HTMLElement = RefPlaceholder;
+    private readonly eNextButton: HTMLElement = RefPlaceholder;
 
     private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
@@ -30,31 +51,33 @@ export class ChartSettingsPanel extends Component {
             <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
             <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
                 <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
-                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
+                    <button type="button" data-ref="ePrevButton" class="ag-button ag-chart-settings-prev-button"></button>
                 </div>
                 <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
                 <div data-ref="eNextBtn" class="ag-chart-settings-next">
-                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
+                    <button type="button" data-ref="eNextButton" class="ag-button ag-chart-settings-next-button"></button>
                 </div>
             </div>
         </div>`);
     }
 
     public postConstruct() {
+        _setAriaRole(this.eCardSelector, 'img');
         this.resetPalettes();
 
         const isRtl = this.gos.get('enableRtl');
-        this.ePrevBtn.insertAdjacentElement(
-            'afterbegin',
-            _createIconNoSpan(isRtl ? 'chartsThemeNext' : 'chartsThemePrevious', this.beans)!
-        );
-        this.eNextBtn.insertAdjacentElement(
-            'afterbegin',
-            _createIconNoSpan(isRtl ? 'chartsThemePrevious' : 'chartsThemeNext', this.beans)!
-        );
+        this.addNavIcon(this.ePrevBtn, isRtl ? 'chartsThemeNext' : 'chartsThemePrevious');
+        this.addNavIcon(this.eNextBtn, isRtl ? 'chartsThemePrevious' : 'chartsThemeNext');
 
-        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
-        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
+        _setAriaLabel(this.ePrevButton, this.chartTranslation.translate('ariaChartPalettePrevious'));
+        _setAriaLabel(this.eNextButton, this.chartTranslation.translate('ariaChartPaletteNext'));
+
+        _addManagedElementListeners(this, this.ePrevBtn, {
+            click: () => this.setActivePalette(this.getPrev(), 'left'),
+        });
+        _addManagedElementListeners(this, this.eNextBtn, {
+            click: () => this.setActivePalette(this.getNext(), 'right'),
+        });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         const reset = () => this.resetPalettes(true);
@@ -64,6 +87,12 @@ export class ChartSettingsPanel extends Component {
         });
 
         this.scrollSelectedIntoView();
+    }
+
+    private addNavIcon(wrapper: HTMLElement, iconName: 'chartsThemePrevious' | 'chartsThemeNext'): void {
+        const icon = _createIconNoSpan(iconName, this.beans)!;
+        _setAriaHidden(icon, true);
+        wrapper.prepend(icon);
     }
 
     private scrollSelectedIntoView(): void {
@@ -129,12 +158,25 @@ export class ChartSettingsPanel extends Component {
 
         _setDisplayed(this.eNavBar, this.palettes.length > 1);
         _radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
+        _setAriaLabel(this.eCardSelector, this.getPageLabel());
+    }
+
+    private getPageLabel(): string | null {
+        if (this.activePaletteIndex < 0) {
+            return null;
+        }
+
+        return this.chartTranslation.translate('ariaChartPalettePage', [
+            String(this.activePaletteIndex + 1),
+            String(this.palettes.length),
+        ]);
     }
 
     private addCardLink(index: number): void {
         const link = _createElement({ tag: 'div', cls: 'ag-chart-settings-card-item' });
+        _setAriaHidden(link, true);
 
-        this.addManagedElementListeners(link, {
+        _addManagedElementListeners(this, link, {
             click: () => {
                 this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
             },
@@ -183,6 +225,11 @@ export class ChartSettingsPanel extends Component {
         const final = (nextGui.style.left = `${_getAbsoluteWidth(this.getGui()) * multiplier}px`);
 
         this.activePaletteIndex = index;
+
+        const pageLabel = this.getPageLabel()!;
+        _setAriaLabel(this.eCardSelector, pageLabel);
+        // focus stays on the arrow button, so announce the change explicitly
+        this.beans.ariaAnnounce?.announceValue(pageLabel, 'chartPalette');
 
         this.isAnimating = true;
 

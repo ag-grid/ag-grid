@@ -1,6 +1,6 @@
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _last<T>(arr: readonly T[]): T;
-export function _last<T extends Node>(arr: NodeListOf<T>): T;
+export function _last<T>(arr: ArrayLike<T>): T;
 export function _last(arr: any): any {
     const len = arr?.length;
     return len ? arr[len - 1] : undefined;

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -15,8 +15,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -38,23 +36,17 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <label>
-                    <span>caseSensitive:</span>
-                    <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive($event)" checked="" />
-                </label>
-                <label>
-                    <span>currentPageOnly:</span>
-                    <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly($event)" checked="" />
-                </label>
-            </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" min="1" />
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="caseSensitive">caseSensitive:</label>
+                <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive($event)" checked="" />
+                <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
+                <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly($event)" checked="" />
+                <label for="find-goto" class="gap-left">Go to match:</label>
+                <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>
-            <div>{{ activeMatch }}</div>
+            <div class="controls-row">{{ activeMatch }}</div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
@@ -67,7 +59,7 @@ ModuleRegistry.registerModules([
             [paginationPageSizeSelector]="paginationPageSizeSelector"
             [toolbar]="toolbar"
             [findOptions]="findOptions"
-            [rowData]="rowData"
+            [rowData]="rowData()"
             (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
         />
@@ -95,7 +87,7 @@ export class AppComponent {
     };
     paginationPageSize = 5;
     paginationPageSizeSelector: number[] | boolean = [5, 10];
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
 
     activeMatch: string = '';
 
@@ -145,6 +137,6 @@ export class AppComponent {
 
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

@@ -29,7 +29,7 @@
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",
-        "{projectRoot}/vite.config.ts",
+        "{projectRoot}/vite.config.mts",
         "!{projectRoot}/dist",
         "{workspaceRoot}/packages/ag-grid-community/src/components/componentUtil.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts"

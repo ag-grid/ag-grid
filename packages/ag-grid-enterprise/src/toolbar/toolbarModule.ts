@@ -28,9 +28,6 @@ export const ToolbarModule: _ModuleWithApi<_ToolbarGridApi<any>> = {
         agQuickFilterToolbarItem: QuickFilterToolbarItem,
         agRowGroupPanelToolbarItem: RowGroupPanelToolbarItem,
     } satisfies Partial<Record<ToolbarItemComponentName, any>>,
-    icons: {
-        filter: 'filter',
-    },
     selectors: [AgToolbarSelector],
     apiFunctions: {
         getToolbarItemInstance,

@@ -2,7 +2,7 @@
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 298
+# @min-rows 310
 # @category curated-tickets
 
 # --- SE-30 ---
@@ -88,6 +88,11 @@ www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 
 # --- AG-17694: Beyond the Prompt moved /campaigns/ -> /community/ ---
 www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
+
+# --- DM-80: Scheduler Pro retired into the Scheduler page; the .md twin follows it ---
+www	/campaigns/bryntum-scheduler-pro/	301	/campaigns/bryntum-scheduler/
+www	/campaigns/bryntum-scheduler-pro	301	/campaigns/bryntum-scheduler-pro/	hops=2
+www	/campaigns/bryntum-scheduler-pro.md	301	/campaigns/bryntum-scheduler.md
 
 # --- SE-166: framework whats-new must reach /whats-new/ in ONE hop, and never /whats-new// ---
 www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
@@ -441,3 +446,12 @@ www	/javascript-data-grid/license-install/Kind/	301	/javascript-data-grid/licens
 www	/pricing/	301	/license-pricing/
 www	/javascript-data-grid/row-grouping/	301	/javascript-data-grid/grouping/
 www	/react-data-grid/row-grouping/	301	/react-data-grid/grouping/
+www	/eula/AG-Grid-Enterprise-License-v12.0.html	301	/eula/commercial/
+www	/eula/AG-Grid-Enterprise-License-v13.0.html	301	/eula/commercial/
+www	/eula/AG-Grid-Enterprise-License-v14.0.html	301	/eula/commercial/
+www	/eula/AG-Grid-Enterprise-License-v15.0.html	301	/eula/commercial/
+www	/eula/AG-Grid-Enterprise-License-v15.1.html	301	/eula/commercial/
+www	/eula/AG_Grid_EULA_web_v38_20260325.html	301	/eula/commercial/
+www	/eula/license-de.html	301	/eula/commercial/
+www	/eula/license-es.html	301	/eula/commercial/
+www	/eula/license-fr.html	301	/eula/commercial/

@@ -191,8 +191,8 @@ test.describe('column menu during header refresh', () => {
         await page.keyboard.press('ArrowDown');
         await expect(page.getByRole('menuitem', { name: 'Pin Column', exact: true })).toBeFocused();
         await page.keyboard.press('ArrowRight');
-        await expect(page.getByRole('menuitemcheckbox', { name: 'No Pin', exact: true })).toBeFocused();
-        const pinLeft = page.getByRole('menuitemcheckbox', { name: 'Pin Left', exact: true });
+        await expect(page.getByRole('menuitemradio', { name: 'No Pin', exact: true })).toBeFocused();
+        const pinLeft = page.getByRole('menuitemradio', { name: 'Pin Left', exact: true });
         await page.keyboard.press('ArrowDown');
         await expect(pinLeft).toBeFocused();
 

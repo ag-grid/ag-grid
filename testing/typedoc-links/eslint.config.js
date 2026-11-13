@@ -10,6 +10,7 @@ export default tseslint.config(
         languageOptions: {
             ecmaVersion: 2022,
             globals: globals.node,
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
         },
     }
 );

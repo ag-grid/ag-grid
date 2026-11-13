@@ -1,4 +1,4 @@
-import { buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
+import { archiveRoot, buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
 import { getHtaccessContent } from './htaccess/htaccessRules';
 import { compileHtaccess, route } from './htaccess/htaccessSimulator';
 import { resolveRoute } from './pageRoutes.test-utils';
@@ -170,6 +170,64 @@ describe('buildAgentsMd', () => {
 
 // SE-77 / SE-80: an agent follows these links verbatim, so each one must be a URL the grid build
 // emits (waf-finding.md §16 T8). Resolved against the route files and docs content, not a dist.
+// waf-finding.md §13: an archive's llms.txt sent agents to the current docs, not the archived version.
+describe('archive builds', () => {
+    const ARCHIVE_ROOT = 'https://www.ag-grid.com/archive/36.3.0/';
+    const ARCHIVE_INPUT = { ...INPUT, archive: { root: ARCHIVE_ROOT, version: '36.3.0' } };
+    const txt = buildLlmsTxt(ARCHIVE_INPUT);
+    const md = buildAgentsMd(ARCHIVE_INPUT);
+
+    test('archiveRoot joins the site root and the build base URL, with or without slashes', () => {
+        expect(archiveRoot('https://www.ag-grid.com/', '/archive/36.3.0/')).toBe(ARCHIVE_ROOT);
+        expect(archiveRoot('https://www.ag-grid.com/', 'archive/36.3.0')).toBe(ARCHIVE_ROOT);
+    });
+
+    test.each([
+        ['llms.txt', txt],
+        ['AGENTS.md', md],
+    ])('%s sends the version-specific links into the archive', (_name, body) => {
+        for (const page of [
+            'react-data-grid/getting-started/',
+            'react-data-grid/reference/',
+            'react-data-grid/mcp-server/',
+        ]) {
+            expect(body, page).toContain(`(${ARCHIVE_ROOT}${page})`);
+        }
+        expect(body).toContain(`${ARCHIVE_ROOT}react-data-grid/getting-started.md`);
+        expect(body).toContain(`${ARCHIVE_ROOT}index.md`);
+    });
+
+    test.each([
+        ['llms.txt', txt],
+        ['AGENTS.md', md],
+    ])('%s keeps the site-wide links on the current site, which has the only copy', (_name, body) => {
+        for (const page of ['charts/', 'studio/', 'example/', 'changelog/']) {
+            expect(body, page).toContain(`(https://www.ag-grid.com/${page})`);
+        }
+        expect(body).not.toContain(`${ARCHIVE_ROOT}charts/`);
+    });
+
+    test('llms.txt names the archived version and links the current docs instead of claiming to be current', () => {
+        expect(txt).toContain('Archived documentation for AG Grid 36.3.0');
+        expect(txt).toContain('the current docs are at https://www.ag-grid.com/react-data-grid/getting-started/.');
+        expect(txt).not.toContain('Current major version');
+    });
+
+    test('AGENTS.md names the archived version and links llms.txt in the archive', () => {
+        expect(md).toContain('these are the archived docs for v36.3.0');
+        expect(md).not.toContain('**Current version:**');
+        expect(md).toContain(`[llms.txt](${ARCHIVE_ROOT}llms.txt)`);
+    });
+
+    test.each([
+        ['llms.txt', buildLlmsTxt, txt],
+        ['AGENTS.md', buildAgentsMd, md],
+    ])('%s is unchanged outside an archive', (_name, build) => {
+        expect(build(INPUT)).not.toContain('/archive/');
+        expect(build({ ...INPUT, archive: undefined })).toBe(build(INPUT));
+    });
+});
+
 describe('curated links in llms.txt and AGENTS.md', () => {
     const SITE_ROOT = 'https://www.ag-grid.com';
     // Written by @astrojs/sitemap rather than a route file.

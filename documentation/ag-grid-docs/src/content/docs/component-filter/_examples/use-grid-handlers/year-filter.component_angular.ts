@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -59,7 +59,7 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, NumberFil
     // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
     name = `year${id++}`;
     params!: FilterDisplayParams<any, any, NumberFilterModel> & FilterWrapperParams;
-    year: FilterOptionKey | 'All' = 'All';
+    year = signal<FilterOptionKey | 'All'>('All');
 
     agInit(params: FilterDisplayParams<any, any, NumberFilterModel> & FilterWrapperParams): void {
         this.refresh(params);
@@ -67,17 +67,17 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, NumberFil
 
     refresh(newParams: FilterDisplayParams<any, any, NumberFilterModel> & FilterWrapperParams): boolean {
         this.params = newParams;
-        const currentValue = this.year === 'All' ? undefined : this.year;
+        const currentValue = this.year() === 'All' ? undefined : this.year();
         const newValue = newParams.state.model?.type;
         if (newValue !== currentValue) {
-            this.year = newValue ?? 'All';
+            this.year.set(newValue ?? 'All');
         }
         return true;
     }
 
     updateFilter() {
         const { onStateChange, onAction, buttons } = this.params;
-        const type = this.year === 'All' ? undefined : this.year;
+        const type = this.year() === 'All' ? undefined : this.year();
         const model: NumberFilterModel | null = type
             ? {
                   type,

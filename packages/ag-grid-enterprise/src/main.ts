@@ -91,7 +91,7 @@ export { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsMo
 export { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 export { distributeGroupValue } from './rowGrouping/distributeGroupValue/distributeGroupValue';
 
-export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
+export { IntegratedChartsModule } from './charts/integratedChartsModule';
 
 export { AllEnterpriseModule } from './allEnterpriseModule';
 

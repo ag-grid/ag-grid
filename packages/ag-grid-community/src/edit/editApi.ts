@@ -47,9 +47,7 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
                     newValue,
                     oldValue: editValue.sourceValue,
                     state: editValue.state,
-                    column,
                     colId,
-                    colKey: colId,
                     rowIndex: rowNode.rowIndex!,
                     rowPinned: rowNode.rowPinned,
                 });

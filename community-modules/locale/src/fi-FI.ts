@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     advancedFilterCancel: 'Peruuta',
     advancedFilterClear: 'Tyhjennä',
     advancedFilterBuilder: 'Rakentaja',
+    advancedFilterPlaceholder: 'Tarkennettu suodatin',
     advancedFilterValidationMissingColumn: 'Sarake puuttuu',
     advancedFilterValidationMissingOption: 'Valinta puuttuu',
     advancedFilterValidationMissingValue: 'Arvo puuttuu',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaCalculatedColumn: 'Laskettu sarake',
     ariaColumnShowValuesAs: 'Näytetään arvot muodossa',
     ariaColumnSelectAll: 'Vaihda kaikkien sarakkeiden näkyvyys',
+    ariaColumnSelectExpandAll: 'Laajenna tai tiivistä kaikki sarakeryhmät',
     ariaDateFilterInput: 'Päivämäärän suodattimen syöte',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Suodata sarakkeiden syöte',
@@ -780,6 +782,10 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaPageSizeSelectorLabel: 'Sivun koko',
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
+    ariaChartSeriesChartType: '${variable} – kaavion tyyppi',
+    ariaChartPalettePrevious: 'Edellinen paletti',
+    ariaChartPaletteNext: 'Seuraava paletti',
+    ariaChartPalettePage: 'Paletti ${variable}/${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, joka näyttää ${count} arvoa välillä ${min} ja ${max}. Alkaa arvosta ${start} ja päättyy arvoon ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 arvo, ${value}.',
@@ -809,11 +815,17 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelClose: 'Sulje',
     ariaLabelMaximize: 'Suurenna',
     ariaLabelRestore: 'Palauta',
+    ariaLabelColorPickerSpectrum: 'Kylläisyys ja kirkkaus',
+    ariaValueColorPickerSpectrum: 'Kylläisyys ${variable} %, kirkkaus ${variable} %',
+    ariaLabelColorPickerHue: 'Sävy',
+    ariaLabelColorPickerAlpha: 'Peittävyys',
+    ariaLabelColorPickerHex: 'Heksadesimaaliväri',
     ariaLabelColumnMenu: 'Sarakkeen valikko',
     ariaLabelColumnFilter: 'Sarakkeen suodatin',
     ariaLabelSelectField: 'Valitse kenttä',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Solumuokkain',
     ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
     ariaFullRowValidationError: 'Koko rivin validointi: ${variable}',
     ariaFullRowEditValidationFailed: 'Rivin muokkausta ei voi viimeistellä. ${variable}',
@@ -843,6 +855,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaLabelFilterCardType: 'Suodattimen tyyppi',
     ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)

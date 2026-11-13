@@ -9,7 +9,6 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
-import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
@@ -1101,17 +1100,12 @@ const getColDefSortTypes = (column: AgColumn): number => {
     return res;
 };
 
-const getSortingOrderInputs = (
-    gos: GridOptionsService,
-    column: AgColumn,
-    colDefSortTypes: number
-): (SortDirection | SortDef)[] =>
+const getSortingOrderInputs = (column: AgColumn, colDefSortTypes: number): (SortDirection | SortDef)[] =>
     column.colDef.sortingOrder ??
-    gos.get('sortingOrder') ??
     ((colDefSortTypes & COL_FLAG_SORT_ABSOLUTE) !== 0 ? DEFAULT_ABSOLUTE_SORTING_ORDER : DEFAULT_SORTING_ORDER);
 
-export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): SortDef[] => {
-    const inputs = getSortingOrderInputs(gos, column, getColDefSortTypes(column));
+export const getSortingOrder = (column: AgColumn): SortDef[] => {
+    const inputs = getSortingOrderInputs(column, getColDefSortTypes(column));
     const res = new Array<SortDef>(inputs.length);
     for (let i = 0, len = inputs.length; i < len; ++i) {
         res[i] = getSortDefFromInput(inputs[i]);
@@ -1120,15 +1114,14 @@ export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): Sort
 };
 
 /** The `COL_FLAG_SORT_DEFAULT` and `COL_FLAG_SORT_ABSOLUTE` bits of the sort types the column offers. */
-const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): number => {
-    const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
+const getAvailableSortTypes = (column: AgColumn): number => {
     const flags = column.colFlags;
-    if (cacheable && (flags & COL_FLAG_SORT_TYPES_CACHED) !== 0) {
+    if ((flags & COL_FLAG_SORT_TYPES_CACHED) !== 0) {
         return flags & (COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE);
     }
     let types = getColDefSortTypes(column);
     // add each directional order entry's type — mirrors `getSortDefFromInput` without allocating a SortDef per entry
-    const order = getSortingOrderInputs(gos, column, types);
+    const order = getSortingOrderInputs(column, types);
     for (let i = 0, len = order.length; i < len; ++i) {
         const input = order[i];
         if (!_isSortDefValid(input)) {
@@ -1141,16 +1134,13 @@ const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): numbe
             types |= sortTypeFlag(input.type);
         }
     }
-    if (cacheable) {
-        column.colFlags =
-            (flags & ~(COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE)) | types | COL_FLAG_SORT_TYPES_CACHED;
-    }
+    column.colFlags = (flags & ~(COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE)) | types | COL_FLAG_SORT_TYPES_CACHED;
     return types;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _isSortTypeAvailable = (gos: GridOptionsService, column: AgColumn, type: SortType): boolean =>
-    (getAvailableSortTypes(gos, column) & sortTypeFlag(type)) !== 0;
+export const _isSortTypeAvailable = (column: AgColumn, type: SortType): boolean =>
+    (getAvailableSortTypes(column) & sortTypeFlag(type)) !== 0;
 
 export const isSortDirectionValid = (maybeSortDir: unknown): maybeSortDir is SortDirection =>
     maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
@@ -1220,9 +1210,15 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
     return pinned === 'left' || pinned === true ? 0 : 1;
 };
 
-/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
-export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+/** The column after `col` in a shift resize: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftNext = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
     col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+
+/** The column a shift resize of `col` takes from: the one after it, when resizable. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null => {
+    const next = getShiftNext(visibleCols, col);
+    return next?.isResizable() ? next : null;
+};
 
 /** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
 export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {

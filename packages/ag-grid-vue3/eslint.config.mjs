@@ -14,7 +14,7 @@ export default [
         },
     },
     {
-        ignores: ['updateGridAndColumnProperties.cjs', 'eslint.config.mjs', 'vite.config.d.ts'],
+        ignores: ['updateGridAndColumnProperties.cjs', 'eslint.config.mjs', 'vite.config.d.ts', 'vite.config.d.mts'],
     },
     {
         files: ['src/**/*.ts'],

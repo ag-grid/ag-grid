@@ -1,12 +1,12 @@
 import { FAST_TEST_TIMINGS } from '../fastTestTimings';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
-import { _debounce } from '../utils/function';
-import { AgBeanStub } from './agBeanStub';
+import { _debounce } from '../utils/debounce';
+import { AgAbstractBean } from './agAbstractBean';
 
 /** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
 const ANNOUNCE_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 200;
@@ -21,13 +21,13 @@ type PendingAnnouncement = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseAriaAnnouncementService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IAriaAnnouncementService
 {
     beanName = 'ariaAnnounce' as const;

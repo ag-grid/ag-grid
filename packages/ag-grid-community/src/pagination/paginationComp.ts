@@ -1,4 +1,4 @@
-import { RefPlaceholder, _removeFromParent, _scrollHorizontallyToShow } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _removeFromParent, _scrollHorizontallyToShow } from 'ag-stack';
 
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -63,7 +63,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
 
         this.addManagedPropertyListeners(['pagination', 'suppressPaginationPanel'], () => this.onPaginationChanged());
         this.addManagedPropertyListeners(
-            ['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
+            ['pagination', 'paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
             () => this.onPageSizeRelatedOptionsChange()
         );
         this.addManagedPropertyListener('paginationPanels', () => this.rebuildComponents(idPrefix));
@@ -71,7 +71,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
 
         _addFocusableContainerListener(this.beans, this, this.getGui());
 
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             focusin: (e: FocusEvent) => {
                 const target = e.target as HTMLElement | null;
                 if (target) {

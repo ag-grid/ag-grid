@@ -123,6 +123,7 @@ export class SeriesChartTypePanel extends Component {
                 new AgSelect({
                     options,
                     value: seriesChartType.chartType,
+                    ariaLabel: this.chartTranslation.translate('ariaChartSeriesChartType', [col.displayName!]),
                     onValueChange: (chartType: ChartType) =>
                         this.chartController.updateSeriesChartType(col.colId, chartType),
                 })

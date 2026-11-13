@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -43,7 +43,7 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
     // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
     name = `year${id++}`;
     params!: FilterDisplayParams<any, any, true> & FilterWrapperParams;
-    year = 'All';
+    year = signal('All');
 
     agInit(params: FilterDisplayParams<any, any, true> & FilterWrapperParams): void {
         this.refresh(params);
@@ -51,10 +51,10 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
 
     refresh(newParams: FilterDisplayParams<any, any, true> & FilterWrapperParams): boolean {
         this.params = newParams;
-        const currentValue = this.year === '2010' || null;
+        const currentValue = this.year() === '2010' || null;
         const newValue = newParams.state.model;
         if (newValue !== currentValue) {
-            this.year = newValue ? '2010' : 'All';
+            this.year.set(newValue ? '2010' : 'All');
         }
         return true;
     }
@@ -62,7 +62,7 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
     updateFilter() {
         const { onStateChange, onAction, buttons } = this.params;
         onStateChange({
-            model: this.year === '2010' || null,
+            model: this.year() === '2010' || null,
         });
         if (!buttons?.includes('apply')) {
             onAction('apply');

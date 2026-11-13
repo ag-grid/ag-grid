@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
@@ -10,8 +10,6 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -26,8 +24,8 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div class="example-header">
-                <span class="button-group">
+            <div class="example-header example-controls">
+                <div class="controls-row">
                     <button (click)="applyTheme('quartz', false)">Quartz</button>
                     <button (click)="applyTheme('quartz', true)">Quartz Dark</button>
                     <button (click)="applyTheme('alpine', false)">Alpine</button>
@@ -36,14 +34,14 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     <button (click)="applyTheme('balham', true)">Balham Dark</button>
                     <button (click)="applyTheme('material', false)">Material</button>
                     <button (click)="applyTheme('material', true)">Material Dark</button>
-                </span>
+                </div>
             </div>
             <div id="myGrid" [class]="themeClass">
                 <ag-grid-angular
                     style="height: 100%"
                     [theme]="'legacy'"
                     [columnDefs]="columnDefs"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     (gridReady)="onGridReady($event)"
                 />
             </div>
@@ -61,7 +59,7 @@ export class AppComponent {
         { field: 'total' },
     ];
 
-    rowData!: IOlympicData[];
+    rowData = signal<IOlympicData[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -72,6 +70,6 @@ export class AppComponent {
     onGridReady(_params: GridReadyEvent<IOlympicData>) {
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

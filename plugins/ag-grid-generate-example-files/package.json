@@ -1,19 +1,18 @@
 {
   "name": "ag-grid-generate-example-files",
-  "version": "36.2.0-beta.20261030.1444",
+  "version": "36.3.0-beta.20261112.158",
   "private": true,
   "dependencies": {
-    "@nx/devkit": "20.8.4",
+    "@nx/devkit": "24.0.2",
     "@swc/helpers": "0.5.23",
-    "ag-grid-community": "36.2.0-beta.20261030.1444",
+    "ag-grid-community": "36.3.0-beta.20261112.158",
     "ag-shared": "0.0.1",
     "cheerio": "^1.2.0",
-    "glob": "^11.1.0",
     "json5": "2.2.3",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "sucrase": "^3.35.1",
     "tinypool": "^2.2.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",

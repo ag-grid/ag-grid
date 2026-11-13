@@ -2,8 +2,8 @@ import type {
     AgChartThemeOverrides,
     AgDonutSeriesOptions,
     AgPieSeriesOptions,
-    AgPolarChartOptions,
-    AgPolarSeriesOptions,
+    AgStandaloneChartOptions,
+    AgStandaloneSeriesOptions,
 } from 'ag-charts-types';
 
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
@@ -25,8 +25,11 @@ function calculateOffsets(offset: DonutOffset) {
     return { outerRadiusOffset, innerRadiusOffset };
 }
 
-export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donut'> {
-    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
+export class PieChartProxy extends ChartProxy<AgStandaloneChartOptions, 'pie' | 'donut'> {
+    protected getUpdateOptions(
+        params: UpdateParams,
+        commonChartOptions: AgStandaloneChartOptions
+    ): AgStandaloneChartOptions {
         return {
             ...commonChartOptions,
             data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
@@ -34,7 +37,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         };
     }
 
-    private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
+    private getSeries(params: UpdateParams): AgStandaloneSeriesOptions[] {
         const [category] = params.categories;
         const numFields = params.fields.length;
 
@@ -55,7 +58,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     calloutLabelKey: category.id,
                 };
 
-                if (this.chartType === 'donut' || this.chartType === 'doughnut') {
+                if (this.chartType === 'donut') {
                     const { outerRadiusOffset, innerRadiusOffset } = calculateOffsets(offset);
                     const title = f.displayName
                         ? {

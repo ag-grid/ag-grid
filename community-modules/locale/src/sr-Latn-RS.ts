@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     advancedFilterCancel: 'Otkaži',
     advancedFilterClear: 'Obriši',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Nedostaje kolona',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
     advancedFilterValidationMissingValue: 'Nedostaje vrednost',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaCalculatedColumn: 'Izračunata kolona',
     ariaColumnShowValuesAs: 'Prikazivanje vrednosti kao',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih kolona',
+    ariaColumnSelectExpandAll: 'Proširi ili skupi sve grupe kolona',
     ariaDateFilterInput: 'Unos filtera datuma',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Unos za filtriranje kolona',
@@ -791,6 +793,10 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaPageSizeSelectorLabel: 'Veličina strane',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartSeriesChartType: 'Tip grafikona za ${variable}',
+    ariaChartPalettePrevious: 'Prethodna paleta',
+    ariaChartPaletteNext: 'Sledeća paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Sparklajn - ${chartType} prikazuje ${count} vrednosti između ${min} i ${max}. Počinje na ${start} i završava se na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparklajn - ${chartType} prikazuje 1 vrednost, ${value}.',
@@ -823,6 +829,11 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelMaximize: 'Maksimizuj',
 
     ariaLabelRestore: 'Vrati',
+    ariaLabelColorPickerSpectrum: 'Zasićenost i osvetljenost',
+    ariaValueColorPickerSpectrum: 'Zasićenost ${variable}%, osvetljenost ${variable}%',
+    ariaLabelColorPickerHue: 'Nijansa',
+    ariaLabelColorPickerAlpha: 'Neprozirnost',
+    ariaLabelColorPickerHex: 'Heksadecimalna boja',
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
@@ -830,6 +841,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelSelectField: 'Izaberite polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor ćelije',
     ariaValidationErrorPrefix: 'Validacija editora ćelije',
     ariaFullRowValidationError: 'Validacija celog reda: ${variable}',
     ariaFullRowEditValidationFailed: 'Nije moguće završiti izmenu reda. ${variable}',
@@ -862,6 +874,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Obriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmene',
+    ariaLabelFilterCardType: 'Tip filtera',
     ariaHasNote: 'Ova ćelija ima napomenu.',
 
     // Number Format (Status Bar, Pagination Panel)

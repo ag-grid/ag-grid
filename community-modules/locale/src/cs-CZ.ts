@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     advancedFilterCancel: 'Zrušit',
     advancedFilterClear: 'Vymazat',
     advancedFilterBuilder: 'Stavitel',
+    advancedFilterPlaceholder: 'Pokročilý filtr',
     advancedFilterValidationMissingColumn: 'Chybí sloupec',
     advancedFilterValidationMissingOption: 'Chybí možnost',
     advancedFilterValidationMissingValue: 'Chybí hodnota',
@@ -734,6 +735,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaCalculatedColumn: 'Vypočítaný sloupec',
     ariaColumnShowValuesAs: 'Zobrazování hodnot jako',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
+    ariaColumnSelectExpandAll: 'Rozbalit nebo sbalit všechny skupiny sloupců',
     ariaDateFilterInput: 'Vstup datového filtru',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vstup filtru sloupců',
@@ -776,6 +778,10 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaPageSizeSelectorLabel: 'Velikost stránky',
     ariaChartMenuClose: 'Zavřít nabídku úpravy grafu',
     ariaChartSelected: 'Vybráno',
+    ariaChartSeriesChartType: 'Typ grafu pro ${variable}',
+    ariaChartPalettePrevious: 'Předchozí paleta',
+    ariaChartPaletteNext: 'Další paleta',
+    ariaChartPalettePage: 'Paleta ${variable} z ${variable}',
     ariaSparklineChartDescription:
         'Mini graf - ${chartType} zobrazuje ${count} hodnot mezi ${min} a ${max}. Začíná na ${start} a končí na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
@@ -805,11 +811,17 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelClose: 'Zavřít',
     ariaLabelMaximize: 'Maximalizovat',
     ariaLabelRestore: 'Obnovit',
+    ariaLabelColorPickerSpectrum: 'Sytost a jas',
+    ariaValueColorPickerSpectrum: 'Sytost ${variable} %, jas ${variable} %',
+    ariaLabelColorPickerHue: 'Odstín',
+    ariaLabelColorPickerAlpha: 'Krytí',
+    ariaLabelColorPickerHex: 'Hexadecimální barva',
     ariaLabelColumnMenu: 'Nabídka sloupců',
     ariaLabelColumnFilter: 'Filtr sloupců',
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor buňky',
     ariaValidationErrorPrefix: 'Ověření editoru buňky',
     ariaFullRowValidationError: 'Validace celého řádku: ${variable}',
     ariaFullRowEditValidationFailed: 'Úpravu řádku nelze dokončit. ${variable}',
@@ -839,6 +851,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtru',
     ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     advancedFilterCancel: 'Annuleren',
     advancedFilterClear: 'Wissen',
     advancedFilterBuilder: 'Bouwer',
+    advancedFilterPlaceholder: 'Geavanceerde Filter',
     advancedFilterValidationMissingColumn: 'Kolom ontbreekt',
     advancedFilterValidationMissingOption: 'Optie ontbreekt',
     advancedFilterValidationMissingValue: 'Waarde ontbreekt',
@@ -735,6 +736,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaCalculatedColumn: 'Berekende kolom',
     ariaColumnShowValuesAs: 'Waarden worden weergegeven als',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
+    ariaColumnSelectExpandAll: 'Alle kolomgroepen uit- of samenvouwen',
     ariaDateFilterInput: 'Datum Filter Invoer',
     ariaDefaultListName: 'Lijst',
     ariaFilterColumnsInput: 'Filter Kolommen Invoer',
@@ -778,6 +780,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaPageSizeSelectorLabel: 'Pagina Grootte',
     ariaChartMenuClose: 'Sluit Grafiek Bewerkmenu',
     ariaChartSelected: 'Geselecteerd',
+    ariaChartSeriesChartType: 'Grafiektype voor ${variable}',
+    ariaChartPalettePrevious: 'Vorig palet',
+    ariaChartPaletteNext: 'Volgend palet',
+    ariaChartPalettePage: 'Palet ${variable} van ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} met ${count} waarden tussen ${min} en ${max}. Begint bij ${start} en eindigt bij ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} met 1 waarde, ${value}.',
@@ -807,11 +813,17 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelClose: 'Sluiten',
     ariaLabelMaximize: 'Maximaliseren',
     ariaLabelRestore: 'Herstellen',
+    ariaLabelColorPickerSpectrum: 'Verzadiging en helderheid',
+    ariaValueColorPickerSpectrum: 'Verzadiging ${variable}%, helderheid ${variable}%',
+    ariaLabelColorPickerHue: 'Tint',
+    ariaLabelColorPickerAlpha: 'Dekking',
+    ariaLabelColorPickerHex: 'Hexkleur',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
     ariaLabelSelectField: 'Selectievak',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaFullRowValidationError: 'Validatie van volledige rij: ${variable}',
     ariaFullRowEditValidationFailed: 'Kan het bewerken van de rij niet voltooien. ${variable}',
@@ -841,6 +853,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaLabelFilterCardType: 'Filtertype',
     ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)

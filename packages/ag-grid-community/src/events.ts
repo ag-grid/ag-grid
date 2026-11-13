@@ -408,7 +408,8 @@ export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGl
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
-export type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';
+export type FilterChangedEventSourceType =
+    'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter' | 'gridInitializing';
 
 export interface FilterChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterChanged',
@@ -421,6 +422,7 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
      * - `quickFilter` - triggered by user filtering from Quick Filter
      * - `columnFilter` - triggered by user filtering from Column Menu
      * - `advancedFilter` - triggered by user filtering from Advanced Filter
+     * - `gridInitializing` - triggered by restoring filter state from `initialState` while the grid is initialising
      */
     source?: FilterChangedEventSourceType;
     /** True if the filter was changed as a result of data changing */

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     advancedFilterCancel: '취소',
     advancedFilterClear: '지우기',
     advancedFilterBuilder: '생성기',
+    advancedFilterPlaceholder: '고급 필터',
     advancedFilterValidationMissingColumn: '열이 누락되었습니다',
     advancedFilterValidationMissingOption: '옵션이 누락되었습니다',
     advancedFilterValidationMissingValue: '값이 누락되었습니다',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaCalculatedColumn: '계산된 열',
     ariaColumnShowValuesAs: '값 표시 형식',
     ariaColumnSelectAll: '모든 열 가시성 전환',
+    ariaColumnSelectExpandAll: '모든 열 그룹 펼치기 또는 접기',
     ariaDateFilterInput: '날짜 필터 입력',
     ariaDefaultListName: '목록',
     ariaFilterColumnsInput: '열 필터 입력',
@@ -775,6 +777,10 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaPageSizeSelectorLabel: '페이지 크기',
     ariaChartMenuClose: '차트 편집 메뉴 닫기',
     ariaChartSelected: '선택됨',
+    ariaChartSeriesChartType: '${variable} 차트 유형',
+    ariaChartPalettePrevious: '이전 팔레트',
+    ariaChartPaletteNext: '다음 팔레트',
+    ariaChartPalettePage: '팔레트 ${variable} / ${variable}',
     ariaSparklineChartDescription:
         '스파크라인 - ${chartType}, 값 ${count}개를 ${min}부터 ${max} 사이에서 표시합니다. ${start}에서 시작해 ${end}에서 끝납니다.',
     ariaSparklineChartDescriptionSingleValue: '스파크라인 - ${chartType}, 값 1개(${value})를 표시합니다.',
@@ -804,11 +810,17 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelClose: '닫기',
     ariaLabelMaximize: '최대화',
     ariaLabelRestore: '복원',
+    ariaLabelColorPickerSpectrum: '채도 및 명도',
+    ariaValueColorPickerSpectrum: '채도 ${variable}%, 명도 ${variable}%',
+    ariaLabelColorPickerHue: '색조',
+    ariaLabelColorPickerAlpha: '불투명도',
+    ariaLabelColorPickerHex: '16진수 색상',
     ariaLabelColumnMenu: '컬럼 메뉴',
     ariaLabelColumnFilter: '컬럼 필터',
     ariaLabelSelectField: '필드 선택',
 
     // Cell Editor
+    ariaLabelCellEditor: '셀 편집기',
     ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
     ariaFullRowValidationError: '전체 행 유효성 검사: ${variable}',
     ariaFullRowEditValidationFailed: '행 편집을 완료할 수 없습니다. ${variable}',
@@ -838,6 +850,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaLabelFilterCardType: '필터 유형',
     ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)

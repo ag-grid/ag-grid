@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     advancedFilterCancel: 'キャンセル',
     advancedFilterClear: 'クリア',
     advancedFilterBuilder: 'ビルダー',
+    advancedFilterPlaceholder: '高度なフィルター',
     advancedFilterValidationMissingColumn: '列が欠落しています',
     advancedFilterValidationMissingOption: 'オプションが欠落しています',
     advancedFilterValidationMissingValue: '値が欠落しています',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
+    ariaColumnSelectExpandAll: 'すべての列グループを展開または折りたたむ',
     ariaDateFilterInput: '日付フィルター入力',
     ariaDefaultListName: 'リスト',
     ariaFilterColumnsInput: 'フィルター列入力',
@@ -775,6 +777,10 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaPageSizeSelectorLabel: 'ページサイズ',
     ariaChartMenuClose: 'チャート編集メニューを閉じる',
     ariaChartSelected: '選択済み',
+    ariaChartSeriesChartType: '${variable} のチャートタイプ',
+    ariaChartPalettePrevious: '前のパレット',
+    ariaChartPaletteNext: '次のパレット',
+    ariaChartPalettePage: 'パレット ${variable} / ${variable}',
     ariaSparklineChartDescription:
         'スパークライン - ${chartType} は ${count} 個の値を ${min} から ${max} の範囲で表示します。${start} で始まり ${end} で終わります。',
     ariaSparklineChartDescriptionSingleValue: 'スパークライン - ${chartType} は 1 つの値 ${value} を表示します。',
@@ -804,11 +810,17 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelClose: '閉じる',
     ariaLabelMaximize: '最大化',
     ariaLabelRestore: '元のサイズに戻す',
+    ariaLabelColorPickerSpectrum: '彩度と明度',
+    ariaValueColorPickerSpectrum: '彩度 ${variable}%、明度 ${variable}%',
+    ariaLabelColorPickerHue: '色相',
+    ariaLabelColorPickerAlpha: '不透明度',
+    ariaLabelColorPickerHex: '16 進数カラー',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
     ariaLabelSelectField: 'フィールドを選択',
 
     // Cell Editor
+    ariaLabelCellEditor: 'セルエディタ',
     ariaValidationErrorPrefix: 'セルエディタの検証',
     ariaFullRowValidationError: '行全体の検証: ${variable}',
     ariaFullRowEditValidationFailed: '行の編集を完了できません。${variable}',
@@ -838,6 +850,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaLabelFilterCardType: 'フィルタータイプ',
     ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)

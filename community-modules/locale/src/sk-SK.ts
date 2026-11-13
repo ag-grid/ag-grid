@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     advancedFilterCancel: 'Zrušiť',
     advancedFilterClear: 'Vymazať',
     advancedFilterBuilder: 'Tvorca',
+    advancedFilterPlaceholder: 'Pokročilý filter',
     advancedFilterValidationMissingColumn: 'Chýba stĺpec',
     advancedFilterValidationMissingOption: 'Chýba možnosť',
     advancedFilterValidationMissingValue: 'Chýba hodnota',
@@ -733,6 +734,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaCalculatedColumn: 'Vypočítaný stĺpec',
     ariaColumnShowValuesAs: 'Zobrazovanie hodnôt ako',
     ariaColumnSelectAll: 'Prepínať viditeľnosť všetkých stĺpcov',
+    ariaColumnSelectExpandAll: 'Rozbaliť alebo zbaliť všetky skupiny stĺpcov',
     ariaDateFilterInput: 'Vstup Dátumového Filtra',
     ariaDefaultListName: 'Zoznam',
     ariaFilterColumnsInput: 'Vstup Filtra pre Stĺpce',
@@ -776,6 +778,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaPageSizeSelectorLabel: 'Veľkosť Strany',
     ariaChartMenuClose: 'Zatvoriť Menu Úpravy Grafu',
     ariaChartSelected: 'Vybrané',
+    ariaChartSeriesChartType: 'Typ grafu pre ${variable}',
+    ariaChartPalettePrevious: 'Predchádzajúca paleta',
+    ariaChartPaletteNext: 'Ďalšia paleta',
+    ariaChartPalettePage: 'Paleta ${variable} z ${variable}',
     ariaSparklineChartDescription:
         'Mini graf - ${chartType} zobrazuje ${count} hodnôt medzi ${min} a ${max}. Začína na ${start} a končí na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',
@@ -805,11 +811,17 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaLabelClose: 'Zavrieť',
     ariaLabelMaximize: 'Maximalizovať',
     ariaLabelRestore: 'Obnoviť',
+    ariaLabelColorPickerSpectrum: 'Sýtosť a jas',
+    ariaValueColorPickerSpectrum: 'Sýtosť ${variable} %, jas ${variable} %',
+    ariaLabelColorPickerHue: 'Odtieň',
+    ariaLabelColorPickerAlpha: 'Krytie',
+    ariaLabelColorPickerHex: 'Hexadecimálna farba',
     ariaLabelColumnMenu: 'Ponuka stĺpcov',
     ariaLabelColumnFilter: 'Filter stĺpcov',
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor bunky',
     ariaValidationErrorPrefix: 'Validácia editora bunky',
     ariaFullRowValidationError: 'Validácia celého riadka: ${variable}',
     ariaFullRowEditValidationFailed: 'Úpravu riadka nie je možné dokončiť. ${variable}',
@@ -839,6 +851,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaLabelFilterCardType: 'Typ filtra',
     ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)

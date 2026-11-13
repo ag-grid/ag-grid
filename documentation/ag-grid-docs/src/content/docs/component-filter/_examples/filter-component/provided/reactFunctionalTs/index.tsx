@@ -68,9 +68,13 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
-                        Invoke Filter Instance Method
-                    </button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={onClicked} className="btn btn-primary">
+                                Invoke Filter Instance Method
+                            </button>
+                        </div>
+                    </div>
 
                     <div style={gridStyle}>
                         <AgGridReact

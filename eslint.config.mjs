@@ -92,6 +92,8 @@ export const sonarjsConfig = [
             'sonarjs/no-redeclare': 0,
             'sonarjs/function-return-type': 0,
             'sonarjs/max-switch-cases': 0,
+            // Duplicates tsc, and misreads generic parameters as of TypeScript 5.9.
+            'sonarjs/argument-type': 0,
 
             'sonarjs/different-types-comparison': 0,
             'sonarjs/slow-regex': 0,
@@ -159,15 +161,36 @@ export const sonarjsConfig = [
         ignores: ['**/*.{test,spec}.{js,ts,tsx}', '**/test-utils/**'],
         rules: Object.fromEntries(TEST_SONARJS_RULES.map((name) => [`sonarjs/${name}`, 0])),
     },
+    {
+        // sonarjs 4.2.2 widened these to flag many existing tests; not enforced on tests for now.
+        files: ['**/*.test.{ts,tsx}'],
+        rules: {
+            'sonarjs/prefer-specific-assertions': 0,
+            'sonarjs/parameterized-tests': 0,
+        },
+    },
 ];
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     { plugins: { 'import-x': eslintImportX, unicorn } },
     {
-        ignores: ['node_modules/', 'dist/', '.astro/', '**/env.d.ts', 'coverage', '**/.dependency-cruiser.js'],
+        ignores: [
+            'node_modules/',
+            'dist/',
+            '**/.build-staging-*/',
+            '.astro/',
+            '**/env.d.ts',
+            'coverage',
+            '**/.dependency-cruiser.js',
+        ],
     },
     {
         rules: {

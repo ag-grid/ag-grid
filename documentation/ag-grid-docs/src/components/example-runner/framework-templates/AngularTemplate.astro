@@ -4,7 +4,6 @@ import ExampleStyle from './lib/ExampleStyle.astro';
 import Styles from './lib/Styles.astro';
 import Extras from './lib/Extras.astro';
 import { ExampleModules } from './lib/ExampleModules';
-import { getCacheBustingUrl } from '@utils/gridLibraryPaths';
 import { Scripts } from './lib/Scripts';
 
 interface Props {
@@ -37,7 +36,7 @@ const {
     appLocation,
     entryFileName,
     fileNames,
-    styleFiles,
+    styleFiles = [],
     scriptFiles,
     extraStyles,
     headFragment,
@@ -52,16 +51,7 @@ const {
     <head>
         <MetaData isDev={isDev} title={`Angular Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
         <ExampleStyle rootSelector="my-app" extraStyles={extraStyles} />
-        <Styles
-            baseUrl={appLocation}
-            files={
-                isDev && styleFiles
-                    ? styleFiles
-                          .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
-                          .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
-                    : []
-            }
-        />
+        <Styles baseUrl={appLocation} files={styleFiles} />
         <Extras extras={extras ?? []} />
         <Fragment set:html={headFragment} />
     </head>
@@ -81,11 +71,6 @@ const {
             document.write('<base href="' + document.location + '" />');
         </script>
         <script is:inline nonce={nonce} src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
-        <script
-            is:inline
-            nonce={nonce}
-            src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"
-        ></script>
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         <ExampleModules
             appLocation={appLocation}
@@ -97,14 +82,6 @@ const {
             usesMathRandom={usesMathRandom}
             transpileInBrowser={transpileInBrowser}
             nonce={nonce}
-        />
-        <Styles
-            baseUrl={appLocation}
-            files={
-                styleFiles
-                    ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
-                    : []
-            }
         />
         <slot />
     </body>

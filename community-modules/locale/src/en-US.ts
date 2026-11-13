@@ -164,6 +164,7 @@ export const AG_GRID_LOCALE_EN_US = {
     advancedFilterCancel: 'Cancel',
     advancedFilterClear: 'Clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaCalculatedColumn: 'Calculated column',
     ariaColumnShowValuesAs: 'Showing Values As',
     ariaColumnSelectAll: 'Toggle All Columns Visibility',
+    ariaColumnSelectExpandAll: 'Expand or Collapse All Column Groups',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
     ariaFilterColumnsInput: 'Filter Columns Input',
@@ -780,6 +782,10 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaPageSizeSelectorLabel: 'Page Size',
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
+    ariaChartSeriesChartType: '${variable} Chart Type',
+    ariaChartPalettePrevious: 'Previous palette',
+    ariaChartPaletteNext: 'Next palette',
+    ariaChartPalettePage: 'Palette ${variable} of ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} displaying 1 value, ${value}.',
@@ -810,6 +816,13 @@ export const AG_GRID_LOCALE_EN_US = {
     // dialog title bar toggle: enlarges the dialog to fill the grid, then returns it to its previous size
     ariaLabelMaximize: 'Maximize',
     ariaLabelRestore: 'Restore',
+    // colour picker dialog: the 2-D saturation/brightness area, the hue and opacity sliders, and the hex text input
+    ariaLabelColorPickerSpectrum: 'Saturation and Brightness',
+    // screen reader value of the saturation/brightness area, format: Saturation {percent}%, Brightness {percent}%
+    ariaValueColorPickerSpectrum: 'Saturation ${variable}%, Brightness ${variable}%',
+    ariaLabelColorPickerHue: 'Hue',
+    ariaLabelColorPickerAlpha: 'Opacity',
+    ariaLabelColorPickerHex: 'Hex Color',
 
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
@@ -817,6 +830,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaLabelSelectField: 'Select Field',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Cell Editor Validation',
     ariaFullRowValidationError: 'Full Row Validation: ${variable}',
     ariaFullRowEditValidationFailed: 'Cannot complete row edit. ${variable}',
@@ -849,6 +863,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaLabelFilterCardType: 'Filter Type',
     ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)

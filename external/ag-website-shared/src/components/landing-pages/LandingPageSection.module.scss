@@ -56,7 +56,7 @@
     color: var(--color-util-brand-600);
 
     #{$selector-darkmode} & {
-        color: var(--color-util-brand-900);
+        color: var(--color-text-brand-primary);
     }
 }
 
@@ -72,7 +72,7 @@
 
 .subHeading {
     color: var(--color-fg-tertiary);
-    font-weight: var(--text-fs-regular);
+    font-weight: var(--text-regular);
 }
 
 .headingContainer {
