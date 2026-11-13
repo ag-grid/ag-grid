@@ -1690,7 +1690,12 @@ describe('StateService - Grid State Management', () => {
             const legacyState = {
                 rangeSelection: {
                     cellRanges: [
-                        { startRow: { rowIndex: 0 }, endRow: { rowIndex: 1 }, colIds: ['name'], startColId: 'name' },
+                        {
+                            startRow: { rowIndex: 0, rowPinned: null },
+                            endRow: { rowIndex: 1, rowPinned: null },
+                            colIds: ['name'],
+                            startColId: 'name',
+                        },
                     ],
                 },
             } as GridState;
@@ -1706,7 +1711,11 @@ describe('StateService - Grid State Management', () => {
                     ['name'],
                 ])
             );
-            expect(api.getState().cellSelection?.cellRanges[0]).toMatchObject({ colIds: ['name'], startColId: 'name' });
+            expect(api.getState().cellSelection?.cellRanges[0]).toMatchObject({
+                startRow: { rowIndex: 0 },
+                endRow: { rowIndex: 1 },
+                colIds: ['name'],
+            });
             expect('rangeSelection' in api.getState()).toBe(false);
         });
 
@@ -1721,12 +1730,22 @@ describe('StateService - Grid State Management', () => {
                 version: '36.0.0',
                 cellSelection: {
                     cellRanges: [
-                        { startRow: { rowIndex: 2 }, endRow: { rowIndex: 3 }, colIds: ['age'], startColId: 'age' },
+                        {
+                            startRow: { rowIndex: 2, rowPinned: null },
+                            endRow: { rowIndex: 3, rowPinned: null },
+                            colIds: ['age'],
+                            startColId: 'age',
+                        },
                     ],
                 },
                 rangeSelection: {
                     cellRanges: [
-                        { startRow: { rowIndex: 0 }, endRow: { rowIndex: 1 }, colIds: ['name'], startColId: 'name' },
+                        {
+                            startRow: { rowIndex: 0, rowPinned: null },
+                            endRow: { rowIndex: 1, rowPinned: null },
+                            colIds: ['name'],
+                            startColId: 'name',
+                        },
                     ],
                 },
             } as GridState);

@@ -461,7 +461,7 @@ export function _getHideDisabledCheckboxes(selection: RowSelectionOptions): bool
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
-    return (typeof selection === 'object' && selection.suppressMultiRanges) ?? false;
+    return typeof selection === 'object' && !!selection?.suppressMultiRanges;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
