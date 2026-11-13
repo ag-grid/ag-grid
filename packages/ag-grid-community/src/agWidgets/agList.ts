@@ -1,11 +1,17 @@
 import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, KeyCode, _clearElement, _isKeyboardMode, _isVisible, _last, _setAriaRole } from 'ag-stack';
+import {
+    AgComponentStub,
+    KEYBOARD_HIGHLIGHT_CLASS,
+    KeyCode,
+    _clearElement,
+    _isKeyboardMode,
+    _isVisible,
+    _last,
+    _setAriaRole,
+} from 'ag-stack';
 
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
-
-/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
-const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ListOption<TValue = string> {

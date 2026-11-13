@@ -1,5 +1,6 @@
 import {
     AgPopupComponent,
+    KEYBOARD_HIGHLIGHT_CLASS,
     RefPlaceholder,
     _exists,
     _isKeyboardMode,
@@ -27,9 +28,6 @@ import type {
     AutocompleteRowComponent,
     AutocompleteRowComponentCreator,
 } from './autocompleteParams';
-
-/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
-const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 /** The list stands empty while values load, so it shows a loading message rather than reading as an empty result. */
 const getAgAutocompleteListElement = (loading: boolean): ElementParams => ({

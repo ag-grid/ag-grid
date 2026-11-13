@@ -296,8 +296,8 @@
     border-style: var(--ag-range-selection-border-style);
 
     /* widths over 1px continue inside the border as an outline, so the cell content doesn't move */
-    outline: calc(var(--ag-cell-focus-border-width) - 1px) var(--ag-range-selection-border-style)
-        var(--ag-range-selection-border-color);
+    outline: var(--ag-internal-cell-focus-outline-width, calc(var(--ag-cell-focus-border-width) - 1px))
+        var(--ag-range-selection-border-style) var(--ag-range-selection-border-color);
     outline-offset: calc(-1 * var(--ag-cell-focus-border-width));
 
     /* every border collapses to CanvasText, so only an outline can mark the focused cell */
@@ -614,6 +614,13 @@
 
     100% {
         background-color: var(--ag-row-loading-skeleton-effect-color);
+    }
+}
+
+/* theme part CSS is nested in a selector, where @keyframes is invalid, so parts' keyframes live here */
+@keyframes ag-skeleton-loading-high-contrast {
+    50% {
+        opacity: 0.4;
     }
 }
 

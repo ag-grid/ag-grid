@@ -199,6 +199,11 @@ export interface CoreParams extends SharedThemeParams {
     cellEditingBorder: BorderValue;
 
     /**
+     * Border around cells being edited whose value fails validation. Make it thicker than `cellEditingBorder` so the error state is visible without relying on color.
+     */
+    cellEditingErrorBorder: BorderValue;
+
+    /**
      * Shadow for cells being edited
      */
     cellEditingShadow: ShadowValue;
@@ -217,6 +222,11 @@ export interface CoreParams extends SharedThemeParams {
      * Text color for cells in batch edit mode
      */
     cellBatchEditTextColor: ColorValue;
+
+    /**
+     * Border around cells in batch edit mode, drawn inside the cell so the content doesn't move. Use a dashed style so pending edits are visible without relying on color.
+     */
+    cellBatchEditBorder: BorderValue;
 
     /**
      * Background color for rows in batch edit mode
@@ -510,6 +520,11 @@ export interface CoreParams extends SharedThemeParams {
      * Border style around range selections.
      */
     rangeSelectionBorderStyle: BorderStyleValue;
+
+    /**
+     * Width of the border around range selections containing more than one cell. Use `cellFocusBorderWidth` for the focused cell and single cell ranges.
+     */
+    rangeSelectionBorderWidth: LengthValue;
 
     /**
      * Width of the border around the focused cell, and around a range selection containing a single cell
@@ -1069,6 +1084,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     rangeSelectionBorderStyle: 'solid',
     cellFocusBorderWidth: 1,
+    rangeSelectionBorderWidth: 1,
     rangeSelectionBorderColor: accentColor,
     rangeSelectionBackgroundColor: accentMix(0.2),
     rangeSelectionChartBackgroundColor: '#0058FF1A',
@@ -1162,6 +1178,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     cellEditingBorder: {
         color: accentColor,
     },
+    cellEditingErrorBorder: {
+        color: { ref: 'invalidColor' },
+    },
     cellEditingShadow: { ref: 'cardShadow' },
     fullRowEditInvalidBackgroundColor: {
         ref: 'invalidColor',
@@ -1170,6 +1189,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     cellBatchEditBackgroundColor: 'rgba(220 181 139 / 16%)',
     cellBatchEditTextColor: '#422f00',
+    cellBatchEditBorder: false,
     rowBatchEditBackgroundColor: { ref: 'cellBatchEditBackgroundColor' },
     rowBatchEditTextColor: { ref: 'cellBatchEditTextColor' },
     columnSelectIndentSize: {

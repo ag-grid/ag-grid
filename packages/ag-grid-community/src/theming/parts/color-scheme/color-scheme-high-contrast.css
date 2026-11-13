@@ -88,7 +88,8 @@
         .ag-filter-toolpanel-expand,
         .ag-panel-title-bar-button-icon,
         .ag-chart-menu-icon,
-        .ag-column-drop-cell-button
+        .ag-column-drop-cell-button,
+        .ag-advanced-filter-builder-item .ag-drag-handle
     )
     .ag-icon::after,
 .ag-icon:where(
@@ -96,7 +97,9 @@
         .ag-filter-toolpanel-expand,
         .ag-panel-title-bar-button-icon,
         .ag-chart-menu-icon
-    )::after {
+    )::after,
+.ag-paging-button::after,
+.ag-advanced-filter-builder-item-button::after {
     content: '';
     position: absolute;
     inset: min(0px, calc(50% - 12px));
@@ -116,17 +119,24 @@
     }
 }
 
-/* header cells clip the 3px of the resize handle outside them, so extend 19px from the 5px inside */
+/* 6px either side of the visible handle, which sits just left of the 8px handle's centre */
 .ag-header-cell-resize::before {
     content: '';
     position: absolute;
-    inset: 0 -19px;
+    inset: 0 -2px 0 calc(-2px - var(--ag-header-column-resize-handle-width));
 }
 
-/* keep end-side icon hit areas clear of the 24px resize handle hit area */
+/* keep end-side icon hit areas clear of the resize handle hit area */
 .ag-header-cell:where(:not(.ag-floating-filter)),
 .ag-header-group-cell {
     padding-right: max(var(--ag-cell-horizontal-padding), calc(36px - var(--ag-icon-size) / 2));
+}
+
+/* 42% is the lowest mix that reaches 3:1 against the background in both modes */
+.ag-skeleton-effect {
+    box-sizing: border-box;
+    border: 2px solid color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 42%);
+    animation-name: ag-skeleton-loading-high-contrast;
 }
 
 .ag-skeleton-effect,
@@ -155,6 +165,58 @@
 .ag-checkbox-input-wrapper {
     width: calc(var(--ag-icon-size) + 2px);
     height: calc(var(--ag-icon-size) + 2px);
+}
+
+/* a gap separates the focus ring from the accent fill; the ring colour matches focusShadow in color-schemes.ts */
+@media not (forced-colors: active) {
+    .ag-checkbox-input-wrapper:where(.ag-checked):where(:focus-within, :active) {
+        box-shadow:
+            0 0 0 1px var(--ag-background-color),
+            0 0 0 4px color-mix(in srgb, transparent, var(--ag-accent-color) 85%);
+    }
+}
+
+.ag-input-field-clear-button:focus-visible {
+    outline: var(--ag-internal-accessible-no-outline, revert);
+    box-shadow: var(--ag-focus-shadow);
+}
+
+/* Firefox has no pseudo-element for the native stepper, so it keeps its default size there */
+.ag-number-field-input-stepper::-webkit-inner-spin-button {
+    width: 24px;
+    height: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
+}
+
+.ag-date-field-input {
+    accent-color: var(--ag-accent-color);
+}
+
+.ag-date-field-input::-webkit-calendar-picker-indicator {
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+    cursor: pointer;
+}
+
+.ag-fill-handle,
+.ag-range-handle {
+    width: 10px;
+    height: 10px;
+}
+
+.ag-list-item-hovered::after {
+    height: 3px;
+}
+
+.ag-paging-panel {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.ag-paging-page-number:where(:not(.ag-paging-page-number-current)),
+.ag-paging-page-number-ellipsis,
+:where(.ag-paging-panel) .ag-picker-field-display,
+:where(.ag-paging-panel) .ag-input-field-input {
+    font-weight: 400;
 }
 
 @media (forced-colors: active) {

@@ -238,6 +238,7 @@ export {
 export type { TempEventHandler } from './utils/event';
 export {
     FOCUS_MANAGED_CLASS,
+    KEYBOARD_HIGHLIGHT_CLASS,
     _findFocusableElements,
     _findNextFocusableElement,
     _findTabbableParent,

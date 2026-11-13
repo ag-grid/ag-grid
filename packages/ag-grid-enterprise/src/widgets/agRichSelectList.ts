@@ -1,5 +1,6 @@
 import type { HighlightTooltipEventType, VerticalDirection } from 'ag-stack';
 import {
+    KEYBOARD_HIGHLIGHT_CLASS,
     _addOrRemoveAttribute,
     _isKeyboardMode,
     _requestAnimationFrame,
@@ -20,8 +21,6 @@ export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectList
 
 const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
-/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
-const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 type AgRichSelectListState = 0 | 1 | 2 | 3;
 const STATE_LOADING = 0;

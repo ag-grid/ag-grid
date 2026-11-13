@@ -4,6 +4,15 @@
     color: var(--ag-cell-batch-edit-text-color);
 }
 
+/* an overlay rather than the cell border, so the content doesn't move and the column border stays */
+.ag-cell-batch-edit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: var(--ag-cell-batch-edit-border);
+    pointer-events: none;
+}
+
 .ag-row-batch-edit {
     background-color: var(--ag-row-batch-edit-background-color);
     color: var(--ag-row-batch-edit-text-color);

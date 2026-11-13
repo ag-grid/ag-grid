@@ -147,7 +147,7 @@ const highContrastNumericFontFamily = (): FontFamilyValue => [
     'monospace',
 ];
 
-const highContrastBorderRadius = 2;
+const highContrastBorderRadius = 0;
 
 const highContrastParams = () =>
     ({
@@ -177,10 +177,10 @@ const highContrastParams = () =>
         numericFontFamily: highContrastNumericFontFamily(),
         fontSize: 16,
         iconSize: 18,
-        headerFontWeight: 400,
+        headerFontWeight: 500,
         headerFontSize: 14,
         statusBarLabelColor: { ref: 'subtleTextColor' },
-        statusBarFontSize: 15,
+        statusBarFontSize: 14,
         rowVerticalPaddingScale: 30 / 26,
         headerVerticalPaddingScale: 36 / 32,
         listItemHeight: { calc: 'max(iconSize, dataFontSize) + widgetVerticalSpacing + 4px' },
@@ -199,18 +199,20 @@ const highContrastParams = () =>
         inputIconColor: { ref: 'subtleTextColor' },
         inputDisabledTextColor: { ref: 'textColor' },
         inputBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
-        inputFocusBorder: { width: highContrastBorderWidth, color: accentColor },
+        inputFocusBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
         inputInvalidBorder: { width: highContrastBorderWidth, color: { ref: 'invalidColor' } },
         inputDisabledBorder: { width: highContrastBorderWidth, color: foregroundMix(0.2) },
         inputDisabledBackgroundColor: backgroundColor,
         pickerButtonBorder: { ref: 'inputBorder' },
         headerColumnResizeHandleColor: { ref: 'textColor' },
+        columnDragIndicatorWidth: 3,
+        noteIndicatorSize: 12,
         checkboxBorderWidth: highContrastBorderWidth,
         checkboxUncheckedBorderColor: highContrastSeparatorColor.primary,
         // opaque so the border, drawn over the background, isn't darker than it
         checkboxIndeterminateBackgroundColor: foregroundBackgroundMix(0.69),
         checkboxIndeterminateBorderColor: { ref: 'checkboxIndeterminateBackgroundColor' },
-        toggleButtonOffBackgroundColor: { ref: 'subtleTextColor' },
+        toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.69),
         focusShadow: { spread: 3, color: { ref: 'accentColor', mix: 0.75 } },
         focusErrorShadow: { spread: 3, color: { ref: 'invalidColor', mix: 0.75 } },
         tabSelectedUnderlineColor: accentColor,
@@ -225,7 +227,7 @@ const highContrastParams = () =>
         selectedRowRangeSelectionBorderColor: accentColor,
         selectedRowDragIndicatorColor: accentColor,
         selectedRowDragHandleColor: accentColor,
-        selectedRowCellEditingBorder: { color: { ref: 'selectedRowTextColor' } },
+        selectedRowCellEditingBorder: { width: highContrastBorderWidth, color: { ref: 'selectedRowTextColor' } },
         selectedRowCheckboxCheckedBackgroundColor: accentColor,
         selectedRowCheckboxCheckedBorderColor: accentColor,
         selectedRowCheckboxCheckedShapeColor: backgroundColor,
@@ -248,7 +250,15 @@ const highContrastParams = () =>
         pinnedColumnBorder: { color: highContrastSeparatorColor.secondary },
         sidePanelBorder: { color: highContrastSeparatorColor.secondary },
         toolbarTextColor: { ref: 'textColor' },
-        cellFocusBorderWidth: highContrastBorderWidth,
+        cellFocusBorderWidth: 3,
+        rangeSelectionBorderWidth: highContrastBorderWidth,
+        cellEditingBorder: { width: highContrastBorderWidth, color: accentColor },
+        cellEditingErrorBorder: { width: highContrastBorderWidth + 1, color: { ref: 'invalidColor' } },
+        cellBatchEditBorder: {
+            style: 'dashed',
+            width: highContrastBorderWidth,
+            color: highContrastSeparatorColor.primary,
+        },
         borderRadius: highContrastBorderRadius,
         wrapperBorderRadius: highContrastBorderRadius,
         iconButtonBorderRadius: highContrastBorderRadius,

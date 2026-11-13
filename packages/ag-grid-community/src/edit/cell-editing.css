@@ -8,6 +8,9 @@
     border: var(--ag-cell-editing-border) !important;
     box-shadow: var(--ag-cell-editing-shadow);
 
+    /* the editing border marks the cell, so the focus outline must not thicken it */
+    --ag-internal-cell-focus-outline-width: 0px;
+
     /* do not add `height` here, it breaks gridOptions.rowHeight for the cellEditor */
 
     .ag-cell-wrapper,
@@ -23,8 +26,7 @@
 
     &.ag-cell-editing-error,
     &.ag-cell-editor-input-invalid {
-        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
-        border-color: var(--ag-invalid-color) !important;
+        --ag-cell-editing-border: var(--ag-cell-editing-error-border);
     }
 }
 

@@ -7,6 +7,9 @@ import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './dom';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
+
 let keyboardModeActive: boolean = false;
 let instanceCount: number = 0;
 

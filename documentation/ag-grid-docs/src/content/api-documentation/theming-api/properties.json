@@ -145,9 +145,11 @@
         "cellHorizontalPaddingScale": {},
         "cellEditingBorder": {},
         "selectedRowCellEditingBorder": {},
+        "cellEditingErrorBorder": {},
         "cellEditingShadow": {},
         "cellBatchEditBackgroundColor": {},
-        "cellBatchEditTextColor": {}
+        "cellBatchEditTextColor": {},
+        "cellBatchEditBorder": {}
     },
     "buttons": {
         "meta": {
@@ -447,6 +449,7 @@
         "rangeSelectionBorderColor": {},
         "selectedRowRangeSelectionBorderColor": {},
         "rangeSelectionBorderStyle": {},
+        "rangeSelectionBorderWidth": {},
         "cellFocusBorderWidth": {},
         "rangeSelectionHighlightColor": {},
         "rangeHeaderHighlightColor": {},

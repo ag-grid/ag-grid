@@ -58,12 +58,19 @@
 }
 
 .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+    /* widths over 1px continue inside the 1px cell border as inset shadows, so the cell content doesn't move */
+    --ag-internal-range-edge-width: calc(var(--ag-range-selection-border-width) - 1px);
+
     &.ag-cell-range-top {
+        --ag-internal-range-top-width: var(--ag-internal-range-edge-width);
+
         border-top-color: var(--ag-range-selection-border-color);
         border-top-style: var(--ag-range-selection-border-style);
     }
 
     &.ag-cell-range-right {
+        --ag-internal-range-right-width: var(--ag-internal-range-edge-width);
+
         /* rtl:ignore */
         border-right-color: var(--ag-range-selection-border-color);
         /* rtl:ignore */
@@ -71,16 +78,29 @@
     }
 
     &.ag-cell-range-bottom {
+        --ag-internal-range-bottom-width: var(--ag-internal-range-edge-width);
+
         border-bottom-color: var(--ag-range-selection-border-color);
         border-bottom-style: var(--ag-range-selection-border-style);
     }
 
     &.ag-cell-range-left {
+        --ag-internal-range-left-width: var(--ag-internal-range-edge-width);
+
         /* rtl:ignore */
         border-left-color: var(--ag-range-selection-border-color);
         /* rtl:ignore */
         border-left-style: var(--ag-range-selection-border-style);
     }
+}
+
+.ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell, .ag-cell-inline-editing) {
+    /* rtl:ignore */
+    box-shadow:
+        inset 0 var(--ag-internal-range-top-width, 0) 0 0 var(--ag-range-selection-border-color),
+        inset calc(-1 * var(--ag-internal-range-right-width, 0px)) 0 0 0 var(--ag-range-selection-border-color),
+        inset 0 calc(-1 * var(--ag-internal-range-bottom-width, 0px)) 0 0 var(--ag-range-selection-border-color),
+        inset var(--ag-internal-range-left-width, 0) 0 0 0 var(--ag-range-selection-border-color);
 }
 
 .ag-cell.ag-selection-fill-top,
