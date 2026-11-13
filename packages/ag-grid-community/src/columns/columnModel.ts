@@ -77,8 +77,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colsById: { [id: string]: AgColumn } = Object.create(null);
 
     public colDefGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
-    /** Primary cols keyed by colId / userProvidedColDef ref / field; passed back for next-build reuse. */
+    /** Primary cols keyed by colId / userProvidedColDef ref; passed back for next-build reuse. */
     private colDefColsByKey: Map<string | ColDef, AgColumn> = new Map();
+    private colDefLaterColsByDef: Map<ColDef, AgColumn[]> | null = null;
     /** Every primary group (padding + non-padding) — sweep uses this to find orphans whose parent's
      *  `.children` was reassigned. */
     private colDefAllGroups: AgProvidedColumnGroup[] = [];
@@ -104,9 +105,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  can't substitute, as `moveColumns` reorders in place. */
     private cachedColsInStateOrder: AgColumn[] | null = null;
 
-    /** Prior display order per mode, as colId snapshots, so the next refresh can restore user moves. */
-    private lastOrder: string[] | null = null;
-    private lastPivotOrder: string[] | null = null;
+    /** Prior display order per mode, as the columns shown, so the next refresh can restore user moves. */
+    private lastOrder: AgColumn[] | null = null;
+    private lastPivotOrder: AgColumn[] | null = null;
     /** True when `lastPivotOrder` came from a strictly-ordered (comparator/pivotSort) refresh, so it must not
      *  be treated as a user order to restore. */
     private prevPivotStrict = false;
@@ -142,6 +143,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public override destroy(): void {
         _destroyColumnTreeAll(this.colDefList, this.colDefAllGroups);
         this.hierarchyWrapperCache.destroy();
+        this.lastOrder = null;
+        this.lastPivotOrder = null;
         super.destroy();
     }
 
@@ -227,6 +230,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 /* primaryColumns */ true,
                 /* existingGroupsById */ this.colDefGroupsById,
                 /* existingColsByKey */ this.colDefColsByKey,
+                /* existingLaterColsByDef */ this.colDefLaterColsByDef,
                 /* existingColsById */ this.colsById,
                 /* source */ source,
                 /* newColDefs */ newColDefs,
@@ -246,6 +250,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.colDefHasMarryChildren = builder.marryChildren;
             this.colDefGroupsById = builder.groupsById;
             this.colDefColsByKey = builder.colsByKey;
+            this.colDefLaterColsByDef = builder.laterColsByDef;
             this.colDefAllGroups = builder.allGroups;
 
             // Seed colsById from the finalized primary cols (user leaves + hierarchy virtuals + calc cols).
@@ -511,17 +516,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
             const autoCols = beans.autoColSvc?.refreshCols(source);
             const selectionCol = beans.selectionColSvc?.refreshCols();
             const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
-            // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
+            // Snapshot prior colsList into the mode's lastOrder so the next refresh restores user moves.
             const oldColsList = this.colsList;
             if (oldColsList.length > 0) {
                 if (prevWasPivot) {
                     // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
                     // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
                     if (!this.prevPivotStrict) {
-                        this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                        this.lastPivotOrder = snapshotCols(oldColsList, this.lastPivotOrder);
                     }
                 } else {
-                    this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
+                    this.lastOrder = snapshotCols(oldColsList, this.lastOrder);
                 }
             }
             this.prevPivotStrict = showingPivotResult && (beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
@@ -827,12 +832,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 }
 
-const snapshotColIds = (list: AgColumn[], out?: string[] | null): string[] => {
+const snapshotCols = (list: AgColumn[], out: AgColumn[] | null): AgColumn[] => {
+    if (out === null) {
+        return list.slice();
+    }
     const len = list.length;
-    out ??= [];
     out.length = len;
     for (let i = 0; i < len; ++i) {
-        out[i] = list[i].colId;
+        out[i] = list[i];
     }
     return out;
 };

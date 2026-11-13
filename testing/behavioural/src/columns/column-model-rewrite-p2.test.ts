@@ -170,7 +170,7 @@ describe('column-model rewrite edge cases', () => {
         expect(liveColIds(incApi)).toEqual(liveColIds(bulkApi));
     });
 
-    // reapplyDefs path: a refresh that keeps the hierarchy colIds unchanged refreshes the generated
+    // A refresh that keeps the hierarchy colIds unchanged refreshes the generated
     // virtual cols in place (reuses the same instances) rather than rebuilding them.
     test('refreshing with unchanged hierarchy colIds reuses the hierarchy column instances', async () => {
         const rowData = [
@@ -192,7 +192,7 @@ describe('column-model rewrite edge cases', () => {
         expect(yearBefore).toBeTruthy();
         expect(monthBefore).toBeTruthy();
 
-        // Adding an unrelated column leaves the date col's hierarchy colIds unchanged → reapplyDefs in place.
+        // Adding an unrelated column leaves the date col's hierarchy colIds unchanged → refreshed in place.
         api.setGridOption('columnDefs', defs(true));
         await asyncSetTimeout(0);
 

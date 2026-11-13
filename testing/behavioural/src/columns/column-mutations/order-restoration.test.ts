@@ -56,6 +56,127 @@ describe('Column Mutations - order restoration', () => {
             `);
         });
 
+        test('maintainColumnOrder places a new column given a removed column’s generated id in colDef order, not where that column was', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'A' }, { headerName: 'B' }, { headerName: 'C' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ headerName: 'B' }, { headerName: 'C' }]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColDef().headerName)).toEqual(['B', 'C']);
+        });
+
+        test('maintainColumnOrder places a new column given a removed column’s generated id as a new column when the defs change in pivot mode', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'A' },
+                    { headerName: 'B' },
+                    { headerName: 'C' },
+                    { headerName: 'Country', field: 'country', pivot: true },
+                    { headerName: 'Gold', field: 'gold', aggFunc: 'sum' },
+                ],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 4);
+            api.setGridOption('pivotMode', true);
+
+            api.setGridOption('columnDefs', [
+                { headerName: 'B' },
+                { headerName: 'C' },
+                { headerName: 'Country', field: 'country', pivot: true },
+                { headerName: 'Gold', field: 'gold', aggFunc: 'sum' },
+            ]);
+            api.setGridOption('pivotMode', false);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColDef().headerName)).toEqual([
+                'Country',
+                'Gold',
+                'B',
+                'C',
+            ]);
+        });
+
+        test('maintainColumnOrder places a new column without colId or field given a removed column’s field as its id as a new column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'A' }, { field: '0' }, { field: 'c' }, { field: 'd' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ headerName: 'N' }, { headerName: 'A' }, { field: 'c' }, { field: 'd' }]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColDef().headerName ?? col.getColId())).toEqual([
+                'c',
+                'd',
+                'N',
+                'A',
+            ]);
+        });
+
+        test('maintainColumnOrder keeps the moved place of columns without colId or field matched by position', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'A' }, { headerName: 'B' }, { headerName: 'C' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ headerName: 'A' }, { headerName: 'B' }, { headerName: 'C' }]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColDef().headerName)).toEqual(['B', 'C', 'A']);
+        });
+
+        test('maintainColumnOrder keeps a column’s moved place when it is removed and added back in pivot mode', () => {
+            const pivotDefs = [
+                { field: 'country', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }, ...pivotDefs],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['a'], 2);
+            api.setGridOption('pivotMode', true);
+
+            api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'c' }, ...pivotDefs]);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'c' }, ...pivotDefs]);
+            api.setGridOption('pivotMode', false);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual([
+                'b',
+                'c',
+                'a',
+                'country',
+                'gold',
+            ]);
+        });
+
+        test('maintainColumnOrder keeps the group column’s moved place when grouping is removed and added back in pivot mode', () => {
+            const columnDefs = (rowGroup: boolean) => [
+                { field: 'sport', rowGroup, hide: true },
+                { field: 'country', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'a' },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: columnDefs(true),
+                rowData: [{ sport: 'Rowing', country: 'Italy', gold: 1, a: 1 }],
+                maintainColumnOrder: true,
+            });
+            const displayedIds = () => api.getAllDisplayedColumns().map((col) => col.getColId());
+            api.moveColumns(['ag-Grid-AutoColumn'], 3);
+            const moved = displayedIds();
+            api.setGridOption('pivotMode', true);
+
+            api.setGridOption('columnDefs', columnDefs(false));
+            api.setGridOption('columnDefs', columnDefs(true));
+            api.setGridOption('pivotMode', false);
+
+            expect(moved).toEqual(['country', 'gold', 'ag-Grid-AutoColumn', 'a']);
+            expect(displayedIds()).toEqual(moved);
+        });
+
         test('new columns are inserted after siblings when maintainColumnOrder=true', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }, { colId: 'b' }] }, { colId: 'c' }],
