@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -7,7 +8,7 @@ import {
     setRowDataChecked,
 } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, RowDragModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowDragModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 
@@ -47,6 +48,7 @@ describe('isRowDrag and drag handle refresh', () => {
     let gridsManager: TestGridsManager;
 
     beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         gridsManager = new TestGridsManager({
             modules: [TextFilterModule, ClientSideRowModelModule, RowDragModule, PivotModule],
         });
