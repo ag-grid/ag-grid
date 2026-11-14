@@ -771,6 +771,8 @@ export const AG_GRID_LOCALE_ES_ES = {
     ariaRowSelect: 'Presiona SPACE para seleccionar esta fila',
     ariaRowSelectionDisabled: 'La selección de filas está deshabilitada para esta fila',
     ariaSearch: 'Buscar',
+    ariaFindActiveMatch: 'Coincidencia ${variable} de ${variable}, ${variable}, fila ${variable}',
+    ariaFindActiveMatchRow: 'Coincidencia ${variable} de ${variable}, fila ${variable}',
     ariaSortPriority: 'Prioridad de ordenación ${priority} de ${count}',
     ariaSortableColumn: 'Presiona ENTER para ordenar',
     ariaSortableColumnWithCellSelection: 'Presiona ALT ENTER para ordenar',

@@ -1,13 +1,15 @@
-import { _addManagedElementListeners, _debounce, _setDisabled } from 'ag-stack';
+import { _addManagedElementListeners, _debounce, _getActiveDomElement, _setDisabled } from 'ag-stack';
 
 import type {
+    AgColumn,
     FindChangedEvent,
+    FindMatch,
     GridInputTextField,
     IInputToolbarItemParams,
     IToolbarItemComp,
     IToolbarItemParams,
 } from 'ag-grid-community';
-import { AgInputTextField, Component, _createElement } from 'ag-grid-community';
+import { AgInputTextField, Component, _createElement, _getAbsoluteRowIndex } from 'ag-grid-community';
 
 import { INPUT_DEBOUNCE_MS, createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
@@ -17,7 +19,7 @@ function createMatchCount(inputId: string): HTMLLabelElement {
     return _createElement<HTMLLabelElement>({
         tag: 'label',
         cls: 'ag-toolbar-find-match-count',
-        attrs: { 'aria-live': 'polite', for: inputId },
+        attrs: { for: inputId },
     });
 }
 
@@ -27,6 +29,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     private eMatchCount!: HTMLLabelElement;
     private ePrevButton!: HTMLButtonElement;
     private eNextButton!: HTMLButtonElement;
+    private lastAnnouncement = '';
 
     constructor() {
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input ag-toolbar-find' });
@@ -101,20 +104,16 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
                     e.preventDefault();
                     // Flush pending debounced update so navigation uses the latest typed value.
                     flushFindSearchValue();
-                    if (e.shiftKey) {
-                        this.beans.findSvc?.previous();
-                    } else {
-                        this.beans.findSvc?.next();
-                    }
+                    this.navigate(e.shiftKey);
                 }
             },
         });
 
         _addManagedElementListeners(this, this.ePrevButton, {
-            click: () => this.beans.findSvc?.previous(),
+            click: () => this.navigate(true),
         });
         _addManagedElementListeners(this, this.eNextButton, {
-            click: () => this.beans.findSvc?.next(),
+            click: () => this.navigate(false),
         });
 
         this.addManagedEventListeners({
@@ -139,16 +138,40 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         return true;
     }
 
+    public override destroy(): void {
+        this.beans.ariaAnnounce?.cancelAnnouncement('find');
+        super.destroy();
+    }
+
+    private navigate(backwards: boolean): void {
+        const findSvc = this.beans.findSvc;
+        if (!findSvc) {
+            return;
+        }
+        // Re-announce even when navigation wraps back onto the same match.
+        this.lastAnnouncement = '';
+        if (backwards) {
+            findSvc.previous();
+        } else {
+            findSvc.next();
+        }
+    }
+
     private onFindChanged(event: FindChangedEvent): void {
-        this.updateMatchDisplay(event.findSearchValue, event.activeMatch?.numOverall ?? 0, event.totalMatches);
+        const { findSearchValue, activeMatch, totalMatches } = event;
+        this.updateMatchDisplay(findSearchValue, activeMatch?.numOverall ?? 0, totalMatches);
+        // A count without a current match is only spoken to the user typing in the Find box, not on load.
+        const announce = !!activeMatch || _getActiveDomElement(this.beans) === this.eInput;
+        this.updateAnnouncement(this.getAnnouncement(findSearchValue, activeMatch, totalMatches), announce);
     }
 
     private syncMatchState(): void {
         const findSvc = this.beans.findSvc;
         const findSearchValue = this.gos.get('findSearchValue');
-        const activeIndex = findSvc?.activeMatch?.numOverall ?? 0;
+        const activeMatch = findSvc?.activeMatch;
         const totalMatches = findSvc?.totalMatches ?? 0;
-        this.updateMatchDisplay(findSearchValue, activeIndex, totalMatches);
+        this.updateMatchDisplay(findSearchValue, activeMatch?.numOverall ?? 0, totalMatches);
+        this.updateAnnouncement(this.getAnnouncement(findSearchValue, activeMatch, totalMatches), false);
     }
 
     private updateMatchDisplay(findSearchValue: string | undefined, activeIndex: number, totalMatches: number): void {
@@ -159,5 +182,47 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const hasMatches = totalMatches > 0;
         _setDisabled(this.ePrevButton, !hasMatches);
         _setDisabled(this.eNextButton, !hasMatches);
+    }
+
+    private updateAnnouncement(announcement: string, announce: boolean): void {
+        const ariaAnnounce = this.beans.ariaAnnounce;
+        if (!announcement || !announce) {
+            ariaAnnounce?.cancelAnnouncement('find');
+        } else if (announcement !== this.lastAnnouncement) {
+            ariaAnnounce?.announceValue(announcement, 'find');
+        }
+        this.lastAnnouncement = announcement;
+    }
+
+    private getAnnouncement(
+        findSearchValue: string | undefined,
+        activeMatch: FindMatch | undefined,
+        totalMatches: number
+    ): string {
+        if (!findSearchValue?.length) {
+            return '';
+        }
+        const counterText = `${activeMatch?.numOverall ?? 0}/${totalMatches}`;
+        const rowIndex = activeMatch?.node.rowIndex;
+        if (!activeMatch || rowIndex == null) {
+            return counterText;
+        }
+        const { beans } = this;
+        const row = _getAbsoluteRowIndex(beans, { rowIndex, rowPinned: activeMatch.node.rowPinned ?? null }) + 1;
+        const { numOverall, column } = activeMatch;
+        const columnName = column ? beans.colNames.getDisplayNameForColumn(column as AgColumn, 'header') : null;
+        const localeTextFunc = this.getLocaleTextFunc();
+        if (!columnName) {
+            return localeTextFunc('ariaFindActiveMatchRow', `Match ${numOverall} of ${totalMatches}, row ${row}`, [
+                String(numOverall),
+                String(totalMatches),
+                String(row),
+            ]);
+        }
+        return localeTextFunc(
+            'ariaFindActiveMatch',
+            `Match ${numOverall} of ${totalMatches}, ${columnName}, row ${row}`,
+            [String(numOverall), String(totalMatches), columnName, String(row)]
+        );
     }
 }

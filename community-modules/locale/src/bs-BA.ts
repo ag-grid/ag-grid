@@ -786,6 +786,8 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaRowSelect: 'Pritisnite RAZMAK za izbor ovog reda',
     ariaRowSelectionDisabled: 'Izbor reda je onemogućen za ovaj red',
     ariaSearch: 'Pretraga',
+    ariaFindActiveMatch: 'Podudaranje ${variable} od ${variable}, ${variable}, red ${variable}',
+    ariaFindActiveMatchRow: 'Podudaranje ${variable} od ${variable}, red ${variable}',
     ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',

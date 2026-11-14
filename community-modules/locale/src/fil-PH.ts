@@ -790,6 +790,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaRowSelect: 'Pindutin ang SPACE para piliin ang row na ito',
     ariaRowSelectionDisabled: 'Naka-disable ang Pagpili ng Row para sa row na ito',
     ariaSearch: 'Maghanap',
+    ariaFindActiveMatch: 'Tugma ${variable} ng ${variable}, ${variable}, hilera ${variable}',
+    ariaFindActiveMatchRow: 'Tugma ${variable} ng ${variable}, hilera ${variable}',
     ariaSortPriority: 'Priyoridad sa pag-uuri ${priority} sa ${count}',
     ariaSortableColumn: 'Pindutin ang ENTER para mag-sort',
     ariaSortableColumnWithCellSelection: 'Pindutin ang ALT ENTER para mag-sort',

@@ -42,6 +42,7 @@ export class FindCellRenderer extends Component implements ICellRenderer {
                     element.textContent = content;
                     if (activeMatch) {
                         element.classList.add('ag-find-active-match');
+                        element.setAttribute('aria-current', 'true');
                         hasActiveMatch = true;
                     }
                     eGui.appendChild(element);

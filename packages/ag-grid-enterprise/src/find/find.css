@@ -12,4 +12,25 @@
 .ag-find-active-match {
     color: var(--ag-find-active-match-color);
     background-color: var(--ag-find-active-match-background-color);
+    position: relative;
+}
+
+/* Drawn on the cell background below the highlight, so it takes the cell text colour, not the match colour. */
+.ag-find-active-match::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 2px;
+    background-color: var(--ag-cell-text-color);
+}
+
+@media (forced-colors: active) {
+    .ag-find-active-match {
+        text-decoration: underline 2px;
+    }
+
+    .ag-find-active-match::after {
+        display: none;
+    }
 }

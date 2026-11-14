@@ -782,6 +782,8 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaRowSelect: 'Притисните SPACE да изаберете овај ред',
     ariaRowSelectionDisabled: 'Избор реда је онемогућен за овај ред',
     ariaSearch: 'Претрага',
+    ariaFindActiveMatch: 'Подударање ${variable} од ${variable}, ${variable}, ред ${variable}',
+    ariaFindActiveMatchRow: 'Подударање ${variable} од ${variable}, ред ${variable}',
     ariaSortPriority: 'Приоритет сортирања ${priority} од ${count}',
     ariaSortableColumn: 'Притисните ENTER за сортирање',
     ariaSortableColumnWithCellSelection: 'Притисните ALT ENTER за сортирање',

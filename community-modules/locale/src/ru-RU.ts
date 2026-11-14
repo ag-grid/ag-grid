@@ -785,6 +785,8 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaRowSelect: 'Нажмите ПРОБЕЛ, чтобы выбрать эту строку',
     ariaRowSelectionDisabled: 'Выбор строки отключён для этой строки',
     ariaSearch: 'Поиск',
+    ariaFindActiveMatch: 'Совпадение ${variable} из ${variable}, ${variable}, строка ${variable}',
+    ariaFindActiveMatchRow: 'Совпадение ${variable} из ${variable}, строка ${variable}',
     ariaSortPriority: 'Приоритет сортировки ${priority} из ${count}',
     ariaSortableColumn: 'Нажмите ENTER для сортировки',
     ariaSortableColumnWithCellSelection: 'Нажмите ALT ENTER для сортировки',

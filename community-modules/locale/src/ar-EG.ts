@@ -765,6 +765,8 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',
     ariaRowSelectionDisabled: 'تحديد الصف معطل لهذا الصف',
     ariaSearch: 'بحث',
+    ariaFindActiveMatch: 'التطابق ${variable} من ${variable}، ${variable}، الصف ${variable}',
+    ariaFindActiveMatchRow: 'التطابق ${variable} من ${variable}، الصف ${variable}',
     ariaSortPriority: 'أولوية الفرز ${priority} من ${count}',
     ariaSortableColumn: 'اضغط ENTER لفرز',
     ariaSortableColumnWithCellSelection: 'اضغط ALT ENTER لفرز',
