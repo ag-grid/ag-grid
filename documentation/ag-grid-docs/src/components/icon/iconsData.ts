@@ -49,6 +49,7 @@ export const ICON_NAMES = [
     'none',
     'not-allowed',
     'paste',
+    'pdf',
     'pin',
     'pinned-bottom',
     'pinned-top',
