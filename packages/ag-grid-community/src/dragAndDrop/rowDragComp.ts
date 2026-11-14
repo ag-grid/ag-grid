@@ -31,7 +31,7 @@ export class RowDragComp extends Component {
         private readonly rowNode: RowNode,
         private readonly column?: AgColumn,
         private readonly customGui?: HTMLElement,
-        private readonly dragStartPixels?: number,
+        private dragStartPixels?: number,
         private readonly alwaysVisible: boolean = false
     ) {
         super();
@@ -44,16 +44,13 @@ export class RowDragComp extends Component {
     public postConstruct(): void {
         const { beans, customGui } = this;
         if (customGui) {
-            this.setDragElement(customGui, this.dragStartPixels);
+            this.setDragElementTemplate(customGui);
         } else {
             this.setTemplate(RowDragElement);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, null)!);
-            this.addDragSource();
         }
 
-        if (!this.alwaysVisible) {
-            this.initCellDrag();
-        }
+        this.initCellDrag();
     }
 
     private initCellDrag(): void {
@@ -74,33 +71,51 @@ export class RowDragComp extends Component {
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
+        this.setDragElementTemplate(dragElement);
+        this.removeDragSource();
+        this.dragStartPixels = dragStartPixels;
+        this.refreshDragSource(this.beans.rowDragSvc?.isRowDraggable(this.rowNode) ?? true);
+    }
+
+    private setDragElementTemplate(dragElement: HTMLElement): void {
         // We set suppressDataRefValidation as the drag element could contain AG Grid comps with data references
         // that are not part of this row dragger's context. Maybe this should just setGui and not setTemplateFromElement?
         this.setTemplateFromElement(dragElement, undefined, undefined, true);
-        this.addDragSource(dragStartPixels);
     }
 
     public refreshVisibility(): void {
+        const { beans, column, rowNode } = this;
+        const { gos, dragAndDrop, rowDragSvc } = beans;
+        const draggable = rowDragSvc?.isRowDraggable(rowNode) ?? true;
+
+        this.refreshDragSource(draggable);
+
         if (this.alwaysVisible) {
             return; // Always visible row draggers do not refresh visibility
         }
 
-        const { beans, column, rowNode } = this;
-        const { gos, dragAndDrop, rowDragSvc } = beans;
+        const rowDragProp = column?.getColDef().rowDrag;
+        if (typeof rowDragProp === 'function') {
+            rowDragSvc?.warnRowDragCallbackDeprecated();
+        }
+
         const visibility = rowDragSvc?.visibility;
         const hide = visibility === 'suppress' || (visibility === 'hidden' && !dragAndDrop?.hasExternalDropZones());
 
         let displayed = !hide;
         let visible = displayed;
 
-        if (displayed && !this.isCustomGui() && column) {
-            const rowDragProp = column.getColDef().rowDrag;
-            if (rowDragProp === false) {
+        if (displayed && !this.isCustomGui()) {
+            if (!column) {
+                visible = draggable;
+            } else if (rowDragProp === false) {
                 displayed = false;
+            } else if (gos.exists('isRowDraggable')) {
+                displayed = !!rowDragProp;
+                visible = draggable;
             } else {
-                const shownSometimes = typeof rowDragProp === 'function';
                 visible = column.isRowDrag(rowNode);
-                displayed = shownSometimes || visible;
+                displayed = typeof rowDragProp === 'function' || visible;
             }
         }
 
@@ -138,7 +153,8 @@ export class RowDragComp extends Component {
     }
 
     private getSelectedNodes(): RowNode[] {
-        return getRowDragMultiRowNodes(this.rowNode, this.gos, this.beans.selectionSvc);
+        const { rowNode, gos, beans } = this;
+        return getRowDragMultiRowNodes(rowNode, gos, beans.selectionSvc, beans.rowDragSvc);
     }
 
     private getDragItem(): IRowDragItem {
@@ -151,12 +167,16 @@ export class RowDragComp extends Component {
         };
     }
 
-    private addDragSource(dragStartPixels: number = 4): void {
-        // if this is changing the drag element, delete the previous dragSource
-        if (this.dragSource) {
+    private refreshDragSource(draggable: boolean): void {
+        if (!draggable) {
             this.removeDragSource();
+            this.removeMouseDownListener();
+        } else if (!this.dragSource) {
+            this.addDragSource(this.dragStartPixels);
         }
+    }
 
+    private addDragSource(dragStartPixels: number = 4): void {
         if (this.gos.get('rowDragManaged') && this.rowNode.footer) {
             return; // Footer nodes in row drag managed mode are not draggable
         }

@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     GridColumns,
     GridRows,
     RowDragDispatcher,
@@ -8,7 +9,7 @@ import {
     getRowHtmlElement,
 } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowDragModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
@@ -614,6 +615,7 @@ describe('tree drag multi with per-node rowDrag and custom rowDragText', () => {
 
     beforeEach(() => {
         gridsManager.reset();
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
     });
 
     afterEach(() => {

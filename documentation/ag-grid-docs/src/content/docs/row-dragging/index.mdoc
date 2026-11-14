@@ -25,16 +25,7 @@ const gridOptions = {
 }
 ```
 
-It is also possible to dynamically control which rows are draggable by providing a callback function as shown below:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        // only allow non-group rows to be dragged
-        { field: 'athlete', rowDrag: params => !params.node.group },
-    ],
-}
-```
+The callback form of `rowDrag` is deprecated. To control which rows can be dragged, use [isRowDraggable](#preventing-rows-being-dragged) instead.
 
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
@@ -46,3 +37,52 @@ See also:
 - [Row Dragging with Tree Data](./tree-data-row-dragging), both for managed and unmanaged row dragging with [Tree Data](./tree-data/).
 - [Row Dragging Between Grids](./row-dragging-to-grid/) to drag rows between two grids.
 - [Row Dragging to an External DropZone](./row-dragging-to-external-dropzone/) to drag rows from the grid to an external drop zone.
+
+## Preventing Rows Being Dragged
+
+{% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowDraggable"] /%}
+
+Use the [isRowDraggable](./grid-options/#reference-rowDragging-isRowDraggable) grid option to decide, row by row, whether a drag can start on a row. It applies to every way of starting a drag: the drag handle of any column with `rowDrag: true`, and the entire row when `rowDragEntireRow` is enabled.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete', rowDrag: true },
+        { field: 'locked' },
+    ],
+    rowDragManaged: true,
+    isRowDraggable: params => !params.data?.locked,
+}
+```
+
+{% gridExampleRunner title="Preventing Rows Being Dragged" name="is-row-draggable" /%}
+
+In the example above, rows with the **Locked** box ticked cannot be dragged. Note the following:
+
+- The drag handle is hidden on locked rows, but keeps its space so the column stays aligned.
+- Ticking or unticking **Locked** updates the row data, so the handle and the row's draggability change straight away.
+- **Drag Entire Row** enables `rowDragEntireRow`. Locked rows then cannot be dragged from any cell.
+- Other rows can still be dropped above or below a locked row.
+
+The `data` property of the params is `undefined` for group and footer rows, so use `node` to decide for those rows.
+
+### Interaction with the rowDrag Column Property
+
+The `rowDrag` column property decides whether a column has a drag handle. `isRowDraggable` decides whether a row can be dragged from it.
+
+| `rowDrag` | `isRowDraggable` returns | Result in that column                                                       |
+| --------- | ------------------------ | --------------------------------------------------------------------------- |
+| `false`   | any value                | No handle is shown and no space is reserved for one.                        |
+| `true`    | `false`                  | The handle is hidden, but its space is reserved. The row cannot be dragged. |
+| `true`    | `true`                   | The handle is shown and the row can be dragged.                             |
+
+With a `rowDrag: false` column, whether the row can be dragged from elsewhere still depends on `isRowDraggable` and the other drag sources.
+
+### Notes
+
+- With [Multi-Row Dragging](./row-dragging-managed/#multi-row-dragging) (`rowDragMultiRow`), rows for which `isRowDraggable` returns `false` are left out of the drag, whether it starts from a handle or from the entire row. A drag cannot start on such a row.
+- `isRowDraggable` is re-evaluated when the row data changes. If the callback reads state from outside the row data, update the row data, call `api.redrawRows()` or set `isRowDraggable` to a new callback for the change to take effect. Setting the same callback again has no effect.
+- `isRowDraggable` only controls whether a row can be picked up. Other rows can still be dropped around it, which can change its position. To control where rows can be dropped, use [isRowValidDropPosition](./row-dragging-managed/#preventing-dropping-on-certain-rows).
+- It works with both managed and unmanaged row dragging. No row drag events fire for a row whose drag was prevented.
+- When `isRowDraggable` is set, the result of a `rowDrag` column property callback is ignored.
+- A custom drag component registered with `registerRowDragger` cannot start a drag on a row that is not draggable, but whether it is visible is left to the application. See [Custom Row Dragger](./row-dragging-customisation/#row-dragger-inside-custom-cell-renderers).

@@ -571,7 +571,11 @@ export class AgColumn<TValue = any>
     }
 
     public isRowDrag(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+        const rowDrag = this.colDef.rowDrag;
+        if (this.gos.exists('isRowDraggable')) {
+            return !!rowDrag && (this.beans.rowDragSvc?.isRowDraggable(rowNode) ?? true);
+        }
+        return this.isColumnFunc(rowNode, rowDrag);
     }
 
     public isDndSource(rowNode: IRowNode): boolean {

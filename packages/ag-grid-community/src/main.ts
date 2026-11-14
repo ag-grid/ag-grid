@@ -191,6 +191,8 @@ export type { DragAndDropIcon, DropTarget, GridDraggingEvent, GridDragSource } f
 export type {
     DraggingEvent,
     DragSource,
+    IsRowDraggableCallback,
+    IsRowDraggableParams,
     IsRowValidDropPositionCallback,
     IsRowValidDropPositionParams,
     IsRowValidDropPositionResult,

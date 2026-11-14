@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 import type { RowDragVisibility } from './rowDragTypes';
@@ -13,6 +14,7 @@ export class RowDragService extends BeanStub implements NamedBean {
 
     public rowDragFeature: RowDragFeature | null = null;
     public visibility: RowDragVisibility = 'suppress';
+    private rowDragCallbackWarned = false;
 
     public setupRowDrag(element: HTMLElement, ctrl: BeanStub): void {
         const rowDragFeature = ctrl.createManagedBean(new RowDragFeature(element));
@@ -27,6 +29,9 @@ export class RowDragService extends BeanStub implements NamedBean {
             ['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'],
             refreshVisibility
         );
+        this.addManagedPropertyListener('isRowDraggable', () =>
+            this.eventSvc.dispatchEvent({ type: 'rowDragVisibilityChanged' })
+        );
 
         this.addManagedEventListeners({
             newColumnsLoaded: refreshVisibility,
@@ -37,6 +42,23 @@ export class RowDragService extends BeanStub implements NamedBean {
         });
 
         this.visibility = this.computeVisibility();
+    }
+
+    /** `true` when `isRowDraggable` is not set, otherwise the result of `isRowDraggable` for the row. */
+    public isRowDraggable(rowNode: IRowNode): boolean {
+        const isRowDraggable = this.gos.getCallback('isRowDraggable');
+        return !isRowDraggable || isRowDraggable({ node: rowNode, data: rowNode.data });
+    }
+
+    public warnRowDragCallbackDeprecated(): void {
+        if (!this.rowDragCallbackWarned) {
+            this.rowDragCallbackWarned = true;
+            this.deprecated(306, {
+                version: '37.0',
+                name: 'colDef.rowDrag callback',
+                message: 'Use `isRowDraggable` in GridOptions instead.',
+            });
+        }
     }
 
     public createRowDragComp(

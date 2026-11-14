@@ -16,6 +16,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
+import type { RowDragService } from './rowDragService';
 import type {
     RowDraggingEvent,
     RowDropTargetPosition,
@@ -718,19 +719,52 @@ const compareRowIndex = (a: IRowNode, b: IRowNode): number =>
 export const getRowDragMultiRowNodes = (
     rowNode: RowNode,
     gos: GridOptionsService,
-    selectionSvc: ISelectionService | undefined
+    selectionSvc: ISelectionService | undefined,
+    rowDragSvc: RowDragService | undefined
 ): RowNode[] => {
     if (!gos.get('rowDragMultiRow') || !selectionSvc || !rowNode.isSelected()) {
         return [rowNode];
     }
+    let nodes: RowNode[] | null = null;
+    let bestCost = false;
     if (gos.get('treeData') && _isClientSideRowModel(gos)) {
-        const bestCost = selectionSvc.getBestCostNodeSelection();
-        if (bestCost?.length) {
-            return bestCost;
-        }
+        nodes = selectionSvc.getBestCostNodeSelection() ?? null;
+        bestCost = !!nodes?.length;
     }
-    const selection = selectionSvc.getSelectedNodes();
-    return selection.length ? selection : [rowNode];
+    if (!nodes?.length) {
+        nodes = selectionSvc.getSelectedNodes();
+    }
+    if (rowDragSvc && gos.exists('isRowDraggable')) {
+        nodes = filterDraggableNodes(nodes, rowNode, rowDragSvc, bestCost);
+    }
+    return nodes.length ? nodes : [rowNode];
+};
+
+/** Keeps the draggable nodes. A best-cost selection stands in for its selected descendants, so a
+ * non-draggable node there is replaced by its draggable selected descendants rather than dropping the branch. */
+const filterDraggableNodes = (
+    nodes: RowNode[],
+    rowNode: RowNode,
+    rowDragSvc: RowDragService,
+    bestCost: boolean
+): RowNode[] => {
+    const result: RowNode[] = [];
+    const collect = (list: RowNode[], selectedOnly: boolean): void => {
+        for (let i = 0, len = list.length; i < len; ++i) {
+            const node = list[i];
+            if (selectedOnly && !node.isSelected()) {
+                continue;
+            }
+            const children = node.childrenAfterGroup;
+            if (node === rowNode || rowDragSvc.isRowDraggable(node)) {
+                result.push(node);
+            } else if (bestCost && children) {
+                collect(children, true);
+            }
+        }
+    };
+    collect(nodes, false);
+    return result;
 };
 
 const setRowNodesDragging = (rowNodes: IRowNode[] | null | undefined, dragging: boolean): void => {

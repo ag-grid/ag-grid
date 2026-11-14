@@ -146,4 +146,14 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 
 {% /expandingSection %}
 
+## Deprecations
+
+The following column definition (`ColDef`) property remains supported, but the replacement below is recommended:
+
+| Deprecated                   | Replacement                  |
+| ---------------------------- | ---------------------------- |
+| `colDef.rowDrag` as callback | `isRowDraggable` grid option |
+
+Setting `rowDrag` to a callback now logs a one-time deprecation warning. Without `isRowDraggable` it works as before, hiding the drag handle in that column only. With `isRowDraggable` set, the callback result is ignored. Unlike the callback, `isRowDraggable` also stops drags that start from the entire row (`rowDragEntireRow`) or from other columns, and leaves the row out of multi-row drags. See [Preventing Rows Being Dragged](./row-dragging/#preventing-rows-being-dragged).
+
 {% changelogSection version=$migrationVersion /%}

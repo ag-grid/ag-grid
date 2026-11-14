@@ -53,6 +53,7 @@ export const SharedDragAndDropModule: _ModuleWithoutApi = {
 /**
  * @feature Rows -> Row Dragging
  * @colDef rowDrag
+ * @gridOption isRowDraggable
  */
 export const RowDragModule: _ModuleWithApi<_DragGridApi<any>> = {
     moduleName: 'RowDrag',

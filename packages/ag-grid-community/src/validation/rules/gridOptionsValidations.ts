@@ -128,6 +128,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
     rowDragEntireRow: 'RowDrag',
+    isRowDraggable: 'RowDrag',
     rowDragManaged: 'RowDrag',
     refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
