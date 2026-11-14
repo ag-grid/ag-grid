@@ -3,6 +3,7 @@ import { _doOnce } from 'ag-stack';
 import type { Mock } from 'vitest';
 
 import { LicenseManager } from './licenseManager';
+import { MD5 } from './md5';
 
 function createMockDocument(hostname: string, pathname = '/'): Document {
     return {
@@ -68,6 +69,37 @@ describe('LicenseManager', () => {
         const manager = new LicenseManager(createMockDocument('example.com'));
 
         expect(manager.getLicenseDetails(`[v3_${'x'.repeat(40)}`).valid).toBe(false);
+    });
+
+    describe('key version', () => {
+        function createKey(licence: string): string {
+            const md5 = new MD5();
+            md5.init();
+            const expiry = btoa(String(Date.UTC(2100, 0, 1)));
+            return `${licence}_${expiry}${md5.md5(`${licence}_${expiry}`)}`;
+        }
+
+        test.each([
+            ['legacy', 'Example_Ltd_Example_App_1Devs1_SaaS_1_January_2100'],
+            ['v2', 'CompanyName=Example Ltd,LicensedApplication=Example App,ExpiryDate=1_January_2100_[v2]'],
+            ['v2 trial', 'For_Trialing_AG_Grid_Only-Valid_Until-1_January_2100_[TRIAL]_[v2]'],
+            ['v3 grid', 'Example_Ltd_is_granted_a_{Single_Application}_[v3]_[01]'],
+            ['v3 grid and charts', 'Example_Ltd_is_granted_a_{Single_Application}_[v3]_[0102]'],
+            ['v3 trial', '[TRIAL]_this_{AG_Charts_and_AG_Grid}_Enterprise_key_[v3]_[0102]'],
+        ])('accepts a %s key', (_name, licence) => {
+            const manager = new LicenseManager(createMockDocument('example.com'));
+
+            expect(manager.getLicenseDetails(createKey(licence)).valid).toBe(true);
+        });
+
+        test.each([
+            ['v0102', 'AgGridLicense_[NORMAL]_[v0102]'],
+            ['v4', 'Example_Ltd_is_granted_a_{Single_Application}_[v4]_[01]'],
+        ])('rejects a %s key', (_name, licence) => {
+            const manager = new LicenseManager(createMockDocument('example.com'));
+
+            expect(manager.getLicenseDetails(createKey(licence)).valid).toBe(false);
+        });
     });
 
     describe('isWebsiteUrl (via isDisplayWatermark)', () => {

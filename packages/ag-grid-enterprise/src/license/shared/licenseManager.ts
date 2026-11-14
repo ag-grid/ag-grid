@@ -150,6 +150,10 @@ export class LicenseManager {
                                 handleTrial();
                             }
                         }
+                        break;
+                    }
+                    default: {
+                        valid = false;
                     }
                 }
             }
