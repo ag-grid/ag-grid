@@ -758,14 +758,20 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaDefaultListName: 'Sąrašas',
     ariaFilterColumnsInput: 'Stulpelių filtravimo laukas',
     ariaFilterFromValue: 'Filtruoti nuo reikšmės',
+    ariaFilterFromValueForColumn: 'Filtruoti stulpelį ${variable} nuo reikšmės',
     ariaFilterInput: 'Filtro laukas',
+    ariaFilterInputForColumn: 'Stulpelio ${variable} filtro laukas',
     ariaLabelInputClear: 'Išvalyti',
     ariaFilterList: 'Filtrų sąrašas',
     ariaFilterToValue: 'Filtruoti iki reikšmės',
+    ariaFilterToValueForColumn: 'Filtruoti stulpelį ${variable} iki reikšmės',
     ariaFilterValue: 'Filtro reikšmė',
+    ariaFilterValueForColumn: 'Stulpelio ${variable} filtro reikšmė',
     ariaNotInCurrentData: 'nėra dabartiniuose duomenyse',
     ariaFilterMenuOpen: 'Atidaryti filtro meniu',
+    ariaFilterMenuOpenForColumn: 'Atidaryti stulpelio ${variable} filtro meniu',
     ariaFilteringOperator: 'Filtravimo operatorius',
+    ariaFilteringOperatorForColumn: 'Stulpelio ${variable} filtravimo operatorius',
     ariaHidden: 'paslėpta',
     ariaIndeterminate: 'neapibrėžta',
     ariaInputEditor: 'Įvedimo redaktorius',
@@ -841,6 +847,7 @@ export const AG_GRID_LOCALE_LT_LT = {
 
     ariaLabelColumnMenu: 'Stulpelio meniu',
     ariaLabelColumnFilter: 'Stulpelio filtras',
+    ariaLabelColumnFilterForColumn: 'Stulpelio ${variable} filtras',
 
     ariaLabelSelectField: 'Pasirinkimo laukas',
 

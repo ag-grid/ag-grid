@@ -757,14 +757,20 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaDefaultListName: 'सूची',
     ariaFilterColumnsInput: 'फ़िल्टर कॉलम इनपुट',
     ariaFilterFromValue: 'से मान फ़िल्टर करें',
+    ariaFilterFromValueForColumn: '${variable} को मान से फ़िल्टर करें',
     ariaFilterInput: 'फ़िल्टर इनपुट',
+    ariaFilterInputForColumn: '${variable} का फ़िल्टर इनपुट',
     ariaLabelInputClear: 'साफ़ करें',
     ariaFilterList: 'फ़िल्टर सूची',
     ariaFilterToValue: 'तक मान फ़िल्टर करें',
+    ariaFilterToValueForColumn: '${variable} को मान तक फ़िल्टर करें',
     ariaFilterValue: 'फ़िल्टर मान',
+    ariaFilterValueForColumn: '${variable} का फ़िल्टर मान',
     ariaNotInCurrentData: 'वर्तमान डेटा में नहीं',
     ariaFilterMenuOpen: 'फ़िल्टर मेनू खोलें',
+    ariaFilterMenuOpenForColumn: '${variable} का फ़िल्टर मेनू खोलें',
     ariaFilteringOperator: 'फ़िल्टरिंग ऑपरेटर',
+    ariaFilteringOperatorForColumn: '${variable} का फ़िल्टरिंग ऑपरेटर',
     ariaHidden: 'छिपा हुआ',
     ariaIndeterminate: 'अनिश्चित',
     ariaInputEditor: 'इनपुट संपादक',
@@ -839,6 +845,7 @@ export const AG_GRID_LOCALE_HI_IN = {
 
     ariaLabelColumnMenu: 'कॉलम मेनू',
     ariaLabelColumnFilter: 'कॉलम फ़िल्टर',
+    ariaLabelColumnFilterForColumn: '${variable} कॉलम फ़िल्टर',
 
     ariaLabelSelectField: 'फ़ील्ड चुनें',
 

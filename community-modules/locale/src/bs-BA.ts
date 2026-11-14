@@ -757,14 +757,20 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Unos za filtriranje kolona',
     ariaFilterFromValue: 'Filtriraj od vrijednosti',
+    ariaFilterFromValueForColumn: 'Filtriraj kolonu ${variable} od vrijednosti',
     ariaFilterInput: 'Unos filtera',
+    ariaFilterInputForColumn: 'Unos filtera kolone ${variable}',
     ariaLabelInputClear: 'Očisti',
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
+    ariaFilterToValueForColumn: 'Filtriraj kolonu ${variable} do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
+    ariaFilterValueForColumn: 'Vrijednost filtera kolone ${variable}',
     ariaNotInCurrentData: 'nije u trenutnim podacima',
     ariaFilterMenuOpen: 'Otvori meni filtera',
+    ariaFilterMenuOpenForColumn: 'Otvori meni filtera kolone ${variable}',
     ariaFilteringOperator: 'Operator filtriranja',
+    ariaFilteringOperatorForColumn: 'Operator filtriranja kolone ${variable}',
     ariaHidden: 'skriveno',
     ariaIndeterminate: 'neodređeno',
     ariaInputEditor: 'Editor unosa',
@@ -841,6 +847,7 @@ export const AG_GRID_LOCALE_BS_BA = {
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
+    ariaLabelColumnFilterForColumn: 'Filter kolone ${variable}',
 
     ariaLabelSelectField: 'Polje za izbor',
 

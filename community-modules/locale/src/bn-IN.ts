@@ -755,14 +755,20 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'কলাম ফিল্টার ইনপুট',
     ariaFilterFromValue: 'মান থেকে ফিল্টার করুন',
+    ariaFilterFromValueForColumn: 'মান থেকে ${variable} ফিল্টার করুন',
     ariaFilterInput: 'ফিল্টার ইনপুট',
+    ariaFilterInputForColumn: '${variable} এর ফিল্টার ইনপুট',
     ariaLabelInputClear: 'পরিষ্কার করুন',
     ariaFilterList: 'ফিল্টার তালিকা',
     ariaFilterToValue: 'মান পর্যন্ত ফিল্টার করুন',
+    ariaFilterToValueForColumn: 'মান পর্যন্ত ${variable} ফিল্টার করুন',
     ariaFilterValue: 'ফিল্টার মান',
+    ariaFilterValueForColumn: '${variable} এর ফিল্টার মান',
     ariaNotInCurrentData: 'বর্তমান ডেটায় নেই',
     ariaFilterMenuOpen: 'ফিল্টার মেনু খুলুন',
+    ariaFilterMenuOpenForColumn: '${variable} এর ফিল্টার মেনু খুলুন',
     ariaFilteringOperator: 'ফিল্টারিং অপারেটর',
+    ariaFilteringOperatorForColumn: '${variable} এর ফিল্টারিং অপারেটর',
     ariaHidden: 'লুকানো',
     ariaIndeterminate: 'অনির্ধারিত',
     ariaInputEditor: 'ইনপুট এডিটর',
@@ -837,6 +843,7 @@ export const AG_GRID_LOCALE_BN_IN = {
 
     ariaLabelColumnMenu: 'কলাম মেনু',
     ariaLabelColumnFilter: 'কলাম ফিল্টার',
+    ariaLabelColumnFilterForColumn: '${variable} কলাম ফিল্টার',
 
     ariaLabelSelectField: 'ফিল্ড নির্বাচন করুন',
 

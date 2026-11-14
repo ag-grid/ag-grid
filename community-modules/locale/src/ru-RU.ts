@@ -758,14 +758,20 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaDefaultListName: 'Список',
     ariaFilterColumnsInput: 'Поле ввода для фильтрации столбцов',
     ariaFilterFromValue: 'Фильтровать от значения',
+    ariaFilterFromValueForColumn: 'Фильтровать столбец ${variable} от значения',
     ariaFilterInput: 'Поле ввода фильтра',
+    ariaFilterInputForColumn: 'Поле ввода фильтра столбца ${variable}',
     ariaLabelInputClear: 'Очистить',
     ariaFilterList: 'Список фильтра',
     ariaFilterToValue: 'Фильтровать до значения',
+    ariaFilterToValueForColumn: 'Фильтровать столбец ${variable} до значения',
     ariaFilterValue: 'Значение фильтра',
+    ariaFilterValueForColumn: 'Значение фильтра столбца ${variable}',
     ariaNotInCurrentData: 'нет в текущих данных',
     ariaFilterMenuOpen: 'Открыть меню фильтра',
+    ariaFilterMenuOpenForColumn: 'Открыть меню фильтра столбца ${variable}',
     ariaFilteringOperator: 'Оператор фильтрации',
+    ariaFilteringOperatorForColumn: 'Оператор фильтрации столбца ${variable}',
     ariaHidden: 'скрыто',
     ariaIndeterminate: 'неопределённо',
     ariaInputEditor: 'Редактор ввода',
@@ -840,6 +846,7 @@ export const AG_GRID_LOCALE_RU_RU = {
 
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',
+    ariaLabelColumnFilterForColumn: 'Фильтр столбца ${variable}',
 
     ariaLabelSelectField: 'Выберите поле',
 

@@ -744,14 +744,20 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaDefaultListName: 'List',
     ariaFilterColumnsInput: 'Filter Columns Input',
     ariaFilterFromValue: 'Filter from value',
+    ariaFilterFromValueForColumn: '${variable} Filter from value',
     ariaFilterInput: 'Filter Input',
+    ariaFilterInputForColumn: '${variable} Filter Input',
     ariaLabelInputClear: 'Clear',
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
+    ariaFilterToValueForColumn: '${variable} Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaFilterValueForColumn: '${variable} Filter Value',
     ariaNotInCurrentData: 'not in current data',
     ariaFilterMenuOpen: 'Open Filter Menu',
+    ariaFilterMenuOpenForColumn: 'Open ${variable} Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
+    ariaFilteringOperatorForColumn: '${variable} Filtering Operator',
     ariaHidden: 'hidden',
     ariaIndeterminate: 'indeterminate',
     ariaInputEditor: 'Input Editor',
@@ -826,6 +832,7 @@ export const AG_GRID_LOCALE_EN_US = {
 
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
+    ariaLabelColumnFilterForColumn: '${variable} Column Filter',
 
     ariaLabelSelectField: 'Select Field',
 

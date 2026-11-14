@@ -758,14 +758,20 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaDefaultListName: 'Senarai',
     ariaFilterColumnsInput: 'Input Tapis Lajur',
     ariaFilterFromValue: 'Tapis dari nilai',
+    ariaFilterFromValueForColumn: 'Tapis ${variable} dari nilai',
     ariaFilterInput: 'Input Penapis',
+    ariaFilterInputForColumn: 'Input Penapis ${variable}',
     ariaLabelInputClear: 'Kosongkan',
     ariaFilterList: 'Senarai Penapis',
     ariaFilterToValue: 'Tapis hingga nilai',
+    ariaFilterToValueForColumn: 'Tapis ${variable} hingga nilai',
     ariaFilterValue: 'Nilai Penapis',
+    ariaFilterValueForColumn: 'Nilai Penapis ${variable}',
     ariaNotInCurrentData: 'tiada dalam data semasa',
     ariaFilterMenuOpen: 'Buka Menu Penapis',
+    ariaFilterMenuOpenForColumn: 'Buka Menu Penapis ${variable}',
     ariaFilteringOperator: 'Operator Penapisan',
+    ariaFilteringOperatorForColumn: 'Operator Penapisan ${variable}',
     ariaHidden: 'tersembunyi',
     ariaIndeterminate: 'tidak tentu',
     ariaInputEditor: 'Editor Input',
@@ -841,6 +847,7 @@ export const AG_GRID_LOCALE_MS_MY = {
 
     ariaLabelColumnMenu: 'Menu Lajur',
     ariaLabelColumnFilter: 'Penapis Lajur',
+    ariaLabelColumnFilterForColumn: 'Penapis Lajur ${variable}',
 
     ariaLabelSelectField: 'Pilih Medan',
 

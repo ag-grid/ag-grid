@@ -761,14 +761,20 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaDefaultListName: 'Listahan',
     ariaFilterColumnsInput: 'Input ng Filter Columns',
     ariaFilterFromValue: 'I-filter mula sa halaga',
+    ariaFilterFromValueForColumn: 'I-filter ang ${variable} mula sa halaga',
     ariaFilterInput: 'Input ng Filter',
+    ariaFilterInputForColumn: 'Input ng Filter para sa ${variable}',
     ariaLabelInputClear: 'I-clear',
     ariaFilterList: 'Listahan ng Filter',
     ariaFilterToValue: 'I-filter hanggang sa halaga',
+    ariaFilterToValueForColumn: 'I-filter ang ${variable} hanggang sa halaga',
     ariaFilterValue: 'Halaga ng Filter',
+    ariaFilterValueForColumn: 'Halaga ng Filter para sa ${variable}',
     ariaNotInCurrentData: 'wala sa kasalukuyang data',
     ariaFilterMenuOpen: 'Buksan ang Menu ng Filter',
+    ariaFilterMenuOpenForColumn: 'Buksan ang Menu ng Filter para sa ${variable}',
     ariaFilteringOperator: 'Operator ng Pag-filter',
+    ariaFilteringOperatorForColumn: 'Operator ng Pag-filter para sa ${variable}',
     ariaHidden: 'nakatago',
     ariaIndeterminate: 'hindi tiyak',
     ariaInputEditor: 'Editor ng Input',
@@ -845,6 +851,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
 
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',
+    ariaLabelColumnFilterForColumn: 'Filter ng Column na ${variable}',
 
     ariaLabelSelectField: 'Piliin ang Field',
 

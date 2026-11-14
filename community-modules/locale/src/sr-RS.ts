@@ -755,14 +755,20 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaDefaultListName: 'Листа',
     ariaFilterColumnsInput: 'Унос за филтрирање колона',
     ariaFilterFromValue: 'Филтрирај од вредности',
+    ariaFilterFromValueForColumn: 'Филтрирај колону ${variable} од вредности',
     ariaFilterInput: 'Унос филтера',
+    ariaFilterInputForColumn: 'Унос филтера колоне ${variable}',
     ariaLabelInputClear: 'Обриши',
     ariaFilterList: 'Листа филтера',
     ariaFilterToValue: 'Филтрирај до вредности',
+    ariaFilterToValueForColumn: 'Филтрирај колону ${variable} до вредности',
     ariaFilterValue: 'Вредност филтера',
+    ariaFilterValueForColumn: 'Вредност филтера колоне ${variable}',
     ariaNotInCurrentData: 'није у тренутним подацима',
     ariaFilterMenuOpen: 'Отвори мени филтера',
+    ariaFilterMenuOpenForColumn: 'Отвори мени филтера колоне ${variable}',
     ariaFilteringOperator: 'Оператор филтрирања',
+    ariaFilteringOperatorForColumn: 'Оператор филтрирања колоне ${variable}',
     ariaHidden: 'скривено',
     ariaIndeterminate: 'неодређено',
     ariaInputEditor: 'Едитор уноса',
@@ -837,6 +843,7 @@ export const AG_GRID_LOCALE_SR_RS = {
 
     ariaLabelColumnMenu: 'Мени колоне',
     ariaLabelColumnFilter: 'Филтер колоне',
+    ariaLabelColumnFilterForColumn: 'Филтер колоне ${variable}',
 
     ariaLabelSelectField: 'Изаберите поље',
 

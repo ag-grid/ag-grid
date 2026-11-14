@@ -14,12 +14,15 @@ import { AgInputTextField } from '../../agWidgets/agInputTextField';
 import type { ListOption } from '../../agWidgets/agList';
 import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
+import type { AgColumn } from '../../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
+import type { ColumnFilterLabelId } from '../filterAriaLabels';
+import { translateColumnFilterLabel } from '../filterAriaLabels';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { isFilterLocaleTextKey } from '../filterLocaleText';
 import type {
@@ -141,6 +144,8 @@ export abstract class SimpleFilter<
 
         this.createOption();
         this.createMissingConditionsAndOperators();
+
+        this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshColumnLabels() });
     }
 
     protected override updateParams(newParams: P, oldParams: P): void {
@@ -149,6 +154,7 @@ export abstract class SimpleFilter<
         super.updateParams(newParams, oldParams);
 
         this.commonUpdateSimpleParams(newParams);
+        this.refreshColumnLabels();
         // A replacement input carries no validity, and an option keeping its key can still change arity.
         this.refreshInputValidation();
         this.updateUiVisibility(); // an invalid condition is not a complete one
@@ -651,9 +657,21 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
+    protected translateColumnLabel(label: ColumnFilterLabelId): string {
+        return translateColumnFilterLabel(this.beans, this.params.column as AgColumn, this.getLocaleTextFunc(), label);
+    }
+
+    private refreshColumnLabels(): void {
+        const { eTypes } = this;
+        const operatorLabel = this.translateColumnLabel('filteringOperator');
+        for (let i = 0, len = eTypes.length; i < len; ++i) {
+            eTypes[i].setAriaLabel(operatorLabel);
+        }
+        this.resetPlaceholder();
+    }
+
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
-        const globalTranslate = this.getLocaleTextFunc();
         const { filterPlaceholder, eTypes } = this;
 
         this.forEachInput((element, index, position, numberOfInputs) => {
@@ -663,12 +681,12 @@ export abstract class SimpleFilter<
 
             const placeholderKey =
                 index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
-            const ariaLabel =
-                index === 0 && numberOfInputs > 1
-                    ? globalTranslate('ariaFilterFromValue', 'Filter from value')
-                    : index === 0
-                      ? globalTranslate('ariaFilterValue', 'Filter Value')
-                      : globalTranslate('ariaFilterToValue', 'Filter to Value');
+            let ariaLabelId: ColumnFilterLabelId = 'filterValue';
+            if (index > 0) {
+                ariaLabelId = 'filterToValue';
+            } else if (numberOfInputs > 1) {
+                ariaLabelId = 'filterFromValue';
+            }
 
             const filterOptionKey = eTypes[position].getValue() as FilterOptionKey;
             const placeholderText = getPlaceholderText(
@@ -680,7 +698,7 @@ export abstract class SimpleFilter<
             );
 
             element.setInputPlaceholder(placeholderText);
-            element.setInputAriaLabel(ariaLabel);
+            element.setInputAriaLabel(this.translateColumnLabel(ariaLabelId));
         });
     }
 
@@ -843,11 +861,9 @@ export abstract class SimpleFilter<
     }
 
     private resetType(eType: GridSelect): void {
-        const translate = this.getLocaleTextFunc();
-        const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
             .setValue(this.optionsFactory.defaultOption, true)
-            .setAriaLabel(filteringLabel)
+            .setAriaLabel(this.translateColumnLabel('filteringOperator'))
             .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
 

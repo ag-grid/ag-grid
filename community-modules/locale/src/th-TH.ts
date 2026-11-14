@@ -754,14 +754,20 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaDefaultListName: 'รายการ',
     ariaFilterColumnsInput: 'ช่องป้อนกรองคอลัมน์',
     ariaFilterFromValue: 'กรองจากค่า',
+    ariaFilterFromValueForColumn: 'กรอง ${variable} จากค่า',
     ariaFilterInput: 'ช่องป้อนตัวกรอง',
+    ariaFilterInputForColumn: 'ช่องป้อนตัวกรองของ ${variable}',
     ariaLabelInputClear: 'ล้าง',
     ariaFilterList: 'รายการตัวกรอง',
     ariaFilterToValue: 'กรองถึงค่า',
+    ariaFilterToValueForColumn: 'กรอง ${variable} ถึงค่า',
     ariaFilterValue: 'ค่าตัวกรอง',
+    ariaFilterValueForColumn: 'ค่าตัวกรองของ ${variable}',
     ariaNotInCurrentData: 'ไม่มีในข้อมูลปัจจุบัน',
     ariaFilterMenuOpen: 'เปิดเมนูตัวกรอง',
+    ariaFilterMenuOpenForColumn: 'เปิดเมนูตัวกรองของ ${variable}',
     ariaFilteringOperator: 'ตัวดำเนินการกรอง',
+    ariaFilteringOperatorForColumn: 'ตัวดำเนินการกรองของ ${variable}',
     ariaHidden: 'ซ่อนอยู่',
     ariaIndeterminate: 'ไม่แน่นอน',
     ariaInputEditor: 'ตัวแก้ไขข้อมูลนำเข้า',
@@ -836,6 +842,7 @@ export const AG_GRID_LOCALE_TH_TH = {
 
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',
+    ariaLabelColumnFilterForColumn: 'ตัวกรองคอลัมน์ ${variable}',
 
     ariaLabelSelectField: 'เลือกฟิลด์',
 

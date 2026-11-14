@@ -758,14 +758,20 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaDefaultListName: 'Daftar',
     ariaFilterColumnsInput: 'Input Filter Kolom',
     ariaFilterFromValue: 'Filter dari nilai',
+    ariaFilterFromValueForColumn: 'Filter ${variable} dari nilai',
     ariaFilterInput: 'Input Filter',
+    ariaFilterInputForColumn: 'Input Filter ${variable}',
     ariaLabelInputClear: 'Bersihkan',
     ariaFilterList: 'Daftar Filter',
     ariaFilterToValue: 'Filter ke nilai',
+    ariaFilterToValueForColumn: 'Filter ${variable} ke nilai',
     ariaFilterValue: 'Nilai Filter',
+    ariaFilterValueForColumn: 'Nilai Filter ${variable}',
     ariaNotInCurrentData: 'tidak ada di data saat ini',
     ariaFilterMenuOpen: 'Buka Menu Filter',
+    ariaFilterMenuOpenForColumn: 'Buka Menu Filter ${variable}',
     ariaFilteringOperator: 'Operator Pemfilteran',
+    ariaFilteringOperatorForColumn: 'Operator Pemfilteran ${variable}',
     ariaHidden: 'tersembunyi',
     ariaIndeterminate: 'tak tentu',
     ariaInputEditor: 'Editor Input',
@@ -840,6 +846,7 @@ export const AG_GRID_LOCALE_ID_ID = {
 
     ariaLabelColumnMenu: 'Menu Kolom',
     ariaLabelColumnFilter: 'Filter Kolom',
+    ariaLabelColumnFilterForColumn: 'Filter Kolom ${variable}',
 
     ariaLabelSelectField: 'Pilih Bidang',
 

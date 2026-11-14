@@ -757,14 +757,20 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaDefaultListName: 'Saraksts',
     ariaFilterColumnsInput: 'Kolonnu filtra ievade',
     ariaFilterFromValue: 'Filtrēt no vērtības',
+    ariaFilterFromValueForColumn: 'Filtrēt kolonnu ${variable} no vērtības',
     ariaFilterInput: 'Filtra ievade',
+    ariaFilterInputForColumn: 'Kolonnas ${variable} filtra ievade',
     ariaLabelInputClear: 'Notīrīt',
     ariaFilterList: 'Filtru saraksts',
     ariaFilterToValue: 'Filtrēt līdz vērtībai',
+    ariaFilterToValueForColumn: 'Filtrēt kolonnu ${variable} līdz vērtībai',
     ariaFilterValue: 'Filtra vērtība',
+    ariaFilterValueForColumn: 'Kolonnas ${variable} filtra vērtība',
     ariaNotInCurrentData: 'nav pašreizējos datos',
     ariaFilterMenuOpen: 'Atvērt filtra izvēlni',
+    ariaFilterMenuOpenForColumn: 'Atvērt kolonnas ${variable} filtra izvēlni',
     ariaFilteringOperator: 'Filtrēšanas operators',
+    ariaFilteringOperatorForColumn: 'Kolonnas ${variable} filtrēšanas operators',
     ariaHidden: 'slēpts',
     ariaIndeterminate: 'nenoteikts',
     ariaInputEditor: 'Ievades redaktors',
@@ -839,6 +845,7 @@ export const AG_GRID_LOCALE_LV_LV = {
 
     ariaLabelColumnMenu: 'Kolonnas izvēlne',
     ariaLabelColumnFilter: 'Kolonnas filtrs',
+    ariaLabelColumnFilterForColumn: 'Kolonnas ${variable} filtrs',
 
     ariaLabelSelectField: 'Atlases lauks',
 

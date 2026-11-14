@@ -755,14 +755,20 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vnos filtra stolpcev',
     ariaFilterFromValue: 'Filter od vrednosti',
+    ariaFilterFromValueForColumn: 'Filter stolpca ${variable} od vrednosti',
     ariaFilterInput: 'Vnos filtra',
+    ariaFilterInputForColumn: 'Vnos filtra stolpca ${variable}',
     ariaLabelInputClear: 'Počisti',
     ariaFilterList: 'Seznam filtrov',
     ariaFilterToValue: 'Filter do vrednosti',
+    ariaFilterToValueForColumn: 'Filter stolpca ${variable} do vrednosti',
     ariaFilterValue: 'Vrednost filtra',
+    ariaFilterValueForColumn: 'Vrednost filtra stolpca ${variable}',
     ariaNotInCurrentData: 'ni v trenutnih podatkih',
     ariaFilterMenuOpen: 'Odpri meni filtra',
+    ariaFilterMenuOpenForColumn: 'Odpri meni filtra stolpca ${variable}',
     ariaFilteringOperator: 'Operator filtriranja',
+    ariaFilteringOperatorForColumn: 'Operator filtriranja stolpca ${variable}',
     ariaHidden: 'skrito',
     ariaIndeterminate: 'nedoločeno',
     ariaInputEditor: 'Urejevalnik vnosa',
@@ -837,6 +843,7 @@ export const AG_GRID_LOCALE_SL_SI = {
 
     ariaLabelColumnMenu: 'Meni stolpca',
     ariaLabelColumnFilter: 'Filter stolpca',
+    ariaLabelColumnFilterForColumn: 'Filter stolpca ${variable}',
 
     ariaLabelSelectField: 'Izberi polje',
 

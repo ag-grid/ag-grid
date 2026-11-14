@@ -1,4 +1,4 @@
-import { AgTabGuardFeature, _findTabbableParent, _isVisible } from 'ag-stack';
+import { AgTabGuardFeature, _findTabbableParent, _isVisible, _setAriaLabel } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -16,6 +16,7 @@ import { _setColMenuVisible } from '../misc/menu/menuService';
 import { Component } from '../widgets/component';
 import { STOP_PROPAGATION_CALLBACKS } from '../widgets/managedFocusFeature';
 import type { PopupService } from '../widgets/popupService';
+import { translateColumnFilterLabel } from './filterAriaLabels';
 import { FilterComp } from './filterComp';
 
 export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
@@ -189,10 +190,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
         const translate = this.getLocaleTextFunc();
 
-        const ariaLabel =
-            isLegacyMenuEnabled && containerType !== 'columnFilter'
-                ? translate('ariaLabelColumnMenu', 'Column Menu')
-                : translate('ariaLabelColumnFilter', 'Column Filter');
+        const isColumnMenu = isLegacyMenuEnabled && containerType !== 'columnFilter';
+        const getColumnFilterLabel = () => translateColumnFilterLabel(this.beans, column, translate, 'columnFilter');
+        const ariaLabel = isColumnMenu ? translate('ariaLabelColumnMenu', 'Column Menu') : getColumnFilterLabel();
 
         const addPopupRes = this.popupSvc?.addPopup({
             modal: true,
@@ -208,6 +208,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         if (!addPopupRes) {
             this.destroyBean(comp);
             return false;
+        }
+
+        if (!isColumnMenu) {
+            const refreshAriaLabel = () => _setAriaLabel(eMenu, getColumnFilterLabel());
+            comp.addManagedListeners(column, { headerNameChanged: refreshAriaLabel, colDefChanged: refreshAriaLabel });
         }
 
         this.activeMenu = comp;
