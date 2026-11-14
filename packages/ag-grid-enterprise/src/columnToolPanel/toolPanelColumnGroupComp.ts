@@ -1,6 +1,7 @@
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
@@ -184,6 +185,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
+        _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
         // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
         // replaced, and a child's rename can change the name a group headerValueGetter returns.
@@ -206,6 +208,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.refreshAriaChecked();
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(
@@ -389,7 +392,14 @@ export class ToolPanelColumnGroupComp extends Component {
         this.onChangeCommon(nextState);
     }
 
+    private onCheckboxMouseDown(e: MouseEvent): void {
+        // Keeps focus on the tree item, as a label click does, so both expose the same selected state.
+        e.preventDefault();
+        this.focusWrapper.focus();
+    }
+
     private onCheckboxChanged(event: any): void {
+        this.refreshAriaChecked();
         this.onChangeCommon(event.selected);
     }
 
@@ -451,6 +461,10 @@ export class ToolPanelColumnGroupComp extends Component {
         _setAriaLabel(focusWrapper, `${displayName} ${columnLabel}`);
         cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
+    }
+
+    private refreshAriaChecked(): void {
+        _setAriaChecked(this.focusWrapper, this.cbSelect.getValue());
     }
 
     public onColumnStateChanged(): void {
