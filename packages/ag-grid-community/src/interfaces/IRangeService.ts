@@ -5,7 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { IAbstractHeaderCellComp } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { Column } from '../interfaces/iColumn';
-import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
 import type { ICellRangeFeature } from './iCellRangeFeature';
@@ -125,4 +125,6 @@ export interface ClearCellRangeParams {
      * fill-handle reduction to undo a fill rather than clearing cells.
      */
     restoreSourceInBatch?: boolean;
+    /** Return `true` to leave a cell's value unchanged. */
+    isCellSuppressed?: (rowNode: IRowNode, column: AgColumn) => boolean;
 }

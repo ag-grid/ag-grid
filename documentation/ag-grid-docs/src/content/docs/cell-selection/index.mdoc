@@ -139,9 +139,11 @@ When a cell range is selected, typing to enter a new value and pressing the {% k
 
 ### Delete Cell Range
 
-Pressing the {% kbd "Delete" /%} key will clear all of the cells in the range (by setting the cell values to `null`). If your column uses a `valueParser`, it will receive an empty string (`''`) as the new value.
+Pressing the {% kbd "Delete" /%} key will clear all of the editable cells in the range (by setting the cell values to `null`). On macOS, {% kbd "⌫ Backspace" /%} also clears the range, unless the `enableCellEditingOnBackspace` grid option is set. If your column uses a `valueParser`, it will receive an empty string (`''`) as the new value.
 
-This will also emit the following events:
+Cells whose column [suppresses the key](./keyboard-navigation/#suppress-keyboard-events) with `suppressKeyboardEvent` keep their values, wherever the range starts.
+
+When at least one cell is cleared, the following events are also emitted:
 
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["cellSelectionDeleteStart","cellSelectionDeleteEnd"] /%}
 

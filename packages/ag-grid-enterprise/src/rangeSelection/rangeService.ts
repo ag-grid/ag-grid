@@ -911,9 +911,22 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             dispatchWrapperEvents,
             wrapperEventSource = 'deleteKey',
             restoreSourceInBatch,
+            isCellSuppressed,
         } = params;
 
-        let { cellRanges } = params;
+        const rowNodes: IRowNode[] = [];
+        const columns: AgColumn[] = [];
+        this.forEachEditableCellInRanges(params.cellRanges ?? this.cellRanges, (rowNode, column) => {
+            if (!isCellSuppressed?.(rowNode, column)) {
+                rowNodes.push(rowNode);
+                columns.push(column);
+            }
+        });
+
+        const cellCount = rowNodes.length;
+        if (cellCount === 0) {
+            return;
+        }
 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({
@@ -926,8 +939,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             });
         }
 
-        cellRanges ??= this.cellRanges;
-
         const { valueSvc, editSvc } = beans;
         const batch = !!editSvc?.isBatchEditing();
 
@@ -935,14 +946,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         editSvc?.beginBulkWrite();
         try {
             changeDetectionSvc?.beginDeferred();
-            this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
+            for (let i = 0; i < cellCount; ++i) {
+                const rowNode = rowNodes[i];
+                const column = columns[i];
                 if (restoreSourceInBatch && batch) {
                     editSvc?.batchResetToSourceValue({ rowNode, column });
-                    return;
+                } else {
+                    rowNode.setDataValue(column, valueSvc.getDeleteValue(column, rowNode), cellEventSource);
                 }
-                const deleteValue = valueSvc.getDeleteValue(column, rowNode);
-                rowNode.setDataValue(column, deleteValue, cellEventSource);
-            });
+            }
         } finally {
             changeDetectionSvc?.endDeferred();
             editSvc?.endBulkWrite();
