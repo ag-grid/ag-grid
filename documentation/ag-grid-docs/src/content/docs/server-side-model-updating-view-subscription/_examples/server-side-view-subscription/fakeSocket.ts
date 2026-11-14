@@ -22,10 +22,11 @@ export type ServerMessage =
     | { type: 'update'; rows: PortfolioRow[] };
 
 const LATENCY_MS = 150;
-const MIN_UPDATE_INTERVAL_MS = 300;
-const MAX_UPDATE_INTERVAL_MS = 1200;
-// the chance that a watched stock changes price on each tick
-const UPDATE_CHANCE = 0.4;
+const MIN_UPDATE_INTERVAL_MS = 50;
+const MAX_UPDATE_INTERVAL_MS = 400;
+// the chance that a stock changes price on each tick: a few stocks are busy, most are quiet
+const MIN_UPDATE_CHANCE = 0.01;
+const MAX_UPDATE_CHANCE = 0.12;
 const REGIONS = ['Americas', 'Asia Pacific', 'Europe'];
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Technology'];
 
@@ -56,6 +57,18 @@ function getValue(stock: PortfolioRow): number {
 function getAncestorIds(id: string): string[] {
     const names = id.split('/');
     return names.slice(1).map((_, i) => names.slice(0, i + 1).join('/'));
+}
+
+// each stock keeps its own update chance, so updates arrive at different rates
+const updateChances = new Map<string, number>();
+
+function getUpdateChance(id: string): number {
+    let chance = updateChances.get(id);
+    if (chance === undefined) {
+        chance = MIN_UPDATE_CHANCE + Math.random() ** 2 * (MAX_UPDATE_CHANCE - MIN_UPDATE_CHANCE);
+        updateChances.set(id, chance);
+    }
+    return chance;
 }
 
 /** Serves the portfolio tree a level at a time, and streams price updates for the subscribed rows only. */
@@ -145,7 +158,7 @@ class FakeServer {
         for (const stock of this.stocks) {
             // a stock is watched when it is subscribed, or a region or sector above it is
             const watched = [stock.id, ...getAncestorIds(stock.id)].some((id) => this.subscribedIds.has(id));
-            if (watched && Math.random() < UPDATE_CHANCE) {
+            if (watched && Math.random() < getUpdateChance(stock.id)) {
                 // a move of up to 2% either way
                 stock.price = Math.max(0.01, Math.round(stock.price! * (1 + (Math.random() - 0.5) * 0.04) * 100) / 100);
                 stock.value = getValue(stock);

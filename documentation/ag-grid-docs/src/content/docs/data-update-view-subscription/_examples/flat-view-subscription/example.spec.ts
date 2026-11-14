@@ -20,8 +20,6 @@ test.agExample(import.meta, () => {
 
             await subscriptionCheckbox.uncheck();
             await expect(count).toHaveText('0');
-            // the last change unsubscribed every row and subscribed none
-            await expect(page.locator('#lastChange')).toHaveText(/^\+0 −[1-9]\d*$/);
             // no rows are subscribed, so the updates sent count starts again
             await expect(page.locator('#updatesSent')).toHaveText('0');
 

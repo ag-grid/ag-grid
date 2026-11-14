@@ -124,6 +124,10 @@ const gridOptions: GridOptions<ResultRow> = {
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('serverSideDatasource', createDatasource());
     },
+    // updates still on their way must not reach the destroyed grid
+    onGridPreDestroyed: () => {
+        socket.onmessage = null;
+    },
 };
 
 function onSubscriptionActiveChanged() {

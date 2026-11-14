@@ -37,6 +37,8 @@ test.agExample(import.meta, () => {
     test.eachFramework(
         'Group rows loaded from the server are subscribed, receive their aggregates, and pause while no aggregate is shown',
         async ({ page, agIdFor }) => {
+            // the quiet streams take a while to show each pause and resume
+            test.slow();
             await waitForGridContent(page);
 
             const count = page.locator('#subscribedCount');

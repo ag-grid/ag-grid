@@ -44,10 +44,13 @@ export type ServerMessage =
     | { type: 'status'; streamedRows: number };
 
 const LATENCY_MS = 150;
-const MIN_UPDATE_INTERVAL_MS = 300;
-const MAX_UPDATE_INTERVAL_MS = 1200;
-// the chance that a watched stock changes price on each tick
-const UPDATE_CHANCE = 0.4;
+const MIN_UPDATE_INTERVAL_MS = 50;
+const MAX_UPDATE_INTERVAL_MS = 400;
+// the chance that a stock changes price on each tick: a few stocks are busy, most are quiet
+const MIN_UPDATE_CHANCE = 0.01;
+const MAX_UPDATE_CHANCE = 0.12;
+// the chance that a changed group row is sent on each tick, so the group rows update at different times
+const GROUP_SEND_CHANCE = 0.15;
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Industrials', 'Technology'];
 const EXCHANGES = ['NYSE', 'NASDAQ'];
 
@@ -97,6 +100,18 @@ function sortRows(rows: ResultRow[], sortModel: SortModelItem[], groupField: str
     });
 }
 
+// each stock keeps its own update chance, so updates arrive at different rates
+const updateChances = new Map<string, number>();
+
+function getUpdateChance(id: string): number {
+    let chance = updateChances.get(id);
+    if (chance === undefined) {
+        chance = MIN_UPDATE_CHANCE + Math.random() ** 2 * (MAX_UPDATE_CHANCE - MIN_UPDATE_CHANCE);
+        updateChances.set(id, chance);
+    }
+    return chance;
+}
+
 /**
  * Groups, pivots and aggregates the stocks for the grid, and streams updates for the subscribed rows only.
  * A subscribed group row receives every one of its aggregates, recomputed whenever one of its stocks moves.
@@ -106,6 +121,8 @@ class FakeServer {
     private readonly subscribedIds = new Set<string>();
     // the subscribed group rows, by row id
     private readonly subscribedGroups = new Map<string, GroupQuery>();
+    // ids of the subscribed group rows whose stocks moved since the row was last sent
+    private readonly changedGroupIds = new Set<string>();
     private timer: ReturnType<typeof setTimeout> | undefined;
 
     constructor(private readonly send: (message: ServerMessage) => void) {
@@ -262,7 +279,7 @@ class FakeServer {
         const groups = [...this.subscribedGroups.entries()];
         const movedStocks: Stock[] = [];
         for (const stock of this.stocks) {
-            if (this.isWatched(stock) && Math.random() < UPDATE_CHANCE) {
+            if (this.isWatched(stock) && Math.random() < getUpdateChance(stock.id)) {
                 // a move of up to 2% either way
                 const price = Math.max(0.01, round(stock.price * (1 + (Math.random() - 0.5) * 0.04)));
                 stock.change = round(((price - stock.price) / stock.price) * 100);
@@ -272,9 +289,15 @@ class FakeServer {
             }
         }
         const stocks = movedStocks.filter((stock) => this.subscribedIds.has(stock.id));
-        const changedGroups = groups
+        groups
             .filter(([, { groupFields, groupKeys }]) => movedStocks.some((s) => isInGroup(s, groupFields, groupKeys)))
-            .map(([id, query]) => ({ id, row: this.getGroupRow(query) }));
+            .forEach(([id]) => this.changedGroupIds.add(id));
+        const changedGroups = groups
+            .filter(([id]) => this.changedGroupIds.has(id) && Math.random() < GROUP_SEND_CHANCE)
+            .map(([id, query]) => {
+                this.changedGroupIds.delete(id);
+                return { id, row: this.getGroupRow(query) };
+            });
         if (stocks.length || changedGroups.length) {
             this.send({ type: 'update', stocks, groups: changedGroups });
         }

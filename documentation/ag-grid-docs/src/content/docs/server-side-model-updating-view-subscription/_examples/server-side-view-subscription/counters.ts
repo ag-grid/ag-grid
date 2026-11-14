@@ -2,13 +2,10 @@
 
 let subscribedCount = 0;
 let updatesSent = 0;
-// the rows subscribed and unsubscribed by the last change, which the grid reports in one task
-let lastChange: { subscribed: number; unsubscribed: number } | undefined;
 
 /** Records rows the grid subscribed, and the number of rows now subscribed. */
 export function recordSubscribed(count: number, totalSubscribed: number) {
     console.log(`subscribe ${count}`);
-    addToLastChange(count, 0);
     subscribedCount = totalSubscribed;
     render();
 }
@@ -16,7 +13,6 @@ export function recordSubscribed(count: number, totalSubscribed: number) {
 /** Records rows the grid unsubscribed, and the number of rows still subscribed. */
 export function recordUnsubscribed(count: number, totalSubscribed: number) {
     console.log(`unsubscribe ${count}`);
-    addToLastChange(0, count);
     subscribedCount = totalSubscribed;
     if (totalSubscribed === 0) {
         // nothing is streamed now, so start counting again
@@ -31,21 +27,8 @@ export function recordUpdates(count: number) {
     render();
 }
 
-function addToLastChange(subscribed: number, unsubscribed: number) {
-    if (!lastChange) {
-        lastChange = { subscribed: 0, unsubscribed: 0 };
-        // the next change starts a new count
-        queueMicrotask(() => (lastChange = undefined));
-    }
-    lastChange.subscribed += subscribed;
-    lastChange.unsubscribed += unsubscribed;
-}
-
 function render() {
     setText('#subscribedCount', String(subscribedCount));
-    if (lastChange) {
-        setText('#lastChange', `+${lastChange.subscribed} −${lastChange.unsubscribed}`);
-    }
     setText('#updatesSent', String(updatesSent));
 }
 

@@ -128,6 +128,10 @@ const gridOptions: GridOptions<Stock> = {
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('rowData', fetchStocks());
     },
+    // updates still on their way must not reach the destroyed grid
+    onGridPreDestroyed: () => {
+        socket.onmessage = null;
+    },
 };
 
 function onSubscriptionActiveChanged() {

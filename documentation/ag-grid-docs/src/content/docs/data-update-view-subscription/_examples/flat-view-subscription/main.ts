@@ -45,18 +45,22 @@ const gridOptions: GridOptions<Stock> = {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.add(id));
             socket.send({ type: 'subscribe', ids });
-            recordSubscribed(ids.length, subscribed.size);
+            recordSubscribed(subscribed.size);
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.delete(id));
             socket.send({ type: 'unsubscribe', ids });
-            recordUnsubscribed(ids.length, subscribed.size);
+            recordUnsubscribed(subscribed.size);
         },
     },
     onGridReady: (params) => {
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('rowData', fetchStocks());
+    },
+    // updates still on their way must not reach the destroyed grid
+    onGridPreDestroyed: () => {
+        socket.onmessage = null;
     },
 };
 

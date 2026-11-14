@@ -14,10 +14,11 @@ export type ClientMessage =
 export type ServerMessage = { type: 'update'; rows: Holding[] };
 
 const LATENCY_MS = 150;
-const MIN_UPDATE_INTERVAL_MS = 300;
-const MAX_UPDATE_INTERVAL_MS = 1200;
-// the chance that a watched stock changes price on each tick
-const UPDATE_CHANCE = 0.4;
+const MIN_UPDATE_INTERVAL_MS = 50;
+const MAX_UPDATE_INTERVAL_MS = 400;
+// the chance that a stock changes price on each tick: a few stocks are busy, most are quiet
+const MIN_UPDATE_CHANCE = 0.01;
+const MAX_UPDATE_CHANCE = 0.12;
 const REGIONS = ['Americas', 'Asia Pacific', 'Europe'];
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Technology'];
 
@@ -60,6 +61,18 @@ function copy<T>(value: T): T {
 /** Whether the holding is under the route, so a subscription to that route covers it. */
 export function isUnder(holding: Holding, route: string[]): boolean {
     return route.every((key, i) => holding.path[i] === key);
+}
+
+// each stock keeps its own update chance, so updates arrive at different rates
+const updateChances = new Map<string, number>();
+
+function getUpdateChance(id: string): number {
+    let chance = updateChances.get(id);
+    if (chance === undefined) {
+        chance = MIN_UPDATE_CHANCE + Math.random() ** 2 * (MAX_UPDATE_CHANCE - MIN_UPDATE_CHANCE);
+        updateChances.set(id, chance);
+    }
+    return chance;
 }
 
 /** Streams price updates for the subscribed holdings, and for every holding under a subscribed route. */
@@ -132,7 +145,7 @@ class FakeServer {
     private sendUpdates(): void {
         const rows: Holding[] = [];
         for (const holding of holdings.values()) {
-            if (this.isWatched(holding) && Math.random() < UPDATE_CHANCE) {
+            if (this.isWatched(holding) && Math.random() < getUpdateChance(holding.id)) {
                 // a move of up to 2% either way
                 holding.price = Math.max(
                     0.01,

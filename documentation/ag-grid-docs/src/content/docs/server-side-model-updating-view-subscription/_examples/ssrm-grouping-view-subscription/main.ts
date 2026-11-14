@@ -70,7 +70,7 @@ const gridOptions: GridOptions<Row> = {
             }
             socket.send({ type: 'subscribe', ids });
             socket.send({ type: 'subscribeSectors', sectors });
-            recordSubscribed(rows.length, subscribedStocks.size + subscribedSectors.size);
+            recordSubscribed(subscribedStocks.size + subscribedSectors.size);
         },
         unsubscribeRows: (rows) => {
             const ids: string[] = [];
@@ -86,12 +86,16 @@ const gridOptions: GridOptions<Row> = {
             }
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeSectors', sectors });
-            recordUnsubscribed(rows.length, subscribedStocks.size + subscribedSectors.size);
+            recordUnsubscribed(subscribedStocks.size + subscribedSectors.size);
         },
     },
     onGridReady: (params) => {
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('serverSideDatasource', createDatasource());
+    },
+    // updates still on their way must not reach the destroyed grid
+    onGridPreDestroyed: () => {
+        socket.onmessage = null;
     },
 };
 

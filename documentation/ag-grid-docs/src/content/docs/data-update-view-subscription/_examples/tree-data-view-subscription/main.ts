@@ -67,7 +67,7 @@ const gridOptions: GridOptions<Holding> = {
             }
             socket.send({ type: 'subscribe', ids });
             socket.send({ type: 'subscribeRoutes', routes });
-            recordSubscribed(rows.length, subscribedIds.size + subscribedRoutes.size);
+            recordSubscribed(subscribedIds.size + subscribedRoutes.size);
         },
         unsubscribeRows: (rows) => {
             const ids = rows.map((row) => row.id).filter((id) => subscribedIds.delete(id));
@@ -80,12 +80,16 @@ const gridOptions: GridOptions<Holding> = {
                 });
             socket.send({ type: 'unsubscribe', ids });
             socket.send({ type: 'unsubscribeRoutes', routes });
-            recordUnsubscribed(ids.length + routes.length, subscribedIds.size + subscribedRoutes.size);
+            recordUnsubscribed(subscribedIds.size + subscribedRoutes.size);
         },
     },
     onGridReady: (params) => {
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('rowData', fetchHoldings());
+    },
+    // updates still on their way must not reach the destroyed grid
+    onGridPreDestroyed: () => {
+        socket.onmessage = null;
     },
 };
 

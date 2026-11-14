@@ -30,10 +30,13 @@ export type ServerMessage =
     | { type: 'update'; stocks: Stock[]; sectors: SectorRow[] };
 
 const LATENCY_MS = 150;
-const MIN_UPDATE_INTERVAL_MS = 300;
-const MAX_UPDATE_INTERVAL_MS = 1200;
-// the chance that a watched stock changes price on each tick
-const UPDATE_CHANCE = 0.4;
+const MIN_UPDATE_INTERVAL_MS = 50;
+const MAX_UPDATE_INTERVAL_MS = 400;
+// the chance that a stock changes price on each tick: a few stocks are busy, most are quiet
+const MIN_UPDATE_CHANCE = 0.01;
+const MAX_UPDATE_CHANCE = 0.12;
+// the chance that a changed sector row is sent on each tick, so the sector rows update at different times
+const SECTOR_SEND_CHANCE = 0.15;
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Industrials', 'Technology'];
 
 // messages are copied, as sending them over a real socket would
@@ -59,6 +62,18 @@ function sortRows(rows: Row[], sortModel: SortModelItem[]): void {
     });
 }
 
+// each stock keeps its own update chance, so updates arrive at different rates
+const updateChances = new Map<string, number>();
+
+function getUpdateChance(id: string): number {
+    let chance = updateChances.get(id);
+    if (chance === undefined) {
+        chance = MIN_UPDATE_CHANCE + Math.random() ** 2 * (MAX_UPDATE_CHANCE - MIN_UPDATE_CHANCE);
+        updateChances.set(id, chance);
+    }
+    return chance;
+}
+
 /**
  * Groups the stocks by sector and aggregates each sector, and streams updates for the subscribed rows only.
  * A subscribed sector row is sent whole, recalculated whenever one of its stocks moves.
@@ -67,6 +82,8 @@ class FakeServer {
     private readonly stocks: Stock[] = [];
     private readonly subscribedIds = new Set<string>();
     private readonly subscribedSectors = new Set<string>();
+    // sectors whose stocks moved since the sector row was last sent
+    private readonly changedSectors = new Set<string>();
     private timer: ReturnType<typeof setTimeout> | undefined;
 
     constructor(private readonly send: (message: ServerMessage) => void) {
@@ -152,7 +169,7 @@ class FakeServer {
         const moved: Stock[] = [];
         for (const stock of this.stocks) {
             const watched = this.subscribedIds.has(stock.id) || this.subscribedSectors.has(stock.sector);
-            if (watched && Math.random() < UPDATE_CHANCE) {
+            if (watched && Math.random() < getUpdateChance(stock.id)) {
                 // a move of up to 2% either way
                 const price = Math.max(0.01, round(stock.price * (1 + (Math.random() - 0.5) * 0.04)));
                 stock.change = round(((price - stock.price) / stock.price) * 100);
@@ -162,9 +179,13 @@ class FakeServer {
             }
         }
         const stocks = moved.filter((s) => this.subscribedIds.has(s.id));
-        const sectors = [...this.subscribedSectors]
-            .filter((sector) => moved.some((s) => s.sector === sector))
-            .map((sector) => this.getSectorRow(sector));
+        moved.forEach((s) => this.changedSectors.add(s.sector));
+        const sectors = [...this.changedSectors]
+            .filter((sector) => this.subscribedSectors.has(sector) && Math.random() < SECTOR_SEND_CHANCE)
+            .map((sector) => {
+                this.changedSectors.delete(sector);
+                return this.getSectorRow(sector);
+            });
         if (stocks.length || sectors.length) {
             this.send({ type: 'update', stocks, sectors });
         }

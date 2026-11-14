@@ -21,10 +21,11 @@ export type ClientMessage =
 export type ServerMessage = { type: 'update'; rows: Stock[] };
 
 const LATENCY_MS = 150;
-const MIN_UPDATE_INTERVAL_MS = 300;
-const MAX_UPDATE_INTERVAL_MS = 1200;
-// the chance that a subscribed stock changes price on each tick
-const UPDATE_CHANCE = 0.4;
+const MIN_UPDATE_INTERVAL_MS = 50;
+const MAX_UPDATE_INTERVAL_MS = 400;
+// the chance that a stock changes price on each tick: a few stocks are busy, most are quiet
+const MIN_UPDATE_CHANCE = 0.01;
+const MAX_UPDATE_CHANCE = 0.12;
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Industrials', 'Technology'];
 const EXCHANGES = ['NYSE', 'NASDAQ'];
 
@@ -61,6 +62,18 @@ function copy<T>(value: T): T {
 
 export function isInGroup(stock: Stock, { fields, keys }: GroupFilter): boolean {
     return fields.every((field, i) => String(stock[field]) === keys[i]);
+}
+
+// each stock keeps its own update chance, so updates arrive at different rates
+const updateChances = new Map<string, number>();
+
+function getUpdateChance(id: string): number {
+    let chance = updateChances.get(id);
+    if (chance === undefined) {
+        chance = MIN_UPDATE_CHANCE + Math.random() ** 2 * (MAX_UPDATE_CHANCE - MIN_UPDATE_CHANCE);
+        updateChances.set(id, chance);
+    }
+    return chance;
 }
 
 /** Streams price updates for the subscribed stocks, and for every stock in a subscribed group. */
@@ -123,7 +136,7 @@ class FakeServer {
         const groups = [...this.subscribedGroups.values()];
         for (const stock of stocks.values()) {
             const watched = this.subscribedIds.has(stock.id) || groups.some((group) => isInGroup(stock, group));
-            if (watched && Math.random() < UPDATE_CHANCE) {
+            if (watched && Math.random() < getUpdateChance(stock.id)) {
                 // a move of up to 2% either way
                 const price = Math.max(0.01, Math.round(stock.price * (1 + (Math.random() - 0.5) * 0.04) * 100) / 100);
                 stock.change = Math.round(((price - stock.price) / stock.price) * 10000) / 100;

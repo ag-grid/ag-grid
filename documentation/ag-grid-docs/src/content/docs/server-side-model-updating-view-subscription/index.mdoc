@@ -8,7 +8,6 @@ View subscription calls your application with the loaded rows that come into vie
 The example below loads 1,000 stocks in blocks over a simulated websocket, which also streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates). Note the following:
 
 - **Subscribed rows** shows the number of subscribed rows. Only the loaded rows in view are subscribed. Scrolling to rows in a new block subscribes them once the block has loaded.
-- **Last change** shows the number of rows the last change subscribed and unsubscribed, such as `+6 −6` after a scroll.
 - **Updates sent** shows the number of row updates applied since rows were last subscribed. It goes back to 0 when no row is subscribed.
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
 

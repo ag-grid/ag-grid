@@ -8,7 +8,6 @@ View subscription calls your application with the rows that come into view and t
 The example below streams price updates for the subscribed stocks over a simulated websocket, and applies them with [Async Transactions](./data-update-high-frequency/). Note the following:
 
 - **Subscribed rows** shows the number of subscribed rows. Scrolling unsubscribes the rows that leave the view and subscribes the rows that enter it, so it stays about the same.
-- **Last change** shows the number of rows the last change subscribed and unsubscribed, such as `+6 −6` after a scroll.
 - **Updates sent** shows the number of row updates applied since rows were last subscribed. It goes back to 0 when no row is subscribed, for example when the example is scrolled out of the browser viewport.
 - Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
 
