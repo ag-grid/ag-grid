@@ -8,11 +8,12 @@ A Viewport is a row model that allows showing a 'window' of data in your client.
 {% note %}
 Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.
 
-We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
-complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
-[Server-Side Row Model](./server-side-model/), as an alternative.
+Many applications use the Viewport Row Model when they don't need to, and become unnecessarily complicated as a result. Consider these alternatives first:
 
-The differences between row models can be found in our [row models summary page](./row-models/)
+- The [Server-Side Row Model](./server-side-model/), our most powerful row model, loads rows from the server in blocks, and supports grouping, pivoting and tree data on the server.
+- [View Subscription](./data-update-view-subscription/), with the Client-Side or [Server-Side](./server-side-model-updating-view-subscription/) Row Model, tells your application which rows are in view, so the server only pushes live updates for those rows.
+
+See the [Row Models](./row-models/) summary for the differences between them.
 {% /note %}
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.

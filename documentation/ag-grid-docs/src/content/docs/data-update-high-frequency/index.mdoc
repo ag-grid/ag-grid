@@ -58,3 +58,5 @@ The example below demonstrates setting the wait time and also flushing. Note the
 - The example listens on event `asyncTransactionsFlushed` and logs how many transactions got applied.
 
 {% gridExampleRunner title="Flush Transactions" name="flush-transactions"  exampleHeight=590 /%}
+
+To also reduce the volume of updates at the source, use [View Subscription](./data-update-view-subscription/) {% enterpriseIcon /%}, so the server pushes updates only for the rows in view.

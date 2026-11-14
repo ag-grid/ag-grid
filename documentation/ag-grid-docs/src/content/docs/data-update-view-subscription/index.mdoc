@@ -1,0 +1,217 @@
+---
+title: "View Subscription"
+enterprise: true
+---
+
+View subscription calls your application with the rows that come into view and the rows that leave it, so a server can stream updates for the rows the user can see only.
+
+The example below streams price updates for the subscribed stocks over a simulated websocket, and applies them with [Async Transactions](./data-update-high-frequency/). Note the following:
+
+- **Subscribed rows** shows the number of subscribed rows. Scrolling unsubscribes the rows that leave the view and subscribes the rows that enter it, so it stays about the same.
+- **Updates sent** shows the number of row updates applied since rows were last subscribed. It goes back to 0 when no row is subscribed, for example when the example is scrolled out of the browser viewport.
+- Clearing **Subscription active** sets `viewSubscriptionActive` to `false`, which unsubscribes every row and stops the stream. Checking it subscribes the rows in view again.
+
+{% gridExampleRunner title="View Subscription with Flat Data" name="flat-view-subscription" exampleHeight=615 /%}
+
+## Configuration
+
+View subscription requires the `ViewSubscriptionModule` and [Row IDs](./row-ids/). Without `getRowId`, the grid logs a warning and never calls the handlers. It is supported by the Client-Side and Server-Side Row Models.
+
+Provide `subscribeRows` and `unsubscribeRows` in `viewSubscription`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    getRowId: (params) => params.data.id,
+    viewSubscription: {
+        subscribeRows: (rows, params) => {
+            stream.subscribe(rows.map((row) => row.id));
+        },
+        unsubscribeRows: (rows, params) => {
+            stream.unsubscribe(rows.map((row) => row.id));
+        },
+    },
+};
+```
+
+{% interfaceDocumentation interfaceName="ViewSubscriptionOptions" config={"description":""} /%}
+
+### Debouncing
+
+The grid calls the handlers once the view has stopped moving for `debounceMs` milliseconds (default `50`), so rows scrolled past quickly are never subscribed. Raise it when each subscription is costly. Set it to `0` to subscribe while scrolling, and keep the handlers fast so scrolling doesn't lag.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewSubscription: {
+        subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
+        unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
+        debounceMs: 150,
+    },
+};
+```
+
+### Pausing When Hidden
+
+While the grid cannot be seen, every row is unsubscribed: while the page is hidden, for example in a background browser tab or a minimised window, and while the grid is scrolled out of the browser viewport or not displayed. Once the grid can be seen again, the rows in view are subscribed.
+
+Set `pauseWhenHidden` to `false` to keep the rows subscribed while the grid cannot be seen.
+
+## Subscribing Rows
+
+When the grid is ready, it calls `subscribeRows` with the rows in view, even if there are none, unless `viewSubscriptionActive` is `false`. It then calls it with each row that comes into view.
+
+`subscribeRows` receives `ViewRow` objects, which include the row `data`. Call `params.api.getRowNode(row.id)` for the row node.
+
+The row's `data` can be out of date by the time it is subscribed, for example when the row comes back into view after scrolling. Have the server send the row's current values first, then stream its changes.
+
+The grid does not wait for the handlers, and a returned promise is ignored. Queue slow work, such as sending the IDs to the server, and return straight away.
+
+## Unsubscribing Rows
+
+Every subscribed row is passed to `unsubscribeRows` exactly once, when it leaves the view or the grid.
+
+`unsubscribeRows` receives `ViewRowRef` objects, captured when the row was subscribed, as its row node may no longer exist. They hold the `id`, `type`, `parentKeys`, `level` and, for group and tree data rows, the `route`, but no `data`. Key the subscriptions on your server by row ID, or store what you need when the row is subscribed.
+
+When rows change, `unsubscribeRows` is called before `subscribeRows`, and the same ID can be in both, for example when a row moves to another parent. Send the messages to your server in the order the handlers are called.
+
+### Late Updates
+
+Updates sent before a row was unsubscribed can arrive after it, as the server is a round trip away. Apply them as usual while the row is in the grid.
+
+Only rows removed by new row data or a transaction need care: updating a row that is no longer in the grid logs a warning. If rows can be removed, skip updates for IDs that `params.api.getRowNode` does not find.
+
+## Data Changes
+
+Subscriptions are tracked by row ID:
+
+- Rows removed by new row data or a transaction are unsubscribed, and added rows in view are subscribed.
+- A row that new row data keeps stays subscribed, even when its data changes.
+- A row that moves to another parent is unsubscribed with its old `parentKeys` and `route`, then subscribed with the new ones. So is a tree data row that gains its first child or loses its last one, with `hasChildren` updated.
+
+## Rows in View
+
+Only rows in view are passed to the handlers, with these differences:
+
+- Rows [pinned](./row-pinning/) by the user or with `isRowPinned` stay subscribed while pinned, wherever the grid is scrolled to.
+- A [sticky group row](./grouping-opening-groups/#prevent-sticky-groups) stays subscribed while it is stuck at the top of the grid.
+- Group rows shown with `groupDisplayType: 'groupRows'` are passed.
+- [Detail rows](./master-detail/), rows for which `isFullWidthRow` returns `true`, and total rows (group totals, the grand total and the pivot root row) are never passed. Total rows can still show aggregated values. See [Group Aggregates](#group-aggregates).
+
+No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every row counts as in view, so keep the normal layout for grids with many rows.
+
+## Row Types
+
+Each row has a `type`:
+
+- `'group'`: a group row, created by [Row Grouping](./grouping/) or [Pivoting](./pivoting/). The `route` holds the group keys down to and including this row. `data` is `undefined`, as the grid creates group rows.
+- `'tree'`: a row in [Tree Data](./tree-data/). `hasChildren` is `true` for rows with children. The `route` holds the keys down to and including this row. `data` is `undefined` for the filler rows the grid creates for missing parents.
+- `'leaf'`: any other row, such as a row in flat data or a leaf row under groups. It has no `route`.
+
+The keys in `route` and `parentKeys` are strings, after any [`keyCreator`](./grouping-data/#grouping-on-object-data), so map them back to field values on your server when grouping by numbers, dates or objects.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewSubscription: {
+        subscribeRows: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.subscribeToGroup(row.route);
+                } else {
+                    stream.subscribe(row.id);
+                }
+            });
+        },
+        unsubscribeRows: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.unsubscribeFromGroup(row.route);
+                } else {
+                    stream.unsubscribe(row.id);
+                }
+            });
+        },
+    },
+};
+```
+
+If the stream only has updates for leaf rows, skip group rows and tree data rows that have children in `subscribeRows`, and ignore the IDs you did not subscribe to in `unsubscribeRows`.
+
+### Row Grouping
+
+The example below [groups](./grouping/) stocks by sector, and the handlers subscribe the stocks only. The group rows show no [aggregated values](./aggregation/), as the stocks of a group out of view are not streamed. See [Group Aggregates](#group-aggregates) for how to keep aggregated values current.
+
+- Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
+- **New Row Data** gives every stock a new ID, so the old stocks are unsubscribed and the new ones subscribed.
+
+{% gridExampleRunner title="View Subscription with Row Grouping" name="client-side-view-subscription" exampleHeight=615 /%}
+
+### Tree Data
+
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./tree-data/). The grid creates the region and sector rows from each stock's path, and each of them shows the total value of the stocks under it. Note the following:
+
+- A region or sector row in view is subscribed with its `route`, and the server streams every stock under it, so its total stays current. A stock row in view is subscribed with its ID.
+- Scrolling unsubscribes the rows that leave the view and subscribes the rows that enter it.
+
+{% gridExampleRunner title="View Subscription with Tree Data" name="tree-data-view-subscription" exampleHeight=615 /%}
+
+## Group Aggregates
+
+The grid calculates the [aggregated values](./aggregation/) of a group row from all of its leaf rows, including leaf rows that are not in view. Only the rows in view are passed to `subscribeRows`, so updates for the leaf rows of a subscribed group row need to be requested separately.
+
+For example, suppose 100 stocks are grouped into 5 sectors, and every group is collapsed. Only the 5 group rows are in view, so only they are subscribed. If the application streams updates for the subscribed rows only, the stocks are never updated, and the aggregated values of each sector, and of every group above it, become out of date.
+
+To keep the aggregated values current, use the `route` of each subscribed group row to stream updates for every leaf row in the group. This is not needed when the group rows in view show no aggregated values, or when the leaf rows are kept up to date in another way.
+
+- A leaf row can be covered by its own subscription and by the `route` of a group above it, for example when the group is expanded. Stop streaming a leaf row only when neither covers it.
+- The grand total and total rows are not subscribed, but show aggregated values too. To keep the grand total current, stream every leaf row.
+
+## Pivoting
+
+In [pivot mode](./pivoting/), every row in view is a group row, and each of its cells aggregates the group's leaf rows for one pivot result column. To support pivot mode, treat it as [Group Aggregates](#group-aggregates) across every pivot result column:
+
+1. In `subscribeRows`, send the `route` of each group row to the server, and have it stream every leaf row in that group.
+1. Stream the whole leaf row, not only the fields of the pivot result columns in view. A subscription covers the whole group row, including result columns scrolled out of view.
+1. In `unsubscribeRows`, stop streaming the leaf rows of the group, unless another subscribed row still covers them.
+
+Group rows keep their IDs when pivot mode or the pivot columns change, so only rows that move into or out of view are subscribed or unsubscribed. With no row groups, pivot mode shows only the pivot root row, which is never passed, so nothing is subscribed. Stream every leaf row in that case.
+
+The example below pivots stocks by exchange, grouped by sector, and shows the largest change and the total volume for each exchange. For each subscribed group row, the handlers send its `route` and the grouped fields, and the server streams every stock in the group.
+
+The application decides which data a subscribed row needs. Here a stream runs only when the selected columns show its data: a stock streams while its price, change or volume is visible, and the stocks of a group stream while the group row shows an aggregate. The example listens to the `columnValueChanged`, `columnVisible` and `columnPivotModeChanged` events to pause and resume the streams.
+
+- **Streamed stocks** shows the number of stocks the server sends updates for. The grid aggregates each group row from its stocks, so the five sector rows stream all 100 stocks, and **Streamed stocks** is much larger than **Subscribed rows**.
+- Removing every value column in the [Columns Tool Panel](./tool-panel-columns/) drops **Streamed stocks** to 0, while the group rows stay subscribed.
+- With pivot mode off, hiding **Price**, **Change %** and **Volume** does the same. Showing **Price** streams only the stocks in view, as group rows leave it blank.
+- Changing the row groups or the pivot columns changes which rows are subscribed.
+- **New Row Data** gives every stock a new ID.
+
+{% gridExampleRunner title="View Subscription with Pivoting" name="pivot-view-subscription" exampleHeight=615 /%}
+
+## Lifecycle
+
+The subscription starts when the grid is ready, unless `viewSubscriptionActive` is `false`.
+
+- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured, for example while the grid is in an inactive tab of your application. Setting it back to `true` subscribes the rows in view. While it is `false`, nothing is subscribed, even when the page is shown.
+- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
+- The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
+
+Bind `viewSubscriptionActive` to application state while the handlers stay as they are:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewSubscription: {
+        subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
+        unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
+    },
+    viewSubscriptionActive: isPricesTabSelected,
+};
+```
+
+If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
+
+## Server-Side Row Model
+
+View subscription also works with the Server-Side Row Model, where rows load in blocks and the server calculates aggregated values. See [SSRM View Subscription](./server-side-model-updating-view-subscription/).
+
+## API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["viewSubscription", "viewSubscriptionActive"] /%}

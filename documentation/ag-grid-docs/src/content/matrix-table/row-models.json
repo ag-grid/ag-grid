@@ -7,7 +7,7 @@
         "viewport": false
     },
     {
-        "feature": "Fetch Data as User Scrolls",
+        "feature": "Fetch Data as User Scrolls (Pull)",
         "clientSide": false,
         "infinite": true,
         "serverSide": true,
@@ -74,6 +74,27 @@
         "clientSide": "client",
         "infinite": false,
         "serverSide": "server",
+        "viewport": false
+    },
+    {
+        "feature": "[Update via Transaction](./data-update-transactions) (Push)",
+        "clientSide": true,
+        "infinite": false,
+        "serverSide": true,
+        "viewport": false
+    },
+    {
+        "feature": "[Update via Async Transactions](./data-update-high-frequency) (Push)",
+        "clientSide": true,
+        "infinite": false,
+        "serverSide": true,
+        "viewport": false
+    },
+    {
+        "feature": "View Subscription ([Client-Side](./data-update-view-subscription), [Server-Side](./server-side-model-updating-view-subscription)) (Push)",
+        "clientSide": true,
+        "infinite": false,
+        "serverSide": true,
         "viewport": false
     },
     {
@@ -222,19 +243,5 @@
         "infinite": true,
         "serverSide": true,
         "viewport": true
-    },
-    {
-        "feature": "[Update via Transaction](./data-update-transactions)",
-        "clientSide": true,
-        "infinite": false,
-        "serverSide": true,
-        "viewport": false
-    },
-    {
-        "feature": "[Update via Async Transactions](./data-update-high-frequency)",
-        "clientSide": true,
-        "infinite": false,
-        "serverSide": true,
-        "viewport": false
     }
 ]

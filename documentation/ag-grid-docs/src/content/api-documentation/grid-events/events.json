@@ -523,7 +523,12 @@
                 "url": "./grid-size/"
             }
         },
-        "virtualRowRemoved": {},
+        "virtualRowRemoved": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./data-update-view-subscription/"
+            }
+        },
         "viewportChanged": {},
         "bodyScroll": {},
         "bodyScrollEnd": {}

@@ -1806,6 +1806,18 @@
                 "name": "Row IDs",
                 "url": "./row-ids/"
             }
+        },
+        "viewSubscription": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./data-update-view-subscription/"
+            }
+        },
+        "viewSubscriptionActive": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./data-update-view-subscription/"
+            }
         }
     },
     "clientRowModel": {

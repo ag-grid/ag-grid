@@ -119,7 +119,8 @@ import type {
     Theme,
     Toolbar,
     TreeDataDisplayType,
-    UseGroupTotalRow
+    UseGroupTotalRow,
+    ViewSubscriptionOptions
 } from 'ag-grid-community';
 // @END_IMPORTS@
 
@@ -1436,6 +1437,21 @@ export interface Props<TData> {
          * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
          */
     rowModelType?: RowModelType,
+    /** Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
+         * so that a server stream only sends updates for rows the user can see.
+         * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
+         * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
+         * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
+         * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+         * @agModule `ViewSubscriptionModule`
+         */
+    viewSubscription?: ViewSubscriptionOptions<TData>,
+    /** Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
+         * them configured, for example while the grid is hidden. Set back to `true` to subscribe to the rows in view again.
+         * @default true
+         * @agModule `ViewSubscriptionModule`
+         */
+    viewSubscriptionActive?: boolean,
     /** Set the data to be displayed as rows in the grid.
          * @agModule `ClientSideRowModelModule`
          */
@@ -2390,6 +2406,8 @@ export function getProps() {
         isRowPinnable: undefined,
         isRowPinned: undefined,
         rowModelType: undefined,
+        viewSubscription: undefined,
+        viewSubscriptionActive: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
         suppressModelUpdateAfterUpdateTransaction: undefined,

@@ -1222,6 +1222,12 @@
                             "type": "item",
                             "title": "High Frequency",
                             "path": "data-update-high-frequency"
+                        },
+                        {
+                            "type": "item",
+                            "title": "View Subscription",
+                            "path": "data-update-view-subscription",
+                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1809,6 +1815,12 @@
                                             "type": "item",
                                             "title": "Transactions",
                                             "path": "server-side-model-updating-transactions",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "View Subscription",
+                                            "path": "server-side-model-updating-view-subscription",
                                             "isEnterprise": true
                                         }
                                     ]

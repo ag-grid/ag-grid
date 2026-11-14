@@ -116,6 +116,8 @@ In the example below, note the following:
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
 
+When the updates come from a live stream, [View Subscription](./server-side-model-updating-view-subscription/) tells your application which loaded rows are in view, so the server only needs to push transactions for those rows.
+
 ## Showcase Example
 
 The following demonstrates a more complex example of transactions, it shows subscribing to a source of updates to provide the changes, while using dynamic row grouping, aggregation, and child counts. All of which react to the changes caused by the transactions.
