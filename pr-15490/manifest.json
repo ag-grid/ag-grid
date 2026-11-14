@@ -2,7 +2,7 @@
   "version": 1,
   "repo": "ag-grid/ag-grid",
   "pr": 15490,
-  "sha": "161c5e64e5c3ff62b4bfcf663a6ea4dc94956f18",
+  "sha": "5f04d0a0da5cf5e040d85f6bb386f96242a02b46",
   "base": "https://ag-grid.github.io/ag-grid/pr-15490/",
   "umd": {
     "ag-grid-community": "ag-grid-community.min.js",

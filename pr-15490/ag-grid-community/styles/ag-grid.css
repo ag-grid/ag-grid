@@ -1324,6 +1324,23 @@
   opacity: var(--ag-icon-image-opacity-pdf, var(--ag-icon-image-opacity, 0.9));
 }
 
+.ag-icon-filter-remove {
+  font-family: var(--ag-icon-font-family-filter-remove, var(--ag-icon-font-family));
+  font-weight: var(--ag-icon-font-weight-filter-remove, var(--ag-icon-font-weight));
+  color: var(--ag-icon-font-color-filter-remove, var(--ag-icon-font-color));
+}
+
+.ag-icon-filter-remove::before {
+  content: var(--ag-icon-font-code-filter-remove, "\f14b");
+  display: var(--ag-icon-font-display-filter-remove, var(--ag-icon-font-display));
+}
+
+.ag-icon-filter-remove::after {
+  background-image: var(--ag-icon-image-filter-remove, var(--ag-icon-image));
+  display: var(--ag-icon-image-display-filter-remove, var(--ag-icon-image-display));
+  opacity: var(--ag-icon-image-opacity-filter-remove, var(--ag-icon-image-opacity, 0.9));
+}
+
 .ag-icon-row-drag::before {
   content: var(--ag-icon-font-code-grip);
 }

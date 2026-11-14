@@ -44727,7 +44727,7 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
     for (let i = 0, len = cols.length; i < len; ++i) {
       const col = cols[i];
       if (col.colDef.showRowGroup === column.getColId()) {
-        col.setColDef(this.createAutoColDef(col.colId, column, i), null, source);
+        col.setColDef(this.createAutoColDef(col.colId, column), null, source);
       }
     }
   }
@@ -44773,7 +44773,7 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
       for (let i = 0, len = currentCols.length; i < len; ++i) {
         const col = currentCols[i];
         const rowGroupCol = doingMultiAutoColumn ? rowGroupCols[i] : void 0;
-        col.setColDef(this.createAutoColDef(col.colId, rowGroupCol, i), null, source);
+        col.setColDef(this.createAutoColDef(col.colId, rowGroupCol), null, source);
       }
       return currentCols;
     }
@@ -44797,7 +44797,7 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
     colModel.beginColUpdate();
     try {
       for (let i = 0; i < len; ++i) {
-        state[i] = this.updateOneAutoCol(cols[i], i, source);
+        state[i] = this.updateOneAutoCol(cols[i], source);
       }
       _applyColumnState2(beans, { state }, source, true);
     } finally {
@@ -44831,10 +44831,10 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
       const len = rowGroupCols.length;
       result = new Array(len);
       for (let i = 0; i < len; ++i) {
-        result[i] = this.reuseOrCreateAutoCol(survivors, rowGroupCols[i], i, source);
+        result[i] = this.reuseOrCreateAutoCol(survivors, rowGroupCols[i], source);
       }
     } else {
-      result = [this.reuseOrCreateAutoCol(survivors, void 0, void 0, source)];
+      result = [this.reuseOrCreateAutoCol(survivors, void 0, source)];
     }
     for (const col of survivors.values()) {
       if (col.isAlive()) {
@@ -44843,16 +44843,16 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
     }
     return result;
   }
-  /** Reuse the existing auto col for `rowGroupCol` (refreshing its colDef + index) if present, else create it. */
-  reuseOrCreateAutoCol(survivors, rowGroupCol, index, source) {
+  /** Reuse the existing auto col for `rowGroupCol` (refreshing its colDef) if present, else create it. */
+  reuseOrCreateAutoCol(survivors, rowGroupCol, source) {
     const colId = autoColId(rowGroupCol);
     const existing = survivors.get(colId);
     if (existing !== void 0) {
       survivors.delete(colId);
-      existing.setColDef(this.createAutoColDef(colId, rowGroupCol, index), null, source);
+      existing.setColDef(this.createAutoColDef(colId, rowGroupCol), null, source);
       return existing;
     }
-    return this.createOneAutoCol(colId, rowGroupCol, index);
+    return this.createOneAutoCol(colId, rowGroupCol);
   }
   isSuppressAutoCol() {
     const gos = this.gos;
@@ -44863,25 +44863,25 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
     }
     return gos.get("treeDataDisplayType") === "custom";
   }
-  // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-  createOneAutoCol(colId, rowGroupCol, index) {
-    const colDef = this.createAutoColDef(colId, rowGroupCol, index);
+  // rowGroupCol is missing if groupDisplayType != "multipleColumns"
+  createOneAutoCol(colId, rowGroupCol) {
+    const colDef = this.createAutoColDef(colId, rowGroupCol);
     const newCol = new AgColumn(colDef, null, colId, true, "auto-group");
     this.beans.context.createBean(newCol);
     return newCol;
   }
   /** Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef, returning the state to apply */
-  updateOneAutoCol(colToUpdate, index, source) {
+  updateOneAutoCol(colToUpdate, source) {
     const beans = this.beans;
     const oldColDef = colToUpdate.colDef;
     const underlyingColId = typeof oldColDef.showRowGroup == "string" ? oldColDef.showRowGroup : void 0;
     const underlyingColumn = underlyingColId != null ? beans.colModel.getNonPivotCol(underlyingColId) : void 0;
     const colId = colToUpdate.colId;
-    const colDef = this.createAutoColDef(colId, underlyingColumn ?? void 0, index);
+    const colDef = this.createAutoColDef(colId, underlyingColumn ?? void 0);
     colToUpdate.setColDef(colDef, null, source);
     return _getColumnStateFromColDef(beans, colDef, colId);
   }
-  createAutoColDef(colId, underlyingColumn, index) {
+  createAutoColDef(colId, underlyingColumn) {
     let res = this.createBaseColDef(underlyingColumn);
     const autoGroupColumnDef = this.gos.get("autoGroupColumnDef");
     _mergeDeep3(res, autoGroupColumnDef);
@@ -44898,9 +44898,6 @@ var AutoColService = class extends __agSuperclass_BeanStub36 {
       if (noFieldOrValueGetter) {
         res.filter = false;
       }
-    }
-    if (index && index > 0) {
-      res.headerCheckboxSelection = false;
     }
     const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);
     const hasOwnData = res.valueGetter || res.field != null;
@@ -47371,9 +47368,8 @@ var GroupCellRendererCtrl = class extends __agSuperclass_BeanStub44 {
         return;
       }
     }
-    const checkboxes = typeof rowSelection === "object" ? _getCheckboxes(rowSelection) : this.params.checkbox;
-    const userWantsCheckboxes = typeof checkboxes === "function" || checkboxes === true;
-    if (!userWantsCheckboxes) {
+    const checkboxes = typeof rowSelection === "object" ? _getCheckboxes(rowSelection) : false;
+    if (!checkboxes) {
       return;
     }
     const isMultiAutoCol = typeof column?.getColDef().showRowGroup === "string";
@@ -70945,7 +70941,7 @@ var SparklineCellRenderer = class extends __agSuperclass_Component66 {
   }
   updateSize(newWidth, newHeight, batch = true) {
     const colDef = this.params?.colDef;
-    const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
+    const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
     const env = this.env;
     const cellPadding = env.getDefaultCellHorizontalPadding();
     const widgetSpace = widgets * (env.getDefaultIconSize() + env.getDefaultCellWidgetSpacing());
