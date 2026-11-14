@@ -61,6 +61,11 @@ Selection checkboxes now require `rowSelection` to be set to an options object.
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
 
+### Column Headers
+
+- `headerClass` classes are now also added to the column's floating filter cell, and the `headerClass` callback receives `params.floatingFilter` (`true` for floating filter cells, `false` for column and column group header cells). To keep header-only styling, return classes only when `params.floatingFilter` is `false`, or narrow selectors with `.ag-header-cell:not(.ag-floating-filter)`.
+- A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
