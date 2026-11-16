@@ -12,30 +12,9 @@ import { doDeltaSort } from './deltaSort';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
-    const childrenAfterSort = rowNode.childrenAfterSort;
     const sibling = rowNode.sibling;
     if (sibling) {
-        sibling.childrenAfterSort = childrenAfterSort;
-    }
-    if (!childrenAfterSort) {
-        return;
-    }
-    for (let i = 0, lastIdx = childrenAfterSort.length - 1; i <= lastIdx; i++) {
-        const child = childrenAfterSort[i];
-        const first = i === 0;
-        const last = i === lastIdx;
-        if (child.firstChild !== first) {
-            child.firstChild = first;
-            child.dispatchRowEvent('firstChildChanged');
-        }
-        if (child.lastChild !== last) {
-            child.lastChild = last;
-            child.dispatchRowEvent('lastChildChanged');
-        }
-        if (child.childIndex !== i) {
-            child.childIndex = i;
-            child.dispatchRowEvent('childIndexChanged');
-        }
+        sibling.childrenAfterSort = rowNode.childrenAfterSort;
     }
 };
 
@@ -82,8 +61,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        // AG-309 (Feb 2018) legacy: runs BEFORE postSortRows so callers can read input-order
-        // flags inside their callback. Don't flip — public contract.
         updateRowNodeAfterSort(rootNode);
 
         postSortFunc?.({ nodes: newChildrenAfterSort });

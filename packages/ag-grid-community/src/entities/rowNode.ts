@@ -118,10 +118,6 @@ export class RowNode<TData = any>
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     public leafGroup: boolean | undefined;
 
-    public firstChild: boolean;
-    public lastChild: boolean;
-    public childIndex: number;
-
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
 
@@ -846,7 +842,6 @@ export class RowNode<TData = any>
      * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
      */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
-        this.beans.validation?.checkRowEvents(eventType);
         if (typeof userListener !== 'function') {
             return; // ignoring non functions for compatibility
         }
@@ -879,24 +874,6 @@ export class RowNode<TData = any>
         }
     }
 
-    /**
-     * @deprecated v32.2.0 Check `node.detail` then user provided callback `isFullWidthRow` instead.
-     *
-     * Returns:
-     * - `true` if the node is a full width cell
-     * - `false` if the node is not a full width cell
-     */
-    public isFullWidthCell(): boolean {
-        // log deprecation
-        this.beans.log.warn(61);
-
-        if (this.detail) {
-            return true;
-        }
-
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
-    }
 
     /**
      * Returns the route of keys to the row node. Returns undefined if the node has no key.

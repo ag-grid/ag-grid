@@ -209,10 +209,6 @@ export class AgColumnGroup<TValue = any>
         );
     }
 
-    public getPartId(): number {
-        return this.partId;
-    }
-
     public getActualWidth(): number {
         let groupActualWidth = 0;
         const displayedChildren = this.displayedChildren;
