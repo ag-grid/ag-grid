@@ -327,7 +327,6 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
     addRenderedRowListener: (eventType: RenderedRowEvent, listener: (...args: any[]) => any) => void;
 }
 
-export type FillOperation<TData = any, TContext = any> = (params: FillOperationParams<TData, TContext>) => any;
 /** A Fill Handle callback result created by a helper on `FillOperationParams`. */
 export type FillOperationResult = BrandedType<object, 'FillOperationResult'>;
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

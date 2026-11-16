@@ -961,7 +961,6 @@ export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInit
 export type {
     ColumnMenuItemsSource,
     DoesExternalFilterPass,
-    FillOperation,
     FillOperationParams,
     FillOperationResult,
     FocusGridInnerElement,
