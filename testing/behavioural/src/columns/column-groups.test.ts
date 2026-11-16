@@ -1825,7 +1825,7 @@ describe('Column Groups', () => {
     });
 
     describe('AgProvidedColumnGroup getters + leaf walk', () => {
-        test('getId / getInstanceId / getChildren return live values; getLeafColumns returns leaf columns', async () => {
+        test('getId / getChildren return live values; getLeafColumns returns leaf columns', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1836,7 +1836,7 @@ describe('Column Groups', () => {
             });
             await new GridColumns(
                 api,
-                `getId / getInstanceId / getChildren return live values; getLeafColumns handles e setup`
+                `getId / getChildren return live values; getLeafColumns handles e setup`
             ).checkColumns(`
                 CENTER
                 └─┬ GROUP
@@ -1845,7 +1845,7 @@ describe('Column Groups', () => {
             `);
             await new GridRows(
                 api,
-                `getId / getInstanceId / getChildren return live values; getLeafColumns handles e setup`
+                `getId / getChildren return live values; getLeafColumns handles e setup`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
@@ -1853,7 +1853,6 @@ describe('Column Groups', () => {
             const provided = api.getProvidedColumnGroup('g1')!;
             expect(provided).toBeTruthy();
             expect(provided.getId()).toBe('g1');
-            expect(typeof provided.getInstanceId()).toBe('number');
             expect(provided.getChildren().map((c: any) => c.getColId?.() ?? c.getGroupId?.())).toEqual(['a', 'b']);
 
             // getLeafColumns walks the tree to its leaf columns (public API; no internal field access)
@@ -1862,7 +1861,7 @@ describe('Column Groups', () => {
     });
 
     describe('AgColumnGroup wrapper getters', () => {
-        test('getPartId / isEmptyGroup / getActualWidth on a displayed group', async () => {
+        test('isEmptyGroup / getActualWidth on a displayed group', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1874,28 +1873,26 @@ describe('Column Groups', () => {
                     },
                 ],
             });
-            await new GridColumns(api, `getPartId / isEmptyGroup / getActualWidth on a displayed group setup`)
+            await new GridColumns(api, `isEmptyGroup / getActualWidth on a displayed group setup`)
                 .checkColumns(`
                     CENTER
                     └─┬ GROUP
                       ├── a width:100
                       └── b width:150
                 `);
-            await new GridRows(api, `getPartId / isEmptyGroup / getActualWidth on a displayed group setup`).check(`
+            await new GridRows(api, `isEmptyGroup / getActualWidth on a displayed group setup`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             const g = api.getColumnGroup('g1')!;
             expect(g).toBeTruthy();
-            // partId is assigned per displayed instance — a number
-            expect(typeof g.getPartId()).toBe('number');
             // group has displayed children → not empty
             expect(g.isEmptyGroup()).toBe(false);
             // actual width = sum of displayed children widths
             expect(g.getActualWidth()).toBe(250);
             // isMoving — no cols are being moved
             expect(g.isMoving()).toBe(false);
-            await new GridRows(api, `getPartId / isEmptyGroup / getActualWidth on a displayed group final state`).check(
+            await new GridRows(api, `isEmptyGroup / getActualWidth on a displayed group final state`).check(
                 `
                     ROOT id:ROOT_NODE_ID
                 `

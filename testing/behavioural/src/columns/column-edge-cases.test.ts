@@ -2152,34 +2152,6 @@ describe('Column Edge Cases', () => {
         });
     });
 
-    describe('deprecated methods still work', () => {
-        test('getRight() equals getLeft() + getActualWidth()', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', width: 150 },
-                    { colId: 'b', width: 200 },
-                ],
-            });
-            await new GridColumns(api, `getRight() equals getLeft() + getActualWidth() setup`).checkColumns(`
-                CENTER
-                ├── a width:150
-                └── b width:200
-            `);
-            await new GridRows(api, `getRight() equals getLeft() + getActualWidth() setup`).check(`
-                ROOT id:ROOT_NODE_ID
-            `);
-
-            const colA = api.getColumn('a')!;
-            const colB = api.getColumn('b')!;
-
-            expect(colA.getRight()).toBe(colA.getLeft()! + colA.getActualWidth());
-            expect(colB.getRight()).toBe(colB.getLeft()! + colB.getActualWidth());
-            await new GridRows(api, `getRight() equals getLeft() + getActualWidth() final state`).check(`
-                ROOT id:ROOT_NODE_ID
-            `);
-        });
-    });
-
     describe('column navigation methods', () => {
         test('getDisplayedColAfter returns null at last column', async () => {
             const api = gridsManager.createGrid('myGrid', {

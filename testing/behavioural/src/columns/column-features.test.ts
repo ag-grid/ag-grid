@@ -1723,22 +1723,14 @@ describe('Column Features', () => {
             expect(a.isResizable()).toBe(true);
             expect(a.isSortable()).toBe(true);
             expect(a.getMinWidth()).toBe(75);
-            expect(a.isGreaterThanMax(150)).toBe(false);
-            expect(a.isGreaterThanMax(250)).toBe(true);
             expect(b.isResizable()).toBe(false);
             expect(b.isSortable()).toBe(false);
-
-            // Field-dot flags
-            expect(a.isFieldContainsDots()).toBe(true);
-            expect(b.isFieldContainsDots()).toBe(false);
 
             // Tooltip flags
             expect(a.isTooltipEnabled()).toBe(true);
             expect(b.isTooltipEnabled()).toBe(true);
             expect(c.isTooltipEnabled()).toBe(true);
             expect(d.isTooltipEnabled()).toBe(false);
-            expect(a.isTooltipFieldContainsDots()).toBe(true);
-            expect(c.isTooltipFieldContainsDots()).toBe(false);
 
             // Per-row callback-driven flags
             expect(a.isDndSource(node)).toBe(true);
@@ -1795,14 +1787,12 @@ describe('Column Features', () => {
             expect(allCol.isValueActive()).toBe(false);
             expect(allCol.isPivotActive()).toBe(false);
             expect(allCol.isRowGroupActive()).toBe(false);
-            expect(allCol.isAnyFunctionActive()).toBe(false);
 
             // Allowed flags from colDef.
             expect(allCol.isAllowValue()).toBe(false);
             expect(allCol.isAllowRowGroup()).toBe(false);
             expect(allCol.isAllowPivot()).toBe(false);
             expect(allCol.isAllowFormula()).toBe(false);
-            expect(allCol.isAnyFunctionAllowed()).toBe(false);
 
             // Fill / paste / nav / edit guards — no selection/edit/nav modules wired.
             expect(allCol.isSuppressFillHandle()).toBe(true);
@@ -2128,9 +2118,8 @@ describe('Column Features', () => {
             expect(fired).toBe(firedAfterFirstResize);
         });
 
-        test('deprecated sort helpers reflect current sort + absolute-sort initialSort exercises absolute sort-types path', async () => {
-            // Combined: cycling sort through asc/desc on a regular col covers isSortNone/Ascending/
-            // Descending/Sorting. A second col with `initialSort: { type: 'absolute' }` exercises
+        test('getSortDef reflects current sort + absolute-sort initialSort exercises absolute sort-types path', async () => {
+            // Combined: cycling sort through asc/desc on a regular col covers getSortDef(). A second col with `initialSort: { type: 'absolute' }` exercises
             // the DEFAULT_ABSOLUTE_SORTING_ORDER selection in getSortingOrder.
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -2140,7 +2129,7 @@ describe('Column Features', () => {
             });
             await new GridColumns(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis setup`
             ).checkColumns(`
                 CENTER
                 ├── a width:200
@@ -2148,21 +2137,18 @@ describe('Column Features', () => {
             `);
             await new GridRows(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis setup`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             const a = api.getColumn('a')!;
-            expect(a.isSortNone()).toBe(true);
-            expect(a.isSorting()).toBe(false);
-            expect(a.isSortAscending()).toBe(false);
-            expect(a.isSortDescending()).toBe(false);
+            expect(a.getSortDef()).toBeNull();
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
             await new GridColumns(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState`
             ).checkColumns(`
                 CENTER
                 ├── a width:200 sort:asc
@@ -2170,17 +2156,16 @@ describe('Column Features', () => {
             `);
             await new GridRows(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            expect(a.isSortAscending()).toBe(true);
-            expect(a.isSorting()).toBe(true);
+            expect(a.getSortDef()?.direction).toBe('asc');
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
             await new GridColumns(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState #2`
             ).checkColumns(`
                 CENTER
                 ├── a width:200 sort:desc
@@ -2188,11 +2173,11 @@ describe('Column Features', () => {
             `);
             await new GridRows(
                 api,
-                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
+                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState #2`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            expect(a.isSortDescending()).toBe(true);
+            expect(a.getSortDef()?.direction).toBe('desc');
 
             // Absolute-sort initial state surfaces in column state
             const bState = api.getColumnState().find((s) => s.colId === 'b')!;
