@@ -53,7 +53,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '32.2',
         message: 'Use `rowSelection.groupSelects = "filteredDescendants"` instead.',
     },
-    isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
+    isRowSelectable: { version: '32.2', message: 'Use `rowSelection.isRowSelectable` instead.' },
     suppressCopySingleCellRanges: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
