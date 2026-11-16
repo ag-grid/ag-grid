@@ -10,6 +10,7 @@ import {
     TEST_TIMEOUT_MS,
     UNIT_TEST_ENVIRONMENT,
     diffConfigFile,
+    outputSetupFile,
     packageSourceAliases,
     sortAliases,
     vitestReporters,
@@ -19,6 +20,9 @@ import type { Alias } from '../shared/vitest/shared';
 // The timezone is pinned by the shared config imported above, which every unit project goes through.
 
 const thisDir = path.dirname(fileURLToPath(import.meta.url));
+
+/** Files testing page-global state (module mocks, import order, the licence key): the `behavioural-isolated` project. */
+const ISOLATED_TEST_FILES = ['**/*.isolated.test.ts', '**/*.isolated.test.tsx'];
 
 /** Repo root — two levels up from testing/behavioural. Used to locate packages/ for source aliases. */
 const repoRoot = path.resolve(thisDir, '../..');
@@ -159,82 +163,93 @@ const cssInlinePlugin = {
 // Benchmarks run in a real Chromium (via Playwright) so layout-dependent work is measured against a real
 // layout engine. Tests (mode 'test') always use happy-dom — only benchmark runs go to the browser.
 // `BENCH_BROWSER_HEADED=1` (`./benches.sh --headed`) opens a visible window to watch the run.
-export default defineConfig(async ({ mode }): Promise<ViteUserConfig> => {
-    const isBench = mode === 'benchmark';
-    const browserHeadless = !process.env.BENCH_BROWSER_HEADED;
+export const behaviouralConfig = (isolatedFiles: boolean) =>
+    defineConfig(async (env): Promise<ViteUserConfig> => {
+        const isBench = env.mode === 'benchmark';
+        const browserHeadless = !process.env.BENCH_BROWSER_HEADED;
 
-    // Imported here rather than at module scope: it pulls in playwright, which every `./behave.sh`
-    // run would otherwise load for a browser it never starts.
-    const browserProvider = isBench ? (await import('@vitest/browser-playwright')).playwright : undefined;
-    // Every bench run gets the Task subclass: its warmup, slices and profiling apply outside bench-compare too.
-    const benchPlugins = isBench ? [cssInlinePlugin, pairedTinybenchPlugin] : [];
+        // Imported here rather than at module scope: it pulls in playwright, which every `./behave.sh`
+        // run would otherwise load for a browser it never starts.
+        const browserProvider = isBench ? (await import('@vitest/browser-playwright')).playwright : undefined;
+        // Every bench run gets the Task subclass: its warmup, slices and profiling apply outside bench-compare too.
+        const benchPlugins = isBench ? [cssInlinePlugin, pairedTinybenchPlugin] : [];
 
-    return {
-        // No `esbuild`/`oxc` block: Vite 8 transforms with oxc, whose defaults are already `target: esnext`
-        // and `jsx: { runtime: 'automatic' }`, and an `esbuild` block alongside oxc is warned about and ignored.
+        return {
+            // No `esbuild`/`oxc` block: Vite 8 transforms with oxc, whose defaults are already `target: esnext`
+            // and `jsx: { runtime: 'automatic' }`, and an `esbuild` block alongside oxc is warned about and ignored.
 
-        // A benchmark measures the shipped grid, so it keeps the real delays; only tests get the fast ones.
-        resolve: { alias: isBench ? aliases.filter((alias) => alias !== fastTestTimingsAlias) : aliases },
-        cacheDir: path.resolve(thisDir, 'node_modules', `.vite-bench-${benchCacheKey}`),
-        plugins: benchPlugins,
-        // Cross-origin isolation → `crossOriginIsolated`, dropping Chromium's `performance.now()` clamp
-        // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on happy-dom.
-        server: isBench
-            ? {
-                  headers: {
-                      'Cross-Origin-Opener-Policy': 'same-origin',
-                      'Cross-Origin-Embedder-Policy': 'require-corp',
-                  },
-              }
-            : undefined,
-        test: {
-            name: 'behavioural',
-            globals: true,
-            environment: UNIT_TEST_ENVIRONMENT,
-            // Benchmarks measure rather than assert, so only tests carry the cap.
-            testTimeout: isBench ? undefined : TEST_TIMEOUT_MS,
-            setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
-            diff: diffConfigFile,
-            reporters: vitestReporters(),
-            watch: false,
-            pool: 'threads',
-            // One bench file at a time, so files don't contend for cores. (Tests keep the defaults.)
-            fileParallelism: isBench ? false : undefined,
-            maxWorkers: isBench ? 1 : undefined,
-            root: repoRoot,
-            dir: path.resolve(thisDir, 'src'),
-            include: ['**/*.test.ts', '**/*.test.tsx'],
-            benchmark: { include: ['**/*.bench.ts', '**/*.bench.tsx'] },
-            sequence: isBench ? { sequencer: await benchSequencer() } : undefined,
-            css: isBench,
-            browser: {
-                enabled: isBench,
-                // expose-gc: window.gc for the harness to collect before each measured run. max-semi-space-size:
-                // bigger young gen → fewer scavenge-GC spikes mid-measurement (the main residual noise).
-                // vsync flags drop frame-rate jitter. NB: don't add a `--disable-features` — Chromium keeps
-                // only the last occurrence, clobbering Playwright's noise-reduction defaults.
-                provider: browserProvider?.({
-                    launchOptions: {
-                        args: [
-                            '--js-flags=--expose-gc --max-semi-space-size=256',
-                            '--enable-benchmarking',
-                            '--disable-frame-rate-limit',
-                            '--disable-gpu-vsync',
-                        ],
-                    },
-                }),
-                instances: [{ browser: 'chromium' }],
-                headless: browserHeadless,
-                // No in-browser overlay — `--headed` shows the grid full-window, and `--ui` serves the
-                // separate Vitest dashboard (the bench picker) at a localhost URL, not this overlay.
-                ui: false,
-                screenshotFailures: false,
-                // Large, fixed viewport so the grid (sized 100vw×100vh) renders a representative number
-                // of rows consistently across machines, and fills the window when headed.
-                viewport: { width: 1600, height: 1200 },
-                commands: isBench ? { benchTurn, benchTurnWait: waitBenchTurn, benchSamples, benchProfile } : undefined,
+            // A benchmark measures the shipped grid, so it keeps the real delays; only tests get the fast ones.
+            resolve: { alias: isBench ? aliases.filter((alias) => alias !== fastTestTimingsAlias) : aliases },
+            cacheDir: path.resolve(thisDir, 'node_modules', `.vite-bench-${benchCacheKey}`),
+            plugins: benchPlugins,
+            // Cross-origin isolation → `crossOriginIsolated`, dropping Chromium's `performance.now()` clamp
+            // from 100µs to 5µs (essential for fast micro-benches). Browser benches only; tests stay on happy-dom.
+            server: isBench
+                ? {
+                      headers: {
+                          'Cross-Origin-Opener-Policy': 'same-origin',
+                          'Cross-Origin-Embedder-Policy': 'require-corp',
+                      },
+                  }
+                : undefined,
+            test: {
+                name: isolatedFiles ? 'behavioural-isolated' : 'behavioural',
+                globals: true,
+                environment: UNIT_TEST_ENVIRONMENT,
+                // Benchmarks measure rather than assert, so only tests carry the cap.
+                testTimeout: isBench ? undefined : TEST_TIMEOUT_MS,
+                // Listed rather than imported by `vitest.setup.ts`: without isolation a setup file's imports are
+                // evaluated once per worker, so only a listed file registers its hooks for every test file.
+                setupFiles: [outputSetupFile, path.resolve(thisDir, 'vitest.setup.ts')],
+                // One module graph per worker: importing the grid per file was most of the run's time.
+                // `vitest.setup.ts` resets what a file leaves behind; benches run in a browser and keep isolation.
+                isolate: isBench || isolatedFiles,
+                diff: diffConfigFile,
+                reporters: vitestReporters(),
+                watch: false,
+                pool: 'threads',
+                // One bench file at a time, so files don't contend for cores. (Tests keep the defaults.)
+                fileParallelism: isBench ? false : undefined,
+                maxWorkers: isBench ? 1 : undefined,
+                root: repoRoot,
+                dir: path.resolve(thisDir, 'src'),
+                include: isolatedFiles ? ISOLATED_TEST_FILES : ['**/*.test.ts', '**/*.test.tsx'],
+                exclude: isolatedFiles ? undefined : ['**/node_modules/**', ...ISOLATED_TEST_FILES],
+                benchmark: { include: isolatedFiles ? [] : ['**/*.bench.ts', '**/*.bench.tsx'] },
+                sequence: isBench ? { sequencer: await benchSequencer() } : undefined,
+                css: isBench,
+                browser: {
+                    enabled: isBench,
+                    // expose-gc: window.gc for the harness to collect before each measured run. max-semi-space-size:
+                    // bigger young gen → fewer scavenge-GC spikes mid-measurement (the main residual noise).
+                    // vsync flags drop frame-rate jitter. NB: don't add a `--disable-features` — Chromium keeps
+                    // only the last occurrence, clobbering Playwright's noise-reduction defaults.
+                    provider: browserProvider?.({
+                        launchOptions: {
+                            args: [
+                                '--js-flags=--expose-gc --max-semi-space-size=256',
+                                '--enable-benchmarking',
+                                '--disable-frame-rate-limit',
+                                '--disable-gpu-vsync',
+                            ],
+                        },
+                    }),
+                    instances: [{ browser: 'chromium' }],
+                    headless: browserHeadless,
+                    // No in-browser overlay — `--headed` shows the grid full-window, and `--ui` serves the
+                    // separate Vitest dashboard (the bench picker) at a localhost URL, not this overlay.
+                    ui: false,
+                    screenshotFailures: false,
+                    // Large, fixed viewport so the grid (sized 100vw×100vh) renders a representative number
+                    // of rows consistently across machines, and fills the window when headed.
+                    viewport: { width: 1600, height: 1200 },
+                    commands: isBench
+                        ? { benchTurn, benchTurnWait: waitBenchTurn, benchSamples, benchProfile }
+                        : undefined,
+                },
             },
-        },
-        clearScreen: false,
-    };
-});
+            clearScreen: false,
+        };
+    });
+
+export default behaviouralConfig(false);

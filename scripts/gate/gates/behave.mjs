@@ -5,7 +5,14 @@
 import { INLINE, NONE, NUMBER, VALUE, captureUsage, isCI } from '../args.mjs';
 
 // Default projects when the caller doesn't pick their own with --project (values are vitest test.names).
-const UNIT_PROJECTS = ['ag-stack', 'ag-grid-community', 'ag-grid-enterprise', 'locale', 'behavioural'];
+const UNIT_PROJECTS = [
+    'ag-stack',
+    'ag-grid-community',
+    'ag-grid-enterprise',
+    'locale',
+    'behavioural',
+    'behavioural-isolated',
+];
 
 export default {
     name: 'behave',

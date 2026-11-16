@@ -1,5 +1,7 @@
 import type { CanvasLike } from 'ag-charts-core';
 
+import { onFileEnd } from '../fileScope';
+
 // Both runtime deps are loaded lazily (inside `init()`, not at module scope) - this module is
 // re-exported from test-utils/index.ts, which almost every behavioural test imports regardless of
 // whether it touches charts. skia-canvas ships a platform-specific native binary, so a top-level
@@ -95,6 +97,7 @@ async function init(): Promise<boolean> {
     // Set before the awaits so a second caller cannot install the patches twice, and rolled back below if
     // setup throws: leaving it true with no saved globals wedges `reset()` and every later `init()`.
     initialized = true;
+    onFileEnd(reset);
     try {
         return await install();
     } catch (error) {

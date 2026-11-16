@@ -137,6 +137,8 @@ All four take `--help` and resolve only from the repo root — from elsewhere ca
 
 **Read a slow file by its per-test rate, not its total** — `--slowest` prints both. A high total with a normal rate is volume, and there is nothing to reclaim without deleting coverage. A high *rate* is a defect worth chasing.
 
+**Behavioural test files share one window per worker.** The `behavioural` project runs without per-file isolation, so the grid is imported once per worker rather than once per file. At each file's end, `testing/behavioural/vitest.setup.ts` destroys the grids still on the page, empties the body and resets the grid's module registry and logging. It then fails the file if a DOM prototype was left patched. Patch a shared object with `definePropertyForFile` or `onFileEnd` from `ag-test-utils`, which undo it when the file ends. A file testing page-global state (`vi.mock`, import order, the licence key) is named `*.isolated.test.ts` and runs in the `behavioural-isolated` project.
+
 **Split a file whose tests are individually fast but numerous.** Vitest parallelises across files, not within one, so a long matrix serialises in a single worker. Split it into sibling suites sharing a harness module — one of the few cases that outweighs the preference for extending an existing suite. Prefer `test.each` over one test looping the matrix, so a failure names the case rather than only the file.
 
 ## Key practices

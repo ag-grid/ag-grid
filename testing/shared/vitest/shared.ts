@@ -8,7 +8,7 @@ import type { ViteUserConfig } from 'vitest/config';
 import { TEST_TIMEOUT_MS } from './timings';
 
 /** Output-volume controls (`--no-diff`, `--stack-trace-len`, DEBUG_PRINT_LIMIT), shared by every unit project. */
-const outputSetupFile = path.resolve(__dirname, 'output.setup.ts');
+export const outputSetupFile = path.resolve(__dirname, 'output.setup.ts');
 
 /** Diff options module (`--diff-lines`), shared by every unit project. */
 export const diffConfigFile = path.resolve(__dirname, 'diff.ts');
