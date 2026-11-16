@@ -5,7 +5,7 @@ import { resolve, dirname, basename, sep } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes, timingSafeEqual } from 'crypto';
 import { dump } from 'js-yaml';
-import { exec, spawn } from 'child_process';
+import { exec, execFileSync, spawn } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -59,8 +59,22 @@ function normaliseSnykData(raw) {
     return projects;
 }
 
+// git skips ignored build output (tmp/, .nx/, dist/) that takes the recursive walk seconds to scan.
+function getSnykFiles(dir) {
+    try {
+        const output = execFileSync(
+            'git',
+            ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', '.snyk', '**/.snyk'],
+            { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+        );
+        return output.split('\0').filter(Boolean).map((file) => resolve(dir, file));
+    } catch {
+        return walkSnykFiles(dir);
+    }
+}
+
 // Recursively find all .snyk files under dir, skipping node_modules and .git.
-function getSnykFiles(dir, found = []) {
+function walkSnykFiles(dir, found = []) {
     let entries;
     try {
         entries = readdirSync(dir, { withFileTypes: true });
@@ -71,7 +85,7 @@ function getSnykFiles(dir, found = []) {
         if (IGNORED_DIRS.has(entry.name)) continue;
         const full = resolve(dir, entry.name);
         if (entry.isDirectory()) {
-            getSnykFiles(full, found);
+            walkSnykFiles(full, found);
         } else if (entry.name === '.snyk') {
             found.push(full);
         }
