@@ -27,7 +27,7 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 
 - **Nx**: Monorepo orchestration and build caching
 - **Yarn**: Package management (version pinned by `packageManager` in `package.json`)
-- **TypeScript**: Strict mode enabled across all packages
+- **TypeScript**: `strict` is off in `tsconfig.base.json`, which enables individual checks (e.g. `strictNullChecks`, `noImplicitAny`) instead; see that file for the current set
 - **ESBuild/Rollup**: Bundle generation
 
 ## Runtime Technologies
@@ -52,7 +52,6 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 
 - **ESLint**: Linting with custom rules
 - **Prettier**: Code formatting (via `yarn nx format --sort-root-tsconfig-paths=false`)
-- **TypeScript Strict Mode**: Enforced across all packages
 
 ## Browser Support
 
