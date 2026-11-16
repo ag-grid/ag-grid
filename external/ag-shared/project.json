@@ -51,6 +51,38 @@
         "production": {}
       }
     },
+    "test": {
+      "executor": "nx:noop",
+      "dependsOn": ["test:vitest"],
+      "inputs": [],
+      "outputs": [],
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
+      }
+    },
+    "test:vitest": {
+      "command": "npx vitest",
+      "outputs": ["{workspaceRoot}/reports/ag-shared.xml"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.config.ts",
+        "watch": false
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-shared.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
+      }
+    },
     "lint": {
       "command": "eslint",
       "options": {

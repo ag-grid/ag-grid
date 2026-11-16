@@ -6,6 +6,10 @@ inputs:
         description: 'Type of branch (pr, latest, release)'
         required: false
         default: 'pr'
+    pr_threshold_mb:
+        description: 'On-disk size in MB above which a PR run resets the Nx cache.'
+        required: false
+        default: '700'
 
 runs:
     using: 'node24'

@@ -9,13 +9,16 @@ if ((process.env.BUILD_FWS ?? '0') !== '1') {
 // Maps a changed project to an ordered list of [project, targets[], config] build tuples.
 //
 // Ordering matters: tuples are processed sequentially (one nx run-many at a time).
-// build:umd is listed before build so the reloadable target (build:umd) runs first,
-// triggering the browser reload as early as possible. The build catch-all (types +
-// package outputs) follows after.
+// The dev server serves dist/umd and dist/package, so build:umd and build:package are both
+// reloadable and listed first: the browser reloads once, after both are fresh. build:types
+// (slow tsc) follows every reloadable tuple and runs in the background lane (see
+// `backgroundTargets`), so it never delays the reload or a later save.
 //
-// Fan-out: upstream changes trigger downstream rebuilds. A change to ag-charts-core
-// queues builds for ag-charts-community and ag-charts-enterprise before the core build
-// itself, so the full dependency chain is rebuilt in dependency order.
+// These projects' `build` is a no-op over build:types, build:package (and build:umd for locale), so
+// it is split into those targets: build:types must be its own tuple to run in the background lane.
+//
+// Fan-out: upstream changes trigger downstream rebuilds in dependency order. build:package
+// depends on ^build:package, so a core edit also rebuilds core's dist/package before the reload.
 function getProjectBuildTargets(project) {
     if (project.startsWith('ag-charts-website-')) {
         return [[project, ['generate'], 'watch']];
@@ -26,28 +29,45 @@ function getProjectBuildTargets(project) {
             return [
                 // docs-resolved-interfaces triggers a dev server reload for API docs pages.
                 [project, ['docs-resolved-interfaces'], 'watch'],
+                [project, ['build:package'], 'watch'],
                 // Rebuild downstream types so community/enterprise stay in sync.
                 ['ag-charts-community', ['build:types'], 'watch'],
                 ['ag-charts-enterprise', ['build:types'], 'watch'],
-                [project, ['build'], 'watch'],
+                [project, ['build:types'], 'watch'],
             ];
         case 'ag-charts-locale':
-        case 'ag-charts-core':
-            // Fan-out: rebuild community and enterprise before the changed package itself.
-            // build:umd listed first to trigger the browser reload as soon as possible.
+            // The dev server serves locale's dist/umd (vanilla examples) directly, so its own
+            // build:umd and build:package are reloadable and run before any build:types.
             return [
-                ['ag-charts-community', ['build:umd', 'build'], 'watch'],
-                ['ag-charts-enterprise', ['build:umd', 'build'], 'watch'],
-                [project, ['build'], 'watch'],
+                [project, ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-community', ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-enterprise', ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-community', ['build:types'], 'watch'],
+                ['ag-charts-enterprise', ['build:types'], 'watch'],
+                [project, ['build:types'], 'watch'],
+            ];
+        case 'ag-charts-core':
+            // Core has no build:umd; community's build:package rebuilds its dist/package as a dependency.
+            return [
+                ['ag-charts-community', ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-enterprise', ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-community', ['build:types'], 'watch'],
+                ['ag-charts-enterprise', ['build:types'], 'watch'],
+                [project, ['build:types'], 'watch'],
             ];
         case 'ag-charts-community':
             // Enterprise depends on community, so rebuild enterprise first.
             return [
-                ['ag-charts-enterprise', ['build:umd', 'build'], 'watch'],
-                [project, ['build:umd', 'build'], 'watch'],
+                ['ag-charts-enterprise', ['build:umd', 'build:package'], 'watch'],
+                [project, ['build:umd', 'build:package'], 'watch'],
+                ['ag-charts-enterprise', ['build:types'], 'watch'],
+                [project, ['build:types'], 'watch'],
             ];
         case 'ag-charts-enterprise':
-            return [[project, ['build:umd', 'build'], 'watch']];
+            return [
+                [project, ['build:umd', 'build:package'], 'watch'],
+                [project, ['build:types'], 'watch'],
+            ];
         case 'ag-charts-demos':
             // Rebuild the demo apps into their dist with the embedded base path. build:watch
             // skips the typecheck + upstream deps of the full build for a fast, reload-gated
@@ -72,5 +92,7 @@ module.exports = {
         'build:watch',
         'generate-examples',
     ],
+    // Run only when nothing else is queued; a save stops them and re-queues them. Never reload targets.
+    backgroundTargets: ['build:types'],
     getProjectBuildTargets,
 };

@@ -6,7 +6,7 @@ const branchType = process.env.INPUT_BRANCH_TYPE || 'pr';
 
 // Cache size thresholds in MB
 const CACHE_SIZE_THRESHOLD_MB = 1024; // 1GB
-const CACHE_SIZE_AGGRESSIVE_THRESHOLD_MB = 700; // 700MB for PR branches
+const CACHE_SIZE_AGGRESSIVE_THRESHOLD_MB = Number(process.env.INPUT_PR_THRESHOLD_MB) || 700; // PR branches
 
 console.log(`Tidy Nx Cache - Branch type: ${branchType}`);
 
@@ -37,7 +37,7 @@ let shouldReset = false;
 let reason = '';
 
 if (branchType === 'pr') {
-    // Aggressive cleanup for PR branches - reset on every run if cache > 700MB
+    // Aggressive cleanup for PR branches - reset on every run if cache exceeds the PR threshold
     if (cacheSizeMB > CACHE_SIZE_AGGRESSIVE_THRESHOLD_MB) {
         shouldReset = true;
         reason = `PR branch cache exceeds ${CACHE_SIZE_AGGRESSIVE_THRESHOLD_MB}MB threshold`;

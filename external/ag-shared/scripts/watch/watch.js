@@ -21,6 +21,7 @@ const {
     BUILD_QUEUE_EMPTY_FILE,
     WATCH_STATUS_FILE,
     MAX_BUILD_HISTORY,
+    PREEMPT_EXIT_TIMEOUT_MS,
 } = require('./constants');
 const chartsConfig = require('./chartsWatch.config');
 const gridConfig = require('./gridWatch.config');
@@ -131,6 +132,9 @@ function updateBuildHistory(target, config, projects, status, startTime, endTime
         statusData.recentBuilds = statusData.recentBuilds.slice(0, MAX_BUILD_HISTORY);
     }
 
+    // A pre-empted build says nothing about the target's health.
+    if (status === 'cancelled') return;
+
     // Update target history
     if (!statusData.targetHistory[target]) {
         statusData.targetHistory[target] = {
@@ -177,6 +181,9 @@ function createTimeManager() {
                 warning(`Time '${label}' not started`);
             }
         },
+        cancel(label) {
+            delete startTimes[label];
+        },
         hasStarted(label) {
             return Boolean(startTimes[label]);
         },
@@ -209,6 +216,8 @@ function createTimeManager() {
 }
 
 const spawnedChildren = new Set();
+// Own process group, so one signal reaches nx and the executors it forks; the terminal's Ctrl+C does not.
+const detachedChildren = new Set();
 const timeManager = createTimeManager();
 
 function spawnNxWatch(outputCb) {
@@ -245,7 +254,22 @@ function spawnNxWatch(outputCb) {
     return exitPromise;
 }
 
-function spawnNxRun(targets, config, projects) {
+function killChild(child) {
+    try {
+        if (detachedChildren.has(child)) {
+            process.kill(-child.pid, 'SIGTERM');
+        } else {
+            child.kill();
+        }
+        return true;
+    } catch (e) {
+        // ESRCH: already gone
+        return e.code === 'ESRCH';
+    }
+}
+
+// Signalling nx alone leaves its executors running for a moment, so background batches are detached.
+function spawnNxRun(targets, config, projects, batch) {
     let exitResolve, exitReject;
     const exitPromise = new Promise((resolve, reject) => {
         exitResolve = resolve;
@@ -265,14 +289,29 @@ function spawnNxRun(targets, config, projects) {
     }
 
     success(`Executing: nx ${nxRunArgs.join(' ')}`);
-    const nxRun = spawn(`nx`, nxRunArgs, { stdio: 'inherit', env: process.env });
+    const detached = batch?.background === true;
+    const nxRun = spawn(`nx`, nxRunArgs, {
+        stdio: detached ? ['ignore', 'inherit', 'inherit'] : 'inherit',
+        detached,
+        env: process.env,
+    });
     spawnedChildren.add(nxRun);
+    if (detached) {
+        detachedChildren.add(nxRun);
+        batch.children.add(nxRun);
+    }
     nxRun.on('error', (e) => {
         console.error(e);
         exitReject(e);
     });
-    nxRun.on('exit', (code) => {
+    nxRun.on('exit', (code, signal) => {
         spawnedChildren.delete(nxRun);
+        detachedChildren.delete(nxRun);
+        batch?.children.delete(nxRun);
+        // nx traps SIGTERM and exits 143.
+        if (batch?.preempted && (signal === 'SIGTERM' || code === 143)) {
+            batch.terminated = true;
+        }
         if (code === 0) {
             exitResolve();
         } else {
@@ -291,7 +330,10 @@ function scheduleBuild(dueMs = QUIET_PERIOD_MS) {
         }
 
         if (timeout) clearTimeout(timeout);
-        timeout = setTimeout(() => build(), dueMs);
+        timeout = setTimeout(() => {
+            timeout = undefined;
+            build();
+        }, dueMs);
     }
 }
 
@@ -338,13 +380,55 @@ function processWatchOutput({ project: rawProject, getProjectBuildTargets }) {
         firstEventTime = performance.now();
     }
 
+    let queuedForeground = false;
     for (const [project, targets, config] of getProjectBuildTargets(rawProject)) {
         for (const target of targets) {
             buildBuffer.push([project, config, target]);
+            queuedForeground ||= !isBackgroundTarget(target);
         }
     }
 
+    // A background build must not delay fresh code: stop it so the new batch starts at once.
+    if (queuedForeground && activeBatch?.background) {
+        preemptActiveBatch();
+    }
+
     scheduleBuild();
+}
+
+function isBackgroundTarget(target) {
+    return globalConfig?.backgroundTargets?.includes(target) ?? false;
+}
+
+let activeBatch = null;
+class BuildCancelled extends Error {}
+
+function preemptActiveBatch() {
+    const batch = activeBatch;
+    if (batch.preempted) return;
+
+    batch.preempted = true;
+    info('Save queued while a background build is running; pre-empting it.');
+
+    const killFailed = [...batch.children].map(killChild).includes(false);
+    if (killFailed) {
+        warning('Could not stop the background build; waiting for it to finish.');
+        batch.preempted = false;
+        return;
+    }
+
+    batch.exitTimer = setTimeout(() => {
+        warning(`Background build still running ${PREEMPT_EXIT_TIMEOUT_MS / 1000}s after pre-empt; waiting for it.`);
+    }, PREEMPT_EXIT_TIMEOUT_MS);
+}
+
+function requeueTuples(tuples) {
+    const queued = new Set(buildBuffer.map((tuple) => tuple.join('\0')));
+    for (const tuple of tuples) {
+        if (!queued.has(tuple.join('\0'))) {
+            buildBuffer.push(tuple);
+        }
+    }
 }
 
 function countReloadTargets() {
@@ -384,7 +468,9 @@ async function build() {
 
     const beforeReloadableCount = countReloadTargets();
     const reloadableSet = globalConfig?.devServerReloadTargets ? new Set(globalConfig.devServerReloadTargets) : new Set();
-    const [, config, firstTarget] = buildBuffer.at(0);
+    // Background targets wait until nothing else is queued, then run as a batch of their own.
+    const batchIsBackground = !buildBuffer.some(([, , target]) => !isBackgroundTarget(target));
+    const [, config, firstTarget] = buildBuffer.find(([, , target]) => isBackgroundTarget(target) === batchIsBackground);
     const firstIsReloadable = reloadableSet.has(firstTarget);
 
     // Collect items for this batch. Reloadable batches match on (config, reloadable)
@@ -392,11 +478,18 @@ async function build() {
     // regardless of config, then run each config group in parallel — saving one Nx
     // spawn (~1s) per extra config group.
     const newBuildBuffer = [];
+    const batchTuples = [];
     const configGroups = new Map(); // config -> { projects: Set, targets: Set }
     for (const next of buildBuffer) {
         const nextIsReloadable = reloadableSet.has(next[2]);
         const configMatch = firstIsReloadable ? next[1] === config : true;
-        if (configGroups.size < BATCH_LIMIT && configMatch && nextIsReloadable === firstIsReloadable) {
+        if (
+            configGroups.size < BATCH_LIMIT &&
+            configMatch &&
+            nextIsReloadable === firstIsReloadable &&
+            isBackgroundTarget(next[2]) === batchIsBackground
+        ) {
+            batchTuples.push(next);
             const groupKey = next[1];
             if (!configGroups.has(groupKey)) {
                 configGroups.set(groupKey, { projects: new Set(), targets: new Set() });
@@ -409,6 +502,8 @@ async function build() {
         }
     }
     buildBuffer = newBuildBuffer;
+    const batch = { background: batchIsBackground, tuples: batchTuples, children: new Set(), preempted: false };
+    activeBatch = batch;
     const afterReloadableCount = countReloadTargets();
 
     // Build a combined message and targets list for logging/status
@@ -439,18 +534,27 @@ async function build() {
         timeManager.start(`${targetMsg} build`);
         success(`Starting build for: ${targetMsg}`);
 
+        // A save can land while the status file is written, before anything has been spawned.
+        if (batch.preempted) throw new BuildCancelled();
+
         // Run config groups in parallel (single group = same as before,
         // multiple groups = parallel nx spawns saving sequential overhead)
         const groupEntries = [...configGroups.entries()];
         if (groupEntries.length === 1) {
             const [groupConfig, { targets, projects }] = groupEntries[0];
-            await spawnNxRun([...targets], groupConfig, [...projects]);
+            await spawnNxRun([...targets], groupConfig, [...projects], batch);
         } else {
-            await Promise.all(
-                groupEntries.map(([groupConfig, { targets, projects }]) =>
-                    spawnNxRun([...targets], groupConfig, [...projects])
-                )
+            const runs = groupEntries.map(([groupConfig, { targets, projects }]) =>
+                spawnNxRun([...targets], groupConfig, [...projects], batch)
             );
+            if (batchIsBackground) {
+                // Wait for every group, so a pre-empted batch has fully stopped before the next starts.
+                const settled = await Promise.allSettled(runs);
+                const failed = settled.find((result) => result.status === 'rejected');
+                if (failed) throw failed.reason;
+            } else {
+                await Promise.all(runs);
+            }
         }
 
         success(`Completed build for: ${targetMsg}`);
@@ -481,6 +585,15 @@ async function build() {
             await writeStatusFile(STATUS.IDLE);
         }
     } catch (e) {
+        if (e instanceof BuildCancelled || (batch.preempted && batch.terminated)) {
+            // Stopped on purpose for a newer save: not a failure, so run it again afterwards.
+            warning(`Background build cancelled for: ${targetMsg}; it will run again.`);
+            timeManager.cancel(`${targetMsg} build`);
+            requeueTuples(batch.tuples);
+            updateBuildHistory(targetsArr.join(','), config, allProjects, 'cancelled', buildStartTime, performance.now());
+            return;
+        }
+
         const errorMsg = e instanceof Error ? e.message : String(e ?? 'Unknown error');
         error(`Build failed for: ${targetMsg}: ${errorMsg}`);
 
@@ -493,7 +606,9 @@ async function build() {
         }
     } finally {
         buildRunning = false;
-        scheduleBuild();
+        activeBatch = null;
+        clearTimeout(batch.exitTimer);
+        scheduleBuild(batch.preempted && !timeout ? 0 : undefined);
     }
 }
 
@@ -591,6 +706,12 @@ function waitMs(timeMs) {
     return new Promise((r) => (resolveWait = r));
 }
 
+process.on('exit', () => {
+    for (const child of detachedChildren) {
+        killChild(child);
+    }
+});
+
 process.on('beforeExit', async () => {
     for (const child of spawnedChildren) {
         child.kill();
@@ -622,6 +743,15 @@ const LIBRARY_KEYS = Object.keys(LIBRARY_CONFIGS);
 const library = process.argv[2];
 if (!LIBRARY_KEYS.includes(library)) {
     const msg = `Invalid library to watch. Options: ${LIBRARY_KEYS.join()}`;
+    error(msg);
+    throw new Error(msg);
+}
+
+const backgroundReloadTargets = (LIBRARY_CONFIGS[library].backgroundTargets ?? []).filter((target) =>
+    LIBRARY_CONFIGS[library].devServerReloadTargets?.includes(target)
+);
+if (backgroundReloadTargets.length > 0) {
+    const msg = `backgroundTargets must not be reload targets: ${backgroundReloadTargets.join()}`;
     error(msg);
     throw new Error(msg);
 }

@@ -9,7 +9,10 @@
  *
  * Usage (assignment — run from the repo root in the CI init job):
  *   node assign-e2e-shards.js --max <maxShards> --count <testCount> \
- *     --timings <timings.json> --test-dir <playwright testDir>
+ *     --timings <timings.json> --test-dir <playwright testDir> [--specs <file>]
+ *
+ * `--specs` limits the plan to the spec files listed in that file, one per line, relative to the
+ * test dir. Without it the plan covers every spec file in the test dir.
  *
  * Prints a GitHub Actions matrix as JSON: {"include": [{"shard": 1, "args": "<playwright args>"}]}.
  * Each shard's `args` is either a list of spec files (relative to the Playwright package), or a
@@ -32,7 +35,8 @@
  *
  * Usage (regenerating a timings file):
  *   1. Pick a run of the SAME event type as the file you are regenerating (a push run for the
- *      push timings, a pull_request run for the PR timings), then download its shard artifacts:
+ *      push timings, a pull_request run that ran the whole suite for the PR timings), then
+ *      download its shard artifacts:
  *        for i in $(seq 1 48); do gh run download <run-id> -n test-results-e2e-shard-$i -D /tmp/e2e-timings/shard-$i; done
  *   2. Check every shard produced a `reports/` directory — `aggregate` skips artifacts without
  *      one, and a silently-skipped shard leaves its spec files to be guessed at median weight.
@@ -119,7 +123,7 @@ function packShards(weighted, maxShards, budget) {
 }
 
 /** Find (via binary search) the smallest per-shard duration budget that fits in `maxShards`. */
-function planShards(weighted, maxShards) {
+function smallestBudget(weighted, maxShards) {
     const total = weighted.reduce((sum, w) => sum + w.seconds, 0);
     let lo = total / maxShards;
     let hi = total;
@@ -131,13 +135,14 @@ function planShards(weighted, maxShards) {
             lo = mid;
         }
     }
-    return packShards(weighted, maxShards, hi);
+    return hi;
 }
 
 function assign(args) {
     const maxShards = Number(args.max);
     const testCount = Number(args.count ?? 0);
     const testDir = args['test-dir'];
+    const onlySpecs = args.specs ? fs.readFileSync(args.specs, 'utf8').split('\n').filter(Boolean) : undefined;
 
     const fallback = (reason) => {
         console.error(`Falling back to count-based sharding: ${reason}`);
@@ -145,7 +150,9 @@ function assign(args) {
         const shardCount = Math.min(Math.ceil(testCount / 100), maxShards);
         const include = [];
         for (let i = 1; i <= shardCount; i++) {
-            include.push({ shard: i, args: `--shard=${i}/${shardCount}` });
+            // Playwright's own sharding would otherwise widen a limited plan back to every spec.
+            const files = (onlySpecs ?? []).map((f) => `${path.basename(testDir)}/${f} `).join('');
+            include.push({ shard: i, args: `${files}--shard=${i}/${shardCount}` });
         }
         console.log(JSON.stringify({ include }));
     };
@@ -174,7 +181,10 @@ function assign(args) {
         .map((file) => ({ file, seconds: timings.files[file] ?? defaultSeconds }))
         .sort((a, b) => b.seconds - a.seconds || (a.file < b.file ? -1 : 1));
 
-    const shards = planShards(weighted, maxShards);
+    // The full suite's budget makes a limited plan use fewer shards, each paying per-shard setup.
+    const budget = smallestBudget(weighted, maxShards);
+    const planned = onlySpecs ? weighted.filter((w) => onlySpecs.includes(w.file)) : weighted;
+    const shards = packShards(planned, maxShards, budget);
     shards.sort((a, b) => b.seconds - a.seconds);
 
     const include = shards.map((shard, i) => {
