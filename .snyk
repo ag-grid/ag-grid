@@ -1,6 +1,117 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.198Z
+    - vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.171Z
+    - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.132Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.121Z
+  SNYK-JS-UNDICI-22370261:
+    - vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.110Z
+    - vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.088Z
+    - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.068Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.058Z
+  SNYK-JS-UNDICI-22291127:
+    - vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.923Z
+    - vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.904Z
+    - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.885Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.879Z
+  SNYK-JS-UNDICI-22291066:
+    - vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.487Z
+    - vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.458Z
+    - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.442Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.436Z
+  SNYK-JS-UNDICI-22290988:
+    - vitest@4.1.12 > vite@8.2.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.039Z
+    - vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.019Z
+    - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:28.993Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:28.988Z
+  SNYK-JS-BASICFTP-22549672:
+    - '@axe-core/cli@4.13.0 > chromedriver@154.0.0 > proxy-agent@8.0.2 > pac-proxy-agent@9.1.0 > get-uri@8.0.1 > basic-ftp@5.3.1':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:38:29.097Z
   SNYK-JS-OPEN-22112123:
     - patch-package@8.0.1 > open@7.4.2:
         reason: >-
@@ -595,6 +706,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-QS-20943482:
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:42:47.518Z
     - '@modelcontextprotocol/server-sequential-thinking@2026.8.31 > @modelcontextprotocol/sdk@1.30.1 > express@5.2.1 > body-parser@2.3.0 > qs@6.16.0':
         reason: >-
             Used in build & dev - not included in final production build
@@ -932,6 +1048,16 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:40:49.439Z
   SNYK-JS-POSTCSSSELECTORPARSER-20510276:
+    - '@nx/rollup@24.0.2 > postcss-modules@6.0.1 > postcss-modules-scope@3.2.1 > postcss-selector-parser@7.1.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:41:35.064Z
+    - '@nx/rollup@24.0.2 > postcss-modules@6.0.1 > postcss-modules-local-by-default@4.2.0 > postcss-selector-parser@7.1.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:41:35.058Z
     - 'cssnano@7.1.9 > cssnano-preset-default@7.0.17 > postcss-merge-longhand@7.0.7 > stylehacks@7.0.11 > postcss-selector-parser@7.1.5':
         reason: >-
             Used in build & dev - not included in final production build
@@ -1116,6 +1242,31 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:34:59.415Z
   SNYK-JS-BRACEEXPANSION-20244952:
+    - '@nx/rollup@24.0.2 > @rollup/plugin-commonjs@25.0.8 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:36.188Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/workspace@24.0.2 > nx@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:36.182Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/workspace@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:36.173Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:36.163Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:36.146Z
     - postcss-url@10.1.4 > minimatch@3.1.5 > brace-expansion@1.1.18:
         reason: >-
             Used in build & dev - not included in final production build
@@ -1482,6 +1633,31 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.608Z
   SNYK-JS-BRACEEXPANSION-20244948:
+    - '@nx/rollup@24.0.2 > @rollup/plugin-commonjs@25.0.8 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:07.926Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/workspace@24.0.2 > nx@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:07.915Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/workspace@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:07.905Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:07.892Z
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:07.884Z
     - postcss-url@10.1.4 > minimatch@3.1.5 > brace-expansion@1.1.18:
         reason: >-
             Used in build & dev - not included in final production build
@@ -3076,6 +3252,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-AJV-15274295:
+    - '@nx/react@24.0.2 > @nx/vite@24.0.2 > ajv@8.17.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:36:25.124Z
     - 'stylelint@17.16.0 > table@6.9.0 > ajv@8.17.1':
         reason: Used in linting - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
@@ -3476,6 +3657,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-FOLLOWREDIRECTS-16032162:
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > http-server@14.1.1 > http-proxy@1.18.1 > follow-redirects@1.15.11':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:40:50.219Z
     - nx@20.8.4 > axios@1.15.2 > follow-redirects@1.15.11:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
@@ -3592,6 +3778,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-14724253:
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:42:00.960Z
     - '@nx/web@24.0.2 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
@@ -3613,6 +3804,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-15268416:
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:42:30.818Z
     - '@nx/web@24.0.2 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
@@ -3666,6 +3862,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
+    - '@nx/react@24.0.2 > @nx/web@24.0.2 > @nx/js@24.0.2 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:37:47.093Z
     - '@nx/js@24.0.2 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
         reason: Dev dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z

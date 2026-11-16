@@ -2,6 +2,16 @@
 version: v1.25.1
 ignore:
   SNYK-JS-UNDICI-22392401:
+    - '@angular/build@21.2.29 > sass@1.97.3 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.254Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.251Z
     - ag-grid-enterprise@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -13,6 +23,16 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.601Z
   SNYK-JS-UNDICI-22370261:
+    - '@angular/build@21.2.29 > sass@1.97.3 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.165Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.160Z
     - ag-grid-enterprise@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -24,6 +44,16 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.600Z
   SNYK-JS-UNDICI-22291127:
+    - '@angular/build@21.2.29 > sass@1.97.3 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.991Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.986Z
     - ag-grid-enterprise@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -35,6 +65,16 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.599Z
   SNYK-JS-UNDICI-22291066:
+    - '@angular/build@21.2.29 > sass@1.97.3 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.543Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.540Z
     - ag-grid-enterprise@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -46,6 +86,16 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.597Z
   SNYK-JS-UNDICI-22290988:
+    - '@angular/build@21.2.29 > sass@1.97.3 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.104Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.101Z
     - ag-grid-enterprise@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project

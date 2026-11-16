@@ -2,6 +2,36 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-UNDICI-22392401:
+        - canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:47:30.272Z
+    SNYK-JS-UNDICI-22370261:
+        - canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:57.185Z
+    SNYK-JS-UNDICI-22291127:
+        - canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:21.003Z
+    SNYK-JS-UNDICI-22291066:
+        - canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:45:30.501Z
+    SNYK-JS-UNDICI-22290988:
+        - canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:43:29.118Z
     SNYK-JS-FFLATE-20883305:
         - 'ag-grid-community@* > *':
               reason: >-

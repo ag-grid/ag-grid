@@ -1,6 +1,111 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - ng-packagr@21.2.7 > @rollup/wasm-node@4.60.4 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.264Z
+    - karma@6.4.4 > chokidar@3.6.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.261Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.247Z
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.244Z
+  SNYK-JS-UNDICI-22370261:
+    - ng-packagr@21.2.7 > @rollup/wasm-node@4.60.4 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.173Z
+    - karma@6.4.4 > chokidar@3.6.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.170Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.155Z
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.152Z
+  SNYK-JS-UNDICI-22291127:
+    - ng-packagr@21.2.7 > @rollup/wasm-node@4.60.4 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.999Z
+    - karma@6.4.4 > chokidar@3.6.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.996Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.976Z
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.972Z
+  SNYK-JS-UNDICI-22291066:
+    - ng-packagr@21.2.7 > @rollup/wasm-node@4.60.4 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.550Z
+    - karma@6.4.4 > chokidar@3.6.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.547Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.534Z
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.531Z
+  SNYK-JS-UNDICI-22290988:
+    - ng-packagr@21.2.7 > @rollup/wasm-node@4.60.4 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.113Z
+    - karma@6.4.4 > chokidar@3.6.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.109Z
+    - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.096Z
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.092Z
   SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
     - '@angular/cli@20.3.35 > @modelcontextprotocol/sdk@1.30.0':
         reason: >-
@@ -129,6 +234,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181005:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:32:14.677Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -155,6 +265,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181009:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:33:07.420Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -176,6 +291,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181011:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:50:30.868Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -197,6 +317,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181013:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:48:25.788Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -223,6 +348,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181015:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:48:47.094Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -249,6 +379,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181017:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:50:46.483Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -270,6 +405,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181019:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:49:17.181Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build
@@ -296,6 +436,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21185768:
+    - '@angular/build@21.2.29 > vite@7.3.7 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:49:30.310Z
     - '@angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5 > msgpackr-extract@3.0.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Used in build & dev - not included in final production build

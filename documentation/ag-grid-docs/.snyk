@@ -2,6 +2,36 @@
 version: v1.25.1
 ignore:
   SNYK-JS-UNDICI-22392401:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.239Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.229Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.223Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.221Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.214Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.212Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -18,6 +48,36 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.444Z
   SNYK-JS-UNDICI-22370261:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.148Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.143Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.138Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.136Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.128Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.125Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -34,6 +94,36 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.439Z
   SNYK-JS-UNDICI-22291127:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.966Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.959Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.955Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.952Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.942Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.939Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -50,6 +140,36 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.428Z
   SNYK-JS-UNDICI-22291066:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.526Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.522Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.517Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.514Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.506Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.503Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -66,6 +186,36 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.420Z
   SNYK-JS-UNDICI-22290988:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.087Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.084Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.078Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.074Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.065Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.061Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project

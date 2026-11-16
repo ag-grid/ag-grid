@@ -2,6 +2,40 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-URIJS-19963963:
+        - eslint@10.13.0 > ajv@6.15.0 > uri-js@4.4.1:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:51:09.308Z
+    SNYK-JS-BRACEEXPANSION-20244952:
+        - typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:40:36.195Z
+        - eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:40:36.193Z
+    SNYK-JS-BRACEEXPANSION-20244948:
+        - typescript-eslint@8.72.0 > @typescript-eslint/eslint-plugin@8.72.0 > @typescript-eslint/type-utils@8.72.0 > @typescript-eslint/typescript-estree@8.72.0 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:40:07.938Z
+        - eslint@10.13.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:40:07.932Z
+    SNYK-JS-AJV-15274295:
+        - webpack@5.112.2 > minimizer-webpack-plugin@5.14.0 > schema-utils@4.8.3 > ajv-formats@3.0.1 > ajv@8.17.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:36:25.129Z
     SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
         - ag-grid-react@* > *:
               reason: >-
@@ -9,78 +43,208 @@ ignore:
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.613Z
     SNYK-JS-UNDICI-22392401:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:47:30.187Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:47:30.162Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.612Z
     SNYK-JS-UNDICI-22370261:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:57.104Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:57.085Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.612Z
     SNYK-JS-UNDICI-22291127:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:20.917Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:20.900Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.611Z
     SNYK-JS-UNDICI-22291066:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:44:33.478Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:44:33.455Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.611Z
     SNYK-JS-UNDICI-22290988:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:43:29.031Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:43:29.012Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.610Z
     SNYK-JS-UNDICI-21185768:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:49:30.331Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:49:30.327Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.610Z
     SNYK-JS-UNDICI-21181019:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:49:17.202Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:49:17.195Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.610Z
     SNYK-JS-UNDICI-21181017:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:50:46.502Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:50:46.498Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.609Z
     SNYK-JS-UNDICI-21181015:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:48:47.110Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:48:47.108Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.609Z
     SNYK-JS-UNDICI-21181013:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:48:25.798Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:48:25.792Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.608Z
     SNYK-JS-UNDICI-21181011:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:50:30.884Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:50:30.882Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.608Z
     SNYK-JS-UNDICI-21181009:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:33:07.440Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:33:07.433Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project
               expires: '2027-03-02T00:00:00.000Z'
               created: 2026-11-16T10:27:48.607Z
     SNYK-JS-UNDICI-21181005:
+        - vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:32:14.691Z
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:32:14.685Z
         - ag-grid-enterprise@* > *:
               reason: >-
                   Local workspace package - its dependencies are scanned and triaged in its own project

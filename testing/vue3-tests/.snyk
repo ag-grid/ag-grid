@@ -2,6 +2,11 @@
 version: v1.25.1
 ignore:
   SNYK-JS-UNDICI-22392401:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.192Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -13,6 +18,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.619Z
   SNYK-JS-UNDICI-22370261:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.107Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -24,6 +34,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.618Z
   SNYK-JS-UNDICI-22291127:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.919Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -35,6 +50,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.617Z
   SNYK-JS-UNDICI-22291066:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.484Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
@@ -46,6 +66,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-16T10:27:48.617Z
   SNYK-JS-UNDICI-22290988:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.036Z
     - ag-grid-vue3@* > *:
         reason: >-
             Local workspace package - its dependencies are scanned and triaged in its own project
