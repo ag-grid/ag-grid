@@ -13,6 +13,7 @@ import {
     _getRowSelectionMode,
     _isMultiRowSelection,
     _isRowSelection,
+    _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -52,7 +53,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
         this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
-        this.addManagedPropertyListener('rowSelection', () => {
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'groupSelectsFiltered', 'rowSelection'], () => {
             const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
             const selectionMode = _getRowSelectionMode(gos);
             const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
@@ -622,7 +623,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 }
 
                 if (!node.footer && !node.expanded) {
-                    // even with descendant group selection, do this recursively as only the filtered children
+                    // even with groupSelectsChildren, do this recursively as only the filtered children
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {
                         addToResult(child);
@@ -674,7 +675,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
 
-        if (!_isMultiRowSelection(gos)) {
+        if (_isUsingNewRowSelectionAPI(gos) && !_isMultiRowSelection(gos)) {
             this.warn(130);
             return;
         }

@@ -40,7 +40,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const { gos, beans } = this;
         this.selectionCtx = new RowRangeSelectionContext(beans.rowModel, beans.pinnedRowModel);
 
-        this.addManagedPropertyListener('rowSelection', () => {
+        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => {
             const callback = _getIsRowSelectable(gos);
             if (callback !== this.isRowSelectable) {
                 this.isRowSelectable = callback;
