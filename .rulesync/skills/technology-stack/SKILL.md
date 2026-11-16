@@ -35,7 +35,7 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 ### Rendering
 
 - **Virtual DOM**: Custom high-performance rendering engine
-- **CSS-in-JS**: Avoided - use CSS modules and traditional stylesheets
+- **CSS-in-JS**: Avoided. Each grid module ships plain `.css` files, listed in its `css` field (`rowSelectionModule.ts` imports `rowSelection.css`) and injected by the grid at runtime; the legacy themes are Sass (`community-modules/styles`). No CSS modules (`*.module.css`).
 - **Canvas**: Used only for specific features (e.g., sparklines)
 
 ### State Management

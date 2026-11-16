@@ -136,10 +136,36 @@ const parseRowIndexAttr = (el: HTMLElement): number => {
     return Number.isFinite(index) ? index : 0;
 };
 
+/** What one outermost layout read has measured. A read changes nothing, yet a scroll size walks the whole subtree
+ *  and every rect sums its ancestors', so each rect and pagination offset is measured once per read. */
+const readScope = { depth: 0, rects: new Map<Element, DOMRect>(), paginationOffsets: new Map<Element, number>() };
+
+function endRead(): void {
+    if (--readScope.depth === 0) {
+        readScope.rects.clear();
+        readScope.paginationOffsets.clear();
+    }
+}
+
 function getBoundingClientRect(this: HTMLElement): DOMRect {
+    let rect = readScope.rects.get(this);
+    if (rect) {
+        return rect;
+    }
+    ++readScope.depth;
+    try {
+        rect = measureRect(this);
+        readScope.rects.set(this, rect);
+    } finally {
+        endRead();
+    }
+    return rect;
+}
+
+function measureRect(el: HTMLElement): DOMRect {
     const { gridWidth, gridHeight, rowHeight, headerHeight, columnWidth, listItemHeight } = mockGridLayout;
 
-    const type = getElementType(this);
+    const type = getElementType(el);
 
     let width = gridWidth;
     let height = 20;
@@ -180,8 +206,8 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
         }
 
         case 'row': {
-            const rowIndex = parseRowIndexAttr(this);
-            const paginationOffset = getPaginationOffset(this);
+            const rowIndex = parseRowIndexAttr(el);
+            const paginationOffset = getPaginationOffset(el);
             const adjustedRowIndex = rowIndex - paginationOffset;
             top = adjustedRowIndex * rowHeight;
             height = rowHeight;
@@ -193,9 +219,9 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
         }
 
         case 'cell': {
-            const rowIndex = parseRowIndexAttr(this);
-            const colIndex = parseInt(this.getAttribute('col-index') || '0', 10);
-            const paginationOffset = getPaginationOffset(this);
+            const rowIndex = parseRowIndexAttr(el);
+            const colIndex = parseInt(el.getAttribute('col-index') || '0', 10);
+            const paginationOffset = getPaginationOffset(el);
             const adjustedRowIndex = rowIndex - paginationOffset;
 
             top = adjustedRowIndex * rowHeight;
@@ -207,7 +233,7 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
 
         case 'drag-handle': {
             const cellRect =
-                (this.closest('.ag-cell') ?? this.closest('.ag-row'))?.getBoundingClientRect() ??
+                (el.closest('.ag-cell') ?? el.closest('.ag-row'))?.getBoundingClientRect() ??
                 new DOMRect(0, 0, 75, mockGridLayout.rowHeight);
 
             return new DOMRect(cellRect.left, cellRect.top, mockGridLayout.dragHandleWidth, cellRect.height);
@@ -225,7 +251,7 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
 
         case 'default': {
             // position:fixed = auto-width measurement container; return 0 so auto-sizing falls back to minWidth.
-            if (this.style?.position === 'fixed') {
+            if (el.style?.position === 'fixed') {
                 width = 0;
                 height = 0;
             } else {
@@ -237,24 +263,24 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
     }
 
     // Prefer explicit grid-set style dimensions so auto-sizing reads real column/row sizes.
-    const styleWidth = parseFloat(this.style?.width);
+    const styleWidth = parseFloat(el.style?.width);
     if (!isNaN(styleWidth) && styleWidth > 0) {
         width = styleWidth;
     }
 
-    const styleHeight = parseFloat(this.style?.height);
+    const styleHeight = parseFloat(el.style?.height);
     if (!isNaN(styleHeight) && styleHeight > 0) {
         height = styleHeight;
     }
 
-    const overrideHeight = mockGridLayout.elementHeightOverride?.(this);
+    const overrideHeight = mockGridLayout.elementHeightOverride?.(el);
     if (overrideHeight != null) {
         height = overrideHeight;
     }
 
     // The parent, not `offsetParent ?? parentElement`: nothing here reports a real offsetParent, so that
     // fallback resolved to the parent every time anyway, at the cost of a `closest()` per rect.
-    const offsetParent = this.parentElement;
+    const offsetParent = el.parentElement;
     if (offsetParent) {
         const parentRect = offsetParent.getBoundingClientRect();
         top += parentRect.top || 0;
@@ -418,19 +444,24 @@ function init(): boolean {
         Object.defineProperty(Element.prototype, prop, {
             configurable: true,
             get(this: HTMLElement) {
-                let max = this.getBoundingClientRect()[axis];
-                const styleValue = parseFloat(this.style?.[axis]);
-                if (!isNaN(styleValue) && styleValue > max) {
-                    max = styleValue;
-                }
-                const children = this.children;
-                for (let i = 0, len = children.length; i < len; ++i) {
-                    const childMax = (children[i] as HTMLElement)[prop];
-                    if (childMax > max) {
-                        max = childMax;
+                ++readScope.depth;
+                try {
+                    let max = this.getBoundingClientRect()[axis];
+                    const styleValue = parseFloat(this.style?.[axis]);
+                    if (!isNaN(styleValue) && styleValue > max) {
+                        max = styleValue;
                     }
+                    const children = this.children;
+                    for (let i = 0, len = children.length; i < len; ++i) {
+                        const childMax = (children[i] as HTMLElement)[prop];
+                        if (childMax > max) {
+                            max = childMax;
+                        }
+                    }
+                    return max;
+                } finally {
+                    endRead();
                 }
-                return max;
             },
         });
     };
@@ -462,10 +493,10 @@ function init(): boolean {
     installScrollPositionPatch('scrollTop', 'top');
     installScrollPositionPatch('scrollLeft', 'left');
 
-    // Absolute, not offsetParent-relative: nothing here reports a real offsetParent, and the consumers that
-    // subtract a scroll offset get a consistent frame either way.
+    // Absolute, as nothing reports a real offsetParent; on HTMLElement.prototype, as happy-dom defines its own
+    // there, which would shadow a patch on Element.prototype.
     const installOffsetPositionPatch = (prop: 'offsetTop' | 'offsetLeft', edge: 'top' | 'left') => {
-        Object.defineProperty(Element.prototype, prop, {
+        Object.defineProperty(HTMLElement.prototype, prop, {
             configurable: true,
             get(this: Element) {
                 return this.getBoundingClientRect()[edge];
@@ -483,6 +514,10 @@ function getPaginationOffset(el: HTMLElement): number {
     if (!body) {
         return 0;
     }
+    const known = readScope.paginationOffsets.get(body);
+    if (known !== undefined) {
+        return known;
+    }
 
     const rows = body.querySelectorAll('.ag-row:not(.ag-header-row)');
     let minIndex = Infinity;
@@ -495,7 +530,9 @@ function getPaginationOffset(el: HTMLElement): number {
         }
     }
 
-    return isFinite(minIndex) ? minIndex : 0;
+    const offset = isFinite(minIndex) ? minIndex : 0;
+    readScope.paginationOffsets.set(body, offset);
+    return offset;
 }
 
 export function innerTextPolyfill() {

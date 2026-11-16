@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -70,7 +70,6 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
                 apply(api, iter++);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;

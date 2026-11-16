@@ -380,8 +380,18 @@ describe('ag-grid calculated columns', () => {
         `);
 
         updateCalculatedColumnDef(api, 'calc', { calculatedExpression: '[b]' });
-        await nextAnimationFrame();
-        await nextAnimationFrame();
+        const gridEl = getGridElement(api)!;
+        const spannedText = (colId: string) =>
+            [...gridEl.querySelectorAll(`.ag-spanned-row [col-id="${colId}"]`)].map((cell) => cell.textContent?.trim());
+        const rowText = (rowId: string, colId: string) =>
+            gridEl.querySelector(`.ag-row[row-id="${rowId}"] [col-id="${colId}"]`)?.textContent?.trim() ?? null;
+        await waitFor(() =>
+            expect({
+                spanned: [spannedText('calc'), spannedText('dep')],
+                r1: [rowText('r1', 'calc'), rowText('r1', 'dep')],
+                r3: [rowText('r3', 'calc'), rowText('r3', 'dep')],
+            }).toEqual({ spanned: [['Q'], ['Q']], r1: ['P', 'P'], r3: [null, null] })
+        );
 
         await new GridRows(api, 'calc re-spans by [b] after expression edit', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID

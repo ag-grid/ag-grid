@@ -107,14 +107,14 @@ yarn nx validate-examples ag-grid-docs
 # Generate framework variants
 yarn nx generate-examples ag-grid-docs
 
-# Run Playwright E2E tests for a specific example
-./docs-e2e.sh "example-name"
+# Run Playwright E2E tests for one example (a bare name also runs same-named examples on other pages)
+./docs-e2e.sh "docs/<page>/_examples/<example>/"
 
 # Run a specific test by name
-./docs-e2e.sh "example-name" --grep "test name"
+./docs-e2e.sh "docs/<page>/_examples/<example>/" --grep "test name"
 
-# Run against a specific framework
-./docs-e2e.sh "example-name" --framework reactFunctionalTs
+# Run one CI shard's framework
+./docs-e2e.sh "docs/<page>/_examples/<example>/" --framework reactFunctionalTs
 ```
 
 ## HTML Container Patterns

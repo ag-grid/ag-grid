@@ -131,19 +131,25 @@ describe('chart format panel shadow colour picker', () => {
     });
 
     test('keeps the colour of a shadow set through the legacy colour option', async () => {
-        const { label } = await openShadowPicker(barShadow({ color: 'rgba(255, 0, 0, 0.5)' }));
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const label = (await openShadowPicker(barShadow({ color: 'rgba(255, 0, 0, 0.5)' }))).label;
 
         expect(label.textContent).toBe('#FF000080');
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('shadow.color');
     });
 
-    test('a pick writes the colour as an opaque fill and the alpha as fillOpacity', async () => {
+    test('a pick writes the colour as an opaque fill and the alpha as fillOpacity, raising no chart warning or error', async () => {
         const { label, writtenShadow, pick } = await openShadowPicker();
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
         await pick('rgba(255, 0, 0, 0.2)');
 
         // The alpha lives in `fillOpacity` alone, so the opacity is not applied twice.
         expect(writtenShadow()).toEqual({ fill: 'rgb(255, 0, 0)', fillOpacity: 0.2 });
         expect(label.textContent).toBe('#FF000033');
+        expect(warnSpy).not.toHaveBeenCalled();
+        expect(errorSpy).not.toHaveBeenCalled();
     });
 
     test('a pick of an opaque colour sets the fillOpacity to 1', async () => {
@@ -155,21 +161,8 @@ describe('chart format panel shadow colour picker', () => {
         expect(label.textContent).toBe('#008000');
     });
 
-    test('a pick changes the colour and opacity of a shadow that is cast', async () => {
-        const { drawnShadow, pick } = await openShadowPicker(barShadow({ enabled: true, blur: 11 }));
-        expect(drawnShadow().enabled).toBe(true);
-
-        await pick('rgba(255, 0, 0, 0.2)');
-
-        expect(drawnShadow()).toMatchObject({
-            enabled: true,
-            blur: 11,
-            fill: 'rgb(255, 0, 0)',
-            fillOpacity: 0.2,
-        });
-    });
-
     test('a pick on a chart that already has a legacy shadow colour changes the shadow it draws', async () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const { label, writtenShadow, drawnShadow, pick } = await openShadowPicker(
             barShadow({ enabled: true, color: 'rgba(255, 0, 0, 0.5)' })
         );
@@ -180,12 +173,14 @@ describe('chart format panel shadow colour picker', () => {
         expect(writtenShadow()).toEqual({ fill: 'rgb(0, 0, 255)', fillOpacity: 0.2 });
         expect(drawnShadow()).toMatchObject({ enabled: true, fill: 'rgb(0, 0, 255)', fillOpacity: 0.2 });
         expect(label.textContent).toBe('#0000FF33');
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('shadow.color');
     });
 
-    test('a pick leaves the rest of the shadow alone', async () => {
+    test('a pick changes the colour and opacity of a shadow that is cast, and leaves the rest of it alone', async () => {
         const { writtenShadow, drawnShadow, pick } = await openShadowPicker(
             barShadow({ enabled: true, blur: 11, xOffset: 7, yOffset: -2 })
         );
+        expect(drawnShadow().enabled).toBe(true);
 
         await pick('rgba(255, 0, 0, 0.2)');
 
@@ -199,17 +194,6 @@ describe('chart format panel shadow colour picker', () => {
             fill: 'rgb(255, 0, 0)',
             fillOpacity: 0.2,
         });
-    });
-
-    test('a pick raises no chart warning or error', async () => {
-        const { pick } = await openShadowPicker();
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-        await pick('rgba(255, 0, 0, 0.2)');
-
-        expect(warnSpy).not.toHaveBeenCalled();
-        expect(errorSpy).not.toHaveBeenCalled();
     });
 
     test('opens on a chart with no series, with the Shadow group present and the picker blank', async () => {

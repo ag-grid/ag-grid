@@ -259,6 +259,7 @@ export {
     _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _resetKeyboardMode,
     _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _debounce } from './utils/debounce';

@@ -6,43 +6,79 @@ import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
 import { polyfillDomGlobals } from 'ag-test-utils/polyfills/domGlobals';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi, vitest } from 'vitest';
 
+import { clearFileIntervals } from './fileIntervals';
+
 // Runs once per test file: the project keeps one window and module graph per worker (`isolate: false`), so
 // this file installs what every file needs once, and puts the page back the way it found it at each file's end.
 
-// `process` is absent in browser mode (BENCH_BROWSER), which measures the real layout and keeps isolation.
-const isNode = typeof process !== 'undefined' && process.versions?.node != null;
-
 polyfillDomGlobals();
 
-// Node-only, and imported here rather than statically: `objectUrls` imports `zlib`.
-const nodePolyfills = isNode
-    ? await Promise.all([
-          import('ag-test-utils/polyfills/mockGridLayout'),
-          import('ag-test-utils/polyfills/objectUrls'),
-          import('ag-test-utils/polyfills/clipboard'),
-      ])
-    : undefined;
-if (nodePolyfills) {
-    const [{ mockGridLayout }, { objectUrls }, { clipboardUtils }] = nodePolyfills;
-    mockGridLayout.init();
-    objectUrls.init();
-    clipboardUtils.init();
-    // user-event patches `focus`/`blur` once per window and marks the document, so it can never be undone per file.
-    (await import('@testing-library/user-event')).default.setup();
+// Imported after the DOM globals they read are in place.
+const [{ mockGridLayout }, { objectUrls }, { clipboardUtils }] = await Promise.all([
+    import('ag-test-utils/polyfills/mockGridLayout'),
+    import('ag-test-utils/polyfills/objectUrls'),
+    import('ag-test-utils/polyfills/clipboard'),
+]);
+mockGridLayout.init();
+// PROBE (temporary): per-file computed-style cost
+if (process.env.PROBE_STYLE) {
+    const g = globalThis as any;
+    if (!g.__probeStyle) {
+        const st = (g.__probeStyle = { gcs: 0, gcsMs: 0, vis: 0, visMs: 0, depth: 0, sheets: 0, callers: new Map() });
+        const realGcs = window.getComputedStyle;
+        const realVis = Element.prototype.checkVisibility;
+        let inside = 0;
+        window.getComputedStyle = function (el: Element, p?: string | null) {
+            if (inside) {
+                st.gcs++;
+                return realGcs.call(window, el, p);
+            }
+            inside++;
+            const t = performance.now();
+            try {
+                st.gcs++;
+                return realGcs.call(window, el, p);
+            } finally {
+                st.gcsMs += performance.now() - t;
+                inside--;
+                const k = (new Error().stack ?? '').split('\n')[2]?.trim().replace(/\(.*ag-grid2\//, '(').slice(0, 140) ?? '';
+                st.callers.set(k, (st.callers.get(k) ?? 0) + 1);
+            }
+        } as typeof window.getComputedStyle;
+        Element.prototype.checkVisibility = function (this: Element, o?: CheckVisibilityOptions) {
+            inside++;
+            const t = performance.now();
+            try {
+                st.vis++;
+                return realVis.call(this, o);
+            } finally {
+                st.visMs += performance.now() - t;
+                inside--;
+            }
+        };
+    }
 }
+objectUrls.init();
+clipboardUtils.init();
+// user-event patches `focus`/`blur` once per window and marks the document, so it can never be undone per file.
+(await import('@testing-library/user-event')).default.setup();
+
+// user-event resets its clipboard stub after each test and detaches it after the file through hooks it registers on
+// import, which a shared module graph runs for the first file only: run them for every file.
+const userEventClipboard = await import('@testing-library/user-event/dist/esm/utils/dataTransfer/Clipboard.js');
+userEventClipboard.detachClipboardStubFromView(window);
+afterEach(() => userEventClipboard.resetClipboardStubOnView(window));
 
 // React Testing Library sets its cleanup, act environment and `@testing-library/dom` wrappers on import, which a
 // shared module graph runs once: set per file instead (a `.tsx` test file is a React one).
-if (isNode) {
-    process.env.RTL_SKIP_AUTO_CLEANUP = 'true';
-    const testingLibraryScope = await import('./testingLibraryScope');
-    let reactCleanup: (() => void) | undefined;
-    beforeAll(async () => {
-        const reactFile = expect.getState().testPath?.endsWith('.tsx') === true;
-        reactCleanup = await testingLibraryScope.useTestingLibraryFor(reactFile);
-    });
-    afterEach(() => reactCleanup?.());
-}
+const testingLibraryScope = await import('./testingLibraryScope');
+process.env.RTL_SKIP_AUTO_CLEANUP = 'true';
+let reactCleanup: (() => void) | undefined;
+beforeAll(async () => {
+    const reactFile = expect.getState().testPath?.endsWith('.tsx') === true;
+    reactCleanup = await testingLibraryScope.useTestingLibraryFor(reactFile);
+});
+afterEach(() => reactCleanup?.());
 
 // A misconfigured grid under test fails loudly rather than scrolling past in the console. Re-asserted each
 // test because the throw config is global, last-write-wins module state; a test exercising a diagnostic
@@ -56,20 +92,18 @@ beforeEach(async () => {
 
 // Shim for code that references `jest` — redirect to vitest.
 (globalThis as Record<string, unknown>).jest = vitest;
+// Before the snapshot, so the filter belongs to the page every file starts from; the `beforeEach` call re-wraps it
+// only when a test's spy displaced it.
+ignoreConsoleLicenseKeyError();
 
-const baseline = isNode ? snapshotPrototypes() : undefined;
-const bodyAttributes = isNode ? snapshotAttributes(document.body) : undefined;
-const htmlAttributes = isNode ? snapshotAttributes(document.documentElement) : undefined;
+const baseline = snapshotSharedObjects();
+const bodyAttributes = snapshotAttributes(document.body);
+const htmlAttributes = snapshotAttributes(document.documentElement);
 
 // Registered before the file's own hooks, so it runs after all of them.
 afterAll(async () => {
-    if (!baseline || !nodePolyfills) {
-        return;
-    }
-    const [{ _resetModuleRegistry, _resetValidationLogging, getGridApi }, { _doOnce }] = await Promise.all([
-        import('ag-grid-community'),
-        import('ag-stack'),
-    ]);
+    const [{ _resetModuleRegistry, _resetValidationLogging, getGridApi }, { _doOnce, _resetKeyboardMode }] =
+        await Promise.all([import('ag-grid-community'), import('ag-stack')]);
     // Each step runs even when an earlier one throws: a half-reset page fails the next file instead of this one.
     try {
         // A grid the file left alive keeps its timers and document listeners, and would call into the next file.
@@ -84,46 +118,65 @@ afterAll(async () => {
             runFileEndCallbacks();
         } finally {
             vi.useRealTimers();
+            clearFileIntervals();
             vi.unstubAllGlobals();
             vi.unstubAllEnvs();
 
             (document.activeElement as HTMLElement | null)?.blur?.();
             document.body.replaceChildren();
-            restoreAttributes(document.body, bodyAttributes!);
-            restoreAttributes(document.documentElement, htmlAttributes!);
+            restoreAttributes(document.body, bodyAttributes);
+            restoreAttributes(document.documentElement, htmlAttributes);
 
-            const [{ mockGridLayout }, { objectUrls }, { clipboardUtils }] = nodePolyfills;
             mockGridLayout.resetOptions();
             objectUrls.reset();
+            userEventClipboard.detachClipboardStubFromView(window);
             clipboardUtils.reset();
+            testingLibraryScope.endTestingLibraryFile();
 
             _resetModuleRegistry();
             _resetValidationLogging();
+            _resetKeyboardMode();
             _doOnce._set.clear();
         }
     }
 
-    const leaks = restorePrototypes(baseline);
+    const leaks = restoreSharedObjects(baseline);
     if (leaks.length) {
         throw new Error(
-            `This test file left shared prototypes changed (put back, so the next file in the worker starts clean):\n` +
+            `This test file left shared globals or prototypes changed (put back, so the next file in the worker starts clean):\n` +
                 `  ${leaks.join('\n  ')}\n` +
                 `Patch through \`definePropertyForFile\` (ag-test-utils/fileScope), or restore in afterAll.`
         );
     }
 });
 
-// Snapshot update mode reaches a TypeScript AST rewriter, so the runs that do not ask for it never load
-// one. `process` is absent in browser mode (BENCH_BROWSER); snapshot updating is node-only anyway.
-if (isNode && process.env.UPDATE_GRID_ROWS_SNAPSHOTS) {
+// Snapshot update mode reaches a TypeScript AST rewriter, so the runs that do not ask for it never load one.
+if (process.env.UPDATE_GRID_ROWS_SNAPSHOTS) {
     await import('./vitest.setup.snapshots');
 }
 
-type PrototypeSnapshot = Map<object, { name: string; descriptors: Record<PropertyKey, PropertyDescriptor> }>;
+type SharedObjectSnapshot = Map<
+    object,
+    { name: string; descriptors: Record<PropertyKey, PropertyDescriptor>; stringKeysOnly: boolean }
+>;
 
-/** Own properties of every prototype of a constructor on `window`, where a polyfill or a test patches the DOM. */
-function snapshotPrototypes(): PrototypeSnapshot {
-    const snapshot: PrototypeSnapshot = new Map();
+/** Set by a library's first use in a worker and kept: the xlsx library's global, the grid's style registry, and
+ *  React's mark on the document it listens to. */
+const LOAD_ONCE_GLOBAL = /^(XLSX|agStyleInjectionVersions|_reactListening\w+)$/;
+
+/** Own properties of the page's globals and of every constructor on `window` and its prototype: where a polyfill or a
+ *  test patches. String keys only on all but the prototypes: the environment and user-event cache by symbol there. */
+function snapshotSharedObjects(): SharedObjectSnapshot {
+    const snapshot: SharedObjectSnapshot = new Map();
+    const add = (target: object, name: string, stringKeysOnly: boolean) => {
+        if (!snapshot.has(target)) {
+            snapshot.set(target, { name, descriptors: Object.getOwnPropertyDescriptors(target), stringKeysOnly });
+        }
+    };
+    add(globalThis, 'globalThis', true);
+    add(document, 'document', true);
+    add(navigator, 'navigator', true);
+    add(console, 'console', true);
     for (const name of Object.getOwnPropertyNames(globalThis)) {
         // Read through the property, not its descriptor: the environment exposes the DOM classes as getters.
         let value: unknown;
@@ -132,33 +185,44 @@ function snapshotPrototypes(): PrototypeSnapshot {
         } catch {
             continue;
         }
-        const prototype: unknown = typeof value === 'function' ? value.prototype : undefined;
-        if (prototype && typeof prototype === 'object' && !snapshot.has(prototype)) {
-            snapshot.set(prototype, { name, descriptors: Object.getOwnPropertyDescriptors(prototype) });
+        if (typeof value !== 'function') {
+            continue;
+        }
+        // Not vitest's `expect`, whose statics are the matchers `expect.extend` adds as each library first loads.
+        if (value !== expect) {
+            add(value, name, true);
+        }
+        const prototype: unknown = value.prototype;
+        if (prototype && typeof prototype === 'object') {
+            add(prototype, `${name}.prototype`, false);
         }
     }
     return snapshot;
 }
 
-/** Puts every prototype back to its snapshot, returning what had changed: a leak fails only the file leaving it. */
-function restorePrototypes(before: PrototypeSnapshot): string[] {
+/** Puts every object back to its snapshot, returning what had changed: a leak fails only the file leaving it. */
+function restoreSharedObjects(before: SharedObjectSnapshot): string[] {
     const changes: string[] = [];
-    for (const [prototype, { name, descriptors }] of before) {
-        const now = Object.getOwnPropertyDescriptors(prototype);
-        for (const key of Reflect.ownKeys(now)) {
+    for (const [target, { name, descriptors, stringKeysOnly }] of before) {
+        const now = Object.getOwnPropertyDescriptors(target);
+        const ownKeys = stringKeysOnly ? Object.getOwnPropertyNames : Reflect.ownKeys;
+        for (const key of ownKeys(now)) {
             const was = descriptors[key as keyof typeof descriptors];
             if (!was) {
-                const restored = Reflect.deleteProperty(prototype, key);
-                changes.push(`${name}.prototype.${String(key)} added${restored ? '' : ' (not configurable: left)'}`);
+                if (typeof key === 'string' && LOAD_ONCE_GLOBAL.test(key)) {
+                    continue;
+                }
+                const restored = Reflect.deleteProperty(target, key);
+                changes.push(`${name}.${String(key)} added${restored ? '' : ' (not configurable: left)'}`);
             } else if (!sameDescriptor(was, now[key as keyof typeof now])) {
-                const restored = Reflect.defineProperty(prototype, key, was);
-                changes.push(`${name}.prototype.${String(key)} replaced${restored ? '' : ' (not configurable: left)'}`);
+                const restored = Reflect.defineProperty(target, key, was);
+                changes.push(`${name}.${String(key)} replaced${restored ? '' : ' (not configurable: left)'}`);
             }
         }
-        for (const key of Reflect.ownKeys(descriptors)) {
+        for (const key of ownKeys(descriptors)) {
             if (!(key in now)) {
-                Reflect.defineProperty(prototype, key, descriptors[key as keyof typeof descriptors]);
-                changes.push(`${name}.prototype.${String(key)} removed`);
+                Reflect.defineProperty(target, key, descriptors[key as keyof typeof descriptors]);
+                changes.push(`${name}.${String(key)} removed`);
             }
         }
     }

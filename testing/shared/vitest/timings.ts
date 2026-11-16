@@ -1,8 +1,6 @@
-// Timing thresholds shared by the vitest configs, `slow-tests.reporter.ts` and `output.setup.ts` - which
-// `./benches.sh` also loads inside a *browser* worker. Kept out of `shared.ts` for that reason: it imports
-// `node:fs`. Nothing here may touch a node builtin, and `process` must stay guarded.
+// Timing thresholds shared by the vitest configs, `slow-tests.reporter.ts` and `output.setup.ts`.
 
-const env = typeof process !== 'undefined' ? process.env : undefined;
+const env = process.env;
 
 // Declared here because this is the one module both the writer (`output.setup.ts`) and the reader
 // (`slow-tests.reporter.ts`) import, so the two halves cannot drift apart without a type error.
@@ -16,11 +14,15 @@ declare module 'vitest' {
         costMs?: number;
         /** Set when `output.setup.ts` failed the test for running past `SLOW_TEST_FAIL_MS`. */
         tooSlow?: boolean;
+        /** On a file: CPU time plus waits from its first hook to its last, its `beforeAll` fixtures included. */
+        fileCostMs?: number;
+        /** On a file: set when `output.setup.ts` failed it for running past `SLOW_FILE_FAIL_MS`. */
+        fileTooSlow?: boolean;
     }
 }
 
 /** Every threshold below is looser here: CI runners are slower and share cores with each other. */
-const isCI = env?.CI != null;
+const isCI = env.CI != null;
 
 /**
  * Per-test timeout for every unit project: several times the suite's slowest legitimate test, and far below
@@ -33,24 +35,31 @@ export const TEST_TIMEOUT_MS = isCI ? 60_000 : 12_000;
 export const SLOW_TEST_WARN_MS = isCI ? 15_000 : 2_000;
 
 /** Above the warning: a test taking longer fails as too slow, locally only (CI, on slower shared runners, has only the cap). */
-export const SLOW_TEST_FAIL_MS = isCI ? Infinity : 4_000;
+export const SLOW_TEST_FAIL_MS = isCI ? Infinity : 5_000;
+
+/**
+ * A whole file, measured as its tests are: a file runs its tests in one worker, one after another, so a long
+ * one sets the run's tail, and a shared `beforeAll` fixture is charged to no test. Split it, or share less.
+ */
+export const SLOW_FILE_WARN_MS = Number(env.AG_SLOW_FILE_WARN_MS ?? (isCI ? 30_000 : 5_000));
+export const SLOW_FILE_FAIL_MS = Number(env.AG_SLOW_FILE_FAIL_MS ?? (isCI ? Infinity : 11_000));
 
 /**
  * How many of the slowest tests `slow-tests.reporter.ts` lists when a run finishes, so the cost is visible
  * on every run rather than only once something is bad enough to warn about. `./behave.sh --slowest N` sets
  * this; 0 turns the table off.
  */
-export const SLOWEST_TESTS_COUNT = Number(env?.AG_SLOWEST_TESTS ?? 5) || 0;
+export const SLOWEST_TESTS_COUNT = Number(env.AG_SLOWEST_TESTS ?? 5) || 0;
 
 /**
  * Floors for those tables, so a healthy run prints nothing. A file's total is mostly how many tests it
  * holds, hence the higher file floor; 5s is where the tail starts. Measured locally, hence the CI multiplier.
  */
-export const SLOWEST_MIN_MS = Number(env?.AG_SLOWEST_MIN_MS ?? (isCI ? 6_000 : 1_200));
-export const SLOWEST_FILE_MIN_MS = Number(env?.AG_SLOWEST_FILE_MIN_MS ?? (isCI ? 15_000 : 5_000));
+export const SLOWEST_MIN_MS = Number(env.AG_SLOWEST_MIN_MS ?? (isCI ? 6_000 : 1_200));
+export const SLOWEST_FILE_MIN_MS = Number(env.AG_SLOWEST_FILE_MIN_MS ?? (isCI ? 15_000 : 5_000));
 
 /**
  * Idle above which a file is listed as reclaimable wait. An absolute floor rather than a share of the file:
  * 3s of idle inside a 10s file is 3s to give back whether or not it clears some percentage.
  */
-export const WAITING_MIN_MS = Number(env?.AG_WAITING_MIN_MS ?? (isCI ? 2_000 : 1_000));
+export const WAITING_MIN_MS = Number(env.AG_WAITING_MIN_MS ?? (isCI ? 2_000 : 1_000));

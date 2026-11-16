@@ -16,7 +16,9 @@ let NodeCanvas: (new (...args: any[]) => ConfiguredCanvasInstance) | undefined;
 type NodeCanvasInstance = ConfiguredCanvasInstance;
 
 let initialized = false;
-let originalCreateElement: typeof document.createElement | undefined;
+/** `document`'s own `createElement` before the patch, usually none: put back as it was, never as a bound copy that the
+ *  next `init()` would wrap again. */
+let originalCreateElement: { descriptor: PropertyDescriptor | undefined } | undefined;
 /** Descriptors, not values: a global that was absent must go back to absent, or a later
  *  `'OffscreenCanvas' in globalThis` feature test answers yes for the rest of the worker. */
 let originalGlobals: [string, PropertyDescriptor | undefined][] | undefined;
@@ -137,12 +139,13 @@ async function install(): Promise<boolean> {
     const canvases = new WeakMap<HTMLCanvasElement, NodeCanvasInstance>();
     // Before the size patch, because `reset()` keys off this being set: patching first would leave the
     // prototype rewritten for the rest of the worker if anything in between threw.
-    originalCreateElement = document.createElement.bind(document);
+    originalCreateElement = { descriptor: Object.getOwnPropertyDescriptor(document, 'createElement') };
+    const createElement = document.createElement;
 
     mockChartContainerSize();
 
     document.createElement = ((tagName: string, options?: ElementCreationOptions): HTMLElement => {
-        const element = originalCreateElement!(tagName, options);
+        const element = createElement.call(document, tagName, options);
         if (tagName.toLowerCase() !== 'canvas') {
             return element;
         }
@@ -174,7 +177,7 @@ async function install(): Promise<boolean> {
 // Each half is restored on its own rather than behind one guard, so this also undoes a partial install.
 function reset(): void {
     if (originalCreateElement) {
-        document.createElement = originalCreateElement;
+        restoreProperty(document, 'createElement', originalCreateElement.descriptor);
         originalCreateElement = undefined;
     }
     for (const [name, descriptor] of originalGlobals ?? []) {

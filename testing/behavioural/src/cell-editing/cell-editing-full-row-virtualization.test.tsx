@@ -757,8 +757,8 @@ describe('Cell Editing: full-row virtualization (React)', () => {
         const anotherCell = gridDiv.querySelector('.ag-row[row-index="1"] .ag-cell[col-id="field1"]') as HTMLElement;
         expect(anotherCell).toBeTruthy();
 
+        await user.click(anotherCell);
         await act(async () => {
-            await user.click(anotherCell);
             await asyncSetTimeout(0);
             await asyncSetTimeout(0);
         });

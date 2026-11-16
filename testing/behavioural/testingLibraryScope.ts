@@ -2,6 +2,7 @@ import type { Config } from '@testing-library/dom';
 import { configure, getConfig } from '@testing-library/dom';
 
 type WrapperConfig = Pick<Config, 'asyncWrapper' | 'eventWrapper' | 'unstable_advanceTimersWrapper'>;
+type ActEnvironment = { IS_REACT_ACT_ENVIRONMENT?: boolean };
 
 const pickWrappers = (config: Config): WrapperConfig => ({
     asyncWrapper: config.asyncWrapper,
@@ -19,11 +20,13 @@ export async function useTestingLibraryFor(reactFile: boolean): Promise<() => vo
     const reactTestingLibrary = await import('@testing-library/react');
     reactWrappers ??= pickWrappers(getConfig());
     configure(reactFile ? reactWrappers : domWrappers);
-    const global = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
     if (reactFile) {
-        global.IS_REACT_ACT_ENVIRONMENT = true;
-    } else {
-        delete global.IS_REACT_ACT_ENVIRONMENT;
+        (globalThis as ActEnvironment).IS_REACT_ACT_ENVIRONMENT = true;
     }
     return reactTestingLibrary.cleanup;
+}
+
+/** Leaves the page without React's act environment, as a file that never set it found it. */
+export function endTestingLibraryFile(): void {
+    delete (globalThis as ActEnvironment).IS_REACT_ACT_ENVIRONMENT;
 }

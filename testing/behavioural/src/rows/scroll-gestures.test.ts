@@ -1,4 +1,4 @@
-import { TestGridsManager, nextAnimationFrame, waitForMissingModuleReports } from 'ag-test-utils';
+import { TestGridsManager, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { GridOptions, Module } from 'ag-grid-community';
@@ -18,11 +18,13 @@ describe('scroll gestures', () => {
 
     beforeEach(() => {
         mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.gridWidth = 700;
+        mockGridLayout.gridHeight = 500;
     });
 
     afterEach(() => {
         grids.reset();
-        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.resetOptions();
         vi.useRealTimers();
         vi.restoreAllMocks();
     });
@@ -32,6 +34,10 @@ describe('scroll gestures', () => {
             'gestures',
             {
                 scrollGestureMode: 'axisLocked',
+                // only the rows and columns in view: every wheel and momentum step measures the scroll size
+                suppressRowVirtualisation: false,
+                suppressColumnVirtualisation: false,
+                rowBuffer: 0,
                 rowHeight: 40,
                 columnDefs: Array.from({ length: 10 }, (_, i) => ({ field: `c${i}`, width: 200 })),
                 rowData: Array.from({ length: 200 }, () => ({})),
@@ -40,13 +46,20 @@ describe('scroll gestures', () => {
             { modules }
         );
         const root = TestGridsManager.getHTMLElement(api)!;
-        root.style.width = '700px';
-        root.style.height = '500px';
         await nextAnimationFrame();
         await nextAnimationFrame();
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
         expect(viewport.clientHeight).toBeGreaterThan(0);
         return { api, root, viewport };
+    }
+
+    // Missing-module reports wait out a 50 ms `setTimeout` debounce: faked (frames stay real), then advanced past.
+    function fakeReportDebounce() {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    }
+
+    async function passReportDebounce() {
+        await vi.advanceTimersByTimeAsync(60);
     }
 
     function wheel(target: HTMLElement, deltaX: number, deltaY: number, init: WheelEventInit = {}) {
@@ -85,8 +98,9 @@ describe('scroll gestures', () => {
     test('reports the missing gesture module and retains native scrolling', async () => {
         enableDevValidations({ throwOn: [] });
         const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        fakeReportDebounce();
         const { root, viewport } = await createGrid({ pinnedTopRowData: [{}] }, []);
-        await waitForMissingModuleReports();
+        await passReportDebounce();
 
         expect(errorSpy).toHaveBeenCalledWith(
             expect.stringContaining('error #200'),
@@ -102,8 +116,9 @@ describe('scroll gestures', () => {
 
     test.each([undefined, 'native'] as const)('native mode (%s) does not require the gesture module', async (mode) => {
         const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        fakeReportDebounce();
         const { viewport } = await createGrid({ scrollGestureMode: mode }, []);
-        await waitForMissingModuleReports();
+        await passReportDebounce();
 
         expect(errorSpy).not.toHaveBeenCalled();
         expect(wheel(viewport, 30, 80).defaultPrevented).toBe(false);
@@ -154,12 +169,13 @@ describe('scroll gestures', () => {
     test('enabling gestures at runtime still requires the module', async () => {
         enableDevValidations({ throwOn: [] });
         const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        fakeReportDebounce();
         const { api, viewport } = await createGrid({ scrollGestureMode: 'native' }, []);
-        await waitForMissingModuleReports();
+        await passReportDebounce();
         expect(errorSpy).not.toHaveBeenCalled();
 
         api.setGridOption('scrollGestureMode', 'axisLocked');
-        await waitForMissingModuleReports();
+        await passReportDebounce();
         expect(errorSpy).toHaveBeenCalledWith(
             expect.stringContaining('error #200'),
             expect.stringContaining('ScrollGestureModule'),

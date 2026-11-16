@@ -1,16 +1,28 @@
 import { _doOnce } from 'ag-stack';
 import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
-import type { BenchOptions } from 'vitest';
-import { bench } from 'vitest';
+import { test } from 'vitest';
 
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
 import { RenderApiModule, createGrid } from 'ag-grid-community';
 
-// Benchmarks use standard vitest `bench`/`suite` and import grid helpers from here (never the
+import type { BenchOptions } from './bench-measure';
+import { measureBench } from './bench-measure';
+
+// Benchmarks use vitest's `suite` and this file's `bench`, and import grid helpers from here (never the
 // `ag-test-utils` barrel, which pulls in node-only helpers and DOM-mock machinery that break the
 // real-browser runner). There is no layout faker — benchmarks measure real layout or none.
-export type { BenchOptions };
 export { SimplePRNG } from 'ag-test-utils/prng';
+
+export type { BenchOptions };
+
+/** One bench, as a test of its own name: vitest runs a bench inside a test; `bench-measure.ts` measures it. */
+export function bench(name: string, fn: () => unknown, options: BenchOptions = {}): void {
+    // Destructured: vitest injects a fixture only when the parameter's pattern names it.
+    test(name, async ({ bench: report }) => {
+        const result = await measureBench(name, fn, options);
+        await report.from(name, () => result).run();
+    });
+}
 
 // A timed loop never yields a frame, so the CSS transitions it starts never finish and pile up, each call
 // costing more than the last (4x over 5000 column moves). At zero length none is ever created.
@@ -33,17 +45,6 @@ export const benchCooldown = (): Promise<void> =>
     (globalThis as { agBenchPaired?: boolean }).agBenchPaired
         ? Promise.resolve()
         : new Promise((resolve) => realSetTimeout(resolve, BENCH_COOLDOWN_MS));
-
-/** Measured window (ms), the same for every bench: noise between processes (~3%) dwarfs a window's own (~1.5%). */
-const BASE_TIME = 500;
-
-/** Warmup (ms): JIT tiers up on work done, so a fast bench needs the same time as a slow one. */
-const WARMUP_TIME = 250;
-
-/** Window and warmup defaults for a `bench()`: `bench(name, fn, benchDefaults({ setup }))`. */
-export function benchDefaults(overrides: BenchOptions = {}): BenchOptions {
-    return { throws: true, warmupTime: WARMUP_TIME, time: BASE_TIME, ...overrides };
-}
 
 /** A scroll gesture's steps are a frame apart, so its scroll-end and re-check timers wait for the gesture to end. */
 const FRAME_MS = 16;
@@ -169,7 +170,6 @@ export function benchAlternating(
             forward = !forward;
         },
         {
-            ...benchDefaults(),
             setup: async () => {
                 await gridsManager.reset();
                 api = gridsManager.createGrid(id, { ...gridOptions, rowData: initialData });
@@ -192,7 +192,6 @@ export function benchRebuild(
         name,
         rebuildRows(() => api, rowData),
         {
-            ...benchDefaults(),
             setup: async () => {
                 await gridsManager.reset();
                 api = gridsManager.createGrid(id, { ...gridOptions, rowData: [] });

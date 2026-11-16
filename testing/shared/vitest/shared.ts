@@ -2,7 +2,9 @@
 // same behaviour applies whether a project runs via `./behave.sh` or standalone (e.g. benches.sh, nx).
 import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
+import { availableParallelism, totalmem } from 'node:os';
 import path from 'node:path';
+import { setFlagsFromString } from 'node:v8';
 import type { ViteUserConfig } from 'vitest/config';
 
 import { TEST_TIMEOUT_MS } from './timings';
@@ -16,6 +18,12 @@ export const diffConfigFile = path.resolve(__dirname, 'diff.ts');
 // Pin the timezone so date-sensitive tests behave identically on every machine. Set when any config
 // imports this module (main process), before workers spawn and inherit the env.
 process.env.TZ = 'UTC';
+
+// Read by each worker's heap as it starts: a larger young generation scavenges the tests' short-lived DOM objects
+// less often (full suite 43.0s -> 38.2s). It can reach ~384MB a worker, so only where each core has 2GB to spare.
+if (totalmem() / availableParallelism() >= 2 * 1024 ** 3) {
+    setFlagsFromString('--max-semi-space-size=128');
+}
 
 const isCI = process.env.CI != null;
 

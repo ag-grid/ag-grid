@@ -5,6 +5,8 @@ import {
     SLOWEST_FILE_MIN_MS,
     SLOWEST_MIN_MS,
     SLOWEST_TESTS_COUNT,
+    SLOW_FILE_FAIL_MS,
+    SLOW_FILE_WARN_MS,
     SLOW_TEST_FAIL_MS,
     SLOW_TEST_WARN_MS,
     WAITING_MIN_MS,
@@ -104,7 +106,63 @@ export default class SlowTestsReporter implements Reporter {
                 )
             );
         }
+
+        const files = collectFileCosts(testModules);
+        const slowFiles = files.filter((file) => !file.tooSlow && file.cost >= SLOW_FILE_WARN_MS);
+        if (slowFiles.length) {
+            const failsAt = Number.isFinite(SLOW_FILE_FAIL_MS)
+                ? ` before they fail at ${SLOW_FILE_FAIL_MS / 1000}s`
+                : '';
+            console.warn(
+                styleText(
+                    'yellow',
+                    `\nSLOW FILE: ${slowFiles.length} file(s) over ${SLOW_FILE_WARN_MS / 1000}s of CPU and waiting - split them or build less in beforeAll${failsAt}:\n${formatFileCost(slowFiles, 'SLOW FILE')}`,
+                    { stream: process.stderr }
+                )
+            );
+        }
+        const tooSlowFiles = files.filter((file) => file.tooSlow);
+        if (tooSlowFiles.length) {
+            console.warn(
+                styleText(
+                    ['red', 'bold'],
+                    `\nTOO SLOW FILE: ${tooSlowFiles.length} file(s) over ${SLOW_FILE_FAIL_MS / 1000}s of CPU and waiting failed - split them:\n${formatFileCost(tooSlowFiles, 'TOO SLOW FILE')}`,
+                    { stream: process.stderr }
+                )
+            );
+        }
     }
+}
+
+interface FileCost {
+    file: string;
+    /** The file's `fileCostMs`: CPU time plus waits from its first hook to its last. */
+    cost: number;
+    count: number;
+    tooSlow: boolean;
+}
+
+function collectFileCosts(modules: ReadonlyArray<TestModule>): FileCost[] {
+    const out: FileCost[] = [];
+    for (const module of modules) {
+        const meta = module.meta();
+        const cost = meta.fileCostMs;
+        if (cost != null) {
+            out.push({
+                file: fileKey(module),
+                cost,
+                count: [...module.children.allTests()].length,
+                tooSlow: meta.fileTooSlow === true,
+            });
+        }
+    }
+    return out.sort((a, b) => b.cost - a.cost);
+}
+
+function formatFileCost(files: FileCost[], prefix: string): string {
+    return files
+        .map(({ file, cost, count }) => `${prefix} ${secs(cost)} ${String(count).padStart(4)} tests  ${file}`)
+        .join('\n');
 }
 
 interface TimedFile {

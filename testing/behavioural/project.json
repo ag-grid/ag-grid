@@ -32,7 +32,7 @@
       }
     },
     "benchmark": {
-      "command": "vitest bench --run",
+      "command": "vitest bench --mode benchmark --run",
       "options": {
         "cwd": "{projectRoot}"
       },

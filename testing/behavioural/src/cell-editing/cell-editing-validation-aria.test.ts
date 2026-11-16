@@ -82,7 +82,7 @@ describe('Full-row edit validation ARIA announcements', () => {
         gridsManager.reset();
         PassiveValidatingEditor.validationCalls = 0;
         PassiveValidatingEditor.validationErrors = undefined;
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 
     const cell = (api: GridApi, rowIndex: number, colId: string): HTMLElement => {
@@ -297,6 +297,7 @@ describe('Full-row edit validation ARIA announcements', () => {
 
     test('announces a full-row error that reappears when a blocked popup value is reverted', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [98] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const rowError = 'The staged name needs review';
         const rowValues: unknown[] = [];
         const api = await createGrid({
@@ -337,6 +338,7 @@ describe('Full-row edit validation ARIA announcements', () => {
 
         await waitForAriaAnnouncement(gridElement, `Full Row Validation: ${rowError}.`);
         expect(rowValues.at(-1)).toBe('ROW_ERROR');
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #98');
     });
 
     test('cancelling an unvalidated edit emits no validation announcement', async () => {

@@ -45,19 +45,8 @@ const benchSamplesPath = process.env.AG_BENCH_SAMPLES;
 const benchProfileDir = process.env.BENCH_PROFILE
     ? process.env.BENCH_PROFILE_DIR || path.resolve(thisDir, 'src/benchmarks/tmp/profiles')
     : undefined;
-const pairedTinybenchPath = path.resolve(thisDir, 'src/benchmarks/paired-tinybench.ts');
-
-// Serves paired-tinybench.ts for the runner's `tinybench` import; the module itself still gets the real one.
-const pairedTinybenchPlugin = {
-    name: 'bench-paired-tinybench',
-    enforce: 'pre' as const,
-    resolveId(source: string, importer: string | undefined) {
-        if (source !== 'tinybench' || importer?.split('?')[0] === pairedTinybenchPath) {
-            return null;
-        }
-        return pairedTinybenchPath;
-    },
-};
+// A bench is a test that also waits out the other side's turn, so its cap is the turn's, not a test's.
+const BENCH_TEST_TIMEOUT_MS = 120_000;
 
 /** Bench name occurrences per `file::name`, so two same-named benches in one file get distinct keys. */
 const benchTurnCounts = new Map<string, number>();
@@ -171,8 +160,7 @@ export const behaviouralConfig = (isolatedFiles: boolean) =>
         // Imported here rather than at module scope: it pulls in playwright, which every `./behave.sh`
         // run would otherwise load for a browser it never starts.
         const browserProvider = isBench ? (await import('@vitest/browser-playwright')).playwright : undefined;
-        // Every bench run gets the Task subclass: its warmup, slices and profiling apply outside bench-compare too.
-        const benchPlugins = isBench ? [cssInlinePlugin, pairedTinybenchPlugin] : [];
+        const benchPlugins = isBench ? [cssInlinePlugin] : [];
 
         return {
             // No `esbuild`/`oxc` block: Vite 8 transforms with oxc, whose defaults are already `target: esnext`
@@ -196,11 +184,10 @@ export const behaviouralConfig = (isolatedFiles: boolean) =>
                 name: isolatedFiles ? 'behavioural-isolated' : 'behavioural',
                 globals: true,
                 environment: UNIT_TEST_ENVIRONMENT,
-                // Benchmarks measure rather than assert, so only tests carry the cap.
-                testTimeout: isBench ? undefined : TEST_TIMEOUT_MS,
-                // Listed rather than imported by `vitest.setup.ts`: without isolation a setup file's imports are
-                // evaluated once per worker, so only a listed file registers its hooks for every test file.
-                setupFiles: [outputSetupFile, path.resolve(thisDir, 'vitest.setup.ts')],
+                testTimeout: isBench ? BENCH_TEST_TIMEOUT_MS : TEST_TIMEOUT_MS,
+                // Listed, as only a listed file registers its hooks for every file of a shared worker; none for a
+                // bench, whose measurement their per-test hooks (dev validations, time limits) would wrap.
+                setupFiles: isBench ? [] : [outputSetupFile, path.resolve(thisDir, 'vitest.setup.ts')],
                 // One module graph per worker: importing the grid per file was most of the run's time.
                 // `vitest.setup.ts` resets what a file leaves behind; benches run in a browser and keep isolation.
                 isolate: isBench || isolatedFiles,
