@@ -35,6 +35,13 @@ export function _createValidationWarning<TId extends ErrorId>(
     return { errorId, emit: (log) => emitValidation(log, errorId, params, false) };
 }
 
+export function _createDeprecationWarning<TId extends ErrorId>(
+    errorId: TId,
+    params: GetErrorParams<TId>
+): ValidationWarning {
+    return { errorId, emit: (log) => emitValidation(log, errorId, params, true) };
+}
+
 /**
  * Emits a validation result that may be either a first-class {@link ValidationWarning} or a legacy
  * free-text string (logged under the generic id 322), through the emitting grid's log service so the
