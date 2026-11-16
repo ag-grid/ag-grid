@@ -385,6 +385,11 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             },
         });
     }
+
+    public override destroy(): void {
+        this.hideActiveMenu();
+        super.destroy();
+    }
 }
 
 type TabbedColumnMenuEvent = 'tabSelected' | 'and';

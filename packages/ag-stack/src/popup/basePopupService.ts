@@ -425,6 +425,7 @@ export abstract class BasePopupService<
         }
 
         const wrapperEl = _createAgElement({ tag: 'div', cls: 'ag-popup' });
+        this.beans.environment.setInstanceDomData(wrapperEl);
         wrapperEl.appendChild(eChild);
         const disconnect = _initStyledRoot(this.beans.environment, this.getPopupParent(), wrapperEl);
 

@@ -58,6 +58,7 @@ import type {
     IAggFuncs,
     IDatasource,
     IServerSideDatasource,
+    ITooltipParams,
     IViewportDatasource,
     Icons,
     InitialGroupOrderComparator,
@@ -308,14 +309,22 @@ export interface Props<TData> {
          */
     enableBrowserTooltips?: boolean,
     /** The trigger that will cause tooltips to show and hide.
-         *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
-         *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+         * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
+         *  - `hover` - The tooltip will show/hide when its element is hovered.
+         *  - `focus` - The tooltip shows immediately on keyboard focus.
+         *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
          * @default 'hover'
          * @initial
          * @agModule `TooltipModule`
          */
-    tooltipTrigger?: 'hover' | 'focus',
-    /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus',
+    /** Provides a plain-text accessible description, available on focus before the visual tooltip appears.
+         * Use this for custom tooltips whose resolved `params.value` is structured data.
+         * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
+         * @agModule `TooltipModule`
+         */
+    getTooltipAriaDescription?: (params: ITooltipParams<TData>) => string | null | undefined,
+    /** The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @default 2000
          * @agModule `TooltipModule`
@@ -328,9 +337,9 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipSwitchShowDelay?: number,
-    /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
-         * @default 10000
+    /** An optional timeout in milliseconds after a tooltip appears. By default there is no timed hide.
+         * A timeout does not close an interactive tooltip while keyboard focus is inside it.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @agModule `TooltipModule`
          */
     tooltipHideDelay?: number,
@@ -347,8 +356,8 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipShowMode?: 'standard' | 'whenTruncated',
-    /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
-         * tooltip itself it being hovered or has focus.
+    /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
+         * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
          * @default false
          * @initial
          * @agModule `TooltipModule`
@@ -2208,6 +2217,7 @@ export function getProps() {
         suppressMenuHide: undefined,
         enableBrowserTooltips: undefined,
         tooltipTrigger: undefined,
+        getTooltipAriaDescription: undefined,
         tooltipShowDelay: undefined,
         tooltipSwitchShowDelay: undefined,
         tooltipHideDelay: undefined,

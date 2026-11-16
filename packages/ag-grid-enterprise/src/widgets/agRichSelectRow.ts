@@ -50,6 +50,7 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
             this.beans.tooltipSvc?.createHighlightTooltip(
                 {
                     getGui: () => this.getGui(),
+                    getAriaElement: () => this.getGui().parentElement!,
                     getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'richSelectListItem',
                     shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,

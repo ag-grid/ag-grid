@@ -43,6 +43,13 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 ## Behaviour Changes
 
+### Tooltips
+
+- Tooltips no longer hide after 10 seconds by default. Set `tooltipHideDelay: 10000` to restore the timeout.
+- All tooltips now accept the pointer and remain open while hovered. `tooltipInteraction: true` is only needed for focusable custom content.
+- `Escape` dismisses an open tooltip without also cancelling editing or closing its source menu.
+- The default trigger remains `'hover'`. Use `'hoverOrFocus'` to support both mouse and keyboard users. Focus descriptions are available before the visual tooltip appears; use `getTooltipAriaDescription` for structured custom values.
+
 ### Filtering
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).

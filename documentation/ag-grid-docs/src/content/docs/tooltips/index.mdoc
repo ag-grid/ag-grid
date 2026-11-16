@@ -35,7 +35,7 @@ Cell and header tooltip callbacks receive the same parameters. `value` is the un
 
 ## Tooltips for Truncated Text
 
-It's possible to configure tooltips to show only when the items hovered are truncated by setting `tooltipShowMode = 'whenTruncated'`.
+Set `tooltipShowMode = 'whenTruncated'` to show tooltips only when the hovered or focused text is truncated.
 
 {% gridExampleRunner title="Tooltips" name="tooltip-show-mode" /%}
 
@@ -45,7 +45,9 @@ It's possible to configure tooltips to show only when the items hovered are trun
 
 ## Show and Hide Delay
 
-By default, tooltips show after 2 seconds and hide after 10 seconds. These delays can be configured in milliseconds:
+By default, tooltips show after 2 seconds and have no timed hide. They stay open while their element or the tooltip is hovered, or their element has focus in a focus-enabled mode. Press `Escape` to dismiss them.
+
+Set `tooltipHideDelay` to opt into a timeout. It does not close an interactive tooltip while keyboard focus is inside it.
 
 {% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipShowDelay", "tooltipSwitchShowDelay", "tooltipHideDelay"] /%}
 
@@ -62,6 +64,28 @@ const gridOptions = {
 {% note %}
 Setting delays will have no effect if using Browser Tooltips as Browser Tooltips are controlled by the browser and not the grid.
 {% /note %}
+
+## Keyboard Focus
+
+Set `tooltipTrigger: 'hoverOrFocus'` to show tooltips on both hover and keyboard focus. This applies wherever grid tooltips are supported, including cells, headers, menu items and tool panel items.
+
+- `'hover'` (default): show on mouse hover only.
+- `'focus'`: show immediately on keyboard focus only.
+- `'hoverOrFocus'`: show on hover or keyboard focus after `tooltipShowDelay`.
+
+In combined mode, the most recently hovered or focused element owns the tooltip. Moving away does not restore an earlier element's tooltip.
+
+Tooltip text is available to screen readers immediately on focus, before the visual delay. For custom tooltips with structured values, provide plain text using `getTooltipAriaDescription`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipTrigger: 'hoverOrFocus',
+    getTooltipAriaDescription: (params) =>
+        params.location === 'cell' ? params.value.description : undefined,
+};
+```
+
+Return `undefined` to use the resolved textual value, or `null` / `''` to omit the focus description. Browser Tooltips remain browser-controlled.
 
 ## Blank Values
 
@@ -110,7 +134,11 @@ When a group row displays an aggregated value in a data column, hovering that ce
 
 ## Touch Devices
 
-On iOS and Android, press and hold a tooltip-enabled grid element to show its rich HTML tooltip. The tooltip opens as soon as the long press is recognised, without applying `tooltipShowDelay` a second time. Moving the touch before the long press completes cancels the gesture. Tap elsewhere to dismiss the tooltip. Grid gestures that already use the long press, such as the context menu and column menu, take precedence over the tooltip. Setting `suppressTouch=true` disables this gesture. Browser Tooltips remain controlled by the browser.
+On iOS and Android, press and hold an element to show its tooltip immediately after the long press is recognised. Tap elsewhere to dismiss it.
+
+- An available context menu or column menu takes precedence.
+- Movement, cancellation or `suppressTouch: true` prevents the long-press tooltip.
+- Browser Tooltips remain browser-controlled.
 
 ## Mouse Tracking
 
@@ -126,7 +154,7 @@ Set the grid property `enableBrowserTooltips=true` to stop using rich HTML Compo
 
 ## Interactive Tooltips
 
-By default, tooltips cannot be interacted with and hovering them has no effect. If `tooltipInteraction=true` is set in the grid options, tooltips remain visible while being hovered and their content can be selected or activated.
+All tooltips can be hovered and their text selected. Set `tooltipInteraction: true` for custom content containing inputs, buttons or links. These tooltips use `role="dialog"` rather than `role="tooltip"`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -134,18 +162,17 @@ const gridOptions = {
 }
 ```
 
-The example below enables Tooltip Interaction to demonstrate a scenario where tooltips will not disappear while hovered. Note following:
+For interactive tooltips:
 
-- Tooltips will not disappear while being hovered.
-- Tooltips content can be selected and copied.
-- `Tab` moves focus into focusable tooltip content and `Escape` closes the tooltip.
+- `Tab` from the source moves focus into the tooltip.
+- `Escape` closes it and returns focus to the source if focus was inside.
+- While focus is inside, hovering another element does not replace the tooltip.
 
 {% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
 
 The example below shows Tooltip Interaction with Custom Tooltips. Note the following:
 
 - Tooltip is enabled for the Athlete and Age columns.
-- Tooltips will not disappear while being hovered.
 - The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
 
 {% gridExampleRunner title="Custom Tooltip Interaction" name="custom-tooltip-interaction" /%}

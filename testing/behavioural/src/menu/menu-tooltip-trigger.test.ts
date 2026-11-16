@@ -10,10 +10,12 @@ import {
 } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TooltipModule } from 'ag-grid-community';
-import { ContextMenuModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 describe('menu tooltip triggers', () => {
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, ContextMenuModule, TooltipModule] });
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, TooltipModule],
+    });
     let restoreOffsetParent: (() => void) | undefined;
 
     afterEach(() => {
@@ -23,7 +25,7 @@ describe('menu tooltip triggers', () => {
     });
 
     async function openContextMenu(
-        tooltipTrigger: 'focus' | 'hover',
+        tooltipTrigger: 'focus' | 'hover' | 'hoverOrFocus',
         initialTooltip?: string,
         {
             interaction = 'mouse',
@@ -118,6 +120,57 @@ describe('menu tooltip triggers', () => {
         await expectTooltip('Initial tooltip');
     });
 
+    test.each(['context', 'column', 'legacy column'])(
+        'destroying a grid with an open %s menu tooltip releases Escape handling',
+        async (menu) => {
+            const getMenuItems = () => [{ name: 'Initial', tooltip: 'Initial tooltip' }];
+            const api = await gridMgr.createGridAndWait('menu-tooltip-destroy', {
+                columnDefs: [{ field: 'value', menuTabs: ['generalMenuTab'] }],
+                rowData: [{ value: 'Cell' }],
+                columnMenu: menu === 'legacy column' ? 'legacy' : 'new',
+                tooltipTrigger: 'focus',
+                getContextMenuItems: getMenuItems,
+                getColumnMenuItems: getMenuItems,
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            if (menu === 'context') {
+                api.showContextMenu();
+            } else {
+                api.showColumnMenu('value');
+            }
+            await expectTooltip('Initial tooltip');
+            gridMgr.reset();
+
+            const button = document.createElement('button');
+            const onKeyDown = vi.fn();
+            button.addEventListener('keydown', onKeyDown);
+            document.body.appendChild(button);
+            try {
+                button.focus();
+                await userEvent.keyboard('{Escape}');
+                expect(onKeyDown).toHaveBeenCalledTimes(1);
+                expect(button).toHaveFocus();
+            } finally {
+                button.remove();
+            }
+        }
+    );
+
+    test('combined mode describes the focused item and Escape dismisses only its tooltip', async () => {
+        const first = await openContextMenu('hoverOrFocus');
+        await userEvent.keyboard('{ArrowDown}');
+        expect(first).toHaveFocus();
+        expect(first).toHaveAccessibleDescription('First tooltip');
+        await expectTooltip('First tooltip');
+
+        await userEvent.keyboard('{Escape}');
+        expect(getVisibleTooltips()).toHaveLength(0);
+        expect(first).toHaveFocus();
+        expect(first).toBeInTheDocument();
+        await userEvent.keyboard('{Escape}');
+        expect(first).not.toBeInTheDocument();
+    });
+
     test('focus trigger ignores hover activation but shows tooltips during keyboard navigation', async () => {
         const first = await openContextMenu('focus');
 
@@ -167,7 +220,7 @@ describe('menu tooltip triggers', () => {
         await expectTooltip('Second tooltip');
     });
 
-    test.each(['focus', 'hover'] as const)(
+    test.each(['focus', 'hover', 'hoverOrFocus'] as const)(
         '%s trigger keeps focus on the hovered sibling after leaving a keyboard-focused submenu',
         async (tooltipTrigger) => {
             const user = userEvent.setup();

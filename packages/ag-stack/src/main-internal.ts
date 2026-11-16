@@ -120,6 +120,7 @@ export { BaseTooltipStateManager } from './tooltip/baseTooltipStateManager';
 export type { BaseTooltipParams } from './tooltip/baseTooltipStateManager';
 export {
     _getAriaCheckboxStateName,
+    _getAriaDescribedBy,
     _getAriaLabel,
     _getAriaPosInSet,
     _removeAriaExpanded,

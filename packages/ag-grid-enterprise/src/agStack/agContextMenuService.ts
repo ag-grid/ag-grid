@@ -308,6 +308,7 @@ export class AgContextMenuService<
 
     public override destroy(): void {
         this.destroyLoadingSpinner?.();
+        this.hideActiveMenu();
         super.destroy();
     }
 }

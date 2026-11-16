@@ -15,6 +15,8 @@ export interface ITooltipFeature {
 export interface TooltipCtrl<TLocation extends string, TParams> {
     getTooltipValue?(): any;
     getGui(): HTMLElement;
+    /** The accessible owner when keyboard focus is managed outside the tooltip source. */
+    getAriaElement?(): HTMLElement;
     getLocation?(): TLocation | 'UNKNOWN';
 
     getTooltipShowDelayOverride?(): number;
