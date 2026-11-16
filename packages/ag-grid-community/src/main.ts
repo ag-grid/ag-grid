@@ -1023,7 +1023,6 @@ export type {
     SendToClipboard,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
-    ServerSideStoreParams,
     SetFillValueCallback,
     TabToNextCell,
     TabToNextCellParams,

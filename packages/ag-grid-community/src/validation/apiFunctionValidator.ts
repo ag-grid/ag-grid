@@ -31,7 +31,6 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     getServerSideGroupLevelState: [serverSide],
     refreshInfiniteCache: [infinite],
     purgeInfiniteCache: [infinite],
-    getInfiniteRowCount: [infinite],
     isLastRowIndexKnown: [infinite, serverSide],
     expandAll: [clientSide, serverSide],
     collapseAll: [clientSide, serverSide],
@@ -59,11 +58,6 @@ const deprecatedFunctions: {
     clearRangeSelection: {
         version: 'v32.2',
         message: 'Use `clearCellSelection` instead.',
-    },
-    getInfiniteRowCount: {
-        version: 'v32.2',
-        old: 'getInfiniteRowCount()',
-        new: 'getDisplayedRowCount()',
     },
 };
 

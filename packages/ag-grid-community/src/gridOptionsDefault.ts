@@ -74,7 +74,6 @@ export const GRID_OPTION_DEFAULTS = {
     enableCellExpressions: false,
     suppressTouch: false,
     suppressFocusAfterRefresh: false,
-    suppressBrowserResizeObserver: false,
     suppressChangeDetection: false,
     debug: false,
     suppressLoadingOverlay: false,

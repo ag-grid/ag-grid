@@ -156,7 +156,7 @@ Limits:
 - **Node.js**: Check `.nvmrc` for version
 - **Package Manager**: Yarn
 - **Build Target**: ES2020 (`tsconfig.base.json`); `lib` is ES2022. Runtime API availability follows the browser-support policy, not this target.
-- **TypeScript**: Strict mode enabled across all packages
+- **TypeScript**: `strict` is off in `tsconfig.base.json`, which enables individual checks (e.g. `strictNullChecks`, `noImplicitAny`) instead; see that file for the current set
 
 ### JIRA Tickets
 

@@ -325,7 +325,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_InfiniteRowModelGridApi>('InfiniteRowModel', {
         refreshInfiniteCache: 0,
         purgeInfiniteCache: 0,
-        getInfiniteRowCount: 0,
     }),
 
     ...mod<_AdvancedFilterGridApi>('AdvancedFilter', {
