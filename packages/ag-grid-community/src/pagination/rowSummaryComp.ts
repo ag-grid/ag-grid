@@ -119,9 +119,13 @@ export class RowSummaryComp extends Component {
         }
         this.lbRecordCount.textContent = lbRecordCount;
 
+        this.ariaStatus = this.getAriaStatus(lbFirstRowOnPage, lbLastRowOnPage, lbRecordCount, {
+            lastPageFound,
+            isLoadingPageSize,
+        });
+
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
 
         const esc = (s: string) =>
             s
@@ -132,5 +136,30 @@ export class RowSummaryComp extends Component {
             '--ag-internal-pagination-width-string',
             `'${lbRecordCount} ${esc(strTo)} ${lbRecordCount} ${esc(strOf)} ${lbRecordCount}'`.replaceAll(/\d/g, '0')
         );
+    }
+
+    /** Builds a self-contained screen reader sentence; the unknown-total cases avoid announcing the visible `?` / `more`. */
+    private getAriaStatus(
+        first: string,
+        last: string,
+        count: string,
+        { lastPageFound, isLoadingPageSize }: { lastPageFound: boolean; isLoadingPageSize: boolean }
+    ): string {
+        const localeTextFunc = this.getLocaleTextFunc();
+        if (isLoadingPageSize) {
+            return localeTextFunc('ariaPaginationRowSummaryLoading', `Loading records from ${first}`, [first]);
+        }
+        if (!lastPageFound) {
+            return localeTextFunc(
+                'ariaPaginationRowSummaryUnknownTotal',
+                `Showing records ${first} to ${last}, total unknown`,
+                [first, last]
+            );
+        }
+        return localeTextFunc('ariaPaginationRowSummary', `Showing records ${first} to ${last} of ${count}`, [
+            first,
+            last,
+            count,
+        ]);
     }
 }
