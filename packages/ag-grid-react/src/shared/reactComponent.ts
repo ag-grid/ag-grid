@@ -70,7 +70,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         }
     }
 
-    protected createParentElement() {
+    protected createParentElement(params: any) {
         const componentWrappingElement = this.portalManager.getComponentWrappingElement();
         const eParentElement = document.createElement(componentWrappingElement || 'div');
 
@@ -79,6 +79,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         if (this.componentType.requiresBlockWrapper) {
             (eParentElement as HTMLElement).classList.add('ag-react-wrapper-block');
         }
+
+        /**
+         * @deprecated v21.2 - Kept as it costs nothing to maintain, and there is no way to warn users
+         * before removal: React copies props, so reads of `reactContainer` cannot be detected.
+         */
+        params.reactContainer = eParentElement;
 
         return eParentElement;
     }
@@ -139,7 +145,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     public init(params: any): AgPromise<void> {
-        this.eParentElement = this.createParentElement();
+        this.eParentElement = this.createParentElement(params);
 
         this.createOrUpdatePortal(params);
 
