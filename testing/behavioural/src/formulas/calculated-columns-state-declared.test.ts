@@ -417,6 +417,35 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         expect(column.getActualWidth()).toBe(333);
     });
 
+    test('removing columns of a group keeps the other columns, with the group’s padding and beside groups', async () => {
+        const api = createGrid('state-removed-in-groups', {
+            rowData: [{ id: 'r1', a: 1, b: 2, c: 3, d: 4, e: 5 }],
+            columnDefs: [
+                { field: 'd' },
+                { field: 'e' },
+                { groupId: 'g', children: [{ field: 'a' }, { field: 'b' }] },
+                { groupId: 'q', children: [{ groupId: 'r', children: [{ field: 'c' }] }] },
+            ],
+        });
+        const ids = () => api.getColumns()!.map((col) => col.getColId());
+
+        api.setState({ userColumns: [{ colId: 'a', removed: true }] });
+        await waitFor(() => expect(ids()).toEqual(['d', 'e', 'b', 'c']));
+        expect(api.getColumn('b')!.getOriginalParent()!.getOriginalParent()!.getGroupId()).toBe('g');
+
+        api.setState({
+            userColumns: [
+                { colId: 'a', removed: true },
+                { colId: 'b', removed: true },
+            ],
+        });
+        await waitFor(() => expect(ids()).toEqual(['d', 'e', 'c']));
+        expect(api.getProvidedColumnGroup('g')!.getChildren()).toEqual([]);
+
+        api.setState({ userColumns: [{ colId: 'd', removed: true }] });
+        await waitFor(() => expect(ids()).toEqual(['e', 'a', 'b', 'c']));
+    });
+
     test('a created entry with no calculated expression leaves a declared column its generated id and state', () => {
         const api = createGrid('state-created-no-expression', {
             rowData: [{ id: 'r1', b: 2 }],

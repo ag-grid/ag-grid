@@ -1,7 +1,7 @@
 import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { ColGroupDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -82,6 +82,24 @@ describe('ag-grid validation warnings', () => {
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #307'),
                 expect.stringContaining('Invalid `colDef` property `notAColProp`'),
+                expect.any(String)
+            );
+        });
+
+        test('warns for unknown column group definition properties', () => {
+            const group: ColGroupDef = Object.assign(
+                { groupId: 'g', children: [{ field: 'a' }] },
+                { notAGroupProp: true }
+            );
+            gridsManager.createGrid('myGrid', {
+                defaultColDef: { cellDataType: false },
+                columnDefs: [group],
+                rowData: [{ a: 1 }],
+            });
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #307'),
+                expect.stringContaining('property `notAGroupProp`'),
                 expect.any(String)
             );
         });

@@ -50,7 +50,7 @@ describe('Floating Filters', () => {
     describe('apply filtering as you type', () => {
         test('typing in a floating text filter filters the grid, and clearing restores every row', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter' }],
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
                 defaultColDef: { floatingFilter: true },
                 rowData: [{ country: 'Ireland' }, { country: 'Ireland' }, { country: 'Italy' }],
             });
@@ -172,7 +172,7 @@ describe('Floating Filters', () => {
 
         test('clearing during a pending debounce applies immediately, exactly once', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 200 } }],
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 20 } }],
                 defaultColDef: { floatingFilter: true },
                 rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
             });
@@ -192,7 +192,7 @@ describe('Floating Filters', () => {
                 })
             );
 
-            // type again, then clear while the 200ms sync debounce is still pending
+            // type again, then clear while the 20ms sync debounce is still pending
             typeIntoFloatingFilter(input, 'Irel');
             let filterChangedCount = 0;
             api.addEventListener('filterChanged', () => ++filterChangedCount);
@@ -206,8 +206,8 @@ describe('Floating Filters', () => {
             expect(api.getColumnFilterModel('country')).toBeNull();
             expect(filterChangedCount).toBe(1);
 
-            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms sync debounce so an uncancelled 'Irel' timer would already have fired
-            await asyncSetTimeout(300);
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 20ms sync debounce so an uncancelled 'Irel' timer would already have fired
+            await asyncSetTimeout(40);
             expect(api.getColumnFilterModel('country')).toBeNull();
             expect(filterChangedCount).toBe(1);
         });

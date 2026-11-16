@@ -891,4 +891,22 @@ describe('ag-grid calculated columns', () => {
             └── LEAF id:r1 revenue:44000 nextRevenue:58000 change:31.8
         `);
     });
+
+    test('a calculated column referencing a column not yet defined evaluates once the column definitions add it', async () => {
+        const profit: ColDef = { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' };
+        const revenue: ColDef = { field: 'revenue' };
+        const api = createGrid('calculated-reference-added-later', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [revenue, profit],
+        });
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toMatch(/^#/)
+        );
+
+        api.setGridOption('columnDefs', [revenue, { field: 'cost' }, profit]);
+
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7)
+        );
+    });
 });

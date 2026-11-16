@@ -141,7 +141,10 @@ describe('a change before rows load to a filter holding none of the model set fo
     test('turning off a built filter before rows load tells it at once, as with rows', async () => {
         const events: string[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {
-            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }, BASE_COLS[1]],
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+                BASE_COLS[1],
+            ],
             onFilterChanged: ({ columns }) => events.push(`${phase}:${columns.map((c) => c.getColId())}`),
         });
         await asyncSetTimeout(0);

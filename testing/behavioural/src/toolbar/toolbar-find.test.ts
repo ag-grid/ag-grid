@@ -98,10 +98,7 @@ describe('Toolbar find item', () => {
         input.value = 'Alice';
         input.dispatchEvent(new Event('input'));
 
-        // Input is debounced; wait past the debounce window before asserting
-        await new Promise<void>((resolve) => setTimeout(resolve, 350));
-
-        expect(api.getGridOption('findSearchValue')).toBe('Alice');
+        await waitFor(() => expect(api.getGridOption('findSearchValue')).toBe('Alice'));
         const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         const findButtons = gridDiv.querySelectorAll<HTMLButtonElement>('.ag-toolbar-find-button');
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);

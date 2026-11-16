@@ -252,6 +252,7 @@ describe('filterValueGetter', () => {
                         colId: 'name',
                         field: 'firstName',
                         filter: 'agTextColumnFilter',
+                        filterParams: { debounceMs: 0 },
                         // Filter value is lastName, not firstName — so typing 'Lovelace'
                         // in the input should match Ada's row, while 'Ada' should match none.
                         filterValueGetter: (params: ValueGetterParams<Person>) => params.data!.lastName,

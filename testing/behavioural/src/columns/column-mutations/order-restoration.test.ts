@@ -58,6 +58,66 @@ describe('Column Mutations - order restoration', () => {
             `);
         });
 
+        test('maintainColumnOrder keeps the place of a column without colId or field loaded with headerName null and set again without one after columnDefs []', () => {
+            const loadedFromJson: ColDef = JSON.parse('{ "headerName": null }');
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'b' }, { field: 'c' }, loadedFromJson],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 0);
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'c' }, {}]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['0', 'b', 'c']);
+        });
+
+        test('maintainColumnOrder keeps the places of renamed columns matched by position', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'A' }, { headerName: 'B' }, { headerName: 'C' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ headerName: 'A2' }, { headerName: 'B2' }, { headerName: 'C2' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName)).toEqual(['B2', 'C2', 'A2']);
+        });
+
+        test('maintainColumnOrder gives a colId the place of the column it takes from a colDef object, whose new column is placed as new', () => {
+            const a: ColDef = { headerName: 'A' };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [a, { field: 'b' }, { field: 'c' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ colId: '0', headerName: 'K' }, a, { field: 'b' }, { field: 'c' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName ?? col.getColId())).toEqual([
+                'b',
+                'c',
+                'K',
+                'A',
+            ]);
+        });
+
+        test('maintainColumnOrder keeps the places of a colId’s repeats and places a new repeat as new', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId repeats
+            const defs = (): ColDef[] => [
+                { colId: 'p', headerName: 'A' },
+                { colId: 'p', headerName: 'B' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs(), maintainColumnOrder: true });
+            api.moveColumns(['p_1'], 0);
+
+            api.setGridOption('columnDefs', [...defs(), { colId: 'p', headerName: 'N' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName)).toEqual(['B', 'A', 'N']);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
         test('maintainColumnOrder keeps a column’s moved place when it is removed and added back in pivot mode', () => {
             const pivotDefs = [
                 { field: 'country', pivot: true },
@@ -280,6 +340,19 @@ describe('Column Mutations - order restoration', () => {
                 });
                 gridsManager.reset();
             }
+        });
+
+        test('maintainColumnOrder places a column removed and added back after the one column left, as a new column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['b'], 0);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }]);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
         });
 
         test('maintainColumnOrder keeps the moved place of a recreated column without colId or field when its group has another headerName', () => {
