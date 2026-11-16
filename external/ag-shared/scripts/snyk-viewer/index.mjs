@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { createServer } from 'http';
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync, existsSync, statSync } from 'fs';
-import { resolve, dirname, sep } from 'path';
+import { resolve, dirname, basename, sep } from 'path';
 import { fileURLToPath } from 'url';
+import { randomBytes, timingSafeEqual } from 'crypto';
 import { dump } from 'js-yaml';
 import { exec, spawn } from 'child_process';
 
@@ -10,6 +11,21 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** Directory names to skip when recursively searching for .snyk files. */
 const IGNORED_DIRS = new Set(['node_modules', '.git', '.claude']);
+
+/** package.json fields the dependency endpoints may read or write. */
+const DEP_FIELDS = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies', 'resolutions'];
+
+/** Keys that would reach an object's prototype rather than an own property. */
+const FORBIDDEN_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+// Package names and resolution keys, e.g. `@scope/pkg`, `**/pkg`, `pkg@^7.0.0`.
+const DEP_KEY_RE = /^[\w@./*^~<>=:+-]+$/;
+
+// Version specifiers, e.g. `1.2.3`, `^1.2.3`, `>=1 <2`, `npm:pkg@1.2.3`, `workspace:*`.
+const DEP_VERSION_RE = /^[\w@./*^~<>=:|+ -]+$/;
+
+/** Request header carrying the per-run token that the UI reads from its page. */
+const CSRF_HEADER = 'x-snyk-viewer-token';
 
 function parseArgs(args) {
     const result = { port: 3456, file: null, open: false, name: null };
@@ -339,6 +355,81 @@ if (args.name) {
     uiHtml = uiHtml.replaceAll('Snyk Vulnerability Viewer', `${args.name}: Snyk Vulnerability Viewer`);
 }
 
+// Other sites cannot read this page's token, and sending it as a header forces a CORS preflight we never approve.
+const csrfToken = randomBytes(32).toString('hex');
+uiHtml = uiHtml.replace('</head>', `<meta name="snyk-viewer-token" content="${csrfToken}">\n</head>`);
+
+// Pinning the Host header defeats DNS rebinding, where a hostile domain resolves to 127.0.0.1.
+const allowedHosts = new Set([`127.0.0.1:${args.port}`, `localhost:${args.port}`]);
+const allowedOrigins = new Set([...allowedHosts].map((host) => `http://${host}`));
+
+function isValidCsrfToken(value) {
+    if (typeof value !== 'string') return false;
+    const actual = Buffer.from(value);
+    const expected = Buffer.from(csrfToken);
+    return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
+// Returns `{ status, error }` describing why the request is refused, or null to allow it.
+function checkRequest(req, url) {
+    if (!allowedHosts.has(req.headers.host?.toLowerCase())) {
+        return { status: 403, error: 'Unexpected Host header' };
+    }
+    const origin = req.headers.origin;
+    if (origin !== undefined && !allowedOrigins.has(origin)) {
+        return { status: 403, error: 'Cross-origin requests are not allowed' };
+    }
+
+    const isMutation = (req.method !== 'GET' && req.method !== 'HEAD') || url.pathname === '/run-snyk';
+    if (!isMutation) return null;
+
+    if (req.method !== 'POST') {
+        return { status: 405, error: 'Method not allowed' };
+    }
+    const contentType = (req.headers['content-type'] ?? '').split(';')[0].trim().toLowerCase();
+    if (contentType !== 'application/json') {
+        return { status: 415, error: 'Content-Type must be application/json' };
+    }
+    if (!isValidCsrfToken(req.headers[CSRF_HEADER])) {
+        return { status: 403, error: 'Missing or invalid CSRF token' };
+    }
+    return null;
+}
+
+function assertSafeKey(key, label) {
+    if (typeof key !== 'string' || FORBIDDEN_KEYS.has(key)) {
+        throw new Error(`Invalid ${label}`);
+    }
+}
+
+function assertDepKey(key, label = 'dependency name') {
+    assertSafeKey(key, label);
+    if (!DEP_KEY_RE.test(key)) throw new Error(`Invalid ${label}`);
+}
+
+function assertDepVersion(version) {
+    if (typeof version !== 'string' || version.length > 256 || !DEP_VERSION_RE.test(version)) {
+        throw new Error('Invalid version');
+    }
+}
+
+function assertDepField(field) {
+    if (field !== undefined && !DEP_FIELDS.includes(field)) {
+        throw new Error('Unsupported dependency field');
+    }
+}
+
+// Resolves a request's package.json path, rejecting anything outside the working directory.
+function resolvePackageJsonPath(packageJsonPath) {
+    if (typeof packageJsonPath !== 'string') throw new Error('Invalid packageJsonPath');
+    const rootDir = process.cwd();
+    const absPath = resolve(rootDir, packageJsonPath);
+    if (!absPath.startsWith(rootDir + sep) || basename(absPath) !== 'package.json') {
+        throw new Error('Invalid packageJsonPath');
+    }
+    return absPath;
+}
+
 function readBody(req) {
     return new Promise((resolve, reject) => {
         let body = '';
@@ -350,6 +441,13 @@ function readBody(req) {
 
 const server = createServer((req, res) => {
     const url = new URL(req.url, `http://localhost:${args.port}`);
+
+    const rejection = checkRequest(req, url);
+    if (rejection) {
+        res.writeHead(rejection.status, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, error: rejection.error }));
+        return;
+    }
 
     if (url.pathname === '/data') {
         const { byFile: ignorePatternsByFile } = loadAllSnykIgnorePatterns(process.cwd());
@@ -417,7 +515,8 @@ const server = createServer((req, res) => {
             }
             res.end();
         });
-        req.on('close', () => { try { child.kill(); } catch { /* ignore */ } });
+        // `res` closes when the client disconnects (or after `res.end()`, once the child has exited).
+        res.on('close', () => { if (child.exitCode === null) child.kill(); });
         return;
     }
 
@@ -459,10 +558,14 @@ const server = createServer((req, res) => {
             readBody(req).then(body => {
                 try {
                     const updates = JSON.parse(body); // { vulnId: { status, resolution?, note? } }
+                    if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
+                        throw new Error('Expected an object of decisions');
+                    }
                     const state = readReviewState();
                     state.decisions = state.decisions || {};
                     const ts = new Date().toISOString();
                     for (const [id, decision] of Object.entries(updates)) {
+                        assertSafeKey(id, 'vulnerability id');
                         state.decisions[id] = { ...decision, timestamp: ts };
                     }
                     writeReviewState(state);
@@ -524,17 +627,15 @@ const server = createServer((req, res) => {
         readBody(req).then(body => {
             try {
                 const { packageJsonPath, dep, version, field } = JSON.parse(body);
-                const rootDir = process.cwd();
-                const absPath = resolve(rootDir, packageJsonPath);
-                const rootPrefix = rootDir + sep;
-                if (!absPath.startsWith(rootPrefix) || !packageJsonPath.endsWith('package.json')) {
-                    throw new Error('Invalid packageJsonPath');
-                }
+                const absPath = resolvePackageJsonPath(packageJsonPath);
+                assertDepKey(dep);
+                assertDepVersion(version);
+                assertDepField(field);
                 const pkg = JSON.parse(readFileSync(absPath, 'utf8'));
                 let updated = false;
                 const fieldsToCheck = field ? [field] : ['dependencies', 'devDependencies', 'resolutions', 'peerDependencies'];
                 for (const f of fieldsToCheck) {
-                    if (pkg[f] && dep in pkg[f]) {
+                    if (pkg[f] && Object.hasOwn(pkg[f], dep)) {
                         pkg[f][dep] = version;
                         updated = true;
                         break;
@@ -562,17 +663,14 @@ const server = createServer((req, res) => {
         readBody(req).then(body => {
             try {
                 const { packageJsonPath, dep, field } = JSON.parse(body);
-                const rootDir = process.cwd();
-                const absPath = resolve(rootDir, packageJsonPath);
-                const rootPrefix = rootDir + sep;
-                if (!absPath.startsWith(rootPrefix) || !packageJsonPath.endsWith('package.json')) {
-                    throw new Error('Invalid packageJsonPath');
-                }
+                const absPath = resolvePackageJsonPath(packageJsonPath);
+                assertDepKey(dep);
+                assertDepField(field);
                 const pkg = JSON.parse(readFileSync(absPath, 'utf8'));
                 const fieldsToCheck = field ? [field] : ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies'];
                 let removed = false;
                 for (const f of fieldsToCheck) {
-                    if (pkg[f] && dep in pkg[f]) {
+                    if (pkg[f] && Object.hasOwn(pkg[f], dep)) {
                         delete pkg[f][dep];
                         removed = true;
                         break;
@@ -595,6 +693,8 @@ const server = createServer((req, res) => {
         readBody(req).then(body => {
             try {
                 const { key, version } = JSON.parse(body);
+                assertDepKey(key, 'resolution key');
+                assertDepVersion(version);
                 const absPath = resolve(process.cwd(), 'package.json');
                 const pkg = JSON.parse(readFileSync(absPath, 'utf8'));
                 pkg.resolutions = pkg.resolutions || {};
