@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     advancedFilterCancel: 'Anulează',
     advancedFilterClear: 'Șterge',
     advancedFilterBuilder: 'Constructor',
+    advancedFilterPlaceholder: 'Filtru Avansat',
     advancedFilterValidationMissingColumn: 'Lipsă coloană',
     advancedFilterValidationMissingOption: 'Lipsă opțiune',
     advancedFilterValidationMissingValue: 'Lipsă valoare',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaCalculatedColumn: 'Coloană calculată',
     ariaColumnShowValuesAs: 'Se afișează valorile ca',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
+    ariaColumnSelectExpandAll: 'Extinde sau restrânge toate grupurile de coloane',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
     ariaDefaultListName: 'Listă',
     ariaFilterColumnsInput: 'Intrare Filtrare Coloane',
@@ -780,6 +782,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',
     ariaChartPalettePrevious: 'Paleta anterioară',
     ariaChartPaletteNext: 'Paleta următoare',
     ariaChartPalettePage: 'Paleta ${variable} din ${variable}',
@@ -822,6 +825,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelSelectField: 'Selectează Câmp',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de celule',
     ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaFullRowValidationError: 'Validarea întregului rând: ${variable}',
     ariaFullRowEditValidationFailed: 'Editarea rândului nu poate fi finalizată. ${variable}',
@@ -851,6 +855,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
+    ariaLabelFilterCardType: 'Tip de Filtru',
     ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)

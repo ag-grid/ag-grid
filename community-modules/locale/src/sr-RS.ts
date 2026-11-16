@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     advancedFilterCancel: 'Откажи',
     advancedFilterClear: 'Обриши',
     advancedFilterBuilder: 'Градитељ',
+    advancedFilterPlaceholder: 'Напредни филтер',
     advancedFilterValidationMissingColumn: 'Недостаје колона',
     advancedFilterValidationMissingOption: 'Недостаје опција',
     advancedFilterValidationMissingValue: 'Недостаје вредност',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaCalculatedColumn: 'Израчуната колона',
     ariaColumnShowValuesAs: 'Приказивање вредности као',
     ariaColumnSelectAll: 'Укључи/искључи видљивост свих колона',
+    ariaColumnSelectExpandAll: 'Прошири или скупи све групе колона',
     ariaDateFilterInput: 'Унос филтера датума',
     ariaDefaultListName: 'Листа',
     ariaFilterColumnsInput: 'Унос за филтрирање колона',
@@ -791,6 +793,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaPageSizeSelectorLabel: 'Величина стране',
     ariaChartMenuClose: 'Затвори мени уређивања графикона',
     ariaChartSelected: 'Изабрано',
+    ariaChartSeriesChartType: 'Тип графикона за ${variable}',
     ariaChartPalettePrevious: 'Претходна палета',
     ariaChartPaletteNext: 'Следећа палета',
     ariaChartPalettePage: 'Палета ${variable} од ${variable}',
@@ -838,6 +841,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelSelectField: 'Изаберите поље',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Едитор ћелије',
     ariaValidationErrorPrefix: 'Валидација едитора ћелије',
     ariaFullRowValidationError: 'Валидација целог реда: ${variable}',
     ariaFullRowEditValidationFailed: 'Није могуће завршити измену реда. ${variable}',
@@ -870,6 +874,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelAddFilterField: 'Додај поље филтера',
     ariaLabelFilterCardDelete: 'Обриши филтер',
     ariaLabelFilterCardHasEdits: 'Има измене',
+    ariaLabelFilterCardType: 'Тип филтера',
     ariaHasNote: 'Ова ћелија има напомену.',
 
     // Number Format (Status Bar, Pagination Panel)

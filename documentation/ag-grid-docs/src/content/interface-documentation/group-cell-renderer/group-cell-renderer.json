@@ -1,12 +1,6 @@
 {
     "_config_": {},
     "IGroupCellRendererParams": {
-        "checkbox": {
-            "interfaceHierarchyOverrides": {
-                "exclude": ["GroupCheckboxSelectionCallbackParams"],
-                "include": []
-            }
-        },
         "totalValueGetter": {
             "interfaceHierarchyOverrides": {
                 "exclude": ["GroupCellRendererParams"],

@@ -19,10 +19,22 @@ if (!baseFile || !prFile) {
     process.exit(1);
 }
 
+/**
+ * Results measured with another bundler (testing/module-size-bundlers) carry a `bundler`. Fold it into the
+ * module name so they are keyed, listed and reported as separate rows from the default Vite 5 results.
+ */
+function withBundlerLabel(result) {
+    if (!result.bundler) {
+        return result;
+    }
+    const names = result.modules.length === 0 ? 'no modules' : result.modules.join(', ');
+    return { ...result, modules: [`${result.bundler}: ${names}`] };
+}
+
 function loadResults(filePath) {
     try {
         const content = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(content);
+        return JSON.parse(content).map(withBundlerLabel);
     } catch (error) {
         console.error(`Failed to load ${filePath}:`, error.message);
         process.exit(1);
@@ -84,6 +96,9 @@ prResults.forEach((result) => {
 
 // Calculate diffs
 const diffs = [];
+
+// A bundler measured for the first time (or no longer) has nothing to compare against: list it, but do not count it as a change.
+const isUnmatchedBundler = (result) => Boolean(result.bundler);
 const allKeys = new Set([...baseMap.keys(), ...prMap.keys()]);
 
 for (const key of allKeys) {
@@ -121,40 +136,42 @@ for (const key of allKeys) {
     } else if (pr && !base) {
         // Not available on latest so default to 0 for now
         pr.gzipSelfSize = pr.gzipSelfSize || 0;
+        const counted = !isUnmatchedBundler(pr);
         diffs.push({
             modules: pr.modules,
             key,
             baseSelfSize: 0,
             prSelfSize: pr.selfSize,
-            selfSizeDiff: pr.selfSize,
-            selfSizePercent: 100,
+            selfSizeDiff: counted ? pr.selfSize : 0,
+            selfSizePercent: counted ? 100 : 0,
             baseFileSize: 0,
             prFileSize: pr.fileSize,
-            fileSizeDiff: pr.fileSize,
+            fileSizeDiff: counted ? pr.fileSize : 0,
             baseGzipSelfSize: 0,
             prGzipSelfSize: pr.gzipSelfSize,
-            gzipSelfSizeDiff: pr.gzipSelfSize,
-            gzipSelfSizePercent: 100,
+            gzipSelfSizeDiff: counted ? pr.gzipSelfSize : 0,
+            gzipSelfSizePercent: counted ? 100 : 0,
             isNew: true,
             isRemoved: false,
         });
     } else if (base && !pr) {
         // Not available on latest so default to 0 for now
         base.gzipSelfSize = base.gzipSelfSize || 0;
+        const counted = !isUnmatchedBundler(base);
         diffs.push({
             modules: base.modules,
             key,
             baseSelfSize: base.selfSize,
             prSelfSize: 0,
-            selfSizeDiff: -base.selfSize,
-            selfSizePercent: -100,
+            selfSizeDiff: counted ? -base.selfSize : 0,
+            selfSizePercent: counted ? -100 : 0,
             baseFileSize: base.fileSize,
             prFileSize: 0,
-            fileSizeDiff: -base.fileSize,
+            fileSizeDiff: counted ? -base.fileSize : 0,
             baseGzipSelfSize: base.gzipSelfSize,
             prGzipSelfSize: 0,
-            gzipSelfSizeDiff: -base.gzipSelfSize,
-            gzipSelfSizePercent: -100,
+            gzipSelfSizeDiff: counted ? -base.gzipSelfSize : 0,
+            gzipSelfSizePercent: counted ? -100 : 0,
             isNew: false,
             isRemoved: true,
         });

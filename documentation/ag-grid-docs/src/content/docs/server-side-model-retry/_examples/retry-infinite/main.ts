@@ -1,8 +1,8 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -52,7 +52,8 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            const response = server.getData(params.request);
+            const failLoad = (document.querySelector('#failLoad') as HTMLInputElement).checked;
+            const response = failLoad ? { success: false } : server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {

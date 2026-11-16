@@ -130,12 +130,6 @@ export function _setUmd(): void {
 
 export class ModuleRegistry {
     /**
-     * @deprecated v33 Use `registerModules([module])` instead.
-     */
-    public static register(module: Module): void {
-        _registerModule(module, undefined);
-    }
-    /**
      * Globally register the given modules for all grids.
      * @param modules - modules to register
      */

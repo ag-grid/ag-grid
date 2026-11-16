@@ -1,14 +1,15 @@
 import type {
     AfterGuiAttachedParams,
-    AgCoreBeanCollection,
+    AgBeanCollection,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     WithoutCommon,
 } from 'ag-stack';
 import {
-    AgBeanStub,
-    AgComponentStub,
+    AgAbstractBean,
+    AgAbstractComponent,
     _anchorElementToMouseMoveEvent,
     _createAgElement,
     _getPageBody,
@@ -53,15 +54,15 @@ export interface AgContextMenuServiceParams<
 }
 
 export class AgContextMenuService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
     TDefaultMenuItem extends string,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private destroyLoadingSpinner: (() => void) | null = null;
     private lastPromise: number = 0;
 
@@ -314,15 +315,15 @@ export class AgContextMenuService<
 type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
     TDefaultMenuItem extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,

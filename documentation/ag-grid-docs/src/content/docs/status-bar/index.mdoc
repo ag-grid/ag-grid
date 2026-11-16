@@ -68,6 +68,8 @@ Labels (e.g. "Rows", "Total Rows", "Average") and number formatting are changed 
 
 The Aggregation Panel `agAggregationComponent` works with number and `bigint` values. When `bigint` values are present, `avg` uses integer division and discards the fractional part.
 
+String values are included in `count` but are never converted to numbers, so numeric-looking strings such as `'1001'` do not contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/).
+
 {% gridExampleRunner title="Status Bar Params" name="status-bar" /%}
 
 The Status Bar sizes its height to fit content. When no panels are visible, the Status Bar will have zero height (not be shown). Add CSS to have a fixed height on the Status Bar.

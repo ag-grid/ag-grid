@@ -1,4 +1,10 @@
-import { RefPlaceholder, _getActiveDomElement, _isNothingFocused, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -64,8 +70,8 @@ class ColumnHeaderEditContent extends Component {
             this.eCancel.textContent = translate('columnHeaderEditCancel', 'Cancel');
             this.eApply.type = 'button';
             this.eCancel.type = 'button';
-            this.addManagedElementListeners(this.eApply, { click: () => this.onApply() });
-            this.addManagedElementListeners(this.eCancel, { click: () => this.onCancel() });
+            _addManagedElementListeners(this, this.eApply, { click: () => this.onApply() });
+            _addManagedElementListeners(this, this.eCancel, { click: () => this.onCancel() });
         }
     }
 
@@ -141,7 +147,7 @@ export class ColumnHeaderEditPopup extends BeanStub {
         );
         this.dialog = dialog;
 
-        this.addManagedElementListeners(dialog.getGui(), {
+        _addManagedElementListeners(this, dialog.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
                     // Enter on a button (Close, Apply, Cancel) activates that button rather than committing.

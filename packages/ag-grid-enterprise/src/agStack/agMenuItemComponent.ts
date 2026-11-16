@@ -1,9 +1,10 @@
 import type {
+    AgBeanCollection,
     AgComponent,
     AgCoreBean,
-    AgCoreBeanCollection,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     ITooltipFeature,
     StopPropagationCallbacks,
@@ -11,8 +12,9 @@ import type {
     WithoutCommon,
 } from 'ag-stack';
 import {
-    AgBeanStub,
+    AgAbstractBean,
     FAST_TEST_TIMINGS,
+    _addManagedElementListeners,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
@@ -97,11 +99,11 @@ export interface AgCloseMenuEvent extends AgEvent<'closeMenu'> {
 }
 
 export interface AgMenuItemActivatedEvent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgEvent<'menuItemActivated'> {
@@ -170,21 +172,14 @@ export interface AgMenuItemCallbacks<TBeanCollection, TMenuActionParams extends 
 }
 
 export class AgMenuItemComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
-> extends AgBeanStub<
-    TBeanCollection,
-    TProperties,
-    TGlobalEvents,
-    TCommon,
-    TPropertiesService,
-    AgMenuItemComponentEvent
-> {
+> extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService, AgMenuItemComponentEvent> {
     private eGui: HTMLElement;
     private params: AgMenuItemDef<TMenuActionParams, TCommon>;
     private isAnotherSubMenuOpen: () => boolean;
@@ -247,13 +242,13 @@ export class AgMenuItemComponent<
 
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
-            this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
+            _addManagedElementListeners(this, eGui, { click: (e) => this.onItemSelected(e!) });
             const touchListener = new TouchListener(eGui, true);
             this.addManagedListeners(touchListener, { tap: (e: TapEvent) => this.onItemSelected(e.touchStart) });
             this.addDestroyFunc(() => touchListener.destroy());
         }
         if (!params?.suppressKeyboardSelect) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 keydown: (e: KeyboardEvent) => {
                     if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                         e.preventDefault();
@@ -263,7 +258,7 @@ export class AgMenuItemComponent<
             });
         }
         if (!params?.suppressMouseDown) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 mousedown: (e: MouseEvent) => {
                     // Prevent event bubbling to other event handlers such as PopupService triggering
                     // premature closing of any open sub-menu popup.
@@ -273,7 +268,7 @@ export class AgMenuItemComponent<
             });
         }
         if (!params?.suppressMouseOver) {
-            this.addManagedElementListeners(eGui, {
+            _addManagedElementListeners(this, eGui, {
                 mouseenter: () => this.onMouseEnter(),
                 mouseleave: () => this.onMouseLeave(),
             });
@@ -293,7 +288,8 @@ export class AgMenuItemComponent<
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', role: 'presentation' });
+        const isPanel = !!this.childComponent;
+        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', role: isPanel ? 'dialog' : 'presentation' });
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {
@@ -381,7 +377,7 @@ export class AgMenuItemComponent<
             eChild: ePopup,
             positionCallback,
             anchorToElement: this.eGui,
-            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
+            ariaLabel: isPanel ? this.params.name : translate('ariaLabelSubMenu', 'SubMenu'),
             afterGuiAttached,
         });
 

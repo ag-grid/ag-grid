@@ -1,4 +1,4 @@
-import { _last, _toStringOrNull } from 'ag-stack';
+import { _addManagedElementListeners, _last, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -131,7 +131,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     public override postConstruct(): void {
         super.postConstruct();
 
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             dblclick: this.onDblClick.bind(this),
         });
     }

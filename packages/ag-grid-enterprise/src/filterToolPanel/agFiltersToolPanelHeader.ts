@@ -1,4 +1,4 @@
-import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _debounce, _setDisplayed } from 'ag-stack';
 
 import type { AgColumn, AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, Component, _createIconNoSpan } from 'ag-grid-community';
@@ -37,8 +37,8 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private eExpandUnchecked: Element;
     private eExpandIndeterminate: Element;
 
-    private onSearchTextChangedDebounced: () => number;
-    private searchTextChangedTimeout: number | undefined;
+    private onSearchTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private searchTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private currentExpandState: EXPAND_STATE;
 
@@ -58,7 +58,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
+        _addManagedElementListeners(this, this.eExpand, { click: this.onExpandClicked.bind(this) });
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 

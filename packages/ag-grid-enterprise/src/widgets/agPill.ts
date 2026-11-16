@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type { ElementParams } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
@@ -49,7 +49,7 @@ export class AgPill extends Component {
         }
 
         if (onButtonClick) {
-            this.addManagedElementListeners(eButton, {
+            _addManagedElementListeners(this, eButton, {
                 click: onButtonClick,
             });
         }

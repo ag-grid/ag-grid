@@ -88,10 +88,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         setNodesSelected: 0,
         selectAll: 0,
         deselectAll: 0,
-        selectAllFiltered: 0,
-        deselectAllFiltered: 0,
-        selectAllOnCurrentPage: 0,
-        deselectAllOnCurrentPage: 0,
         getSelectedNodes: 0,
         getSelectedRows: 0,
     }),
@@ -329,7 +325,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_InfiniteRowModelGridApi>('InfiniteRowModel', {
         refreshInfiniteCache: 0,
         purgeInfiniteCache: 0,
-        getInfiniteRowCount: 0,
     }),
 
     ...mod<_AdvancedFilterGridApi>('AdvancedFilter', {

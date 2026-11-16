@@ -146,12 +146,100 @@ function groupByVersion(entries) {
     return groups;
 }
 
+// Jira wiki code; one ending in `}` renders as `}}}`, so a span closes at the last brace of the
+// run. Existing `<code>` and `<pre>` markup is matched first so its braces are left alone.
+const WIKI_CODE = /(<pre\b[\s\S]*?<\/pre>|<code\b[\s\S]*?<\/code>)|\{\{(.+?)\}\}(?!\})/gi;
+const HTML_LIST_TAG = /<(\/?)(ul|ol|li)\b[^>]*>/gi;
+const NOTE_LINE_BREAK = /<br\s*\/?>|<\/(?:p|div|tr|h[1-6])>|\r\n|\n|\r/i;
+const LEADING_SPACE = /^(?:&nbsp;|\s)*/;
+// Jira `#` lists are not parsed: older notes use `#` for Markdown headings.
+const JIRA_BULLET = /^(\*+)[ \t]+/;
+const TYPED_BULLET = /^-[ \t]+/;
+
+// HTML lists become Jira bullets, so every kind of list nests the same way.
+function htmlListsToBullets(html) {
+    let depth = 0;
+    return html.replace(HTML_LIST_TAG, (_, closing, tag) => {
+        if (tag.toLowerCase() === 'li') {
+            return closing ? '\n' : `\n${'*'.repeat(Math.max(depth, 1))} `;
+        }
+        depth = Math.max(depth + (closing ? -1 : 1), 0);
+        return '\n';
+    });
+}
+
+// Text before any list stays on the entry's line; lists and the text after them nest under it.
+function notesToMarkdown(html) {
+    const lines = htmlListsToBullets(
+        String(html || '').replace(WIKI_CODE, (_, markup, code) => markup || `\`${code}\``)
+    ).split(NOTE_LINE_BREAK);
+
+    const lead = [];
+    const nested = [];
+    // Text after a list ends it, and is nested under the entry as a paragraph.
+    let paragraph = [];
+    let previousDepth = 0;
+    // Indents of the typed bullets open above the current line, outermost first.
+    let typedIndents = [];
+    const endParagraph = () => {
+        if (paragraph.length) {
+            nested.push('', `  ${paragraph.join(' ')}`);
+        }
+        paragraph = [];
+    };
+
+    for (const line of lines) {
+        const indent = LEADING_SPACE.exec(line)[0];
+        const rest = line.slice(indent.length);
+        const jiraBullet = JIRA_BULLET.exec(rest);
+        const typedBullet = !jiraBullet && TYPED_BULLET.exec(rest);
+        const text = htmlToText(rest.slice((jiraBullet || typedBullet || [''])[0].length));
+        if (!text) {
+            continue;
+        }
+
+        if (!jiraBullet && !typedBullet) {
+            if (nested.length) {
+                paragraph.push(text);
+                previousDepth = 0;
+                typedIndents = [];
+            } else {
+                lead.push(text);
+            }
+            continue;
+        }
+
+        endParagraph();
+        let depth;
+        if (jiraBullet) {
+            depth = jiraBullet[1].length;
+        } else {
+            const width = indent.replace(/&nbsp;/g, ' ').length;
+            while (typedIndents.length && width < typedIndents[typedIndents.length - 1]) {
+                typedIndents.pop();
+            }
+            // As in Markdown, a bullet nests only when indented at least two past its parent.
+            if (!typedIndents.length || width >= typedIndents[typedIndents.length - 1] + 2) {
+                typedIndents.push(width);
+            }
+            depth = typedIndents.length;
+        }
+        // A list can only open one level deeper than the item above it.
+        depth = Math.min(depth, previousDepth + 1);
+        previousDepth = depth;
+        nested.push(`${'  '.repeat(depth)}- ${text}`);
+    }
+    endParagraph();
+
+    return { lead: lead.join(' '), nested };
+}
+
 function noteBullet(entry, field) {
     const summary = htmlToText(entry.summary);
-    const notes = htmlToText(entry[field]);
-    const detail = notes ? `: ${notes}` : '';
+    const { lead, nested } = notesToMarkdown(entry[field]);
     const docLink = entry.documentationUrl ? ` ([docs](${entry.documentationUrl}))` : '';
-    return `- **${entry.key}** - ${summary}${detail}${docLink}`;
+    const detail = lead ? `${summary}: ${lead}${docLink}` : `${summary}${docLink}${nested.length ? ':' : ''}`;
+    return [`- **${entry.key}** - ${detail}`, ...nested].join('\n');
 }
 
 // A lead section (Breaking Changes / Deprecations) listing every entry carrying the

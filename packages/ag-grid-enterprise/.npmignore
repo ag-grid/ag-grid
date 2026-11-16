@@ -30,3 +30,4 @@ coverage
 e2e/*
 playwright.config.ts
 esbuildBuild.cjs
+.build-staging-*

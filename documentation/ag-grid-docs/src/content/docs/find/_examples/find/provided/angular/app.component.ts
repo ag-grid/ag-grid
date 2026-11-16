@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -32,9 +32,7 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
                 <button (click)="previous()">Previous</button>
                 <button (click)="next()">Next</button>
                 <span>{{ activeMatchNum }}</span>
-            </div>
-            <div class="controls-row">
-                <label for="find-goto">Go to match:</label>
+                <label for="find-goto" class="gap-left">Go to match:</label>
                 <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>
@@ -42,7 +40,7 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
         <ag-grid-angular
             style="width: 100%; height: 100%;"
             [columnDefs]="columnDefs"
-            [rowData]="rowData"
+            [rowData]="rowData()"
             [findSearchValue]="findSearchValue"
             (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
@@ -64,7 +62,7 @@ export class AppComponent {
         { field: 'silver', minWidth: 100 },
         { field: 'bronze', minWidth: 100 },
     ];
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
 
     activeMatchNum: string = '';
 
@@ -99,7 +97,7 @@ export class AppComponent {
 
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 
     onInput(event: Event): void {

@@ -70,7 +70,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         // appear in this cell e.g. if rowDrag is a callback and returns false, so that every sparkline in a column is
         // the same size and they line up vertically.
         const colDef = this.params?.colDef;
-        const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.checkboxSelection ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
+        const widgets = (colDef?.rowDrag ? 1 : 0) + (colDef?.dndSource ? 1 : 0);
         const env = this.env;
         const cellPadding = env.getDefaultCellHorizontalPadding();
         const widgetSpace = widgets * (env.getDefaultIconSize() + env.getDefaultCellWidgetSpacing());

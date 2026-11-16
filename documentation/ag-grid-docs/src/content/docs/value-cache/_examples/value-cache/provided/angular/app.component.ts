@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GetRowIdParams, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
@@ -63,7 +63,7 @@ function formatNumber(params: ValueFormatterParams) {
                     </div>
                 </div>
             </div>
-            @if (isVisible) {
+            @if (isVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
                     [columnDefs]="columnDefs"
@@ -83,7 +83,7 @@ function formatNumber(params: ValueFormatterParams) {
 })
 export class AppComponent {
     public valueCacheOn = false;
-    public isVisible = true;
+    public isVisible = signal(true);
 
     public columnDefs: ColDef[] = [
         { field: 'q1', type: 'quarterFigure' },
@@ -129,8 +129,8 @@ export class AppComponent {
         // grid re-creation — remove then re-add the grid to pick up the new setting.
         callCount = 1;
         this.valueCacheOn = on;
-        this.isVisible = false;
-        setTimeout(() => (this.isVisible = true), 1);
+        this.isVisible.set(false);
+        setTimeout(() => this.isVisible.set(true), 1);
     }
 
     onCellValueChanged() {

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpar',
     advancedFilterBuilder: 'Construtor',
+    advancedFilterPlaceholder: 'Filtro Avançado',
     advancedFilterValidationMissingColumn: 'Coluna está faltando',
     advancedFilterValidationMissingOption: 'Opção está faltando',
     advancedFilterValidationMissingValue: 'Valor está faltando',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaCalculatedColumn: 'Coluna calculada',
     ariaColumnShowValuesAs: 'Mostrando valores como',
     ariaColumnSelectAll: 'Alternar Visibilidade de Todas as Colunas',
+    ariaColumnSelectExpandAll: 'Expandir ou recolher todos os grupos de colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Colunas de Filtro',
@@ -780,6 +782,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaPageSizeSelectorLabel: 'Tamanho da Página',
     ariaChartMenuClose: 'Fechar Menu de Edição do Gráfico',
     ariaChartSelected: 'Selecionado',
+    ariaChartSeriesChartType: 'Tipo de gráfico de ${variable}',
     ariaChartPalettePrevious: 'Paleta anterior',
     ariaChartPaletteNext: 'Próxima paleta',
     ariaChartPalettePage: 'Paleta ${variable} de ${variable}',
@@ -822,6 +825,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaLabelSelectField: 'Selecionar Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de Célula',
     ariaValidationErrorPrefix: 'Validação do Editor de Célula',
     ariaFullRowValidationError: 'Validação da linha completa: ${variable}',
     ariaFullRowEditValidationFailed: 'Não é possível concluir a edição da linha. ${variable}',
@@ -852,6 +856,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Tem Edições',
+    ariaLabelFilterCardType: 'Tipo de Filtro',
     ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)

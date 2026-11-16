@@ -24,8 +24,6 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
     public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'alwaysShowGrandTotalRow',
         'groupHideParentOfSingleChild',
-        'groupRemoveSingleChildren',
-        'groupRemoveLowestSingleChildren',
         'groupTotalRow',
         'masterDetail',
     ];

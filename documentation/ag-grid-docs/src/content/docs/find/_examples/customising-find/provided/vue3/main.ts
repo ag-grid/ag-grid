@@ -38,9 +38,7 @@ const VueExample = defineComponent({
                 <input id="caseSensitive" type="checkbox" @change="toggleCaseSensitive" checked>
                 <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
                 <input id="currentPageOnly" type="checkbox" @change="toggleCurrentPageOnly" checked>
-            </div>
-            <div class="controls-row">
-                <label for="find-goto">Go to match:</label>
+                <label for="find-goto" class="gap-left">Go to match:</label>
                 <input type="number" id="find-goto" min="1" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
             </div>

@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type {
     GetDetailRowDataParams,
     GridApi,
@@ -22,8 +24,6 @@ import {
     MasterDetailModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

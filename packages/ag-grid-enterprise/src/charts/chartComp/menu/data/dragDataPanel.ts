@@ -63,7 +63,10 @@ export abstract class DragDataPanel extends Component {
             );
             this.groupComp.addItem(this.valuePillSelect);
         } else {
-            const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
+            const params: AgSelectParams<AgComponentSelectorType, ColState> = {
+                ...this.createValueSelectParams(columns),
+                ariaLabel,
+            };
             params.onValueChange = (updatedColState: ColState) => {
                 for (const col of columns) {
                     col.selected = false;

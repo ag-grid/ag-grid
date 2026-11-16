@@ -22,46 +22,6 @@ const MenuCoreModule: _ModuleWithoutApi = {
     moduleName: 'MenuCore',
     version: VERSION,
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils, ToolbarMenuBuilder],
-    icons: {
-        // context menu chart item
-        chart: 'chart',
-        // columns in menu (column chooser / columns tab)
-        columns: 'columns',
-        // loading async menu items
-        loadingMenuItems: 'loading',
-        // "Pin column" item in column header menu
-        menuPin: 'pin',
-        // "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
-        menuValue: 'aggregation',
-        // "Group by {column-name}" item in column header menu
-        menuAddRowGroup: 'group',
-        // "Un-Group by {column-name}" item in column header menu
-        menuRemoveRowGroup: 'group',
-        // context menu copy item
-        clipboardCopy: 'copy',
-        // context menu cut item
-        clipboardCut: 'cut',
-        // context menu paste item
-        clipboardPaste: 'paste',
-        // context menu export item
-        save: 'save',
-        // csv export
-        csvExport: 'csv',
-        // excel export,
-        excelExport: 'excel',
-        // pdf export
-        pdfExport: 'pdf',
-        // show on column header when column is sorted ascending
-        sortAscending: 'asc',
-        // show on column header when column is sorted descending
-        sortDescending: 'desc',
-        // show on column header when column is sorted absolute ascending
-        sortAbsoluteAscending: 'aasc',
-        // show on column header when column is sorted absolute descending
-        sortAbsoluteDescending: 'adesc',
-        // show on column header when column has no sort, only when enabled with colDef.unSortIcon=true
-        sortUnSort: 'none',
-    },
     dependsOn: [EnterpriseCoreModule, _PopupModule, _SharedMenuModule, MenuItemModule],
 };
 
@@ -72,25 +32,6 @@ export const ColumnMenuModule: _ModuleWithApi<_ColumnChooserGridApi> = {
     moduleName: 'ColumnMenu',
     version: VERSION,
     beans: [EnterpriseMenuFactory, ColumnMenuFactory, ColumnChooserFactory],
-    icons: {
-        menuMoveLeft: 'left',
-        menuMoveRight: 'right',
-        // the column chooser offers the same move items as the Columns Tool Panel
-        menuMoveUp: 'up',
-        menuMoveDown: 'down',
-        ensureColumnVisible: 'column-arrow',
-        // menu tab icon in legacy tabbed enterprise column menu
-        legacyMenu: 'menu',
-        // filter tab icon in legacy tabbed enterprise column menu
-        filterTab: 'filter',
-        // column tool panel column group contracted (click to expand)
-        columnSelectClosed: 'tree-closed',
-        // column tool panel column group expanded (click to contract)
-        columnSelectOpen: 'tree-open',
-        // column tool panel header expand/collapse all button, shown when some children are expanded and
-        //     others are collapsed
-        columnSelectIndeterminate: 'tree-indeterminate',
-    },
     apiFunctions: {
         showColumnChooser,
         hideColumnChooser,

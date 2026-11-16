@@ -1482,7 +1482,7 @@ describe('StateService - Grid State Management', () => {
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
 
-        test('initialState filter restore fires onFilterChanged with source "columnFilter"', async () => {
+        test('initialState filter restore fires onFilterChanged with source "gridInitializing"', async () => {
             const sources: (string | undefined)[] = [];
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1501,7 +1501,7 @@ describe('StateService - Grid State Management', () => {
             // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
             await asyncSetTimeout(10);
 
-            expect(sources.every((s) => s === 'columnFilter')).toBe(true);
+            expect(sources.every((s) => s === 'gridInitializing')).toBe(true);
         });
 
         describe('a filter set before row data is first provided lands after the initial state filter', () => {
@@ -2334,6 +2334,7 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('initialState restores a filter on a pivot result column', async () => {
+            const sources: (string | undefined)[] = [];
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData,
@@ -2343,6 +2344,7 @@ describe('StateService - Grid State Management', () => {
                         filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } },
                     },
                 } as GridState,
+                onFilterChanged: ({ source }) => sources.push(source),
             });
             await waitForNoLoadingRows(api);
 
@@ -2362,6 +2364,8 @@ describe('StateService - Grid State Management', () => {
                 · ├── LEAF hidden id:0 pivot_year_2000_gold:66 pivot_year_2004_gold:66
                 · └── LEAF hidden id:1 pivot_year_2000_gold:10 pivot_year_2004_gold:10
             `);
+            expect(sources).toContain('gridInitializing');
+            expect(sources.every((s) => s === 'gridInitializing')).toBe(true);
         });
 
         test.each([[[]], [undefined]])(

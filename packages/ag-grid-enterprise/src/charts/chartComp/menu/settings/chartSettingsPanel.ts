@@ -1,6 +1,7 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _areEqual,
     _clearElement,
     _getAbsoluteWidth,
@@ -71,8 +72,12 @@ export class ChartSettingsPanel extends Component {
         _setAriaLabel(this.ePrevButton, this.chartTranslation.translate('ariaChartPalettePrevious'));
         _setAriaLabel(this.eNextButton, this.chartTranslation.translate('ariaChartPaletteNext'));
 
-        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
-        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
+        _addManagedElementListeners(this, this.ePrevBtn, {
+            click: () => this.setActivePalette(this.getPrev(), 'left'),
+        });
+        _addManagedElementListeners(this, this.eNextBtn, {
+            click: () => this.setActivePalette(this.getNext(), 'right'),
+        });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         const reset = () => this.resetPalettes(true);
@@ -171,7 +176,7 @@ export class ChartSettingsPanel extends Component {
         const link = _createElement({ tag: 'div', cls: 'ag-chart-settings-card-item' });
         _setAriaHidden(link, true);
 
-        this.addManagedElementListeners(link, {
+        _addManagedElementListeners(this, link, {
             click: () => {
                 this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
             },

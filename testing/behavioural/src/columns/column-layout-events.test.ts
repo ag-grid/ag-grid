@@ -463,6 +463,21 @@ describe('the rows drawn for the columns', () => {
         expect(ariaRowIndex()).toBe('3');
     });
 
+    test('a column shown by setColumnsVisible is drawn in the rows when its visibleChanged listener runs', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b', hide: true }, { field: 'c' }],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(drawnRow(api)).toBe('a:100px c:100px'));
+        const seen: string[] = [];
+        api.getColumn('b')!.addEventListener('visibleChanged', () => seen.push(drawnRow(api)));
+
+        api.setColumnsVisible(['b'], true);
+
+        expect(seen).toEqual(['a:100px b:100px c:100px']);
+    });
+
     // a group open or close refreshes the columns outside a column update, and its rows are laid out before its layout events
     test('a column a group shows is drawn in the rows, and one it hides is gone from them, when a column listener runs', async () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -1005,7 +1020,30 @@ describe('the column events of one call', () => {
         await waitFor(() => expect(seen).toEqual([true]));
     });
 
-    test('a group column redefined by a row group move is told once the columns hold the new order', () => {
+    test('expanding shows every group column it reveals in one displayed columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true },
+                { field: 'b', rowGroup: true },
+                { field: 'c', rowGroup: true },
+                { field: 'd' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            groupHideColumnsUntilExpanded: true,
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        await asyncSetTimeout(0);
+        const seen: string[] = [];
+        api.addEventListener('displayedColumnsChanged', () =>
+            seen.push(ids(api.getAllDisplayedColumns().filter((c) => c.getColId().startsWith('ag-Grid-AutoColumn'))))
+        );
+
+        api.expandAll();
+
+        await waitFor(() => expect(seen).toEqual(['ag-Grid-AutoColumn-a,ag-Grid-AutoColumn-b,ag-Grid-AutoColumn-c']));
+    });
+
+    test('a group column a row group move only reorders is not told its colDef changed', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a', rowGroup: true }, { field: 'b', rowGroup: true }, { field: 'c' }],
             groupDisplayType: 'multipleColumns',
@@ -1018,7 +1056,7 @@ describe('the column events of one call', () => {
 
         api.moveRowGroupColumn(0, 1);
 
-        expect(seen).toEqual([ids(api.getAllGridColumns())]);
+        expect(seen).toEqual([]);
     });
 
     test("a column a listener changes again before being told is told once, by the listener's update", () => {

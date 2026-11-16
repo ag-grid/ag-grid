@@ -1,4 +1,5 @@
 import { appendFile, mkdir, writeFile } from 'fs/promises';
+import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
@@ -121,11 +122,12 @@ const fastTestTimingsAlias: Alias = {
     replacement: path.resolve(thisDir, '../ag-test-utils/src/fastTestTimings.ts'),
 };
 
-// Pin react/react-dom to the versions installed in testing/behavioural/node_modules,
-// preventing Vite from resolving them from the repo-root node_modules instead.
+// One React for every importer: ag-grid-react's source would otherwise find the React 16 it builds against.
+const requireFromSuite = createRequire(import.meta.url);
+const suitePackageDir = (name: string) => path.dirname(requireFromSuite.resolve(`${name}/package.json`));
 const aliases: Alias[] = [
-    { find: 'react', replacement: path.resolve(thisDir, 'node_modules/react') },
-    { find: 'react-dom', replacement: path.resolve(thisDir, 'node_modules/react-dom') },
+    { find: 'react', replacement: suitePackageDir('react') },
+    { find: 'react-dom', replacement: suitePackageDir('react-dom') },
     fastTestTimingsAlias,
 ];
 

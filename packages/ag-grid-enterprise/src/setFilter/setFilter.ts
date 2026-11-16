@@ -1,4 +1,12 @@
-import { RefPlaceholder, _areEqual, _exists, _getActiveDomElement, _makeNull, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _areEqual,
+    _exists,
+    _getActiveDomElement,
+    _makeNull,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -637,7 +645,7 @@ export class SetFilter<V = string>
         eMiniFilter.onValueChange(() => this.onMiniFilterInput()).onValueClear(() => this.onMiniFilterInput(true));
         eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));
 
-        this.addManagedElementListeners(eMiniFilter.getInputElement(), {
+        _addManagedElementListeners(this, eMiniFilter.getInputElement(), {
             keydown: (e) => this.onMiniFilterKeyDown(e!),
         });
     }

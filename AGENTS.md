@@ -24,7 +24,7 @@ Each script takes `--help`. Full flag reference lives in the guides below rather
 
 **Locally, never run `./checks.sh`, `./behave.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** (under `CI` or in a workflow, do the opposite: see below). They take minutes, and a foreground call blocks the whole session: the user cannot reach the agent, no other work proceeds, and the wait is dead time repeated at every gate. Start them with the agent harness's background mechanism, which delivers a completion event in a later turn, then keep working. **Never `sleep` to wait for one either** — that is the same block, wearing a different hat.
 
-Nothing needs to be arranged to read the result afterwards: every local run captures itself and prints the log path as its first line (`tmp/_<name>-output/<id>/output.log`). Grep that file — while the run is going to abort early on the first failure, or after it for the verdict; `--bail 1` makes the run stop itself there instead, which is what you want in a fix-one-error-at-a-time loop. `./behave.sh` also writes Vitest's machine-readable `result.json` beside the log; the other scripts leave only the log and a status file. **All of this is local-only, and so is the rule above.** Backgrounding exists to keep an interactive session reachable; a CI job or workflow has nobody to block, so run these in the foreground there and read the output directly. The scripts capture nothing under `CI` for the same reason.
+Nothing needs to be arranged to read the result afterwards: every local run captures itself and prints the log path as its first line (`tmp/_<name>-output/<id>/output.log`). Grep that file — while the run is going to abort early on the first failure, or after it for the verdict; `--bail 1` makes the run stop itself there instead, which is what you want in a fix-one-error-at-a-time loop. `./behave.sh` also writes Vitest's machine-readable `result.json` beside the log; the other scripts leave only the log, the command and a status file. **All of this is local-only, and so is the rule above.** Backgrounding exists to keep an interactive session reachable; a CI job or workflow has nobody to block, so run these in the foreground there and read the output directly. The scripts capture nothing under `CI` for the same reason.
 
 ### Content Locations
 
@@ -124,12 +124,32 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 **Bug fix or feature work:** update the implementation (typically `packages/ag-grid-*/src/`), sync dependent docs and examples, then run `./behave.sh` and `./checks.sh`. Docs and example workflows are covered by the docs-pages and examples rules, which load when you touch those trees.
 
+### CI on a draft PR
+
+Draft PRs skip CI. To run it without marking the PR ready, comment on the PR:
+
+- `/ci` – full run (`nx run-many`)
+- `/ci --affected` – `nx affected` only
+
+Without the comment trigger, dispatch it yourself: `gh workflow run ci.yml -R ag-grid/ag-grid --ref <branch> -f nx_command=run-many`.
+
+The result shows on the PR as the `CI (manual)` status, linked to the run, and in `gh pr checks`. When a PR based on `latest`, `next` or a `b*` branch is later marked ready, CI runs again and a failed `CI (manual)` is replaced by a passing one that says the PR run supersedes it. A manual run that finishes after the PR run stays red until the next push or mark-ready.
+
+Limits:
+
+- Your own branch only, never `latest` (the staging deploy gates on the ref alone, so it would deploy). `/ci` refuses forks, `ghabot-*` branches and PRs that aren't open drafts.
+- `/ci` also runs PR Preview (and updates its PR comment) and the Module Size Comparison, as marking the PR ready does. They run only when the PR is open, from this repo and on the dispatched branch; otherwise the run warns and skips them. By hand, add `-f pr_number=<N>` to the `gh workflow run` above, and dispatch `module-size-comparison.yml` the same way (`gh workflow run module-size-comparison.yml -R ag-grid/ag-grid --ref <branch> -f pr_number=<N>`).
+- CodeQL and the Codex review don't run. Comment `/pr-review` on the draft for the Codex review.
+- `/ci` sets `nx_command` and `pr_number`, and `run_package_tests` defaults to off, so package tests don't run. A PR run doesn't run them either.
+- The run tests the branch head, not the merge ref, so it can pass where the merge would fail.
+- Marking the PR ready re-runs CI only for those bases. On any other base (a stacked PR, say) no PR run starts, so a red `CI (manual)` stays on that commit. A new commit starts without the status.
+
 ### Technical Requirements
 
 - **Node.js**: Check `.nvmrc` for version
 - **Package Manager**: Yarn
 - **Build Target**: ES2020 (`tsconfig.base.json`); `lib` is ES2022. Runtime API availability follows the browser-support policy, not this target.
-- **TypeScript**: Strict mode enabled across all packages
+- **TypeScript**: `strict` is off in `tsconfig.base.json`, which enables individual checks (e.g. `strictNullChecks`, `noImplicitAny`) instead; see that file for the current set
 
 ### JIRA Tickets
 

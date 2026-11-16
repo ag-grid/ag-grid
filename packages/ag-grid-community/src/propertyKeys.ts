@@ -66,6 +66,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'findSearchValue',
     'styleNonce',
     'renderingMode',
+    'scrollGestureMode',
 ];
 
 // only used internally
@@ -122,7 +123,6 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
 
 // only used internally
 const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
-    'sortingOrder',
     'alignedGrids',
     'rowData',
     'columnDefs',
@@ -207,7 +207,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'loadThemeGoogleFonts',
     'suppressInputClearButton',
     'enableInputAutoComplete',
-    'suppressMakeColumnVisibleAfterUnGroup',
     'suppressRowClickSelection',
     'suppressCellFocus',
     'suppressHeaderFocus',
@@ -221,7 +220,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'groupSuppressBlankHeader',
     'suppressMenuHide',
     'suppressRowDeselection',
-    'unSortIcon',
     'suppressMultiSort',
     'alwaysMultiSort',
     'singleClickEdit',
@@ -242,7 +240,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'allowContextMenuWithControlKey',
     'suppressContextMenu',
     'suppressDragLeaveHidesColumns',
-    'suppressRowGroupHidesColumns',
     'suppressMiddleClickScrolls',
     'suppressPreventDefaultOnMouseWheel',
     'suppressCopyRowsToClipboard',
@@ -257,8 +254,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'functionsReadOnly',
     'animateRows',
     'groupSelectsFiltered',
-    'groupRemoveSingleChildren',
-    'groupRemoveLowestSingleChildren',
     'enableRtl',
     'enableCellSpan',
     'suppressClickEdit',
@@ -294,7 +289,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressMultiRangeSelection',
     'enterNavigatesVerticallyAfterEdit',
     'enterNavigatesVertically',
-    'suppressPropertyNamesCheck',
     'rowMultiSelectWithClick',
     'suppressRowHoverHighlight',
     'suppressRowTransform',
@@ -306,7 +300,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'includeHiddenColumnsInCharts',
     'suppressMaintainUnsortedOrder',
     'enableCellTextSelection',
-    'suppressBrowserResizeObserver',
     'suppressMaxRenderedRowRestriction',
     'excludeChildrenWhenTreeDataFiltering',
     'tooltipMouseTrack',

@@ -1,5 +1,15 @@
 import type { AgComponentPopupPositionParams } from 'ag-stack';
-import { _getActiveDomElement } from 'ag-stack';
+import {
+    _addManagedElementListeners,
+    _getActiveDomElement,
+    _getElementRootNode,
+    _setAriaActiveDescendant,
+    _setAriaAutoComplete,
+    _setAriaControls,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaRole,
+} from 'ag-stack';
 
 import type { BeanCollection, IFormulaService, PopupPositionParams } from 'ag-grid-community';
 import { BeanStub, KeyCode } from 'ag-grid-community';
@@ -25,7 +35,13 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedElementListeners(this.field.getContentElement(), {
+        const input = this.field.getInputElement();
+        _setAriaRole(input, 'combobox');
+        _setAriaAutoComplete(input, 'list');
+        _setAriaHasPopup(input, 'listbox');
+        _setAriaExpanded(input, false);
+
+        _addManagedElementListeners(this, this.field.getContentElement(), {
             keydown: this.onContentKeyDown.bind(this),
             mouseup: this.updateFunctionAutocomplete.bind(this),
             focusin: this.updateFunctionAutocomplete.bind(this),
@@ -177,6 +193,7 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
                 autoSizeList: true,
                 maxVisibleItems: 10,
                 onListHeightChanged: repositionList,
+                onActiveOptionChanged: () => this.refreshComboboxAria(),
             })
         );
 
@@ -200,11 +217,38 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
 
         this.functionAutocompleteHidePopup = addPopupRes.hideFunc;
         this.functionAutocompleteList.afterGuiAttached();
+        this.refreshComboboxAria();
+    }
+
+    private refreshComboboxAria(): void {
+        const list = this.functionAutocompleteList;
+        // the list fires its first active-option change while still being constructed, before it is assigned.
+        if (!list) {
+            this.clearComboboxAria();
+            return;
+        }
+
+        const input = this.field.getInputElement();
+        const activeOptionId = list.getActiveOptionId();
+        const renderedActiveOptionId =
+            activeOptionId && _getElementRootNode(input).getElementById(activeOptionId) ? activeOptionId : null;
+
+        _setAriaExpanded(input, true);
+        _setAriaControls(input, list.getListId());
+        _setAriaActiveDescendant(input, renderedActiveOptionId);
+    }
+
+    private clearComboboxAria(): void {
+        const input = this.field.getInputElement();
+        _setAriaExpanded(input, false);
+        _setAriaControls(input, null);
+        _setAriaActiveDescendant(input, null);
     }
 
     private closeFunctionAutocomplete(): void {
         this.functionAutocompleteToken = null;
         this.functionAutocompleteSearch = null;
+        this.clearComboboxAria();
 
         if (!this.functionAutocompleteList) {
             return;

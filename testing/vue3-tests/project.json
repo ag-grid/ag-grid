@@ -13,6 +13,7 @@
     },
     "dev": {
       "command": "npx vite",
+      "cache": false,
       "options": {
         "cwd": "testing/vue3-tests"
       }

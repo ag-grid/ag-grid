@@ -97,9 +97,9 @@ const GridExample = () => {
                         <button onClick={previous}>Previous</button>
                         <button onClick={next}>Next</button>
                         <span>{activeMatchNum}</span>
-                    </div>
-                    <div className="controls-row">
-                        <label htmlFor="find-goto">Go to match:</label>
+                        <label htmlFor="find-goto" className="gap-left">
+                            Go to match:
+                        </label>
                         <input type="number" id="find-goto" min="1" ref={goToRef} />
                         <button onClick={goToFind}>Go To</button>
                     </div>

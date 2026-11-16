@@ -40,6 +40,7 @@ describe('Column Mutations', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     describe('setColumnDefs: instance preservation', () => {
@@ -1391,6 +1392,144 @@ describe('Column Mutations', () => {
             `);
             await asyncSetTimeout(0);
             expect(api.getColumn('a')).toBe(colABefore);
+        });
+
+        test('a group without groupId keeps its open state when defaultColGroupDef sets a groupId', () => {
+            const defs = () => [
+                { headerName: 'G', children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandDefaultGroupId', {
+                columnDefs: defs(),
+                defaultColGroupDef: { groupId: 'x' },
+            });
+            const group = () => api.getColumn('a')!.getOriginalParent()!;
+            api.setColumnGroupOpened(group().getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs());
+
+            expect(group().isExpanded()).toBe(true);
+        });
+
+        test.each([
+            ['their headerNames change, as in a language switch', undefined, ['Group', 'Other'], ['Gruppe', 'Andere']],
+            ['the headerName of the group around them changes', 'outer', ['Group', 'Other'], ['Group', 'Other']],
+        ])(
+            'groups without groupId keep their open states by position when %s',
+            (_name, outerGroupId: string | undefined, before: string[], after: string[]) => {
+                const group = (headerName: string, field: string) => ({
+                    headerName,
+                    children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+                });
+                const defs = (headers: string[], outer: string) => [
+                    {
+                        groupId: outerGroupId,
+                        headerName: outer,
+                        children: [
+                            group(headers[0], 'a'),
+                            group(headers[1], 'b'),
+                            { field: 'c', columnGroupShow: 'open' as const },
+                        ],
+                    },
+                ];
+                const api = gridsManager.createGrid('expandByPosition', { columnDefs: defs(before, 'Outer') });
+                const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+                api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+                api.setGridOption('columnDefs', defs(after, 'Äußere'));
+
+                const outer = parentOf('a').getOriginalParent()!; // `c`'s own parent is a padding group
+                expect([parentOf('a').isExpanded(), parentOf('b').isExpanded(), outer.isExpanded()]).toEqual([
+                    true,
+                    false,
+                    false,
+                ]);
+            }
+        );
+
+        test('a group without groupId keeps its open state by headerName when the group around it is renamed and a group is added beside it', () => {
+            const group = (headerName: string, field: string) => ({
+                headerName,
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandOuterRenamed', {
+                columnDefs: [{ headerName: 'Year', children: [group('Q1', 'a')] }],
+            });
+            const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+            api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+            api.setGridOption('columnDefs', [{ headerName: 'Année', children: [group('Q1', 'a'), group('Q2', 'b')] }]);
+
+            expect([parentOf('a').isExpanded(), parentOf('b').isExpanded()]).toEqual([true, false]);
+        });
+
+        test('a group without groupId after a column keeps its open state by headerName', () => {
+            const defs = () => [
+                { field: 'x' },
+                { headerName: 'G', children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandAfterColumn', { columnDefs: defs() });
+            const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+            api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs());
+
+            expect(parentOf('a').isExpanded()).toBe(true);
+        });
+
+        test('a group without groupId does not take the open state of a removed group with a groupId and the same headerName', () => {
+            const group = (field: string, groupId?: string) => ({
+                groupId,
+                headerName: 'G',
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandFromGroupId', { columnDefs: [group('a', 'g')] });
+            api.setColumnGroupOpened('g', true);
+
+            api.setGridOption('columnDefs', [group('b')]);
+
+            expect(api.getColumn('b')!.getOriginalParent()!.isExpanded()).toBe(false);
+        });
+
+        test('a duplicate groupId added in an update takes no open state, and keeps its own at its suffixed id', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected groupId collision
+            const group = (field: string) => ({
+                groupId: 'g',
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandDuplicateAdded', { columnDefs: [group('a')] });
+            api.setColumnGroupOpened('g', true);
+            const openStates = () => [
+                api.getProvidedColumnGroup('g')!.isExpanded(),
+                api.getProvidedColumnGroup('g_1')!.isExpanded(),
+            ];
+
+            api.setGridOption('columnDefs', [group('a'), group('b')]);
+            expect(openStates()).toEqual([true, false]);
+
+            api.setColumnGroupOpened('g', false);
+            api.setColumnGroupOpened('g_1', true);
+            api.setGridOption('columnDefs', [group('a'), group('b')]);
+            expect(openStates()).toEqual([false, true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('a group whose groupId an earlier def now takes keeps its open state at its suffixed id', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected id collision
+            const group = {
+                groupId: 'g',
+                headerName: 'G',
+                children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }],
+            };
+            const api = gridsManager.createGrid('expandGroupIdTaken', { columnDefs: [group] });
+            api.setColumnGroupOpened('g', true);
+
+            api.setGridOption('columnDefs', [{ field: 'g' }, group]);
+
+            const parent = api.getColumn('a')!.getOriginalParent()!;
+            expect([parent.getGroupId(), parent.isExpanded()]).toEqual(['g_1', true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
         });
 
         test('expanded state restored on group reuse via groupId', async () => {
