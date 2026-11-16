@@ -3,7 +3,17 @@ import { SelectionColService } from '../columns/selectionColService';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import rowSelectionCSS from './rowSelection.css';
-import { deselectAll, getSelectedNodes, getSelectedRows, selectAll, setNodesSelected } from './rowSelectionApi';
+import {
+    deselectAll,
+    deselectAllFiltered,
+    deselectAllOnCurrentPage,
+    getSelectedNodes,
+    getSelectedRows,
+    selectAll,
+    selectAllFiltered,
+    selectAllOnCurrentPage,
+    setNodesSelected,
+} from './rowSelectionApi';
 import { SelectionService } from './selectionService';
 
 /**
@@ -18,6 +28,10 @@ export const SharedRowSelectionModule: _ModuleWithApi<_RowSelectionGridApi> = {
         setNodesSelected,
         selectAll,
         deselectAll,
+        selectAllFiltered,
+        deselectAllFiltered,
+        selectAllOnCurrentPage,
+        deselectAllOnCurrentPage,
         getSelectedNodes,
         getSelectedRows,
     },

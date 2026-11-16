@@ -1,10 +1,17 @@
-import type { CellRendererSelectorFunc } from '../entities/colDef';
+import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../entities/colDef';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { UserCompDetails } from './iUserCompDetails';
 
 export type FooterValueGetterFunc<TData = any, TValue = any> = (params: GroupCellRendererParams<TData, TValue>) => any;
 
 export type TotalValueGetterFunc<TData = any, TValue = any> = (params: GroupCellRendererParams<TData, TValue>) => any;
+
+export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> &
+    GroupCellRendererParams<TData, TValue>;
+
+export type GroupCheckboxSelectionCallback<TData = any, TValue = any> = (
+    params: GroupCheckboxSelectionCallbackParams<TData, TValue>
+) => boolean;
 
 /**
  * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
@@ -20,6 +27,13 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     totalValueGetter?: string | TotalValueGetterFunc<TData, TValue>;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
+    /**
+     * Set to `true`, or a function that returns `true`, if a checkbox should be included.
+     *
+     * @deprecated v33 Use `rowSelection.checkboxes` and `rowSelection.checkboxLocation` instead.
+     */
+    checkbox?: boolean | GroupCheckboxSelectionCallback<TData, TValue>;
+
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: any;
     /** Additional params to customise to the `innerRenderer`. */
