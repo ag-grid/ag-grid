@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -41,7 +41,7 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
 
     name = `year${id++}`;
     params!: FilterDisplayParams<any, any, true> & FilterWrapperParams;
-    year = 'All';
+    year = signal('All');
 
     agInit(params: FilterDisplayParams<any, any, true> & FilterWrapperParams): void {
         this.params = params;
@@ -49,16 +49,16 @@ export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
     }
 
     refresh(newParams: FilterDisplayParams<any, any, true> & FilterWrapperParams): boolean {
-        const currentValue = this.year === '2010' || null;
+        const currentValue = this.year() === '2010' || null;
         const newValue = newParams.model;
         if (newValue !== currentValue) {
-            this.year = newValue ? '2010' : 'All';
+            this.year.set(newValue ? '2010' : 'All');
         }
         return true;
     }
 
     updateFilter() {
-        this.params.onModelChange(this.year === '2010' || null);
+        this.params.onModelChange(this.year() === '2010' || null);
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {

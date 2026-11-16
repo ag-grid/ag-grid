@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Kosongkan',
     advancedFilterBuilder: 'Pembina',
+    advancedFilterPlaceholder: 'Penapis Lanjutan',
     advancedFilterValidationMissingColumn: 'Lajur tiada',
     advancedFilterValidationMissingOption: 'Pilihan tiada',
     advancedFilterValidationMissingValue: 'Nilai tiada',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaCalculatedColumn: 'Lajur dikira',
     ariaColumnShowValuesAs: 'Memaparkan Nilai Sebagai',
     ariaColumnSelectAll: 'Togol Keterlihatan Semua Lajur',
+    ariaColumnSelectExpandAll: 'Kembangkan atau Kuncupkan Semua Kumpulan Lajur',
     ariaDateFilterInput: 'Input Penapis Tarikh',
     ariaDefaultListName: 'Senarai',
     ariaFilterColumnsInput: 'Input Tapis Lajur',
@@ -795,6 +797,10 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaPageSizeSelectorLabel: 'Saiz Halaman',
     ariaChartMenuClose: 'Tutup Menu Sunting Carta',
     ariaChartSelected: 'Dipilih',
+    ariaChartSeriesChartType: 'Jenis Carta ${variable}',
+    ariaChartPalettePrevious: 'Palet sebelumnya',
+    ariaChartPaletteNext: 'Palet seterusnya',
+    ariaChartPalettePage: 'Palet ${variable} daripada ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} memaparkan ${count} nilai antara ${min} dan ${max}. Bermula pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} memaparkan 1 nilai, ${value}.',
@@ -827,6 +833,11 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelMaximize: 'Maksimumkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelColorPickerSpectrum: 'Ketepuan dan Kecerahan',
+    ariaValueColorPickerSpectrum: 'Ketepuan ${variable}%, Kecerahan ${variable}%',
+    ariaLabelColorPickerHue: 'Rona',
+    ariaLabelColorPickerAlpha: 'Kelegapan',
+    ariaLabelColorPickerHex: 'Warna Heks',
 
     ariaLabelColumnMenu: 'Menu Lajur',
     ariaLabelColumnFilter: 'Penapis Lajur',
@@ -834,6 +845,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelSelectField: 'Pilih Medan',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor Sel',
     ariaValidationErrorPrefix: 'Pengesahan Editor Sel',
     ariaFullRowValidationError: 'Pengesahan Baris Penuh: ${variable}',
     ariaFullRowEditValidationFailed: 'Tidak dapat menyelesaikan suntingan baris. ${variable}',
@@ -866,6 +878,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelAddFilterField: 'Tambah Medan Penapis',
     ariaLabelFilterCardDelete: 'Padam Penapis',
     ariaLabelFilterCardHasEdits: 'Mempunyai Suntingan',
+    ariaLabelFilterCardType: 'Jenis Penapis',
     ariaHasNote: 'Sel ini mempunyai nota.',
 
     // Number Format (Status Bar, Pagination Panel)

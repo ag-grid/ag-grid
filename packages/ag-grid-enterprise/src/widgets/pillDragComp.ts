@@ -1,4 +1,4 @@
-import { RefPlaceholder, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type {
     AgEvent,
@@ -201,7 +201,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => this.onKeyDown(e));
 
-        this.addManagedElementListeners(this.eButton, {
+        _addManagedElementListeners(this, this.eButton, {
             click: (mouseEvent: MouseEvent) => {
                 // Stop first: the pill's own GUI carries a click-to-sort listener, so a listener that throws
                 // must not leak the click up to it.

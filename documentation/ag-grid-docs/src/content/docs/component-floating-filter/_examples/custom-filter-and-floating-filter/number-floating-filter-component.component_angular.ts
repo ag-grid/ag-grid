@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IFloatingFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -22,7 +22,7 @@ export interface CustomParams {
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngularComp {
     params!: FloatingFilterDisplayParams<any, any, number> & CustomParams;
-    currentValue: string = '';
+    currentValue = signal<string>('');
     style: any;
 
     agInit(params: FloatingFilterDisplayParams<any, any, number> & CustomParams): void {
@@ -38,12 +38,12 @@ export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngu
         // if the update is from the floating filter, we don't need to update the UI
         if (params.source !== 'ui') {
             const model = params.model;
-            this.currentValue = model == null ? '' : String(model);
+            this.currentValue.set(model == null ? '' : String(model));
         }
     }
 
     onInputBoxChanged() {
-        const newValue = this.currentValue ?? '';
+        const newValue = this.currentValue() ?? '';
         this.params.onModelChange(newValue === '' ? null : Number(newValue));
     }
 }

@@ -1,4 +1,4 @@
-import { RefPlaceholder, _observeResize, _setFixedWidth } from 'ag-stack';
+import { RefPlaceholder, _observeResize, _setFixedWidth, _throttleToFrame } from 'ag-stack';
 
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -25,7 +25,11 @@ const FakeVScrollElement: ElementParams = {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     private readonly eSpacer: HTMLElement = RefPlaceholder;
-    private readonly queueContainerHeightSync = this.throttleToFrame(() => this.syncContainerHeight());
+    private readonly queueContainerHeightSync = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.syncContainerHeight()
+    );
 
     constructor() {
         super(FakeVScrollElement, 'vertical');

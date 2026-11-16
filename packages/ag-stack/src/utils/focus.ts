@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _last } from './array';
 import { _getTabIndex } from './browser';
 import { _getActiveDomElement, _getDocument } from './document';

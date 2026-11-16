@@ -20,7 +20,6 @@ const CHART_TYPE_TO_SERIES_TYPE: Record<ChartTypeExCombo, string> = {
     bubble: 'bubble',
     pie: 'pie',
     donut: 'donut',
-    doughnut: 'donut',
     area: 'area',
     stackedArea: 'area',
     normalizedArea: 'area',
@@ -218,10 +217,6 @@ export function isStatistical(seriesType: ChartSeriesType): boolean {
     return doesSeriesHaveProperty(seriesType, 'isStatistical');
 }
 
-export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 'doughnut'> {
-    return chartType === 'doughnut' ? 'donut' : chartType;
-}
-
 export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
     return CHART_TYPE_TO_SERIES_TYPE[chartType as ChartTypeExCombo] as ChartSeriesType | undefined;
 }
@@ -280,8 +275,6 @@ export function getFullChartNameTranslationKey(chartType: ChartType): ChartTrans
         case 'stackedArea':
         case 'normalizedArea':
             return `${chartType}Full`;
-        case 'doughnut':
-            return 'donut';
         case 'areaColumnCombo':
             return 'AreaColumnCombo';
         default:

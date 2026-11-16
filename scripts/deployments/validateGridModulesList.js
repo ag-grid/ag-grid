@@ -13,8 +13,6 @@ const IGNORED_MODULES = [
     'AllCommunityModule',
     // Bundled module
     'AllEnterpriseModule',
-    // Deprecated in favour of `IntegratedChartsModule`
-    'GridChartsModule',
     // Deprecated
     'MenuModule',
     // Deprecated

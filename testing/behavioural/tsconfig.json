@@ -1,18 +1,23 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.spec.json",
   "compilerOptions": {
-    "jsx": "react",
-    "emitDecoratorMetadata": false,
-    "noImplicitAny": false,
-    "module": "ES2022",
-    "useDefineForClassFields": false,
-    "moduleResolution": "Node",
-    "types": ["vitest/globals", "node", "@testing-library/jest-dom"],
-    "noEmit": true
+    "tsBuildInfoFile": "../../node_modules/.cache/tsc-editor/behavioural.tsbuildinfo"
   },
   "references": [
     {
-      "path": "./tsconfig.spec.json"
+      "path": "../../packages/ag-stack"
+    },
+    {
+      "path": "../../packages/ag-grid-community"
+    },
+    {
+      "path": "../../packages/ag-grid-enterprise"
+    },
+    {
+      "path": "../../packages/ag-grid-react"
+    },
+    {
+      "path": "../shared/vitest"
     }
   ]
 }

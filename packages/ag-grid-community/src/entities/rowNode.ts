@@ -293,7 +293,7 @@ export class RowNode<TData = any>
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number | null = null;
 
-    /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    /** `true` by default - can be overridden via rowSelection.isRowSelectable(rowNode) */
     public selectable = true;
 
     /** Used by the value service, stores values for a particular change detection turn. */

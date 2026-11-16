@@ -6,7 +6,6 @@ import { ClientSideRowModelModule, ColumnApiModule, enableDevValidations } from 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -49,14 +48,13 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="test-container">
-                    <div className="test-header">
-                        <div style={{ marginBottom: '1rem' }}>
-                            <input type="checkbox" id="pinFirstColumnOnLoad" />
-                            <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
-                        </div>
-
-                        <div style={{ marginBottom: '1rem' }}>
+                <div className="example-wrapper">
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <div>
+                                <input type="checkbox" id="pinFirstColumnOnLoad" />
+                                <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+                            </div>
                             <button id="reloadGridButton" onClick={reloadGrid}>
                                 Reload Grid
                             </button>

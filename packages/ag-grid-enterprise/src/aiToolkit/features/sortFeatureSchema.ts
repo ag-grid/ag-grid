@@ -1,8 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 
+import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 
-export const buildSortFeatureSchema = (beans: BeanCollection) => {
+export const buildSortFeatureSchema = (beans: BeanCollection): SchemaBuilder | undefined => {
     const { sortSvc } = beans;
     if (!sortSvc) {
         return;

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpiar',
     advancedFilterBuilder: 'Constructor',
+    advancedFilterPlaceholder: 'Filtro Avanzado',
     advancedFilterValidationMissingColumn: 'Falta la columna',
     advancedFilterValidationMissingOption: 'Falta la opción',
     advancedFilterValidationMissingValue: 'Falta el valor',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     ariaCalculatedColumn: 'Columna calculada',
     ariaColumnShowValuesAs: 'Mostrando valores como',
     ariaColumnSelectAll: 'Alternar visibilidad de todas las columnas',
+    ariaColumnSelectExpandAll: 'Expandir o contraer todos los grupos de columnas',
     ariaDateFilterInput: 'Entrada de Filtro de Fecha',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtrado de Columnas',
@@ -780,6 +782,10 @@ export const AG_GRID_LOCALE_ES_ES = {
     ariaPageSizeSelectorLabel: 'Tamaño de Página',
     ariaChartMenuClose: 'Cerrar Menú de Edición de Gráfica',
     ariaChartSelected: 'Seleccionado',
+    ariaChartSeriesChartType: 'Tipo de gráfico de ${variable}',
+    ariaChartPalettePrevious: 'Paleta anterior',
+    ariaChartPaletteNext: 'Paleta siguiente',
+    ariaChartPalettePage: 'Paleta ${variable} de ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} que muestra ${count} valores entre ${min} y ${max}. Empieza en ${start} y termina en ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} que muestra 1 valor: ${value}.',
@@ -809,11 +815,17 @@ export const AG_GRID_LOCALE_ES_ES = {
     ariaLabelClose: 'Cerrar',
     ariaLabelMaximize: 'Maximizar',
     ariaLabelRestore: 'Restaurar',
+    ariaLabelColorPickerSpectrum: 'Saturación y brillo',
+    ariaValueColorPickerSpectrum: 'Saturación ${variable} %, brillo ${variable} %',
+    ariaLabelColorPickerHue: 'Tono',
+    ariaLabelColorPickerAlpha: 'Opacidad',
+    ariaLabelColorPickerHex: 'Color hexadecimal',
     ariaLabelColumnMenu: 'Menú de Columna',
     ariaLabelColumnFilter: 'Filtro de Columna',
     ariaLabelSelectField: 'Seleccionar Campo',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de Celda',
     ariaValidationErrorPrefix: 'Validación del Editor de Celda',
     ariaFullRowValidationError: 'Validación de la fila completa: ${variable}',
     ariaFullRowEditValidationFailed: 'No se puede completar la edición de la fila. ${variable}',
@@ -844,6 +856,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     ariaLabelAddFilterField: 'Agregar campo de filtro',
     ariaLabelFilterCardDelete: 'Eliminar filtro',
     ariaLabelFilterCardHasEdits: 'Tiene ediciones',
+    ariaLabelFilterCardType: 'Tipo de Filtro',
     ariaHasNote: 'Esta celda tiene una nota.',
 
     // Number Format (Status Bar, Pagination Panel)

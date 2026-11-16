@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { KeyCode, _exists, _isBrowserSafari } from 'ag-stack';
+import { KeyCode, _addManagedElementListeners, _exists, _isBrowserSafari } from 'ag-stack';
 
 import { AgInputNumberFieldSelector } from '../../agWidgets/agInputNumberField';
 import type { ElementParams } from '../../utils/element';
@@ -52,7 +52,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         const editorEl = eEditor.getInputElement();
         if (params.preventStepping) {
-            eEditor.addManagedElementListeners(editorEl, { keydown: this.preventStepping });
+            _addManagedElementListeners(eEditor, editorEl, { keydown: this.preventStepping });
         } else if (params.showStepperButtons) {
             editorEl.classList.add('ag-number-field-input-stepper');
         }

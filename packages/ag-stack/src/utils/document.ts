@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _exists } from './generic';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

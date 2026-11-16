@@ -29,6 +29,12 @@ inputs:
     description: 'Cache mode for setup-nx (rw, ro, off). Use off for release tags to avoid cross-version cache hits.'
     required: false
     default: 'ro'
+  bundlers:
+    description: >-
+      Also build the testing/module-size-bundlers apps with other bundlers (Vite 8, webpack 5). They run once, on
+      shard 1, and are skipped for refs that predate that project.
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -85,9 +91,22 @@ runs:
         npm run module-combinations -- --shard=${{ inputs.shard }}/${{ inputs.total-shards }}
         mv module-size-results.json module-size-results-shard-${{ inputs.shard }}.json
 
+    - name: Run bundler module size tests
+      if: inputs.bundlers == 'true' && inputs.shard == '1'
+      shell: bash
+      run: |
+        if [ ! -d testing/module-size-bundlers ]; then
+          echo "testing/module-size-bundlers does not exist at this ref; skipping"
+          exit 0
+        fi
+        (cd testing/module-size-bundlers && npm run module-combinations)
+        mv testing/module-size-bundlers/module-size-results-bundlers.json testing/module-size/module-size-results-shard-bundlers.json
+
     - name: Upload shard results
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: ${{ inputs.artifact-prefix }}-shard-${{ inputs.shard }}${{ inputs.artifact-suffix && format('-{0}', inputs.artifact-suffix) || '' }}
-        path: testing/module-size/module-size-results-shard-${{ inputs.shard }}.json
+        path: |
+          testing/module-size/module-size-results-shard-${{ inputs.shard }}.json
+          testing/module-size/module-size-results-shard-bundlers.json
         retention-days: 1

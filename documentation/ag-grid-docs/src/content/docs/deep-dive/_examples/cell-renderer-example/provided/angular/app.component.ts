@@ -68,7 +68,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
             <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
             <ag-grid-angular
                 style="width: 100%; height: 550px;"
-                [rowData]="rowData"
+                [rowData]="rowData()"
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
@@ -79,7 +79,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 })
 export class AppComponent {
     // Row Data: The data to be displayed.
-    rowData: IRow[] = [];
+    rowData = signal<IRow[]>([]);
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
@@ -115,6 +115,6 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent) {
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

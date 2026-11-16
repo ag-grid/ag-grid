@@ -1,7 +1,8 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { AgEvent } from '../interfaces/agEvent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
+import type { ICommonSource } from '../interfaces/iEvent';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
@@ -18,11 +19,11 @@ export interface HighlightTooltipEvent extends AgEvent<HighlightTooltipEventType
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgHighlightTooltipFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TTooltipCtrlParams,
     TLocation extends string,

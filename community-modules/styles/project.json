@@ -87,7 +87,6 @@
     "test": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
-      "inputs": [],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}",

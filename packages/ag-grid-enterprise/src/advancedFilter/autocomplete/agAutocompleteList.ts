@@ -101,7 +101,12 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(
-            new VirtualList({ cssIdentifier: 'autocomplete', retainRoleWhenEmpty: this.params.retainRoleWhenEmpty })
+            new VirtualList({
+                cssIdentifier: 'autocomplete',
+                retainRoleWhenEmpty: this.params.retainRoleWhenEmpty,
+                // A row scrolled into view is drawn after the selection that scrolled to it was announced.
+                onRowsDrawn: () => this.refreshActiveDescendant(),
+            })
         );
         const virtualList = this.virtualList;
         const virtualListGui = virtualList.getGui();

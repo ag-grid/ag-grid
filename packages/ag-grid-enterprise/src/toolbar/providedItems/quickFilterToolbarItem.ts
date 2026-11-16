@@ -1,4 +1,4 @@
-import { _debounce } from 'ag-stack';
+import { _addManagedElementListeners, _debounce } from 'ag-stack';
 
 import type {
     GridInputTextField,
@@ -32,7 +32,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
-        let quickFilterTextTimeout: number | undefined;
+        let quickFilterTextTimeout: ReturnType<typeof setTimeout> | undefined;
         const setQuickFilterText = (quickFilterText: string) =>
             this.gos.updateGridOptions({ options: { quickFilterText } });
 
@@ -59,7 +59,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
         const updateQuickFilterText = _debounce(this, () => setQuickFilterText(this.eInput.value), INPUT_DEBOUNCE_MS);
 
-        this.addManagedElementListeners(this.eInput, {
+        _addManagedElementListeners(this, this.eInput, {
             input: () => (quickFilterTextTimeout = updateQuickFilterText()),
         });
 

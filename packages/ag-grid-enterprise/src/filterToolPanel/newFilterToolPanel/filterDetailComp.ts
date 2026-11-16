@@ -10,6 +10,8 @@ import type {
 } from 'ag-grid-community';
 import { AgSelectSelector, Component } from 'ag-grid-community';
 
+import { translateForFilterPanel } from './filterPanelUtils';
+
 const FilterDetailElement: ElementParams = {
     tag: 'div',
     cls: 'ag-filter-card-body',
@@ -22,6 +24,7 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
 
     public postConstruct(): void {
         const eFilterTypeParams: AgSelectParams<AgComponentSelectorType> = {
+            ariaLabel: translateForFilterPanel(this, 'ariaLabelFilterCardType'),
             onValueChange: (filterDef) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterDef }),
         };
         this.setTemplate(FilterDetailElement, [AgSelectSelector], { eFilterType: eFilterTypeParams });

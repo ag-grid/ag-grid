@@ -13,12 +13,6 @@ export const ColumnHeaderCompModule: _ModuleWithoutApi = {
     userComponents: {
         agColumnHeader: AgColumnHeader,
     },
-    icons: {
-        // button to launch legacy column menu
-        menu: 'menu',
-        // button to launch new enterprise column menu
-        menuAlt: 'menu-alt',
-    },
 };
 
 /**
@@ -30,11 +24,5 @@ export const ColumnGroupHeaderCompModule: _ModuleWithoutApi = {
     version: VERSION,
     userComponents: {
         agColumnGroupHeader: AgColumnGroupHeader,
-    },
-    icons: {
-        // header column group shown when expanded (click to contract)
-        columnGroupOpened: 'expanded',
-        // header column group shown when contracted (click to expand)
-        columnGroupClosed: 'contracted',
     },
 };

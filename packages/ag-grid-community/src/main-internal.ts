@@ -256,7 +256,6 @@ export {
     _isServerSideRowModel,
     _isSetFilterByDefault,
     _isUsingNewCellSelectionAPI,
-    _isUsingNewRowSelectionAPI,
     _processOnChange,
     _shouldUpdateColVisibilityAfterGroup,
 } from './gridOptionsUtils';

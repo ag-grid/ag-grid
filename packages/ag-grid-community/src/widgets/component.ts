@@ -1,5 +1,5 @@
 import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from 'ag-stack';
-import { AgComponentStub } from 'ag-stack';
+import { AgAbstractComponent } from 'ag-stack';
 
 import type { AgWidgetSelectorType } from '../agWidgets/agWidgetSelectorType';
 import type { BeanCollection } from '../context/context';
@@ -44,7 +44,7 @@ export type AgComponentSelectorType =
     | 'AG-FORMULA-INPUT-FIELD';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
+export class Component<TLocalEvent extends string = AgComponentEvent> extends AgAbstractComponent<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,

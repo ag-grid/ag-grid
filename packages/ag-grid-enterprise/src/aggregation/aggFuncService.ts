@@ -223,7 +223,7 @@ function aggMinMax(
 }
 
 // Proto used to reduce memory impact from repeat function instantiation
-const COUNT_PROTO = Object.freeze({
+const COUNT_PROTO = /* #__PURE__ */ Object.freeze({
     // the grid by default uses toString to render values for an object, so this
     // is a trick to get the default cellRenderer to display the avg value
     toString: function () {
@@ -261,7 +261,7 @@ function aggCount(params: IAggFuncParams) {
 }
 
 // Proto used to reduce memory impact from repeat function instantiation
-const AVERAGE_PROTO = Object.freeze({
+const AVERAGE_PROTO = /* #__PURE__ */ Object.freeze({
     // the grid by default uses toString to render values for an object, so this
     // is a trick to get the default cellRenderer to display the avg value
     toString: function () {

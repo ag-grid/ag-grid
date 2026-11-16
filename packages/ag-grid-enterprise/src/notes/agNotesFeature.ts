@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type {
     BeanCollection,
     BeanStub,
@@ -285,7 +287,7 @@ export class AgNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
-        this.compBean.addManagedElementListeners(this.ctrl.eGui, {
+        _addManagedElementListeners(this.compBean, this.ctrl.eGui, {
             pointerenter: (event: PointerEvent) => {
                 if (this.ctrl.isNoteHoverSuppressed()) {
                     return;

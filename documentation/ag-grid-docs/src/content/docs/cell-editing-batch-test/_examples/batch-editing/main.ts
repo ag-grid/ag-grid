@@ -327,7 +327,7 @@ function decorateCells() {
             return null;
         }
 
-        const cellCtrl: CellCtrl | undefined = rowCtrl.getCellCtrl(position.column as AgColumn);
+        const cellCtrl: CellCtrl | undefined = rowCtrl.getCellCtrl(gridApi.getColumn(position.colId) as AgColumn);
 
         if (!cellCtrl) {
             return;

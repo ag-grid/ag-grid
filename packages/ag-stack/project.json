@@ -15,16 +15,16 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:package:core", "build:umd"]
     },
     "build:umd": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["^build:package", "build:package"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-stack*.js"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main-umd.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "packages/ag-stack/esbuildBuild.cjs",
@@ -39,13 +39,13 @@
       "cache": true
     },
     "build:umd:watch": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": [],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-stack*.js"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main-umd.ts",
         "tsConfig": "{projectRoot}/tsconfig.watch.json",
         "esbuildConfig": "packages/ag-stack/esbuildBuild.cjs",
@@ -63,7 +63,7 @@
       "cache": true
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
+      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -76,22 +76,19 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/dist/types"],
       "options": {
-        "outputPath": "packages/ag-stack/dist/types",
-        "main": "packages/ag-stack/src/main.ts",
-        "tsConfig": "packages/ag-stack/tsconfig.types.json",
-        "compiler": "tsc"
+        "command": "node scripts/package/emit-declarations.mjs {projectRoot}/tsconfig.types.json {projectRoot}/dist/types"
       },
       "configurations": {
         "watch": {
-          "tsConfig": "packages/ag-stack/tsconfig.types.watch.json"
+          "command": "node scripts/package/emit-declarations.mjs {projectRoot}/tsconfig.types.watch.json {projectRoot}/dist/types"
         },
         "production": {}
       }
     },
     "build:package": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["^build:package"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -106,6 +103,7 @@
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist/package",
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
@@ -130,8 +128,49 @@
         }
       }
     },
+    "build:package:core": {
+      "executor": "ag-grid-task-autogen:esbuild-staged",
+      "dependsOn": ["^build:package"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "skipTypeCheck": true,
+        "outputPath": "{projectRoot}/dist/core",
+        "main": "{projectRoot}/src/main-core.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "neutral",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false,
+          "metafile": false
+        },
+        "production": {
+          "sourcemap": false,
+          "metafile": false
+        }
+      }
+    },
     "build:package:watch": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": [],
       "inputs": [
         "{projectRoot}/package.json",
@@ -146,7 +185,6 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist/package",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.watch.json",
         "skipTypeCheck": true,
@@ -175,7 +213,11 @@
         "command": "eslint && stylelint './src/**/*css'"
       }
     },
-    "build:test": {},
+    "build:test": {
+      "options": {
+        "command": "npx tsc -p {projectRoot}/tsconfig.spec.json --noEmit && npx tsc -p {projectRoot}/tsconfig.core.json && npx tsc -p {projectRoot}/tsconfig.core.worker.json"
+      }
+    },
     "test": {
       "command": "npx vitest run",
       "dependsOn": ["build:test"],
@@ -211,10 +253,11 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["allOutputs"],
+      "inputs": ["allOutputs", "{workspaceRoot}/scripts/package/verify-package-resolution.mjs"],
       "options": {
         "commands": [
-          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package",
+          "node scripts/package/verify-package-resolution.mjs --dom-free core -- dist/artifacts/contents/{projectRoot}/package"
         ]
       },
       "configurations": {

@@ -1,4 +1,4 @@
-import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
@@ -48,37 +48,27 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
+let rowIdSequence = 100;
+
+const createDataItem = (color: string) => ({
+    id: rowIdSequence++,
+    color: color,
+    value1: Math.floor(Math.random() * 100),
+    value2: Math.floor(Math.random() * 100),
+});
+
+const initialLeftRowData = ['Red', 'Green', 'Blue'].map((color) => createDataItem(color));
+
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState<GridApi | null>(null);
     const [rightApi, setRightApi] = useState<GridApi | null>(null);
-    const [leftRowData, setLeftRowData] = useState<any[]>([]);
+    const [leftRowData] = useState<any[]>(initialLeftRowData);
     const [rightRowData] = useState<any[]>([]);
 
     const eLeftGrid = useRef(null);
     const eRightGrid = useRef(null);
     const eBin = useRef<HTMLElement>(null);
     const eBinIcon = useRef<HTMLElement>(null);
-
-    let rowIdSequence = 100;
-
-    const createDataItem = useCallback(
-        (color: string) => {
-            const obj = {
-                id: rowIdSequence++,
-                color: color,
-                value1: Math.floor(Math.random() * 100),
-                value2: Math.floor(Math.random() * 100),
-            };
-
-            return obj;
-        },
-        [rowIdSequence]
-    );
-
-    useEffect(() => {
-        const createLeftRowData = () => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color));
-        setLeftRowData(createLeftRowData());
-    }, [createDataItem]);
 
     const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
@@ -196,7 +186,11 @@ const GridExample = () => {
 
     const getInnerGridCol = (side: string) => (
         <div className="inner-col">
-            <div className="toolbar">{['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}</div>
+            <div className="toolbar example-controls">
+                <div className="controls-row">
+                    {['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}
+                </div>
+            </div>
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
@@ -214,7 +208,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="example-wrapper">
+            <div className="example-wrapper example-wrapper--row">
                 {getInnerGridCol('Left')}
                 <div className="inner-col vertical-toolbar">
                     <span className="bin" ref={eBin}>

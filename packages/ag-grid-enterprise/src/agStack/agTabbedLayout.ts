@@ -1,6 +1,6 @@
 import type {
     AfterGuiAttachedParams,
-    AgCoreBeanCollection,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -9,6 +9,7 @@ import type {
 import {
     AgTabGuardComp,
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _createAgElement,
     _findNextFocusableElement,
@@ -52,11 +53,11 @@ function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgTabbedLayout<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TContainerType extends string = string,
 > extends AgTabGuardComp<
@@ -131,7 +132,7 @@ export class AgTabbedLayout<
         const eIcon = this.beans.iconSvc.createIconNoSpan('close')!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
-        this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
+        _addManagedElementListeners(this, eCloseButton, { click: () => this.params.onCloseClicked?.() });
         const eCloseButtonWrapper = _createAgElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         eCloseButtonWrapper.appendChild(eCloseButton);
@@ -319,7 +320,7 @@ export class AgTabbedLayout<
 
             if (this.params.keepScrollPosition) {
                 const scrollableContainer = tabbedItem.getScrollableContainer?.() ?? body;
-                [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
+                [this.lastScrollListener] = _addManagedElementListeners(this, scrollableContainer, {
                     scroll: () => {
                         this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
                     },

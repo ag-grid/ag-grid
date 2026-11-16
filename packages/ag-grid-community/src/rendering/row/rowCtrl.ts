@@ -557,8 +557,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         return this.rowType !== 'Normal';
     }
 
-    /** Called by NormalRowFeature after refreshing cells */
-    public onNormalRowRefreshed(): void {
+    /** Called after refreshing cells or retaining a full width renderer. */
+    public onRowRefreshed(): void {
         // push only what changed: an unchanged value still re-renders a React row
         if (_escapeString(this.rowNode.id) !== this.rowId) {
             this.setRowCompRowId();
@@ -702,9 +702,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     }
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
-        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== !!isNodeFullWidthCell(this.beans, this.rowNode);
-        if (fullWidthChanged) {
+        // a row whose type changed is drawn anew, as each type renders differently
+        if (getRowTypeForNode(this.beans, this.rowNode) !== this.rowType) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
@@ -1288,9 +1287,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             }
         }
 
-        // if this was focused; focus will need recovered
+        // the grid owes back the focus it held in this row, as when a focused cell is removed
         if (this.isFullWidth() && this.rowGui?.element.contains(_getActiveDomElement(this.beans))) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.oweFocus();
         }
 
         rowNode.setHovered(false);

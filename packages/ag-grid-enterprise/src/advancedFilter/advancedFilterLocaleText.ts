@@ -62,6 +62,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterCancel: 'Cancel',
     advancedFilterClear: 'Clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',

@@ -1,8 +1,12 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
+// Request values are bound as `?` parameters, and column names and sort directions are
+// checked against allow-lists of known values.
 export function FakeServer(allData) {
     alasql.options.cache = false;
+
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
 
     return {
         getData: function (request) {
@@ -24,18 +28,26 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        const sql = buildSql(request);
+        const params = [allData];
+        const sql = buildSql(request, params);
 
-        console.log('[FakeServer] - about to execute query:', sql);
+        console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
 
-        return alasql(sql, [allData]);
+        return alasql(sql, params);
     }
 
-    function buildSql(request) {
-        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
+    function buildSql(request, params) {
+        return 'SELECT * FROM ?' + whereSql(request, params) + orderBySql(request) + limitSql(request);
     }
 
-    function whereSql(request) {
+    function column(colId) {
+        if (!knownColumns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function whereSql(request, params) {
         const whereParts = [];
         const filterModel = request.filterModel;
 
@@ -44,7 +56,9 @@ export function FakeServer(allData) {
                 const filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
-                    whereParts.push(columnKey + " IN ('" + filter.values.join("', '") + "')");
+                    whereParts.push(column(columnKey) + ' IN (' + filter.values.map(() => '?').join(', ') + ')');
+                    // blanks arrive as `null`; bind '' instead, as AlaSQL never matches null in an IN list
+                    params.push(...filter.values.map((value) => value ?? ''));
                     return;
                 }
 
@@ -60,12 +74,15 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        const sortModel = request.sortModel;
+        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
+        const sortModel = request.sortModel.filter(function (s) {
+            return knownColumns.has(s.colId);
+        });
 
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            return s.colId + ' ' + s.sort.toUpperCase();
+            return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
         });
 
         return ' ORDER BY ' + sorts.join(', ');
@@ -75,9 +92,11 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        const blockSize = request.endRow - request.startRow;
+        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
+        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
+        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
 
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function getLastRowIndex(request) {

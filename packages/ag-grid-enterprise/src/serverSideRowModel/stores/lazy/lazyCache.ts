@@ -1080,7 +1080,7 @@ export class LazyCache extends BeanStub {
         if (!this.dataVersionWarned) {
             this.dataVersionWarned = true;
             // Streaming needs versions it can order, and these two cannot be ordered.
-            this.warn(341, { pinned, received, unordered: isStreaming && Number.isNaN(comparison) });
+            this.warn(343, { pinned, received, unordered: isStreaming && Number.isNaN(comparison) });
         }
         return false;
     }

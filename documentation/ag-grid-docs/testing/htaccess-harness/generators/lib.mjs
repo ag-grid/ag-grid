@@ -339,13 +339,33 @@ export function knownFailMarker(ref, intended, actual) {
     return assertions.length ? `known-fail=${assertions.join(',')}:${ref}` : null;
 }
 
+const EDGE_CACHE = 'max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400';
+
 /**
- * Every generated redirect row also asserts it is never cached (the root's `Header always set
- * Cache-Control "no-cache"` for 3xx except 304), so a cached Location cannot replay one visitor's
- * query string to another. A row asserting its own Cache-Control keeps it.
+ * Whether production caches this redirect at the edge (redirectEdgeCacheRules): a 301 on www over https,
+ * with no query string, outside the archives.
  */
-const withRedirectChecks = (status, extra) =>
-    isRedirect(status) && !extra.some((e) => /^cc[=~]/.test(e)) ? [...extra, 'cc=no-cache'] : extra;
+const isEdgeCachedRedirect = (host, path, status, extra) =>
+    status === 301 &&
+    (host === 'www' || host === 'www.ag-grid.com') &&
+    !path.includes('?') &&
+    !/^\/(charts\/|studio\/)?archive\/[0-9]/.test(path) &&
+    !extra.includes('scheme=http');
+
+/**
+ * Every generated redirect row also asserts its caching: the root's `Header always set Cache-Control
+ * "no-cache"` for 3xx except 304, so a cached Location cannot replay one visitor's query string to
+ * another - or, for the permanent www redirects with no query string, the day-long edge cache and the
+ * deploy invalidation's cache tag. A row asserting its own Cache-Control keeps it.
+ */
+const withRedirectChecks = (host, path, status, extra) => {
+    if (!isRedirect(status) || extra.some((e) => /^cc[=~]/.test(e))) {
+        return extra;
+    }
+    return isEdgeCachedRedirect(host, path, status, extra)
+        ? [...extra, `cc=${EDGE_CACHE}`, 'h:x-ag-cache-tag=ag-docs']
+        : [...extra, 'cc=no-cache'];
+};
 
 export class Rows {
     constructor() {
@@ -362,7 +382,9 @@ export class Rows {
             return;
         }
         this.seen.add(key);
-        this.rows.push([host, path, String(status), loc, ...withRedirectChecks(Number(status), extra)].join('\t'));
+        this.rows.push(
+            [host, path, String(status), loc, ...withRedirectChecks(host, path, Number(status), extra)].join('\t')
+        );
     }
     section(title) {
         this.rows.push('', `# @category ${title}`);

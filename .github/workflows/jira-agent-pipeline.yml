@@ -335,8 +335,8 @@ jobs:
         timeout-minutes: 10
         permissions:
             contents: read
-            # Reads this CI run's own jobs, to re-verify a cancelled run (AG-17920).
-            actions: read
+            # Reads this CI run's own jobs (AG-17920); dispatches Accept & start triage runs (AG-19321).
+            actions: write
             pull-requests: read
             packages: read
         outputs:

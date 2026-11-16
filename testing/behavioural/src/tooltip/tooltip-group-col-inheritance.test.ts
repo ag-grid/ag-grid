@@ -12,6 +12,7 @@ import {
 
 import {
     GROUP_AUTO_COLUMN_ID,
+    RenderApiModule,
     TooltipModule,
     agTestIdFor,
     enableDevValidations,
@@ -33,7 +34,7 @@ import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './le
 describe('Tooltip inheritance in group columns', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [TooltipModule, RowGroupingModule, TreeDataModule] as Module[],
+        modules: [TooltipModule, RowGroupingModule, TreeDataModule, RenderApiModule] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -580,6 +581,99 @@ describe('Tooltip inheritance in group columns', () => {
         expect(selectorParams?.node?.key).toBe('Australia');
         expect(selectorParams?.location).toBe('fullWidthRow');
     });
+
+    test('a group row renderer that refreshes in place keeps the tooltip it set (groupRows)', async () => {
+        class RefreshingTooltipRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+
+            init(params: ICellRendererParams) {
+                this.eGui.textContent = String(params.value);
+                params.setTooltip('Renderer tooltip');
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return true;
+            }
+        }
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-refreshing-full-width', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            groupDisplayType: 'groupRows',
+            groupRowRenderer: RefreshingTooltipRenderer,
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = () => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia'));
+        await waitFor(groupRow);
+
+        api.refreshCells({ rowNodes: [api.getRowNode('row-group-country-Australia')!] });
+        await userEvent.hover(await waitFor(groupRow));
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Renderer tooltip');
+    });
+
+    test.each(['gains', 'changes'] as const)(
+        'a group row renderer that refreshes in place shows the tooltip its column %s (groupRows)',
+        async (change) => {
+            allowLegacyTooltipProperties();
+            class RefreshingRenderer implements ICellRendererComp {
+                private readonly eGui = document.createElement('span');
+
+                init(params: ICellRendererParams) {
+                    this.eGui.textContent = String(params.value);
+                }
+
+                getGui() {
+                    return this.eGui;
+                }
+
+                refresh() {
+                    return true;
+                }
+            }
+
+            const api = await gridMgr.createGridAndWait('tooltip-group-refreshing-col-tooltip', {
+                columnDefs: [
+                    {
+                        field: 'country',
+                        rowGroup: true,
+                        hide: true,
+                        tooltipValueGetter: change === 'changes' ? () => 'Old tooltip' : undefined,
+                    },
+                    { field: 'athlete' },
+                ],
+                groupDisplayType: 'groupRows',
+                groupRowRenderer: RefreshingRenderer,
+                rowData: [{ country: 'Australia', athlete: 'Alice' }],
+                tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+                tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const groupRow = () => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia'));
+            const eRendererGui = (await waitFor(groupRow)).querySelector('span');
+
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipValueGetter: (params) => `Tooltip: ${params.value}`,
+                },
+                { field: 'athlete' },
+            ]);
+            api.refreshCells({ rowNodes: [api.getRowNode('row-group-country-Australia')!], force: true });
+            await userEvent.hover(await waitFor(groupRow));
+            await waitForTooltips(1);
+            expect(getTooltips()[0]).toHaveTextContent('Tooltip: Australia');
+            expect(groupRow().querySelector('span')).toBe(eRendererGui);
+        }
+    );
 
     // TC3 – groupDisplayType: 'groupRows': full-width row inherits tooltipValueGetter from colDef
     test('full-width group row inherits tooltipValueGetter (groupRows)', async () => {

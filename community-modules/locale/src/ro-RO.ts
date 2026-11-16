@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     advancedFilterCancel: 'Anulează',
     advancedFilterClear: 'Șterge',
     advancedFilterBuilder: 'Constructor',
+    advancedFilterPlaceholder: 'Filtru Avansat',
     advancedFilterValidationMissingColumn: 'Lipsă coloană',
     advancedFilterValidationMissingOption: 'Lipsă opțiune',
     advancedFilterValidationMissingValue: 'Lipsă valoare',
@@ -737,6 +738,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaCalculatedColumn: 'Coloană calculată',
     ariaColumnShowValuesAs: 'Se afișează valorile ca',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
+    ariaColumnSelectExpandAll: 'Extinde sau restrânge toate grupurile de coloane',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
     ariaDefaultListName: 'Listă',
     ariaFilterColumnsInput: 'Intrare Filtrare Coloane',
@@ -780,6 +782,10 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',
+    ariaChartPalettePrevious: 'Paleta anterioară',
+    ariaChartPaletteNext: 'Paleta următoare',
+    ariaChartPalettePage: 'Paleta ${variable} din ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} afișează 1 valoare: ${value}.',
@@ -809,11 +815,17 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelClose: 'Închide',
     ariaLabelMaximize: 'Maximizează',
     ariaLabelRestore: 'Restaurează',
+    ariaLabelColorPickerSpectrum: 'Saturație și luminozitate',
+    ariaValueColorPickerSpectrum: 'Saturație ${variable}%, luminozitate ${variable}%',
+    ariaLabelColorPickerHue: 'Nuanță',
+    ariaLabelColorPickerAlpha: 'Opacitate',
+    ariaLabelColorPickerHex: 'Culoare hexazecimală',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',
     ariaLabelSelectField: 'Selectează Câmp',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor de celule',
     ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaFullRowValidationError: 'Validarea întregului rând: ${variable}',
     ariaFullRowEditValidationFailed: 'Editarea rândului nu poate fi finalizată. ${variable}',
@@ -843,6 +855,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
+    ariaLabelFilterCardType: 'Tip de Filtru',
     ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)

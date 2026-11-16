@@ -275,6 +275,24 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
     );
 
     test.each(['infinite', 'serverSide'] as const)(
+        'with the %s row model, the initial filter state reports source gridInitializing',
+        async (rowModelType) => {
+            const requests: unknown[] = [];
+            const sources: (string | undefined)[] = [];
+            const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+            gridsManager.createGrid('grid1', {
+                rowModelType,
+                columnDefs: [{ field: 'athlete' }, { field: 'age', filter: 'agNumberColumnFilter' }],
+                initialState: { filter: { filterModel: { age } } },
+                onFilterChanged: ({ source }) => sources.push(source),
+                ...datasourceFor(rowModelType, ROWS, requests),
+            });
+            await waitFor(() => expect(requests).toEqual([{ age }]));
+            expect(sources).toEqual(['gridInitializing']);
+        }
+    );
+
+    test.each(['infinite', 'serverSide'] as const)(
         'with the %s row model, a column whose filter is built, removed and given back before the datasource still takes its initial model',
         async (rowModelType) => {
             const requests: unknown[] = [];

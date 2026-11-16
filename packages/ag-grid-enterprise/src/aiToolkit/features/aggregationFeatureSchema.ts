@@ -1,8 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 
+import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 
-export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
+export const buildAggregationFeatureSchema = (beans: BeanCollection): SchemaBuilder | undefined => {
     const { aggFuncSvc } = beans;
     if (!aggFuncSvc) {
         return;

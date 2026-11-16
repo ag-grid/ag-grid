@@ -1,4 +1,5 @@
 import {
+    _addManagedElementListeners,
     _clearElement,
     _findFocusableElements,
     _getActiveDomElement,
@@ -15,7 +16,7 @@ import type {
     IToolbarItem,
     IToolbarItemComp,
     IToolbarItemParams,
-    IconName,
+    IconKey,
     Toolbar,
     ToolbarButtonItemDef,
     ToolbarItemActionParams,
@@ -47,7 +48,7 @@ interface NormalisedToolbarItem {
     key: string;
     label?: string;
     tooltip?: string;
-    icon?: IconName;
+    icon?: IconKey;
     action?: (params: ToolbarItemActionParams) => void;
 }
 
@@ -60,7 +61,7 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
     let toolbarItemParams: unknown = item.toolbarItemParams;
     let label: string | undefined;
     let tooltip: string | undefined;
-    let icon: IconName | undefined;
+    let icon: IconKey | undefined;
     let action: ((params: ToolbarItemActionParams) => void) | undefined;
 
     if (toolbarItem == null) {
@@ -124,7 +125,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
         // The toolbar clips overflow, so a focused item that sits outside the visible area
         // would otherwise appear to lose focus. Scroll it back into view on focusin.
-        this.addManagedElementListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             focusin: this.ensureFocusedItemVisible.bind(this),
         });
 

@@ -95,6 +95,27 @@ describe('AgRichSelect', () => {
         expect(setValue).toHaveBeenCalledWith('', false);
     });
 
+    it('keeps the allowTyping wrapper and input out of the Tab order while disabled', () => {
+        const richSelect = createRichSelect<string>({ allowTyping: true });
+        const wrapper = document.createElement('div');
+        const input = document.createElement('input');
+        richSelect.gos = { get: () => 0 };
+        richSelect.eWrapper = wrapper;
+        richSelect.eInput = { getFocusableElement: () => input };
+
+        richSelect.setDisabled(true);
+
+        expect(wrapper.getAttribute('tabindex')).toBe('-1');
+        expect(input.getAttribute('tabindex')).toBe('-1');
+        expect(input.getAttribute('aria-disabled')).toBe('true');
+
+        richSelect.setDisabled(false);
+
+        expect(wrapper.getAttribute('tabindex')).toBe('0');
+        expect(input.getAttribute('tabindex')).toBe('0');
+        expect(input.getAttribute('aria-disabled')).toBeNull();
+    });
+
     it('rejects non-array values that cannot be resolved in the list', () => {
         const richSelect = createRichSelect<ComplexValue>();
         const unknown = { id: 10, label: 'ten' };

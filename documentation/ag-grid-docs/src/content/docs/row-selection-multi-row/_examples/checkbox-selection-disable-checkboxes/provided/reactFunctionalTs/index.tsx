@@ -5,8 +5,6 @@ import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } fr
 import type { ColDef, RowSelectionOptions } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -53,11 +51,18 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div className="example-header">
-                    <label>
-                        <span>Hide disabled checkboxes:</span>
-                        <input id="toggle-hide-checkbox" type="checkbox" defaultChecked onChange={toggleHideCheckbox} />
-                    </label>
+                <div className="example-header example-controls">
+                    <div className="controls-row">
+                        <label>
+                            <span>Hide disabled checkboxes:</span>
+                            <input
+                                id="toggle-hide-checkbox"
+                                type="checkbox"
+                                defaultChecked
+                                onChange={toggleHideCheckbox}
+                            />
+                        </label>
+                    </div>
                 </div>
                 <div id="myGrid" className="grid">
                     <AgGridReact

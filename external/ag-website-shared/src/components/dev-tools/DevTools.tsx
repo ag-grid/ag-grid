@@ -1,14 +1,10 @@
 import {
     $copyFrameworkAgnosticLinks,
     $devTools,
-    $exampleDevToolbar,
     $fpsMonitor,
-    $openLinksInNewTab,
     toggleCopyFrameworkAgnosticLinks,
     toggleDevTools,
-    toggleExampleDevToolbar,
     toggleFpsMonitor,
-    toggleOpenLinksInNewTab,
 } from '@ag-website-shared/components/dev-tools/stores/devToolsStore';
 import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import type { FunctionComponent, ReactNode } from 'react';
@@ -51,8 +47,6 @@ export const DevToolsToggle = ({ children }: { children: ReactNode }) => {
 
 export const DevTools: FunctionComponent = () => {
     const devTools = useStoreSsr($devTools, false);
-    const exampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
-    const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
     const copyFrameworkAgnosticLinks = useStoreSsr($copyFrameworkAgnosticLinks, false);
     const fpsMonitor = useStoreSsr($fpsMonitor, false);
 
@@ -76,28 +70,6 @@ export const DevTools: FunctionComponent = () => {
         <div id={DEV_TOOLS_ID} className={styles.devToolsContainer}>
             <h2>Dev Tools</h2>
             <div className={styles.options}>
-                <div>
-                    <label htmlFor={`${DEV_TOOLS_ID}-exampleDevToolbar`}>Example Dev Toolbar:</label>
-                    <input
-                        id={`${DEV_TOOLS_ID}-exampleDevToolbar`}
-                        type="checkbox"
-                        defaultChecked={exampleDevToolbar}
-                        onClick={() => {
-                            toggleExampleDevToolbar();
-                        }}
-                    />
-                </div>
-                <div>
-                    <label htmlFor={`${DEV_TOOLS_ID}-openLinksInNewTab`}>Open Links In New Tab:</label>
-                    <input
-                        id={`${DEV_TOOLS_ID}-openLinksInNewTab`}
-                        type="checkbox"
-                        defaultChecked={openLinksInNewTab}
-                        onClick={() => {
-                            toggleOpenLinksInNewTab();
-                        }}
-                    />
-                </div>
                 <div>
                     <label htmlFor={`${DEV_TOOLS_ID}-copyFrameworkAgnosticLinks`}>Copy Framework Agnostic Links:</label>
                     <input

@@ -1,5 +1,13 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, KeyCode, _clearElement, _isVisible, _last, _setAriaRole } from 'ag-stack';
+import type { AgBeanCollection, AgEvent, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import {
+    AgAbstractComponent,
+    KeyCode,
+    _addManagedElementListeners,
+    _clearElement,
+    _isVisible,
+    _last,
+    _setAriaRole,
+} from 'ag-stack';
 
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
@@ -10,18 +18,27 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+export type AgListEvent = 'fieldValueChanged' | 'selectedItem' | 'activeItemChanged';
+
+export interface AgListActiveItemChangedEvent extends AgEvent<'activeItemChanged'> {
+    activeId: string | null;
+}
+
+const TYPE_AHEAD_TIMEOUT_MS = 1000;
+
+const normaliseForTypeAhead = (text: string): string =>
+    text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
 
 export class AgList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TEventType extends string = AgListEvent,
     TValue = string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -54,6 +71,12 @@ export class AgList<
     private value: TValue | null;
     private displayValue: string | null;
 
+    private typedText = '';
+    private lastTypedTime = 0;
+
+    private isHoverPaused = false;
+    private lastPointerPosition: string | null = null;
+
     constructor(private readonly cssIdentifier = 'default') {
         super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
         this.registerCSS(agListCSS);
@@ -61,7 +84,7 @@ export class AgList<
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        _addManagedElementListeners(this, eGui, { mouseleave: () => this.clearHighlighted() });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -78,6 +101,7 @@ export class AgList<
             case KeyCode.DOWN:
             case KeyCode.UP:
                 e.preventDefault();
+                this.pauseHover();
                 this.navigate(key);
                 break;
             case KeyCode.PAGE_DOWN:
@@ -85,8 +109,74 @@ export class AgList<
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 e.preventDefault();
+                this.pauseHover();
                 this.navigateToPage(key);
                 break;
+        }
+    }
+
+    public onItemMouseMove(
+        item: AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        >,
+        e: MouseEvent
+    ): void {
+        const position = `${e.clientX},${e.clientY}`;
+        const lastPosition = this.lastPointerPosition;
+        this.lastPointerPosition = position;
+        if (this.isHoverPaused) {
+            if (lastPosition == null || position === lastPosition) {
+                return;
+            }
+            this.isHoverPaused = false;
+        }
+        if (item !== this.highlightedItem) {
+            this.highlightItem(item);
+        }
+    }
+
+    public hasActiveTypeAhead(): boolean {
+        return this.typedText !== '' && Date.now() - this.lastTypedTime <= TYPE_AHEAD_TIMEOUT_MS;
+    }
+
+    /** The typed text and hover state only apply while the list is open. */
+    public resetInputTracking(): void {
+        this.typedText = '';
+        this.isHoverPaused = false;
+        this.lastPointerPosition = null;
+    }
+
+    /** A repeated character cycles through the options starting with it; other text matches the first option starting with it. */
+    public typeCharacter(char: string): void {
+        const typedChar = normaliseForTypeAhead(char);
+        if (typedChar === '') {
+            return;
+        }
+        this.pauseHover();
+        const typedText = (this.hasActiveTypeAhead() ? this.typedText : '') + typedChar;
+        this.typedText = typedText;
+        this.lastTypedTime = Date.now();
+
+        const { options, listItems, highlightedItem } = this;
+        const firstChar = typedText[0];
+        const isCycling = typedText === firstChar.repeat(typedText.length);
+        const searchText = isCycling ? firstChar : typedText;
+        const startIdx = isCycling && highlightedItem ? listItems.indexOf(highlightedItem) + 1 : 0;
+
+        for (let i = 0, len = options.length; i < len; ++i) {
+            const idx = (startIdx + i) % len;
+            // Cell editors can supply non-string option text at runtime.
+            const optionText = normaliseForTypeAhead(String(options[idx].text ?? '').trimStart());
+            if (optionText.startsWith(searchText)) {
+                this.highlightItem(listItems[idx]);
+                return;
+            }
         }
     }
 
@@ -99,7 +189,7 @@ export class AgList<
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text ?? (value as any);
+        const valueToRender = String(text ?? value ?? '');
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);
@@ -196,9 +286,7 @@ export class AgList<
             return;
         }
 
-        this.clearHighlighted();
-        item.setHighlighted(true);
-        this.highlightedItem = item;
+        this.setHighlightedItem(item);
 
         const eGui = this.getGui();
 
@@ -228,9 +316,38 @@ export class AgList<
         }
     }
 
+    // WebKit reports a `mousemove` at the unchanged position when the list scrolls under a still pointer,
+    // so hover only resumes once the pointer is somewhere other than its last known position.
+    private pauseHover(): void {
+        this.isHoverPaused = true;
+    }
+
     private clearHighlighted(): void {
-        this.highlightedItem?.setHighlighted(false);
-        this.highlightedItem = null;
+        this.setHighlightedItem(null);
+    }
+
+    private setHighlightedItem(
+        item: AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        > | null
+    ): void {
+        const previousItem = this.highlightedItem;
+        previousItem?.setHighlighted(false);
+        item?.setHighlighted(true);
+        this.highlightedItem = item;
+
+        if (previousItem !== item) {
+            this.dispatchLocalEvent<AgListActiveItemChangedEvent>({
+                type: 'activeItemChanged',
+                activeId: item?.getId() ?? null,
+            });
+        }
     }
 
     private renderOption(value: TValue, text: string): void {

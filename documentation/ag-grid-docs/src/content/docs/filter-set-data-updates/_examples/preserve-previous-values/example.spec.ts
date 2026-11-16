@@ -26,7 +26,7 @@ test.agExample(import.meta, () => {
         await expectRowCount(page, 53);
 
         // 2004 has no Afghanistan, Algeria or Armenia rows: each keeps its place, Algeria still selected.
-        await click(page, 'Show 2004');
+        await click(page, 'Load 2004 Data');
         await expect(itemAt(page, 2)).toHaveText('Afghanistan (not in rows)');
         await expect(itemAt(page, 3)).toHaveText('Algeria (not in rows)');
         await expect(itemAt(page, 4)).toHaveText('Argentina');
@@ -43,7 +43,7 @@ test.agExample(import.meta, () => {
         await sideButton(page, 'Filters').click();
 
         // Back to 2008: Algeria's rows pass again.
-        await click(page, 'Show 2008');
+        await click(page, 'Load 2008 Data');
         await expect(itemAt(page, 3)).toHaveText('Algeria');
         await expect(filterItemCheckbox(page, 'Algeria')).toBeChecked();
         await expectRowCount(page, 53);
@@ -56,7 +56,7 @@ test.agExample(import.meta, () => {
             await waitForGridContent(page);
 
             await click(page, 'Select Algeria and Argentina');
-            await click(page, 'Show 2004');
+            await click(page, 'Load 2004 Data');
             await expect(filterItem(page, 'Algeria (not in rows)')).toHaveCount(1);
             await click(page, 'Clear Preserved Values');
             await expect(itemAt(page, 2)).toHaveText('Argentina');
@@ -65,7 +65,7 @@ test.agExample(import.meta, () => {
             await expect(filterItem(page, 'Armenia (not in rows)')).toHaveCount(0);
 
             // Had Algeria stayed in the model, its rows would pass again once they return.
-            await click(page, 'Show 2008');
+            await click(page, 'Load 2008 Data');
             await expect(filterItemCheckbox(page, 'Algeria')).not.toBeChecked();
             await expectRowCount(page, 51);
         }

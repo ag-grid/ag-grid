@@ -1,10 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": ["../../tsconfig.base.json", "../../tsconfig.paths.json"],
   "compilerOptions": {
     "module": "ES2022",
-    "moduleResolution": "Node",
-    "types": ["vitest/globals", "node"],
-    "noEmit": true
+    "types": ["vitest/globals", "node"]
   },
   "include": ["src/**/*.ts", "vitest.config.ts"]
 }

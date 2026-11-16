@@ -1,6 +1,42 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - vite@5.4.21 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.176Z
+  SNYK-JS-UNDICI-22370261:
+    - vite@5.4.21 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.095Z
+  SNYK-JS-UNDICI-22291127:
+    - vite@5.4.21 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.909Z
+  SNYK-JS-UNDICI-22291066:
+    - vite@5.4.21 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.464Z
+  SNYK-JS-UNDICI-22290988:
+    - vite@5.4.21 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.024Z
+  SNYK-JS-OPEN-22112123:
+    - vite-plugin-vue-devtools@8.2.1 > vite-plugin-inspect@11.3.3 > open@10.2.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:16.272Z
   SNYK-JS-FFLATE-20883305:
     - 'ag-grid-community@* > *':
         reason: >-

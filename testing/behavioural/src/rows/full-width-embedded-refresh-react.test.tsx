@@ -1,8 +1,15 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import type { GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, RenderApiModule, RowApiModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    RenderApiModule,
+    RowApiModule,
+    RowStyleModule,
+} from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 const events: string[] = [];
@@ -29,7 +36,13 @@ class SectionRenderer implements ICellRendererComp {
 
 describe('embedded full width row refresh (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RenderApiModule, RowApiModule]);
+        ModuleRegistry.registerModules([
+            ClientSideRowModelModule,
+            RenderApiModule,
+            RowApiModule,
+            RowGroupingModule,
+            RowStyleModule,
+        ]);
     });
 
     afterEach(() => {
@@ -78,6 +91,61 @@ describe('embedded full width row refresh (React)', () => {
                 `refresh right right ${v}`,
             ]);
         }
+    });
+
+    test('refreshCells updates a group row renderer and its row styling without remounting it', async () => {
+        let mounts = 0;
+        const GroupRow = (params: ICellRendererParams) => {
+            useEffect(() => {
+                ++mounts;
+            }, []);
+            return (
+                <span className="group-label">
+                    {params.context.label} {params.node.key}
+                </span>
+            );
+        };
+        let api: GridApi | undefined;
+        const container = render(
+            <AgGridReact
+                columnDefs={[{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }]}
+                rowData={[{ id: '1', g: 'x', v: 'a' }]}
+                getRowId={(params) => params.data.id}
+                groupDisplayType="groupRows"
+                groupRowRenderer={GroupRow}
+                context={{ label: 'one' }}
+                getRowClass={(params) => `context-${params.context.label}`}
+                getRowStyle={(params) => ({ color: params.context.label === 'two' ? 'red' : 'blue' })}
+                rowClassRules={{ 'highlighted-group': (params) => params.context.label === 'two' }}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        ).container;
+        const label = () => container.querySelector('.group-label')?.textContent;
+        await waitFor(() => expect(label()).toBe('one x'));
+        const row = container.querySelector<HTMLElement>('.ag-full-width-row')!;
+        expect(row.classList).toContain('context-one');
+        expect(row.classList).not.toContain('highlighted-group');
+        expect(row.style.color).toBe('blue');
+
+        act(() => {
+            api!.setGridOption('context', { label: 'two' });
+            api!.refreshCells({ rowNodes: [api!.getDisplayedRowAtIndex(0)!] });
+        });
+        await waitFor(() => expect(label()).toBe('two x'));
+        expect(container.querySelector('.ag-full-width-row')).toBe(row);
+        expect(row.classList).toContain('context-two');
+        expect(row.classList).toContain('highlighted-group');
+        expect(row.style.color).toBe('red');
+        act(() => {
+            api!.setGridOption('context', { label: 'three' });
+            api!.refreshCells({ rowNodes: [api!.getDisplayedRowAtIndex(0)!] });
+        });
+        await waitFor(() => expect(label()).toBe('three x'));
+        expect(row.classList).not.toContain('highlighted-group');
+        expect(row.style.color).toBe('blue');
+        expect(mounts).toBe(1);
     });
 
     test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {

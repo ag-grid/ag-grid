@@ -1,5 +1,6 @@
+import { createRequire } from 'node:module';
 import path from 'node:path';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 import packageJson from '../../package.json';
 
@@ -17,6 +18,16 @@ if (!(CONTAINER_REPO in WEBSITE_PATH_PREFIX)) {
     throw new Error(`ag-website-shared: no website path mapped for container package "${CONTAINER_REPO}"`);
 }
 
+// The stylelint rules are only tested in a container repo that installs stylelint.
+function hasStylelint() {
+    try {
+        createRequire(__filename).resolve('stylelint');
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 function resolvePath(srcPath) {
     return path.resolve(__dirname, WEBSITE_PATH_PREFIX[CONTAINER_REPO], srcPath);
 }
@@ -27,7 +38,8 @@ export default defineConfig({
         globals: true,
         environment: 'node',
         pool: 'threads',
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', 'stylelint/**/*.test.mjs'],
+        exclude: [...configDefaults.exclude, ...(hasStylelint() ? [] : ['stylelint/plugin.test.mjs'])],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-website-shared', provider: 'v8' },
     },

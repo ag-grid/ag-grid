@@ -11,7 +11,7 @@ test.agExample(import.meta, () => {
             await header.locator('.ag-header-cell-menu-button').click();
             await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
             const dialog = page.locator('.ag-calculated-column-form');
-            await dialog.getByRole('button', { name: 'Columns', exact: true }).click();
+            await dialog.getByRole('combobox', { name: 'Columns', exact: true }).click();
             const salary = page.locator('.ag-calculated-column-suggestion-label', { hasText: /^Salary$/ });
             if (colId === 'target') {
                 await expect(salary).toHaveCount(0);

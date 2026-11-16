@@ -78,8 +78,6 @@ export class GridRowsValidationState {
         const selection = api.getGridOption('rowSelection');
         if (selection == null) {
             result = false;
-        } else if (typeof selection === 'string') {
-            result = !!api.getGridOption('groupSelectsChildren');
         } else if (selection.mode !== 'multiRow') {
             result = false;
         } else {

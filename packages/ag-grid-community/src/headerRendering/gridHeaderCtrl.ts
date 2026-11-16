@@ -1,4 +1,4 @@
-import { KeyCode, _exists, _getActiveDomElement } from 'ag-stack';
+import { KeyCode, _addManagedElementListeners, _exists, _getActiveDomElement, _throttleToFrame } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -39,7 +39,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.setupHeaderHeight();
 
         const listener = this.onHeaderContextMenu.bind(this);
-        this.addManagedElementListeners(this.eGui, { contextmenu: listener });
+        _addManagedElementListeners(this, this.eGui, { contextmenu: listener });
         touchSvc?.mockHeaderContextMenu(this, listener);
 
         ctrlsSvc.register('gridHeaderCtrl', this);
@@ -85,7 +85,7 @@ export class GridHeaderCtrl extends BeanStub {
             displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
             // Deferred to a frame to avoid a feedback loop.
-            columnGroupHeaderHeightChanged: this.throttleToFrame(listener),
+            columnGroupHeaderHeightChanged: _throttleToFrame(this, () => this.beans, listener),
             stylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });

@@ -1,0 +1,24 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+/* Equal widths so the row and column controls line up */
+.target-label {
+    display: inline-block;
+    min-width: 120px;
+}
+
+.target-input {
+    width: 80px;
+}
+
+.position-select {
+    width: 110px;
+}

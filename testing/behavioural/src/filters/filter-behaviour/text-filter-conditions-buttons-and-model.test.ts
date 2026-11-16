@@ -11,7 +11,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
 
 /** Clicks an apply-panel button by label (harness only exposes Apply/Clear; Reset needs this). */
 async function clickPanelButton(label: string): Promise<void> {
@@ -208,6 +208,46 @@ describe('Text Filter — buttons & model round-trip', () => {
             └── LEAF id:2 name:"Charlie"
         `);
     });
+
+    test.each([false, true])(
+        'the join radio revealed by typing can be found by its test ID (enableFilterHandlers: %s)',
+        async (enableFilterHandlers) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } }],
+                rowData: [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Eve' }],
+            });
+
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            // eslint-disable-next-line no-restricted-syntax -- outlast TestIdService's 500ms delayed pass scheduled by opening, so only typing can stamp the radios it reveals
+            await asyncSetTimeout(600);
+            await filter.setText('li');
+
+            const orTestId = agTestIdFor.filterConditionRadioButton({ source: 'column-filter' }, 'OR');
+            const orRadio = await waitFor(() => {
+                const radio = document.querySelector<HTMLInputElement>(`[data-testid="${orTestId}"]`);
+                expect(radio).not.toBeNull();
+                return radio!;
+            });
+            await firePointerLikeClick(orRadio);
+            await filter.setText('bo', 1);
+            await filter.apply();
+
+            expect(api.getColumnFilterModel('name')).toEqual({
+                filterType: 'text',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'text', type: 'contains', filter: 'li' },
+                    { filterType: 'text', type: 'contains', filter: 'bo' },
+                ],
+            });
+            await new GridRows(api, 'joined with OR').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Alice"
+                └── LEAF id:1 name:"Bob"
+            `);
+        }
+    );
 
     // `OR` is the case that separates a model joining nothing from one matching nothing: `[].some()` is false.
     test.each([

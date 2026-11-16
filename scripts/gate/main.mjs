@@ -9,9 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { isCI, parseArgs } from './args.mjs';
 import { RunLog, preventIdleSleep, spawnAwait } from './run-log.mjs';
 
-// Vite 8 (which Vitest 4 nests) warns, once per config it loads, that these configs are not loadable by the
-// `configLoader: 'native'` it plans to default to. Clearing it for real needs `.mts` + `import.meta.dirname`,
-// which packages/*/tsconfig.spec.json cannot type-check under `module: commonjs`. Revisit when Vite flips.
+// Astro's Vite 8 warns, once per config it loads, that its planned `configLoader: 'native'` could not load it.
 process.env.VITE_CONFIG_NATIVE_IGNORE_WARNING = 'true';
 
 const GATES = ['behave', 'bench', 'checks', 'docs-e2e', 'grid-e2e'];

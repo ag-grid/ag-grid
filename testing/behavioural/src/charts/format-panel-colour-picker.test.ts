@@ -1,4 +1,6 @@
 import { waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
+import { userEvent } from '@testing-library/user-event';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
@@ -52,6 +54,54 @@ describe('chart format panel colour picker', () => {
         return { picker, label };
     }
 
+    const triggerOf = (picker: Element) => picker.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+
+    test('every colour picker trigger is a button that opens a dialog, named by its visible label', async () => {
+        await openFirstColourPicker();
+        const pickers = Array.from(document.querySelectorAll<HTMLElement>('.ag-color-picker'));
+        expect(pickers.length).toBeGreaterThan(0);
+
+        for (const picker of pickers) {
+            const trigger = triggerOf(picker);
+            const labelText = picker.querySelector<HTMLElement>('.ag-label')!.textContent!.trim();
+            expect(trigger).toHaveAttribute('role', 'button');
+            expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+            expect(trigger).toHaveAttribute('aria-expanded', 'false');
+            expect(trigger).toHaveAccessibleName(labelText);
+        }
+    });
+
+    test('select pickers in the format panel stay comboboxes', async () => {
+        await openFirstColourPicker();
+        const selectTrigger = await waitFor(() => {
+            const el = document.querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+
+        expect(selectTrigger).toHaveAttribute('role', 'combobox');
+        expect(selectTrigger).not.toHaveAttribute('aria-haspopup', 'dialog');
+    });
+
+    test('aria-expanded follows the colour dialog opening with Enter and closing with Escape', async () => {
+        const { picker } = await openFirstColourPicker();
+        const trigger = triggerOf(picker);
+        const user = userEvent.setup();
+
+        trigger.focus();
+        await user.keyboard('{Enter}');
+        const dialog = await waitFor(() => {
+            const el = document.querySelector<HTMLElement>('.ag-color-dialog');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(dialog.closest('[role="dialog"]') ?? dialog.querySelector('[role="dialog"]')).not.toBeNull();
+
+        await user.keyboard('{Escape}');
+        await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+    });
+
     test('the picker label is the colour as upper-case hex', async () => {
         const { label } = await openFirstColourPicker();
 
@@ -98,5 +148,121 @@ describe('chart format panel colour picker', () => {
 
         expect(input.validationMessage).toBe('Color value is invalid');
         expect(label.textContent).toBe(initialHex);
+    });
+
+    describe('dialog accessibility', () => {
+        afterEach(() => vi.restoreAllMocks());
+
+        async function openColourDialog() {
+            const { picker } = await openFirstColourPicker();
+            picker
+                .querySelector('.ag-picker-field-wrapper')!
+                .dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+            const dialog = await waitFor(() => {
+                const el = document.querySelector<HTMLElement>('.ag-color-dialog');
+                expect(el).not.toBeNull();
+                return el!;
+            });
+            return {
+                picker,
+                dialog,
+                area: dialog.querySelector<HTMLElement>('.ag-spectrum-color')!,
+                hue: dialog.querySelector<HTMLElement>('.ag-spectrum-hue .ag-spectrum-slider')!,
+                alpha: dialog.querySelector<HTMLElement>('.ag-spectrum-alpha .ag-spectrum-slider')!,
+                input: dialog.querySelector<HTMLInputElement>('.ag-color-panel input')!,
+            };
+        }
+
+        function typeColour(input: HTMLInputElement, value: string) {
+            input.value = value;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        test('the dialog is named after the picker label', async () => {
+            const { picker, dialog } = await openColourDialog();
+            const pickerLabel = picker.querySelector('.ag-label')!.textContent!.trim();
+
+            expect(pickerLabel).toBe('Color');
+            expect(dialog.getAttribute('aria-label')).toBe(pickerLabel);
+        });
+
+        test('the colour area and both sliders are named sliders with a range', async () => {
+            const { area, hue, alpha } = await openColourDialog();
+
+            for (const [el, name, max] of [
+                [area, 'Saturation and Brightness', '100'],
+                [hue, 'Hue', '360'],
+                [alpha, 'Opacity', '100'],
+            ] as const) {
+                expect(el.getAttribute('role')).toBe('slider');
+                expect(el.getAttribute('aria-label')).toBe(name);
+                expect(el.getAttribute('aria-valuemin')).toBe('0');
+                expect(el.getAttribute('aria-valuemax')).toBe(max);
+                expect(el.getAttribute('aria-valuenow')).toMatch(/^\d+$/);
+            }
+            expect(area.getAttribute('aria-valuetext')).toMatch(/^Saturation \d+%, Brightness \d+%$/);
+        });
+
+        test('the slider values follow the colour', async () => {
+            const { area, hue, alpha, input } = await openColourDialog();
+
+            typeColour(input, 'rgba(255, 0, 0, 0.5)');
+
+            expect(area.getAttribute('aria-valuenow')).toBe('100');
+            expect(area.getAttribute('aria-valuetext')).toBe('Saturation 100%, Brightness 100%');
+            expect(hue.getAttribute('aria-valuenow')).toBe('0');
+            expect(alpha.getAttribute('aria-valuenow')).toBe('50');
+
+            typeColour(input, '#00008080');
+
+            expect(area.getAttribute('aria-valuetext')).toBe('Saturation 100%, Brightness 50%');
+            expect(hue.getAttribute('aria-valuenow')).toBe('240');
+        });
+
+        test('arrow keys update the slider values', async () => {
+            const originalRect = Element.prototype.getBoundingClientRect;
+            vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+                if (this.classList.contains('ag-spectrum-tool')) {
+                    return { left: 0, right: 200, top: 0, bottom: 10, width: 200, height: 10, x: 0, y: 0 } as DOMRect;
+                }
+                if (this.classList.contains('ag-spectrum-val')) {
+                    return { left: 0, right: 200, top: 0, bottom: 100, width: 200, height: 100, x: 0, y: 0 } as DOMRect;
+                }
+                return originalRect.call(this);
+            });
+            const { area, hue, alpha, input } = await openColourDialog();
+            typeColour(input, '#40408080');
+
+            const valueNow = (el: HTMLElement) => Number(el.getAttribute('aria-valuenow'));
+            const brightness = () => Number(/Brightness (\d+)%/.exec(area.getAttribute('aria-valuetext')!)![1]);
+            const press = (el: HTMLElement, key: string) =>
+                el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+
+            const saturationBefore = valueNow(area);
+            press(area, 'ArrowRight');
+            expect(valueNow(area)).toBeGreaterThan(saturationBefore);
+
+            const brightnessBefore = brightness();
+            press(area, 'ArrowUp');
+            expect(brightness()).toBeGreaterThan(brightnessBefore);
+
+            const alphaBefore = valueNow(alpha);
+            press(alpha, 'ArrowRight');
+            expect(valueNow(alpha)).toBeGreaterThan(alphaBefore);
+
+            // The hue track runs from 360 on the left to 0 on the right, so Right lowers the hue.
+            expect(valueNow(hue)).toBe(240);
+            press(hue, 'ArrowRight');
+            expect(valueNow(hue)).toBeLessThan(240);
+            press(hue, 'ArrowLeft');
+            expect(valueNow(hue)).toBe(240);
+        });
+
+        test('the hex input is named', async () => {
+            const { input } = await openColourDialog();
+
+            expect(input.getAttribute('aria-label')).toBe('Hex Color');
+            expect(input.hasAttribute('aria-labelledby')).toBe(false);
+        });
     });
 });

@@ -5,7 +5,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
-import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import type { ElementParams } from '../utils/element';
 import { _stopPropagationForAgGrid } from '../utils/gridEvent';
 import { Component } from '../widgets/component';
@@ -30,7 +29,7 @@ export class CheckboxSelectionComponent extends Component {
     private rowNode: RowNode;
     private column: AgColumn | undefined;
     private overrides?: {
-        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+        isVisible: boolean | CheckboxSelectionCallback | undefined;
         callbackParams: any;
         removeHidden: boolean;
     };
@@ -71,7 +70,7 @@ export class CheckboxSelectionComponent extends Component {
         rowNode: RowNode;
         column?: AgColumn;
         overrides?: {
-            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+            isVisible: boolean | CheckboxSelectionCallback | undefined;
             callbackParams: any;
             removeHidden: boolean;
         };
@@ -163,8 +162,7 @@ export class CheckboxSelectionComponent extends Component {
         const visible = selectable || checkboxes;
 
         const so = gos.get('rowSelection');
-        const showDisabledCheckboxes =
-            so && typeof so !== 'string' ? !_getHideDisabledCheckboxes(so) : !!column?.colDef.showDisabledCheckboxes;
+        const showDisabledCheckboxes = !!so && typeof so !== 'string' && !_getHideDisabledCheckboxes(so);
 
         this.setVisible(visible && (disabled ? showDisabledCheckboxes : true));
         this.setDisplayed(visible && (disabled ? showDisabledCheckboxes : true));
@@ -188,7 +186,6 @@ export class CheckboxSelectionComponent extends Component {
             return _getCheckboxes(so);
         }
 
-        // column will be missing if groupDisplayType = 'groupRows'
-        return this.column?.colDef?.checkboxSelection;
+        return undefined;
     }
 }

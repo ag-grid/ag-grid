@@ -16,7 +16,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import MedalCellRenderer from './medalCellRenderer';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -97,10 +96,12 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button onClick={onCallGold}>Gold</button>
-                        <button onClick={onFirstRowGold}>First Row Gold</button>
-                        <button onClick={onCallAllCells}>All Cells</button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={onCallGold}>Gold</button>
+                            <button onClick={onFirstRowGold}>First Row Gold</button>
+                            <button onClick={onCallAllCells}>All Cells</button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

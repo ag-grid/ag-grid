@@ -1,4 +1,4 @@
-import { TabGuardClassNames, _findFocusableElements } from 'ag-stack';
+import { TabGuardClassNames, _addManagedElementListeners, _findFocusableElements } from 'ag-stack';
 
 import type { NamedBean } from 'ag-grid-community';
 import { BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -40,7 +40,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
             })
         );
         const dialogGui = dialog.getGui();
-        dialog.addManagedElementListeners(dialogGui, {
+        _addManagedElementListeners(dialog, dialogGui, {
             keydown: (e: KeyboardEvent) => trapTabFocus(e, dialogGui),
         });
 

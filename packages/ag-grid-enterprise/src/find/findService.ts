@@ -182,7 +182,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     public clearActive(): void {
         if (this.activeMatch) {
-            this.setActive(undefined);
+            this.setActive();
         }
     }
 
@@ -320,7 +320,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 this.restoring = false;
             }
         } else if (this.activeMatch) {
-            this.setActive(undefined);
+            this.setActive();
         }
     }
 

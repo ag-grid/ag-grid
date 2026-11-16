@@ -1,11 +1,5 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
-import { _getDocument } from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import { _getDocument, _setAriaHasPopup } from 'ag-stack';
 
 import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
@@ -27,11 +21,11 @@ export interface AgColorPickerParams<TComponentSelectorType extends string> exte
 }
 
 export class AgColorPicker<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgPickerField<
     TBeanCollection,
@@ -56,9 +50,15 @@ export class AgColorPicker<
             pickerType: 'ag-list',
             className: 'ag-color-picker',
             pickerIcon: 'chartsColorPicker',
+            ariaRole: 'button',
             ...config,
         });
         this.registerCSS(agColorPickerCSS);
+    }
+
+    protected override setupAria(): void {
+        super.setupAria();
+        _setAriaHasPopup(this.getAriaElement(), 'dialog');
     }
 
     public override postConstruct() {
@@ -94,6 +94,7 @@ export class AgColorPicker<
                 TComponentSelectorType
             >(
                 {
+                    title: this.getDialogAriaLabel(),
                     closable: false,
                     modal: true,
                     hideTitleBar: true,
@@ -112,6 +113,13 @@ export class AgColorPicker<
         );
 
         return colorDialog;
+    }
+
+    /** The dialog is never titled visibly, so this only names it for assistive technology. */
+    private getDialogAriaLabel(): string {
+        const label = this.getLabel();
+        const text = (typeof label === 'string' ? label : label?.textContent)?.trim();
+        return text || this.getLocaleTextFunc()('color', 'Color');
     }
 
     protected override renderAndPositionPicker(): () => void {

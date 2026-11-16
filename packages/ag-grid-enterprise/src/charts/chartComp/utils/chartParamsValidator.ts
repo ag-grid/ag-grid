@@ -14,7 +14,7 @@ import type {
 import { _createValidationWarning, _emitValidationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
-import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
+import { getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
 
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
     return (value: I | null | undefined): boolean | O => {
@@ -45,8 +45,6 @@ interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     warnIfFixed?: boolean;
 }
 
-const legacyChartTypes: ChartType[] = ['doughnut'];
-
 const baseUpdateChartParams = [
     'type',
     'chartId',
@@ -60,22 +58,11 @@ function isValidChartType(value: string): value is ChartType {
     return !!getSeriesTypeIfExists(value as ChartType) || isComboChart(value as ChartType);
 }
 
-function isLegacyChartType(value: string): value is ChartType {
-    return legacyChartTypes.includes(value as ChartType);
-}
-
-const makeValidateChartType = (log: LogService) =>
-    validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>((chartType) => {
-        if (isValidChartType(chartType)) {
-            return true;
-        }
-        if (isLegacyChartType(chartType)) {
-            const renamedChartType = getCanonicalChartType(chartType);
-            log.deprecated(312, { chartType, renamedChartType });
-            return renamedChartType;
-        }
-        return false;
-    });
+const chartTypeValidation: ValidationFunction<any> = {
+    property: 'chartType',
+    validationFn: validateIfDefined<ChartType>(isValidChartType),
+    warnMessage: createWarnMessage('chartType', 'ChartType'),
+};
 
 const validateAgChartThemeOverrides = validateIfDefined<AgChartThemeOverrides>((themeOverrides) => {
     // ensure supplied AgChartThemeOverrides is an object - can be improved if necessary?
@@ -112,13 +99,16 @@ const switchCategorySeriesValidation: (isEnterprise: boolean) => ValidationFunct
     warnIfFixed: true,
 });
 
-const commonUpdateValidations: (log: LogService) => ValidationFunction<any>[] = (log) => [
+const createPairedValidation: ValidationFunction<any> = {
+    property: 'paired',
+    validationFn: validateIfDefined<boolean, undefined>((paired) => isBoolean(paired) || undefined),
+    warnMessage: createWarnMessage('paired', 'boolean'),
+    warnIfFixed: true,
+};
+
+const commonUpdateValidations: ValidationFunction<any>[] = [
     { property: 'chartId', validationFn: isString, warnMessage: createWarnMessage('chartId', 'string') },
-    {
-        property: 'chartType',
-        validationFn: makeValidateChartType(log),
-        warnMessage: createWarnMessage('chartType', 'ChartType'),
-    },
+    chartTypeValidation,
     {
         property: 'chartThemeName',
         validationFn: isString,
@@ -181,7 +171,12 @@ export function validateCreateParams(
 ): boolean | CommonCreateChartParams {
     return validateProperties(
         params,
-        [enterpriseChartTypeValidation(isEnterprise), switchCategorySeriesValidation(isEnterprise)],
+        [
+            chartTypeValidation,
+            enterpriseChartTypeValidation(isEnterprise),
+            switchCategorySeriesValidation(isEnterprise),
+            createPairedValidation,
+        ],
         log
     );
 }
@@ -192,7 +187,7 @@ function validateUpdateRangeChartParams(
     log: LogService
 ): boolean | UpdateRangeChartParams {
     const validations: ValidationFunction<any>[] = [
-        ...commonUpdateValidations(log),
+        ...commonUpdateValidations,
         enterpriseChartTypeValidation(isEnterprise),
         ...cellRangeValidations(isEnterprise),
         {
@@ -205,6 +200,11 @@ function validateUpdateRangeChartParams(
             property: 'useGroupColumnAsCategory',
             validationFn: isBoolean,
             warnMessage: createWarnMessage('useGroupColumnAsCategory', 'boolean'),
+        },
+        {
+            property: 'paired',
+            validationFn: validateIfDefined(isBoolean),
+            warnMessage: createWarnMessage('paired', 'boolean'),
         },
     ];
 
@@ -221,6 +221,7 @@ function validateUpdateRangeChartParams(
             'seriesChartTypes',
             'seriesGroupType',
             'useGroupColumnAsCategory',
+            'paired',
         ],
         'UpdateRangeChartParams'
     );
@@ -230,7 +231,7 @@ function validateUpdatePivotChartParams(
     params: UpdatePivotChartParams,
     log: LogService
 ): boolean | UpdatePivotChartParams {
-    const validations: ValidationFunction<any>[] = [...commonUpdateValidations(log)];
+    const validations: ValidationFunction<any>[] = [...commonUpdateValidations];
 
     return validateProperties(params, validations, log, [...baseUpdateChartParams], 'UpdatePivotChartParams');
 }
@@ -240,10 +241,7 @@ function validateUpdateCrossFilterChartParams(
     isEnterprise: boolean,
     log: LogService
 ): boolean | UpdateCrossFilterChartParams {
-    const validations: ValidationFunction<any>[] = [
-        ...commonUpdateValidations(log),
-        ...cellRangeValidations(isEnterprise),
-    ];
+    const validations: ValidationFunction<any>[] = [...commonUpdateValidations, ...cellRangeValidations(isEnterprise)];
 
     return validateProperties(
         params,

@@ -21,13 +21,15 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                Theme:
-                <select style="margin-right: 16px" v-model="theme">
-                    <option v-for="(theme, id) in themes" :value="theme">{{ id }}</option>
-                </select>
-            </p>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    Theme:
+                    <select v-model="theme">
+                        <option v-for="(theme, id) in themes" :value="theme">{{ id }}</option>
+                    </select>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-vue
                     style="height: 100%;"

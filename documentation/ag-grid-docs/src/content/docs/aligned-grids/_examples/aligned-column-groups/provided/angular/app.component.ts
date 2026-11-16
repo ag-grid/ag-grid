@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
         <ag-grid-angular
             style="width: 100%; height: 45%"
             #topGrid
-            [rowData]="rowData"
+            [rowData]="rowData()"
             [gridOptions]="topOptions"
             [columnDefs]="columnDefs"
             [alignedGrids]="[bottomGrid]"
@@ -45,7 +45,7 @@ ModuleRegistry.registerModules([
         <ag-grid-angular
             style="width: 100%; height: 45%"
             #bottomGrid
-            [rowData]="rowData"
+            [rowData]="rowData()"
             [gridOptions]="bottomOptions"
             [columnDefs]="columnDefs"
             [alignedGrids]="[topGrid]"
@@ -54,7 +54,7 @@ ModuleRegistry.registerModules([
 })
 export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
     topOptions: GridOptions = {
         defaultColDef: {
             minWidth: 120,
@@ -107,7 +107,7 @@ export class AppComponent {
 
     ngOnInit() {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe((data) => {
-            this.rowData = data as any[];
+            this.rowData.set(data as any[]);
 
             // mix up some columns
             this.topGrid.api.moveColumnByIndex(11, 4);

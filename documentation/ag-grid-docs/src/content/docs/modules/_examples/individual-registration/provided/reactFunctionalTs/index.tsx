@@ -69,7 +69,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={sharedModules}>
-            <div className="example-wrapper">
+            <div className="example-wrapper example-wrapper--row">
                 <div className="inner-col">
                     <AgGridReact
                         gridId="Left"

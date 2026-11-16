@@ -47,6 +47,26 @@ interface AgentReadinessInput {
      * `gridDocsPrefix`.
      */
     indexDocsPrefix?: string;
+    /**
+     * Set when building an archived version (`/archive/<version>/`). Its llms.txt and AGENTS.md
+     * then send the version-specific links (grid docs, API reference, MCP server, markdown
+     * twins, llms.txt itself) into the archive and say which version it is, while site-wide
+     * links (charts, studio, examples, pricing, changelog, pipeline, sitemap) stay on the
+     * current site, which has the only copy of them.
+     */
+    archive?: ArchiveInput;
+}
+
+interface ArchiveInput {
+    /** The archive's root with a trailing slash, e.g. `https://www.ag-grid.com/archive/36.3.0/`. */
+    root: string;
+    /** The archived version, e.g. `36.3.0`. */
+    version: string;
+}
+
+/** The archive root for a site root and an archive build's base URL, e.g. `/archive/36.3.0/`. */
+export function archiveRoot(siteRoot: string, baseUrl: string): string {
+    return `${siteRoot}${baseUrl.replace(/^\/+/, '').replace(/\/?$/, '/')}`;
 }
 
 interface AgentReadinessLinks {
@@ -69,8 +89,10 @@ interface AgentReadinessLinks {
 
 const FRAMEWORKS = ['javascript', 'react', 'angular', 'vue'];
 
-function buildLinks({ siteRoot, gridDocsPrefix, chartsDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
-    const grid = `${siteRoot}${gridDocsPrefix}/`;
+function buildLinks({ siteRoot, gridDocsPrefix, chartsDocsPrefix, archive }: AgentReadinessInput): AgentReadinessLinks {
+    // Version-specific pages live in the archive when building one; the rest only on the current site.
+    const docsRoot = archive?.root ?? siteRoot;
+    const grid = `${docsRoot}${gridDocsPrefix}/`;
     return {
         // The docs entry point, as the header's Docs link, rather than the framework docs root,
         // which for JavaScript is a client-side forwarder with no markdown twin (waf-finding.md §20.3).
@@ -86,10 +108,14 @@ function buildLinks({ siteRoot, gridDocsPrefix, chartsDocsPrefix }: AgentReadine
         changelog: `${siteRoot}changelog/`,
         pipeline: `${siteRoot}pipeline/`,
         sitemap: `${siteRoot}sitemap-index.xml`,
-        llmsTxt: `${siteRoot}llms.txt`,
-        homepageMarkdown: `${siteRoot}index.md`,
+        llmsTxt: `${docsRoot}llms.txt`,
+        homepageMarkdown: `${docsRoot}index.md`,
     };
 }
+
+/** The current docs entry point, linked from an archive's files. */
+const currentDocs = ({ siteRoot, gridDocsPrefix }: AgentReadinessInput) =>
+    `${siteRoot}${gridDocsPrefix}/getting-started/`;
 
 /** The instruction for reaching another framework's copy of a docs URL, by swapping its framework segment. */
 function frameworkSubstitution(docsPrefix: string): string {
@@ -141,8 +167,11 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
         input.includeMarkdownDocs === false
             ? ''
             : `\n- Markdown versions: append \`.md\` to any page URL listed in the sitemap for a clean Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or send \`Accept: text/markdown\`. Docs pages are resolved for the framework in the URL. The homepage is the one URL with no \`.md\` suffix - its copy is ${l.homepageMarkdown}.`;
+    const version = input.archive
+        ? `Archived documentation for AG Grid ${input.archive.version}; the current docs are at ${currentDocs(input)}.`
+        : `Current major version: v${input.majorVersion}.`;
     return `# AG Grid
-> High-performance JavaScript Data Grid, plus AG Charts and AG Studio. Framework-agnostic, with React, Angular and Vue support. Free Community and paid Enterprise editions. Current major version: v${input.majorVersion}.
+> High-performance JavaScript Data Grid, plus AG Charts and AG Studio. Framework-agnostic, with React, Angular and Vue support. Free Community and paid Enterprise editions. ${version}
 
 ## Products
 - [Data Grid](${l.dataGrid}): high-performance JavaScript Data Grid for React, Angular, Vue and JavaScript
@@ -177,10 +206,13 @@ export function buildAgentsMd(input: AgentReadinessInput): string {
         input.includeMarkdownDocs === false
             ? ''
             : `\n- **Markdown for LLMs:** append \`.md\` to any page URL listed in the [sitemap](${l.sitemap}) (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md), or request the page with \`Accept: text/markdown\`. Docs pages are resolved for the framework in the URL. The homepage is the one URL with no \`.md\` suffix - its copy is ${l.homepageMarkdown}.`;
+    const version = input.archive
+        ? `- **Version:** these are the archived docs for v${input.archive.version}; the current docs are at ${currentDocs(input)}. APIs change across majors, and the MCP server is version-aware - always check the version before generating code.`
+        : `- **Current version:** v${input.majorVersion}. APIs change across majors, and the MCP server is version-aware - always check the version before generating code.`;
     return `# AG Grid - guide for AI coding assistants
 
 - **What it is:** JavaScript Data Grid, plus [AG Charts](${l.charts}) and [AG Studio](${l.studio}). Framework-agnostic, with React, Angular and Vue wrappers. Community (free) and Enterprise (licensed) editions.
-- **Current version:** v${input.majorVersion}. APIs change across majors, and the MCP server is version-aware - always check the version before generating code.
+${version}
 - **Install:** \`npm i ag-grid-community\` (or \`ag-grid-enterprise\`), plus the framework wrapper - \`ag-grid-react\`, \`ag-grid-angular\` or \`ag-grid-vue3\`. JavaScript needs no wrapper.
 - **MCP server:** \`ag-mcp\` (\`npx ag-mcp\`) returns version-specific docs, examples and API in condensed markdown. Point your assistant at it for current, correct code - see [the MCP server docs](${l.mcpServer}).
 - **Where to look:** [Data Grid docs](${l.dataGridDocs}), [API reference](${l.dataGridReference}), [examples](${l.examples}) and the [changelog](${l.changelog}).

@@ -144,10 +144,6 @@ function getModuleImports(
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
-
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindings.imports || []).filter((entry) => !entry.module.includes('./'))];
     bImports.push({
@@ -160,6 +156,12 @@ function getModuleImports(
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true);
+    }
+
+    // After the binding imports, which include the grid's own stylesheets, so the example's
+    // styles load last and win over theme rules of equal specificity
+    if (allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     if (componentFileNames) {

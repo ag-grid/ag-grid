@@ -43,7 +43,7 @@ describe('AgSideBar focus overrides', () => {
                         getGui: () => sideBarGui,
                     },
                     getGui: () => sideBarGui,
-                    addManagedElementListeners: (
+                    addManagedListeners: (
                         element: HTMLElement,
                         listeners: { keydown?: (e: KeyboardEvent) => void }
                     ) => {
@@ -56,7 +56,7 @@ describe('AgSideBar focus overrides', () => {
                 const onTabKeyDown = (AgSideBarSelector.component as any).prototype.onTabKeyDown;
 
                 // replicate enterprise sidebar wiring: managed focus listener + focusable container listener
-                sideBarContext.addManagedElementListeners(sideBarGui, {
+                sideBarContext.addManagedListeners(sideBarGui, {
                     keydown: (e: KeyboardEvent) => onTabKeyDown.call(sideBarContext, e),
                 });
                 _addFocusableContainerListener(beans as any, sideBarContext as any, sideBarGui);

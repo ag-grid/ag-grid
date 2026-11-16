@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { IFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -25,7 +25,7 @@ import { FilterDisplayParams } from 'ag-grid-community';
 })
 export class NumberFilterComponent implements IFilterDisplayAngularComp<any, any, number> {
     filterParams!: FilterDisplayParams<any, any, number>;
-    filterText: string = '';
+    filterText = signal<string>('');
 
     agInit(params: FilterDisplayParams<any, any, number>): void {
         this.refresh(params);
@@ -35,13 +35,13 @@ export class NumberFilterComponent implements IFilterDisplayAngularComp<any, any
         this.filterParams = params;
         // if the update is from the floating filter, we don't need to update the UI
         if (params.source !== 'ui') {
-            this.filterText = String(params.model ?? '');
+            this.filterText.set(String(params.model ?? ''));
         }
         return true;
     }
 
     onInputBoxChanged() {
-        const newValue = this.filterText;
+        const newValue = this.filterText();
         this.filterParams.onModelChange(newValue === '' ? null : Number(newValue));
     }
 }

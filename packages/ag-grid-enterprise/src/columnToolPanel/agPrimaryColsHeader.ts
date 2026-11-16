@@ -1,4 +1,11 @@
-import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _debounce,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField } from 'ag-grid-community';
 import { AgCheckboxSelector, AgInputTextFieldSelector, Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
@@ -19,7 +26,7 @@ const AgPrimaryColsHeaderElement: ElementParams = {
     cls: 'ag-column-select-header',
     role: 'presentation',
     children: [
-        { tag: 'div', ref: 'eExpand', cls: 'ag-column-select-header-icon' },
+        { tag: 'div', ref: 'eExpand', cls: 'ag-column-select-header-icon', role: 'button' },
         { tag: 'ag-checkbox', ref: 'eSelect', cls: 'ag-column-select-header-checkbox' },
         { tag: 'ag-input-text-field', ref: 'eFilterTextField', cls: 'ag-column-select-header-filter-wrapper' },
     ],
@@ -36,8 +43,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private expandState: ExpandState;
     private selectState?: boolean;
 
-    private onFilterTextChangedDebounced: () => number;
-    private filterTextChangedTimeout: number | undefined;
+    private onFilterTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private filterTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private params: ToolPanelColumnCompParams;
 
@@ -51,14 +58,14 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.addManagedListeners(this.eExpand, {
             click: this.onExpandClicked.bind(this),
             keydown: (e: KeyboardEvent) => {
-                if (e.key === KeyCode.SPACE) {
+                if (e.key === KeyCode.SPACE || e.key === KeyCode.ENTER) {
                     e.preventDefault();
                     this.onExpandClicked();
                 }
             },
         });
 
-        this.addManagedElementListeners(this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
+        _addManagedElementListeners(this, this.eSelect.getInputElement(), { click: this.onSelectClicked.bind(this) });
         this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
         this.eFilterTextField
@@ -72,6 +79,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         const translate = this.getLocaleTextFunc();
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle All Columns Visibility'));
+        _setAriaLabel(this.eExpand, translate('ariaColumnSelectExpandAll', 'Expand or Collapse All Column Groups'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
 
         this.activateTabIndex([this.eExpand]);
@@ -151,9 +159,14 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.dispatchLocalEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
     }
 
+    public focusFilter(): void {
+        this.eFilterTextField.getFocusableElement().focus();
+    }
+
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
 
+        _setAriaExpanded(this.eExpand, state === ExpandState.EXPANDED);
         _setDisplayed(this.eExpandChecked, state === ExpandState.EXPANDED);
         _setDisplayed(this.eExpandUnchecked, state === ExpandState.COLLAPSED);
         _setDisplayed(this.eExpandIndeterminate, state === ExpandState.INDETERMINATE);

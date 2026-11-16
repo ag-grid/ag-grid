@@ -1,32 +1,5 @@
 @use '../core' as *;
 
-.card {
-    --card-color: var(--color-border-primary);
-    --header-tint: 77.5%;
-    --content-tint: 95%;
-
-    display: flex;
-    flex-direction: column;
-    border-radius: var(--radius-md);
-    border: 3px solid var(--card-color);
-    background-color: var(--card-color);
-    overflow: hidden;
-
-    header,
-    .header,
-    .top {
-        padding: $spacing-size-2 $spacing-size-4;
-        background-color: color-mix(in srgb, var(--color-bg-primary) var(--header-tint), var(--card-color));
-    }
-
-    .content,
-    .bottom {
-        flex-grow: 1;
-        padding: $spacing-size-4;
-        background-color: color-mix(in srgb, var(--color-bg-primary) var(--content-tint), var(--card-color));
-    }
-}
-
 .tabs-outer {
     border: 1px solid var(--color-border-secondary);
     border-radius: var(--radius-sm);

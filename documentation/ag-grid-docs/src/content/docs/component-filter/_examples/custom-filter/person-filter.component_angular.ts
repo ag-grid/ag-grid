@@ -1,5 +1,5 @@
 import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
@@ -30,7 +30,7 @@ export class PersonFilter implements IFilterDisplayAngularComp<any, any, string>
     @ViewChild('eFilterText') eFilterText!: ElementRef;
 
     filterParams!: FilterDisplayParams<any, any, string>;
-    filterText = '';
+    filterText = signal('');
 
     agInit(params: FilterDisplayParams<any, any, string>): void {
         this.filterParams = params;
@@ -38,16 +38,18 @@ export class PersonFilter implements IFilterDisplayAngularComp<any, any, string>
     }
 
     refresh(newParams: FilterDisplayParams<any, any, string, any>): boolean {
-        const currentValue = this.filterText;
+        const currentValue = this.filterText();
         const newValue = newParams.model ?? '';
         if (newValue !== currentValue) {
-            this.filterText = newValue;
+            this.filterText.set(newValue);
         }
         return true;
     }
 
     onInputChanged() {
-        this.filterParams.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
+        this.filterParams.onModelChange(
+            this.filterText() == null || this.filterText() === '' ? null : this.filterText()
+        );
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {

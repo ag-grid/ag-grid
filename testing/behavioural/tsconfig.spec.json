@@ -1,7 +1,11 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["../../tsconfig.base.json", "../../tsconfig.paths.json"],
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "noImplicitAny": true
-  }
+    "jsx": "react",
+    "noImplicitAny": true,
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "types": ["vitest/globals", "node", "@testing-library/jest-dom"]
+  },
+  "include": ["**/*"]
 }

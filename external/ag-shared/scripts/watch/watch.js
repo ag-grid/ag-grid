@@ -218,8 +218,11 @@ function spawnNxWatch(outputCb) {
         exitReject = reject;
     });
 
-    const nxWatch = spawn('nx', [...NX_ARGS, ...'watch --all -- echo ${NX_PROJECT_NAME}'.split(' ')], {
+    // No NX_ARGS here: `nx watch` rejects `--output-style` (Nx 24+) and exits straight away.
+    // stderr is inherited so a failing `nx watch` shows its error instead of only the respawn warning.
+    const nxWatch = spawn('nx', 'watch --all -- echo ${NX_PROJECT_NAME}'.split(' '), {
         env: process.env,
+        stdio: ['ignore', 'pipe', 'inherit'],
     });
     spawnedChildren.add(nxWatch);
     nxWatch.on('error', (e) => {
@@ -578,7 +581,7 @@ function respawnError() {
     - \`yarn\`
 
     Or alternatively view its logs at:
-    - .nx/cache/d/daemon.log
+    - .nx/workspace-data/d/daemon.log
 `);
 }
 

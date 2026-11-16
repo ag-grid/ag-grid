@@ -7,7 +7,6 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -29,14 +28,14 @@ const columnOrderState: GridState = {
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div>
-                <span class="button-group">
+            <div class="example-controls">
+                <div class="controls-row">
                     <button (click)="recreateWithNoState()">No State</button>
                     <button (click)="recreateWithColumnOrder()">Column Order (overrides defaults)</button>
                     <button (click)="recreateWithPartialColumnOrder()">
                         Column Order + partialColumnState (keeps defaults)
                     </button>
-                </span>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular
@@ -45,7 +44,7 @@ const columnOrderState: GridState = {
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [grandTotalRow]="'bottom'"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     [initialState]="initialState"
                     (gridReady)="onGridReady($event)"
                 />
@@ -68,7 +67,7 @@ export class AppComponent {
         flex: 1,
         minWidth: 100,
     };
-    public rowData?: IOlympicData[];
+    public rowData = signal<IOlympicData[] | undefined>(undefined);
     public gridVisible = signal(true);
     public initialState?: GridState;
 
@@ -78,7 +77,7 @@ export class AppComponent {
         this.gridVisible.set(false);
         console.log('Recreating grid with initialState', state);
         this.initialState = state;
-        this.rowData = undefined;
+        this.rowData.set(undefined);
         setTimeout(() => {
             this.gridVisible.set(true);
         });
@@ -100,6 +99,6 @@ export class AppComponent {
         this.gridApi = params.api;
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

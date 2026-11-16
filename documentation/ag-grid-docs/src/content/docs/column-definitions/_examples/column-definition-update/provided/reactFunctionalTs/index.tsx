@@ -6,7 +6,6 @@ import { ClientSideRowModelModule, ColumnAutoSizeModule, enableDevValidations } 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -51,10 +50,12 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="test-container">
-                    <div className="test-header">
-                        <button onClick={onBtUpdateHeaders}>Update Header Names</button>
-                        <button onClick={onBtRestoreHeaders}>Restore Original Column Definitions</button>
+                <div className="example-wrapper">
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={onBtUpdateHeaders}>Update Header Names</button>
+                            <button onClick={onBtRestoreHeaders}>Restore Original Column Definitions</button>
+                        </div>
                     </div>
                     <div style={gridStyle}>
                         <AgGridReact<IOlympicData>

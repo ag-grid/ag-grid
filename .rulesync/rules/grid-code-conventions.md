@@ -24,21 +24,35 @@ Enforced by ESLint plus team preferences.
 - Destructure only for 2+ fields; single field uses dot access.
 - `import type` for compile-time-only imports; separate `import type { Foo }` statements, no inline `{ type Foo, Bar }`.
 
-## Annotate only the published internal entry point with `AG_GRID_INTERNAL`
+## Annotate only the published internal entry points with `AG_GRID_INTERNAL`
 
 `/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */` marks
-membership of a package's published internal entry point — nothing else. Only `ag-grid-community` and
-`ag-stack` have one (`src/main-internal.ts`).
+membership of a package's published internal entry points — nothing else. `ag-grid-community` has one
+(`src/main-internal.ts`); `ag-stack` has two (`src/main-internal.ts`, and `src/main-core.ts` published as
+`ag-stack/core`).
 
-- Add it to a top-level declaration **only** when `main-internal.ts` re-exports that declaration, and add
-  it whenever it does.
-- Never add it to a class member, a property, a non-exported declaration, or an exported symbol
-  `main-internal.ts` does not re-export. It is not a general "this is internal" marker — the `_` name
-  prefix already carries that.
-- Never add it in a package with no `main-internal.ts`, which has no internal entry point to belong to.
+- Add it to a top-level declaration **only** when an internal entry point re-exports that declaration, and
+  add it whenever `main-internal.ts` does.
+- Never add it to a class member, a property, a non-exported declaration, or an exported symbol no
+  internal entry point re-exports. It is not a general "this is internal" marker — the `_` name prefix
+  already carries that.
+- Never add it in a package with no internal entry point.
 
 `main-internal.test.ts` enforces both directions in each package, so a speculative annotation fails CI.
 Removing an annotation is a comment-only change: nothing in the build reads `@internal`.
+
+## Keep `ag-stack/core` free of the DOM
+
+`ag-stack/src/main-core.ts` is the entry point for hosts with no DOM, such as parts of AG Studio. Everything
+it reaches through imports must type-check without `lib.dom` and run without `window` or `document`.
+`ag-stack:build:test` (part of `./checks.sh`) enforces this against Node's types and the WebWorker lib.
+
+- Use bare `setTimeout` / `clearTimeout` rather than `window.setTimeout` in modules it reaches.
+- Import from the narrowest module. A value import of `utils/dom`, `utils/event` or a UI interface
+  pulls the DOM into the whole entry point.
+- Keep `AgAbstractBean` and the contracts it reaches free of DOM types. DOM-typed bean helpers are
+  functions in `utils/dom` or `utils/event` (`_addManagedElementListeners`, `_throttleToFrame`), and
+  DOM-typed beans belong in `AgBeanCollection` rather than `AgCoreBeanCollection`.
 
 ## Prefer inline null checks over `_exists` / `_missing`
 

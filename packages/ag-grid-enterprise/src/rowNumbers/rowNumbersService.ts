@@ -1,5 +1,5 @@
 import type { IAriaAnnouncementService } from 'ag-stack';
-import { _debounce, _setAriaLabel } from 'ag-stack';
+import { _addManagedElementListeners, _debounce, _setAriaLabel } from 'ag-stack';
 
 import {
     KeyCode,
@@ -224,7 +224,7 @@ export class RowNumbersService
         }
         _setAriaLabel(eGridHeader, 'Row Number');
         // on the header comp, so a rebuilt header takes its listeners with it
-        comp.addManagedElementListeners(eGridHeader, {
+        _addManagedElementListeners(comp, eGridHeader, {
             click: this.onHeaderClick.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });

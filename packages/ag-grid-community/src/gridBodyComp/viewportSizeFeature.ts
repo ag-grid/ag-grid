@@ -1,4 +1,4 @@
-import { _getInnerHeight, _getInnerWidth, _observeResize } from 'ag-stack';
+import { _getInnerHeight, _getInnerWidth, _observeResize, _throttleToFrame } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -19,9 +19,21 @@ export class ViewportSizeFeature extends BeanStub {
 
     private bodyHeight: number;
 
-    private readonly scheduleCenterViewportResize = this.throttleToFrame(() => this.onCenterViewportResized());
-    private readonly scheduleViewportGeometryRefresh = this.throttleToFrame(() => this.onViewportGeometryChanged());
-    private readonly scheduleScrollVisibilityRefresh = this.throttleToFrame(() => this.scrollVisibleSvc.refresh());
+    private readonly scheduleCenterViewportResize = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.onCenterViewportResized()
+    );
+    private readonly scheduleViewportGeometryRefresh = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.onViewportGeometryChanged()
+    );
+    private readonly scheduleScrollVisibilityRefresh = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.scrollVisibleSvc.refresh()
+    );
 
     constructor(private readonly centerContainerCtrl: RowContainerCtrl) {
         super();

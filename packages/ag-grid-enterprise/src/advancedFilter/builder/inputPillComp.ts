@@ -1,4 +1,4 @@
-import { _exists, _setDisplayed } from 'ag-stack';
+import { _addManagedElementListeners, _exists, _setDisplayed } from 'ag-stack';
 
 import type {
     BaseCellDataType,
@@ -78,7 +78,7 @@ export class InputPillComp extends PillComp<InputPillCompEvent> {
         this.editorOpenedWith = editValueFormatter?.(this.value) ?? this.value;
         this.eEditor.setValue(this.editorOpenedWith);
         const eEditorGui = this.eEditor.getGui();
-        this.eEditor.addManagedElementListeners(eEditorGui, {
+        _addManagedElementListeners(this.eEditor, eEditorGui, {
             keydown: (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.ENTER:
@@ -109,6 +109,7 @@ export class InputPillComp extends PillComp<InputPillCompEvent> {
         // eslint-disable-next-line sonarjs/new-operator-misuse -- false positive: Comp is a class constructor from inputComponentDescriptors
         const instance = this.createBean(new Comp());
         postConstruct?.(instance);
+        instance.setInputAriaLabel(this.params.ariaLabel);
         return instance;
     }
 

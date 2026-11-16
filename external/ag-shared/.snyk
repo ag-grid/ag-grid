@@ -2,7 +2,7 @@
 version: v1.25.1
 ignore:
   SNYK-JS-BRACEEXPANSION-20244952:
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -18,7 +18,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T11:14:43.457Z
   SNYK-JS-BRACEEXPANSION-20244948:
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -84,7 +84,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T10:13:56.772Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -101,7 +101,7 @@ ignore:
         reason: Used in dev - ReDOS attack would only affect developer machines
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-02-27T18:31:59.780Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z

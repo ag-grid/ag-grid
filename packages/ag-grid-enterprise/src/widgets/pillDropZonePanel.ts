@@ -1,4 +1,5 @@
 import {
+    _addManagedElementListeners,
     _areEqual,
     _clearElement,
     _findFocusableElements,
@@ -143,7 +144,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.refreshGui();
 
-        this.addManagedElementListeners(this.getFocusableElement(), {
+        _addManagedElementListeners(this, this.getFocusableElement(), {
             focusin: this.onFocusIn.bind(this),
         });
     }

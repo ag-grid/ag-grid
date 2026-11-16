@@ -15,6 +15,8 @@ env:
 
 permissions:
   contents: read
+  # read is sufficient: the only actions-scope consumer is the previous-run lookup below.
+  actions: read
 
 jobs:
   check_results:
@@ -87,8 +89,39 @@ jobs:
         with:
           report-path: '${{ env.REPORT_FILE }}'
 
+      - name: Check previous run status
+        id: prev_run
+        if: steps.check_results.outcome == 'success'
+        # A flaky `gh` call here must never redden a run whose check passed.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${GITHUB_RUN_ATTEMPT}" -ge 2 ]]; then
+            # A re-run's own earlier attempt is directly queryable, unlike the
+            # completed-run listing below (which only sees prior runs).
+            PREV_CONCLUSION=$(gh api \
+              "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/$((GITHUB_RUN_ATTEMPT - 1))" \
+              --jq '.conclusion // ""' || true)
+          else
+            # Filtered here rather than with --branch/--status, which have been seen to omit
+            # recent runs. Skips cancelled/skipped runs to take the last real verdict.
+            PREV_CONCLUSION=$(gh run list \
+              --workflow post-scorecard-check.yml \
+              --limit 20 \
+              --json headBranch,status,conclusion \
+              --jq '[.[] | select(.headBranch == "${{ github.ref_name }}" and .status == "completed" and (.conclusion == "success" or .conclusion == "failure"))][0].conclusion // ""' || true)
+          fi
+
+          echo "conclusion=${PREV_CONCLUSION}" >> "$GITHUB_OUTPUT"
+
       - name: Slack Notification
-        if: success() && steps.check_results.outcome == 'failure'
+        # Always notify on failure. On success, only notify if the previous run failed - a
+        # "back to green" signal - so a routine passing run doesn't spam the channel.
+        if: >
+          success() &&
+          (steps.check_results.outcome == 'failure' ||
+           steps.prev_run.outputs.conclusion == 'failure')
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}

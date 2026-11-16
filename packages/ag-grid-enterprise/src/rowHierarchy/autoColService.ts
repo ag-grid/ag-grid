@@ -67,7 +67,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             const col = cols[i];
             if (col.colDef.showRowGroup === column.getColId()) {
                 // setColDef alone, as refreshCols does: re-applying colDef state would reset width and sort.
-                col.setColDef(this.createAutoColDef(col.colId, column as AgColumn, i), null, source);
+                col.setColDef(this.createAutoColDef(col.colId, column as AgColumn), null, source);
             }
         }
     }
@@ -127,7 +127,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             for (let i = 0, len = currentCols.length; i < len; ++i) {
                 const col = currentCols[i];
                 const rowGroupCol = doingMultiAutoColumn ? rowGroupCols![i] : undefined;
-                col.setColDef(this.createAutoColDef(col.colId, rowGroupCol, i), null, source);
+                col.setColDef(this.createAutoColDef(col.colId, rowGroupCol), null, source);
             }
             return currentCols;
         }
@@ -156,7 +156,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         colModel.beginColUpdate();
         try {
             for (let i = 0; i < len; ++i) {
-                state[i] = this.updateOneAutoCol(cols[i], i, source);
+                state[i] = this.updateOneAutoCol(cols[i], source);
             }
             // one state pass lays the auto cols out once, and tells them together
             _applyColumnState(beans, { state }, source, true);
@@ -198,10 +198,10 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             const len = rowGroupCols.length;
             result = new Array<AgColumn>(len);
             for (let i = 0; i < len; ++i) {
-                result[i] = this.reuseOrCreateAutoCol(survivors, rowGroupCols[i], i, source);
+                result[i] = this.reuseOrCreateAutoCol(survivors, rowGroupCols[i], source);
             }
         } else {
-            result = [this.reuseOrCreateAutoCol(survivors, undefined, undefined, source)];
+            result = [this.reuseOrCreateAutoCol(survivors, undefined, source)];
         }
         // Whatever's left in `survivors` was removed from the grouping — destroy those instances.
         for (const col of survivors.values()) {
@@ -212,21 +212,20 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return result;
     }
 
-    /** Reuse the existing auto col for `rowGroupCol` (refreshing its colDef + index) if present, else create it. */
+    /** Reuse the existing auto col for `rowGroupCol` (refreshing its colDef) if present, else create it. */
     private reuseOrCreateAutoCol(
         survivors: Map<string, AgColumn>,
         rowGroupCol: AgColumn | undefined,
-        index: number | undefined,
         source: ColumnEventType
     ): AgColumn {
         const colId = autoColId(rowGroupCol);
         const existing = survivors.get(colId);
         if (existing !== undefined) {
             survivors.delete(colId);
-            existing.setColDef(this.createAutoColDef(colId, rowGroupCol, index), null, source);
+            existing.setColDef(this.createAutoColDef(colId, rowGroupCol), null, source);
             return existing;
         }
-        return this.createOneAutoCol(colId, rowGroupCol, index);
+        return this.createOneAutoCol(colId, rowGroupCol);
     }
 
     private isSuppressAutoCol() {
@@ -239,27 +238,27 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return gos.get('treeDataDisplayType') === 'custom';
     }
 
-    // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoCol(colId: string, rowGroupCol: AgColumn | undefined, index: number | undefined): AgColumn {
-        const colDef = this.createAutoColDef(colId, rowGroupCol, index);
+    // rowGroupCol is missing if groupDisplayType != "multipleColumns"
+    private createOneAutoCol(colId: string, rowGroupCol: AgColumn | undefined): AgColumn {
+        const colDef = this.createAutoColDef(colId, rowGroupCol);
         const newCol = new AgColumn(colDef, null, colId, true, 'auto-group');
         this.beans.context.createBean(newCol);
         return newCol;
     }
 
     /** Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef, returning the state to apply */
-    private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType): ColumnState {
+    private updateOneAutoCol(colToUpdate: AgColumn, source: ColumnEventType): ColumnState {
         const beans = this.beans;
         const oldColDef = colToUpdate.colDef;
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId != null ? beans.colModel.getNonPivotCol(underlyingColId) : undefined;
         const colId = colToUpdate.colId;
-        const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
+        const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined);
         colToUpdate.setColDef(colDef, null, source);
         return _getColumnStateFromColDef(beans, colDef, colId);
     }
 
-    private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
+    private createAutoColDef(colId: string, underlyingColumn?: AgColumn): ColDef {
         // if one provided by user, use it, otherwise create one
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
@@ -288,11 +287,6 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             if (noFieldOrValueGetter) {
                 res.filter = false;
             }
-        }
-
-        // if showing many cols, we don't want to show more than one with a checkbox for selection
-        if (index && index > 0) {
-            res.headerCheckboxSelection = false;
         }
 
         const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);

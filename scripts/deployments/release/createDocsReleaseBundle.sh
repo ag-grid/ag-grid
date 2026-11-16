@@ -16,6 +16,7 @@ VERSION=""${RAW_VERSION//./}""
 echo "Creating Release Archive"
 cd documentation/ag-grid-docs/dist
 FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
+rm -f ../../../$FILENAME
 zip -r ../../../$FILENAME .
 
 cd ../../../

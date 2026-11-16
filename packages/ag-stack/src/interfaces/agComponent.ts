@@ -1,4 +1,4 @@
-import type { AgBeanStubEvent } from '../core/agBeanStub';
+import type { AgBeanStubEvent } from '../core/agAbstractBean';
 import type { AgBaseBean } from './agBaseBean';
 import type { AgBean } from './agBean';
 import type { AgEvent } from './agEvent';

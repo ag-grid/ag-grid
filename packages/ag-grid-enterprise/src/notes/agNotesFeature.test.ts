@@ -48,7 +48,7 @@ describe('AgNotesFeature', () => {
             isNoteHoverSuppressed,
         } as unknown as CellCtrl;
         compBean = {
-            addManagedElementListeners: vi.fn((_element: HTMLElement, managedListeners: typeof listeners) => {
+            addManagedListeners: vi.fn((_element: HTMLElement, managedListeners: typeof listeners) => {
                 listeners = managedListeners;
                 return [];
             }),
@@ -347,7 +347,7 @@ describe('AgNotesFeature', () => {
 
         feature.show({ focusEditor: true });
 
-        const otherCompBean = { addManagedElementListeners: vi.fn(() => []) } as unknown as BeanStub;
+        const otherCompBean = { addManagedListeners: vi.fn(() => []) } as unknown as BeanStub;
         const otherFeature = new AgNotesFeature(beans, otherCtrl, otherCompBean, notesSvc);
         otherFeature.initialise();
         otherFeature.show({ focusEditor: true });

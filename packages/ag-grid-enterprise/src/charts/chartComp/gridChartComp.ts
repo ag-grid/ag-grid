@@ -6,6 +6,7 @@ import type {
 } from 'ag-charts-types';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _focusInto,
     _getAbsoluteHeight,
@@ -51,7 +52,7 @@ import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
-import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
+import { getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
 export interface GridChartParams {
     chartId: string;
@@ -74,6 +75,7 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -133,7 +135,6 @@ export class GridChartComp extends Component {
     public postConstruct(): void {
         const modelParams: ChartModelParams = {
             ...this.params,
-            chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
         };
 
@@ -153,7 +154,7 @@ export class GridChartComp extends Component {
 
         this.addMenu();
 
-        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        _addManagedElementListeners(this, this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
         this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
         this.addManagedPropertyListeners(
@@ -268,7 +269,6 @@ export class GridChartComp extends Component {
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
             case 'donut':
-            case 'doughnut':
                 return new PieChartProxy(chartProxyParams);
             case 'area':
             case 'stackedArea':
@@ -451,8 +451,7 @@ export class GridChartComp extends Component {
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): ChartType | null {
-        const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
-        const targetChartType = updatedChartType ? getCanonicalChartType(updatedChartType) : undefined;
+        const [currentType, targetChartType] = [this.chartController.getChartType(), updateParams?.chartType];
         // If the grid chart component is out of sync with the existing chart instance type, return the correct chart type
         if (this.chartType !== currentType) {
             return targetChartType ?? currentType;

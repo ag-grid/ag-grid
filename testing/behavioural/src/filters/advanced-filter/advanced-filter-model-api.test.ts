@@ -1417,11 +1417,15 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
             expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
-            expect(sources).toEqual(['advancedFilter']);
+            expect(sources).toEqual(['gridInitializing']);
         });
 
         test('a model restored with setState reads back at once and applies once rows arrive', async () => {
-            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                onFilterChanged: ({ source }) => sources.push(source),
+            });
             await asyncSetTimeout(0);
 
             api.setState({ filter: { advancedFilterModel: OVER_24 } });
@@ -1431,6 +1435,7 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual(OVER_24);
             expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+            expect(sources).toEqual(['api']);
         });
 
         test('an expression applied in the input after a model replaces it, before and after rows arrive', async () => {

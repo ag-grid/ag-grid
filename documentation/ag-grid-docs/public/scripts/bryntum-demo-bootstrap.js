@@ -1,8 +1,8 @@
 // Shared bootstrap for every Bryntum "Try it yourself!" demo on the campaign
 // pages. Each per-product script calls `bryntumDemoInit(namespace, mountId,
-// factory)`; this helper handles mount lookup, the `window.bryntum[namespace]`
-// presence check, the dataset re-init guard, and DOM readiness — keeping the
-// per-product files focused on demo configuration only.
+// factory)`; this helper handles mount lookup, loading the product's ES module,
+// the dataset re-init guard, and DOM readiness — keeping the per-product files
+// focused on demo configuration only.
 
 window.bryntumDemoInit = function (namespace, mountId, factory) {
     function init() {
@@ -11,32 +11,38 @@ window.bryntumDemoInit = function (namespace, mountId, factory) {
             return;
         }
 
-        // Resolve the Bryntum API surface. The published UMD currently leaves
-        // window.bryntum.<namespace> empty and registers public classes on the
-        // internal window.bryntum._classes registry; prefer that when present
-        // and fall back to the public namespace (which is the documented path
-        // and may be restored in a future build).
-        var publicNs = window.bryntum && window.bryntum[namespace];
-        var classes = window.bryntum && window.bryntum._classes;
-        var publicHasContents = publicNs && Object.keys(publicNs).length > 0;
-        var api = publicHasContents ? publicNs : classes;
+        if (mount.dataset.bryntumInitialized === '1') {
+            return;
+        }
 
-        if (!api) {
-            // Bryntum UMD bundle did not load (CDN failure, CSP block, or
-            // upstream rename). Warn so the empty demo frame doesn't look like
-            // an unexplained bug to anyone inspecting the page.
+        // BryntumCampaign.astro emits a modulepreload link per product. Importing
+        // its URL (rather than relying on script execution order) also holds up
+        // after a ClientRouter soft navigation, where `defer` is not honoured.
+        var link = document.querySelector('link[rel="modulepreload"][data-bryntum-module="' + namespace + '"]');
+        if (!link) {
             console.warn(
-                '[bryntum-demo] window.bryntum.' + namespace + ' not loaded; skipping live demo for #' + mountId + '.'
+                '[bryntum-demo] no ' + namespace + ' module on the page; skipping live demo for #' + mountId + '.'
             );
             return;
         }
 
-        if (mount.dataset.bryntumInitialized === '1') {
-            return;
-        }
         mount.dataset.bryntumInitialized = '1';
 
-        factory(api, mount);
+        import(link.href).then(
+            function (api) {
+                factory(api, mount);
+            },
+            function (error) {
+                // Bryntum module did not load (CDN failure, CSP block, or
+                // upstream rename). Warn so the empty demo frame doesn't look
+                // like an unexplained bug to anyone inspecting the page.
+                delete mount.dataset.bryntumInitialized;
+                console.warn(
+                    '[bryntum-demo] ' + namespace + ' module failed to load; skipping live demo for #' + mountId + '.',
+                    error
+                );
+            }
+        );
     }
 
     if (document.readyState === 'loading') {

@@ -2,9 +2,9 @@ import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../col
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
-import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
+import { _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
@@ -12,27 +12,6 @@ function quote(s: string): string {
 }
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
-    checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
-    headerCheckboxSelection: {
-        version: '32.2',
-        message: 'Use `rowSelection.headerCheckbox = true` in `GridOptions` instead.',
-    },
-    headerCheckboxSelectionFilteredOnly: {
-        version: '32.2',
-        message: 'Use `rowSelection.selectAll = "filtered"` in `GridOptions` instead.',
-    },
-    headerCheckboxSelectionCurrentPageOnly: {
-        version: '32.2',
-        message: 'Use `rowSelection.selectAll = "currentPage"` in `GridOptions` instead.',
-    },
-    showDisabledCheckboxes: {
-        version: '32.2',
-        message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
-    },
-    rowGroupingHierarchy: {
-        version: '34.3',
-        message: 'Use `colDef.groupHierarchy` instead.',
-    },
     headerTooltipValueGetter: {
         version: '36.2',
         message: 'Use `headerTooltip` with a callback instead.',
@@ -193,23 +172,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        cellRendererParams: {
-            validate: (colDef) => {
-                const groupColumn =
-                    colDef.rowGroup != null ||
-                    colDef.rowGroupIndex != null ||
-                    colDef.cellRenderer === 'agGroupCellRenderer';
-
-                if (groupColumn && 'checkbox' in colDef.cellRendererParams) {
-                    return _createDeprecationWarning(306, {
-                        version: '33.0',
-                        name: 'cellRendererParams.checkbox',
-                        message: 'Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.',
-                    });
-                }
-                return null;
-            },
-        },
         flex: {
             validate: (_options, gridOptions) => {
                 if (gridOptions.autoSizeStrategy) {
@@ -221,27 +183,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        headerCheckboxSelection: {
-            supportedRowModels: ['clientSide', 'serverSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelection is only supported with rowSelection=multiple',
-        },
-        headerCheckboxSelectionCurrentPageOnly: {
-            supportedRowModels: ['clientSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
-        },
-        headerCheckboxSelectionFilteredOnly: {
-            supportedRowModels: ['clientSide'],
-            validate: (_options, { rowSelection }) =>
-                rowSelection === 'multiple'
-                    ? null
-                    : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
-        },
         headerValueGetter: {
             validate: (_options: AbstractColDef) => {
                 const headerValueGetter = _options.headerValueGetter;
@@ -249,22 +190,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return null;
                 }
                 return 'headerValueGetter must be a function or a valid string expression';
-            },
-        },
-        icons: {
-            validate: ({ icons }) => {
-                if (icons) {
-                    if (icons['smallDown']) {
-                        return _errMsg(262);
-                    }
-                    if (icons['smallLeft']) {
-                        return _errMsg(263);
-                    }
-                    if (icons['smallRight']) {
-                        return _errMsg(264);
-                    }
-                }
-                return null;
             },
         },
         sort: {
@@ -512,11 +437,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialRowGroup: undefined,
     pivot: undefined,
     initialPivot: undefined,
-    checkboxSelection: undefined,
-    showDisabledCheckboxes: undefined,
-    headerCheckboxSelection: undefined,
-    headerCheckboxSelectionFilteredOnly: undefined,
-    headerCheckboxSelectionCurrentPageOnly: undefined,
     suppressHeaderMenuButton: undefined,
     suppressMovable: undefined,
     lockPosition: undefined,
@@ -585,7 +505,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponent: undefined,
     dateComponentParams: undefined,
     getFindText: undefined,
-    rowGroupingHierarchy: undefined,
     groupHierarchy: undefined,
     allowFormula: undefined,
     suppressNoteActions: undefined,

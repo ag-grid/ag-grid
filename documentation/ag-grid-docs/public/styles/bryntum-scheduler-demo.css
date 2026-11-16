@@ -1,18 +1,26 @@
 /* Bryntum Scheduler "Try it yourself!" demo styles.
-   Ported verbatim from the upstream drag-from-grid(-custom) example's app.css:
+   Ported from the upstream drag-from-grid(-custom) example's app.css:
    https://bryntum.com/products/scheduler/examples/drag-from-grid-custom/resources/app.css
 
-   The only change from upstream is the container selector: the example mounts
-   its widgets in `#main`, whereas our UMD port (public/scripts/bryntum-scheduler-demo.js)
+   Upstream mounts its widgets in `#main`; our port (public/scripts/bryntum-scheduler-demo.js)
    mounts them in `#live-scheduler-demo`. Without the flex rule below the
    scheduler, splitter and unplanned grid stack vertically instead of laying out
    side-by-side.
 
-   Loaded only on the scheduler campaign page (see BryntumCampaign.astro) so the
-   generic `.b-sch-event-wrap` / `.b-event-header` rules don't leak onto other
-   product demos (e.g. scheduler-pro) that also render those Bryntum classes. */
+   The Scheduler page hosts a second live demo that renders the same Bryntum
+   classes, so every other rule is scoped to `#live-scheduler-demo` or to a class
+   only this demo adds to elements rendered outside it (the drag proxy's
+   `b-unassigned-class`, the drag tooltip's `b-unplanned-drag-tip`). `:where()`
+   keeps upstream's specificity, so Bryntum's own state rules still win. */
 
-.b-sch-event-wrap {
+#live-scheduler-demo {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 100%;
+}
+
+:where(#live-scheduler-demo) .b-sch-event-wrap,
+.b-sch-event-wrap:where(.b-unassigned-class) {
     --b-sch-event-box-shadow: var(--b-elevation-1);
 
     .b-sch-event-content {
@@ -22,7 +30,7 @@
     }
 }
 
-.b-event-header {
+:where(#live-scheduler-demo, .b-unassigned-class) .b-event-header {
     display: flex;
     font-weight: 600;
 
@@ -31,7 +39,7 @@
     }
 }
 
-.b-event-footer {
+:where(#live-scheduler-demo, .b-unassigned-class) .b-event-footer {
     display: flex;
     font-weight: 400;
     font-size: 0.8em;
@@ -42,13 +50,7 @@
     }
 }
 
-#live-scheduler-demo {
-    display: flex;
-    flex-direction: row;
-    flex: 1 1 100%;
-}
-
-.b-grid.b-unplanned-grid {
+:where(#live-scheduler-demo) .b-grid.b-unplanned-grid {
     --b-grid-cell-background: transparent;
     --b-grid-cell-hover-background: transparent;
     --b-grid-cell-selected-background: transparent;
@@ -71,8 +73,8 @@
     }
 }
 
-.b-unplanned-grid .b-panel-ui-toolbar.b-dock-top,
-.b-scheduler > .b-panel-body-wrap > .b-toolbar {
+:where(#live-scheduler-demo) .b-unplanned-grid .b-panel-ui-toolbar.b-dock-top,
+:where(#live-scheduler-demo) .b-scheduler > .b-panel-body-wrap > .b-toolbar {
     min-height: 4.3em;
 }
 
@@ -90,7 +92,7 @@
     }
 }
 
-.b-sch-tooltip-start-date,
-.b-sch-tooltip-end-date {
+:where(.b-unplanned-drag-tip) .b-sch-tooltip-start-date,
+:where(.b-unplanned-drag-tip) .b-sch-tooltip-end-date {
     margin-top: 0.2em;
 }

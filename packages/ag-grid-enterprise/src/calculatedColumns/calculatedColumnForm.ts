@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _getActiveDomElement,
     _getElementRootNode,
     _setAriaActiveDescendant,
@@ -9,6 +10,8 @@ import {
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaInvalid,
+    _setAriaLabel,
+    _setAriaRole,
     _setDisplayed,
 } from 'ag-stack';
 
@@ -54,7 +57,7 @@ export const DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS = ['columns', 'functio
 
 const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
 const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
-const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = OPERATOR_VALUES.map((operator) => ({
+const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = /* #__PURE__ */ OPERATOR_VALUES.map((operator) => ({
     type: 'operator' as const,
     label: operator,
     value: operator,
@@ -284,6 +287,9 @@ export class CalculatedColumnForm extends Component {
         const pickerButtons = [this.eColumns, this.eFunctions, this.eOperators];
         for (const button of pickerButtons) {
             button.setAttribute('tabindex', tabIndex);
+            // combobox, not button: only a combobox can expose the highlighted option via aria-activedescendant
+            _setAriaRole(button, 'combobox');
+            _setAriaLabel(button, button.textContent);
             _setAriaHasPopup(button, 'listbox');
             _setAriaExpanded(button, false);
         }
@@ -332,7 +338,7 @@ export class CalculatedColumnForm extends Component {
         if (this.readOnly) {
             return;
         }
-        this.addManagedElementListeners(input, {
+        _addManagedElementListeners(this, input, {
             click: () => {
                 this.rememberExpressionSelection();
                 this.refreshContextSuggestions();
@@ -354,26 +360,40 @@ export class CalculatedColumnForm extends Component {
         for (const pickerButton of pickerButtons) {
             const [pickerKey, suggestionType, button] = pickerButton;
             if (expressionPickers.has(pickerKey)) {
-                this.addManagedElementListeners(button, {
+                _addManagedElementListeners(this, button, {
                     mousedown: () => this.rememberExpressionSelection(),
                     click: () => this.openPicker(suggestionType, button),
+                    keydown: (event: KeyboardEvent) => this.onPickerButtonKeyDown(event, suggestionType, button),
                 });
             }
         }
         if (!this.liveApply) {
-            this.addManagedElementListeners(this.eApply, {
+            _addManagedElementListeners(this, this.eApply, {
                 click: () => {
                     this.setValidationErrors(this.onApply(this.draft));
                 },
             });
-            this.addManagedElementListeners(this.eCancel, {
+            _addManagedElementListeners(this, this.eCancel, {
                 click: () => this.onCancel(),
             });
         }
     }
 
+    private onPickerButtonKeyDown(
+        event: KeyboardEvent,
+        type: ColumnSuggestion['type'],
+        button: HTMLButtonElement
+    ): void {
+        if (this.autocompleteList || (event.key !== KeyCode.UP && event.key !== KeyCode.DOWN)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        this.openPicker(type, button);
+    }
+
     private addFormListeners(): void {
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (event.target !== this.eExpression.getInputElement()) {
                     this.onSuggestionKeyDown(event);
@@ -559,19 +579,20 @@ export class CalculatedColumnForm extends Component {
         const listId = this.autocompleteList.getListId();
         const expressionInputEl = this.eExpression.getInputElement();
         const isInline = this.suggestionSourceType === 'inline';
-        const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
+        const activeOptionId = this.autocompleteList.getActiveOptionId();
         const renderedActiveOptionId =
             activeOptionId && _getElementRootNode(expressionInputEl).getElementById(activeOptionId)
                 ? activeOptionId
                 : null;
 
         _setAriaControls(expressionInputEl, isInline ? listId : null);
-        _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
+        _setAriaActiveDescendant(expressionInputEl, isInline ? renderedActiveOptionId : null);
 
         for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
             const isButtonSource = this.suggestionSourceType === 'picker' && this.suggestionSource === buttons;
             _setAriaExpanded(buttons, isButtonSource);
             _setAriaControls(buttons, isButtonSource ? listId : null);
+            _setAriaActiveDescendant(buttons, isButtonSource ? renderedActiveOptionId : null);
         }
     }
 
@@ -583,6 +604,7 @@ export class CalculatedColumnForm extends Component {
         for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
             _setAriaExpanded(buttons, false);
             _setAriaControls(buttons, null);
+            _setAriaActiveDescendant(buttons, null);
         }
     }
 

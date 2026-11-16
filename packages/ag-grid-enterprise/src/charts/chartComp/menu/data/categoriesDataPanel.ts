@@ -43,6 +43,7 @@ export class CategoriesDataPanel extends DragDataPanel {
             (col) => col.displayName ?? '',
             'categoryAdd',
             'categorySelect',
+            this.title,
             () => !this.chartController.getAggFunc()
         );
         this.createAggFuncControls(this.dimensionCols);
@@ -91,6 +92,7 @@ export class CategoriesDataPanel extends DragDataPanel {
                         { value: 'avg', text: this.chartTranslation.translate('avg') },
                     ],
                     value: typeof aggFunc === 'string' ? aggFunc : undefined,
+                    ariaLabel: this.chartTranslation.translate('ariaLabelAggregationFunction'),
                     onValueChange: (value) => {
                         this.chartController.setAggFunc(value);
                     },

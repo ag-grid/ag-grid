@@ -3,60 +3,60 @@
 # @min-rows 371
 
 # @category charts-redirects
-www	/charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
 blog	/charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
-www	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+www	/charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
 blog	/charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
-www	/charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+www	/charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
 blog	/charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
-www	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+www	/charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
 blog	/charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
-www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
-www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/javascript	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
 blog	/charts/javascript/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
-www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
 blog	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+www	/charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
 blog	/charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+www	/charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
 blog	/charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/sitemap.xml	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
-www	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
+www	/charts/sitemap.xml	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
 blog	/charts/sitemap.xml/	301	https://www.ag-grid.com/charts/sitemap-0.xml	cc=no-cache
-www	/charts/archive	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
-www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
+www	/charts/archive	301	https://www.ag-grid.com/charts/documentation-archive/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
 blog	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/	cc=no-cache
 www	/charts/privacy/bar-series	410	
@@ -65,295 +65,295 @@ www	/charts/privacy	410
 www	/charts/privacy/	410	
 apex	/charts/privacy/	410	
 blog	/charts/privacy/	410	
-www	/charts/javascript-charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/javascript-charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/javascript-charts/javascript/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/javascript-charts/javascript/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/javascript-charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/javascript-charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/javascript-charts/javascript/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
 blog	/charts/javascript-charts/javascript/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/javascript-charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/javascript-charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/javascript-charts/javascript/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
 blog	/charts/javascript-charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/javascript-charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript-charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript-charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript-charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript-charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/javascript-charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript-charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript-charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript-charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript-charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/javascript-charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
 blog	/charts/javascript-charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript-charts/javascript/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
+www	/charts/javascript-charts/javascript/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
 blog	/charts/javascript-charts/javascript/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
-www	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript-charts/javascript/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/javascript-charts/javascript/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/angular-charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/angular-charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/angular-charts/angular/bullet-series/	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/angular-charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
-www	/charts/angular-charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
+www	/charts/angular-charts/angular/fonts	301	https://www.ag-grid.com/charts/angular/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
 blog	/charts/angular-charts/angular/fonts/	301	https://www.ag-grid.com/charts/angular/text/	cc=no-cache
-www	/charts/angular-charts/angular/series/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/series/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+www	/charts/angular-charts/angular/series/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/series/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
 blog	/charts/angular-charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/axes/bar-series	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular-charts/angular/axes/bar-series/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular-charts/angular/axes	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular-charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
+www	/charts/angular-charts/angular/axes/bar-series	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/axes/bar-series/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/axes	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
 blog	/charts/angular-charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular-charts/angular/bar-series.bar-series	301	https://www.ag-grid.com/charts/angular/bar-series.bar-series	cc=no-cache
+www	/charts/angular-charts/angular/bar-series.bar-series	301	https://www.ag-grid.com/charts/angular/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/bar-series.bar-series	301	https://www.ag-grid.com/charts/angular/bar-series.bar-series	cc=no-cache
 blog	/charts/angular-charts/angular/bar-series.bar-series	301	https://www.ag-grid.com/charts/angular/bar-series.bar-series	cc=no-cache
-www	/charts/angular-charts/angular/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+www	/charts/angular-charts/angular/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
 blog	/charts/angular-charts/angular/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/react-charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/react-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/react-charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/react-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/react-charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/react-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+www	/charts/react-charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
 blog	/charts/react-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/react-charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/react-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+www	/charts/react-charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
 blog	/charts/react-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/react-charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/react-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+www	/charts/react-charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
 blog	/charts/react-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/react-charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react-charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react-charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react-charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
 blog	/charts/react-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react-charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react-charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react-charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
+www	/charts/react-charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
 blog	/charts/react-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
+www	/charts/react-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
 blog	/charts/react-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
-www	/charts/react-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
 blog	/charts/react-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/vue-charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/vue-charts/vue/bullet-series	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/vue-charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/vue-charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
-www	/charts/vue-charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
+www	/charts/vue-charts/vue/fonts	301	https://www.ag-grid.com/charts/vue/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
 blog	/charts/vue-charts/vue/fonts/	301	https://www.ag-grid.com/charts/vue/text/	cc=no-cache
-www	/charts/vue-charts/vue/series/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/series/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+www	/charts/vue-charts/vue/series/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/series/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
 blog	/charts/vue-charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/axes/bar-series	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue-charts/vue/axes/bar-series/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue-charts/vue/axes	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue-charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
+www	/charts/vue-charts/vue/axes/bar-series	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/axes/bar-series/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/axes	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
 blog	/charts/vue-charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue-charts/vue/bar-series.bar-series	301	https://www.ag-grid.com/charts/vue/bar-series.bar-series	cc=no-cache
+www	/charts/vue-charts/vue/bar-series.bar-series	301	https://www.ag-grid.com/charts/vue/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/bar-series.bar-series	301	https://www.ag-grid.com/charts/vue/bar-series.bar-series	cc=no-cache
 blog	/charts/vue-charts/vue/bar-series.bar-series	301	https://www.ag-grid.com/charts/vue/bar-series.bar-series	cc=no-cache
-www	/charts/vue-charts/vue/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+www	/charts/vue-charts/vue/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
 blog	/charts/vue-charts/vue/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/enterprise-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/enterprise-charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/enterprise-charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/enterprise-charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/enterprise-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
+www	/charts/enterprise-charts/react/fonts	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
 blog	/charts/enterprise-charts/react/fonts/	301	https://www.ag-grid.com/charts/react/text/	cc=no-cache
-www	/charts/enterprise-charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/enterprise-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
+www	/charts/enterprise-charts/react/toolbar	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
 blog	/charts/enterprise-charts/react/toolbar/	301	https://www.ag-grid.com/charts/react/financial-charts-toolbar/	cc=no-cache
-www	/charts/enterprise-charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/enterprise-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
+www	/charts/enterprise-charts/react/line	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
 blog	/charts/enterprise-charts/react/line/	301	https://www.ag-grid.com/charts/react/line-series/	cc=no-cache
-www	/charts/enterprise-charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/enterprise-charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
 blog	/charts/enterprise-charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/enterprise-charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/enterprise-charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/enterprise-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
+www	/charts/enterprise-charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
 blog	/charts/enterprise-charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/enterprise-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
+www	/charts/enterprise-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
 blog	/charts/enterprise-charts/react/bar-series.bar-series	301	https://www.ag-grid.com/charts/react/bar-series.bar-series	cc=no-cache
-www	/charts/enterprise-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/enterprise-charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
 blog	/charts/enterprise-charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/javascript-charts/gallery/bar-series	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
-www	/charts/javascript-charts/gallery/bar-series/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
-www	/charts/javascript-charts/gallery	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
-www	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
+www	/charts/javascript-charts/gallery/bar-series	301	https://www.ag-grid.com/charts/gallery/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/gallery/bar-series/	301	https://www.ag-grid.com/charts/gallery/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/gallery	301	https://www.ag-grid.com/charts/gallery/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
 blog	/charts/javascript-charts/gallery/	301	https://www.ag-grid.com/charts/gallery/	cc=no-cache
-www	/charts/javascript-charts/options/bar-series	301	https://www.ag-grid.com/charts/options/	cc=no-cache
-www	/charts/javascript-charts/options/bar-series/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
-www	/charts/javascript-charts/options	301	https://www.ag-grid.com/charts/options/	cc=no-cache
-www	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
+www	/charts/javascript-charts/options/bar-series	301	https://www.ag-grid.com/charts/options/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/options/bar-series/	301	https://www.ag-grid.com/charts/options/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/options	301	https://www.ag-grid.com/charts/options/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
 blog	/charts/javascript-charts/options/	301	https://www.ag-grid.com/charts/options/	cc=no-cache
-www	/charts/enterprise-charts/bar-series	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
-www	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
+www	/charts/enterprise-charts/bar-series	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
 blog	/charts/enterprise-charts/bar-series/	301	https://www.ag-grid.com/charts/enterprise-charts/	cc=no-cache
-www	/charts/core	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
-www	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
+www	/charts/core	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
 blog	/charts/core/	301	https://www.ag-grid.com/charts/javascript/quick-start/	cc=no-cache
-www	/charts/core/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/core/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/core/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/core/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/core/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/core/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/core/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
 blog	/charts/core/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/core/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/core/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/core/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
 blog	/charts/core/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/core/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/core/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/core/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/core/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/core/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/core/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/core/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/core/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/core/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/core/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/core/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
 blog	/charts/core/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/core/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
+www	/charts/core/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
 blog	/charts/core/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
-www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/core/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/side/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
+www	/charts/side/bullet-series	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
 blog	/charts/side/bullet-series/	301	https://www.ag-grid.com/charts/javascript/linear-gauge/#bullet-series	cc=no-cache
-www	/charts/side/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/side/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
+www	/charts/side/fonts	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
 blog	/charts/side/fonts/	301	https://www.ag-grid.com/charts/javascript/text/	cc=no-cache
-www	/charts/side/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/side/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
+www	/charts/side/toolbar	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
 blog	/charts/side/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/	cc=no-cache
-www	/charts/side/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/side/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/side/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/side/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/side/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/side/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/side/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
 blog	/charts/side/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/side/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
+www	/charts/side/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
 blog	/charts/side/bar-series.bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series.bar-series	cc=no-cache
-www	/charts/side/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/side/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/side/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/server-side-rendering/bar-series	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
-www	/charts/server-side-rendering/bar-series/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
-www	/charts/server-side-rendering	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
-www	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
+www	/charts/server-side-rendering/bar-series	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/server-side-rendering/bar-series/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/server-side-rendering	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
 blog	/charts/server-side-rendering/	301	https://www.ag-grid.com/charts/javascript/server-side-rendering/	cc=no-cache
-www	/charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
+www	/charts/react/series/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/series/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/series	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
 blog	/charts/react/series/	301	https://www.ag-grid.com/charts/react/bar-series/	cc=no-cache
-www	/charts/angular/series/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular/series/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular/series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
+www	/charts/angular/series/bar-series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/series/bar-series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/series	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
 blog	/charts/angular/series/	301	https://www.ag-grid.com/charts/angular/bar-series/	cc=no-cache
-www	/charts/vue/series/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue/series/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue/series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
+www	/charts/vue/series/bar-series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/series/bar-series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/series	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
 blog	/charts/vue/series/	301	https://www.ag-grid.com/charts/vue/bar-series/	cc=no-cache
-www	/charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
+www	/charts/javascript/series/bar-series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/series/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/series	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
 blog	/charts/javascript/series/	301	https://www.ag-grid.com/charts/javascript/bar-series/	cc=no-cache
-www	/charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
+www	/charts/react/axes/bar-series	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/axes/bar-series/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/axes	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
 blog	/charts/react/axes/	301	https://www.ag-grid.com/charts/react/axes-configuration/	cc=no-cache
-www	/charts/angular/axes/bar-series	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular/axes/bar-series/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular/axes	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
+www	/charts/angular/axes/bar-series	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/axes/bar-series/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/axes	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
 blog	/charts/angular/axes/	301	https://www.ag-grid.com/charts/angular/axes-configuration/	cc=no-cache
-www	/charts/vue/axes/bar-series	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue/axes/bar-series/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue/axes	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
+www	/charts/vue/axes/bar-series	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/axes/bar-series/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/axes	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
 blog	/charts/vue/axes/	301	https://www.ag-grid.com/charts/vue/axes-configuration/	cc=no-cache
-www	/charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
-www	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
+www	/charts/javascript/axes/bar-series	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/axes/bar-series/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/axes	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
+www	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400	h:x-ag-cache-tag=ag-docs
 apex	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
 blog	/charts/javascript/axes/	301	https://www.ag-grid.com/charts/javascript/axes-configuration/	cc=no-cache
 

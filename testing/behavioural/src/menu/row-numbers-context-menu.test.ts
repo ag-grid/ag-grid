@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {
-    ALL_SEVERITIES,
     TestGridsManager,
     canvasPolyfill,
     clickMenuOption,
@@ -21,7 +20,7 @@ import type {
     NotesDataSourceGetNoteParams,
     NotesDataSourceSetNoteParams,
 } from 'ag-grid-community';
-import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, enableDevValidations, getGridElement } from 'ag-grid-community';
+import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 let restoreOffsetParent: (() => void) | undefined;
@@ -433,68 +432,20 @@ describe('Row Numbers context menu (AG-16355)', () => {
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
     });
 
-    // The legacy string rowSelection copies selected rows by default, unless suppressCopyRowsToClipboard is set.
-    test('a row-number cell follows the legacy rowSelection copy behaviour', async () => {
-        // the string form of rowSelection is deprecated (#306) but still supported
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-        const withCopy = await gridMgr.createGridAndWait('rowNumbersCtxLegacy', {
+    test('a row-number cell hides Copy and Cut for selected rows when copySelectedRows is unset', async () => {
+        const api = await gridMgr.createGridAndWait('rowNumbersCtxCopyRowsUnset', {
             columnDefs,
             rowData,
             rowNumbers: true,
-            rowSelection: 'multiple',
-        });
-        restoreOffsetParent = polyfillOffsetParent();
-        withCopy.setNodesSelected({ nodes: [withCopy.getDisplayedRowAtIndex(1)!], newValue: true });
-        rightClick(cell(getGridElement(withCopy)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
-        await clickMenuOption('Copy');
-        await waitFor(() => expect(clipboardUtils.getText()).toBe('Natalie Coughlin\t25'));
-        gridMgr.reset();
-
-        const suppressed = await gridMgr.createGridAndWait('rowNumbersCtxLegacySuppressed', {
-            columnDefs,
-            rowData,
-            rowNumbers: true,
-            rowSelection: 'multiple',
-            suppressCopyRowsToClipboard: true,
-        });
-        rightClick(cell(getGridElement(suppressed)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
-        await waitFor(() => expect(menuOption('Export')).not.toBeNull());
-        expect(menuOption('Copy')).toBeNull();
-    });
-
-    // A range is not always a copy target: under the legacy API `suppressCopySingleCellRanges` makes the clipboard
-    // skip a single-cell range and fall back to the focused cell, so the row-number guard must ask the clipboard
-    // rather than assume a non-empty range means Copy is safe.
-    test('a row-number cell hides Copy when suppressCopySingleCellRanges rejects the range', async () => {
-        // the legacy enableRangeSelection/suppressCopySingleCellRanges options are deprecated (#306) but supported
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-        const api = await gridMgr.createGridAndWait('rowNumbersCtxSuppressedSingleCellRange', {
-            columnDefs,
-            rowData,
-            rowNumbers: true,
-            enableRangeSelection: true,
-            suppressCopySingleCellRanges: true,
+            rowSelection: { mode: 'multiRow' },
         });
         restoreOffsetParent = polyfillOffsetParent();
 
-        const gridDiv = getGridElement(api)! as HTMLElement;
-
-        // a single-cell range on a data cell: the clipboard would skip it and copy the focused cell instead
-        fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
-        expect(api.getCellRanges()).toHaveLength(1);
-
-        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
+        api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(1)!], newValue: true });
+        rightClick(cell(getGridElement(api)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
         await waitFor(() => expect(menuOption('Export')).not.toBeNull());
         expect(menuOption('Copy')).toBeNull();
         expect(menuOption('Cut')).toBeNull();
-        api.hidePopupMenu();
-        await waitFor(() => expect(document.querySelectorAll('.ag-menu')).toHaveLength(0));
-
-        // extend the range past one cell and the clipboard will copy it, so the items come back
-        fireGridPointerDown(cell(gridDiv, 1, 'age'), { shiftKey: true });
-        rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
-        await clickMenuOption('Copy');
-        await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
     });
 
     // With the integration suppressed a row-number right-click leaves an existing range alone, and Copy copies it.

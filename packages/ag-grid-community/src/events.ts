@@ -362,8 +362,6 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 /**
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
- * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
- * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -380,8 +378,6 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 export type SelectionEventSourceType =
     | 'api'
     | 'apiSelectAll'
-    | 'apiSelectAllFiltered'
-    | 'apiSelectAllCurrentPage'
     | 'checkboxSelected'
     | 'rowClicked'
     | 'rowDataChanged'
@@ -408,7 +404,8 @@ export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGl
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
-export type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';
+export type FilterChangedEventSourceType =
+    'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter' | 'gridInitializing';
 
 export interface FilterChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterChanged',
@@ -421,6 +418,7 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
      * - `quickFilter` - triggered by user filtering from Quick Filter
      * - `columnFilter` - triggered by user filtering from Column Menu
      * - `advancedFilter` - triggered by user filtering from Advanced Filter
+     * - `gridInitializing` - triggered by restoring filter state from `initialState` while the grid is initialising
      */
     source?: FilterChangedEventSourceType;
     /** True if the filter was changed as a result of data changing */

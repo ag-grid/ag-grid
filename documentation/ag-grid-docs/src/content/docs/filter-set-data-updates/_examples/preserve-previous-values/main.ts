@@ -63,7 +63,7 @@ function rowsOfYear(year: number) {
     return allData.filter((row) => row.year === year);
 }
 
-function showYear(year: number) {
+function loadYear(year: number) {
     gridApi!.setGridOption('rowData', rowsOfYear(year));
 }
 

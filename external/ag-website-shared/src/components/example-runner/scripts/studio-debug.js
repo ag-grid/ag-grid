@@ -191,9 +191,31 @@ const requeryWithExplainButton = {
     },
 };
 
+/**
+ * Shows the widget's query plans in a popup. The page enables the popup before it creates Studio,
+ * which also has the widget's queries keep the plans of their runs.
+ * @type {AgWidgetToolbarItem}
+ */
+const queryPlansButton = {
+    id: 'queryPlans',
+    type: 'button',
+    label: 'Explain Queries',
+    icon: 'aiCreatePlan',
+    showOnNoData: true,
+    action: (params) => {
+        const widgetId = /** @type {any} */ (params).widgetId;
+        internalApi(params.api)?.showQueryPlans?.(widgetId);
+    },
+};
+
 /** @type {any} */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debugOverrides = {
+    // The query plans popup is read at the size of the page, not of Studio. A getter, as the
+    // script can run before the page has a body.
+    get popupParent() {
+        return document.body;
+    },
     /**
      * @param {AgWidgetsConfig} widgetConfig
      * @return {AgWidgetsConfig} widgetConfig
@@ -227,6 +249,10 @@ const debugOverrides = {
 
                 if (!toolbar?.includes(requeryWithExplainButton)) {
                     addButton(requeryWithExplainButton);
+                }
+
+                if (!toolbar?.includes(queryPlansButton)) {
+                    addButton(queryPlansButton);
                 }
 
                 return { ...widget, toolbar };

@@ -1,6 +1,9 @@
+import { _getDocument } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgColor } from '../../../../../agStack/agColor';
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
@@ -36,7 +39,7 @@ export class ShadowPanel extends Component {
                 useToggle: true,
             }
         );
-        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
+        const shadowColorPickerParams = this.getColorPickerParams(propertyNamespace);
         this.setTemplate(
             /* html */ `<div>
             <ag-group-component data-ref="shadowGroup">
@@ -55,6 +58,34 @@ export class ShadowPanel extends Component {
                 shadowYOffsetSlider: this.getSliderParams('yOffset', -10, 10),
             }
         );
+    }
+
+    /**
+     * The shadow casts `fill` at `fillOpacity`, so the picker shows the two combined as one colour with an alpha,
+     * and a pick writes both back, leaving `fill` opaque so the opacity is not applied twice.
+     */
+    private getColorPickerParams(propertyNamespace: string) {
+        const fillExpression = `${propertyNamespace}.fill`;
+        const fillOpacityExpression = `${propertyNamespace}.fillOpacity`;
+        const chartOptions = this.chartMenuUtils.getChartOptions();
+        const doc = _getDocument(this.beans);
+
+        const params = this.chartMenuUtils.getDefaultColorPickerParams(fillExpression);
+        const fill = chartOptions.getValue<string | undefined>(fillExpression);
+        // A chart with no series has no resolved shadow, so leave the picker blank as before
+        if (fill != null) {
+            const fillColor = AgColor.fromString(fill, doc);
+            const fillOpacity = chartOptions.getValue<number | undefined>(fillOpacityExpression) ?? 1;
+            params.value = new AgColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a * fillOpacity).toRgbaString();
+        }
+        params.onValueChange = (value) => {
+            const color = AgColor.fromString(value, doc);
+            chartOptions.setValues<string | number>([
+                { expression: fillExpression, value: new AgColor(color.r, color.g, color.b).toRgbaString() },
+                { expression: fillOpacityExpression, value: Math.round(color.a * 1000) / 1000 },
+            ]);
+        };
+        return params;
     }
 
     private getSliderParams(property: ChartTranslationKey, minValue: number, defaultMaxValue: number): AgSliderParams {

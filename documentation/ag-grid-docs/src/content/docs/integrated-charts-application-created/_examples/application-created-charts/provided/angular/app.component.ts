@@ -61,17 +61,19 @@ function numberCellFormatter(params: ValueFormatterParams) {
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<div id="myApp" class="wrapper">
-        <div style="padding-bottom: 4px">
-            <span>
-                <button (click)="onStopMessages()">&#9632; Stop</button>
-                <button (click)="onStartLoad()">&#9658; Start</button>
-            </span>
-            <span style="margin-left: 30px">
-                <button (click)="updateChart('stackedColumn')">Stacked Column Chart</button>
-                <button (click)="updateChart('groupedColumn')">Grouped Column Chart</button>
-                <button (click)="updateChart('line')">Line Chart</button>
-            </span>
+    template: `<div id="myApp" class="example-wrapper">
+        <div class="example-controls">
+            <div class="controls-row">
+                <span>
+                    <button (click)="onStopMessages()">&#9632; Stop</button>
+                    <button (click)="onStartLoad()">&#9658; Start</button>
+                </span>
+                <span class="gap-left">
+                    <button (click)="updateChart('stackedColumn')">Stacked Column Chart</button>
+                    <button (click)="updateChart('groupedColumn')">Grouped Column Chart</button>
+                    <button (click)="updateChart('line')">Line Chart</button>
+                </span>
+            </div>
         </div>
         <ag-grid-angular
             class="my-grid"

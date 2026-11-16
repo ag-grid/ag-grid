@@ -19,6 +19,7 @@ const LOCAL_PACKAGE_ROOTS: Record<string, string> = {
     '@ag-grid-community/locale': 'community-modules/locale',
     'ag-charts-types': 'node_modules/ag-charts-types',
     'ag-charts-core': 'node_modules/ag-charts-core',
+    'ag-charts-locale': 'node_modules/ag-charts-locale',
     'ag-charts-community': 'node_modules/ag-charts-community',
     'ag-charts-enterprise': 'node_modules/ag-charts-enterprise',
 };

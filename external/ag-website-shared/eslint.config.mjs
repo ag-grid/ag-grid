@@ -6,7 +6,13 @@ import tseslint from 'typescript-eslint';
 import { noRawHistoryWrites } from './eslint.history-rules.mjs';
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            // Without it typescript-eslint infers the root, which fails once an editor loads several configs.
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     // { plugins: { 'import-x': eslintImportX } },

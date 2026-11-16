@@ -79,12 +79,12 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
         prev: GridOptions['rowSelection'],
         source: ColumnEventType
     ) {
-        const prevCheckbox = prev && typeof prev !== 'string' ? _getCheckboxes(prev) : undefined;
-        const currCheckbox = current && typeof current !== 'string' ? _getCheckboxes(current) : undefined;
+        const prevCheckbox = prev ? _getCheckboxes(prev) : undefined;
+        const currCheckbox = current ? _getCheckboxes(current) : undefined;
         const checkboxHasChanged = prevCheckbox !== currCheckbox;
 
-        const prevHeaderCheckbox = prev && typeof prev !== 'string' ? _getHeaderCheckbox(prev) : undefined;
-        const currHeaderCheckbox = current && typeof current !== 'string' ? _getHeaderCheckbox(current) : undefined;
+        const prevHeaderCheckbox = prev ? _getHeaderCheckbox(prev) : undefined;
+        const currHeaderCheckbox = current ? _getHeaderCheckbox(current) : undefined;
         const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
 
         const currLocation = _getCheckboxLocation(current);

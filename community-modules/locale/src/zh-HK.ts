@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '建造者',
+    advancedFilterPlaceholder: '高級篩選器',
     advancedFilterValidationMissingColumn: '缺少列',
     advancedFilterValidationMissingOption: '缺少選項',
     advancedFilterValidationMissingValue: '缺少值',
@@ -732,6 +733,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '正在以此方式顯示值',
     ariaColumnSelectAll: '切換所有欄的可見性',
+    ariaColumnSelectExpandAll: '展開或摺疊所有欄組',
     ariaDateFilterInput: '日期篩選器輸入',
     ariaDefaultListName: '列表',
     ariaFilterColumnsInput: '篩選列輸入',
@@ -774,6 +776,10 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaPageSizeSelectorLabel: '頁面大小',
     ariaChartMenuClose: '關閉圖表編輯菜單',
     ariaChartSelected: '已選擇',
+    ariaChartSeriesChartType: '${variable} 圖表類型',
+    ariaChartPalettePrevious: '上一個調色板',
+    ariaChartPaletteNext: '下一個調色板',
+    ariaChartPalettePage: '調色板 ${variable} / ${variable}',
     ariaSparklineChartDescription:
         '迷你圖 - ${chartType} 顯示 ${count} 個值，介乎 ${min} 至 ${max}。由 ${start} 開始，至 ${end} 結束。',
     ariaSparklineChartDescriptionSingleValue: '迷你圖 - ${chartType} 顯示 1 個數值：${value}。',
@@ -803,11 +809,17 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaLabelClose: '關閉',
     ariaLabelMaximize: '最大化',
     ariaLabelRestore: '還原',
+    ariaLabelColorPickerSpectrum: '飽和度和亮度',
+    ariaValueColorPickerSpectrum: '飽和度 ${variable}%，亮度 ${variable}%',
+    ariaLabelColorPickerHue: '色相',
+    ariaLabelColorPickerAlpha: '不透明度',
+    ariaLabelColorPickerHex: '十六進制顏色',
     ariaLabelColumnMenu: '列選單',
     ariaLabelColumnFilter: '列篩選',
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
+    ariaLabelCellEditor: '單元編輯器',
     ariaValidationErrorPrefix: '單元編輯器驗證',
     ariaFullRowValidationError: '整行驗證：${variable}',
     ariaFullRowEditValidationFailed: '無法完成行編輯。${variable}',
@@ -837,6 +849,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
+    ariaLabelFilterCardType: '篩選類型',
     ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)

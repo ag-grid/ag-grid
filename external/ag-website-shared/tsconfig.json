@@ -16,9 +16,8 @@
     "experimentalDecorators": true,
 
     // Import aliases
-    "baseUrl": ".",
     "paths": {
-      "@ag-website-shared/*": ["src/*"]
+      "@ag-website-shared/*": ["./src/*"]
     }
   }
 }

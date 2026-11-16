@@ -90,7 +90,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
             {
                 key: 'clearFilters',
-                icon: 'filterActive',
+                icon: 'filter-remove',
                 tooltip: 'Clear All Filters',
                 action: (params) => params.api.setFilterModel(null),
             },

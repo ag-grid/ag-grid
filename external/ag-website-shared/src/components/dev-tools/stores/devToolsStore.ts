@@ -17,20 +17,6 @@ function createToggleBoolean($store: any) {
 export const $devTools = persistentAtom<boolean>(`${LOCALSTORAGE_PREFIX}`, false, parseBoolean);
 export const toggleDevTools = createToggleBoolean($devTools);
 
-export const $exampleDevToolbar = persistentAtom<boolean>(
-    `${LOCALSTORAGE_PREFIX}:exampleDevToolbar`,
-    false,
-    parseBoolean
-);
-export const toggleExampleDevToolbar = createToggleBoolean($exampleDevToolbar);
-
-export const $openLinksInNewTab = persistentAtom<boolean>(
-    `${LOCALSTORAGE_PREFIX}:openLinksInNewTab`,
-    false,
-    parseBoolean
-);
-export const toggleOpenLinksInNewTab = createToggleBoolean($openLinksInNewTab);
-
 export const $copyFrameworkAgnosticLinks = persistentAtom<boolean>(
     `${LOCALSTORAGE_PREFIX}:copyFrameworkAgnosticLinks`,
     false,

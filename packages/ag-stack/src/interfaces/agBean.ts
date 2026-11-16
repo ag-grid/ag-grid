@@ -1,17 +1,20 @@
 import type { AgCoreBean } from './agCoreBean';
 import type { AgEvent } from './agEvent';
-import type { BaseEvents } from './baseEvents';
-import type { BaseProperties } from './baseProperties';
 import type { AgEventHandlers } from './iContext';
-import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
+import type {
+    AgListenerOptionsForEvent,
+    IAgEventEmitter,
+    IEventEmitter,
+    IEventListener,
+    ListenerTarget,
+} from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iProperties';
 
-/** Includes bean event and property handling logic */
 export interface AgBean<
     TBeanCollection,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
+    TProperties,
+    TGlobalEvents,
     TLocalEventType extends string,
 > extends AgCoreBean<TBeanCollection> {
     addEventListener<T extends TLocalEventType>(
@@ -28,18 +31,14 @@ export interface AgBean<
 
     dispatchLocalEvent<TEvent extends AgEvent<TLocalEventType>>(event: TEvent): void;
 
-    addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
-        object: Element | Document | ShadowRoot,
-        handlers: AgEventHandlers<TEvent, HTMLElementEventMap[TEvent]>
-    ): (() => null)[];
-
     addManagedEventListeners(handlers: {
         [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
     }): (() => null)[];
 
     addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
-        handlers: AgEventHandlers<TEvent>
+        object: ListenerTarget | IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
+        handlers: AgEventHandlers<TEvent>,
+        optionsForEvent?: AgListenerOptionsForEvent
     ): (() => null)[];
 
     /**

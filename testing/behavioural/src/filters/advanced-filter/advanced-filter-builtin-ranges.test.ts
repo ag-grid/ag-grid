@@ -109,6 +109,19 @@ function getDisplayedIds(api: GridApi<TestRow>): number[] {
     return result;
 }
 
+/** Opens value pill `index`'s editor, checks its accessible name, then closes it with Escape. */
+async function expectEditorLabel(
+    builder: AdvancedFilterBuilderHarness,
+    condition: HTMLElement,
+    index: number,
+    label: string
+): Promise<void> {
+    const editor = await builder.openValueEditor(condition, index);
+    expect(editor.getAttribute('aria-label')).toBe(label);
+    editor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await asyncSetTimeout(0);
+}
+
 /** Enough leading conditions that the range below them sits outside the Builder's rendered window. */
 const LEADING_CONDITIONS = 30;
 
@@ -692,6 +705,7 @@ describe('Advanced Filter - built-in range and relative date options', () => {
             expect(await builder.operatorOptions(condition)).toEqual(SCALAR_OPERATORS);
             expect(builder.valuePills(condition)).toHaveLength(1);
             expect(builder.valuePills(condition)[0].getAttribute('aria-label')).toBe('Value');
+            await expectEditorLabel(builder, condition, 0, 'Value');
 
             await builder.selectOperator(condition, 'is between');
             expect(builder.valuePills(condition)).toHaveLength(2);
@@ -699,6 +713,8 @@ describe('Advanced Filter - built-in range and relative date options', () => {
                 'Filter from value',
                 'Filter to value',
             ]);
+            await expectEditorLabel(builder, condition, 0, 'Filter from value');
+            await expectEditorLabel(builder, condition, 1, 'Filter to value');
 
             await builder.setValue(condition, '21', 0);
             await builder.setValue(condition, '38', 1);

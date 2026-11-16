@@ -270,6 +270,10 @@
     mask-image: url('./material-svg-icons/filter-add.svg');
 }
 
+.ag-icon-filter-remove::before {
+    mask-image: url('./material-svg-icons/filter-remove.svg');
+}
+
 .ag-icon-edit::before {
     mask-image: url('./material-svg-icons/edit.svg');
 }

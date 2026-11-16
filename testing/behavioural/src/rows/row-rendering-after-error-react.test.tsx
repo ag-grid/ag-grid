@@ -59,6 +59,7 @@ describe('Row rendering after an error while rows are drawn (React)', () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     getRowId={getRowId}
+                    animateRows={false}
                     isFullWidthRow={isFullWidthRow}
                     onGridReady={(e) => resolveApi(e.api)}
                 />
@@ -82,7 +83,8 @@ describe('Row rendering after an error while rows are drawn (React)', () => {
             }
         });
         expect(error).toEqual(new Error('isFullWidthRow failed'));
-        await waitFor(() => expect(renderedRowIds()).toEqual(['bad-0']));
+        // Checked before any timer runs: a later redraw (e.g. the scroll-visibility re-check) draws bad-1.
+        expect(renderedRowIds()).toEqual(['bad-0']);
 
         await act(async () => rerender(renderGrid(buildRows(2, 'next'))));
 

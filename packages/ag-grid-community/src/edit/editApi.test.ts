@@ -177,9 +177,7 @@ describe('Edit API', () => {
                     newValue: 'new1',
                     oldValue: 'old1',
                     state: 'editing',
-                    column: column1,
                     colId: 'col1',
-                    colKey: 'col1',
                     rowIndex: 0,
                     rowPinned: undefined,
                 },
@@ -187,9 +185,7 @@ describe('Edit API', () => {
                     newValue: 'new2',
                     oldValue: 'old2',
                     state: 'changed',
-                    column: column2,
                     colId: 'col2',
-                    colKey: 'col2',
                     rowIndex: 0,
                     rowPinned: undefined,
                 },
@@ -217,9 +213,7 @@ describe('Edit API', () => {
                     newValue: 'new1',
                     oldValue: 'old1',
                     state: 'editing',
-                    column: column1,
                     colId: 'col1',
-                    colKey: 'col1',
                     rowIndex: 0,
                     rowPinned: undefined,
                 },
@@ -227,9 +221,7 @@ describe('Edit API', () => {
                     newValue: 'new2',
                     oldValue: 'old2',
                     state: 'changed',
-                    column: column2,
                     colId: 'col2',
-                    colKey: 'col2',
                     rowIndex: 0,
                     rowPinned: undefined,
                 },
@@ -237,9 +229,7 @@ describe('Edit API', () => {
                     newValue: 'new3',
                     oldValue: 'old3',
                     state: 'editing',
-                    column: column1,
                     colId: 'col1',
-                    colKey: 'col1',
                     rowIndex: 1,
                     rowPinned: undefined,
                 },
@@ -247,9 +237,7 @@ describe('Edit API', () => {
                     newValue: 'new4',
                     oldValue: 'old4',
                     state: 'changed',
-                    column: column2,
                     colId: 'col2',
-                    colKey: 'col2',
                     rowIndex: 1,
                     rowPinned: undefined,
                 },
@@ -271,8 +259,6 @@ describe('Edit API', () => {
             expect(result).toEqual([
                 {
                     colId: 'col1',
-                    colKey: 'col1',
-                    column: column1,
                     newValue: undefined,
                     oldValue: 'old1',
                     rowId: undefined,
@@ -282,8 +268,6 @@ describe('Edit API', () => {
                 },
                 {
                     colId: 'col2',
-                    colKey: 'col2',
-                    column: column2,
                     newValue: 'new2',
                     oldValue: 'old2',
                     rowId: undefined,
@@ -362,204 +346,6 @@ describe('Edit API', () => {
                             ]),
                         ],
                     ]) as any
-                )
-            );
-        });
-
-        test('sets edits in batch editing mode, using colKey:string', () => {
-            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
-            const cells = [
-                { colKey: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
-                { colKey: 'col2', rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
-            ] as EditingCellPosition[];
-            setEditingCells(beans, cells);
-            expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                expect.objectContaining(
-                    new Map([
-                        [
-                            { rowIndex: 0, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col1',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                                ],
-                            ]),
-                        ],
-                        [
-                            { rowIndex: 1, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col2',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                                ],
-                            ]),
-                        ],
-                    ])
-                )
-            );
-        });
-
-        test('sets edits in batch editing mode, using colKey:column', () => {
-            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
-            const cells = [
-                { colKey: column1, rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
-                { colKey: column2, rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
-            ] as EditingCellPosition[];
-            setEditingCells(beans, cells);
-            expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                expect.objectContaining(
-                    new Map([
-                        [
-                            { rowIndex: 0, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col1',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                                ],
-                            ]),
-                        ],
-                        [
-                            { rowIndex: 1, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col2',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                                ],
-                            ]),
-                        ],
-                    ])
-                )
-            );
-        });
-
-        test('sets edits in batch editing mode, using column', () => {
-            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
-            const cells = [
-                { column: column1, rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
-                { column: column2, rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
-            ] as EditingCellPosition[];
-            setEditingCells(beans, cells);
-            expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                expect.objectContaining(
-                    new Map([
-                        [
-                            { rowIndex: 0, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col1',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                                ],
-                            ]),
-                        ],
-                        [
-                            { rowIndex: 1, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col2',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                                ],
-                            ]),
-                        ],
-                    ])
-                )
-            );
-        });
-
-        test('sets edits in batch editing mode, using all three column options', () => {
-            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
-            const cells = [
-                {
-                    colId: 'col1',
-                    colKey: 'colA',
-                    column: {},
-                    rowIndex: 0,
-                    rowPinned: undefined,
-                    newValue: 'new1',
-                    state: 'editing',
-                },
-                {
-                    colId: 'col2',
-                    colKey: 'colB',
-                    column: {},
-                    rowIndex: 1,
-                    rowPinned: undefined,
-                    newValue: 'new2',
-                    state: 'changed',
-                },
-            ] as EditingCellPosition[];
-            setEditingCells(beans, cells);
-            expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                expect.objectContaining(
-                    new Map([
-                        [
-                            { rowIndex: 0, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col1',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    {
-                                        editorValue: undefined,
-                                        pendingValue: 'new1',
-                                        sourceValue: 'old1',
-                                        state: 'editing',
-                                    },
-                                ],
-                            ]),
-                        ],
-                        [
-                            { rowIndex: 1, rowPinned: undefined },
-                            new Map([
-                                [
-                                    {
-                                        getColId: expect.any(Function),
-                                        colId: 'col2',
-                                        getColDef: expect.any(Function),
-                                        isColumnFunc: expect.any(Function),
-                                    },
-                                    {
-                                        editorValue: undefined,
-                                        pendingValue: 'new2',
-                                        sourceValue: 'old2',
-                                        state: 'changed',
-                                    },
-                                ],
-                            ]),
-                        ],
-                    ])
                 )
             );
         });

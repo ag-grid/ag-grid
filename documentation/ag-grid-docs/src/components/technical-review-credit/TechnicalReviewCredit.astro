@@ -13,6 +13,6 @@ const { reviewer, standalone } = Astro.props;
 const { name, jobTitle } = TECHNICAL_REVIEWERS[reviewer];
 ---
 
-<p class:list={[styles.credit, standalone && [styles.standalone, 'layout-max-width-small']]}>
+<p class:list={[styles.credit, standalone && styles.standalone]}>
     Technically reviewed by <a href={getAuthorPageUrl(reviewer)}>{name}</a>, {jobTitle}
 </p>

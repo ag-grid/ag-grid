@@ -1,0 +1,42 @@
+name: CI Comment
+
+# `/ci` on a draft PR runs ci.yml on its branch through the shared ci-comment-trigger action.
+
+on:
+    issue_comment:
+        types: [created]
+
+permissions:
+    contents: read
+
+jobs:
+    ci-comment:
+        runs-on: ubuntu-24.04
+        if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/ci')
+        permissions:
+            contents: read
+            packages: read # to install @ag-grid/dev-prompts
+            pull-requests: write # the outcome comment
+            actions: write # dispatch ci.yml
+        steps:
+            - name: Setup Node (GitHub Packages for @ag-grid scope)
+              uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: '24'
+                  registry-url: https://npm.pkg.github.com
+                  scope: '@ag-grid'
+
+            - name: Install @ag-grid/dev-prompts
+              env:
+                  NODE_AUTH_TOKEN: ${{ github.token }}
+              run: |
+                  set -euo pipefail
+                  mkdir -p "$GITHUB_WORKSPACE/.ag-dev-prompts"
+                  cd "$GITHUB_WORKSPACE/.ag-dev-prompts"
+                  echo '{"name":"ag-dev-prompts-install","private":true}' > package.json
+                  npm install --no-save --silent "@ag-grid/dev-prompts@latest"
+
+            - name: Handle /ci comment
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/ci-comment-trigger
+              with:
+                  github-token: ${{ github.token }}

@@ -3,6 +3,7 @@ import type {
     BryntumCampaignContent,
     BryntumCta,
     BryntumSection,
+    BryntumTiersSection,
 } from '@components/campaigns-components/bryntum/types';
 import { decorateBryntumHtml, resolveBryntumHref } from '@utils/bryntumCampaignAssets';
 
@@ -36,7 +37,19 @@ function bodyMarkdown(section: BryntumSection): string | undefined {
     return 'body_text' in section ? section.body_text : undefined;
 }
 
+function tiersMarkdown(section: BryntumTiersSection): string {
+    return section.items
+        .map(({ heading, licence, features }, idx) => {
+            const includes = idx > 0 ? ` Everything in ${section.items[idx - 1].heading}, plus:` : '';
+            return [`**${heading}** (${licence}).${includes}`, ...features.map((feature) => `- ${feature}`)].join('\n');
+        })
+        .join('\n\n');
+}
+
 function itemsMarkdown(section: BryntumSection): string | undefined {
+    if (section.type === 'tiers') {
+        return tiersMarkdown(section);
+    }
     if (!('items' in section) || !section.items?.length) {
         return undefined;
     }

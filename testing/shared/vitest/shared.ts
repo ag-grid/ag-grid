@@ -28,11 +28,7 @@ const SOURCE_PACKAGE_DIRS = ['packages', 'community-modules'] as const;
 
 export type Alias = { find: string | RegExp; replacement: string };
 
-/**
- * Alias every workspace package under `repoRoot` to its TS source entry, so tests import internal deps from
- * source with no prior build - dist is absent in CI. `repoRoot` is passed rather than derived, so this
- * module needs no `import.meta`: the package `tsconfig.spec` type-checks it as CommonJS, which forbids it.
- */
+/** Aliases each package under `repoRoot` (another checkout's for benchmarks) to its source: tests need no build. */
 export const packageSourceAliases = async (repoRoot: string): Promise<Alias[]> => {
     const aliases: Alias[] = [];
     for (const dir of SOURCE_PACKAGE_DIRS) {

@@ -77,6 +77,12 @@ export interface ChartModel {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     useGroupColumnAsCategory?: boolean;
+    /**
+     * Only applies to scatter and bubble charts. When `true`, the charted columns are paired, alternating between X and Y values (and size values for bubble charts).
+     * When `false`, the first column provides the X values and every other column is plotted against it as Y values (alternating Y and size values for bubble charts).
+     * @default true
+     */
+    paired?: boolean;
 }
 
 export interface IChartService {
@@ -124,6 +130,12 @@ export interface CreateRangeChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
     /** Prefer using the auto group column as the category when grouping is active. */
     useGroupColumnAsCategory?: boolean;
+    /**
+     * Only applies to scatter and bubble charts. When `true`, the charted columns are paired, alternating between X and Y values (and size values for bubble charts).
+     * When `false`, the first column provides the X values and every other column is plotted against it as Y values (alternating Y and size values for bubble charts).
+     * @default true
+     */
+    paired?: boolean;
 }
 export interface CreateCrossFilterChartParams extends BaseCreateChartParams {
     /** The type of cross-filter chart to create. */
@@ -178,6 +190,12 @@ export interface UpdateRangeChartParams extends BaseUpdateChartParams {
     seriesGroupType?: SeriesGroupType;
     /** Prefer using the auto group column as the category when grouping is active. */
     useGroupColumnAsCategory?: boolean;
+    /**
+     * Only applies to scatter and bubble charts. When `true`, the charted columns are paired, alternating between X and Y values (and size values for bubble charts).
+     * When `false`, the first column provides the X values and every other column is plotted against it as Y values (alternating Y and size values for bubble charts).
+     * @default true
+     */
+    paired?: boolean;
 }
 
 // When updating, also update `ChartParamsValidator`

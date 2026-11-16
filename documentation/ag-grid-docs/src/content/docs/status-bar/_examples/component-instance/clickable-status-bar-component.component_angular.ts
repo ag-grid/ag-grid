@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import type { IStatusPanelAngularComp } from 'ag-grid-angular';
 import type { IStatusPanelParams } from 'ag-grid-community';
@@ -6,7 +6,7 @@ import type { IStatusPanelParams } from 'ag-grid-community';
 @Component({
     standalone: true,
     template: `
-        @if (visible) {
+        @if (visible()) {
             <div class="container">
                 <div>
                     <span class="component"
@@ -19,7 +19,7 @@ import type { IStatusPanelParams } from 'ag-grid-community';
 })
 export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     public params!: IStatusPanelParams;
-    public visible = true;
+    public visible = signal(true);
 
     agInit(params: IStatusPanelParams): void {
         this.params = params;
@@ -30,10 +30,10 @@ export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     }
 
     setVisible(visible: boolean) {
-        this.visible = visible;
+        this.visible.set(visible);
     }
 
     isVisible(): boolean {
-        return this.visible;
+        return this.visible();
     }
 }

@@ -14,7 +14,6 @@ import type { ChartType, GridChartContext, SeriesChartType, SeriesGroupType } fr
 import type { AgChartsExports } from '../../agChartsExports';
 import type { CrossFilteringContext } from '../../chartService';
 import { deproxy } from '../utils/integration';
-import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
@@ -67,6 +66,7 @@ export interface UpdateParams {
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
     seriesGroupType?: SeriesGroupType;
+    paired: boolean;
 }
 
 export abstract class ChartProxy<
@@ -147,20 +147,6 @@ export abstract class ChartProxy<
 
     public getChartPalette(): AgChartThemePalette | undefined {
         return this.agChartsExports._Theme.getChartTheme(this.getChartOptions().theme).palette;
-    }
-
-    public setPaired(paired: boolean) {
-        // Special handling to make scatter charts operate in paired mode by default, where
-        // columns alternate between being X and Y (and size for bubble). In standard mode,
-        // the first column is used for X and every other column is treated as Y
-        // (or alternates between Y and size for bubble)
-        const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        void this.chart.updateDelta({ theme: { overrides: { [seriesType]: { paired } } } });
-    }
-
-    public isPaired(): boolean {
-        const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        return get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
     }
 
     public lookupCustomChartTheme(themeName: string) {

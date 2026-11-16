@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     advancedFilterCancel: 'لغو',
     advancedFilterClear: 'پاک کردن',
     advancedFilterBuilder: 'سازنده',
+    advancedFilterPlaceholder: 'فیلتر پیشرفته',
     advancedFilterValidationMissingColumn: 'ستون گمشده است',
     advancedFilterValidationMissingOption: 'گزینه گمشده است',
     advancedFilterValidationMissingValue: 'مقدار گمشده است',
@@ -734,6 +735,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaCalculatedColumn: 'ستون محاسبه‌شده',
     ariaColumnShowValuesAs: 'در حال نمایش مقادیر به‌صورت',
     ariaColumnSelectAll: 'تغییر وضعیت نمایش تمام ستون‌ها',
+    ariaColumnSelectExpandAll: 'باز یا بسته کردن همه گروه‌های ستون',
     ariaDateFilterInput: 'ورودی فیلتر تاریخ',
     ariaDefaultListName: 'لیست',
     ariaFilterColumnsInput: 'ورودی فیلتر ستون‌ها',
@@ -777,6 +779,10 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaPageSizeSelectorLabel: 'اندازه صفحه',
     ariaChartMenuClose: 'بستن منوی ویرایش نمودار',
     ariaChartSelected: 'انتخاب شده',
+    ariaChartSeriesChartType: 'نوع نمودار ${variable}',
+    ariaChartPalettePrevious: 'پالت قبلی',
+    ariaChartPaletteNext: 'پالت بعدی',
+    ariaChartPalettePage: 'پالت ${variable} از ${variable}',
     ariaSparklineChartDescription:
         'اسپارک‌لاین - ${chartType}، ${count} مقدار را بین ${min} و ${max} نمایش می‌دهد. از ${start} شروع می‌شود و در ${end} پایان می‌یابد.',
     ariaSparklineChartDescriptionSingleValue: 'اسپارک‌لاین - ${chartType} یک مقدار را نمایش می‌دهد: ${value}.',
@@ -806,11 +812,17 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaLabelClose: 'بستن',
     ariaLabelMaximize: 'بزرگ کردن',
     ariaLabelRestore: 'بازگرداندن',
+    ariaLabelColorPickerSpectrum: 'اشباع و روشنایی',
+    ariaValueColorPickerSpectrum: 'اشباع ${variable}%، روشنایی ${variable}%',
+    ariaLabelColorPickerHue: 'فام',
+    ariaLabelColorPickerAlpha: 'کدری',
+    ariaLabelColorPickerHex: 'رنگ هگز',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',
     ariaLabelSelectField: 'انتخاب فیلد',
 
     // Cell Editor
+    ariaLabelCellEditor: 'ویرایشگر سلول',
     ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
     ariaFullRowValidationError: 'اعتبارسنجی کل سطر: ${variable}',
     ariaFullRowEditValidationFailed: 'ویرایش سطر را نمی‌توان تکمیل کرد. ${variable}',
@@ -840,6 +852,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
+    ariaLabelFilterCardType: 'نوع فیلتر',
     ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)

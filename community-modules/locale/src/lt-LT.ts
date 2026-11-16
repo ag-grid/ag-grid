@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     advancedFilterCancel: 'Atšaukti',
     advancedFilterClear: 'Išvalyti',
     advancedFilterBuilder: 'Kūrimo įrankis',
+    advancedFilterPlaceholder: 'Išplėstinis filtras',
     advancedFilterValidationMissingColumn: 'Trūksta stulpelio',
     advancedFilterValidationMissingOption: 'Trūksta parinkties',
     advancedFilterValidationMissingValue: 'Trūksta reikšmės',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaCalculatedColumn: 'Skaičiuojamasis stulpelis',
     ariaColumnShowValuesAs: 'Rodomos reikšmės kaip',
     ariaColumnSelectAll: 'Perjungti visų stulpelių matomumą',
+    ariaColumnSelectExpandAll: 'Išskleisti arba suskleisti visas stulpelių grupes',
     ariaDateFilterInput: 'Datos filtro laukas',
     ariaDefaultListName: 'Sąrašas',
     ariaFilterColumnsInput: 'Stulpelių filtravimo laukas',
@@ -795,6 +797,10 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaPageSizeSelectorLabel: 'Puslapio dydis',
     ariaChartMenuClose: 'Uždaryti diagramos redagavimo meniu',
     ariaChartSelected: 'Pasirinkta',
+    ariaChartSeriesChartType: '${variable} diagramos tipas',
+    ariaChartPalettePrevious: 'Ankstesnė paletė',
+    ariaChartPaletteNext: 'Kita paletė',
+    ariaChartPalettePage: 'Paletė ${variable} iš ${variable}',
     ariaSparklineChartDescription:
         'Mini diagrama - ${chartType} rodanti ${count} reikšmes tarp ${min} ir ${max}. Pradedama ${start} ir baigiama ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini diagrama - ${chartType} rodanti 1 reikšmę, ${value}.',
@@ -827,6 +833,11 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelMaximize: 'Padidinti',
 
     ariaLabelRestore: 'Atkurti',
+    ariaLabelColorPickerSpectrum: 'Sodrumas ir ryškumas',
+    ariaValueColorPickerSpectrum: 'Sodrumas ${variable} %, ryškumas ${variable} %',
+    ariaLabelColorPickerHue: 'Atspalvis',
+    ariaLabelColorPickerAlpha: 'Nepermatomumas',
+    ariaLabelColorPickerHex: 'Šešioliktainė spalva',
 
     ariaLabelColumnMenu: 'Stulpelio meniu',
     ariaLabelColumnFilter: 'Stulpelio filtras',
@@ -834,6 +845,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelSelectField: 'Pasirinkimo laukas',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Langelio redaktorius',
     ariaValidationErrorPrefix: 'Langelio redaktoriaus patikra',
     ariaFullRowValidationError: 'Visos eilutės patikra: ${variable}',
     ariaFullRowEditValidationFailed: 'Nepavyksta užbaigti eilutės redagavimo. ${variable}',
@@ -866,6 +878,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelAddFilterField: 'Pridėti filtro laukas',
     ariaLabelFilterCardDelete: 'Ištrinti filtrą',
     ariaLabelFilterCardHasEdits: 'Turi pakeitimų',
+    ariaLabelFilterCardType: 'Filtro tipas',
     ariaHasNote: 'Šis langelis turi pastabą.',
 
     // Number Format (Status Bar, Pagination Panel)

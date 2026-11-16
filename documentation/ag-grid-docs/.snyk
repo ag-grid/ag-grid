@@ -1,18 +1,242 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
-  SNYK-JS-DOMPURIFY-21460653:
-    - 'dompurify@3.4.16':
+  SNYK-JS-UNDICI-22392401:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
-            Only used by the example dev toolbar (off unless enabled in local storage) to sanitise links built from the site config - no user-supplied input
+            Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-10-23T12:58:56.000Z
-  SNYK-JS-DOMPURIFY-21460657:
-    - 'dompurify@3.4.16':
+        created: 2026-11-16T10:47:30.239Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
         reason: >-
-            Only used by the example dev toolbar (off unless enabled in local storage) to sanitise links built from the site config - no user-supplied input
+            Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-10-23T12:58:56.000Z
+        created: 2026-11-16T10:47:30.229Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.223Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.221Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.214Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.212Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.517Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.470Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.444Z
+  SNYK-JS-UNDICI-22370261:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.148Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.143Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.138Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.136Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.128Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.125Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.507Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.465Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.439Z
+  SNYK-JS-UNDICI-22291127:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.966Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.959Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.955Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.952Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.942Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.939Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.498Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.460Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.428Z
+  SNYK-JS-UNDICI-22291066:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.526Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.522Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.517Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.514Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.506Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.503Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.490Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.456Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.420Z
+  SNYK-JS-UNDICI-22290988:
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.087Z
+    - vite-plugin-mkcert@2.1.0 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.084Z
+    - astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.078Z
+    - astro@7.4.2 > unifont@1.0.3 > undici@8.11.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.074Z
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.065Z
+    - sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.061Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.480Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.452Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.406Z
+  SNYK-JS-OPEN-22112123:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:49:58.667Z
   SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
     - 'ag-grid-angular@* > *':
         reason: >-
@@ -171,25 +395,25 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'react-instantsearch@7.50.0 > instantsearch.js@4.118.0 > qs@6.14.1':
+    - 'react-instantsearch@7.52.0 > instantsearch.js@4.120.0 > qs@6.14.1':
         reason: >-
             Only exploitable via qs.stringify with arrayFormat 'comma', which instantsearch.js never uses
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-SHARP-21347772:
-    - 'astro@7.3.4 > sharp@0.35.4':
+    - 'astro@7.4.2 > sharp@0.35.4':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-20954499:
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181005:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -209,12 +433,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -224,7 +448,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -235,7 +459,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181009:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -255,12 +479,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -270,7 +494,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -281,7 +505,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181011:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -301,12 +525,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -316,7 +540,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -327,7 +551,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181013:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -347,12 +571,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -362,7 +586,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -373,7 +597,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181015:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -393,12 +617,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -408,7 +632,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -419,7 +643,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181017:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -439,12 +663,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -454,7 +678,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -465,7 +689,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21181019:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -485,12 +709,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -500,7 +724,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -511,7 +735,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-UNDICI-21185768:
-    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - '@astrojs/react@7.1.1 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -531,12 +755,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+    - 'astro@7.4.2 > unifont@1.0.3 > undici@8.11.0':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'astro@7.4.2 > vite@8.3.5 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -546,7 +770,7 @@ ignore:
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
-    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
         reason: >-
             Docs website build tooling - the site is built statically, so this runs at build time only
         expires: '2027-03-02T00:00:00.000Z'
@@ -578,7 +802,7 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-23T10:11:14.000Z
   SNYK-JS-SHARP-20552492:
-    - astro@7.3.4 > sharp@0.35.4:
+    - 'astro@7.4.2 > sharp@0.35.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -735,7 +959,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.503Z
-    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > braces@3.0.3:
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > braces@3.0.3':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -772,7 +996,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.181Z
-    - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -793,7 +1017,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:46.019Z
-    - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+    - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -826,7 +1050,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.566Z
-    - astro@7.3.4 > http-cache-semantics@4.2.0:
+    - 'astro@7.4.2 > http-cache-semantics@4.3.0':
         reason: >-
             The website is a static site, so server-side vulns are not relevant
         expires: '2027-03-02T00:00:00.000Z'
@@ -837,7 +1061,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.564Z
-    - astro@7.3.4 > http-cache-semantics@4.2.0:
+    - 'astro@7.4.2 > http-cache-semantics@4.3.0':
         reason: >-
             The website is a static site, so server-side vulns are not relevant
         expires: '2027-03-02T00:00:00.000Z'
@@ -929,12 +1153,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.626Z
-    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1:
+    - 'sass@1.106.1 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:41:48.473Z
-    - astro@7.3.4 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1:
+    - 'astro@7.4.2 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1':
         reason: >-
             The website is a static site, so server-side vulns are not relevant
         expires: '2027-03-02T00:00:00.000Z'
@@ -977,7 +1201,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.650Z
-    - 'react-instantsearch@7.50.0 > instantsearch.js@4.118.0 > qs@6.14.1':
+    - 'react-instantsearch@7.52.0 > instantsearch.js@4.120.0 > qs@6.14.1':
         reason: Only parses search query strings generated by the user in their own browser session on the docs site - low risk of exploitation
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-02T11:37:48.363Z
@@ -987,7 +1211,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.480Z
-    - '@astrojs/check@0.9.10 > @astrojs/language-server@2.17.0 > volar-service-yaml@0.0.71 > yaml-language-server@1.23.0 > ajv@8.17.1':
+    - '@astrojs/check@0.9.12 > @astrojs/language-server@2.17.3 > volar-service-yaml@0.0.71 > yaml-language-server@1.23.0 > ajv@8.17.1':
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-24T11:38:57.296Z
@@ -999,7 +1223,7 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv-formats@3.0.1 > ajv@8.17.1:
+    - 'playwright-ctrf-json-reporter@0.2.0 > ctrf@0.5.0 > ajv-formats@3.0.1 > ajv@8.17.1':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -1023,7 +1247,7 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2025-01-05T10:10:00.000Z
   SNYK-JS-PREACT-14897824:
-    - 'react-instantsearch@7.50.0 > instantsearch.js@4.118.0 > preact@10.27.2':
+    - 'react-instantsearch@7.52.0 > instantsearch.js@4.120.0 > preact@10.27.2':
         reason: We don't use preact
         expires: 2027-03-02T00:00:00.000Z
         created: 2025-01-12T10:00:00.000Z

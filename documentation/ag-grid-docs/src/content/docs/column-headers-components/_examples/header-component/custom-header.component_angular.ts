@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 
 import type { IHeaderAngularComp } from 'ag-grid-angular';
 import type { IHeaderParams } from 'ag-grid-community';
@@ -20,13 +20,13 @@ export interface ICustomHeaderParams {
             }
             <div class="customHeaderLabel">{{ params.displayName }}</div>
             @if (params.enableSorting) {
-                <div (click)="onSortRequested('asc', $event)" [ngClass]="ascSort" class="customSortDownLabel">
+                <div (click)="onSortRequested('asc', $event)" [ngClass]="ascSort()" class="customSortDownLabel">
                     <i class="fa fa-long-arrow-alt-down"></i>
                 </div>
-                <div (click)="onSortRequested('desc', $event)" [ngClass]="descSort" class="customSortUpLabel">
+                <div (click)="onSortRequested('desc', $event)" [ngClass]="descSort()" class="customSortUpLabel">
                     <i class="fa fa-long-arrow-alt-up"></i>
                 </div>
-                <div (click)="onSortRequested('', $event)" [ngClass]="noSort" class="customSortRemoveLabel">
+                <div (click)="onSortRequested('', $event)" [ngClass]="noSort()" class="customSortRemoveLabel">
                     <i class="fa fa-times"></i>
                 </div>
             }
@@ -60,9 +60,9 @@ export interface ICustomHeaderParams {
 export class CustomHeader implements IHeaderAngularComp {
     public params!: IHeaderParams & ICustomHeaderParams;
 
-    public ascSort = 'inactive';
-    public descSort = 'inactive';
-    public noSort = 'inactive';
+    public ascSort = signal('inactive');
+    public descSort = signal('inactive');
+    public noSort = signal('inactive');
 
     @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
 
@@ -79,14 +79,16 @@ export class CustomHeader implements IHeaderAngularComp {
     }
 
     onSortChanged() {
-        this.ascSort = this.descSort = this.noSort = 'inactive';
+        this.ascSort.set('inactive');
+        this.descSort.set('inactive');
+        this.noSort.set('inactive');
         const sort = this.params.column.getSortDef()?.direction;
         if (sort === 'asc') {
-            this.ascSort = 'active';
+            this.ascSort.set('active');
         } else if (sort === 'desc') {
-            this.descSort = 'active';
+            this.descSort.set('active');
         } else {
-            this.noSort = 'active';
+            this.noSort.set('active');
         }
     }
 

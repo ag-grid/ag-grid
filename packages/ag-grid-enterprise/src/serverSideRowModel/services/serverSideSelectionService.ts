@@ -19,7 +19,6 @@ import {
     _getRowSelectionMode,
     _isMultiRowSelection,
     _isRowSelection,
-    _isUsingNewRowSelectionAPI,
 } from 'ag-grid-community';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
@@ -34,10 +33,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
+        this.addManagedPropertyListener('rowSelection', () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
 
-            // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
+            // Only switch strategies when the group selection mode actually changes, not just any part of selection options
             const Strategy =
                 groupSelectsChildren && this.selectionStrategy instanceof DefaultStrategy
                     ? GroupSelectsChildrenStrategy
@@ -276,7 +275,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         }
 
         validateSelectionParameters(this.beans.log, params);
-        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+        if (!_isMultiRowSelection(this.gos)) {
             return this.warn(130);
         }
 

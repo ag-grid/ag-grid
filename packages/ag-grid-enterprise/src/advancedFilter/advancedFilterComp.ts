@@ -1,4 +1,4 @@
-import { RefPlaceholder, _makeNull, _setDisabled, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _makeNull, _setDisabled, _setDisplayed } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -104,6 +104,7 @@ export class AdvancedFilterComp extends Component {
             .setForceLastSelection((lastSelection, searchString) =>
                 this.forceLastSelection(lastSelection, searchString)
             )
+            .setInputPlaceholder(this.advFilterExpSvc.translate('advancedFilterPlaceholder'))
             .setInputAriaLabel(this.advFilterExpSvc.translate('ariaAdvancedFilterInput'))
             .setListAriaLabel(this.advFilterExpSvc.translate('ariaLabelAdvancedFilterAutocomplete'));
 
@@ -115,7 +116,7 @@ export class AdvancedFilterComp extends Component {
             this.addManagedListeners(advFilterSetSvc, {
                 valuesChanged: () => this.eAutocomplete.refresh(!this.advancedFilter.isCurrentExpressionApplied()),
             });
-            this.addManagedElementListeners(this.eAutocomplete.getGui(), {
+            _addManagedElementListeners(this, this.eAutocomplete.getGui(), {
                 // Enables support for filterParams.refreshValuesOnOpen
                 focusin: () => advFilterSetSvc.refreshValuesOnFocus(),
             });
@@ -220,7 +221,7 @@ export class AdvancedFilterComp extends Component {
         this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
         this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
-        this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
+        _addManagedElementListeners(this, this.eBuilderFilterButton, { click: () => this.openBuilder() });
         this.addManagedListeners(this.advancedFilter.getCtrl(), {
             advancedFilterBuilderClosed: () => this.closeBuilder(),
         });

@@ -69,7 +69,7 @@ The following example demonstrates the default behaviour using the value formatt
 Note that if any of the following conditions are true, then `useValueFormatterForExport` is ignored for that feature and the value will be either the original value or that set in the custom handler:
 
 - If `processCellForClipboard` is provided when using copy/cut.
-- If `fillOperation` is provided when using fill handle.
+- If `cellSelection.handle.setFillValue` is provided when using fill handle.
 - If `processCellForClipboard` is provided when using copy range down.
 - If `processCellCallback` is provided when using CSV export.
 - If `processCellCallback` or [Excel Data Types](./excel-export-data-types/) are provided when using Excel export.

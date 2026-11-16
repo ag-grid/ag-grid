@@ -226,7 +226,9 @@ export class RowComp extends Component {
         this.fullWidthCellRendererParamsBySection ??= {};
         this.fullWidthCellRendererParamsBySection[section] = params;
         const renderer = this.fullWidthCellRenderersBySection?.[section];
-        return !renderer?.refresh || renderer.refresh(params);
+        return (
+            renderer?.refresh?.(params) ?? !(section === 'center' || this.rowCtrl.embeddedSectionHasContent[section])
+        );
     }
 
     private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] | undefined {

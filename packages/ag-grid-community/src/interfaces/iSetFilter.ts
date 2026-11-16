@@ -280,7 +280,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     preservePreviousValuesLimit?: number;
     /**
      * Requires `preservePreviousValues = true`. Text shown as given after each value in the Filter List that is no
-     * longer in the data, for example `'(not in rows)'`.
+     * longer in the data, for example `'(not in rows)'`. Screen readers announce it after the value in place of the
+     * `ariaNotInCurrentData` locale text.
      */
     preservePreviousValuesLabel?: string;
 }

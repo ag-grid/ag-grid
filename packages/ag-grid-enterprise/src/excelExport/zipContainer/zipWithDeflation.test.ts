@@ -6,33 +6,42 @@ const readUInt16LE = (buffer: Uint8Array, offset: number): number => buffer[offs
 const readUInt32LE = (buffer: Uint8Array, offset: number): number =>
     buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16) | (buffer[offset + 3] << 24);
 
+/** The archive's first `count` local entries, each inflated from the compressed size its header records. */
+const readLocalEntries = (archive: Uint8Array, count: number) => {
+    const entries: { name: string; content: string; compressedSize: number; end: number }[] = [];
+    let offset = 0;
+    for (let i = 0; i < count; ++i) {
+        const nameLength = readUInt16LE(archive, offset + 26);
+        const compressedSize = readUInt32LE(archive, offset + 18);
+        const contentStart = offset + 30 + nameLength + readUInt16LE(archive, offset + 28);
+        entries.push({
+            name: new TextDecoder().decode(archive.subarray(offset + 30, offset + 30 + nameLength)),
+            content: inflateRawSync(archive.subarray(contentStart, contentStart + compressedSize)).toString('utf8'),
+            compressedSize,
+            end: contentStart + compressedSize,
+        });
+        offset = contentStart + compressedSize;
+    }
+    return entries;
+};
+
 describe('When adding a file to a zip container with deflation', () => {
     const testPath: string = 'test-path/file-name.csv';
-    const smallContent = 'aaaaaaaaaaaaaaaaaaaa'; // 20 bytes without deflation - Deflated size: 4 bytes
-    const largeContent = 'aaaaaaaaaaaaaaaaaaaa'.repeat(1000); // 20kb without deflation - Deflated size: 38 bytes
+    const smallContent = 'aaaaaaaaaaaaaaaaaaaa';
+    const largeContent = 'aaaaaaaaaaaaaaaaaaaa'.repeat(1000);
 
     it('preserves entry order and contents across compression batches', async () => {
         const zipContainer = new ZipContainer();
         const contents = Array.from({ length: 9 }, (_, index) => `${index}:\u00e9`.repeat(30000));
         for (let i = 0; i < contents.length; ++i) {
-            zipContainer.addFile(`sheet${i}.xml`, contents[i]);
+            zipContainer.addFile(`sheet${i}\u00e9.xml`, contents[i]);
         }
         const archive = new Uint8Array(await (await zipContainer.getZipFile()).arrayBuffer());
-        let offset = 0;
-        for (let i = 0; i < contents.length; ++i) {
-            const nameLength = readUInt16LE(archive, offset + 26);
-            const extraLength = readUInt16LE(archive, offset + 28);
-            const compressedSize = readUInt32LE(archive, offset + 18);
-            const contentStart = offset + 30 + nameLength + extraLength;
-            expect(new TextDecoder().decode(archive.subarray(offset + 30, offset + 30 + nameLength))).toBe(
-                `sheet${i}.xml`
-            );
-            expect(inflateRawSync(archive.subarray(contentStart, contentStart + compressedSize)).toString('utf8')).toBe(
-                contents[i]
-            );
-            offset = contentStart + compressedSize;
-        }
-        expect(offset).toBe(readUInt32LE(archive, archive.length - 22 + 16));
+        const entries = readLocalEntries(archive, contents.length);
+        expect(entries.map(({ name, content }) => ({ name, content }))).toEqual(
+            contents.map((content, i) => ({ name: `sheet${i}\u00e9.xml`, content }))
+        );
+        expect(entries[entries.length - 1].end).toBe(readUInt32LE(archive, archive.length - 22 + 16));
     });
 
     it('should handle a single small text header', async () => {
@@ -56,16 +65,16 @@ describe('When adding a file to a zip container with deflation', () => {
             4 + // bytes - signature: PK\x05\x06
             18; // bytes - info about directory end
 
-        // The 20 bytes 'aaa' string can be deflated to 4 bytes
-        const deflationGains = smallContent.length - 4;
+        const [entry] = readLocalEntries(new Uint8Array(await result.arrayBuffer()), 1);
 
         expect(result.type).toEqual('application/zip');
+        expect(entry.content).toBe(smallContent);
+        expect(entry.compressedSize).toBeLessThan(smallContent.length);
         expect(result.size).toEqual(
             expectedCentralDirectoryHeader +
                 expectedLocalFileHeader +
-                smallContent.length +
-                expectedCentralDirectoryEndSize -
-                deflationGains
+                entry.compressedSize +
+                expectedCentralDirectoryEndSize
         );
     });
 
@@ -90,16 +99,16 @@ describe('When adding a file to a zip container with deflation', () => {
             4 + // bytes - signature: PK\x05\x06
             18; // bytes - info about directory end
 
-        // The 20kb 'aaaaaa' string can be deflated to 38 bytes !!!
-        const deflationGains = largeContent.length - 38;
+        const [entry] = readLocalEntries(new Uint8Array(await result.arrayBuffer()), 1);
 
         expect(result.type).toEqual('application/zip');
+        expect(entry.content).toBe(largeContent);
+        expect(entry.compressedSize).toBeLessThan(largeContent.length);
         expect(result.size).toEqual(
             expectedCentralDirectoryHeader +
                 expectedLocalFileHeader +
-                +largeContent.length +
-                expectedCentralDirectoryEndSize -
-                deflationGains
+                entry.compressedSize +
+                expectedCentralDirectoryEndSize
         );
     });
 
@@ -137,20 +146,20 @@ describe('When adding a file to a zip container with deflation', () => {
             4 + // bytes - signature: PK\x05\x06
             18; // bytes - info about directory end
 
-        // The 20 bytes 'aaa' string can be deflated to 4 bytes
-        // The 20kb 'aaaaaa' string can be deflated to 38 bytes
-        const deflationGains = smallContent.length + largeContent.length - 38 - 4;
+        const [entry1, entry2] = readLocalEntries(new Uint8Array(await result.arrayBuffer()), 2);
 
         expect(result.type).toEqual('application/zip');
+        expect([entry1.content, entry2.content]).toEqual([smallContent, largeContent]);
+        expect(entry1.compressedSize).toBeLessThan(smallContent.length);
+        expect(entry2.compressedSize).toBeLessThan(largeContent.length);
         expect(result.size).toEqual(
-            +expectedCentralDirectoryHeader1 +
+            expectedCentralDirectoryHeader1 +
                 expectedCentralDirectoryHeader2 +
                 expectedLocalFileHeader1 +
                 expectedLocalFileHeader2 +
-                smallContent.length +
-                largeContent.length +
-                expectedCentralDirectoryEndSize -
-                deflationGains
+                entry1.compressedSize +
+                entry2.compressedSize +
+                expectedCentralDirectoryEndSize
         );
     });
 

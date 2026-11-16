@@ -5,6 +5,7 @@ import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
     NumberFilterModule,
+    TextEditorModule,
     TextFilterModule,
     forEachColDef,
 } from 'ag-grid-community';
@@ -62,6 +63,29 @@ describe('Auto-Generate Column Defs', () => {
             });
 
             await new GridColumns(api, 'empty array').checkColumns('empty');
+        });
+    });
+
+    describe('with an editing module registered', () => {
+        const editGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AutoGenerateColumnsModule, TextEditorModule],
+        });
+
+        afterEach(() => {
+            editGridsManager.reset();
+        });
+
+        test('generates columns from initial rowData', async () => {
+            const api = await editGridsManager.createGridAndWait('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: [{ name: 'Alice', age: 30 }],
+            });
+
+            await new GridColumns(api, 'auto-generated with editor module').checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
         });
     });
 

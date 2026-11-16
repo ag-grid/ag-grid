@@ -1,6 +1,18 @@
-<div style="height: 100%; display: flex; flex-direction: column">
-    <div style="margin-bottom: 4px">
-        <button onclick="onUpdateSomeValues()">Update Some Data</button>
+<div class="example-wrapper">
+    <div class="example-controls">
+        <div class="controls-row">
+            <button onclick="onUpdateSomeValues()">Update Some Data</button>
+            <label>
+                Flash colour:
+                <input
+                    type="text"
+                    id="flash-colour"
+                    value="#cc222244"
+                    oninput="onFlashColourChanged(event.target.value)"
+                    style="width: 100px"
+                />
+            </label>
+        </div>
     </div>
     <div style="flex-grow: 1">
         <div id="myGrid" style="height: 100%"></div>

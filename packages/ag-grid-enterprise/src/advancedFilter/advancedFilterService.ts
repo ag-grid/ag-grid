@@ -111,6 +111,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.pendingModels = [];
         for (let i = 0, len = pendingModels.length; i < len; ++i) {
             const { model, source } = pendingModels[i];
+            // each queued model is a call the app made, so one a later call supersedes still warns
+            this.checkModelColumns(model);
             this.applyModel(model);
             this.filterManager?.onFilterChanged({ source });
         }
@@ -209,8 +211,15 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             this.pendingModels.push({ model: cloneModel(model), source });
             return;
         }
+        this.checkModelColumns(model);
         this.setModel(model);
         this.filterManager?.onFilterChanged({ source });
+    }
+
+    private checkModelColumns(model: AdvancedFilterModel | null): void {
+        this.beans.validation?.checkAdvancedFilterModel(model, (colId) =>
+            this.advFilterExpSvc.getColumnAutocompleteEntries().some(({ key }) => key === colId)
+        );
     }
 
     public setModel(model: AdvancedFilterModel | null): void {

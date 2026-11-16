@@ -40,7 +40,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const { gos, beans } = this;
         this.selectionCtx = new RowRangeSelectionContext(beans.rowModel, beans.pinnedRowModel);
 
-        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => {
+        this.addManagedPropertyListener('rowSelection', () => {
             const callback = _getIsRowSelectable(gos);
             if (callback !== this.isRowSelectable) {
                 this.isRowSelectable = callback;
@@ -154,7 +154,14 @@ export abstract class BaseSelectionService extends BeanStub {
     protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     protected isRowSelectionBlocked(rowNode: RowNode): boolean {
-        return !rowNode.selectable || (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) || !_isRowSelection(this.gos);
+        return (
+            !rowNode.selectable ||
+            (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) ||
+            !_isRowSelection(this.gos) ||
+            (!!rowNode.footer &&
+                rowNode.level === -1 &&
+                _isInternalFeatureFlagEnabled(this.beans, 'grandTotalRowUnselectable'))
+        );
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
@@ -297,9 +304,9 @@ export abstract class BaseSelectionService extends BeanStub {
         if (so && typeof so !== 'string') {
             const checkbox = isColumnSelectionCol(column) && _getCheckboxes(so);
             return column.isColumnFunc(rowNode, checkbox);
-        } else {
-            return column.isColumnFunc(rowNode, column.colDef.checkboxSelection);
         }
+
+        return false;
     }
 
     protected inferNodeSelections(

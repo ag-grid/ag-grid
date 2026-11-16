@@ -95,6 +95,83 @@ describe('changelogToMarkdown', () => {
         expect(output.endsWith('\n\n')).toBe(false);
     });
 
+    describe('notes', () => {
+        const noteEntry = (notes: string, documentationUrl: string | null = null) => {
+            const output = changelogToMarkdown([
+                {
+                    key: 'AG-1',
+                    issueType: 'Task',
+                    summary: 'Change',
+                    versions: ['1.0.0'],
+                    deprecationNotes: notes,
+                    documentationUrl,
+                },
+            ]);
+            const start = output.indexOf('- **AG-1**');
+            return output.slice(start, output.indexOf('\n\n## All Changes', start));
+        };
+
+        it.each`
+            name                                             | notes                                                   | expected
+            ${'converts Jira wiki code to backticks'}        | ${'{{gap}} replaces {{axis.type: &#39;category&#39;}}'} | ${"`gap` replaces `axis.type: 'category'`"}
+            ${'closes wiki code at the last brace of a run'} | ${'Set {{collideWith: { seriesArea: true }}} to keep'}  | ${'Set `collideWith: { seriesArea: true }` to keep'}
+            ${'leaves braces in existing code alone'}        | ${'<code>{{value}}</code>'}                             | ${'`{{value}}`'}
+            ${'keeps a note without a list on one line'}     | ${'First line<br/>\nsecond line'}                       | ${'First line second line'}
+            ${'does not take Jira emphasis for a bullet'}    | ${'*Histogram Series.* Callbacks'}                      | ${'*Histogram Series.* Callbacks'}
+            ${'does not take a heading for a bullet'}        | ${"# Column 'initial' Values"}                          | ${"# Column 'initial' Values"}
+        `('$name', ({ notes, expected }) => {
+            expect(noteEntry(notes)).toBe(`- **AG-1** - Change: ${expected}`);
+        });
+
+        it('puts each Jira bullet on its own line under the entry', () => {
+            expect(noteEntry('* {{a}} is deprecated.<br/>\n* On a {{line}} crossline, {{inside-*}} is too.')).toBe(
+                [
+                    '- **AG-1** - Change:',
+                    '  - `a` is deprecated.',
+                    '  - On a `line` crossline, `inside-*` is too.',
+                ].join('\n')
+            );
+        });
+
+        it('keeps the text before a list on the entry line, followed by the docs link', () => {
+            expect(noteEntry('Callbacks changed:<br/>\n<br/>\n* {{datum}} is now {{undefined}}.', 'https://x.y/')).toBe(
+                [
+                    '- **AG-1** - Change: Callbacks changed: ([docs](https://x.y/))',
+                    '  - `datum` is now `undefined`.',
+                ].join('\n')
+            );
+        });
+
+        it.each`
+            name                                    | notes
+            ${'Jira bullets'}                       | ${'* a\r\n** a1\r\n** a2\r\n* b'}
+            ${'typed bullets indented with spaces'} | ${'-   a<br/>\n&nbsp;&nbsp;&nbsp;&nbsp;-   a1<br/>\n&nbsp;&nbsp;&nbsp;&nbsp;-   a2<br/>\n-   b'}
+            ${'HTML lists'}                         | ${'<ul><li>a<ul><li>a1</li><li>a2</li></ul></li><li>b</li></ul>'}
+        `('nests deeper $name inside the item above them', ({ notes }) => {
+            expect(noteEntry(notes)).toBe(
+                ['- **AG-1** - Change:', '  - a', '    - a1', '    - a2', '  - b'].join('\n')
+            );
+        });
+
+        it('treats a typed bullet indented by less than two as a sibling', () => {
+            expect(noteEntry(' - a\r\n- b\r\n - c')).toBe(
+                ['- **AG-1** - Change:', '  - a', '  - b', '  - c'].join('\n')
+            );
+        });
+
+        it('opens a list at most one level deeper than the item above it', () => {
+            expect(noteEntry('** a\n*** a1')).toBe(['- **AG-1** - Change:', '  - a', '    - a1'].join('\n'));
+        });
+
+        it('nests the text after a list as a paragraph of the entry', () => {
+            expect(noteEntry('- a<br/>\n<br/>\nBar series<br/>\n* b<br/>\n<br/>\nSeries type is removed.')).toBe(
+                ['- **AG-1** - Change:', '  - a', '', '  Bar series', '  - b', '', '  Series type is removed.'].join(
+                    '\n'
+                )
+            );
+        });
+    });
+
     it('shows a placeholder when a lead section has no entries', () => {
         const output = changelogToMarkdown([
             { key: 'AG-1', issueType: 'Task', summary: 'Only change', versions: ['1.0.0'] },

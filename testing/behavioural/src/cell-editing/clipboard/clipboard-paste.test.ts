@@ -816,6 +816,37 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         }
     );
 
+    const tableRows = '<tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr>';
+    test.each([
+        { name: 'unclosed body tags', html: '<body>'.repeat(50_000) },
+        { name: 'unclosed table tags', html: '<table>'.repeat(50_000) },
+        { name: 'unterminated comments', html: `<table>${'<!--'.repeat(75_000)}${tableRows}</table>` },
+        { name: 'unterminated cell tags', html: `<table>${tableRows}${'<td '.repeat(75_000)}</table>` },
+        { name: 'unterminated quoted attributes', html: `<table>${tableRows}${'<td "'.repeat(60_000)}</table>` },
+    ])('pastes the plain text promptly when the HTML has $name', async ({ html }) => {
+        const api = await gridMgr.createGridAndWait('htmlMalformedPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old0', b: 'old0' },
+                { a: 'old1', b: 'old1' },
+            ],
+        });
+        clipboardUtils.setTextAndHtml('a1\tb1\r\na2\tb2\r\n', html);
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        const start = performance.now();
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(performance.now() - start).toBeLessThan(500);
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1', b: 'b1' });
+        expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'a2', b: 'b2' });
+    });
+
     const blankCellHtml =
         '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>';
     test.each([

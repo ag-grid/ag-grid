@@ -2,6 +2,7 @@ import type { AstroIntegrationLogger } from 'astro';
 import { existsSync } from 'node:fs';
 import path from 'path';
 
+import type { Redirect } from './redirects';
 import { IGNORE_PAGES, REDIRECTS_FILE, SITE_301_REDIRECTS } from './redirects';
 
 type SuccessResult = {
@@ -59,51 +60,68 @@ function checkPathExists(pathToCheck: string): Result {
     }
 }
 
-export function redirectsChecker({ buildDir, logger }: { buildDir: string; logger: AstroIntegrationLogger }) {
-    const results: Result[] = SITE_301_REDIRECTS.map((redirect) => {
-        const from = 'from' in redirect ? redirect.from : null;
+// A trailing slash always means a directory, even when a segment has a dot (`/archive/31.0.0/`)
+const isFilePath = (urlPath: string) => !urlPath.endsWith('/') && path.extname(urlPath) !== '';
 
-        // Check that redirect source doesn't shadow an existing page (also flags a 410 on a live page)
-        if (from && existsSync(path.join(buildDir, from, 'index.html'))) {
-            return { type: 'error', message: 'Redirect shadows existing page', path: from };
+const getBuildFilePath = (buildDir: string, urlPath: string) =>
+    isFilePath(urlPath) ? path.join(buildDir, urlPath) : path.join(buildDir, urlPath, 'index.html');
+
+export function checkRedirect(
+    redirect: Redirect,
+    { buildDir, disableMarkdownDocs }: { buildDir: string; disableMarkdownDocs: boolean }
+): Result {
+    const from = 'from' in redirect ? redirect.from : null;
+
+    // Check that redirect source doesn't shadow an existing page (also flags a 410 on a live page)
+    if (from && existsSync(getBuildFilePath(buildDir, from))) {
+        return { type: 'error', message: 'Redirect shadows existing page', path: from };
+    }
+
+    // 410 Gone rules have no target to validate
+    if ('gone' in redirect) {
+        return { type: 'ignored', path: from ?? ('fromPattern' in redirect ? redirect.fromPattern : '') };
+    }
+
+    const { to } = redirect;
+
+    if (to.startsWith('/')) {
+        const toPath = to.split('#')[0]; // Remove search params
+
+        if (IGNORE_PAGES.includes(toPath)) {
+            return {
+                type: 'ignored',
+                path: to,
+            };
         }
 
-        // 410 Gone rules have no target to validate
-        if ('gone' in redirect) {
-            return { type: 'ignored', path: from ?? ('fromPattern' in redirect ? redirect.fromPattern : '') };
+        const toBuildPath = getBuildFilePath(buildDir, toPath);
+
+        if (disableMarkdownDocs && path.extname(toPath) === '.md' && !existsSync(toBuildPath)) {
+            return {
+                type: 'ignored',
+                path: to,
+            };
         }
 
-        const { to } = redirect;
+        return checkPathExists(toBuildPath);
+    }
 
-        if (to.startsWith('/')) {
-            const toPath = to.split('#')[0]; // Remove search params
+    return {
+        type: 'ignored',
+        path: to,
+    };
+}
 
-            if (IGNORE_PAGES.includes(toPath)) {
-                return {
-                    type: 'ignored',
-                    path: to,
-                };
-            }
-
-            const toBuildPath = path.join(buildDir, toPath);
-
-            if (toBuildPath.endsWith('/')) {
-                const toFolder = toBuildPath.slice(0, -1);
-                const toIndex = path.join(toFolder, 'index.html');
-
-                return checkPathExists(toIndex);
-            } else {
-                const toIndex = path.join(toBuildPath, 'index.html');
-
-                return checkPathExists(toIndex);
-            }
-        }
-
-        return {
-            type: 'ignored',
-            path: to,
-        };
-    });
+export function redirectsChecker({
+    buildDir,
+    disableMarkdownDocs,
+    logger,
+}: {
+    buildDir: string;
+    disableMarkdownDocs: boolean;
+    logger: AstroIntegrationLogger;
+}) {
+    const results = SITE_301_REDIRECTS.map((redirect) => checkRedirect(redirect, { buildDir, disableMarkdownDocs }));
 
     getResultOutput(results)
         .split('\n')

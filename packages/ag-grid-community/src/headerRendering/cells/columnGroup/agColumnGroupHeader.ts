@@ -1,5 +1,5 @@
 import type { IComponent } from 'ag-stack';
-import { RefPlaceholder, _exists, _setDisplayed, _toString } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _exists, _setDisplayed, _toString } from 'ag-stack';
 
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -204,10 +204,10 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addManagedElementListeners(agClosed, { dblclick: stopPropagationAction });
-        this.addManagedElementListeners(agOpened, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agClosed, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agOpened, { dblclick: stopPropagationAction });
 
-        this.addManagedElementListeners(this.getGui(), { dblclick: expandAction });
+        _addManagedElementListeners(this, this.getGui(), { dblclick: expandAction });
 
         this.updateIconVisibility();
 
@@ -221,7 +221,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
-        this.addManagedElementListeners(eElement, { click: action });
+        _addManagedElementListeners(this, eElement, { click: action });
     }
 
     private updateIconVisibility(): void {

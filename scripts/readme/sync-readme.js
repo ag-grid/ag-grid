@@ -17,11 +17,10 @@ const patterns = [
 // Dependencies
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 const prettier = require('prettier');
 const rootReadme = fs.readFileSync('./README.md').toString();
 const libraries = ['ag-grid-community', 'ag-grid-enterprise'];
-const packageReadmeList = patterns.flatMap((pattern) => glob.sync(pattern));
+const packageReadmeList = patterns.flatMap((pattern) => fs.globSync(pattern));
 
 function titleCase(name) {
     return `${name.substring(0, 1).toLocaleUpperCase()}${name.substring(1)}`;

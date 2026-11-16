@@ -1,4 +1,5 @@
 import {
+    ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER,
     DEVELOPMENT_FLAGS,
     DEV_FLAG_PLACEHOLDERS,
     FRAMEWORK_VERSION_PARAM,
@@ -139,6 +140,22 @@ describe('example-runner.js injectImportMap', () => {
         loadClient().injectImportMap(options);
 
         expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1');
+    });
+
+    test.each([
+        ['21.0.0', 'primitives-di.mjs'],
+        ['20.3.0', 'primitives/di.mjs'],
+    ])('resolves the Angular core primitives layout for version %s', (version, entryPoint) => {
+        const imports = {
+            '@angular/core/primitives/di': `https://cdn/@angular/core@${FRAMEWORK_VERSION_PLACEHOLDER}/fesm2022/primitives${ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER}di.mjs`,
+        };
+        const { head, options } = stubPage(`?version=${version}`, { imports });
+
+        loadClient().injectImportMap(options);
+
+        expect(registeredImports(head)['@angular/core/primitives/di']).toBe(
+            `https://cdn/@angular/core@${version}/fesm2022/${entryPoint}`
+        );
     });
 
     test('takes the nonce the page hands it, for a page whose CSP allows only nonces', () => {

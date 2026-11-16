@@ -52,9 +52,9 @@ describe('removing a row group via the drop-zone pill remove button', () => {
     });
 
     test('a remove button click never falls through to a sort, even when a column callback throws', async () => {
-        // The removed group column becomes visible again over the group rows still on screen, so a
-        // non-null-safe valueFormatter (as in the grouping-object-data example) throws mid-update.
+        // The removed group column becomes visible again; its valueFormatter throws when it is drawn.
         const errors: (string | undefined)[] = [];
+        let formatterThrows = false;
         const swallowError = (event: ErrorEvent) => {
             errors.push(event.error?.message ?? event.message);
             event.preventDefault();
@@ -68,7 +68,12 @@ describe('removing a row group via the drop-zone pill remove button', () => {
                         rowGroup: true,
                         hide: true,
                         keyCreator: (params) => params.value.id,
-                        valueFormatter: (params) => params.value.name,
+                        valueFormatter: (params) => {
+                            if (formatterThrows) {
+                                throw new Error('formatter failed');
+                            }
+                            return params.value.name;
+                        },
                     },
                     { field: 'country' },
                     { field: 'year' },
@@ -82,6 +87,7 @@ describe('removing a row group via the drop-zone pill remove button', () => {
             await waitFor(() => expect(pillTexts(api)).toEqual(['Athlete']));
             expect(errors).toEqual([]);
 
+            formatterThrows = true;
             try {
                 clickRemove(api, 0);
             } catch (error) {
@@ -91,7 +97,7 @@ describe('removing a row group via the drop-zone pill remove button', () => {
             }
 
             // The formatter must actually have thrown, or the test would pass without exercising the fix.
-            await waitFor(() => expect(errors).toContain("Cannot read properties of undefined (reading 'name')"));
+            await waitFor(() => expect(errors).toContain('formatter failed'));
             expect(api.getColumnState().find((state) => state.colId === 'athlete')?.sort ?? null).toBeNull();
             expect(api.getRowGroupColumns()).toEqual([]);
             expect(pillTexts(api)).toEqual([]);

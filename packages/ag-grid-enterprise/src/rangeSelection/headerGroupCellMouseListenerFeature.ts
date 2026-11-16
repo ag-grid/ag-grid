@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type { AgColumnGroup } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
@@ -10,7 +12,7 @@ export class HeaderGroupCellMouseListenerFeature extends BeanStub {
     }
 
     public postConstruct() {
-        this.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(this, this.eGui, {
             click: (e) => e && this.onClick(e),
         });
     }

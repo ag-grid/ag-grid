@@ -19,7 +19,6 @@ import { CellSelectionModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomButtonComponent from './customButtonComponent';
-import './styles.css';
 
 const modules = [
     ClientSideRowModelModule,
@@ -86,13 +85,15 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button onClick={toggleCellSelection}>
-                            {cellSelection ? 'Disable' : 'Enable'} Cell Selection
-                        </button>
-                        <button onClick={toggleRowSelection}>
-                            {rowSelection ? 'Disable' : 'Enable'} Row Selection
-                        </button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={toggleCellSelection}>
+                                {cellSelection ? 'Disable' : 'Enable'} Cell Selection
+                            </button>
+                            <button onClick={toggleRowSelection}>
+                                {rowSelection ? 'Disable' : 'Enable'} Row Selection
+                            </button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

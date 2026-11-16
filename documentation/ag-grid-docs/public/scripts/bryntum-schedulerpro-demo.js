@@ -1,18 +1,19 @@
 /* global bryntumDemoInit */
-// Bryntum Scheduler Pro "Try it yourself!" demo — UMD port of
+// Bryntum Scheduler (Enterprise tier) "Try it yourself!" demo — port of
 // https://bryntum.com/demos/live/schedulerpro/grouping/app.js
 // Bootstrap lives in bryntum-demo-bootstrap.js.
 
-bryntumDemoInit('schedulerpro', 'live-schedulerpro-demo', function (api) {
-    const { SchedulerPro, Toast } = api;
+bryntumDemoInit('scheduler', 'live-schedulerpro-demo', function (api) {
+    const { Scheduler, Toast } = api;
 
-    const schedulerPro = new SchedulerPro({
+    const scheduler = new Scheduler({
+        tier: 'enterprise',
         project: {
             autoLoad: true,
             loadUrl: 'https://bryntum.com/demos/live/schedulerpro/grouping/data.json',
         },
 
-        style: 'width:100%;margin:1em auto;height:48em',
+        style: 'width:100%;height:100%',
         adopt: 'live-schedulerpro-demo',
         resourceImagePath: 'https://bryntum.com/examples/schedulerpro-next/_shared/images/transparent-users/',
         eventStyle: 'rounded',
@@ -51,7 +52,7 @@ bryntumDemoInit('schedulerpro', 'live-schedulerpro-demo', function (api) {
                     {
                         cls: 'fa fa-edit',
                         handler() {
-                            schedulerPro.editEvent(this.eventRecord);
+                            scheduler.editEvent(this.eventRecord);
                         },
                     },
                 ],
@@ -84,14 +85,14 @@ bryntumDemoInit('schedulerpro', 'live-schedulerpro-demo', function (api) {
                         cls: 'fa fa-fw fa-plus',
                         tooltip: 'Add task',
                         onClick: async ({ record }) => {
-                            await schedulerPro.project.addEvent({
+                            await scheduler.project.addEvent({
                                 name: 'New task',
-                                startDate: schedulerPro.startDate,
+                                startDate: scheduler.startDate,
                                 duration: 4,
                                 durationUnit: 'h',
                                 resourceId: record.id,
                             });
-                            schedulerPro.editEvent(schedulerPro.eventStore.last);
+                            scheduler.editEvent(scheduler.eventStore.last);
                         },
                     },
                     {

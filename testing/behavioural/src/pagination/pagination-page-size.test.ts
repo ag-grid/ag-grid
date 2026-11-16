@@ -1,7 +1,9 @@
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
+import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, enableDevValidations } from 'ag-grid-community';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ id: String(i), name: `Row ${i}` }));
@@ -1161,6 +1163,57 @@ describe('Pagination Page Size', () => {
             expect(nodesAfter).toHaveLength(25);
             expect(nodesAfter[0].data.id).toBe('0');
             expect(nodesAfter[24].data.id).toBe('24');
+        });
+    });
+
+    describe('page size selector warnings', () => {
+        // paginationPageSize 10 is not in the default selector values [20, 50, 100]
+        const options: Partial<GridOptions> = { paginationPageSize: 10, paginationPageSizeSelector: undefined };
+
+        test('no page size selector warnings when the pagination panel is suppressed', () => {
+            const api = createGrid(gridsManager, { ...options, suppressPaginationPanel: true });
+            expect(api.paginationGetPageSize()).toBe(10);
+        });
+
+        test('no page size selector warnings when pagination is disabled', () => {
+            const api = createGrid(gridsManager, { ...options, pagination: false });
+            expect(api.paginationGetPageSize()).toBe(10);
+        });
+
+        describe('when the selector is shown', () => {
+            let consoleWarnSpy: MockInstance;
+
+            beforeEach(() => {
+                consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                // Deliberately exercises warnings #94/#95, so they are logged but must not throw.
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [94, 95] });
+            });
+
+            afterEach(() => {
+                consoleWarnSpy.mockRestore();
+            });
+
+            const hasSelectorWarning = () =>
+                consoleWarnSpy.mock.calls.some((c) => c.join(' ').includes('is not included in the default'));
+
+            test('warns when the pagination panel is visible', () => {
+                createGrid(gridsManager, options);
+                expect(hasSelectorWarning()).toBe(true);
+            });
+
+            test('warns once the suppressed pagination panel is shown', () => {
+                const api = createGrid(gridsManager, { ...options, suppressPaginationPanel: true });
+                expect(hasSelectorWarning()).toBe(false);
+                api.setGridOption('suppressPaginationPanel', false);
+                expect(hasSelectorWarning()).toBe(true);
+            });
+
+            test('warns once pagination is enabled', () => {
+                const api = createGrid(gridsManager, { ...options, pagination: false });
+                expect(hasSelectorWarning()).toBe(false);
+                api.setGridOption('pagination', true);
+                expect(hasSelectorWarning()).toBe(true);
+            });
         });
     });
 });

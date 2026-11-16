@@ -77,7 +77,7 @@ interface RenderToolbarButtonContentsParams {
     eIcon: HTMLElement;
     eLabel: HTMLElement;
     eGui: HTMLElement;
-    icon?: IconName;
+    icon?: string;
     label?: string;
     hoverText?: string;
 }
@@ -88,7 +88,7 @@ export function renderToolbarButtonContents(
 ): void {
     _clearElement(eIcon);
     if (icon) {
-        const eIconEl = _createIconNoSpan(icon, beans);
+        const eIconEl = _createIconNoSpan(icon as IconName, beans);
         if (eIconEl) {
             eIcon.appendChild(eIconEl);
         }

@@ -1,4 +1,4 @@
-import { _last, _toStringOrNull } from 'ag-stack';
+import { _addManagedElementListeners, _last, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -13,6 +13,7 @@ import type {
 } from 'ag-grid-community';
 import {
     _addGridCommonParams,
+    _createCellId,
     _getCellByPosition,
     _getFillHandle,
     _getLastRow,
@@ -28,6 +29,7 @@ import {
 } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
+import type { RangeService } from './rangeService';
 import { findLineByLeastSquares } from './utils';
 
 interface FillValues {
@@ -95,6 +97,13 @@ function getFillOperationDecision(value: any): FillOperationDecision | undefined
 }
 
 type FillDirection = 'x' | 'y';
+const FILL_CSS_CLASSES = [
+    'ag-selection-fill-top',
+    'ag-selection-fill-right',
+    'ag-selection-fill-bottom',
+    'ag-selection-fill-left',
+] as const;
+type FillCssClass = (typeof FILL_CSS_CLASSES)[number];
 const FillHandleElement: ElementParams = {
     tag: 'div',
     cls: 'ag-fill-handle',
@@ -104,6 +113,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private initialXY: { x: number; y: number } | null;
     private lastCellMarked: CellPosition | undefined;
     private readonly markedCells: CellCtrl[] = [];
+    /** The fill classes on for each marked cell, by cell id as a redrawn row replaces the ctrl. */
+    private readonly fillCssByCellId = new Map<string, Set<FillCssClass>>();
     private readonly cellValues: FillValues[][] = [];
 
     private dragAxis?: FillDirection;
@@ -120,7 +131,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     public override postConstruct(): void {
         super.postConstruct();
 
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             dblclick: this.onDblClick.bind(this),
         });
     }
@@ -203,8 +214,33 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const lastCellHovered = this.getLastCellHovered();
 
         if (lastCellHovered) {
+            (this.beans.rangeSvc as RangeService).activeFillHandle = this;
             this.markPathFrom(this.initialPosition, lastCellHovered);
         }
+    }
+
+    /** A cell that mounts on the marked path missed the marking, so give it its part of the outline now. */
+    public onCellMounted(cell: CellCtrl): void {
+        const classes = this.fillCssByCellId.get(_createCellId(cell.cellPosition));
+        if (classes === undefined) {
+            return;
+        }
+        for (let i = 0, len = FILL_CSS_CLASSES.length; i < len; ++i) {
+            const cssClass = FILL_CSS_CLASSES[i];
+            cell.comp.toggleCss(cssClass, classes.has(cssClass));
+        }
+    }
+
+    private toggleFillCss(cell: CellCtrl, cssClass: FillCssClass, on: boolean): void {
+        const cellId = _createCellId(cell.cellPosition);
+        const classes = this.fillCssByCellId.get(cellId) ?? new Set<FillCssClass>();
+        this.fillCssByCellId.set(cellId, classes);
+        if (on) {
+            classes.add(cssClass);
+        } else {
+            classes.delete(cssClass);
+        }
+        cell.comp?.toggleCss(cssClass, on);
     }
 
     protected onDragEnd(e: MouseEvent) {
@@ -648,23 +684,29 @@ export class AgFillHandle extends AbstractSelectionHandle {
         this.clearCellValues();
 
         this.lastCellMarked = undefined;
+        const rangeSvc = this.beans.rangeSvc as RangeService;
+        if (rangeSvc.activeFillHandle === this) {
+            rangeSvc.activeFillHandle = undefined;
+        }
 
         super.clearValues();
     }
 
     private clearMarkedPath() {
-        for (const cell of this.markedCells) {
-            if (!cell.isAlive()) {
+        for (const marked of this.markedCells) {
+            // a redrawn row's replacement cell may carry the outline, or not have mounted yet
+            const cell = marked.isAlive() ? marked : _getCellByPosition(this.beans, marked.cellPosition);
+            const comp = cell?.comp;
+            if (!comp) {
                 continue;
             }
-            const { comp } = cell;
-            comp.toggleCss('ag-selection-fill-top', false);
-            comp.toggleCss('ag-selection-fill-right', false);
-            comp.toggleCss('ag-selection-fill-bottom', false);
-            comp.toggleCss('ag-selection-fill-left', false);
+            for (let i = 0, len = FILL_CSS_CLASSES.length; i < len; ++i) {
+                comp.toggleCss(FILL_CSS_CLASSES[i], false);
+            }
         }
 
         this.markedCells.length = 0;
+        this.fillCssByCellId.clear();
 
         this.isUp = false;
         this.isLeft = false;
@@ -748,14 +790,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                     if (cell) {
                         this.markedCells.push(cell);
-                        const cellComp = cell.comp;
 
                         if (!cellInRange) {
-                            cellComp.toggleCss('ag-selection-fill-left', i === 0);
-                            cellComp.toggleCss('ag-selection-fill-right', i === colLen - 1);
+                            this.toggleFillCss(cell, 'ag-selection-fill-left', i === 0);
+                            this.toggleFillCss(cell, 'ag-selection-fill-right', i === colLen - 1);
                         }
 
-                        cellComp.toggleCss(
+                        this.toggleFillCss(
+                            cell,
                             isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom',
                             _isSameRow(row, endPosition)
                         );
@@ -789,7 +831,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 if (cell) {
                     this.markedCells.push(cell);
 
-                    cell.comp.toggleCss('ag-selection-fill-bottom', _isSameRow(row, endPosition));
+                    this.toggleFillCss(cell, 'ag-selection-fill-bottom', _isSameRow(row, endPosition));
                 }
             }
             if (isLastRow) {
@@ -824,15 +866,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 if (cell) {
                     this.markedCells.push(cell);
-                    const cellComp = cell.comp;
 
-                    cellComp.toggleCss('ag-selection-fill-top', _isSameRow(row, rangeStartRow));
-                    cellComp.toggleCss('ag-selection-fill-bottom', _isSameRow(row, rangeEndRow));
+                    this.toggleFillCss(cell, 'ag-selection-fill-top', _isSameRow(row, rangeStartRow));
+                    this.toggleFillCss(cell, 'ag-selection-fill-bottom', _isSameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         this.isLeft = true;
-                        cellComp.toggleCss('ag-selection-fill-left', column === colsToMark[0]);
+                        this.toggleFillCss(cell, 'ag-selection-fill-left', column === colsToMark[0]);
                     } else {
-                        cellComp.toggleCss('ag-selection-fill-right', column === _last(colsToMark));
+                        this.toggleFillCss(cell, 'ag-selection-fill-right', column === _last(colsToMark));
                     }
                 }
 
@@ -865,7 +906,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 if (cell) {
                     this.markedCells.push(cell);
-                    cell.comp.toggleCss('ag-selection-fill-right', column === colsToMark[0]);
+                    this.toggleFillCss(cell, 'ag-selection-fill-right', column === colsToMark[0]);
                 }
 
                 row = _getRowBelow(beans, row)!;

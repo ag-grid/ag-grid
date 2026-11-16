@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
@@ -13,8 +13,6 @@ import {
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -35,31 +33,35 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `
-        <div class="test-header" style="height: 5%">
-            <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label>
-            <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
-            <label><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <label
+                        ><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label
+                    >
+                    <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
+                    <label
+                        ><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label
+                    >
+                </div>
+            </div>
+
+            <ag-grid-angular
+                #topGrid
+                [rowData]="rowData()"
+                [gridOptions]="topOptions"
+                [alignedGrids]="[bottomGrid]"
+                [columnDefs]="columnDefs"
+            />
+
+            <ag-grid-angular
+                #bottomGrid
+                [rowData]="rowData()"
+                [gridOptions]="bottomOptions"
+                [alignedGrids]="[topGrid]"
+                [columnDefs]="columnDefs"
+            />
         </div>
-
-        <ag-grid-angular
-            style="width: 100%; height: 45%"
-            #topGrid
-            [rowData]="rowData"
-            [gridOptions]="topOptions"
-            [alignedGrids]="[bottomGrid]"
-            [columnDefs]="columnDefs"
-        />
-
-        <div style="height: 5%"></div>
-
-        <ag-grid-angular
-            style="width: 100%; height: 45%"
-            #bottomGrid
-            [rowData]="rowData"
-            [gridOptions]="bottomOptions"
-            [alignedGrids]="[topGrid]"
-            [columnDefs]="columnDefs"
-        />
     `,
 })
 export class AppComponent {
@@ -68,7 +70,7 @@ export class AppComponent {
         filter: true,
         minWidth: 100,
     };
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
     topOptions: GridOptions = {
         defaultColDef: this.defaultColDef,
         autoSizeStrategy: {
@@ -107,7 +109,7 @@ export class AppComponent {
 
     ngOnInit() {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe((data) => {
-            this.rowData = data as any[];
+            this.rowData.set(data as any[]);
         });
     }
 

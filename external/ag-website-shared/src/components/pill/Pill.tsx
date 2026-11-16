@@ -5,7 +5,7 @@ import styles from './Pill.module.scss';
 
 interface PillProps {
     text: string;
-    color: 'blue' | 'green' | 'yellow' | 'red';
+    color: 'blue' | 'green' | 'yellow';
     dot?: boolean;
     className?: string;
 }

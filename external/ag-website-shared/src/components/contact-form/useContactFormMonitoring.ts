@@ -1,9 +1,8 @@
-import {
-    reportMonitoringError,
-    trackMonitoringEvent,
-} from '@ag-website-shared/components/website-monitoring/websiteMonitoring';
+import { trackMonitoringEvent } from '@ag-website-shared/components/website-monitoring/websiteMonitoring';
 import { useCallback, useMemo, useRef } from 'react';
 import type { FieldErrors } from 'react-hook-form';
+
+import type { RecaptchaLoadFailure } from './watchRecaptchaLoad';
 
 // A submit should have navigated to Salesforce by now. A slow Salesforce response also trips it
 const SUBMIT_STALLED_MILLIS = 10_000;
@@ -117,8 +116,14 @@ export function useContactFormMonitoring(formLocation: string) {
         [formLocation]
     );
 
-    const reportCaptchaLoadError = useCallback(
-        (error: unknown) => reportMonitoringError(error, { formLocation }),
+    // The visitor is shown the email fallback instead of the form's captcha
+    const trackCaptchaLoadFailed = useCallback(
+        (reason: RecaptchaLoadFailure) =>
+            trackMonitoringEvent(
+                'contact_form_captcha_load_failed',
+                { formLocation, reason, isOnline: navigator.onLine },
+                'WARN'
+            ),
         [formLocation]
     );
 
@@ -128,6 +133,6 @@ export function useContactFormMonitoring(formLocation: string) {
         trackCaptchaIncomplete,
         trackSubmit,
         captchaCallbacks,
-        reportCaptchaLoadError,
+        trackCaptchaLoadFailed,
     };
 }

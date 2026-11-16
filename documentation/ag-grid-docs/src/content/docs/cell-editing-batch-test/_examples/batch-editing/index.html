@@ -1,11 +1,11 @@
 <div class="example-wrapper">
-    <div class="example-buttons">
-        <div class="example-button-row">
+    <div class="example-buttons example-controls">
+        <div class="example-button-row controls-row">
             <span>Editing Strategy:</span>
             <button id="singleCell" onclick="setEditType(undefined)">Single Cell (default)</button>
             <button id="fullRow" onclick="setEditType('fullRow')">Full Row</button>
         </div>
-        <div class="example-button-row">
+        <div class="example-button-row controls-row">
             <span>Editing API: </span>
             <button onclick="onBtStartEditing()">Edit (1, Last Name)</button>
             <button id="stopEdit" onclick="stopEdit()">Stop Edits</button>
@@ -13,29 +13,29 @@
             <button id="commitBatchEdit" onclick="commitBatchEdit()">Commit Batch Edits</button>
             <button id="cancelBatchEdit" onclick="cancelBatchEdit()">Cancel Batch Edits</button>
         </div>
-        <div class="example-button-row">
+        <div class="example-button-row controls-row">
             <span>Export API: </span>
             <button onclick="onBtExport('excel')">Excel</button>
             <button onclick="onBtExport('csv')">CSV (inc pending)</button>
         </div>
-        <div class="example-button-row">
+        <div class="example-button-row controls-row">
             <span>UndoRedo API: </span>
             <button onclick="onBtUndo()">Undo</button>
             <button onclick="onBtRedo()">Redo</button>
         </div>
-        <div class="example-button-row">
+        <div class="example-button-row controls-row">
             <span>Extras: </span>
             <button id="createChart" onclick="createChart()">Create Chart</button>
             <button id="refresh" onclick="refreshRows()">Refresh Rows</button>
         </div>
-        <div class="example-button-row">
+        <div class="example-button-row controls-row">
             <span>Batch Editing:</span>
             <label><input type="checkbox" id="batchEdit" onclick="toggleBatch()" />Enabled</label>
         </div>
     </div>
     <div id="edits" style="grid-column: 2">
-        <div>
-            <div id="poll-buttons">
+        <div class="example-controls">
+            <div id="poll-buttons" class="controls-row">
                 <button id="getPending" onclick="onGetPending()">Get Editing Cells</button>
                 <button id="enablePoll" onclick="pollState()">Poll State</button>
                 <button id="disablePoll" onclick="pollState()">Stop Polling</button>

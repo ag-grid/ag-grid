@@ -17,18 +17,6 @@
     }
 }
 
-// Layout
-// ===============================================
-.layoutExample {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
-
-    div {
-        background-color: rgba(255, 0, 0, 0.1);
-    }
-}
-
 // Spacing
 // ===============================================
 .spacingItem {

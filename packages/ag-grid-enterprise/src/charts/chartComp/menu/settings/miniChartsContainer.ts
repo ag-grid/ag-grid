@@ -42,7 +42,6 @@ const miniChartMapping: MiniChartMenuMapping = {
     pieGroup: {
         pie: { range: true, pivot: true, enterprise: false, chartType: 'pie' },
         donut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
-        doughnut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
     },
     lineGroup: {
         line: { range: true, pivot: true, enterprise: false, chartType: 'line' },

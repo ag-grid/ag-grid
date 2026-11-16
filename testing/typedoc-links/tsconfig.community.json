@@ -2,7 +2,8 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "strict": false,
-    "moduleResolution": "node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "noEmit": true
   },
   "files": ["../../packages/ag-grid-community/dist/types/src/main.d.ts"]

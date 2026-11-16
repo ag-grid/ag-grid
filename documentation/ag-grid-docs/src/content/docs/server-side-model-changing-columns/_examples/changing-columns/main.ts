@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type {
     ColDef,
     GridApi,
@@ -15,8 +17,6 @@ import {
     ServerSideRowModelModule,
     SetFilterModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -91,7 +91,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function getAthletesAsync(params: SetFilterValuesFuncParams) {
-    const countries = fakeServer.getAthletes();
+    const countries = fakeServer.getDistinctValues('athlete');
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {

@@ -3,6 +3,7 @@ import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 
+import { groupRoadmapByQuarter } from '../groupRoadmapByQuarter';
 import type { RoadmapItem } from '../types';
 import styles from './RoadmapBoard.module.scss';
 import { RoadmapCard } from './roadmap-card/RoadmapCard';
@@ -17,11 +18,7 @@ export const RoadmapBoard: React.FC<RoadmapBoardProps> = ({ roadmapData: { items
     const [filter, setFilter] = useState<'all' | 'planned' | 'in-progress' | 'shipped'>('all');
     const framework = useFrameworkFromStore();
 
-    const groupedByQuarter = items.reduce<Record<string, RoadmapItem[]>>((acc, item) => {
-        const key = String(item.q);
-        (acc[key] ??= []).push(item);
-        return acc;
-    }, {});
+    const groupedByQuarter = groupRoadmapByQuarter(items);
 
     const statusList = [...new Set(items.map((item) => item.status))];
 
@@ -49,7 +46,7 @@ export const RoadmapBoard: React.FC<RoadmapBoardProps> = ({ roadmapData: { items
             <ButtonGroup buttons={filterButtons} preText="Filter by status" className={styles.filters} />
             <section className={styles.swimlanesContainer}>
                 <div className={styles.swimlanes}>
-                    {Object.entries(groupedByQuarter).map(([quarter, quarterItems]) => (
+                    {groupedByQuarter.map(([quarter, quarterItems]) => (
                         <div key={quarter} className={styles.swimlane}>
                             <div className={styles.swimlaneHeader}>
                                 <span>

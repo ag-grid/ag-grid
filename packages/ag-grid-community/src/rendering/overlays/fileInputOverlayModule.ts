@@ -13,8 +13,5 @@ export const FileInputOverlayModule: _ModuleWithoutApi = {
     userComponents: {
         agFileInputOverlay: FileInputOverlayComponent,
     },
-    icons: {
-        document: 'document',
-    },
     dependsOn: [OverlayModule],
 };

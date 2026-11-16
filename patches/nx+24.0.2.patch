@@ -1,0 +1,14 @@
+diff --git a/node_modules/nx/dist/src/utils/formatters/prettier.js b/node_modules/nx/dist/src/utils/formatters/prettier.js
+index ed33c794a9b..3994ac8df32 100644
+--- a/node_modules/nx/dist/src/utils/formatters/prettier.js
++++ b/node_modules/nx/dist/src/utils/formatters/prettier.js
+@@ -82,7 +82,8 @@ async function filterToPrettierSupportedFiles(files) {
+     const supportInfo = await prettier.getSupportInfo();
+     const supportedExtensions = new Set(supportInfo.languages
+         .flatMap((language) => language.extensions)
+-        .filter((extension) => !!extension));
++        .filter((extension) => !!extension)
++        .concat('.mdoc', '.astro'));
+     // Prettier matches ~30 files by *name* rather than extension (`.swcrc`,
+     // `Jakefile`). It publishes that list next to the extensions, so read it
+     // rather than hardcoding.

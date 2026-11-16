@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { FilterWrapperParams, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import {
     ModuleRegistry,
@@ -13,8 +15,6 @@ import {
     ServerSideRowModelModule,
     SideBarModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

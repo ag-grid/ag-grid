@@ -58,6 +58,7 @@ import {
     _isUsingNewCellSelectionAPI,
 } from 'ag-grid-community';
 
+import type { AgFillHandle } from './agFillHandle';
 import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
@@ -115,6 +116,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     private intersectionRange = false;
 
     public autoScrollService: AutoScrollService;
+    /** The fill handle being dragged, so cells mounting mid-drag can take their part of its outline. */
+    public activeFillHandle: AgFillHandle | undefined;
 
     private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
 
@@ -1579,7 +1582,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
-        return new CellRangeFeature(this.beans, ctrl);
+        return new CellRangeFeature(this.beans, ctrl, this);
     }
 
     public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub {

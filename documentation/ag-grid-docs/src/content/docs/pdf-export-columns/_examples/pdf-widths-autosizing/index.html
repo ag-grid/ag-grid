@@ -1,12 +1,14 @@
 <div class="example-wrapper">
-    <div class="controls" onchange="onPdfExportOptionsChanged()">
-        <button onclick="onBtExport()">Export to PDF</button>
-        <label for="widthMode">Column widths</label>
-        <select id="widthMode">
-            <option value="grid">Grid</option>
-            <option value="auto">Auto</option>
-            <option value="custom">Custom</option>
-        </select>
+    <div class="controls example-controls" onchange="onPdfExportOptionsChanged()">
+        <div class="controls-row">
+            <button onclick="onBtExport()">Export to PDF</button>
+            <label for="widthMode">Column widths</label>
+            <select id="widthMode">
+                <option value="grid">Grid</option>
+                <option value="auto">Auto</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
     </div>
     <div id="myGrid"></div>
 </div>

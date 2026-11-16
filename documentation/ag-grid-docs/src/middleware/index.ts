@@ -1,3 +1,4 @@
+import { moveViteClientToEndOfBody } from '@ag-website-shared/utils/moveViteClientToEndOfBody';
 import { getIsProduction } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
@@ -18,12 +19,7 @@ const rewriteAstroGeneratedContent = (body: string) => {
             }
         });
 
-        // Firefox ignores an import map added after a module starts loading, so load Vite's client after the example's
-        const viteClient = html.querySelector('script[src*="/@vite/client"]');
-        const body = html.querySelector('body');
-        if (viteClient && body) {
-            body.appendChild(viteClient.remove());
-        }
+        moveViteClientToEndOfBody(html);
     }
     return html.toString();
 };

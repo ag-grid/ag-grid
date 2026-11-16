@@ -116,7 +116,7 @@ export const InfoTooltip = ({ title, href, linkSubject, className }: InfoTooltip
             title={
                 <>
                     {title}
-                    <DocsHint>Open the API reference</DocsHint>
+                    <DocsHint>Click Icon for themes API page</DocsHint>
                 </>
             }
         >

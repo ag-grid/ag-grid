@@ -27,10 +27,14 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ClientSideRowModelApiM
             <div class="grid-section">
                 <div class="controls">
                     <span class="grid-label">Grid A</span>
-                    <button type="button" (click)="triggerWarning('a')">Trigger warning</button>
-                    <button type="button" (click)="triggerError('a')">Trigger error</button>
-                    <button type="button" (click)="triggerAsyncWarning('a')">Trigger async warning</button>
-                    <button type="button" (click)="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                    <div class="example-controls">
+                        <div class="controls-row">
+                            <button type="button" (click)="triggerWarning('a')">Trigger warning</button>
+                            <button type="button" (click)="triggerError('a')">Trigger error</button>
+                            <button type="button" (click)="triggerAsyncWarning('a')">Trigger async warning</button>
+                            <button type="button" (click)="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                        </div>
+                    </div>
                 </div>
                 <ag-grid-angular
                     class="grid"
@@ -44,9 +48,13 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ClientSideRowModelApiM
             <div class="grid-section">
                 <div class="controls">
                     <span class="grid-label">Grid B</span>
-                    <button type="button" (click)="triggerWarning('b')">Trigger warning</button>
-                    <button type="button" (click)="triggerError('b')">Trigger error</button>
-                    <button type="button" (click)="triggerAsyncWarning('b')">Trigger async warning</button>
+                    <div class="example-controls">
+                        <div class="controls-row">
+                            <button type="button" (click)="triggerWarning('b')">Trigger warning</button>
+                            <button type="button" (click)="triggerError('b')">Trigger error</button>
+                            <button type="button" (click)="triggerAsyncWarning('b')">Trigger async warning</button>
+                        </div>
+                    </div>
                 </div>
                 <ag-grid-angular
                     class="grid"

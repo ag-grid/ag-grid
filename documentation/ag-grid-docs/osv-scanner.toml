@@ -90,34 +90,6 @@ id = "GHSA-rgjc-h3x7-9mwg"
 reason = "Angular version used determined by end user"
 
 [[IgnoredVulns]]
-id = "GHSA-76mc-f452-cxcm"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-gvmj-g25r-r7wr"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-hpcv-96wg-7vj8"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-r47g-fvhr-h676"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-rp9w-3fw7-7cwq"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-vxr8-fq34-vvx9"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
-id = "GHSA-x4vx-rjvf-j5p4"
-reason = "dompurify is only used in developer tools, and is not exposed to customers"
-
-[[IgnoredVulns]]
 id = "GHSA-4x5r-pxfx-6jf8"
 reason = "@babel/core is used in build & dev - not included in final production build"
 
@@ -302,7 +274,7 @@ reason = "extract-zip is a transitive dependency of chromedriver (via @axe-core/
 
 [[IgnoredVulns]]
 id = "GHSA-px8p-9vwx-vf98"
-reason = "fflate is a transitive dependency of @vitest/ui and the compression-streams-polyfill dev dependency, used only in testing/build - not included in the final production build"
+reason = "fflate is a transitive dependency of @vitest/ui, used only in testing/build - not included in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-5p2g-fcmc-qvqq"

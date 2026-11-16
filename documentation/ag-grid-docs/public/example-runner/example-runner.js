@@ -19,6 +19,7 @@
     const THEME_MODE_PARAM = 'agThemeMode';
     const THEME_MODES = { 'dark-blue': 'dark', light: 'light' };
     const VERSION_PLACEHOLDER = '0.0.0-ag-framework-version';
+    const ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER = '~ag-angular-primitives-separator~';
     const VERSION_PATTERN = '^\\d+\\.\\d+\\.\\d+(?:-[\\w.-]+)?(?:\\+[\\w.-]+)?$';
     const BUILD_TOKENS = {
         production: { '?ag-dev-query': '', '&ag-dev-appended': '', '.ag-dev-suffix': '.prod' },
@@ -78,6 +79,7 @@
 
         const substitutions = Object.assign({}, isProd ? BUILD_TOKENS.production : BUILD_TOKENS.development);
         substitutions[VERSION_PLACEHOLDER] = version;
+        substitutions[ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER] = parseInt(version, 10) >= 21 ? '-' : '/';
 
         const rendered = options.imports || JSON.parse(options.template).imports;
         const imports = {};

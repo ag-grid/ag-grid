@@ -37,28 +37,6 @@ type IntegratedChartsModuleType = {
     with: (params: IntegratedModule) => _ModuleWithApi<_GridChartsGridApi>;
 } & _ModuleWithApi<_GridChartsGridApi>;
 
-const icons: _ModuleWithApi<_GridChartsGridApi>['icons'] = {
-    // shown on top right of chart when chart is linked to range data (click to unlink)
-    linked: 'linked',
-    // shown on top right of chart when chart is not linked to range data (click to link)
-    unlinked: 'unlinked',
-    // icon to open charts menu
-    chartsMenu: 'menu-alt',
-    // download chart
-    chartsDownload: 'save',
-    // Edit Chart menu item shown in Integrated Charts menu
-    chartsMenuEdit: 'chart',
-    // Advanced Settings menu item shown in Integrated Charts menu
-    chartsMenuAdvancedSettings: 'settings',
-    // shown in Integrated Charts menu add fields
-    chartsMenuAdd: 'plus',
-    // shown in Integrated Charts tool panel color picker
-    chartsColorPicker: 'small-down',
-    // previous in Integrated Charts settings tool panel theme switcher
-    chartsThemePrevious: 'previous',
-    // next in Integrated Charts settings tool panel theme switcher
-    chartsThemeNext: 'next',
-};
 const apiFunctions: _ModuleWithApi<_GridChartsGridApi>['apiFunctions'] = {
     getChartModels,
     getChartRef,
@@ -81,21 +59,6 @@ const dependsOn: Module[] = [
     MenuItemModule,
 ];
 const moduleName: ModuleName = 'IntegratedCharts';
-
-/**
- * @deprecated v33 Deprecated as of v33, please use `IntegratedChartsModule` instead.
- */
-export const GridChartsModule: _ModuleWithApi<_GridChartsGridApi> = {
-    moduleName: 'GridCharts',
-    version: VERSION,
-    dependsOn, // included to avoid other false positive warnings about missing modules
-    validate: () => {
-        return {
-            isValid: false,
-            errorId: 334,
-        };
-    },
-};
 
 /**
  * @feature Integrated Charts
@@ -131,7 +94,6 @@ export const IntegratedChartsModule: IntegratedChartsModuleType = {
         const module: _ModuleWithApi<_GridChartsGridApi> = {
             moduleName,
             version: VERSION,
-            icons,
             apiFunctions,
             dependsOn,
             css: [integratedChartsModuleCSS],

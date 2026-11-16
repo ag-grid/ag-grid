@@ -19,7 +19,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellClassRules, CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
+import type { CellClassRules, CellStyle, CheckboxSelectionCallback } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
@@ -160,7 +160,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     /** A start requested before this cell had a component, replayed by the edit service once it attaches. */
     public pendingEditStart: StartEditParams | null = null;
 
-    private focusEventWhileNotReady: CellFocusedEvent | null = null;
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
@@ -425,7 +424,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
-        // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
+        // if node is stub, and no group data for this node (rowSelection.groupSelects can populate group data)
         const isLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         const colDef = column.colDef;
 
@@ -473,7 +472,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     private setupControlComps(): void {
         const colDef = this.column.colDef;
-        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef), true);
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(), true);
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
@@ -513,7 +512,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return (rowUnpinned || (allowManuallyPinned && _isManualPinnedRow(this.rowNode))) && !!value;
     }
 
-    private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
+    private isCheckboxSelection(): boolean | CheckboxSelectionCallback | undefined {
         const { rowSelection, groupDisplayType } = this.beans.gridOptions;
         const checkboxLocation = _getCheckboxLocation(rowSelection);
         const isSelectionColumn = isColumnSelectionCol(this.column);
@@ -525,15 +524,12 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             return false;
         }
 
-        return (
-            colDef.checkboxSelection ||
-            (isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection))
-        );
+        return isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection);
     }
 
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.colDef;
-        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef), true);
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(), true);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy
@@ -880,12 +876,24 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             beans: { editSvc, focusSvc },
             comp,
         } = this;
-        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused() || !focusSvc.shouldTakeFocus()) {
+        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused()) {
             return;
         }
+        const owedEvent = focusSvc.takeOwedFocusEvent();
+        if (owedEvent) {
+            this.onCellFocused(owedEvent);
+            return;
+        }
+        const takeFocus = focusSvc.shouldTakeFocus();
 
+        // owed focus is taken only as it lands, so a cell destroyed before then leaves it to the next one drawn
         const focus = () => {
-            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+            if (
+                this.isAlive() &&
+                this.isCellFocused() &&
+                (focusSvc.takeOwedFocus() || takeFocus) &&
+                focusSvc.isFocusFreeForGrid()
+            ) {
                 comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
@@ -949,10 +957,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        // only the focused cell uses the event, so only it pays to check the event is still current
-        this.onCellFocused(
-            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
-        );
+        this.onCellFocused();
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -964,9 +969,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (!this.comp) {
             // scenario: focusing event on cell outside viewport causes cells to force render
             // preserve event for when cell renders.
-            if (event) {
-                this.focusEventWhileNotReady = event;
-                beans.focusSvc.deferFocus(event);
+            if (event && this.isCellFocused()) {
+                beans.focusSvc.oweFocus(event);
             }
             return;
         }
@@ -993,10 +997,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             const preventScroll = event ? event.preventScrollOnBrowserFocus : true;
             focusEl.focus({ preventScroll });
             _placeCaretAtEnd(beans, focusEl);
-        }
-
-        if (cellFocused && this.focusEventWhileNotReady) {
-            this.focusEventWhileNotReady = null;
         }
 
         // require event to announce so we only announce
@@ -1109,7 +1109,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.oweFocus();
         }
 
         destroyCompBean(this);

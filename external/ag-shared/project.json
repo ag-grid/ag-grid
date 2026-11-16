@@ -28,7 +28,7 @@
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
         "{projectRoot}/tsconfig.*.json",
-        "{projectRoot}/scripts/plugin-utils/**/*.ts",
+        "{projectRoot}/scripts/**/*.ts",
         "tsDeclarations",
         "sharedGlobals",
         "defaultExcludes",

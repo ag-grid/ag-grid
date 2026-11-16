@@ -50,7 +50,7 @@ test.agExample(import.meta, () => {
             await expect(dialog.getByRole('textbox', { name: 'Expression', exact: true })).toHaveValue(
                 '([Revenue] - [Cost]) / [Revenue]'
             );
-            await expect(dialog.getByRole('button', { name: 'Columns', exact: true })).toBeHidden();
+            await expect(dialog.locator('button', { hasText: /^Columns$/ })).toBeHidden();
             await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeHidden();
             await dialog.locator('.ag-panel-title-bar-button').click();
 
