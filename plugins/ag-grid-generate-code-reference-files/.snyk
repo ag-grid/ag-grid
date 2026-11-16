@@ -12,7 +12,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.773Z
-    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+    - '@nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -28,7 +28,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.602Z
-    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+    - '@nx/devkit@24.0.2 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
