@@ -50,6 +50,6 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         sortOption.leafComparator = leafComparator;
         sortOption.descending = sortOption.sort === 'desc';
         sortOption.absolute = type === 'absolute';
-        sortOption.stringComparator = _getColumnStringComparator(column, gos);
+        sortOption.stringComparator = _getColumnStringComparator(column, colModel, gos);
     }
 };

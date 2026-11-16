@@ -22,7 +22,7 @@ import type {
 } from '../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
 import { _isProtoField } from '../utils/value';
@@ -203,10 +203,10 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
-    /** The effective `accentedSort` the column's string comparator was built from: its own, else the grid's. */
-    public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
-    /** Compares the column's strings for `accentedSort`, `undefined` when it is off. See `_getColumnStringComparator`. */
+    /** Compares the column's strings for its effective `accentedSort`, `undefined` when it is off. Built lazily by `_getColumnStringComparator`. */
     public stringComparator: StringComparator | undefined = undefined;
+    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef changes. */
+    public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
@@ -324,6 +324,7 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
+        this.stringComparatorVersion = -1; // `accentedSort` may have changed
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();

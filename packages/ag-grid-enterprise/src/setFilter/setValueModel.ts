@@ -221,7 +221,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             csrmValuesExtractor.getValue = getValue;
         }
 
-        const stringComparator = _getColumnStringComparator(column as AgColumn, this.gos);
+        const stringComparator = _getColumnStringComparator(column as AgColumn, this.beans.colModel, this.gos);
         const defaultComparator = stringComparator
             ? (a: any, b: any) => _defaultComparator(a, b, stringComparator)
             : _defaultComparator;

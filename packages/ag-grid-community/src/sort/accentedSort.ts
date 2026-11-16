@@ -1,9 +1,9 @@
 import type { StringComparator } from 'ag-stack';
 
+import type { ColumnModel } from '../columns/columnModel';
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { AccentedSortOptions } from '../interfaces/iSort';
-import { _mergedEqual } from '../utils/mergeDeep';
 
 /** `accentedSort: true`: `localeCompare` with the browser's default locale. */
 const localeStringComparator: StringComparator = (valueA, valueB) => valueA.localeCompare(valueB);
@@ -38,17 +38,25 @@ const createStringComparator = (
     return createCollatorComparator(accentedSort.locales, accentedSort.options);
 };
 
+/** `stringComparatorVersion` of a column with its own `accentedSort`, which the grid option does not affect. */
+const OWN_ACCENTED_SORT = -2;
+
 /**
  * The comparator used for a column's strings, from its effective `accentedSort`: the column's own, else the grid's.
- * It is kept on the column and rebuilt only when that value changes, so a framework such as React re-creating the
- * grid options or column definition with an equal value keeps its `Intl.Collator`, which goes with the column.
+ * Built on first use and kept on the column until its definition changes or, when it uses the grid's value, the grid
+ * option changes. Both are checked where they are set, so reading is a version compare.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _getColumnStringComparator(column: AgColumn, gos: GridOptionsService): StringComparator | undefined {
-    const accentedSort = column.colDef.accentedSort ?? gos.get('accentedSort');
-    if (!_mergedEqual(column.accentedSort, accentedSort)) {
-        column.accentedSort = accentedSort;
-        column.stringComparator = createStringComparator(accentedSort);
+export function _getColumnStringComparator(
+    column: AgColumn,
+    colModel: ColumnModel,
+    gos: GridOptionsService
+): StringComparator | undefined {
+    const ownAccentedSort = column.colDef.accentedSort;
+    const version = ownAccentedSort === undefined ? colModel.accentedSortVersion : OWN_ACCENTED_SORT;
+    if (column.stringComparatorVersion !== version) {
+        column.stringComparatorVersion = version;
+        column.stringComparator = createStringComparator(ownAccentedSort ?? gos.get('accentedSort'));
     }
     return column.stringComparator;
 }
