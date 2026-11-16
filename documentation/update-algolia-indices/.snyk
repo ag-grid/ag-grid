@@ -2,6 +2,36 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-UNDICI-22392401:
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:47:30.149Z
+    SNYK-JS-UNDICI-22370261:
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:57.077Z
+    SNYK-JS-UNDICI-22291127:
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:46:20.890Z
+    SNYK-JS-UNDICI-22291066:
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:44:33.449Z
+    SNYK-JS-UNDICI-22290988:
+        - tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:43:29.004Z
     SNYK-JS-PICOMATCH-21248802:
         - 'tsx@4.23.15 > fsevents@2.3.3 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
               reason: >-

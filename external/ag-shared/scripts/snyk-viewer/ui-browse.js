@@ -11,6 +11,12 @@
             .replace(/"/g, '&quot;');
     }
 
+    // Headers for requests that change state: the server rejects them without the page's token.
+    function apiHeaders() {
+        const token = document.querySelector('meta[name="snyk-viewer-token"]')?.content || '';
+        return { 'Content-Type': 'application/json', 'X-Snyk-Viewer-Token': token };
+    }
+
     function sevClass(vuln) { return (vuln.severity || 'low').toLowerCase(); }
 
     function stripVer(dep) { return dep.replace(/@[^@]*$/, ''); }
@@ -116,7 +122,7 @@
 
     // Export shared utilities
     window.SnykUtils = {
-        esc, sevClass, stripVer, pathKey, projectName, getSnykFilePath,
+        esc, apiHeaders, sevClass, stripVer, pathKey, projectName, getSnykFilePath,
         getNearIgnoredPath, semverMajor, sameMajorFixVersion, upgradeTarget,
         depCrumbsHtml, depPathHtml, fixHtml, cveHtml, npmLink,
     };
@@ -218,7 +224,7 @@
         function postUpdates(updates) {
             fetch('/update-snyk', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ updates }),
             })
             .then(r => r.json())
@@ -616,31 +622,59 @@
             panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             const logBody = panel.querySelector('.run-log-body');
 
-            const evtSource = new EventSource(`/run-snyk?backup=${backup ? '1' : '0'}`);
-            evtSource.addEventListener('message', e => {
-                const { text } = JSON.parse(e.data);
-                logBody.textContent += text.replace(new RegExp(String.fromCharCode(27) + '\\[[0-9;]*[a-zA-Z]', 'g'), '');
-                logBody.scrollTop = logBody.scrollHeight;
-            });
-            evtSource.addEventListener('done', e => {
-                evtSource.close();
-                const { ok, error } = JSON.parse(e.data);
+            let finished = false;
+            const onEvent = (event, data) => {
+                if (event === 'message') {
+                    logBody.textContent += data.text.replace(new RegExp(String.fromCharCode(27) + '\\[[0-9;]*[a-zA-Z]', 'g'), '');
+                    logBody.scrollTop = logBody.scrollHeight;
+                    return;
+                }
+                if (event !== 'done') return;
+                finished = true;
                 const header = panel.querySelector('.run-log-header');
-                if (ok) {
+                if (data.ok) {
                     header.innerHTML = `<span class="run-log-title" style="color:var(--c-fix)">✓ Scan complete — reloading…</span>`;
                     setTimeout(() => location.reload(), 800);
                 } else {
-                    header.innerHTML = `<span class="run-log-title" style="color:var(--c-critical)">⚠ Scan failed: ${esc(error || 'unknown error')}</span>`;
+                    header.innerHTML = `<span class="run-log-title" style="color:var(--c-critical)">⚠ Scan failed: ${esc(data.error || 'unknown error')}</span>`;
                     btn.disabled = false;
                 }
-            });
-            evtSource.onerror = () => {
-                evtSource.close();
-                const header = panel.querySelector('.run-log-header');
-                header.innerHTML = `<span class="run-log-title" style="color:var(--c-critical)">⚠ Connection error</span>`;
-                btn.disabled = false;
             };
+
+            streamRunSnyk(backup, onEvent)
+                .then(() => { if (!finished) throw new Error('stream ended early'); })
+                .catch(err => {
+                    const header = panel.querySelector('.run-log-header');
+                    header.innerHTML = `<span class="run-log-title" style="color:var(--c-critical)">⚠ Connection error: ${esc(err.message)}</span>`;
+                    btn.disabled = false;
+                });
         });
+
+        // POSTs to /run-snyk and feeds each server-sent event to `onEvent(event, data)`. EventSource
+        // can only send GET requests without custom headers, so the stream is read from fetch instead.
+        async function streamRunSnyk(backup, onEvent) {
+            const res = await fetch(`/run-snyk?backup=${backup ? '1' : '0'}`, { method: 'POST', headers: apiHeaders() });
+            if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+            const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+            let buffer = '';
+            for (;;) {
+                const { value, done } = await reader.read();
+                if (done) return;
+                buffer += value;
+                let boundary;
+                while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+                    const block = buffer.slice(0, boundary);
+                    buffer = buffer.slice(boundary + 2);
+                    let event = 'message';
+                    let data = '';
+                    for (const line of block.split('\n')) {
+                        if (line.startsWith('event: ')) event = line.slice(7);
+                        else if (line.startsWith('data: ')) data += line.slice(6);
+                    }
+                    if (data) onEvent(event, JSON.parse(data));
+                }
+            }
+        }
 
         // ── Init ──
         renderHeader();
