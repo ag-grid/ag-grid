@@ -253,6 +253,31 @@ describe('Row Selection Legacy Grid Options', () => {
                 `);
             });
 
+            test('Clicking a row does nothing when `suppressRowClickSelection` is true', async () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: 'multiple',
+                    suppressRowClickSelection: true,
+                });
+
+                actions.clickRowByIndex(1);
+                assertSelectedRowsByIndex([], api);
+                await new GridRows(
+                    api,
+                    `Clicking a row does nothing when _suppressRowClickSelection_ is true final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
+            });
+
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', async () => {
                     const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
