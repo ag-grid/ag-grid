@@ -202,6 +202,42 @@ describe('accentedSort locale and collator options', () => {
         expect(displayed()).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
     });
 
+    test('an equal options object, as from a framework re-render, reuses the collator', () => {
+        // Counts the collators the grid sorts with; validation builds its own to check the options.
+        const RealCollator = Intl.Collator;
+        let built = 0;
+        vi.spyOn(Intl, 'Collator').mockImplementation(function (
+            locales?: string | string[],
+            options?: Intl.CollatorOptions
+        ) {
+            if (!new Error().stack?.includes('validateAccentedSort')) {
+                built++;
+            }
+            return new RealCollator(locales, options);
+        } as any);
+        const columnDefs = (): ColDef[] => [{ field: 'name' }, { field: 'german', accentedSort: { locales: 'de' } }];
+        const api = createGrid('accented-equal-options', {
+            columnDefs: columnDefs(),
+            rowData: names.map((name) => ({ name, german: name })),
+            accentedSort: { locales: 'sv', options: { sensitivity: 'base' } },
+        });
+
+        expect(sortedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        expect(sortedValues(api, 'german')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+        const builtInitially = built;
+        expect(builtInitially).toBeGreaterThan(0);
+
+        api.setGridOption('accentedSort', { locales: 'sv', options: { sensitivity: 'base' } });
+        api.setGridOption('columnDefs', columnDefs());
+        expect(sortedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        expect(sortedValues(api, 'german')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+        expect(built).toBe(builtInitially);
+
+        api.setGridOption('accentedSort', { locales: 'de' });
+        expect(sortedValues(api, 'name')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+        expect(built).toBe(builtInitially + 1);
+    });
+
     test('colDef.accentedSort overrides the grid option for that column', () => {
         const rowData = names.map((name) => ({ inherit: name, off: name, german: name }));
         const api = createGrid('accented-coldef', {

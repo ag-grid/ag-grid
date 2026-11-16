@@ -11,8 +11,9 @@ import type {
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
+    StringComparatorCache,
 } from 'ag-grid-community';
-import { AgPromise, BeanStub, _addGridCommonParams, _getStringComparator } from 'ag-grid-community';
+import { AgPromise, BeanStub, _addGridCommonParams, _resolveStringComparator } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
 import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } from './setFilterUtils';
@@ -74,6 +75,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private keyComparator: (a: string | null, b: string | null) => number;
     /** The column's effective `accentedSort`, used when the values are sorted without a user comparator. */
     private stringComparator: StringComparator | undefined;
+    /** Keeps the comparator while the column definition or grid options are replaced with an equal `accentedSort`. */
+    private stringComparatorCache: StringComparatorCache | undefined;
     /** The grid's default comparator, using the column's `accentedSort`. */
     private defaultComparator: (a: any, b: any) => number;
     private valueComparator: (a: TValue | null, b: TValue | null) => number;
@@ -219,7 +222,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             csrmValuesExtractor.getValue = getValue;
         }
 
-        const stringComparator = _getStringComparator(colDef.accentedSort ?? this.gos.get('accentedSort'));
+        const stringComparatorCache = _resolveStringComparator(
+            colDef.accentedSort ?? this.gos.get('accentedSort'),
+            this.stringComparatorCache
+        );
+        this.stringComparatorCache = stringComparatorCache;
+        const stringComparator = stringComparatorCache.comparator;
         const defaultComparator = stringComparator
             ? (a: any, b: any) => _defaultComparator(a, b, stringComparator)
             : _defaultComparator;

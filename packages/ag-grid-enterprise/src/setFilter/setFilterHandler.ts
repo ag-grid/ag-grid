@@ -23,6 +23,7 @@ import {
     _getFilterValueSource,
     _isBlank,
     _isClientSideRowModel,
+    _mergedEqual,
 } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
@@ -466,9 +467,10 @@ export class SetFilterHandler<TValue = string>
 
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
-        this.addManagedPropertyListeners(['accentedSort'], () => {
+        this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
             const { colDef, column } = this.params;
-            if (colDef.accentedSort !== undefined) {
+            // an equal value, e.g. from a framework re-creating the grid options, keeps the current order
+            if (colDef.accentedSort !== undefined || _mergedEqual(currentValue, previousValue)) {
                 return;
             }
             this.beans.colFilter?.filterParamsChanged(column.getColId());

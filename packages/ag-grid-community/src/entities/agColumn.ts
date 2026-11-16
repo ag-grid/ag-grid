@@ -23,6 +23,7 @@ import type {
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { StringComparatorCache } from '../sort/accentedSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
 import { _isProtoField } from '../utils/value';
@@ -203,6 +204,8 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
+    /** The comparator for `colDef.accentedSort`, kept while the column definition is replaced by an equal value. */
+    public stringComparatorCache: StringComparatorCache | undefined = undefined;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */

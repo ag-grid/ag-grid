@@ -12,7 +12,8 @@ import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEnti
 import type { IFormulaService } from '../interfaces/formulas';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ValueService } from '../valueService/valueService';
-import { _getStringComparator } from './accentedSort';
+import type { StringComparatorCache } from './accentedSort';
+import { _resolveStringComparator } from './accentedSort';
 
 // this logic is used by both SSRM and CSRM
 
@@ -22,6 +23,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     /** String comparator from the `accentedSort` grid option; a column's own `accentedSort` overrides it. */
     private gridStringComparator: StringComparator | undefined;
+    /** Keeps the grid's comparator while `accentedSort` is replaced by an equal value. */
+    private gridStringComparatorCache: StringComparatorCache | undefined;
     private primaryColumnsSortGroups: boolean = false;
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
@@ -39,7 +42,9 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const updateOptions = () => {
             const gos = this.gos;
-            this.gridStringComparator = _getStringComparator(gos.get('accentedSort'));
+            const cache = _resolveStringComparator(gos.get('accentedSort'), this.gridStringComparatorCache);
+            this.gridStringComparatorCache = cache;
+            this.gridStringComparator = cache.comparator;
             this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
         };
 
