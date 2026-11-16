@@ -193,6 +193,7 @@ The subscription starts when the grid is ready, unless `viewSubscriptionActive` 
 - Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured, for example while the grid is in an inactive tab of your application. Setting it back to `true` subscribes the rows in view. While it is `false`, nothing is subscribed, even when the page is shown.
 - Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
 - The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
+- Without `getRowId`, nothing is subscribed. Providing it later subscribes the rows in view, and removing it unsubscribes every row. A new `getRowId` callback for the same rows makes no call.
 
 Bind `viewSubscriptionActive` to application state while the handlers stay as they are:
 

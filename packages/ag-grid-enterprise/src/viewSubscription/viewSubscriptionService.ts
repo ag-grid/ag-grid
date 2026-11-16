@@ -79,6 +79,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
+        // Row IDs are read from the row nodes, so a new callback for the same rows changes nothing.
+        // Only adding a missing `getRowId` or removing it acts, as frameworks can pass a new function on every render.
+        this.addManagedPropertyListener('getRowId', () =>
+            _getRowIdCallback(this.beans) ? this.refresh() : this.stop()
+        );
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.addManagedListeners(_getDocument(this.beans), { visibilitychange: () => this.refresh() });
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
@@ -127,7 +132,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
-        options.subscribeRows(rows, this.createParams());
+        this.callSubscribeRows(sub, rows, options);
     }
 
     /** Unsubscribes every subscribed row. Cleared first, so a handler that turns the subscription back on starts afresh. */
@@ -230,7 +235,23 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             this.schedule();
         }
         if (rows.length) {
-            this.getOptions()?.subscribeRows(rows, this.createParams());
+            this.callSubscribeRows(sub, rows, this.getOptions());
+        }
+    }
+
+    /** Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`. */
+    private callSubscribeRows(
+        sub: ActiveSubscription,
+        rows: ViewRow[],
+        options: ViewSubscriptionOptions | undefined
+    ): void {
+        try {
+            options?.subscribeRows(rows, this.createParams());
+        } catch (e) {
+            for (const row of rows) {
+                sub.rows.delete(row.id);
+            }
+            throw e;
         }
     }
 

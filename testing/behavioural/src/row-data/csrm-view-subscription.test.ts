@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, mockGridLayout, nextAnimationFrame } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, mockGridLayout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, ViewSubscriptionOptions } from 'ag-grid-community';
 import {
@@ -9,6 +9,7 @@ import {
     NumberFilterModule,
     PaginationModule,
     ScrollApiModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
@@ -212,6 +213,39 @@ describe('CSRM viewSubscription', () => {
         }
     });
 
+    test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            // Rows 50-55 were never subscribed, so removing the option passes none of them to unsubscribeRows.
+            api.setGridOption('viewSubscription', undefined);
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('debounceMs still calls the handlers while data updates keep arriving', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
@@ -232,6 +266,53 @@ describe('CSRM viewSubscription', () => {
     });
 
     describe('lifecycle', () => {
+        describe('getRowId', () => {
+            // getRowId is an initial property (warning 22), and the grid warns while it is missing (warning 188).
+            beforeEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [22, 188] });
+            });
+
+            afterEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES });
+            });
+
+            /** Updates `getRowId` the way a framework wrapper does, as it is not a managed grid option. */
+            function setGetRowId(api: GridApi, getRowId: GridOptions['getRowId']) {
+                api.updateGridOptions({ getRowId } as GridOptions);
+            }
+
+            test('providing getRowId after the grid is created subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers, getRowId: undefined });
+                expect(recorder.calls).toEqual([]);
+
+                setGetRowId(api, (params) => params.data.id);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('a new getRowId callback makes no call', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                setGetRowId(api, (params) => params.data.id);
+                await nextAnimationFrame();
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('removing getRowId unsubscribes every row', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                setGetRowId(api, undefined);
+
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
+                expect(recorder.violations).toEqual([]);
+            });
+        });
+
         describe('pauseWhenHidden', () => {
             let pageHidden = false;
 
