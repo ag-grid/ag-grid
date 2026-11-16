@@ -80,7 +80,10 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             (eParentElement as HTMLElement).classList.add('ag-react-wrapper-block');
         }
 
-        /** @deprecated v21.2 */
+        /**
+         * @deprecated v21.2 - Kept as it costs nothing to maintain, and there is no way to warn users
+         * before removal: React copies props, so reads of `reactContainer` cannot be detected.
+         */
         params.reactContainer = eParentElement;
 
         return eParentElement;

@@ -853,11 +853,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressFocusAfterRefresh?: boolean,
-    /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-         * @default false
-         * @initial
-         */
-    suppressBrowserResizeObserver?: boolean,
     /** Disables change detection.
          * @default false
          */
@@ -2284,7 +2279,6 @@ export function getProps() {
         enableCellExpressions: undefined,
         suppressTouch: undefined,
         suppressFocusAfterRefresh: undefined,
-        suppressBrowserResizeObserver: undefined,
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,

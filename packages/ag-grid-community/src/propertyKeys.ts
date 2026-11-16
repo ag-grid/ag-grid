@@ -294,7 +294,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'includeHiddenColumnsInCharts',
     'suppressMaintainUnsortedOrder',
     'enableCellTextSelection',
-    'suppressBrowserResizeObserver',
     'suppressMaxRenderedRowRestriction',
     'excludeChildrenWhenTreeDataFiltering',
     'tooltipMouseTrack',

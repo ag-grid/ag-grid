@@ -987,12 +987,6 @@ export interface GridOptions<TData = any> {
      */
     suppressFocusAfterRefresh?: boolean;
     /**
-     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-     * @default false
-     * @initial
-     */
-    suppressBrowserResizeObserver?: boolean;
-    /**
      * Disables change detection.
      * @default false
      */

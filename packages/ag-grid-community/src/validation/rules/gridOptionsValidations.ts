@@ -40,11 +40,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
     onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
 
-    suppressBrowserResizeObserver: {
-        version: '32.2',
-        message: "The grid always uses the browser's ResizeObserver, this grid option has no effect.",
-    },
-
     onColumnEverythingChanged: {
         version: '32.2',
         message:

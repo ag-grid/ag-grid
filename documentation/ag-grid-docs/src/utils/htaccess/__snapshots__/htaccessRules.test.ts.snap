@@ -130,7 +130,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=227]
+    RewriteRule ^ - [S=231]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
@@ -142,6 +142,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?javascript-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
     RewriteRule "^/?javascript-grid/cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?javascript-grid/client-side-model/$" "https://www.ag-grid.com/javascript-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?javascript-grid/column-api/$" "https://www.ag-grid.com/javascript-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-cell-editor/$" "https://www.ag-grid.com/javascript-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-date/$" "https://www.ag-grid.com/javascript-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-header/$" "https://www.ag-grid.com/javascript-data-grid/column-headers/" [R=301,L]
@@ -176,6 +177,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?javascript-grid/themes-provided/$" "https://www.ag-grid.com/javascript-data-grid/themes/" [R=301,L]
     RewriteRule "^/?angular-grid/cell-rendering/$" "https://www.ag-grid.com/angular-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?angular-grid/client-side-model/$" "https://www.ag-grid.com/angular-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?angular-grid/column-api/$" "https://www.ag-grid.com/angular-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?angular-grid/component-cell-editor/$" "https://www.ag-grid.com/angular-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?angular-grid/component-date/$" "https://www.ag-grid.com/angular-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?angular-grid/component-header/$" "https://www.ag-grid.com/angular-data-grid/column-headers/" [R=301,L]
@@ -210,6 +212,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?angular-grid/themes-provided/$" "https://www.ag-grid.com/angular-data-grid/themes/" [R=301,L]
     RewriteRule "^/?react-grid/cell-rendering/$" "https://www.ag-grid.com/react-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?react-grid/client-side-model/$" "https://www.ag-grid.com/react-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?react-grid/column-api/$" "https://www.ag-grid.com/react-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?react-grid/component-date/$" "https://www.ag-grid.com/react-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?react-grid/component-header/$" "https://www.ag-grid.com/react-data-grid/column-headers/" [R=301,L]
     RewriteRule "^/?react-grid/component-overlay/$" "https://www.ag-grid.com/react-data-grid/overlays/" [R=301,L]
@@ -248,6 +251,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?react-grid/themes-provided/$" "https://www.ag-grid.com/react-data-grid/themes/" [R=301,L]
     RewriteRule "^/?vue-grid/cell-rendering/$" "https://www.ag-grid.com/vue-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?vue-grid/client-side-model/$" "https://www.ag-grid.com/vue-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?vue-grid/column-api/$" "https://www.ag-grid.com/vue-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?vue-grid/component-cell-editor/$" "https://www.ag-grid.com/vue-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?vue-grid/component-date/$" "https://www.ag-grid.com/vue-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?vue-grid/component-header/$" "https://www.ag-grid.com/vue-data-grid/column-headers/" [R=301,L]
@@ -781,7 +785,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid-cell-rendering/ /angular-data-grid/component-cell-renderer/
     Redirect 301 /angular-grid-cell-template/ /angular-data-grid/getting-started/
     Redirect 301 /angular-grid-clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /angular-grid-column-api/ /angular-data-grid/column-api/
+    Redirect 301 /angular-grid-column-api/ /angular-data-grid/grid-api/
     Redirect 301 /angular-grid-column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /angular-grid-column-menu/ /angular-data-grid/column-menu/
     Redirect 301 /angular-grid-context-menu/ /angular-data-grid/context-menu/
@@ -860,7 +864,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/angular/change-detection/ /angular-data-grid/change-detection/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
+    Redirect 301 /documentation/angular/column-api/ /angular-data-grid/grid-api/
     Redirect 301 /documentation/angular/column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /documentation/angular/column-groups/ /angular-data-grid/column-groups/
     Redirect 301 /documentation/angular/column-headers/ /angular-data-grid/column-headers/
@@ -1057,7 +1061,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/javascript/change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /documentation/javascript/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /documentation/javascript/clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /documentation/javascript/column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /documentation/javascript/column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /documentation/javascript/column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /documentation/javascript/column-groups/ /javascript-data-grid/column-groups/
     Redirect 301 /documentation/javascript/column-headers/ /javascript-data-grid/column-headers/
@@ -1245,7 +1249,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/react/change-detection/ /react-data-grid/change-detection/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/row-models/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
-    Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
+    Redirect 301 /documentation/react/column-api/ /react-data-grid/grid-api/
     Redirect 301 /documentation/react/column-definitions/ /react-data-grid/column-definitions/
     Redirect 301 /documentation/react/column-groups/ /react-data-grid/column-groups/
     Redirect 301 /documentation/react/column-headers/ /react-data-grid/column-headers/
@@ -1439,7 +1443,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/vue/change-detection/ /vue-data-grid/change-detection/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/row-models/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
-    Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
+    Redirect 301 /documentation/vue/column-api/ /vue-data-grid/grid-api/
     Redirect 301 /documentation/vue/column-definitions/ /vue-data-grid/column-definitions/
     Redirect 301 /documentation/vue/column-groups/ /vue-data-grid/column-groups/
     Redirect 301 /documentation/vue/column-headers/ /vue-data-grid/column-headers/
@@ -1641,7 +1645,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid-change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /javascript-grid-client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid-clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /javascript-grid-column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /javascript-grid-column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /javascript-grid-column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /javascript-grid-column-header/ /javascript-data-grid/column-headers/
     Redirect 301 /javascript-grid-column-interface/ /javascript-data-grid/column-interface/
@@ -1817,7 +1821,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid/change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /javascript-grid/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid/clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /javascript-grid/column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /javascript-grid/column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /javascript-grid/column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /javascript-grid/column-groups/ /javascript-data-grid/column-groups/
     Redirect 301 /javascript-grid/column-headers/ /javascript-data-grid/column-headers/
@@ -2009,7 +2013,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid/change-detection/ /angular-data-grid/change-detection/
     Redirect 301 /angular-grid/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /angular-grid/clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /angular-grid/column-api/ /angular-data-grid/column-api/
+    Redirect 301 /angular-grid/column-api/ /angular-data-grid/grid-api/
     Redirect 301 /angular-grid/column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /angular-grid/column-groups/ /angular-data-grid/column-groups/
     Redirect 301 /angular-grid/column-headers/ /angular-data-grid/column-headers/
@@ -2202,7 +2206,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/change-detection/ /react-data-grid/change-detection/
     Redirect 301 /react-grid/client-side-model/ /react-data-grid/row-models/
     Redirect 301 /react-grid/clipboard/ /react-data-grid/clipboard/
-    Redirect 301 /react-grid/column-api/ /react-data-grid/column-api/
+    Redirect 301 /react-grid/column-api/ /react-data-grid/grid-api/
     Redirect 301 /react-grid/column-definitions/ /react-data-grid/column-definitions/
     Redirect 301 /react-grid/column-groups/ /react-data-grid/column-groups/
     Redirect 301 /react-grid/column-headers/ /react-data-grid/column-headers/
@@ -2401,7 +2405,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-grid/change-detection/ /vue-data-grid/change-detection/
     Redirect 301 /vue-grid/client-side-model/ /vue-data-grid/row-models/
     Redirect 301 /vue-grid/clipboard/ /vue-data-grid/clipboard/
-    Redirect 301 /vue-grid/column-api/ /vue-data-grid/column-api/
+    Redirect 301 /vue-grid/column-api/ /vue-data-grid/grid-api/
     Redirect 301 /vue-grid/column-definitions/ /vue-data-grid/column-definitions/
     Redirect 301 /vue-grid/column-groups/ /vue-data-grid/column-groups/
     Redirect 301 /vue-grid/column-headers/ /vue-data-grid/column-headers/
@@ -2907,6 +2911,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/server-side-operations-spark /angular-data-grid/server-side-model
     Redirect 301 /react-data-grid/server-side-operations-spark /react-data-grid/server-side-model
     Redirect 301 /vue-data-grid/server-side-operations-spark /vue-data-grid/server-side-model
+    Redirect 301 /javascript-data-grid/column-api /javascript-data-grid/grid-api
+    Redirect 301 /angular-data-grid/column-api /angular-data-grid/grid-api
+    Redirect 301 /react-data-grid/column-api /react-data-grid/grid-api
+    Redirect 301 /vue-data-grid/column-api /vue-data-grid/grid-api
     RedirectMatch 301 "^/javascript-grid-virtual-paging/.*" "/javascript-data-grid/infinite-scrolling/"
     RedirectMatch 301 "^/javascript-grid-enterprise-model/.*" "/javascript-data-grid/server-side-model/"
     Redirect 301 /javascript-grid-cell-style/ /javascript-data-grid/cell-styles/
