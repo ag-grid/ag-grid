@@ -3,6 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _normalizeSortType, getSortDefFromInput, getSortingOrder } from '../entities/agColumn';
+import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -23,6 +24,8 @@ export class SortService extends BeanStub implements NamedBean {
     private cols: AgColumn[] | null = null;
     private map: Map<AgColumn, number> | null = null;
     private opts: SortOption[] | null = null;
+    /** The `accentedSort` grid option `opts` was resolved with, as its string comparators depend on it. */
+    private optsAccentedSort: GridOptions['accentedSort'];
     private displaySortCount = 0;
 
     public override destroy(): void {
@@ -268,7 +271,8 @@ export class SortService extends BeanStub implements NamedBean {
 
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
-        if (opts === null) {
+        const accentedSort = this.gos.get('accentedSort');
+        if (opts === null || accentedSort !== this.optsAccentedSort) {
             opts = [];
             const cols = this.getSortedCols();
             for (let i = 0, len = cols.length; i < len; ++i) {
@@ -288,8 +292,9 @@ export class SortService extends BeanStub implements NamedBean {
                     });
                 }
             }
-            _resolveSortOptions(opts, this.beans.colModel);
+            _resolveSortOptions(opts, this.beans.colModel, this.gos);
             this.opts = opts;
+            this.optsAccentedSort = accentedSort;
         }
         return opts;
     }

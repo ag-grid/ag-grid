@@ -1,5 +1,7 @@
 import type { StringComparator } from 'ag-stack';
 
+import type { AgColumn } from '../entities/agColumn';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { AccentedSortOptions } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 
@@ -23,34 +25,30 @@ const createCollatorComparator = (
     }
 };
 
-/**
- * An `accentedSort` value with the comparator built from it, held by the owner of the value (the grid or a column).
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export interface StringComparatorCache {
-    readonly accentedSort: boolean | AccentedSortOptions | undefined;
-    /** Used when both values are strings; `undefined` when `accentedSort` is off. */
-    readonly comparator: StringComparator | undefined;
-}
+/** Builds the comparator for an `accentedSort` value, or `undefined` when it is off. */
+const createStringComparator = (
+    accentedSort: boolean | AccentedSortOptions | undefined
+): StringComparator | undefined => {
+    if (!accentedSort) {
+        return undefined;
+    }
+    if (accentedSort === true) {
+        return localeStringComparator;
+    }
+    return createCollatorComparator(accentedSort.locales, accentedSort.options);
+};
 
 /**
- * Resolves an `accentedSort` value to its comparator, reusing `cache` while the value is equal to the cached one.
- * Frameworks such as React can recreate the grid options or a column definition on every render, so an equal
- * options object keeps its `Intl.Collator`, and the owner drops the comparator with the cache.
+ * The comparator used for a column's strings, from its effective `accentedSort`: the column's own, else the grid's.
+ * It is kept on the column and rebuilt only when that value changes, so a framework such as React re-creating the
+ * grid options or column definition with an equal value keeps its `Intl.Collator`, which goes with the column.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _resolveStringComparator(
-    accentedSort: boolean | AccentedSortOptions | undefined,
-    cache: StringComparatorCache | undefined
-): StringComparatorCache {
-    if (cache && _mergedEqual(cache.accentedSort, accentedSort)) {
-        return cache;
+export function _getColumnStringComparator(column: AgColumn, gos: GridOptionsService): StringComparator | undefined {
+    const accentedSort = column.colDef.accentedSort ?? gos.get('accentedSort');
+    if (!_mergedEqual(column.accentedSort, accentedSort)) {
+        column.accentedSort = accentedSort;
+        column.stringComparator = createStringComparator(accentedSort);
     }
-    let comparator: StringComparator | undefined;
-    if (accentedSort === true) {
-        comparator = localeStringComparator;
-    } else if (accentedSort) {
-        comparator = createCollatorComparator(accentedSort.locales, accentedSort.options);
-    }
-    return { accentedSort, comparator };
+    return column.stringComparator;
 }

@@ -1,4 +1,3 @@
-import type { StringComparator } from 'ag-stack';
 import { _defaultComparator } from 'ag-stack';
 
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
@@ -12,8 +11,6 @@ import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEnti
 import type { IFormulaService } from '../interfaces/formulas';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ValueService } from '../valueService/valueService';
-import type { StringComparatorCache } from './accentedSort';
-import { _resolveStringComparator } from './accentedSort';
 
 // this logic is used by both SSRM and CSRM
 
@@ -21,10 +18,6 @@ import { _resolveStringComparator } from './accentedSort';
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    /** String comparator from the `accentedSort` grid option; a column's own `accentedSort` overrides it. */
-    private gridStringComparator: StringComparator | undefined;
-    /** Keeps the grid's comparator while `accentedSort` is replaced by an equal value. */
-    private gridStringComparatorCache: StringComparatorCache | undefined;
     private primaryColumnsSortGroups: boolean = false;
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
@@ -41,14 +34,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         };
 
         const updateOptions = () => {
-            const gos = this.gos;
-            const cache = _resolveStringComparator(gos.get('accentedSort'), this.gridStringComparatorCache);
-            this.gridStringComparatorCache = cache;
-            this.gridStringComparator = cache.comparator;
-            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
         };
 
-        this.addManagedPropertyListeners(['accentedSort', 'autoGroupColumnDef', 'treeData'], updateOptions);
+        this.addManagedPropertyListeners(['autoGroupColumnDef', 'treeData'], updateOptions);
 
         this.addManagedEventListeners({
             columnPivotModeChanged: updatePivotModeState,
@@ -71,8 +60,6 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
-        const gridStringComparator = this.gridStringComparator;
-
         // Iterate columns, return the first that doesn't match. Comparators are resolved up front
         // (see _resolveSortOptions): a col comparator applies to every row; a row-group display col falls back
         // to its primary column's comparator for leaf rows only; otherwise the grid's default comparator is used.
@@ -88,8 +75,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             if (comparator) {
                 result = comparator(valueA, valueB, nodeA, nodeB, descending);
             } else {
-                const colStringComparator = sortOption.stringComparator;
-                const stringComparator = colStringComparator === undefined ? gridStringComparator : colStringComparator;
+                const stringComparator = sortOption.stringComparator;
                 result = sortOption.absolute
                     ? _defaultComparator(
                           absoluteValueTransformer(valueA),

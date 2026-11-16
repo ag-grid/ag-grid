@@ -17,9 +17,6 @@ export interface SortOption {
     descending: boolean;
     /** `type === 'absolute'`, precomputed to avoid a per-comparison string compare. Filled by `_resolveSortOptions`. */
     absolute: boolean;
-    /**
-     * String comparator from the column's own `accentedSort`. Filled by `_resolveSortOptions`.
-     * `undefined` when the column does not set `accentedSort`, so the grid option applies; `null` when the column turns it off.
-     */
-    stringComparator: StringComparator | null | undefined;
+    /** Compares strings for the column's effective `accentedSort`, `undefined` when it is off. Filled by `_resolveSortOptions`. */
+    stringComparator: StringComparator | undefined;
 }

@@ -1,4 +1,4 @@
-import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
+import type { AgBeanStubEvent, AgEvent, IAgEventEmitter, StringComparator } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
@@ -22,8 +22,7 @@ import type {
 } from '../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
-import type { StringComparatorCache } from '../sort/accentedSort';
+import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
 import { _isProtoField } from '../utils/value';
@@ -204,8 +203,10 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
-    /** The comparator for `colDef.accentedSort`, kept while the column definition is replaced by an equal value. */
-    public stringComparatorCache: StringComparatorCache | undefined = undefined;
+    /** The effective `accentedSort` the column's string comparator was built from: its own, else the grid's. */
+    public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
+    /** Compares the column's strings for `accentedSort`, `undefined` when it is off. See `_getColumnStringComparator`. */
+    public stringComparator: StringComparator | undefined = undefined;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
