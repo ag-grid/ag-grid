@@ -20,44 +20,6 @@ const [{ mockGridLayout }, { objectUrls }, { clipboardUtils }] = await Promise.a
     import('ag-test-utils/polyfills/clipboard'),
 ]);
 mockGridLayout.init();
-// PROBE (temporary): per-file computed-style cost
-if (process.env.PROBE_STYLE) {
-    const g = globalThis as any;
-    if (!g.__probeStyle) {
-        const st = (g.__probeStyle = { gcs: 0, gcsMs: 0, vis: 0, visMs: 0, depth: 0, sheets: 0, callers: new Map() });
-        const realGcs = window.getComputedStyle;
-        const realVis = Element.prototype.checkVisibility;
-        let inside = 0;
-        window.getComputedStyle = function (el: Element, p?: string | null) {
-            if (inside) {
-                st.gcs++;
-                return realGcs.call(window, el, p);
-            }
-            inside++;
-            const t = performance.now();
-            try {
-                st.gcs++;
-                return realGcs.call(window, el, p);
-            } finally {
-                st.gcsMs += performance.now() - t;
-                inside--;
-                const k = (new Error().stack ?? '').split('\n')[2]?.trim().replace(/\(.*ag-grid2\//, '(').slice(0, 140) ?? '';
-                st.callers.set(k, (st.callers.get(k) ?? 0) + 1);
-            }
-        } as typeof window.getComputedStyle;
-        Element.prototype.checkVisibility = function (this: Element, o?: CheckVisibilityOptions) {
-            inside++;
-            const t = performance.now();
-            try {
-                st.vis++;
-                return realVis.call(this, o);
-            } finally {
-                st.visMs += performance.now() - t;
-                inside--;
-            }
-        };
-    }
-}
 objectUrls.init();
 clipboardUtils.init();
 // user-event patches `focus`/`blur` once per window and marks the document, so it can never be undone per file.
@@ -99,6 +61,7 @@ ignoreConsoleLicenseKeyError();
 const baseline = snapshotSharedObjects();
 const bodyAttributes = snapshotAttributes(document.body);
 const htmlAttributes = snapshotAttributes(document.documentElement);
+const headChildren = Array.from(document.head.childNodes);
 
 // Registered before the file's own hooks, so it runs after all of them.
 afterAll(async () => {
@@ -126,6 +89,10 @@ afterAll(async () => {
             document.body.replaceChildren();
             restoreAttributes(document.body, bodyAttributes);
             restoreAttributes(document.documentElement, htmlAttributes);
+            // A new head, not an emptied one: AG Charts injects its CSS once per head element.
+            const head = document.createElement('head');
+            head.append(...headChildren);
+            document.documentElement.replaceChild(head, document.head);
 
             mockGridLayout.resetOptions();
             objectUrls.reset();

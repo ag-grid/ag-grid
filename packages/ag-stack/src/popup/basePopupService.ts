@@ -66,6 +66,13 @@ export abstract class BasePopupService<
 
     protected popupList: AgPopup[] = [];
 
+    public override destroy(): void {
+        for (const popup of this.popupList.slice()) {
+            popup.hideFunc({ forceHide: true });
+        }
+        super.destroy();
+    }
+
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
 
@@ -536,6 +543,9 @@ export abstract class BasePopupService<
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(() => {
+            if (popupHidden) {
+                return;
+            }
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }

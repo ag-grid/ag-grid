@@ -339,10 +339,14 @@ function init(): boolean {
     };
 
     const origGetComputedStyle = window.getComputedStyle;
+    let visibilityCheckDepth = 0;
     window.getComputedStyle = function patchedGetComputedStyle(
         el: Element,
         pseudoElement?: string | null
     ): CSSStyleDeclaration {
+        if (visibilityCheckDepth > 0) {
+            return origGetComputedStyle.call(window, el, pseudoElement);
+        }
         if (!styleTurnScheduled) {
             styleTurnScheduled = true;
             queueMicrotask(() => {
@@ -392,6 +396,22 @@ function init(): boolean {
         styleCache.set(el, { turn: styleTurn, key, style: wrapped });
         return wrapped;
     };
+
+    // happy-dom's checkVisibility reads each ancestor through `window.getComputedStyle`: none of what it reads (display,
+    // visibility, opacity) is overridden above, so inside it the wrapper skips the key, rect and padding work.
+    const origCheckVisibility = Element.prototype.checkVisibility;
+    Object.defineProperty(Element.prototype, 'checkVisibility', {
+        configurable: true,
+        writable: true,
+        value: function checkVisibility(this: Element, options?: CheckVisibilityOptions): boolean {
+            ++visibilityCheckDepth;
+            try {
+                return origCheckVisibility.call(this, options);
+            } finally {
+                --visibilityCheckDepth;
+            }
+        },
+    });
 
     // These live on HTMLElement.prototype, shadowing any Element.prototype patch, so install there too.
     // Behind the flag, since the default 0 is what the captured snapshots record.
