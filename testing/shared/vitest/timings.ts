@@ -12,6 +12,10 @@ declare module 'vitest' {
         activeMs?: number;
         /** Milliseconds it sat waiting on a timer or IO - the part a removed delay would give back. */
         idleMs?: number;
+        /** This thread's CPU time plus `idleMs`: what the test cost, without time it waited for a core. */
+        costMs?: number;
+        /** Set when `output.setup.ts` failed the test for running past `SLOW_TEST_FAIL_MS`. */
+        tooSlow?: boolean;
     }
 }
 
@@ -25,12 +29,11 @@ const isCI = env?.CI != null;
  */
 export const TEST_TIMEOUT_MS = isCI ? 60_000 : 12_000;
 
-/**
- * Tests at or above this are reported as a warning by `slow-tests.reporter.ts`, so creep is visible as a
- * nudge rather than as the red build that follows it. The slowest legitimate test in the suite is ~3s, so
- * nothing trips this today.
- */
-export const SLOW_TEST_WARN_MS = isCI ? 15_000 : 6_000;
+/** Passing tests at or above this are warned about, so creep shows before it reaches `SLOW_TEST_FAIL_MS`. */
+export const SLOW_TEST_WARN_MS = isCI ? 15_000 : 2_000;
+
+/** Above the warning: a test taking longer fails as too slow, locally only (CI, on slower shared runners, has only the cap). */
+export const SLOW_TEST_FAIL_MS = isCI ? Infinity : 4_000;
 
 /**
  * How many of the slowest tests `slow-tests.reporter.ts` lists when a run finishes, so the cost is visible

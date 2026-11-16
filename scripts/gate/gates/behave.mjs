@@ -11,7 +11,9 @@ export default {
     name: 'behave',
     script: 'behave.sh',
     helpCommand: ['vitest', '--help'],
-    failRe: /^( FAIL|\s+×)/,
+    // `SLOW` and `TOO SLOW` lead the lines of `testing/shared/vitest/slow-tests.reporter.ts`'s two blocks.
+    failRe: /^( FAIL|\s+×|TOO SLOW)/,
+    warnRe: /^SLOW/,
     summaryRe: /^ *(Test Files|Tests|Duration) /,
 
     flags: {

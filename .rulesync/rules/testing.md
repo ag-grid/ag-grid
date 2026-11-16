@@ -127,7 +127,7 @@ All four take `--help` and resolve only from the repo root — from elsewhere ca
 
 ## Speed
 
-**A test should take well under 4 seconds.** The suite mean is ~70ms, so 4s already means something is wrong. A slower one is reported as a warning and a much slower one fails outright; both thresholds live in `testing/shared/vitest/timings.ts`, and are looser in CI.
+**A test should take well under 4 seconds.** The suite mean is ~70ms, so 4s already means something is wrong. Locally, a test costing over 2s is reported as a yellow `SLOW` warning and one over 4s fails as "test too slow - fix it", in red, `--quiet` included. Cost is the test's own CPU time plus its waits, so a busy machine does not trip it. In CI only the warning applies, at a looser threshold; the thresholds live in `testing/shared/vitest/timings.ts`.
 
 **Never pass a timeout to `test()`.** It does not raise the limit — `testing/shared/vitest/output.setup.ts` fails on measured duration, so an override only lets a slow test run to completion and then fail anyway. It hid a 147s test for months. If a test needs more time, the time is the bug.
 

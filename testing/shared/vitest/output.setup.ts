@@ -5,7 +5,7 @@ import type { EventLoopUtilization } from 'node:perf_hooks';
 import type { TestContext } from 'vitest';
 import { afterEach, beforeEach, chai } from 'vitest';
 
-import { TEST_TIMEOUT_MS } from './timings';
+import { SLOW_TEST_FAIL_MS, TEST_TIMEOUT_MS } from './timings';
 
 // `process` is absent in browser mode (BENCH_BROWSER), so guard the env reads.
 const env = typeof process !== 'undefined' ? process.env : undefined;
@@ -44,7 +44,10 @@ const realNow = performance.now.bind(performance);
 
 // Keyed by task rather than held in a module global: a `concurrent` suite overlaps these hooks, and a
 // shared pair of variables would then bill one test for another's wait.
-const startedAt = new WeakMap<object, { at: number; elu: EventLoopUtilization | undefined }>();
+const startedAt = new WeakMap<
+    object,
+    { at: number; elu: EventLoopUtilization | undefined; cpu: ReturnType<typeof process.threadCpuUsage> | undefined }
+>();
 beforeEach((ctx: TestContext) => {
     if (ctx.task) {
         // Before the body runs, since the duration check below cannot pre-empt a worker blocked for minutes.
@@ -57,7 +60,11 @@ beforeEach((ctx: TestContext) => {
                     ` A test needing longer is waiting on something - find what it waits on, or split the case up.`
             );
         }
-        startedAt.set(ctx.task, { at: realNow(), elu: eventLoopUtilization?.() });
+        startedAt.set(ctx.task, {
+            at: realNow(),
+            elu: eventLoopUtilization?.(),
+            cpu: isNode ? process.threadCpuUsage() : undefined,
+        });
     }
 });
 // Typed against vitest's own `TestContext`, so a rename fails the type-check rather than silently
@@ -69,16 +76,37 @@ afterEach((ctx: TestContext) => {
     }
     // Skipped for a concurrent task: the counter covers the whole worker, so overlapping tests would each
     // be billed the others' idle. The suite has none today, and a wrong number is worse than no number.
-    if (eventLoopUtilization && started.elu && ctx.task.meta && !ctx.task.concurrent) {
+    const elapsedMs = Math.round(realNow() - started.at);
+    // The wall clock unless both counters were read: a busy machine stretches it with time this thread waits
+    // for a core, which its own CPU time plus its waits leave out.
+    let costMs = elapsedMs;
+    const meta = ctx.task.meta;
+    if (eventLoopUtilization && started.elu && started.cpu && meta && !ctx.task.concurrent) {
         // `active` is time this thread had work on the loop; `idle` is time it sat waiting on a timer or IO.
         const { active, idle } = eventLoopUtilization(started.elu);
-        ctx.task.meta.activeMs = active;
-        ctx.task.meta.idleMs = idle;
+        const { user, system } = process.threadCpuUsage(started.cpu);
+        meta.activeMs = active;
+        meta.idleMs = idle;
+        costMs = Math.round((user + system) / 1000 + idle);
+        meta.costMs = costMs;
     }
-    const elapsedMs = Math.round(realNow() - started.at);
     // A test killed by `testTimeout` already reports a duration at the cap, so failing it again here would
     // only staple a second, contradictory error onto the real one.
-    if (elapsedMs > TEST_TIMEOUT_MS && ctx.task?.result?.state !== 'fail') {
+    if (ctx.task.result?.state === 'fail') {
+        return;
+    }
+    // Infinity in CI, so only the cap below applies there.
+    if (costMs > SLOW_TEST_FAIL_MS) {
+        if (meta) {
+            meta.tooSlow = true;
+        }
+        throw new Error(
+            `Test too slow - fix it: ${(costMs / 1000).toFixed(1)}s of CPU and waiting (${(elapsedMs / 1000).toFixed(1)}s wall),` +
+                ` over the ${SLOW_TEST_FAIL_MS / 1000}s local limit. A test this slow is usually waiting on a timeout or` +
+                ` repeating work - find what it waits on, or split the case up.`
+        );
+    }
+    if (elapsedMs > TEST_TIMEOUT_MS) {
         throw new Error(
             `Test took ${(elapsedMs / 1000).toFixed(1)}s, over the ${TEST_TIMEOUT_MS / 1000}s limit. A test this slow is` +
                 ` usually waiting on a timeout rather than working - find what it waits on, or split the case up.`
