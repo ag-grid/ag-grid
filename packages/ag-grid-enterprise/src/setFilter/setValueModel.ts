@@ -230,7 +230,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
         let valueComparator: (a: TValue | null, b: TValue | null) => number;
         if (treeDataOrGrouping && !keyComparator) {
-            valueComparator = (a, b) => treeDataOrGroupingComparator(a as any, b as any, defaultComparator);
+            // without `accentedSort` the plain comparator is used as is, keeping the default path free of a wrapper
+            valueComparator = stringComparator
+                ? (a, b) => treeDataOrGroupingComparator(a as any, b as any, stringComparator)
+                : (treeDataOrGroupingComparator as any);
         } else if (treeList && !treeListPathGetter && !keyComparator) {
             valueComparator = defaultComparator;
         } else {
