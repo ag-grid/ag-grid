@@ -42,7 +42,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     doAggregate(changedPath: ChangedPath | undefined): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
-
 }
 
 export interface RefreshModelParams<TData = any> {

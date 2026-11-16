@@ -17,7 +17,6 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
     applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
-
 }
 
 export interface IServerSideTransactionManager<TData = any> {
