@@ -43,10 +43,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
 
-    /**
-     * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
-     */
-    onRowHeightChangedDebounced(): void;
 }
 
 export interface RefreshModelParams<TData = any> {

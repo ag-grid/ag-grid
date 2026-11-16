@@ -1020,11 +1020,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressFocusAfterRefresh: boolean | undefined = undefined;
-    /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-     * @default false
-     * @initial
-     */
-    @Input({ transform: booleanAttribute }) public suppressBrowserResizeObserver: boolean | undefined = undefined;
     /** Disables change detection.
      * @default false
      */

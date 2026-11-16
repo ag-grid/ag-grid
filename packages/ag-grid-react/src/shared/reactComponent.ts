@@ -80,9 +80,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             (eParentElement as HTMLElement).classList.add('ag-react-wrapper-block');
         }
 
-        /** @deprecated v21.2 */
-        params.reactContainer = eParentElement;
-
         return eParentElement;
     }
 

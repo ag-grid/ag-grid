@@ -1,5 +1,3 @@
-import { _debounce } from 'ag-stack';
-
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -1406,14 +1404,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.stages = null;
         this.stagesRefreshProps.clear();
         clearTimeout(this.asyncTransactionsTimer);
-    }
-
-    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
-    /**
-     * @deprecated v33.1
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 }
 

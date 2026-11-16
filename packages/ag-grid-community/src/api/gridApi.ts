@@ -1479,11 +1479,6 @@ export interface _InfiniteRowModelGridApi {
      * @agModule `InfiniteRowModelModule`
      */
     purgeInfiniteCache(): void;
-
-    /**
-     * @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead.
-     */
-    getInfiniteRowCount(): number | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
