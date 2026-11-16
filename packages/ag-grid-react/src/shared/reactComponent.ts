@@ -70,7 +70,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         }
     }
 
-    protected createParentElement(params: any) {
+    protected createParentElement() {
         const componentWrappingElement = this.portalManager.getComponentWrappingElement();
         const eParentElement = document.createElement(componentWrappingElement || 'div');
 
@@ -139,7 +139,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     public init(params: any): AgPromise<void> {
-        this.eParentElement = this.createParentElement(params);
+        this.eParentElement = this.createParentElement();
 
         this.createOrUpdatePortal(params);
 
