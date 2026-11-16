@@ -142,7 +142,20 @@ function assign(args) {
     const maxShards = Number(args.max);
     const testCount = Number(args.count ?? 0);
     const testDir = args['test-dir'];
-    const onlySpecs = args.specs ? fs.readFileSync(args.specs, 'utf8').split('\n').filter(Boolean) : undefined;
+    const onlySpecs = args.specs
+        ? fs
+              .readFileSync(args.specs, 'utf8')
+              .split(/\r?\n/)
+              .map((file) => file.trim())
+              .filter(Boolean)
+        : undefined;
+
+    // Checked before the fallback, whose bare --shard args would otherwise run every spec.
+    if (onlySpecs?.length === 0) {
+        console.error('The spec list is empty: nothing to run.');
+        console.log(JSON.stringify({ include: [] }));
+        return;
+    }
 
     const fallback = (reason) => {
         console.error(`Falling back to count-based sharding: ${reason}`);
