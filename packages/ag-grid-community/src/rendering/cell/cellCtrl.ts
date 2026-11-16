@@ -19,7 +19,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellClassRules, CellStyle, CheckboxSelectionCallback } from '../../entities/colDef';
+import type { CellClassRules, CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
@@ -472,7 +472,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     private setupControlComps(): void {
         const colDef = this.column.colDef;
-        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(), true);
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
@@ -512,7 +512,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return (rowUnpinned || (allowManuallyPinned && _isManualPinnedRow(this.rowNode))) && !!value;
     }
 
-    private isCheckboxSelection(): boolean | CheckboxSelectionCallback | undefined {
+    private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
         const { rowSelection, groupDisplayType } = this.beans.gridOptions;
         const checkboxLocation = _getCheckboxLocation(rowSelection);
         const isSelectionColumn = isColumnSelectionCol(this.column);
@@ -524,12 +524,15 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             return false;
         }
 
-        return isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection);
+        return (
+            colDef.checkboxSelection ||
+            (isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection))
+        );
     }
 
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.colDef;
-        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(), true);
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy

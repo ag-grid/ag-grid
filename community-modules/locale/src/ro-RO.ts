@@ -780,6 +780,12 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaVisible: 'vizibil',
     ariaSearchFilterValues: 'Caută valori ale filtrului',
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
+    ariaPageSizeSelectorDescription: 'Modificarea dimensiunii paginii actualizează rândurile afișate în grilă',
+    ariaPaginationRowSummary: 'Se afișează înregistrările de la ${variable} la ${variable} din ${variable}',
+    ariaPaginationRowSummaryUnknownTotal:
+        'Se afișează înregistrările de la ${variable} la ${variable}, total necunoscut',
+    ariaPaginationRowSummaryLoading: 'Se încarcă înregistrările de la ${variable}',
+    ariaPaginationPanelLabel: 'Paginarea grilei',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
     ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',

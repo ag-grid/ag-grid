@@ -41,9 +41,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         const idPrefix = `ag-${this.getCompId()}`;
 
         this.setTemplate({
-            tag: 'div',
+            tag: 'nav',
             cls: 'ag-paging-panel ag-unselectable',
-            attrs: { id: idPrefix },
+            attrs: {
+                id: idPrefix,
+                'aria-label': this.getLocaleTextFunc()('ariaPaginationPanelLabel', 'Grid pagination'),
+            },
             children: [{ tag: 'div', cls: 'ag-paging-panel-content', ref: 'eContent' }],
         });
 

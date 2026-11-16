@@ -465,6 +465,8 @@ export type { CheckboxSelectionComponent } from './selection/checkboxSelectionCo
 export type {
     FooterValueGetterFunc,
     GroupCellRendererParams,
+    GroupCheckboxSelectionCallback,
+    GroupCheckboxSelectionCallbackParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IGroupCellRendererFullRowParams,
@@ -799,6 +801,8 @@ export type {
     GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
+    HeaderCheckboxSelectionCallback,
+    HeaderCheckboxSelectionCallbackParams,
     HeaderClass,
     HeaderClassParams,
     HeaderLocation,
