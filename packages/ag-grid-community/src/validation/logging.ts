@@ -387,6 +387,8 @@ export function _resetValidationLogging(): void {
     bootstrapPanelRenderer = null;
     baseDocLink = DEFAULT_DOC_LINK;
     _resetMissingModuleReports();
+    diagnosticListeners.clear();
+    bufferedDiagnostics.length = 0;
 }
 
 /**
