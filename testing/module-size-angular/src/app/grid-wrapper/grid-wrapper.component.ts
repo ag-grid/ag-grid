@@ -101,7 +101,7 @@ export class GridWrapperComponent {
         filter: 'agTextColumnFilter',
         floatingFilter: true,
     };
-    public rowSelection: RowSelectionOptions = {
+    public rowSelection: RowSelectionOptions | 'single' | 'multiple' = {
         mode: 'multiRow',
         headerCheckbox: false,
     };
