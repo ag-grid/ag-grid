@@ -1834,19 +1834,14 @@ describe('Column Groups', () => {
                     },
                 ],
             });
-            await new GridColumns(
-                api,
-                `getId / getChildren return live values; getLeafColumns handles e setup`
-            ).checkColumns(`
+            await new GridColumns(api, `getId / getChildren return live values; getLeafColumns handles e setup`)
+                .checkColumns(`
                 CENTER
                 └─┬ GROUP
                   ├── a width:200
                   └── b width:200
             `);
-            await new GridRows(
-                api,
-                `getId / getChildren return live values; getLeafColumns handles e setup`
-            ).check(`
+            await new GridRows(api, `getId / getChildren return live values; getLeafColumns handles e setup`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
@@ -1873,8 +1868,7 @@ describe('Column Groups', () => {
                     },
                 ],
             });
-            await new GridColumns(api, `isEmptyGroup / getActualWidth on a displayed group setup`)
-                .checkColumns(`
+            await new GridColumns(api, `isEmptyGroup / getActualWidth on a displayed group setup`).checkColumns(`
                     CENTER
                     └─┬ GROUP
                       ├── a width:100

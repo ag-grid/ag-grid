@@ -2127,18 +2127,14 @@ describe('Column Features', () => {
                     { colId: 'b', sortable: true, initialSort: { type: 'absolute', direction: 'asc' } as any },
                 ],
             });
-            await new GridColumns(
-                api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis setup`
-            ).checkColumns(`
+            await new GridColumns(api, `getSortDef reflects current sort + absolute-sort initialSort exercis setup`)
+                .checkColumns(`
                 CENTER
                 ├── a width:200
                 └── b width:200 sort:asc
             `);
-            await new GridRows(
-                api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis setup`
-            ).check(`
+            await new GridRows(api, `getSortDef reflects current sort + absolute-sort initialSort exercis setup`)
+                .check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
