@@ -145,15 +145,27 @@ value the cell showed as `oldValue`, both in the getter's units. It decides what
 example by reversing the getter on both and passing the results to `distributeGroupValue`. When that distribution
 writes a child group, the function is called again with `distributing: true`, and `newValue` and `oldValue` are then
 stored aggregates, so reverse the getter only when `distributing` is `false`. Here `reverse` is the app's function
-that undoes its getter:
+that undoes `getterFn`:
 
 ```{% frameworkTransform=true %}
-groupRowValueSetter: (params) =>
-    distributeGroupValue(
-        params.distributing
-            ? params
-            : { ...params, newValue: reverse(params.newValue), oldValue: reverse(params.oldValue) }
-    ),
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'amount',
+            aggFunc: 'sum',
+            aggValueGetter: (params) => getterFn(params.aggValue),
+            groupRowEditable: true,
+            groupRowValueSetter: (params) => {
+                if (params.distributing) {
+                    return distributeGroupValue(params);
+                }
+                const newValue = reverse(params.newValue);
+                const oldValue = reverse(params.oldValue);
+                return distributeGroupValue({ ...params, newValue, oldValue });
+            },
+        },
+    ],
+}
 ```
 
 The grid does not write the edited value into the group row's own data, as the function decides what to write.
