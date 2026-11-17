@@ -32,6 +32,14 @@ interface ActiveSubscription {
     stopped: boolean;
     /** Set while a flush is scheduled. */
     timer: ReturnType<typeof setTimeout> | undefined;
+    /** The view at the last flush or scroll. */
+    view: ViewEnds;
+}
+
+interface ViewEnds {
+    first: RowNode | undefined;
+    last: RowNode | undefined;
+    page: number | undefined;
 }
 
 const DEFAULT_DEBOUNCE_MS = 50;
@@ -48,10 +56,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     public postConstruct(): void {
         const markDirty = () => this.schedule();
         const markViewMoved = () => this.schedule(true);
+        const markScrolled = () => this.onScroll();
         this.addManagedEventListeners({
             gridReady: () => this.refresh(),
             modelUpdated: markDirty,
-            viewportChanged: markViewMoved,
+            viewportChanged: markScrolled,
             // A partial redraw can change whether a row is full width, without a model or viewport change.
             displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
                 if (!event.afterScroll) {
@@ -64,7 +73,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             paginationChanged: (event: PaginationChangedEvent) => this.schedule(event.newPage),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'vertical') {
-                    markViewMoved();
+                    markScrolled();
                 }
             },
             rowGroupOpened: markDirty,
@@ -127,7 +136,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             return;
         }
 
-        const sub: ActiveSubscription = { rows: new Map(), stopped: false, timer: undefined };
+        const sub: ActiveSubscription = { rows: new Map(), stopped: false, timer: undefined, view: this.getViewEnds() };
         this.sub = sub;
 
         const rows: ViewRow[] = [];
@@ -175,6 +184,24 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         sub.timer = setTimeout(() => this.runScheduled(sub), this.getOptions()?.debounceMs ?? DEFAULT_DEBOUNCE_MS);
     }
 
+    /** Keeping rows in view after an update scrolls the grid without changing the rows in view. */
+    private onScroll(): void {
+        const sub = this.sub;
+        if (!sub) {
+            return;
+        }
+        const previous = sub.view;
+        const view = this.getViewEnds();
+        sub.view = view;
+        this.schedule(previous.first !== view.first || previous.last !== view.last || previous.page !== view.page);
+    }
+
+    private getViewEnds(): ViewEnds {
+        const [first, last] = this.getRange();
+        const { rowModel, pagination } = this.beans;
+        return { first: rowModel.getRow(first), last: rowModel.getRow(last), page: pagination?.getCurrentPage() };
+    }
+
     private runScheduled(sub: ActiveSubscription): void {
         sub.timer = undefined;
         if (sub.stopped || !this.isAlive()) {
@@ -184,6 +211,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private flush(sub: ActiveSubscription): void {
+        sub.view = this.getViewEnds();
         const inView = this.getViewportRows();
 
         // A stale row is unsubscribed and subscribed again, as its captured ref is out of date.

@@ -265,6 +265,32 @@ describe('CSRM viewSubscription', () => {
         }
     });
 
+    test('scrolling that keeps the same rows in view does not push a pending debounce back', async () => {
+        const api = await createFlatGrid({ asyncTransactionWaitMillis: 5 });
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 50 });
+        mockGridLayout.asyncScrollEvents = true;
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(50, 'top');
+            for (let i = 1; i <= 15; ++i) {
+                // Rows added above the view are scrolled past, so the same rows stay in view.
+                api.applyTransactionAsync({ add: [{ id: `new${i}`, value: -i }], addIndex: 0 }, () =>
+                    api.ensureIndexVisible(50 + i, 'top')
+                );
+                await vi.advanceTimersByTimeAsync(20);
+            }
+            expect(recorder.ids()).toEqual(range(50, 55));
+
+            await vi.advanceTimersByTimeAsync(100);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+            mockGridLayout.asyncScrollEvents = false;
+        }
+    });
+
     describe('lifecycle', () => {
         describe('getRowId', () => {
             // getRowId is an initial property (warning 22), and the grid warns while it is missing (warning 188).
