@@ -95,9 +95,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
         // Row IDs are read from the row nodes, so a new callback for the same rows changes nothing.
         // Only adding a missing `getRowId` or removing it acts, as frameworks can pass a new function on every render.
-        this.addManagedPropertyListener('getRowId', () =>
-            _getRowIdCallback(this.beans) ? this.refresh() : this.stop()
-        );
+        this.addManagedPropertyListener('getRowId', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
             this.eViewport = gridBodyCtrl.eGridViewport;
@@ -141,7 +139,8 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
-        const wanted = !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed;
+        const wanted =
+            !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
         this.setWatching(wanted);
         if (!options || !wanted || this.isPaused(options)) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
@@ -151,16 +150,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         }
     }
 
-    private start(options: ViewSubscriptionOptions): void {
-        const { gos, beans } = this;
+    private canSubscribe(): boolean {
+        const { gos } = this;
         if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
-            return;
+            return false;
         }
-        if (!_getRowIdCallback(beans)) {
+        if (!_getRowIdCallback(this.beans)) {
             this.warn(188, { feature: '`viewSubscription`' });
-            return;
+            return false;
         }
+        return true;
+    }
 
+    private start(options: ViewSubscriptionOptions): void {
         const sub: ActiveSubscription = { rows: new Map(), stopped: false, timer: undefined, view: this.getViewEnds() };
         this.sub = sub;
 
@@ -392,13 +394,25 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     private createRef(id: string, node: RowNode): ViewRowRef {
         const parentKeys = node.parent?.getRoute() ?? [];
         const level = node.level;
-        const route = node.getRoute();
         const type = this.getRowType(node);
         const ref = { type, id, parentKeys, level } as ViewRowRef;
-        if (type === 'group' || (type === 'tree' && route)) {
-            (ref as ViewGroupRowRef).route = route ?? [];
+        const route = this.getRefRoute(node, type);
+        if (route) {
+            (ref as ViewGroupRowRef).route = route;
         }
         return ref;
+    }
+
+    /**
+     * Every client-side tree data row has a route. Server-side tree data keeps the key of a row that loses its children,
+     * so there only expandable rows get a route.
+     */
+    private getRefRoute(node: RowNode, type: ViewRowRef['type']): string[] | undefined {
+        if (type === 'group') {
+            return node.getRoute() ?? [];
+        }
+        const hasRoute = type === 'tree' && (_isClientSideRowModel(this.gos) || this.isGroup(node));
+        return hasRoute ? node.getRoute() : undefined;
     }
 
     private getRowType(node: RowNode): ViewRowRef['type'] {
@@ -414,7 +428,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             isGroup !== this.isGroup(node) ||
             ref.level !== node.level ||
             !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
-            !_areEqual(ref.type === 'leaf' ? undefined : ref.route, node.getRoute())
+            !_areEqual(ref.type === 'leaf' ? undefined : ref.route, this.getRefRoute(node, ref.type))
         );
     }
 
