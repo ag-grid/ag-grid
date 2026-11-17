@@ -4,6 +4,7 @@ import {
     BeanStub,
     _addGridCommonParams,
     _getRowIdCallback,
+    _isClientSideRowModel,
     _isDomLayout,
     _isServerSideRowModel,
 } from 'ag-grid-community';
@@ -152,7 +153,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
     private start(options: ViewSubscriptionOptions): void {
         const { gos, beans } = this;
-        if (!_isServerSideRowModel(gos)) {
+        if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
             return;
         }
         if (!_getRowIdCallback(beans)) {
