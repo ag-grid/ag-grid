@@ -298,6 +298,14 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 });
             },
         },
+        aggValueGetter: {
+            validate: ({ aggValueGetter, groupRowEditable, groupRowValueSetter }) => {
+                if (aggValueGetter && groupRowEditable && typeof groupRowValueSetter !== 'function') {
+                    return '`colDef.groupRowEditable` has no effect with `colDef.aggValueGetter` unless `colDef.groupRowValueSetter` is a function. The built-in distribution cannot reverse the getter, so group cells in this column are not editable.';
+                }
+                return null;
+            },
+        },
         rowSpan: {
             validate: (_options, { suppressRowTransform }) => {
                 if (!suppressRowTransform) {

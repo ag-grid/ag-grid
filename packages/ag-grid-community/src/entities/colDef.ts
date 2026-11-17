@@ -934,6 +934,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * client-side sorting and filtering. It is not stored, so parent groups still aggregate the computed aggregates
      * of their children.
      * Return `params.value` to keep the value shown without this function.
+     * <br /><br />
+     * With `groupRowEditable`, group cells in this column are editable only when `groupRowValueSetter` is a function,
+     * as the built-in distribution cannot reverse this getter.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggValueGetter?: AggValueGetterFunc<TData, TValue>;

@@ -137,9 +137,12 @@ The returned value is used everywhere the grid reads the cell value, including e
 sorts and filters group rows. The returned value is not stored, so parent groups aggregate the computed aggregates of
 their children, and the `avg` function still weights each child group by its row count.
 
-When the column is also [editable on group rows](./grouping-edit/), the editor starts from the returned value, and the
-edited value is distributed to the descendant rows as a new aggregate. The getter is then applied to the new
-aggregates.
+The grid cannot reverse an `aggValueGetter`, so its built-in distribution cannot turn a value typed into a group
+cell back into an aggregate. When the column is also [editable on group rows](./grouping-edit/), group cells are
+editable only when `groupRowValueSetter` is a function. The function receives the typed value and decides what to write
+to the descendant rows, for example by reversing the getter and passing the result to `distributeGroupValue`. Without
+one, group cells in the column are not editable, `setDataValue` on a group row leaves the data unchanged, and the grid
+logs a warning. Leaf rows stay editable.
 
 `aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
 shown on its total row displays no value, so the getter is not called to display it.
