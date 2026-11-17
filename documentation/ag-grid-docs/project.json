@@ -294,7 +294,7 @@
     },
     "validate-examples": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["^build:types", { "projects": ["ag-grid-angular", "ag-grid-vue3"], "target": "build" }],
       "inputs": [
         "{projectRoot}/tsconfig.examples.json",
         "{projectRoot}/src/**/_examples/**/*.{ts,tsx}",
