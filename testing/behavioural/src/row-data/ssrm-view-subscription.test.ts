@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     TestGridsManager,
     installMockResizeObserver,
     mockGridLayout,
@@ -9,8 +10,14 @@ import {
     waitForNoLoadingRows,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
+import type {
+    GridApi,
+    GridOptions,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+    ViewSubscriptionOptions,
+} from 'ag-grid-community';
+import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -438,6 +445,578 @@ describe('SSRM viewSubscription', () => {
         pending.splice(0).forEach(respond);
         await waitForNoLoadingRows(api);
         expect(recorder.violations).toEqual([]);
+    });
+
+    test('debounceMs makes no call until rows stop changing', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 100 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            await vi.advanceTimersByTimeAsync(90);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            api.ensureIndexVisible(60, 'top');
+            await vi.advanceTimersByTimeAsync(90);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            await vi.advanceTimersByTimeAsync(20);
+            expect(recorder.ids()).toEqual(range(60, 65));
+            expect(recorder.batches('subscribe')).toEqual([range(0, 5), range(60, 65)]);
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('debounceMs defaults to 50', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: undefined });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            await vi.advanceTimersByTimeAsync(40);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(30, 35));
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('debounceMs 0 passes changes to the handlers once the current task ends', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 0 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            await vi.advanceTimersByTimeAsync(0);
+            expect(recorder.ids()).toEqual(range(30, 35));
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('data updates do not push a pending debounce back', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 100 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            for (let i = 0; i < 4; ++i) {
+                await vi.advanceTimersByTimeAsync(25);
+                api.applyServerSideTransaction({ update: [{ id: String(i), value: -i }] });
+            }
+            expect(recorder.ids()).toEqual(range(30, 35));
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('rows that came into view are still subscribed when unsubscribeRows throws', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = true;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: recorder.handlers.subscribeRows,
+            unsubscribeRows: (rows, params) => {
+                recorder.handlers.unsubscribeRows(rows, params);
+                if (fail) {
+                    fail = false;
+                    throw new Error('unsubscribe failed');
+                }
+            },
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('unsubscribe failed');
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            // Rows 50-55 were never subscribed, so removing the option passes none of them to unsubscribeRows.
+            api.setGridOption('viewSubscription', undefined);
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('debounceMs still calls the handlers while data updates keep arriving', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 100 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            for (let i = 0; i < 5; ++i) {
+                api.applyServerSideTransaction({ update: [{ id: '30', value: i }] });
+                await vi.advanceTimersByTimeAsync(50);
+            }
+
+            expect(recorder.ids()).toEqual(range(30, 35));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('scrolling that keeps the same rows in view does not push a pending debounce back', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        subscribe(api, recorder, { debounceMs: 50 });
+        mockGridLayout.asyncScrollEvents = true;
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(50, 'top');
+            for (let i = 1; i <= 15; ++i) {
+                // Rows added above the view are scrolled past, so the same rows stay in view.
+                api.applyServerSideTransaction({ add: [{ id: `new${i}`, value: -i }], addIndex: 0 });
+                api.ensureIndexVisible(50 + i, 'top');
+                await vi.advanceTimersByTimeAsync(20);
+            }
+            expect(recorder.ids()).toEqual(range(50, 55));
+
+            await vi.advanceTimersByTimeAsync(100);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+            mockGridLayout.asyncScrollEvents = false;
+        }
+    });
+
+    describe('lifecycle', () => {
+        describe('getRowId', () => {
+            // getRowId is an initial property (warning 22), and the grid warns while it is missing (warning 188).
+            beforeEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [22, 188] });
+            });
+
+            afterEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES });
+            });
+
+            /** Updates `getRowId` the way a framework wrapper does, as it is not a managed grid option. */
+            function setGetRowId(api: GridApi, getRowId: GridOptions['getRowId']) {
+                api.updateGridOptions({ getRowId } as GridOptions);
+            }
+
+            test('providing getRowId after the grid is created subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers, getRowId: undefined });
+                expect(recorder.calls).toEqual([]);
+
+                setGetRowId(api, (params) => params.data.id);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('a new getRowId callback makes no call', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                setGetRowId(api, (params) => params.data.id);
+                await nextAnimationFrame();
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('removing getRowId unsubscribes every row', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                setGetRowId(api, undefined);
+
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
+                expect(recorder.violations).toEqual([]);
+            });
+        });
+
+        describe('pauseWhenHidden', () => {
+            let pageHidden = false;
+
+            function setPageHidden(hidden: boolean) {
+                pageHidden = hidden;
+                document.dispatchEvent(new Event('visibilitychange'));
+            }
+
+            beforeEach(() => {
+                pageHidden = false;
+                Object.defineProperty(document, 'hidden', { configurable: true, get: () => pageHidden });
+            });
+
+            afterEach(() => {
+                delete (document as { hidden?: boolean }).hidden;
+            });
+
+            test('hiding the page unsubscribes every row, and showing it subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                setPageHidden(true);
+                expect(recorder.subscribed.size).toBe(0);
+
+                setPageHidden(false);
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('a grid created while the page is hidden subscribes once the page is shown', async () => {
+                pageHidden = true;
+                const recorder = createRecorder();
+                await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                expect(recorder.calls).toEqual([]);
+
+                setPageHidden(false);
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('with pauseWhenHidden set to false, the rows stay subscribed while the page is hidden', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder, { pauseWhenHidden: false });
+
+                setPageHidden(true);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('setting pauseWhenHidden to false while the page is hidden subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+                setPageHidden(true);
+
+                subscribe(api, recorder, { pauseWhenHidden: false });
+
+                expect(recorder.ids()).toEqual(range(0, 5));
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('showing the page does not subscribe while viewSubscriptionActive is false', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+                setPageHidden(true);
+                setActive(api, false);
+
+                setPageHidden(false);
+
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.violations).toEqual([]);
+            });
+        });
+
+        describe('grid scrolled off screen', () => {
+            const OriginalIntersectionObserver = window.IntersectionObserver;
+            let observers: { callback: IntersectionObserverCallback; disconnected: boolean }[] = [];
+
+            /** Reports whether the grid is in the browser viewport, as the browser does on scroll. */
+            function setOnScreen(onScreen: boolean) {
+                for (const observer of observers) {
+                    if (!observer.disconnected) {
+                        observer.callback([{ isIntersecting: onScreen } as IntersectionObserverEntry], {} as any);
+                    }
+                }
+            }
+
+            beforeEach(() => {
+                observers = [];
+                (window as any).IntersectionObserver = class {
+                    private readonly entry;
+                    constructor(callback: IntersectionObserverCallback) {
+                        this.entry = { callback, disconnected: false };
+                        observers.push(this.entry);
+                    }
+                    observe() {}
+                    disconnect() {
+                        this.entry.disconnected = true;
+                    }
+                };
+            });
+
+            afterEach(() => {
+                window.IntersectionObserver = OriginalIntersectionObserver;
+            });
+
+            test('scrolling the grid off screen unsubscribes every row, and back on screen subscribes the rows in view', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                setOnScreen(false);
+                expect(recorder.subscribed.size).toBe(0);
+
+                setOnScreen(true);
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('with pauseWhenHidden set to false, the rows stay subscribed while the grid is off screen', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder, { pauseWhenHidden: false });
+
+                setOnScreen(false);
+
+                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('destroying the grid stops observing whether it is on screen', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                api.destroy();
+
+                expect(observers.length).toBeGreaterThan(0);
+                expect(observers.every((observer) => observer.disconnected)).toBe(true);
+            });
+
+            test('a grid without the option watches neither the page nor its place on screen until it is set', async () => {
+                const addListener = vi.spyOn(document, 'addEventListener');
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+
+                const visibilityListeners = () =>
+                    addListener.mock.calls.filter(([type]) => type === 'visibilitychange');
+                expect(observers).toEqual([]);
+                expect(visibilityListeners()).toEqual([]);
+
+                subscribe(api, recorder);
+                expect(visibilityListeners()).toHaveLength(1);
+                setOnScreen(false);
+                expect(recorder.subscribed.size).toBe(0);
+                addListener.mockRestore();
+            });
+
+            test('turning the subscription off stops watching the page and its place on screen', async () => {
+                const removeListener = vi.spyOn(document, 'removeEventListener');
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                setActive(api, false);
+
+                expect(observers.length).toBeGreaterThan(0);
+                expect(observers.every((observer) => observer.disconnected)).toBe(true);
+                expect(removeListener.mock.calls.filter(([type]) => type === 'visibilitychange')).toHaveLength(1);
+                removeListener.mockRestore();
+            });
+        });
+
+        test('setting the option again with the same handlers makes no call', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            subscribe(api, recorder);
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+        });
+
+        test('the handlers are called as methods of the current option', async () => {
+            const receivers: unknown[] = [];
+            const options: ViewSubscriptionOptions = {
+                subscribeRows() {
+                    receivers.push(this);
+                },
+                unsubscribeRows() {
+                    receivers.push(this);
+                },
+            };
+            const api = await createFlatGrid();
+            api.setGridOption('viewSubscription', options);
+
+            api.destroy();
+
+            expect(receivers).toHaveLength(2);
+            expect(receivers.every((receiver) => receiver === options)).toBe(true);
+        });
+
+        test('setting viewSubscriptionActive to false unsubscribes every row once, then makes no call while disabled', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            setActive(api, false);
+            setActive(api, false);
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+
+            api.ensureIndexVisible(50, 'top');
+            api.applyServerSideTransaction({ update: [{ id: '50', value: -1 }], remove: [{ id: '51' }] });
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.calls).toHaveLength(2);
+        });
+
+        test('a grid created with viewSubscriptionActive false makes no call until viewSubscriptionActive', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid({
+                viewSubscription: recorder.handlers,
+                viewSubscriptionActive: false,
+            });
+            api.ensureIndexVisible(50, 'top');
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.calls).toEqual([]);
+
+            setActive(api, true);
+
+            expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(50, 55) }]);
+        });
+
+        test('setting viewSubscriptionActive to false then true in one go unsubscribes every row, then subscribes them again', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            setActive(api, false);
+            setActive(api, true);
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+                { type: 'subscribe', ids: range(0, 5) },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('setting the option to undefined unsubscribes every row, and setting it again subscribes the rows in view', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            api.setGridOption('viewSubscription', undefined);
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+
+            api.ensureIndexVisible(50, 'top');
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.calls).toHaveLength(2);
+
+            subscribe(api, recorder);
+
+            expect(recorder.calls.slice(2)).toEqual([{ type: 'subscribe', ids: range(50, 55) }]);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('destroying the grid while disabled makes no further call', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+            setActive(api, false);
+
+            api.destroy();
+
+            expect(recorder.calls).toHaveLength(2);
+        });
+
+        test('destroying the grid inside unsubscribeRows makes no further call', async () => {
+            const recorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe') {
+                    api.destroy();
+                }
+            });
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            api.ensureIndexVisible(50, 'top');
+            await waitFor(() => expect(recorder.calls.some((c) => c.type === 'unsubscribe')).toBe(true));
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(api.isDestroyed()).toBe(true);
+        });
+
+        test('toggling viewSubscriptionActive inside unsubscribeRows subscribes the rows in view once', async () => {
+            let toggled = false;
+            const recorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe' && !toggled) {
+                    toggled = true;
+                    setActive(api, false);
+                    setActive(api, true);
+                }
+            });
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
+
+            api.ensureIndexVisible(50, 'top');
+            await waitFor(() => expect(recorder.ids()).toEqual(range(50, 55)));
+            await nextAnimationFrame();
+
+            expect(recorder.calls.slice(1)).toEqual([
+                { type: 'unsubscribe', ids: range(0, 5) },
+                { type: 'subscribe', ids: range(50, 55) },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
     });
 
     test('without getRowId it warns and never calls the handlers', async () => {

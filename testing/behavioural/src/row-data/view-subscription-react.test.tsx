@@ -3,9 +3,9 @@ import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
-import type { ColDef, ViewRow, ViewRowRef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import { ViewSubscriptionModule } from 'ag-grid-enterprise';
+import type { ColDef, IServerSideDatasource, ViewRow, ViewRowRef } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ServerSideRowModelModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { createRecorder, range } from './viewSubscriptionTestUtils';
@@ -14,7 +14,7 @@ describe('viewSubscription with AgGridReact', () => {
     beforeAll(() => {
         mockGridLayout.init();
         mockGridLayout.useRealOffsetDimensions = true;
-        ModuleRegistry.registerModules([ClientSideRowModelModule, ViewSubscriptionModule]);
+        ModuleRegistry.registerModules([ServerSideRowModelModule, ViewSubscriptionModule]);
     });
 
     afterAll(() => {
@@ -31,6 +31,9 @@ describe('viewSubscription with AgGridReact', () => {
     type Datum = { id: string; value: number };
     const columnDefs: ColDef<Datum>[] = [{ field: 'value' }];
     const rowData: Datum[] = Array.from({ length: 5 }, (_, i) => ({ id: String(i), value: i }));
+    const serverSideDatasource: IServerSideDatasource = {
+        getRows: (params) => params.success({ rowData, rowCount: rowData.length }),
+    };
     const getRowId = ({ data }: { data: Datum }) => data.id;
 
     test('inline handlers re-created on every render neither unsubscribe nor subscribe again, and viewSubscriptionActive false unsubscribes every row', async () => {
@@ -46,7 +49,8 @@ describe('viewSubscription with AgGridReact', () => {
             return (
                 <div style={{ height: 400, width: 600 }} data-count={count}>
                     <AgGridReact<Datum>
-                        rowData={rowData}
+                        rowModelType="serverSide"
+                        serverSideDatasource={serverSideDatasource}
                         columnDefs={columnDefs}
                         getRowId={getRowId}
                         viewSubscription={{
