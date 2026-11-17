@@ -51,7 +51,7 @@ const gridOptions = {
 
 ### Pausing When Hidden
 
-While the grid cannot be seen, every row is unsubscribed: while the page is hidden, for example in a background browser tab or a minimised window, and while the grid is scrolled out of the browser viewport or not displayed. Once the grid can be seen again, the rows in view are subscribed.
+While the grid cannot be seen, every row is unsubscribed: while the page is hidden, for example in a background browser tab or a minimised window, and while the grid is scrolled out of the browser viewport or not displayed. Once the grid can be seen again, the rows in view are subscribed. When the subscription starts while the grid is already scrolled out of the browser viewport, the rows in view are subscribed and then unsubscribed straight away, as the grid only finds out that it cannot be seen once the subscription has started.
 
 Set `pauseWhenHidden` to `false` to keep the rows subscribed while the grid cannot be seen.
 
