@@ -121,7 +121,7 @@ export function FakeServer(allData) {
         const isGrouped = request.rowGroupCols.some(function (col) {
             return col.id === colId;
         });
-        return valueCol && isGrouped ? valueCol.aggFunc + '_' + colId : colId;
+        return valueCol && isGrouped ? valueCol.aggFunc + '_' + valueCol.field : colId;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {

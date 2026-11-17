@@ -13,9 +13,9 @@ test.agExample(import.meta, () => {
         // The group key comes from `gold`, the aggregate from `sum_gold` via aggValueGetter.
         const gold4 = groupRow('4');
         await expect(gold4.locator('[col-id="ag-Grid-AutoColumn"]')).toContainText('4', { useInnerText: true });
-        await expect(gold4.locator('.ag-cell[col-id="gold"]')).toContainText('12');
-        await expect(gold4.locator('.ag-cell[col-id="silver"]')).toContainText('2');
-        await expect(groupRow('8').locator('.ag-cell[col-id="gold"]')).toContainText('8');
+        await expect(gold4.locator('.ag-cell[col-id="gold"]')).toHaveText('12');
+        await expect(gold4.locator('.ag-cell[col-id="silver"]')).toHaveText('2');
+        await expect(groupRow('8').locator('.ag-cell[col-id="gold"]')).toHaveText('8');
 
         // Expanding uses the group key, so the group's athletes load.
         await gold4.locator('.ag-group-contracted').first().click();
