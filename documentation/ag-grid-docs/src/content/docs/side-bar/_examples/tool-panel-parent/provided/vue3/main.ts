@@ -16,7 +16,6 @@ import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SetFilterModule } fr
 import { AgGridVue } from 'ag-grid-vue3';
 
 // Import data interface
-import { IOlympicData } from './interfaces';
 import './styles.css';
 
 // Register AG Grid modules
