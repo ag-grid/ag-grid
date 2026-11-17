@@ -26,4 +26,7 @@ export default [
         // tsconfig, so linting it errors. A concurrent `./checks.sh` would otherwise fail on someone else's run.
         ignores: ['src/benchmarks/bench-compare.mjs', 'eslint.config.mjs', 'vitest.config.*.timestamp*'],
     },
+    {
+        ignores: ['src/tmp/**'],
+    },
 ];

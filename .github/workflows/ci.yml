@@ -240,7 +240,7 @@ jobs:
           case " $affected " in *" ag-grid-community "*) unit_projects="$unit_projects --project=ag-grid-community";; esac
           case " $affected " in *" ag-grid-enterprise "*) unit_projects="$unit_projects --project=ag-grid-enterprise";; esac
           case " $affected " in *" @ag-grid-community/locale "*) unit_projects="$unit_projects --project=locale";; esac
-          case " $affected " in *" ag-behavioural-testing "*) unit_projects="$unit_projects --project=behavioural";; esac
+          case " $affected " in *" ag-behavioural-testing "*) unit_projects="$unit_projects --project=behavioural --project=behavioural-isolated";; esac
           echo "unit_projects=${unit_projects# }" >> $GITHUB_OUTPUT
           echo "Affected unit vitest projects: ${unit_projects:-<none>}"
 

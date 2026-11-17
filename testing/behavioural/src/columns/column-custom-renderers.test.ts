@@ -426,7 +426,7 @@ describe('Column Custom Renderers', () => {
 
     describe('custom cell renderer', () => {
         test('a registered string cellRenderer may reshape the cell text', async () => {
-            const api = gridsManager.createGrid('string-renderer', {
+            const api = await gridsManager.createGridAndWait('string-renderer', {
                 components: { units: (p: { value: unknown }) => `${p.value} kg` },
                 columnDefs: [{ field: 'weight', cellRenderer: 'units' }],
                 rowData: [{ weight: 5 }],

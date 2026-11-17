@@ -1,6 +1,8 @@
 import type { waitForOptions } from '@testing-library/dom';
 import { getByRole, waitFor } from '@testing-library/dom';
 
+import { definePropertyForFile } from './fileScope';
+
 /** What the default selector matches: `agLargeTextCellEditor` is a textarea, so this is not just an input.
  *  No grid editor or filter renders a `<select>`, so a caller wanting one passes its own selector. */
 export type EditorFormControl = HTMLInputElement | HTMLTextAreaElement;
@@ -55,7 +57,7 @@ export function fakeElementAttribute<K extends keyof HTMLElement, S extends stri
     value: HTMLElement[K],
     selector: S
 ): void {
-    Object.defineProperty(HTMLElement.prototype, attribute, {
+    definePropertyForFile(HTMLElement.prototype, attribute, {
         configurable: true,
         get(this: HTMLElement): HTMLElement[K] {
             return this.matches(selector) ? value : (0 as HTMLElement[K]);

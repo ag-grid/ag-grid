@@ -1,3 +1,5 @@
+import { FAST_TEST_TIMINGS } from 'ag-stack';
+
 import type {
     BeanCollection,
     ChartToolPanelMenuOptions,
@@ -15,6 +17,8 @@ import type { ChartMenuContext } from './chartMenuContext';
 import type { ChartMenuListFactory } from './chartMenuList';
 import { ChartToolbar } from './chartToolbar';
 import { TabbedChartMenu } from './tabbedChartMenu';
+
+const MENU_PANEL_DELAY = FAST_TEST_TIMINGS ? 0 : 100;
 
 type ChartToolbarButtons = {
     [key in ChartToolbarMenuItemOptions]: {
@@ -154,7 +158,7 @@ export class ChartMenu extends Component {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
                 res(menuPanel);
-            }, 100);
+            }, MENU_PANEL_DELAY);
         });
     }
 

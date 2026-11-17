@@ -5,11 +5,14 @@ import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
 import { constants } from 'node:os';
 import path from 'node:path';
-import { stripVTControlCharacters } from 'node:util';
+import { stripVTControlCharacters, styleText } from 'node:util';
 
 const ESC = String.fromCharCode(27);
 
 export const stripAnsi = stripVTControlCharacters;
+
+/** Colour for a digest printed to this process's console: a terminal, and not turned off. */
+const consoleColour = () => Boolean(process.stdout.isTTY) && !process.env.NO_COLOR;
 
 const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -137,13 +140,14 @@ export class RunLog {
      * (the console gets nothing, so the gate can report only what matters) or 'off'. `report` closes a run
      * that showed the console nothing with the part a human still needs.
      */
-    constructor({ name, rootDir, id, capture = 'stream', report = false, filter, failRe, summaryRe }) {
+    constructor({ name, rootDir, id, capture = 'stream', report = false, filter, failRe, warnRe, summaryRe }) {
         this.name = name;
         this.rootDir = rootDir;
         this.capture = capture;
         this.report = report;
         this.filterOptions = filter;
         this.failRe = failRe;
+        this.warnRe = warnRe;
         this.summaryRe = summaryRe;
         this.root = path.join(rootDir, 'tmp', `_${name}-output`);
         // The id doubles as a sort key and as a hint of when the run happened; the pid keeps concurrent runs apart.
@@ -328,20 +332,24 @@ export class RunLog {
         }
     }
 
-    // The two things worth repeating out of a log: what the runner concluded, and every line it failed on.
-    // One pass: on a wholesale failure this file is the biggest thing the gate touches.
-    digest(file = this.file) {
+    // What is worth repeating out of a log: what the runner concluded, its warnings in yellow and every line it
+    // failed on in red. One pass: on a wholesale failure this file is the biggest thing the gate touches.
+    digest(file = this.file, colour = false) {
         const summary = [];
+        const warnings = [];
         const failures = [];
         for (const line of this.lines(file)) {
             if (this.summaryRe?.test(line)) {
                 summary.push(line);
             }
+            if (this.warnRe?.test(line)) {
+                warnings.push(colour ? styleText('yellow', line, { validateStream: false }) : line);
+            }
             if (this.failRe?.test(line)) {
-                failures.push(line);
+                failures.push(colour ? styleText('red', line, { validateStream: false }) : line);
             }
         }
-        return { summary, failures };
+        return [...summary, ...warnings, ...failures];
     }
 
     /**
@@ -423,9 +431,8 @@ export class RunLog {
         // Filtered output is the whole console answer, so the digest it would otherwise print is left out.
         const report = this.report && !this.filterOptions;
         if (report || tty) {
-            const { summary, failures } = this.digest();
             if (report) {
-                for (const line of [...summary, ...failures]) {
+                for (const line of this.digest(this.file, consoleColour())) {
                     console.log(line);
                 }
                 console.log(`▶ ${this.name} exit ${code} after ${elapsed}s → ${this.relative(this.file)}`);
@@ -441,8 +448,8 @@ export class RunLog {
                         [
                             '',
                             `▶ ${this.name} ${this.id} finished: ${verdict} after ${elapsed}s`,
-                            ...summary,
-                            ...failures,
+                            // Only set when the launching console was a terminal.
+                            ...this.digest(this.file, true),
                             `▶ ${this.relative(this.file)}`,
                             '',
                         ].join('\n')
@@ -563,8 +570,7 @@ export class RunLog {
         if (this.filterOptions) {
             this.printFiltered(logFile);
         } else {
-            const { summary, failures } = this.digest(logFile);
-            for (const line of [...summary, ...failures]) {
+            for (const line of this.digest(logFile, consoleColour())) {
                 console.log(line);
             }
         }

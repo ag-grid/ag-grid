@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, ColGroupDef, ColumnState, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -80,7 +80,6 @@ suite('column update — applyColumnState / getColumnState paths (tiny rowData)'
                 roundTrip(api);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(id, { ...initial, rowData: tinyRows });

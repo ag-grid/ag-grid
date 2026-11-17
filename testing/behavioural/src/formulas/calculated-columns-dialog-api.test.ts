@@ -1,5 +1,6 @@
 import { queryByRole, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
+import { openPicker } from 'ag-test-utils';
 import { onTestFinished, vi } from 'vitest';
 
 import {
@@ -273,5 +274,22 @@ describe('calculated column dialog APIs', () => {
         api.openAddCalculatedColumnDialog('revenue');
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
         expect(api.getColumns()!.map((column) => column.getColId())).toEqual(['revenue']);
+    });
+
+    test('a nested dropdown open in the dialog does not break grid destruction', async () => {
+        const api = createGrid('calculated-api-destroy-with-dropdown', {
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        api.openCalculatedColumnDialog('profit');
+        await openPicker(getCalculatedColumnDialog().querySelector('.ag-select')!);
+        await waitFor(() => expect(document.querySelectorAll('.ag-select-list').length).toBe(1), { timeout: 1000 });
+
+        api.destroy();
+
+        expect({
+            dialogs: document.querySelectorAll('.ag-dialog').length,
+            lists: document.querySelectorAll('.ag-select-list').length,
+        }).toEqual({ dialogs: 0, lists: 0 });
     });
 });

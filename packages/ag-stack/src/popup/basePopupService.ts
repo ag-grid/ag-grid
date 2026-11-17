@@ -66,6 +66,13 @@ export abstract class BasePopupService<
 
     protected popupList: AgPopup[] = [];
 
+    public override destroy(): void {
+        for (const popup of this.popupList.slice()) {
+            popup.hideFunc({ forceHide: true });
+        }
+        super.destroy();
+    }
+
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
 
@@ -487,6 +494,10 @@ export abstract class BasePopupService<
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
+            // Once only, forced or not: the client can have different paths, each one wanting to close.
+            if (popupHidden) {
+                return;
+            }
             const eventSourceToIgnore =
                 typeof params.eventSourceToIgnore === 'function'
                     ? params.eventSourceToIgnore()
@@ -503,10 +514,7 @@ export abstract class BasePopupService<
                     (!!eventSourceToIgnore &&
                         isSourceDismissalEvent &&
                         !!pointerEvent &&
-                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)) ||
-                    // this method should only be called once. the client can have different
-                    // paths, each one wanting to close, so this method may be called multiple times.
-                    popupHidden)
+                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)))
             ) {
                 return;
             }
@@ -536,6 +544,9 @@ export abstract class BasePopupService<
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(() => {
+            if (popupHidden) {
+                return;
+            }
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }

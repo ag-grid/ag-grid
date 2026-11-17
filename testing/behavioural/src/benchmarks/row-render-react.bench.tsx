@@ -2,7 +2,7 @@
 // focus, data update). Each act runs in flushSync with frames flushed, and setup asserts a scroll commits
 // synchronously, so a deferred commit never reads as free.
 import { flushSync } from 'react-dom';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
@@ -13,7 +13,7 @@ import {
 } from 'ag-grid-community';
 
 import { ReactBenchGrid } from './bench-react-utils';
-import { benchDefaults, scrollStep, sweep } from './bench-utils';
+import { bench, scrollStep, sweep } from './bench-utils';
 
 // RenderApiModule for api.flushAllAnimationFrames(), without which every act measures nothing.
 const modules: Module[] = [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule, RenderApiModule];
@@ -96,7 +96,6 @@ suite('react row render — scrolling and updates on rendered rows', () => {
                 });
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await grid.reset();
                     iter = 0;

@@ -1,5 +1,5 @@
 import type { IAriaAnnouncementService } from 'ag-stack';
-import { _addManagedElementListeners, _debounce, _setAriaLabel } from 'ag-stack';
+import { FAST_TEST_TIMINGS, _addManagedElementListeners, _debounce, _setAriaLabel } from 'ag-stack';
 
 import {
     KeyCode,
@@ -46,6 +46,8 @@ import type {
 } from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
+const ROWS_CHANGED_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 10;
+
 export class RowNumbersService
     extends _BaseSingleColService
     implements NamedBean, IRowNumbersService, RangeSelectionExtension
@@ -75,7 +77,7 @@ export class RowNumbersService
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
 
     public postConstruct(): void {
-        const onRowsChanged_debounced = _debounce(this, this.onRowsChanged.bind(this), 10);
+        const onRowsChanged_debounced = _debounce(this, this.onRowsChanged.bind(this), ROWS_CHANGED_DEBOUNCE);
         this.addManagedEventListeners({
             columnResized: () => {
                 this.lastColumnResized = Date.now();

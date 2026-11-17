@@ -1013,6 +1013,40 @@ describe('StateService - Grid State Management', () => {
             expect(api.getRowNode('fr')!.expanded).toBe(false);
         });
 
+        // Ireland expanded, France collapsed, under the expandAll strategy.
+        const createIrelandOnlyExpandedGrid = async (id: string) => {
+            const api = gridsManager.createGrid(id, {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: twoGroupsOneLeafEach,
+                getRowId: (params) => params.data.id,
+                ssrmExpandAllAffectsAllRows: true,
+            });
+            await waitForNoLoadingRows(api);
+            api.expandAll();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('fr')!, false);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0); // allow debounced state update to flush
+            return api;
+        };
+
+        const irelandOnlyExpanded = { expandAll: true, invertedRowGroupIds: ['fr'] };
+
+        test('SSRM expandAll strategy: setState without ssrmRowGroupExpansion collapses the groups', async () => {
+            const api = await createIrelandOnlyExpandedGrid('ssrmOmittedCollapses');
+            expect(api.getState().ssrmRowGroupExpansion).toEqual(irelandOnlyExpanded);
+
+            const withoutSection = structuredClone(api.getState());
+            delete withoutSection.ssrmRowGroupExpansion;
+
+            api.setState(withoutSection);
+            await waitForNoLoadingRows(api);
+
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
         test('SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on grid creation', async () => {
             // Tests the gridInitializing path: ssrmRowGroupExpansion must be checked (not just
             // rowGroupExpansion) when deciding whether to call setRowGroupExpansionState.
