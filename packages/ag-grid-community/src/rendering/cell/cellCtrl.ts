@@ -1,3 +1,4 @@
+import type { _SpaceKeyAction } from 'ag-stack';
 import {
     AgPromise,
     _addOrRemoveAttribute,
@@ -780,8 +781,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return _createCellEvent<T>(beans, domEvent, eventType, { rowNode, column }, value);
     }
 
-    public processCharacter(event: KeyboardEvent): void {
-        _processCellCharacter(this.beans, this, event);
+    public processCharacter(event: KeyboardEvent, spaceKeyAction: _SpaceKeyAction): void {
+        _processCellCharacter(this.beans, this, event, spaceKeyAction);
     }
 
     public onKeyDown(event: KeyboardEvent): void {

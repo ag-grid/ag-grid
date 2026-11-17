@@ -1,4 +1,4 @@
-import type { ITooltipFeature } from 'ag-stack';
+import type { ITooltipFeature, _SpaceKeyAction } from 'ag-stack';
 import { _getActiveDomElement, _getAriaCheckboxStateName, _setAriaRole } from 'ag-stack';
 
 import { AgCheckbox } from '../agWidgets/agCheckbox';
@@ -33,12 +33,11 @@ export class SelectAllFeature extends BeanStub {
         super();
     }
 
-    public onSpaceKeyDown(e: KeyboardEvent): void {
+    public onSpaceKeyDown(e: KeyboardEvent, spaceKeyAction: _SpaceKeyAction): void {
         const checkbox = this.cbSelectAll;
 
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(_getActiveDomElement(this.beans))) {
-            e.preventDefault();
-            checkbox.setValue(!checkbox.getValue());
+            spaceKeyAction.arm(e, () => checkbox.setValue(!checkbox.getValue()));
         }
     }
 

@@ -3,10 +3,15 @@ import { GridColumns, GridRows, TestGridsManager, assertSelectedRowsByIndex, asy
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    _createInternalFeatureFlagsModule,
+} from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridActions, pressAKey, pressSpaceKey } from './utils';
+import { GridActions, holdSpaceKey, pressAKey, pressSpaceKey, releaseSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -160,6 +165,91 @@ describe('Row Selection with Keyboard', () => {
 
         assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
         expect(api.getCellRanges()).toEqual([]);
+    });
+
+    describe('Space acts on release', () => {
+        test('holding SPACE on a cell selects the row once, when SPACE is released', () => {
+            const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+            const cell = actions.getCellByPosition(1, 'sport')!;
+
+            holdSpaceKey(cell);
+            assertSelectedRowsByIndex([], api);
+
+            releaseSpaceKey(cell);
+            assertSelectedRowsByIndex([1], api);
+        });
+
+        test('holding SPACE on a full-width row selects it once, when SPACE is released', () => {
+            const [api, actions] = createGrid({
+                columnDefs,
+                rowData,
+                isFullWidthRow: (p) => (p.rowNode.rowIndex ?? -1) === 0,
+                fullWidthCellRenderer: () => 'full width',
+                rowSelection: { mode: 'multiRow' },
+            });
+            const row = actions.getRowByIndex(0)!;
+
+            holdSpaceKey(row);
+            assertSelectedRowsByIndex([], api);
+
+            releaseSpaceKey(row);
+            assertSelectedRowsByIndex([0], api);
+        });
+
+        test('SPACE released on a different cell from the one it was pressed on selects neither row', () => {
+            const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+
+            holdSpaceKey(actions.getCellByPosition(1, 'sport')!);
+            releaseSpaceKey(actions.getCellByPosition(2, 'sport')!);
+
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('SHIFT held when SPACE is pressed selects the range, even when SHIFT is released first', () => {
+            const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+            pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
+            const cell = actions.getCellByPosition(5, 'sport')!;
+
+            holdSpaceKey(cell, { shiftKey: true });
+            releaseSpaceKey(cell, { shiftKey: false });
+
+            assertSelectedRowsByIndex([2, 3, 4, 5], api);
+        });
+
+        test('holding SPACE on an editable boolean cell toggles its value once, when released, without selecting the row', async () => {
+            const [api, actions] = createGrid(
+                {
+                    columnDefs: [{ field: 'done', cellDataType: 'boolean', editable: true }],
+                    rowData: [{ done: false }, { done: false }],
+                    rowSelection: { mode: 'multiRow' },
+                },
+                [CheckboxEditorModule]
+            );
+            api.setFocusedCell(0, 'done');
+            await asyncSetTimeout(0);
+            const cell = actions.getCellByPosition(0, 'done')!;
+
+            holdSpaceKey(cell);
+            expect(api.getDisplayedRowAtIndex(0)!.data.done).toBe(false);
+
+            releaseSpaceKey(cell);
+            expect(api.getDisplayedRowAtIndex(0)!.data.done).toBe(true);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('suppressKeyboardEvent returning true for SPACE still stops row selection', () => {
+            const suppressKeyboardEvent = vi.fn(({ event }) => event.key === ' ');
+            const [api, actions] = createGrid({
+                columnDefs: [{ field: 'sport', suppressKeyboardEvent }],
+                rowData,
+                rowSelection: { mode: 'multiRow' },
+            });
+
+            pressSpaceKey(actions.getCellByPosition(1, 'sport')!);
+
+            assertSelectedRowsByIndex([], api);
+            expect(suppressKeyboardEvent.mock.calls.every(([{ event }]) => event.type === 'keydown')).toBe(true);
+        });
     });
 
     describe('Range selection behaviour', () => {

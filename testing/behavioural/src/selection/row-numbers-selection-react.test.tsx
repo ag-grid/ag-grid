@@ -89,7 +89,9 @@ describe('Row numbers header (React)', () => {
         act(() => api!.setFocusedHeader(ROW_NUMBERS_COLUMN_ID));
         const press = (key: string) =>
             act(() => {
-                document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+                const target = document.activeElement!;
+                target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+                target.dispatchEvent(new KeyboardEvent('keyup', { key, bubbles: true, cancelable: true }));
             });
         const rangeCount = () => api!.getCellRanges()?.length ?? 0;
 

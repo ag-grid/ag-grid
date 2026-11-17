@@ -1,3 +1,5 @@
+import type { _SpaceKeyAction } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
@@ -72,8 +74,11 @@ export interface IRowNumbersService {
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;
-    /** Selects all cells on Space or Enter on the row number header, after `suppressHeaderKeyboardEvent`. */
-    handleKeyDownOnHeader(column: AgColumn, event: KeyboardEvent): void;
+    /**
+     * Selects all cells on Enter on the row number header, or arms `spaceKeyAction` to do so when Space is released,
+     * after `suppressHeaderKeyboardEvent`.
+     */
+    handleKeyDownOnHeader(column: AgColumn, event: KeyboardEvent, spaceKeyAction: _SpaceKeyAction): void;
     createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
 }
 

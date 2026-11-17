@@ -1,4 +1,4 @@
-import type { IAriaAnnouncementService } from 'ag-stack';
+import type { IAriaAnnouncementService, _SpaceKeyAction } from 'ag-stack';
 import { FAST_TEST_TIMINGS, _addManagedElementListeners, _debounce, _setAriaLabel } from 'ag-stack';
 
 import {
@@ -310,16 +310,16 @@ export class RowNumbersService
         this.ariaAnnounce?.announceValue(message, 'ariaSelectAllCells');
     }
 
-    public handleKeyDownOnHeader(column: AgColumn, e: KeyboardEvent): void {
-        if (
-            !this.isIntegratedWithSelection ||
-            (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER) ||
-            !isRowNumberCol(column)
-        ) {
+    public handleKeyDownOnHeader(column: AgColumn, e: KeyboardEvent, spaceKeyAction: _SpaceKeyAction): void {
+        if (!this.isIntegratedWithSelection || !isRowNumberCol(column)) {
             return;
         }
-        e.preventDefault();
-        this.selectAllCellsFromHeader();
+        if (e.key === KeyCode.ENTER) {
+            e.preventDefault();
+            this.selectAllCellsFromHeader();
+        } else if (e.key === KeyCode.SPACE) {
+            spaceKeyAction.arm(e, () => this.selectAllCellsFromHeader());
+        }
     }
 
     private onHeaderClick(_e: MouseEvent): void {
