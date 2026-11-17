@@ -750,7 +750,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaFilterList: 'Listă de Filtre',
     ariaFilterToValue: 'Filtrează până la valoare',
     ariaFilterToValueForColumn: 'Filtrează ${variable} până la valoare',
-    ariaFilterValue: 'Valoare Filtrată',
+    ariaFilterValue: 'Valoarea filtrului',
     ariaFilterValueForColumn: 'Valoarea filtrului pentru ${variable}',
     ariaNotInCurrentData: 'nu există în datele curente',
     ariaFilterMenuOpen: 'Deschide Meniul Filtrului',
