@@ -4,17 +4,7 @@ title: "Maintaining Rows in View"
 
 Keep the rows the user is looking at in place when a background update moves them.
 
-By default, when rows are added above the rows in view, the rows in view move down, and when rows above them are removed, they move up. This can make it hard to read a grid that is receiving a stream of updates, as the rows keep moving away while the user reads them.
-
-Set `maintainRowsInViewOnDataUpdate=true` to make the grid scroll with the rows in view, so they stay where they are:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    maintainRowsInViewOnDataUpdate: true,
-};
-```
-
-{% apiDocumentation source="grid-options/properties.json" section="scrolling" names=["maintainRowsInViewOnDataUpdate"] /%}
+When a row data update adds rows above the rows in view, or removes rows above them, the grid scrolls by the same amount, so the rows the user is reading stay where they are. This keeps a grid that receives a stream of updates readable. No configuration is needed.
 
 The rows are kept in view when the update comes from:
 
@@ -28,13 +18,12 @@ The grid does not scroll while it is scrolled to the top of the grid, so rows ad
 
 Rows with [different heights](./row-height/) are supported, including rows with auto height that are measured after the update. When an update removes or filters out every row near the rows in view, the grid compensates only for the heights of the rows it removed above them. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
 
-The [focused cell](./keyboard-navigation/) and [cell selection](./cell-selection/) ranges stay on their rows, so they keep the same cells, wherever the grid is scrolled. When the update removes the row the focused cell, or the first or last row of a range, is on, it keeps its index, as it would without this option. A cell being [edited](./cell-editing/) keeps its editor. Moving the focused cell does not fire `cellFocused`, as the same cell keeps focus, while moving a range fires `cellSelectionChanged`. Cells in [pinned rows](./row-pinning/) do not move.
+The [focused cell](./keyboard-navigation/) and [cell selection](./cell-selection/) ranges stay on their rows, so they keep the same cells, wherever the grid is scrolled. When the update removes the row the focused cell, or the first or last row of a range, is on, it keeps its index. A cell being [edited](./cell-editing/) keeps its editor. Moving the focused cell does not fire `cellFocused`, as the same cell keeps focus, while moving a range fires `cellSelectionChanged`. Cells in [pinned rows](./row-pinning/) do not move.
 
 The example below adds and removes rows at the top of the grid. Note the following:
 
 - Scroll down the grid, then click **Add 5 Rows at the Top**. The rows in view stay in place and the vertical scrollbar moves.
 - Click **Remove 5 Rows at the Top**. The rows in view stay in place.
-- Clear **Maintain Rows in View** and repeat. The rows in view move down when rows are added, and up when rows are removed.
 - Scroll to the top and click **Add 5 Rows at the Top**. The new rows come into view.
 
 {% gridExampleRunner title="Maintain Rows in View" name="maintain-rows-in-view" exampleHeight=590 /%}

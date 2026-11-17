@@ -28,7 +28,7 @@ const SCROLL_TOP = 1000; // row 20 at the top of the viewport
 const createRows = (prefix: string, count: number): Row[] =>
     Array.from({ length: count }, (_, i) => ({ id: `${prefix}${i}`, value: i }));
 
-describe('maintainRowsInViewOnDataUpdate', () => {
+describe('maintaining rows in view', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -74,25 +74,8 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowData: createRows('r', 200),
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 ...options,
             });
-
-        test('is off by default', () => {
-            const api = createGrid({ maintainRowsInViewOnDataUpdate: undefined });
-            expect(api.getGridOption('maintainRowsInViewOnDataUpdate')).toBe(false);
-            scrollTo(api, SCROLL_TOP);
-
-            api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
-
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
-            expect(offsetInView(api, 'r20')).toBe(3 * ROW_HEIGHT);
-
-            api.setGridOption('rowData', [...createRows('row', 2), ...createRows('new', 3), ...createRows('r', 200)]);
-
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
-            expect(offsetInView(api, 'r20')).toBe(5 * ROW_HEIGHT);
-        });
 
         test('keeps rows in view when a transaction adds rows above them', () => {
             const api = createGrid();
@@ -591,7 +574,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
             await asyncSetTimeout(0);
 
-            // a row growing above the rows in view moves them, as without the option, since no data update moved them
+            // a row growing above the rows in view moves them, since no data update moved them
             expect(getViewport(api).scrollTop).toBe(2 * SCROLL_TOP);
             expect(offsetInView(api, 'r60')).toBe(offset + 2 * ROW_HEIGHT);
         });
@@ -642,31 +625,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
             await asyncSetTimeout(0);
 
-            // a row growing above the rows in view moves them, as without the option, since no data update moved them
-            expect(getViewport(api).scrollTop).toBe(scrollTop);
-        });
-
-        test('does not keep the rows of an earlier update in view for auto height once the option is turned off', async () => {
-            const tallRows = new Set<string>();
-            mockGridLayout.elementHeightOverride = (el) => {
-                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
-                    return undefined;
-                }
-                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
-            };
-            const api = createGrid({ columnDefs: [{ field: 'value', autoHeight: true }] });
-            await asyncSetTimeout(0);
-            scrollTo(api, SCROLL_TOP);
-            api.applyTransaction({ add: createRows('new', 1), addIndex: 0 });
-            await asyncSetTimeout(0);
-            const scrollTop = getViewport(api).scrollTop;
-            api.setGridOption('maintainRowsInViewOnDataUpdate', false);
-
-            tallRows.add('r5');
-            api.redrawRows({ rowNodes: [api.getRowNode('r5')!] });
-            await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
-            await asyncSetTimeout(0);
-
+            // a row growing above the rows in view moves them, since no data update moved them
             expect(getViewport(api).scrollTop).toBe(scrollTop);
         });
 
@@ -789,7 +748,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 ],
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 groupDefaultExpanded: -1,
                 groupHideParentOfSingleChild: true,
                 suppressGroupRowsSticky: true,
@@ -825,7 +783,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 serverSideDatasource: {
                     getRows: ({ request, success }) =>
                         success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),
@@ -844,7 +801,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 serverSideEnableClientSideSort: true,
                 cacheBlockSize: rowData.length,
                 serverSideDatasource: {
@@ -905,7 +861,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 suppressRowVirtualisation: false,
                 cacheBlockSize: 50,
                 maxBlocksInCache: 1,
@@ -934,7 +889,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id ?? data.country!,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 suppressRowVirtualisation: false,
                 cacheBlockSize: 100,
                 isServerSideGroupOpenByDefault: () => true,
@@ -969,7 +923,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id ?? data.country!,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 suppressRowVirtualisation: false,
                 cacheBlockSize: 100,
                 isServerSideGroupOpenByDefault: () => true,
@@ -1024,7 +977,6 @@ describe('maintainRowsInViewOnDataUpdate', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id ?? data.country!,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 serverSideEnableClientSideSort: true,
                 groupAllowUnbalanced: true,
                 cacheBlockSize: groups.length,

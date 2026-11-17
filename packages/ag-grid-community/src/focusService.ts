@@ -434,10 +434,10 @@ export class FocusService extends BeanStub implements NamedBean {
         }
         const getRowIndex = _followRow(this.beans, focusedCell);
         return () => {
-            if (this.focusedCell !== focusedCell) {
-                return; // focus moved during the update
-            }
             const rowIndex = getRowIndex();
+            if (this.focusedCell !== focusedCell || rowIndex == null || rowIndex === focusedCell.rowIndex) {
+                return; // focus moved during the update, its row was removed (handled as without anchoring), or it did not move
+            }
             this.focusedCell = { ...focusedCell, rowIndex };
             if (this.previousCellFocusParams) {
                 this.previousCellFocusParams = { ...this.previousCellFocusParams, rowIndex };

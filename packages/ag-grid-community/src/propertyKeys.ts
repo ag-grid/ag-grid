@@ -271,7 +271,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'pagination',
     'paginationAutoPageSize',
     'suppressScrollOnNewData',
-    'maintainRowsInViewOnDataUpdate',
     'suppressScrollWhenPopupsAreOpen',
     'purgeClosedRowNodes',
     'cacheQuickFilter',

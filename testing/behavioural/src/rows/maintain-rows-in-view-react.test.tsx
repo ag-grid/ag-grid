@@ -15,7 +15,7 @@ const createRows = (prefix: string, count: number) =>
 
 // React applies the row positions and the container classes through its own state, so the rows kept in view must
 // still be moved with their animation prevented.
-describe('maintainRowsInViewOnDataUpdate in React', () => {
+describe('maintaining rows in view in React', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ClientSideRowModelApiModule]);
         mockGridLayout.init();
@@ -42,7 +42,6 @@ describe('maintainRowsInViewOnDataUpdate in React', () => {
                 getRowId={({ data }) => data.id}
                 rowHeight={ROW_HEIGHT}
                 animateRows
-                maintainRowsInViewOnDataUpdate
                 onGridReady={(event) => (api = event.api)}
             />
         );

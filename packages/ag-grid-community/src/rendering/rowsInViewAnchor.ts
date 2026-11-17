@@ -31,6 +31,8 @@ export interface RowsInViewAnchor {
     followed?: number | null;
     /** The vertical scroll position the latest restore left the viewport at, to tell a scroll elsewhere apart. */
     scrollTop?: number;
+    /** Set when the update left none of the rows, so nothing is kept in view. */
+    forgotten?: boolean;
 }
 
 /** Records where the viewport is, or `null` at the top of the first page, so rows added at the top come into view. */
@@ -218,23 +220,17 @@ function isDisplayed(rowModel: IRowModel, rowNode: RowNode | undefined): rowNode
 }
 
 /**
- * Records the row at a position before a data update, returning how to find its index after it. A removed row's
- * position keeps its index, within the rows left.
+ * Records the row at a position before a data update, returning how to find its index after it, or `undefined` once
+ * the row is removed.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number {
+export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number | undefined {
     const { rowModel } = beans;
     if (rowPinned) {
         return () => rowIndex;
     }
     const rowNode = rowModel.getRow(rowIndex);
-    return () => {
-        if (isDisplayed(rowModel, rowNode)) {
-            return rowNode.rowIndex;
-        }
-        const lastIndex = rowModel.getRowCount() - 1;
-        return lastIndex < 0 ? rowIndex : Math.min(rowIndex, lastIndex);
-    };
+    return () => (isDisplayed(rowModel, rowNode) ? rowNode.rowIndex : undefined);
 }
 
 /** The vertical scroll position that keeps the rows the user could see where they were. */

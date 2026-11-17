@@ -357,8 +357,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
                     params.keepRenderedRows = true;
                     params.animate = !gos.get('suppressAnimationFrame');
-                    params.changedRowNodes = new ChangedRowNodes();
+                    const changedRowNodes = new ChangedRowNodes();
+                    params.changedRowNodes = changedRowNodes;
                     nodeManager.setImmutableRowData(params, newRowData);
+                    if (changedRowNodes.adds.size === this.rootNode?._leafs?.length) {
+                        // every row is new, so there are no rows to keep in view and the scroll position stays
+                        beans.rowRenderer.forgetRowsInView();
+                    }
                     this.refreshChangedStage(params, properties);
                 });
                 return;

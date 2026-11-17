@@ -21,7 +21,7 @@ const ROW_HEIGHT = 50;
 const createRows = (prefix: string, count: number): Row[] =>
     Array.from({ length: count }, (_, i) => ({ id: `${prefix}${i}`, value: i }));
 
-describe('maintainRowsInViewOnDataUpdate at the bottom of the rows', () => {
+describe('maintaining rows in view at the bottom of the rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -71,7 +71,6 @@ describe('maintainRowsInViewOnDataUpdate at the bottom of the rows', () => {
                 rowData: createRows('r', 200),
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 ...options,
             });
 
@@ -163,16 +162,6 @@ describe('maintainRowsInViewOnDataUpdate at the bottom of the rows', () => {
             expect(getViewport(api).scrollTop).toBe(bottom);
             expect(getViewport(api).scrollTop).toBe(getMaxScrollTop(api));
         });
-
-        test('does not stay at the bottom when the option is off', () => {
-            const api = createGrid({ maintainRowsInViewOnDataUpdate: undefined });
-            const bottom = scrollToBottom(api);
-
-            api.applyTransaction({ add: createRows('new', 3) });
-
-            expect(getViewport(api).scrollTop).toBe(bottom);
-            expect(getMaxScrollTop(api)).toBe(bottom + 3 * ROW_HEIGHT);
-        });
     });
 
     describe('server-side row model', () => {
@@ -183,7 +172,6 @@ describe('maintainRowsInViewOnDataUpdate at the bottom of the rows', () => {
                 rowModelType: 'serverSide',
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
-                maintainRowsInViewOnDataUpdate: true,
                 serverSideDatasource: {
                     getRows: ({ request, success }) =>
                         success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),

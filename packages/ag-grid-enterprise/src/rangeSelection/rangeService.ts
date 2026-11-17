@@ -364,8 +364,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const followRow = <T extends RowPosition>(row: T | undefined): (() => T | undefined) => {
             const getRowIndex = row && _followRow(beans, row);
             return () => {
-                const rowIndex = getRowIndex?.();
-                return row && rowIndex !== row.rowIndex ? { ...row, rowIndex } : row;
+                if (!row) {
+                    return row;
+                }
+                // a removed row keeps its index, within the rows left
+                const lastIndex = beans.rowModel.getRowCount() - 1;
+                const rowIndex = getRowIndex?.() ?? (lastIndex < 0 ? row.rowIndex : Math.min(row.rowIndex, lastIndex));
+                return rowIndex !== row.rowIndex ? { ...row, rowIndex } : row;
             };
         };
         const followed = cellRanges.map(

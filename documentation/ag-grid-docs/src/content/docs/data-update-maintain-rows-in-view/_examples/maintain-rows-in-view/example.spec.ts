@@ -18,10 +18,6 @@ test.agExample(import.meta, () => {
 
         await page.getByRole('button', { name: 'Remove 5 Rows at the Top' }).click();
         await expect.poll(offsetInView).toBe(offset);
-
-        await page.getByLabel('Maintain Rows in View').uncheck();
-        await page.getByRole('button', { name: 'Add 5 Rows at the Top' }).click();
-        await expect.poll(offsetInView).toBeGreaterThan(offset);
     });
 
     test.eachFramework('Shows rows added at the top while scrolled to the top', async ({ page }) => {

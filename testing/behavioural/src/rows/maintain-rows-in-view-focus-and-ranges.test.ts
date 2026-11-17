@@ -24,7 +24,7 @@ const SCROLL_TOP = 1000; // row 20 at the top of the viewport
 const createRows = (prefix: string, count: number): Row[] =>
     Array.from({ length: count }, (_, i) => ({ id: `${prefix}${i}`, a: i, b: i }));
 
-describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
+describe('maintaining rows in view focused cell and cell ranges', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -70,21 +70,8 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
                 cellSelection: true,
-                maintainRowsInViewOnDataUpdate: true,
                 ...options,
             });
-
-        test('does not move the focused cell or cell ranges when the option is off', () => {
-            const api = createGrid({ maintainRowsInViewOnDataUpdate: undefined });
-            scrollTo(api, SCROLL_TOP);
-            api.setFocusedCell(22, 'a');
-            api.addCellRange({ rowStartIndex: 21, rowEndIndex: 24, columns: ['a'] });
-
-            api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
-
-            expect(api.getFocusedCell()!.rowIndex).toBe(22);
-            expect(getRangeRowIds(api)).toEqual(['r18', 'r21']);
-        });
 
         test('keeps the focused cell on its row when a transaction adds rows above it, without a focus event', async () => {
             const api = createGrid();
@@ -147,7 +134,7 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getFocusedRowId(api)).toBe('r22');
         });
 
-        test('keeps the index of the focused cell when its row is removed, as without the option', () => {
+        test('keeps the index of the focused cell when its row is removed', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.setFocusedCell(22, 'a');
@@ -198,20 +185,17 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(api.getFocusedCell()!.rowIndex).toBe(22);
         });
 
-        test.each([true, undefined])(
-            'leaves the focused cell and cell ranges where they were when every row is removed, option %s',
-            (maintainRowsInViewOnDataUpdate) => {
-                const api = createGrid({ rowData: createRows('r', 50), maintainRowsInViewOnDataUpdate });
-                api.setFocusedCell(22, 'a');
-                api.addCellRange({ rowStartIndex: 21, rowEndIndex: 24, columns: ['a'] });
+        test('leaves the focused cell and cell ranges where they were when every row is removed', () => {
+            const api = createGrid({ rowData: createRows('r', 50) });
+            api.setFocusedCell(22, 'a');
+            api.addCellRange({ rowStartIndex: 21, rowEndIndex: 24, columns: ['a'] });
 
-                api.applyTransaction({ remove: createRows('r', 50) });
+            api.applyTransaction({ remove: createRows('r', 50) });
 
-                expect(api.getFocusedCell()!.rowIndex).toBe(22);
-                const { startRow, endRow } = api.getCellRanges()![0];
-                expect([startRow!.rowIndex, endRow!.rowIndex]).toEqual([21, 24]);
-            }
-        );
+            expect(api.getFocusedCell()!.rowIndex).toBe(22);
+            const { startRow, endRow } = api.getCellRanges()![0];
+            expect([startRow!.rowIndex, endRow!.rowIndex]).toEqual([21, 24]);
+        });
 
         test('does not move the focused cell of a pinned row', () => {
             const api = createGrid({ pinnedTopRowData: createRows('top', 1) });
@@ -316,7 +300,6 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
                 getRowId: ({ data }) => data.id,
                 rowHeight: ROW_HEIGHT,
                 cellSelection: true,
-                maintainRowsInViewOnDataUpdate: true,
                 serverSideDatasource: {
                     getRows: ({ request, success }) =>
                         success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),

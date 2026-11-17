@@ -40,7 +40,6 @@ const gridOptions: GridOptions<Trade> = {
     },
     rowData: Array.from({ length: 100 }, (_, id) => createTrade(id)),
     getRowId: ({ data }) => String(data.id),
-    maintainRowsInViewOnDataUpdate: true,
 };
 
 function onAddRowsAbove() {
@@ -57,11 +56,6 @@ function onRemoveRowsAbove() {
         }
     }
     gridApi!.applyTransaction({ remove });
-}
-
-function onMaintainRowsInViewChanged() {
-    const checked = document.querySelector<HTMLInputElement>('#maintainRowsInView')!.checked;
-    gridApi!.setGridOption('maintainRowsInViewOnDataUpdate', checked);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
