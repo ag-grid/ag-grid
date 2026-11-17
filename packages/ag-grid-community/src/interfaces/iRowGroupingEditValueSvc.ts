@@ -19,6 +19,9 @@ export interface IRowGroupingEditValueSvc {
      */
     rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean;
 
+    /** Whether the column's function `groupRowValueSetter` is running, so a write to a child group is distribution. */
+    isDistributing(column: AgColumn): boolean;
+
     /**
      * Resolves and executes groupRowValueSetter for a group row edit.
      * Returns `undefined` if no groupRowValueSetter is configured (caller should use normal path).

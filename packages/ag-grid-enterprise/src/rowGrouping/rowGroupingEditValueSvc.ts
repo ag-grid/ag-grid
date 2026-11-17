@@ -52,6 +52,10 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         return resolveStrategy(aggFunc, setter ?? undefined) !== false;
     }
 
+    public isDistributing(column: AgColumn): boolean {
+        return this.distributingCols.has(column);
+    }
+
     public rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean {
         // The built-in distribution cannot reverse aggValueGetter, so only a function setter may change the data
         if (!column.colDef.aggValueGetter) {
@@ -93,21 +97,19 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
             return undefined; // No groupRowValueSetter or false → caller uses normal path.
         }
 
-        // A write to a child group while this column's function setter runs is distribution: its new value is
-        // already a stored aggregate, so it gets the stored old value too, not the getter's result.
-        const distributing = this.distributingCols.has(column);
-        const storedOldValue = distributing && !!colDef.aggValueGetter;
-        const paramsOldValue = storedOldValue ? this.beans.valueSvc.getRawValueFromData(column, rowNode) : oldValue;
+        // A write to a child group while this column's function setter runs is distribution: its values are stored
+        // aggregates (`ValueService.setValue` reads the old value raw then).
+        const distributing = this.isDistributing(column);
 
         const params: GroupRowValueSetterParams = this.gos.addCommon({
             node: rowNode,
             data: rowNode.data,
-            oldValue: paramsOldValue,
+            oldValue,
             newValue,
             colDef,
             column,
             eventSource,
-            valueChanged: storedOldValue ? newValue !== paramsOldValue : valueChanged,
+            valueChanged,
             distributing,
             aggregatedChildren: this.beans.aggChildrenSvc?.getAggregatedChildren(rowNode, column) ?? [],
         });

@@ -156,6 +156,7 @@ groupRowValueSetter: (params) =>
     ),
 ```
 
+The grid does not write the edited value into the group row's own data, as the function decides what to write.
 Without a function `groupRowValueSetter`, group cells in the column are not editable, `setDataValue` on a group row
 leaves the data unchanged, and the grid logs a warning. Leaf rows stay editable.
 

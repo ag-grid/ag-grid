@@ -67,6 +67,56 @@ describe.each(EDIT_MODES)('distributeGroupValue with aggValueGetter (%s)', (edit
     });
 });
 
+test('child group events during distribution carry stored aggregates for both values', async () => {
+    const api = await createGrid('distribute-agg-value-getter-child-events', {
+        aggValueGetter,
+        groupRowValueSetter: reversingSetter('percentage'),
+    });
+    const events: { id: string | undefined; oldValue: unknown; newValue: unknown }[] = [];
+    api.addEventListener('cellValueChanged', (e) =>
+        events.push({ id: e.node.id, oldValue: e.oldValue, newValue: e.newValue })
+    );
+
+    await performEdit('setDataValue', api, api.getRowNode('row-group-region-Americas')!, 'amount', 1320);
+
+    expect(events).toContainEqual({ id: 'row-group-region-Americas', oldValue: 1160, newValue: 1320 });
+    expect(events).toContainEqual({ id: 'row-group-region-Americas-country-USA', oldValue: 100, newValue: 200 });
+    expect(events).toContainEqual({ id: 'row-group-region-Americas-country-Canada', oldValue: 60, newValue: 120 });
+});
+
+test('a tree data parent with its own data keeps its field: only the function setter writes', async () => {
+    const api = await gridsManager.createGridAndWait('distribute-agg-value-getter-tree-function', {
+        treeData: true,
+        treeDataChildrenField: undefined,
+        getDataPath: (data: any) => data.path,
+        columnDefs: [
+            {
+                field: 'budget',
+                aggFunc: 'sum',
+                groupRowEditable: true,
+                aggValueGetter,
+                groupRowValueSetter: reversingSetter('percentage'),
+            },
+        ],
+        rowData: [
+            { id: 'hq', path: ['HQ'], budget: 5 },
+            { id: 'eng', path: ['HQ', 'Engineering'], budget: 40 },
+            { id: 'sales', path: ['HQ', 'Sales'], budget: 60 },
+        ],
+        groupDefaultExpanded: -1,
+        getRowId: (params) => params.data.id,
+    });
+    const hq = api.getRowNode('hq')!;
+
+    hq.setDataValue('budget', 1200, 'ui');
+    await asyncSetTimeout(0);
+
+    expect(hq.data.budget).toBe(5);
+    expect(api.getRowNode('eng')!.data.budget).toBe(80);
+    expect(api.getRowNode('sales')!.data.budget).toBe(120);
+    expect(api.getCellValue({ rowNode: hq, colKey: 'budget' })).toBe(1200);
+});
+
 test('undo replays the shown value through the reversing setter', async () => {
     const api = await createGrid('distribute-agg-value-getter-undo', {
         aggValueGetter,

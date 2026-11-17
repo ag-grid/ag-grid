@@ -585,9 +585,14 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        // Get old value from stored data, ignoring any pending edit state. With `aggValueGetter` a group cell's old value
-        // is the getter's result, the same units as the typed value and as undo replays it.
-        const oldValue = this.getValueFromData(column, rowNode);
+        // Get old value from stored data, ignoring any pending edit state. On a group cell shown through
+        // `aggValueGetter`, the old value is in the same units as the new one: the getter's result for an edit, and
+        // the stored aggregate for a child group written by distribution.
+        const aggGetterCell = rowNode.group && this.appliesAggValueGetter(column, rowNode);
+        const oldValue =
+            aggGetterCell && this.rowGroupingEditValueSvc?.isDistributing(column)
+                ? this.getRawValueFromData(column, rowNode)
+                : this.getValueFromData(column, rowNode);
 
         const data = rowNode.data;
         const params: ValueSetterParams = {
@@ -603,7 +608,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let valueSetterChanged = false;
 
-        if (data) {
+        // A group cell shown through `aggValueGetter` holds a value in the getter's units, so only the function
+        // `groupRowValueSetter` writes it: never the group's own field or `valueSetter`.
+        if (data && !aggGetterCell) {
             const externalFormulaResult = this.handleExternalFormulaChange({
                 column,
                 eventSource,
@@ -903,14 +910,24 @@ export class ValueService extends BeanStub implements NamedBean {
 
     /** Applies `aggValueGetter` to an aggregated column's value on a group, total, grand total or tree data parent
      *  row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows and group columns. */
+    /** Whether `colDef.aggValueGetter` computes this cell's value. */
+    private appliesAggValueGetter(column: AgColumn, rowNode: IRowNode): boolean {
+        // `footer` admits the SSRM grand total row, which is not a group row.
+        return (
+            !!column.aggValueGetter &&
+            !!(rowNode.group || rowNode.footer) &&
+            column.aggregationActive &&
+            !column.showRowGroup
+        );
+    }
+
     private applyAggValueGetter(
         aggValueGetter: AggValueGetterFunc,
         column: AgColumn,
         rowNode: IRowNode,
         value: any
     ): any {
-        // `footer` admits the SSRM grand total row, which is not a group row.
-        if (!(rowNode.group || rowNode.footer) || !column.aggregationActive || column.showRowGroup) {
+        if (!this.appliesAggValueGetter(column, rowNode)) {
             return value;
         }
         const aggData = rowNode.aggData;
