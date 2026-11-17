@@ -13,7 +13,6 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, SetFilterM
 import { AgGridVue } from 'ag-grid-vue3';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -59,28 +58,22 @@ const dateFilterParams: IDateFilterParams = {
 
 const VueExample = defineComponent({
     template: `
-        <div class="test-container">
-            <div class="test-header">
-                <label>
-                    <input type="radio" name="filter" id="everyone" checked v-on:change="onAgeTypeChanged('everyone')">
-                    Everyone
-                </label>
-                <label>
-                    <input type="radio" name="filter" id="below25" v-on:change="onAgeTypeChanged('below25')">
-                    Below 25
-                </label>
-                <label>
-                    <input type="radio" name="filter" id="between25and50" v-on:change="onAgeTypeChanged('between25and50')">
-                    Between 25 and 50
-                </label>
-                <label>
-                    <input type="radio" name="filter" id="above50" v-on:change="onAgeTypeChanged('above50')">
-                    Above 50
-                </label>
-                <label>
-                    <input type="radio" name="filter" id="dateAfter2008" v-on:change="onAgeTypeChanged('dateAfter2008')">
-                    After 01/01/2008
-                </label>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <div class="button-group" role="group" aria-label="Age filter">
+                        <input type="radio" name="filter" id="everyone" checked v-on:change="onAgeTypeChanged('everyone')">
+                        <label for="everyone">Everyone</label>
+                        <input type="radio" name="filter" id="below25" v-on:change="onAgeTypeChanged('below25')">
+                        <label for="below25">Below 25</label>
+                        <input type="radio" name="filter" id="between25and50" v-on:change="onAgeTypeChanged('between25and50')">
+                        <label for="between25and50">Between 25 and 50</label>
+                        <input type="radio" name="filter" id="above50" v-on:change="onAgeTypeChanged('above50')">
+                        <label for="above50">Above 50</label>
+                        <input type="radio" name="filter" id="dateAfter2008" v-on:change="onAgeTypeChanged('dateAfter2008')">
+                        <label for="dateAfter2008">After 01/01/2008</label>
+                    </div>
+                </div>
             </div>
             <ag-grid-vue
                 style="width: 100%; height: 100%;"

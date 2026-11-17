@@ -378,6 +378,7 @@ export {
     _findEnterpriseCoreModule,
     _getGridRegisteredModules,
     _registerModule,
+    _resetModuleRegistry,
     _setUmd,
 } from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
@@ -463,6 +464,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

@@ -5,6 +5,7 @@ import { redirectsChecker } from '../src/utils/htaccess/redirectsChecker';
 
 type Options = {
     skip: boolean;
+    disableMarkdownDocs: boolean;
 };
 
 export default function createPlugin(options: Options): AstroIntegration {
@@ -19,7 +20,7 @@ export default function createPlugin(options: Options): AstroIntegration {
 
                 const destDir = fileURLToPath(dir);
 
-                redirectsChecker({ buildDir: destDir, logger });
+                redirectsChecker({ buildDir: destDir, disableMarkdownDocs: options.disableMarkdownDocs, logger });
             },
         },
     };

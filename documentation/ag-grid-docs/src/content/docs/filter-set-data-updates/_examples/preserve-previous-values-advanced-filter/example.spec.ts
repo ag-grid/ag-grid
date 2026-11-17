@@ -7,7 +7,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Show 2012' }).click();
+        await page.getByRole('button', { name: 'Load 2012 Data' }).click();
         const input = page.locator('.ag-advanced-filter input[type=text]');
         await input.fill('[Country] is any of [Au');
         const suggestion = (value: string) =>
@@ -20,7 +20,7 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
         await expect(rows(page)).toHaveCount(0);
 
-        await page.getByRole('button', { name: 'Show 2008' }).click();
+        await page.getByRole('button', { name: 'Load 2008 Data' }).click();
         await expect(rows(page)).toHaveCount(3);
     });
 });

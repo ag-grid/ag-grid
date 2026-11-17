@@ -160,7 +160,7 @@ function loadGrid(options: GridOptions, oldApi: GridApi, side: string, data: any
 }
 
 function resetInputs() {
-    const inputs = document.querySelectorAll('.example-toolbar input') as NodeListOf<HTMLInputElement>;
+    const inputs = document.querySelectorAll('.example-controls input') as NodeListOf<HTMLInputElement>;
     const checkbox = inputs[inputs.length - 1];
 
     if (!checkbox.checked) {

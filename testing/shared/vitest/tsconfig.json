@@ -1,0 +1,14 @@
+{
+  // VS Code's project for the shared Vitest helpers, referenced by each package using them (a file belongs to one
+  // composite project).
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "../../../node_modules/.cache/tsc-editor/testing-shared-vitest",
+    "types": ["node"]
+  },
+  "include": ["*.ts"]
+}

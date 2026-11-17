@@ -1,4 +1,5 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+import { vi } from 'vitest';
 
 import type { ColDef, Column, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -15,6 +16,7 @@ describe('pivot column identity across columnDefs updates', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     const olympicLikeRows = [
@@ -592,6 +594,36 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(afterCol!.getColDef().headerName).toBe('Gold Medals');
     });
 
+    test('custom properties on a pivot result colDef survive applying the value columns’ current order again', async () => {
+        type ColDefWithCustom = ColDef & { myCustomProp?: string };
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'sport', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'year', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            getRowId: (params) => String(params.data.id),
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+        const targetColId = api.getPivotResultColumns()![0].getColId();
+        (api.getPivotResultColumns()![0].getColDef() as ColDefWithCustom).myCustomProp = 'foo';
+
+        api.applyColumnState({
+            state: [
+                { colId: 'gold', valueIndex: 0 },
+                { colId: 'year', valueIndex: 1 },
+            ],
+        });
+        applyTransactionChecked(api, { update: [{ ...olympicLikeRows[0], gold: 30 }] });
+        await asyncSetTimeout(0);
+
+        const afterCol = api.getPivotResultColumns()!.find((col) => col.getColId() === targetColId);
+        expect((afterCol!.getColDef() as ColDefWithCustom).myCustomProp).toBe('foo');
+    });
+
     test('in-place mutation of a value column colDef propagates to pivot result colDefs', async () => {
         const liveDefs: ColDef[] = [
             { field: 'country', rowGroup: true },
@@ -650,6 +682,85 @@ describe('pivot column identity across columnDefs updates', () => {
         for (const col of api.getPivotResultColumns() ?? []) {
             expect(col.getColDef().headerName).toBe('Gold Medals');
         }
+    });
+
+    test('pivot result columns are shown when the default column definition hides columns, also after the definitions are set again', async () => {
+        const defs = (): ColDef[] => [
+            { field: 'country', rowGroup: true, hide: false },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum' },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs(),
+            defaultColDef: { hide: true },
+            pivotMode: true,
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+        const hidden = () => (api.getPivotResultColumns() ?? []).filter((col) => !col.isVisible()).length;
+        expect({ count: api.getPivotResultColumns()?.length, hidden: hidden() }).toEqual({ count: 2, hidden: 0 });
+
+        api.setGridOption('columnDefs', defs());
+        await asyncSetTimeout(0);
+        expect(hidden()).toBe(0);
+    });
+
+    test('a value column header change reaches the pivot result columns new data added since the last change', async () => {
+        const liveDefs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum', headerName: 'Gold' },
+        ];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: liveDefs, pivotMode: true });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+        liveDefs[2].headerName = 'Gold Medals';
+        api.setGridOption('columnDefs', liveDefs);
+        await asyncSetTimeout(0);
+
+        applyTransactionChecked(api, { add: [{ id: 6, country: 'USA', sport: 'Diving', year: 2012, gold: 1 }] });
+        await asyncSetTimeout(0);
+        liveDefs[2].headerName = 'Golds';
+        api.setGridOption('columnDefs', liveDefs);
+        await asyncSetTimeout(0);
+
+        const headers = (api.getPivotResultColumns() ?? []).map(
+            (col) => `${col.getColId()} ${col.getColDef().headerName}`
+        );
+        expect(headers.sort()).toEqual([
+            'pivot_sport_Diving_gold Golds',
+            'pivot_sport_Gymnastics_gold Golds',
+            'pivot_sport_Swimming_gold Golds',
+        ]);
+    });
+
+    test('a value column minWidth change reaches the pivot result columns new data added since the last change', async () => {
+        const liveDefs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum', minWidth: 51 },
+        ];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: liveDefs, pivotMode: true });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+        liveDefs[2].minWidth = 52;
+        api.setGridOption('columnDefs', liveDefs);
+        await asyncSetTimeout(0);
+
+        applyTransactionChecked(api, { add: [{ id: 6, country: 'USA', sport: 'Diving', year: 2012, gold: 1 }] });
+        await asyncSetTimeout(0);
+        liveDefs[2].minWidth = 53;
+        api.setGridOption('columnDefs', liveDefs);
+        await asyncSetTimeout(0);
+
+        const minWidths = (api.getPivotResultColumns() ?? []).map(
+            (col) => `${col.getColId()} ${col.getColDef().minWidth}`
+        );
+        expect(minWidths.sort()).toEqual([
+            'pivot_sport_Diving_gold 53',
+            'pivot_sport_Gymnastics_gold 53',
+            'pivot_sport_Swimming_gold 53',
+        ]);
     });
 
     test('applyColumnState({applyOrder:true}) in pivot mode does not pull primary cols into pivot displayed list', async () => {
@@ -932,7 +1043,7 @@ describe('pivot column identity across columnDefs updates', () => {
     });
 
     test('a value column redefined draws each pivot result cell again once', async () => {
-        const told: string[] = [];
+        const refreshes: string[] = [];
         class CountingRenderer implements ICellRendererComp {
             private readonly eGui = document.createElement('span');
             private id = '';
@@ -943,7 +1054,7 @@ describe('pivot column identity across columnDefs updates', () => {
                 return this.eGui;
             }
             public refresh(): boolean {
-                told.push(this.id);
+                refreshes.push(this.id);
                 return true;
             }
         }
@@ -968,11 +1079,76 @@ describe('pivot column identity across columnDefs updates', () => {
         api.setGridOption('columnDefs', defs);
         await asyncSetTimeout(0);
 
-        expect(told.sort()).toEqual([
+        expect(refreshes.sort()).toEqual([
             'pivot_sport_S1_gold@row-group-country-A',
             'pivot_sport_S1_gold@row-group-country-B',
             'pivot_sport_S2_gold@row-group-country-A',
             'pivot_sport_S2_gold@row-group-country-B',
         ]);
+    });
+
+    test.each([
+        ['a new headerName', (defs: ColDef[]) => [defs[0], defs[1], { ...defs[2], headerName: 'Gold Medals' }], 1],
+        ['the same definitions as new objects', (defs: ColDef[]) => defs.map((def) => ({ ...def })), 0],
+    ])(
+        'a value column given %s redefines each pivot result column as many times as it changed',
+        async (_, change, times) => {
+            const defs: ColDef[] = [
+                { field: 'country', rowGroup: true },
+                { field: 'sport', pivot: true },
+                { field: 'gold', aggFunc: 'sum', headerName: 'Gold' },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs,
+                defaultColDef: { minWidth: 50 },
+                pivotMode: true,
+                rowData: [
+                    { country: 'A', sport: 'S1', gold: 1 },
+                    { country: 'B', sport: 'S2', gold: 3 },
+                ],
+            });
+            await asyncSetTimeout(0);
+            const pivotCols = api.getPivotResultColumns()!;
+            const colDefChanges = pivotCols.map(() => 0);
+            pivotCols.forEach((col, i) => col.addEventListener('colDefChanged', () => ++colDefChanges[i]));
+
+            api.setGridOption('columnDefs', change(defs));
+            await asyncSetTimeout(0);
+
+            expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual([
+                'pivot_sport_S1_gold',
+                'pivot_sport_S2_gold',
+            ]);
+            expect(api.getPivotResultColumns()).toEqual(pivotCols);
+            expect(colDefChanges).toEqual([times, times]);
+        }
+    );
+
+    test('a value column replaced by one with its colId as field shows the new field in the pivot result columns', async () => {
+        const defs = (value: ColDef): ColDef[] => [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            value,
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs({ colId: 'gold', field: 'silver', aggFunc: 'sum' }),
+            pivotMode: true,
+            rowData: [
+                { country: 'A', sport: 'S1', gold: 1, silver: 2 },
+                { country: 'B', sport: 'S1', gold: 3, silver: 4 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', defs({ field: 'gold', aggFunc: 'sum' }));
+        await asyncSetTimeout(0);
+
+        const shown: unknown[] = [];
+        api.forEachNode((node) => {
+            if (node.group) {
+                shown.push(api.getCellValue({ rowNode: node, colKey: 'pivot_sport_S1_gold' }));
+            }
+        });
+        expect(shown).toEqual([1, 3]);
     });
 });

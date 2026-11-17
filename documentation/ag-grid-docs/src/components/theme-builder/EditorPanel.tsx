@@ -23,7 +23,7 @@ const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 export const EditorPanel = () => {
     const sectionProps = useCollapsibleSections(DEFAULT_OPEN_SECTIONS);
     const [chartPalette, setChartPalette] = useChartPalette();
-    const [previewStrokes, setPreviewStrokes] = usePreviewStrokes();
+    const [previewStrokes] = usePreviewStrokes();
     const strokeDirection = useStrokeDirection();
 
     return (
@@ -104,8 +104,8 @@ export const EditorPanel = () => {
                     value={chartPalette}
                     onChange={setChartPalette}
                     strokeDirection={strokeDirection}
-                    previewStrokes={previewStrokes}
-                    onPreviewStrokesChange={setPreviewStrokes}
+                    seriesStrokesPreviewed={previewStrokes}
+                    showSemanticColors={false}
                 />
             </CollapsibleSection>
             <CollapsibleSection {...sectionProps('All Parameters')}>

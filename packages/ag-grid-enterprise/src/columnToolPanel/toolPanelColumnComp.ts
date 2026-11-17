@@ -1,4 +1,10 @@
-import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -65,7 +71,8 @@ export class ToolPanelColumnComp extends Component {
         private readonly params: ToolPanelColumnCompParams,
         private readonly eventType: ColumnEventType,
         private readonly source: ColumnSelectionPanelSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super();
         const { column, depth } = modelItem;
@@ -166,7 +173,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
-        this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();
@@ -199,7 +206,8 @@ export class ToolPanelColumnComp extends Component {
                 this.params,
                 this.eventType,
                 this.source,
-                this.columnMove
+                this.columnMove,
+                this.refocusIfLost
             )
         );
         this.addDestroyFunc(() => {

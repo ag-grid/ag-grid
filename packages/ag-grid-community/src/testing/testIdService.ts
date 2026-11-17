@@ -75,6 +75,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             gridSizeChanged: setup,
             filterOpened: setup,
             filterChanged: setup,
+            filterModified: setup,
+            filterUiChanged: setup,
             cellSelectionChanged: setup,
         });
 

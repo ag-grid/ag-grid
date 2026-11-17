@@ -12,7 +12,6 @@
         "test:package:local-21",
         "test:package:local-22",
         "test:package:local-latest",
-        "test:package:production-20",
         "test:package:production-21",
         "test:package:production-22"
       ],
@@ -26,16 +25,6 @@
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -u 21"
-        }
-      }
-    },
-    "test:package:production-20": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -p 20",
-      "cache": false,
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/run.sh -p -u 20"
         }
       }
     },

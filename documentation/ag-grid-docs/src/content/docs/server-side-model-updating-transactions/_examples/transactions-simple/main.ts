@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type {
     ColDef,
     GetRowIdParams,
@@ -12,7 +14,6 @@ import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidation
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { data } from './data';
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

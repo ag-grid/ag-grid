@@ -248,7 +248,19 @@ describe('Multi Filter floating filter keystroke race', () => {
     test('before rows load, an input in a floating filter showing none of a held model keeps all of it', async () => {
         const onFilterModified = vi.fn();
         const api = gridsManager.createGrid('grid1', {
-            columnDefs: [{ field: 'name', filter: 'agMultiColumnFilter', floatingFilter: true }],
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    floatingFilter: true,
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+                            { filter: 'agSetColumnFilter' },
+                        ],
+                    },
+                },
+            ],
             rowData: [],
             onFilterModified,
         });

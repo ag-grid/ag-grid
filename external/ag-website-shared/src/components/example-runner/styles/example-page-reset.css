@@ -1,0 +1,18 @@
+/**
+ * Page-level reset for example documents, linked beside `example-controls.css` by a site whose
+ * example runner has no reset of its own (AG Charts). A site that already resets its example
+ * pages (AG Grid) links only the controls sheet, as these rules would fight that reset.
+ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}

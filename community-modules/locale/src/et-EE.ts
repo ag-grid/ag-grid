@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     advancedFilterCancel: 'Loobu',
     advancedFilterClear: 'Tühjenda',
     advancedFilterBuilder: 'Koostaja',
+    advancedFilterPlaceholder: 'Täpsem filter',
     advancedFilterValidationMissingColumn: 'Veerg on puudu',
     advancedFilterValidationMissingOption: 'Valik on puudu',
     advancedFilterValidationMissingValue: 'Väärtus on puudu',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaCalculatedColumn: 'Arvutatud veerg',
     ariaColumnShowValuesAs: 'Näitab väärtusi kui',
     ariaColumnSelectAll: 'Lülita kõikide veergude nähtavus',
+    ariaColumnSelectExpandAll: 'Laienda või ahenda kõik veerurühmad',
     ariaDateFilterInput: 'Kuupäevafiltri sisend',
     ariaDefaultListName: 'Loend',
     ariaFilterColumnsInput: 'Filtri veergude sisend',
@@ -789,8 +791,17 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaVisible: 'nähtav',
     ariaSearchFilterValues: 'Otsi filtri väärtusi',
     ariaPageSizeSelectorLabel: 'Lehe suurus',
+    ariaPageSizeSelectorDescription: 'Lehe suuruse muutmine värskendab ruudustikus kuvatavaid ridu',
+    ariaPaginationRowSummary: 'Kuvatakse kirjed ${variable} kuni ${variable}, kokku ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'Kuvatakse kirjed ${variable} kuni ${variable}, koguarv teadmata',
+    ariaPaginationRowSummaryLoading: 'Kirjete laadimine alates ${variable}',
+    ariaPaginationPanelLabel: 'Ruudustiku lehekülgedeks jaotamine',
     ariaChartMenuClose: 'Sulge diagrammi muutmismenüü',
     ariaChartSelected: 'Valitud',
+    ariaChartSeriesChartType: '${variable} diagrammi tüüp',
+    ariaChartPalettePrevious: 'Eelmine palett',
+    ariaChartPaletteNext: 'Järgmine palett',
+    ariaChartPalettePage: 'Palett ${variable}/${variable}',
     ariaSparklineChartDescription:
         'Väikediagramm - ${chartType} näitab ${count} väärtust vahemikus ${min} kuni ${max}. Algab ${start} ja lõpeb ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Väikediagramm - ${chartType} näitab 1 väärtust, ${value}.',
@@ -823,6 +834,11 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelMaximize: 'Maksimeeri',
 
     ariaLabelRestore: 'Taasta',
+    ariaLabelColorPickerSpectrum: 'Küllastus ja heledus',
+    ariaValueColorPickerSpectrum: 'Küllastus ${variable}%, heledus ${variable}%',
+    ariaLabelColorPickerHue: 'Toon',
+    ariaLabelColorPickerAlpha: 'Läbipaistmatus',
+    ariaLabelColorPickerHex: 'Kuueteistkümnendvärv',
 
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',
@@ -830,6 +846,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelSelectField: 'Väljavalik',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Lahtriredaktor',
     ariaValidationErrorPrefix: 'Lahtriredaktori valideerimine',
     ariaFullRowValidationError: 'Täisrea valideerimine: ${variable}',
     ariaFullRowEditValidationFailed: 'Rea muutmist ei saa lõpetada. ${variable}',
@@ -862,6 +879,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelAddFilterField: 'Filtrivälja lisamine',
     ariaLabelFilterCardDelete: 'Kustuta filter',
     ariaLabelFilterCardHasEdits: 'Sisaldab muudatusi',
+    ariaLabelFilterCardType: 'Filtri tüüp',
     ariaHasNote: 'Sellel lahtril on märkus.',
 
     // Number Format (Status Bar, Pagination Panel)

@@ -2,7 +2,7 @@
 // grouping + aggregation (50 value cols), grouping + filtering. Merged from the former grouping /
 // grouping-sorting / grouping-aggregation / grouping-filtering files. The plain/sorting/filtering
 // suites share bench-data's grouped builders; the aggregation suite uses wide value-column rows.
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
@@ -17,14 +17,7 @@ import {
     buildValueEdits,
     buildValuePartialUpdate,
 } from './bench-data';
-import {
-    BenchGridsManager,
-    SimplePRNG,
-    benchAlternating,
-    benchDefaults,
-    benchRebuild,
-    rebuildRows,
-} from './bench-utils';
+import { BenchGridsManager, SimplePRNG, bench, benchAlternating, benchRebuild, rebuildRows } from './bench-utils';
 
 const groupingModules = [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule];
 
@@ -37,7 +30,7 @@ suite('grouping — plain (3 levels, 20k rows)', () => {
     const rowData = buildGroupedData(20_000);
     const updatedRowData = buildGroupedStructuralUpdate(rowData);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('grouping-plain', {
@@ -55,7 +48,7 @@ suite('grouping — plain (3 levels, 20k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-    });
+    };
 
     bench(
         `grouping from scratch ${rowData.length} rows`,
@@ -84,7 +77,7 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
     const rowData = buildGroupedData(15_000);
     const updatedRowData = buildGroupedStructuralUpdate(rowData);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('grouping-sorting', {
@@ -104,7 +97,7 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-    });
+    };
 
     bench(
         `sorting from scratch ${rowData.length} rows (5 sorts)`,
@@ -248,7 +241,7 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
     const rowData = buildGroupedData(12_000);
     const updatedRowData = buildGroupedCellUpdate(rowData);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('grouping-filter', {
@@ -266,7 +259,7 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-    });
+    };
 
     const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
     let filterOn = false;

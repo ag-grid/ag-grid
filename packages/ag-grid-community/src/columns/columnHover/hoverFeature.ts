@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 
@@ -24,7 +26,7 @@ export class HoverFeature extends BeanStub {
         const active = enabled ?? !!gos.get('columnHoverHighlight');
 
         if (active) {
-            this.destroyManagedListeners = this.addManagedElementListeners(element, {
+            this.destroyManagedListeners = _addManagedElementListeners(this, element, {
                 mouseover: colHover.setMouseOver.bind(colHover, columns),
                 mouseout: colHover.clearMouseOver.bind(colHover),
             });

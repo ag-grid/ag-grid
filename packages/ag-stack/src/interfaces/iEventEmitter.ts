@@ -1,5 +1,16 @@
 import type { AgEvent } from './agEvent';
 
+/**
+ * Mirrors the DOM's `AddEventListenerOptions`, so a DOM element still satisfies `IEventEmitter`.
+ * @knipIgnore Re-exported for consumers.
+ */
+export interface AgAddEventListenerOptions {
+    capture?: boolean;
+    once?: boolean;
+    passive?: boolean;
+    signal?: AbortSignal;
+}
+
 export type IEventListener<TEventType extends string> = (params: AgEvent<TEventType>) => void;
 export type IGlobalEventListener<TEventType extends string> = (
     eventType: TEventType,
@@ -10,13 +21,13 @@ export interface IEventEmitter<TEventType extends string> {
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
     removeEventListener(
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
 }
 
@@ -29,12 +40,26 @@ export interface IAgEventEmitter<TEventType extends string> {
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
     __removeEventListener(
         eventType: TEventType,
         listener: IEventListener<TEventType>,
         async?: boolean,
-        options?: AddEventListenerOptions
+        options?: AgAddEventListenerOptions
     ): void;
+}
+
+/** Structural so that describing an element needs no DOM types. */
+/** The subset of DOM listener options a target may honour, named without DOM types. */
+export interface AgListenerOptions {
+    passive?: boolean;
+}
+
+/** Chooses the options for each event a managed listener subscribes to. */
+export type AgListenerOptionsForEvent = (event: string) => Readonly<AgListenerOptions> | undefined;
+
+export interface ListenerTarget {
+    addEventListener(type: string, listener: (event?: any) => void, options?: Readonly<AgListenerOptions>): void;
+    removeEventListener(type: string, listener: (event?: any) => void): void;
 }

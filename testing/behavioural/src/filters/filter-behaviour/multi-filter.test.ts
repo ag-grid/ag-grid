@@ -916,6 +916,44 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             `);
         });
 
+        test('a sub-menu child is a button that opens a dialog named after its filter', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: displayStyleCols,
+                rowData: ROWS,
+            });
+            await ColumnFilterHarness.open(api, 'name');
+            const multiFilter = multiFilterIn(api, '.ag-filter-menu');
+            const menuItem = multiFilter.querySelector<HTMLElement>('.ag-multi-filter-menu-item')!;
+            const itemAria = () => ({
+                role: menuItem.getAttribute('role'),
+                hasPopup: menuItem.getAttribute('aria-haspopup'),
+                expanded: menuItem.getAttribute('aria-expanded'),
+            });
+            expect({
+                ...itemAria(),
+                menuItems: multiFilter.querySelectorAll('[role="menuitem"]').length,
+            }).toEqual({ role: 'button', hasPopup: 'dialog', expanded: 'false', menuItems: 0 });
+
+            menuItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            const subMenu = await waitFor(() => {
+                const popup = getGridElement(api)!.querySelector('.ag-menu.ag-popup-child:not(.ag-filter-menu)');
+                expect(popup).not.toBeNull();
+                return popup!;
+            });
+            expect({
+                ...itemAria(),
+                popupRole: subMenu.getAttribute('role'),
+                popupName: subMenu.getAttribute('aria-label'),
+            }).toEqual({
+                role: 'button',
+                hasPopup: 'dialog',
+                expanded: 'true',
+                popupRole: 'dialog',
+                popupName: 'Text Filter',
+            });
+        });
+
         test('an accordion child shows collapsed under its title until expanded', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
@@ -954,6 +992,75 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
                     (e) => e.textContent
                 ),
             }).toEqual({ menuItems: 0, groups: ['Text Filter', 'Pick names'] });
+        });
+
+        test('a custom sub-menu child keeps its own role and label in the popup and in the filters tool panel', async () => {
+            class OwnAriaFilter implements IFilterComp {
+                private readonly eGui = document.createElement('div');
+                public init(): void {
+                    this.eGui.className = 'own-aria-filter';
+                    this.eGui.setAttribute('role', 'group');
+                    this.eGui.setAttribute('aria-label', 'Own names');
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public isFilterActive(): boolean {
+                    return false;
+                }
+                public doesFilterPass(): boolean {
+                    return true;
+                }
+                public getModel(): null {
+                    return null;
+                }
+                public setModel(): void {}
+            }
+            const api: GridApi = await gridsManager.createGridAndWait(
+                'grid1',
+                {
+                    enableFilterHandlers,
+                    columnDefs: [
+                        {
+                            field: 'name',
+                            filter: 'agMultiColumnFilter',
+                            filterParams: {
+                                filters: [
+                                    {
+                                        filter: enableFilterHandlers
+                                            ? { component: OwnAriaFilter, doesFilterPass: () => true }
+                                            : OwnAriaFilter,
+                                        display: 'subMenu',
+                                        title: 'Own',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                    rowData: ROWS,
+                    sideBar: FILTERS_SIDEBAR,
+                },
+                { modules: [CustomFilterModule] }
+            );
+            const ownAria = (el: Element) => ({ role: el.getAttribute('role'), label: el.getAttribute('aria-label') });
+            await ColumnFilterHarness.open(api, 'name');
+            multiFilterIn(api, '.ag-filter-menu')
+                .querySelector<HTMLElement>('.ag-multi-filter-menu-item')!
+                .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            const inPopup = await waitFor(() => {
+                const el = getGridElement(api)!.querySelector('.ag-popup-child .own-aria-filter');
+                expect(el).not.toBeNull();
+                return el!;
+            });
+            expect(ownAria(inPopup)).toEqual({ role: 'group', label: 'Own names' });
+            api.hidePopupMenu();
+
+            const panel = await openFiltersPanel(api);
+            await panel.expandGroup('Name');
+            expect(ownAria(multiFilterIn(api, '.ag-filter-toolpanel').querySelector('.own-aria-filter')!)).toEqual({
+                role: 'group',
+                label: 'Own names',
+            });
         });
     });
 

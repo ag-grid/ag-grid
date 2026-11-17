@@ -17,6 +17,7 @@ import {
     _renderBootstrapPanel,
     _reportMissingModule,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
     getErrorLink,
@@ -560,6 +561,22 @@ describe('bootstrap panel', () => {
         _renderBootstrapPanel(document.createElement('div'), VERSIONS_TEXT);
 
         expect(renderer).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('reset to a fresh page', () => {
+    test('a listener attached after the reset is replayed nothing from before it, though an earlier listener was never detached', () => {
+        _configureDiagnostics({ capture: true });
+        listenAll(() => undefined);
+        _warnWithoutAttribution(11);
+
+        _resetValidationLogging();
+        _configureDiagnostics({ capture: true });
+        const listener = vi.fn();
+        const off = listenAll(listener);
+
+        expect(listener).not.toHaveBeenCalled();
+        off();
     });
 });
 

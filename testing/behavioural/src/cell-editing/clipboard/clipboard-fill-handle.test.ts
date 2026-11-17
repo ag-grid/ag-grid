@@ -10,6 +10,7 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
+import type { AgColumn, BeanCollection, ICellComp } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -407,6 +408,58 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         await new GridRows(api, 'after horizontal reduce').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ROW_0 a:"X" b:"Y" c:null
+        `);
+    });
+
+    test('dragging the fill handle over a cell whose component has not mounted yet does not throw', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardGridFillUnmountedComp', {
+            cellSelection: { handle: { mode: 'fill', direction: 'y' } },
+            columnDefs: [{ field: 'v', editable: true }],
+            rowData: [
+                { id: 'ROW_0', v: 'X' },
+                { id: 'ROW_1', v: 'A' },
+                { id: 'ROW_2', v: 'B' },
+                { id: 'ROW_3', v: 'C' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellFor = (rowId: string) => waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(rowId, 'v')));
+
+        const sourceCell = await cellFor('ROW_0');
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        // No public API leaves a CellCtrl without its comp, so unmount ROW_2's comp directly.
+        const beans: BeanCollection = (api.getRowNode('ROW_2') as any).beans;
+        const cellCtrl = beans.rowRenderer
+            .getRowByPosition({ rowIndex: 2, rowPinned: null })!
+            .getCellCtrl(api.getColumn('v') as AgColumn)!;
+        const mountedComp = cellCtrl.comp;
+        expect(mountedComp).toBeDefined();
+        (cellCtrl as { comp?: ICellComp }).comp = undefined;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        let clientY = 0;
+        for (const rowId of ['ROW_0', 'ROW_1', 'ROW_2', 'ROW_3']) {
+            clientY += 10;
+            (await cellFor(rowId)).dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY }));
+        }
+
+        cellCtrl.comp = mountedComp;
+        const fillEnd = waitForEvent('fillEnd', api);
+        (await cellFor('ROW_3')).dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY }));
+        await fillEnd;
+
+        await new GridRows(api, 'after filling over a cell whose comp mounted late').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 v:"X"
+            ├── LEAF id:ROW_1 v:"X"
+            ├── LEAF id:ROW_2 v:"X"
+            └── LEAF id:ROW_3 v:"X"
         `);
     });
 

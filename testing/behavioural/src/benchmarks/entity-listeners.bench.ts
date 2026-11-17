@@ -1,5 +1,5 @@
 import type { IAgEventEmitter, IEventEmitter } from 'ag-stack';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type {
     AgColumn,
@@ -14,7 +14,7 @@ import type {
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowApiModule } from 'ag-grid-community';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const LISTENERS = 256;
 
@@ -83,7 +83,7 @@ suite('entity listeners — add, remove and raise on row nodes, columns and colu
                     remove(listeners[i]);
                 }
             },
-            benchDefaults({
+            {
                 setup: async () => {
                     await setup();
                     afterSetup?.();
@@ -95,7 +95,7 @@ suite('entity listeners — add, remove and raise on row nodes, columns and colu
                     expectCalls(1, name);
                     calls = 0;
                 },
-            })
+            }
         );
     };
 
@@ -108,13 +108,13 @@ suite('entity listeners — add, remove and raise on row nodes, columns and colu
                 expectCalls(iter * perCall, name);
                 raise(iter++);
             },
-            benchDefaults({
+            {
                 setup: async () => {
                     await setup();
                     iter = 0;
                     addAll();
                 },
-            })
+            }
         );
     };
 

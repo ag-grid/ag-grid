@@ -1,19 +1,20 @@
 {
+  "extends": ["./tsconfig.lib.json", "../../tsconfig.paths.json"],
   "compilerOptions": {
-    "allowJs": false,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "composite": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "../../node_modules/.cache/tsc-editor/ag-grid-react"
   },
-  "files": [],
-  "include": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [],
   "references": [
     {
-      "path": "./tsconfig.lib.json"
+      "path": "../ag-stack"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path": "../ag-grid-community"
     }
-  ],
-  "extends": "../../tsconfig.base.json"
+  ]
 }

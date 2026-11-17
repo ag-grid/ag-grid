@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     advancedFilterCancel: 'Abbrechen',
     advancedFilterClear: 'Löschen',
     advancedFilterBuilder: 'Ersteller',
+    advancedFilterPlaceholder: 'Erweiterter Filter',
     advancedFilterValidationMissingColumn: 'Spalte fehlt',
     advancedFilterValidationMissingOption: 'Option fehlt',
     advancedFilterValidationMissingValue: 'Wert fehlt',
@@ -739,6 +740,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaCalculatedColumn: 'Berechnete Spalte',
     ariaColumnShowValuesAs: 'Werte werden angezeigt als',
     ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
+    ariaColumnSelectExpandAll: 'Alle Spaltengruppen auf- oder zuklappen',
     ariaDateFilterInput: 'Datum-Filtereingang',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',
@@ -781,8 +783,19 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaVisible: 'sichtbar',
     ariaSearchFilterValues: 'Filterwerte suchen',
     ariaPageSizeSelectorLabel: 'Seitengröße',
+    ariaPageSizeSelectorDescription:
+        'Durch Ändern der Seitengröße werden die im Raster angezeigten Zeilen aktualisiert',
+    ariaPaginationRowSummary: 'Datensätze ${variable} bis ${variable} von ${variable} werden angezeigt',
+    ariaPaginationRowSummaryUnknownTotal:
+        'Datensätze ${variable} bis ${variable} werden angezeigt, Gesamtzahl unbekannt',
+    ariaPaginationRowSummaryLoading: 'Datensätze ab ${variable} werden geladen',
+    ariaPaginationPanelLabel: 'Raster-Paginierung',
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
+    ariaChartSeriesChartType: 'Diagrammtyp für ${variable}',
+    ariaChartPalettePrevious: 'Vorherige Palette',
+    ariaChartPaletteNext: 'Nächste Palette',
+    ariaChartPalettePage: 'Palette ${variable} von ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} mit ${count} Werten zwischen ${min} und ${max}. Beginnt bei ${start} und endet bei ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} mit 1 Wert, ${value}.',
@@ -812,11 +825,17 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelClose: 'Schließen',
     ariaLabelMaximize: 'Maximieren',
     ariaLabelRestore: 'Wiederherstellen',
+    ariaLabelColorPickerSpectrum: 'Sättigung und Helligkeit',
+    ariaValueColorPickerSpectrum: 'Sättigung ${variable} %, Helligkeit ${variable} %',
+    ariaLabelColorPickerHue: 'Farbton',
+    ariaLabelColorPickerAlpha: 'Deckkraft',
+    ariaLabelColorPickerHex: 'Hex-Farbe',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',
     ariaLabelSelectField: 'Feld auswählen',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Zelleneditor',
     ariaValidationErrorPrefix: 'Zelleneditor-Validierung',
     ariaFullRowValidationError: 'Validierung der gesamten Zeile: ${variable}',
     ariaFullRowEditValidationFailed: 'Zeilenbearbeitung kann nicht abgeschlossen werden. ${variable}',
@@ -846,6 +865,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',
     ariaLabelFilterCardDelete: 'Filter löschen',
     ariaLabelFilterCardHasEdits: 'Hat Änderungen',
+    ariaLabelFilterCardType: 'Filtertyp',
     ariaHasNote: 'Diese Zelle hat eine Notiz.',
 
     // Number Format (Status Bar, Pagination Panel)

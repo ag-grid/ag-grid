@@ -95,6 +95,13 @@ const resolveFontFamily = (theme: RenderedThemeInfo['theme']): ChartFontFamily |
     return isChartFontFamily(fontFamily) ? fontFamily : resolveParam('fontFamily', 'fontFamily');
 };
 
+/** The editor hides the semantic colours, so any already stored stay out of the theme. */
+const withoutSemanticColors = ({ fills, strokes, strokesDerived }: Palette): Palette => ({
+    fills,
+    strokes,
+    strokesDerived,
+});
+
 const buildChartTheme = (theme: RenderedThemeInfo['theme'], palette: Palette | undefined): AgChartTheme => {
     const params: AgChartThemeParams = {
         backgroundColor: resolveColor('backgroundColor'),
@@ -104,7 +111,7 @@ const buildChartTheme = (theme: RenderedThemeInfo['theme'], palette: Palette | u
     };
     return {
         baseTheme: BASE_THEME,
-        ...(palette ? { palette: toThemePalette(palette, resolveStrokeDirection()) } : {}),
+        ...(palette ? { palette: toThemePalette(withoutSemanticColors(palette), resolveStrokeDirection()) } : {}),
         params: Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined)),
     };
 };
@@ -118,7 +125,7 @@ export const useChartTheme = (): AgChartTheme => {
 
 /**
  * AG Charts draws most series' strokes at zero width unless a stroke is set, so these are its widths once one is.
- * Series that already outline themselves are left out, as is waterfall, which takes the up, down and neutral colours.
+ * Series that already outline themselves are left out, as is waterfall, which colours its bars from the base theme rather than the series palette.
  */
 const PREVIEW_STROKE_OVERRIDES = {
     bar: { series: { strokeWidth: 2 } },

@@ -1678,7 +1678,7 @@ export class ColumnFilterService
                     }
                 }
 
-                return AgPromise.resolve(undefined);
+                return AgPromise.resolve();
             },
             handler,
             handlerParams,

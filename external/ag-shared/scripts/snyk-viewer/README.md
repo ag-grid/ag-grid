@@ -207,6 +207,22 @@ entry in place. A vuln reached only through workspaces is auto-resolved once all
 All mutation endpoints are `POST` with `Content-Type: application/json`. All responses
 are `{ ok: true, ... }` or `{ ok: false, error: "..." }`.
 
+### Request protection
+
+The server rewrites `package.json` files and runs `yarn nx`, so any web page open in the
+developer's browser must not be able to drive it:
+
+- Every request must carry a `Host` of `127.0.0.1:<port>` or `localhost:<port>`, which blocks
+  DNS rebinding. A request with an `Origin` header must come from one of those origins.
+- Every `POST` (including `/run-snyk`) must send `Content-Type: application/json` and the
+  `X-Snyk-Viewer-Token` header. The token is random per server run and is embedded in the
+  served page as `<meta name="snyk-viewer-token">`; `SnykUtils.apiHeaders()` adds both headers.
+- Dependency endpoints only touch the `dependencies`, `devDependencies`, `peerDependencies`,
+  `optionalDependencies` and `resolutions` fields, and reject prototype keys (`__proto__`,
+  `constructor`, `prototype`) and names or versions containing unexpected characters.
+
+### Endpoints
+
 | Method | Path | Purpose |
 |--------|------|---------|
 | `GET` | `/data` | Vuln projects array + ignore patterns + shared expiry + root package name |
@@ -221,7 +237,7 @@ are `{ ok: true, ... }` or `{ ok: false, error: "..." }`.
 | `POST` | `/add-snyk-ignore` | Add or update an ignore entry in a `.snyk` file (`snykFile`, `vulnId`, `path`, `reason`, `expires`) |
 | `POST` | `/add-snyk-ignores` | Batch of `/add-snyk-ignore` entries (`entries: [{snykFile, vulnId, path, reason, expires}]`) |
 | `POST` | `/update-snyk` | Update stale dep-path keys in `.snyk` files (`updates: [{snykFile, vulnId, oldPath, newPath}]`) |
-| `GET` | `/run-snyk` | SSE stream — runs `yarn nx snyk:test:json`, emits stdout/stderr, reloads data on success |
+| `POST` | `/run-snyk?backup=` | SSE-formatted stream (read with `fetch`) — runs `yarn nx snyk:test:json`, emits stdout/stderr, reloads data on success |
 | `GET` | `/*.css`, `/*.js` | Static UI files served from the same directory |
 
 ### `/add-snyk-ignore` update behaviour

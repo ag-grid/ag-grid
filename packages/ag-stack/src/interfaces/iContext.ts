@@ -1,6 +1,6 @@
 import type { AgBaseBean } from './agBaseBean';
 
-export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
+export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event: TEvent) => void };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IContext<TBeanCollection> {

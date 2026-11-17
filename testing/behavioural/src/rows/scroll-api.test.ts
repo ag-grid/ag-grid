@@ -34,6 +34,8 @@ describe('scroll API', () => {
                 {
                     columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
                     rowData: Array.from({ length: 200 }, () => ({})),
+                    suppressRowVirtualisation: false,
+                    suppressColumnVirtualisation: false,
                     ...options,
                 },
                 { modules: [PinnedRowModule] }
@@ -257,7 +259,7 @@ describe('scroll API', () => {
             const scrollAndMoveRows = async (id: string, columnDefs: ColDef[]) => {
                 const api = gridsManager.createGrid(
                     id,
-                    { columnDefs, rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i })) },
+                    { columnDefs, rowData: Array.from({ length: 130 }, (_, i) => ({ a: i, b: i })) },
                     { modules: [RowAutoHeightModule] }
                 );
                 const viewport = getViewport(api);
@@ -297,7 +299,7 @@ describe('scroll API', () => {
                             { field: 'b', autoHeight: true },
                             { field: 'c', autoHeight: true },
                         ],
-                        rowData: Array.from({ length: 200 }, (_, i) => ({ a: i, b: i, c: i })),
+                        rowData: Array.from({ length: 130 }, (_, i) => ({ a: i, b: i, c: i })),
                     },
                     { modules: [RowAutoHeightModule] }
                 );
@@ -341,7 +343,7 @@ describe('scroll API', () => {
                             { field: 'a', autoHeight: true, spanRows: true },
                             { field: 'b', autoHeight: true },
                         ],
-                        rowData: Array.from({ length: 200 }, (_, i) => ({ a: Math.floor(i / 4), b: i })),
+                        rowData: Array.from({ length: 130 }, (_, i) => ({ a: Math.floor(i / 4), b: i })),
                     },
                     { modules: [CellSpanModule, RowAutoHeightModule] }
                 );

@@ -16,7 +16,7 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
+      "executor": "nx:run-commands",
       "dependsOn": ["ag-grid-community:build:types"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -29,12 +29,9 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/dist/types"],
       "options": {
-        "outputPath": "packages/ag-grid-react/dist/types",
-        "main": "packages/ag-grid-react/src/index.ts",
-        "tsConfig": "packages/ag-grid-react/tsconfig.types.json",
-        "compiler": "tsc"
+        "command": "node scripts/package/emit-declarations.mjs {projectRoot}/tsconfig.types.json {projectRoot}/dist/types"
       },
       "configurations": {
         "watch": {},
@@ -42,7 +39,7 @@
       }
     },
     "build:package": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["ag-grid-community:build:types", "ag-grid-community:build:package"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -54,6 +51,7 @@
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "packages/ag-grid-react/dist/package",
         "main": "packages/ag-grid-react/src/index.ts",
         "tsConfig": "packages/ag-grid-react/tsconfig.lib.json",
@@ -73,8 +71,9 @@
       }
     },
     "build:umd": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["build:package"],
+      "inputs": ["jsOutputs", "sharedGlobals"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist/umd",

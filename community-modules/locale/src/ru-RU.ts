@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     advancedFilterCancel: 'Отмена',
     advancedFilterClear: 'Очистить',
     advancedFilterBuilder: 'Конструктор',
+    advancedFilterPlaceholder: 'Расширенный фильтр',
     advancedFilterValidationMissingColumn: 'Отсутствует столбец',
     advancedFilterValidationMissingOption: 'Отсутствует вариант',
     advancedFilterValidationMissingValue: 'Отсутствует значение',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaCalculatedColumn: 'Вычисляемый столбец',
     ariaColumnShowValuesAs: 'Показ значений как',
     ariaColumnSelectAll: 'Переключить видимость всех столбцов',
+    ariaColumnSelectExpandAll: 'Развернуть или свернуть все группы столбцов',
     ariaDateFilterInput: 'Поле ввода фильтра по дате',
     ariaDefaultListName: 'Список',
     ariaFilterColumnsInput: 'Поле ввода для фильтрации столбцов',
@@ -792,8 +794,17 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaVisible: 'видимо',
     ariaSearchFilterValues: 'Поиск значений фильтра',
     ariaPageSizeSelectorLabel: 'Размер страницы',
+    ariaPageSizeSelectorDescription: 'При изменении размера страницы обновляются строки, отображаемые в таблице',
+    ariaPaginationRowSummary: 'Показаны записи с ${variable} по ${variable} из ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'Показаны записи с ${variable} по ${variable}, общее количество неизвестно',
+    ariaPaginationRowSummaryLoading: 'Загрузка записей, начиная с ${variable}',
+    ariaPaginationPanelLabel: 'Постраничная навигация таблицы',
     ariaChartMenuClose: 'Закрыть меню редактирования диаграммы',
     ariaChartSelected: 'Выбрано',
+    ariaChartSeriesChartType: 'Тип диаграммы для ${variable}',
+    ariaChartPalettePrevious: 'Предыдущая палитра',
+    ariaChartPaletteNext: 'Следующая палитра',
+    ariaChartPalettePage: 'Палитра ${variable} из ${variable}',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, отображающий ${count} значений между ${min} и ${max}. Начинается с ${start} и заканчивается на ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, отображающий 1 значение, ${value}.',
@@ -826,6 +837,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelMaximize: 'Развернуть',
 
     ariaLabelRestore: 'Восстановить',
+    ariaLabelColorPickerSpectrum: 'Насыщенность и яркость',
+    ariaValueColorPickerSpectrum: 'Насыщенность ${variable}%, яркость ${variable}%',
+    ariaLabelColorPickerHue: 'Оттенок',
+    ariaLabelColorPickerAlpha: 'Непрозрачность',
+    ariaLabelColorPickerHex: 'Шестнадцатеричный цвет',
 
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',
@@ -833,6 +849,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelSelectField: 'Выберите поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор ячейки',
     ariaValidationErrorPrefix: 'Проверка редактора ячейки',
     ariaFullRowValidationError: 'Проверка всей строки: ${variable}',
     ariaFullRowEditValidationFailed: 'Не удалось завершить редактирование строки. ${variable}',
@@ -866,6 +883,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelAddFilterField: 'Поле добавления фильтра',
     ariaLabelFilterCardDelete: 'Удалить фильтр',
     ariaLabelFilterCardHasEdits: 'Есть изменения',
+    ariaLabelFilterCardType: 'Тип фильтра',
     ariaHasNote: 'У этой ячейки есть заметка.',
 
     // Number Format (Status Bar, Pagination Panel)

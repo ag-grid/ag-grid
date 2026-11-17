@@ -25,11 +25,28 @@ import { toTitleCase } from './string-utils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
+const ROW_DATA_FROM_RESPONSE = /gridApi!?\.setGridOption\('rowData', (?=data)/;
+
+function setsRowDataFromResponse(data: ParsedBindings['data']): boolean {
+    return !!data && ROW_DATA_FROM_RESPONSE.test(data.callback);
+}
+
+function toRowDataSignal(rowDataType: string, value?: string | null): string {
+    if (value === undefined) {
+        return `rowData = signal<${rowDataType}[] | undefined>(undefined)`;
+    }
+    if (value === null || value === 'null') {
+        return `rowData = signal<${rowDataType}[] | null>(null)`;
+    }
+    return `rowData = signal<${rowDataType}[]>(${value})`;
+}
+
 function getOnGridReadyCode(
     readyCode: string,
     data: { url: string; callback: string },
     rowDataType: string | undefined,
-    hasApi: boolean
+    hasApi: boolean,
+    rowDataSignal: boolean
 ): string {
     const additionalLines = [];
 
@@ -39,7 +56,9 @@ function getOnGridReadyCode(
 
     if (data) {
         const { url, callback } = data;
-        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
+        const setRowDataBlock = rowDataSignal
+            ? callback.replace(new RegExp(ROW_DATA_FROM_RESPONSE, 'g'), 'this.rowData.set(')
+            : replaceGridReadyRowData(callback, 'this.rowData');
         additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
@@ -67,10 +86,6 @@ function addModuleImports(
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
 
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
-
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
@@ -83,6 +98,12 @@ function addModuleImports(
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true);
+    }
+
+    // After the binding imports, which include the grid's own stylesheets, so the example's
+    // styles load last and win over theme rules of equal specificity
+    if (allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     imports.push(getEnableAGTestIdLogic());
@@ -99,9 +120,10 @@ function getImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
-    allStylesheets: string[]
+    allStylesheets: string[],
+    rowDataSignal: boolean
 ): string[] {
-    const imports = ["import { Component } from '@angular/core';"];
+    const imports = [`import { ${rowDataSignal ? 'Component, signal' : 'Component'} } from '@angular/core';`];
 
     if (bindings.data) {
         imports.push("import { HttpClient } from '@angular/common/http';");
@@ -162,14 +184,15 @@ export function vanillaToAngular(
     const eventHandlers = bindings.eventHandlers.map((event) => event.handler).map(removeFunctionKeyword);
     const externalEventHandlers = bindings.externalEventHandlers.map((handler) => removeFunctionKeyword(handler.body));
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
+    const rowDataSignal = setsRowDataFromResponse(data);
 
     return () => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets, rowDataSignal);
         const propertyAttributes = [];
         const propertyAssignments = [];
 
         properties
-            .filter((property) => property.name !== 'onGridReady')
+            .filter((property) => property.name !== 'onGridReady' && !(rowDataSignal && property.name === 'rowData'))
             .forEach((property) => {
                 if (property.value === 'true' || property.value === 'false') {
                     propertyAttributes.push(toConst(property));
@@ -187,11 +210,16 @@ export function vanillaToAngular(
                 }
             });
 
-        if (!propertyAttributes.find((item) => item.indexOf('[rowData]') >= 0)) {
+        if (rowDataSignal) {
+            const declaredRowData = properties.find((property) => property.name === 'rowData');
+            propertyAttributes.push('[rowData]="rowData()"');
+            propertyAssignments.push(`${toRowDataSignal(rowDataType, declaredRowData?.value)};`);
+        } else if (!propertyAttributes.find((item) => item.indexOf('[rowData]') >= 0)) {
             propertyAttributes.push('[rowData]="rowData"');
         }
 
         if (
+            !rowDataSignal &&
             !propertyAssignments.find((item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0)
         ) {
             propertyAssignments.push(`rowData!: ${rowDataType}[];`);
@@ -204,7 +232,7 @@ export function vanillaToAngular(
             .join('\n\n');
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
-        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, data, rowDataType, hasGridApi);
+        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, data, rowDataType, hasGridApi, rowDataSignal);
         const additional = [];
         if (gridReadyCode) {
             additional.push(gridReadyCode);

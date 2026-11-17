@@ -259,10 +259,6 @@ export interface ServerSideGroupLevelParams {
     cacheBlockSize?: number;
 }
 
-/**
- * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
-
 export type GetServerSideGroupLevelParams<TData = any, TContext = any> = (
     params: GetServerSideGroupLevelParamsParams<TData, TContext>
 ) => ServerSideGroupLevelParams;

@@ -1249,7 +1249,8 @@ export class EditService extends BeanStub implements NamedBean {
 
     /** Ends edits on every column dropping out of colsList, destroyed or merely parked. */
     public releaseColumnsLeaving(newCols: AgColumn[]): void {
-        const editMap = this.model.getEditMap();
+        // Columns can be set before postConstruct (e.g. autoGenerateColumnDefs with initial rowData), when there is no model and nothing in edit.
+        const editMap = this.model?.getEditMap();
         if (!editMap?.size) {
             return;
         }
@@ -2090,8 +2091,8 @@ export class EditService extends BeanStub implements NamedBean {
 
         const edits: EditMap = new Map();
 
-        for (let { colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
-            const col = colId ? colModel.colsById[colId] : colKey ? colModel.getCol(colKey) : column;
+        for (let { colId, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
+            const col = colModel.colsById[colId];
 
             if (!col) {
                 continue;

@@ -1,0 +1,15 @@
+{
+  // VS Code's solution: each listed `tsconfig.json` is `composite`, so find-all-references crosses packages; only `tsc -b`
+  // emits them, into node_modules/.cache, as checks, tests and builds use the lib, spec and types configs. It extends
+  // the base, so a tool reading the root config for a file outside every project (esbuild, Vite) uses the repo's options.
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/ag-stack" },
+    { "path": "./packages/ag-grid-community" },
+    { "path": "./packages/ag-grid-enterprise" },
+    { "path": "./packages/ag-grid-react" },
+    { "path": "./testing/behavioural" },
+    { "path": "./testing/shared/vitest" }
+  ]
+}

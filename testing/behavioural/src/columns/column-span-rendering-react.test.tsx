@@ -215,8 +215,8 @@ describe('colSpan follows row data updates (React)', () => {
         await waitFor(() => expect(drawn()).toContain(38));
         const keptFirst = Math.min(...drawn());
 
-        act(() => api!.ensureColumnVisible('c36'));
-        await waitFor(() => expect(drawn()).toContain(36));
+        act(() => api!.ensureColumnVisible(`c${keptFirst - 1}`));
+        await waitFor(() => expect(drawn()).toContain(keptFirst - 1));
 
         const cols = drawn();
         expect(cols).toContain(keptFirst);

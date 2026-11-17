@@ -7,6 +7,7 @@ import {
     asyncSetTimeout,
     clipboardUtils,
     initPointerEventPolyfill,
+    mockGridLayout,
     waitForEvent,
 } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
@@ -1190,8 +1191,119 @@ describe('ag-grid formulas interactive workflows', () => {
                 Array.from(shadowRoot.querySelectorAll('.ag-autocomplete-row-label'), (label) => label.textContent)
             ).toContain('SUM')
         );
+        await waitFor(() =>
+            expect(
+                shadowRoot.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim()
+            ).toBe('SUM')
+        );
         await userEvent.keyboard('{Enter}');
         expect(editor.value).toBe('=SUM(');
+    });
+
+    test('the formula editor is a named combobox that is collapsed when no suggestions show', async () => {
+        const api = await createGrid('fx-editor-aria-name', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.value).toBe('=A1');
+        expect(editor.getAttribute('aria-label')).toBe('B');
+        expect(editor.getAttribute('role')).toBe('combobox');
+        expect(editor.getAttribute('aria-autocomplete')).toBe('list');
+        expect(editor.getAttribute('aria-haspopup')).toBe('listbox');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor exposes the function suggestions and the highlighted one while they show', async () => {
+        const api = await createGrid('fx-editor-aria-suggestions', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOption = () => document.getElementById(editor.getAttribute('aria-activedescendant') ?? '');
+        const activeOptionLabel = () => activeOption()?.textContent?.trim();
+
+        await userEvent.type(editor, '=SU');
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('SUM'));
+        expect(editor.getAttribute('aria-expanded')).toBe('true');
+        expect(document.getElementById(editor.getAttribute('aria-controls')!)?.getAttribute('role')).toBe('listbox');
+        expect(activeOption()?.getAttribute('role')).toBe('option');
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        const firstOption = activeOption()!;
+        await userEvent.keyboard('{ArrowDown}');
+        await waitFor(() => expect(activeOption()?.getAttribute('aria-posinset')).toBe('2'));
+        expect(activeOption()).not.toBe(firstOption);
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        await userEvent.keyboard('{Escape}');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+
+        await userEvent.type(editor, 'M');
+        await waitFor(() => expect(editor.getAttribute('aria-expanded')).toBe('true'));
+        await userEvent.keyboard('{Tab}');
+        expect(editor.value).toBe('=SUM(');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor falls back to the localised "Input Editor" name when the column has no display name', async () => {
+        const api = await createGrid('fx-editor-aria-name-fallback', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b', headerName: '' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.getAttribute('aria-label')).toBe('Input Editor');
+    });
+
+    test('the formula editor references a function suggestion that only renders once scrolled into view', async () => {
+        onTestFinished(() => mockGridLayout.resetOptions());
+        mockGridLayout.asyncScrollEvents = true;
+
+        const formulaFuncs: GridOptions['formulaFuncs'] = {};
+        for (let i = 0; i < 30; ++i) {
+            formulaFuncs[`ZTEST${String(i).padStart(2, '0')}`] = { func: () => i };
+        }
+        const api = await createGrid('fx-editor-aria-scrolled-suggestion', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            formulaFuncs,
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOptionLabel = () =>
+            document.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim();
+
+        await userEvent.type(editor, '=ZTEST');
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST00'));
+        expect(document.querySelector('[aria-posinset="12"]')).toBeNull();
+
+        // Held down, the key outpaces the scrolls it causes, so the target row renders only afterwards.
+        await userEvent.setup({ delay: null }).keyboard('{ArrowDown>11/}');
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST11'));
     });
 
     test('returning to a formula editor in a grid inside a shadow root after picking a reference puts the caret at the end', async () => {

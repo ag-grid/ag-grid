@@ -1,11 +1,13 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import {
+    AgAbstractComponent,
+    RefPlaceholder,
+    _exists,
+    _getDocument,
+    _setAriaLabel,
+    _setAriaRole,
+    _setDisplayed,
 } from 'ag-stack';
-import { AgComponentStub, RefPlaceholder, _exists, _getDocument, _setDisplayed } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
 
@@ -19,13 +21,13 @@ const maxRecentColors = 8;
 let sharedRecentColors: string[] = [];
 
 export class AgColorPanel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -115,6 +117,7 @@ export class AgColorPanel<
 
     public postConstruct() {
         this.initTabIndex();
+        this.initAria();
         this.initRecentColors();
 
         this.addGuiEventListener('focus', () => this.spectrumColor.focus());
@@ -162,6 +165,40 @@ export class AgColorPanel<
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
         this.spectrumAlphaSlider.setAttribute('tabindex', tabIndex);
+    }
+
+    private initAria(): void {
+        const translate = this.getLocaleTextFunc();
+        this.initAriaSlider(
+            this.spectrumColor,
+            translate('ariaLabelColorPickerSpectrum', 'Saturation and Brightness'),
+            100
+        );
+        this.initAriaSlider(this.spectrumHueSlider, translate('ariaLabelColorPickerHue', 'Hue'), 360);
+        this.initAriaSlider(this.spectrumAlphaSlider, translate('ariaLabelColorPickerAlpha', 'Opacity'), 100);
+    }
+
+    private initAriaSlider(slider: HTMLElement, label: string, max: number): void {
+        _setAriaRole(slider, 'slider');
+        _setAriaLabel(slider, label);
+        slider.setAttribute('aria-valuemin', '0');
+        slider.setAttribute('aria-valuemax', String(max));
+    }
+
+    private refreshAriaValues(): void {
+        const saturation = String(Math.round(this.S * 100));
+        const brightness = String(Math.round(this.B * 100));
+        this.spectrumColor.setAttribute('aria-valuenow', saturation);
+        this.spectrumColor.setAttribute(
+            'aria-valuetext',
+            this.getLocaleTextFunc()(
+                'ariaValueColorPickerSpectrum',
+                `Saturation ${saturation}%, Brightness ${brightness}%`,
+                [saturation, brightness]
+            )
+        );
+        this.spectrumHueSlider.setAttribute('aria-valuenow', String(Math.round(this.H * 360)));
+        this.spectrumAlphaSlider.setAttribute('aria-valuenow', String(Math.round(this.A * 100)));
     }
 
     private refreshSpectrumRect() {
@@ -359,6 +396,8 @@ export class AgColorPanel<
         );
         this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color-to', rgbaColorWithoutAlpha);
         this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color', rgbaColor);
+
+        this.refreshAriaValues();
 
         if (!suppressColorInputUpdate) {
             this.colorInput.setColor(color);

@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     advancedFilterCancel: 'Откажи',
     advancedFilterClear: 'Обриши',
     advancedFilterBuilder: 'Градитељ',
+    advancedFilterPlaceholder: 'Напредни филтер',
     advancedFilterValidationMissingColumn: 'Недостаје колона',
     advancedFilterValidationMissingOption: 'Недостаје опција',
     advancedFilterValidationMissingValue: 'Недостаје вредност',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaCalculatedColumn: 'Израчуната колона',
     ariaColumnShowValuesAs: 'Приказивање вредности као',
     ariaColumnSelectAll: 'Укључи/искључи видљивост свих колона',
+    ariaColumnSelectExpandAll: 'Прошири или скупи све групе колона',
     ariaDateFilterInput: 'Унос филтера датума',
     ariaDefaultListName: 'Листа',
     ariaFilterColumnsInput: 'Унос за филтрирање колона',
@@ -789,8 +791,17 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaVisible: 'видљиво',
     ariaSearchFilterValues: 'Претражи вредности филтера',
     ariaPageSizeSelectorLabel: 'Величина стране',
+    ariaPageSizeSelectorDescription: 'Промена величине стране ажурира редове приказане у табели',
+    ariaPaginationRowSummary: 'Приказани су записи од ${variable} до ${variable}, од укупно ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'Приказани су записи од ${variable} до ${variable}, укупан број није познат',
+    ariaPaginationRowSummaryLoading: 'Учитавање записа од ${variable}',
+    ariaPaginationPanelLabel: 'Пагинација табеле',
     ariaChartMenuClose: 'Затвори мени уређивања графикона',
     ariaChartSelected: 'Изабрано',
+    ariaChartSeriesChartType: 'Тип графикона за ${variable}',
+    ariaChartPalettePrevious: 'Претходна палета',
+    ariaChartPaletteNext: 'Следећа палета',
+    ariaChartPalettePage: 'Палета ${variable} од ${variable}',
     ariaSparklineChartDescription:
         'Спарклајн - ${chartType} приказује ${count} вредности између ${min} и ${max}. Почиње на ${start} и завршава се на ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Спарклајн - ${chartType} приказује 1 вредност, ${value}.',
@@ -823,6 +834,11 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelMaximize: 'Максимизуј',
 
     ariaLabelRestore: 'Врати',
+    ariaLabelColorPickerSpectrum: 'Засићеност и осветљеност',
+    ariaValueColorPickerSpectrum: 'Засићеност ${variable}%, осветљеност ${variable}%',
+    ariaLabelColorPickerHue: 'Нијанса',
+    ariaLabelColorPickerAlpha: 'Непрозирност',
+    ariaLabelColorPickerHex: 'Хексадецимална боја',
 
     ariaLabelColumnMenu: 'Мени колоне',
     ariaLabelColumnFilter: 'Филтер колоне',
@@ -830,6 +846,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelSelectField: 'Изаберите поље',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Едитор ћелије',
     ariaValidationErrorPrefix: 'Валидација едитора ћелије',
     ariaFullRowValidationError: 'Валидација целог реда: ${variable}',
     ariaFullRowEditValidationFailed: 'Није могуће завршити измену реда. ${variable}',
@@ -862,6 +879,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelAddFilterField: 'Додај поље филтера',
     ariaLabelFilterCardDelete: 'Обриши филтер',
     ariaLabelFilterCardHasEdits: 'Има измене',
+    ariaLabelFilterCardType: 'Тип филтера',
     ariaHasNote: 'Ова ћелија има напомену.',
 
     // Number Format (Status Bar, Pagination Panel)

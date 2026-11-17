@@ -1,11 +1,11 @@
 import { clipboardUtils } from 'ag-test-utils/polyfills/clipboard';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, EventApiModule, TextEditorModule } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -104,7 +104,6 @@ suite(`cell editing — batch paste (${GRID_ROWS} rows × ${COLS} cols)`, () => 
                 await pasteBlock(api, toggle ? blockA : blockB, 0);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     clipboardUtils.init();

@@ -260,5 +260,5 @@ const hierarchyPartsForCol = (col: AgColumn): NonNullable<ColDef['groupHierarchy
         return null;
     }
 
-    return def.groupHierarchy ?? def.rowGroupingHierarchy;
+    return def.groupHierarchy;
 };

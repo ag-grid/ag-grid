@@ -6,20 +6,10 @@ alwaysApply: false
 
 # Documentation Example Specs Must Be Meaningful and Framework-Validated
 
-When you **add a new documentation example** (a new folder under a page's `_examples/`) or **create a new doc page** with examples, the example is not complete until it has a meaningful `example.spec.ts` — not the placeholder template — and that spec passes across every framework.
+When you **add a new documentation example** (a new folder under a page's `_examples/`) or **create a new doc page** with examples, the example is not complete until its `example.spec.ts` asserts the behaviour the example demonstrates and passes in every framework the example has pages for. The placeholder spec only proves the grid mounts, so it does not stay (one exception, below).
 
-Do not leave the placeholder `example.spec.ts` in place. The placeholder only proves the grid mounts; it asserts nothing about the behaviour the example exists to demonstrate.
+**Invoke the `docs-e2e-tests` skill** ([SKILL.md](../skills/docs-e2e-tests/SKILL.md)): it reads the page's `index.mdoc` and the example source, writes assertions for that behaviour (not only that the grid loads), and runs the spec in every framework.
 
-**Required steps — invoke the `docs-e2e-tests` skill, which walks through them:**
+A behaviour that needs a real browser but is not what a docs example demonstrates (an arbitrary configuration, or an enterprise feature) belongs in `testing/e2e` instead: see *Choosing a layer* in `testing.md`.
 
-1. Read the page's `index.mdoc` and the example source to understand what the example demonstrates.
-2. Write assertions that exercise that specific behaviour (not just that the grid loads).
-3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"`, which locally runs every framework the example has pages for (its `exampleConfig.json` `supportedFrameworks`, when set) except the production React build (`reactFunctionalTs`). Add `--all-variants` to include it; CI always does. To narrow to one framework, use the grid documentation framework strings for `--framework` (validated against `ALL_FRAMEWORKS` in `documentation/ag-grid-docs/src/utils/grid/test/exampleFrameworks.ts`): `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`.
-
-See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
-
-A behaviour that needs a real browser but is not what a docs example demonstrates (an arbitrary configuration, or an enterprise feature) belongs in `testing/e2e` instead: see *Playwright e2e, behavioural test or docs-example spec* in `testing.md`.
-
-**Exception: style-only examples**
-
-We have a rule in testing.md that styles are not tested. We test what classes are applied to the grid but not the computed style. If the only purpose of an example is to demonstrate styles - CSS rules or theming API parameters - these do not need testing. This is the only circumstance in which it is acceptable to leave the default `example.spec.ts` placeholder in place.
+**Exception: style-only examples.** An example whose only purpose is styling (CSS rules or theming API parameters) keeps the placeholder `example.spec.ts`, since styles are not tested (`testing.md`): a test may check the classes applied to the grid, never the computed style. This is the only case where the placeholder may stay.

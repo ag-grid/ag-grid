@@ -652,6 +652,28 @@ describe('Advanced Filter - Builder UI', () => {
         });
     });
 
+    describe('Accessibility', () => {
+        // Each column type opens a different input class, so each is checked for a name.
+        test.each([
+            { type: 'text', model: { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'a' } },
+            { type: 'number', model: { filterType: 'number', colId: 'age', type: 'equals', filter: 23 } },
+            { type: 'date', model: { filterType: 'date', colId: 'date', type: 'equals', filter: '2024-01-01' } },
+        ] as const)('the $type value editor is named like the pill it replaces', async ({ model }) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [...COLUMN_DEFS!, { field: 'date', cellDataType: 'date', filter: true }],
+            });
+            api.setAdvancedFilterModel(model);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [condition] = await builder.conditionItems();
+            const editor = await builder.openValueEditor(condition);
+            expect(editor).toHaveAttribute('aria-label', 'Value');
+        });
+    });
+
     test('turning the Advanced Filter off closes an open Builder, reporting it hidden once', async () => {
         const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
         const visibility: { source: string; visible: boolean }[] = [];

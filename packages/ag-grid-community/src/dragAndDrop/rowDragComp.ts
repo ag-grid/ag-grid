@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _isEventSupported, preventEventDefault } from 'ag-stack';
+import { _addManagedElementListeners, _isEventSupported, preventEventDefault } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
@@ -170,7 +170,7 @@ export class RowDragComp extends Component {
                 ? { pointerdown: preventEventDefault }
                 : { mousedown: preventEventDefault };
 
-            this.mouseDownListener = this.addManagedElementListeners(eGui, listeners)[0];
+            this.mouseDownListener = _addManagedElementListeners(this, eGui, listeners)[0];
         }
 
         const translate = this.getLocaleTextFunc();

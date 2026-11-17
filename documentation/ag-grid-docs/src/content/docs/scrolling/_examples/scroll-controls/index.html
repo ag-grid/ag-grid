@@ -1,0 +1,37 @@
+<div class="example-wrapper">
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <label>
+                <span class="target-label">Row index:</span>
+                <input id="rowIndex" class="target-input" type="number" value="150" min="0" />
+            </label>
+            <label>
+                <span>Position:</span>
+                <select id="rowPosition" class="position-select">
+                    <option value="auto">auto</option>
+                    <option value="top">top</option>
+                    <option value="middle">middle</option>
+                    <option value="bottom">bottom</option>
+                </select>
+            </label>
+            <button onclick="onEnsureIndexVisible()">Scroll to row</button>
+        </div>
+        <div class="controls-row">
+            <label>
+                <span class="target-label">Column number:</span>
+                <input id="columnNumber" class="target-input" type="number" value="15" min="1" max="20" />
+            </label>
+            <label>
+                <span>Position:</span>
+                <select id="columnPosition" class="position-select">
+                    <option value="auto">auto</option>
+                    <option value="start">start</option>
+                    <option value="middle">middle</option>
+                    <option value="end">end</option>
+                </select>
+            </label>
+            <button onclick="onEnsureColumnVisible()">Scroll to column</button>
+        </div>
+    </div>
+    <div id="myGrid"></div>
+</div>

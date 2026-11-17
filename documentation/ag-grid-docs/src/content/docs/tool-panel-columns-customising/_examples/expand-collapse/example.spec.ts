@@ -22,12 +22,12 @@ test.agExample(import.meta, () => {
         await expect(leaf('Gold')).toHaveCount(0);
 
         // Expand All -> every child column becomes visible.
-        await page.getByRole('button', { name: 'Expand All' }).click();
+        await page.getByRole('button', { name: 'Expand All', exact: true }).click();
         await expect(leaf('Year')).toBeVisible();
         await expect(leaf('Gold')).toBeVisible();
 
         // Collapse All -> child columns hidden again.
-        await page.getByRole('button', { name: 'Collapse All' }).click();
+        await page.getByRole('button', { name: 'Collapse All', exact: true }).click();
         await expect(leaf('Year')).toHaveCount(0);
         await expect(leaf('Gold')).toHaveCount(0);
 
