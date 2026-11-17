@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColGroupDef, GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -41,8 +41,8 @@ describe('column select expand/collapse-all control accessibility', () => {
         return el!;
     }
 
-    function pressKey(el: HTMLElement, key: string): KeyboardEvent {
-        const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+    function pressKey(el: HTMLElement, key: string, type: 'keydown' | 'keyup' = 'keydown'): KeyboardEvent {
+        const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true });
         el.dispatchEvent(event);
         return event;
     }
@@ -56,6 +56,10 @@ describe('column select expand/collapse-all control accessibility', () => {
 
         const space = pressKey(control, ' ');
         expect(space.defaultPrevented).toBe(true);
+        await asyncSetTimeout(0);
+        expect(control.getAttribute('aria-expanded')).toBe('true');
+
+        pressKey(control, ' ', 'keyup');
         await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('false'));
 
         const enter = pressKey(control, 'Enter');
@@ -66,7 +70,7 @@ describe('column select expand/collapse-all control accessibility', () => {
         await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('false'));
     }
 
-    test('columns tool panel control has button role, name and state, and toggles with Enter and Space', async () => {
+    test('columns tool panel control has button role, name and state, and toggles on Enter press and Space release', async () => {
         const api = await createGrid(true);
         const panel = getGridElement(api)!.querySelector('.ag-column-panel')!;
 

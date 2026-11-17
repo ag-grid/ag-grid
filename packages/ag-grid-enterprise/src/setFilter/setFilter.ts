@@ -1,6 +1,8 @@
+import type { _SpaceKeyAction } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _areEqual,
     _exists,
     _getActiveDomElement,
@@ -84,6 +86,7 @@ export class SetFilter<V = string>
 
     private miniFilterText: string | null = null;
     private noMatchesComp: NoMatchesComp;
+    private spaceKeyAction: _SpaceKeyAction;
 
     /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
     private addCurrentSelectionToFilter: boolean = false;
@@ -265,8 +268,10 @@ export class SetFilter<V = string>
         super.postConstruct();
         this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-filter-no-matches'));
         this.eSetFilterList.insertAdjacentElement('beforebegin', this.noMatchesComp.getGui());
+        const eFocusable = this.getFocusableElement();
+        this.spaceKeyAction = _addSpaceKeyAction(this, eFocusable);
         this.createManagedBean(
-            new ManagedFocusFeature(this.getFocusableElement(), {
+            new ManagedFocusFeature(eFocusable, {
                 handleKeyDown: this.handleKeyDown.bind(this),
             })
         );
@@ -302,9 +307,13 @@ export class SetFilter<V = string>
         };
 
         switch (e.key) {
-            case KeyCode.SPACE:
-                getComponentForKeyEvent()?.toggleSelected();
+            case KeyCode.SPACE: {
+                const component = getComponentForKeyEvent();
+                if (component) {
+                    this.spaceKeyAction.arm(e, () => component.toggleSelected());
+                }
                 break;
+            }
             case KeyCode.ENTER:
                 this.handleKeyEnter(e);
                 break;
