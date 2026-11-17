@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridOptions } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -85,8 +85,8 @@ export class AppComponent {
 
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
     triggerWarning(grid: string) {
-        const initialOnlyOptions: GridOptions = { tooltipInteraction: true };
-        this.apiFor(grid).updateGridOptions(initialOnlyOptions);
+        // @ts-expect-error deliberately updates an initial-only option
+        this.apiFor(grid).setGridOption('tooltipInteraction', true);
     }
 
     // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
