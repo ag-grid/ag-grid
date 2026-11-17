@@ -1810,13 +1810,13 @@
         "viewSubscription": {
             "more": {
                 "name": "View Subscription",
-                "url": "./data-update-view-subscription/"
+                "url": "./server-side-model-updating-view-subscription/"
             }
         },
         "viewSubscriptionActive": {
             "more": {
                 "name": "View Subscription",
-                "url": "./data-update-view-subscription/"
+                "url": "./server-side-model-updating-view-subscription/"
             }
         }
     },

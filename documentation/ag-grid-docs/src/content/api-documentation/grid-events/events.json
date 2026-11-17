@@ -526,7 +526,7 @@
         "virtualRowRemoved": {
             "more": {
                 "name": "View Subscription",
-                "url": "./data-update-view-subscription/"
+                "url": "./server-side-model-updating-view-subscription/"
             }
         },
         "viewportChanged": {},

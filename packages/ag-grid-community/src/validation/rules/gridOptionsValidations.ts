@@ -305,7 +305,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide', 'serverSide'],
         },
         viewSubscription: {
-            supportedRowModels: ['clientSide', 'serverSide'],
+            supportedRowModels: ['serverSide'],
         },
         enableRangeSelection: {
             dependencies: {

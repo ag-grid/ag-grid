@@ -12,7 +12,7 @@ interface ViewportRowRefBase {
     level: number;
 }
 
-/** A group row, created by row grouping or pivoting, or loaded as a group by the Server-Side Row Model. */
+/** A group row, loaded as a group by the Server-Side Row Model with row grouping or pivoting. */
 export interface ViewGroupRowRef extends ViewportRowRefBase {
     type: 'group';
     /** The keys from the top level down to and including this row. */
@@ -24,7 +24,7 @@ export interface ViewTreeRowRef extends ViewportRowRefBase {
     type: 'tree';
     /**
      * The keys from the top level down to and including this row.
-     * Set for every row in client-side tree data, and for the expandable rows in server-side tree data.
+     * Set for the expandable rows.
      */
     route?: string[];
 }
@@ -38,14 +38,14 @@ export interface ViewLeafRowRef extends ViewportRowRefBase {
 export type ViewRowRef = ViewGroupRowRef | ViewTreeRowRef | ViewLeafRowRef;
 
 export interface ViewGroupRow<TData = any> extends ViewGroupRowRef {
-    /** The row's data. `undefined` for group rows the grid creates, such as with client-side row grouping. */
+    /** The row's data. */
     data: TData | undefined;
 }
 
 export interface ViewTreeRow<TData = any> extends ViewTreeRowRef {
-    /** `true` if the row has children, including the expandable rows in server-side tree data. */
+    /** `true` for the expandable rows. */
     hasChildren: boolean;
-    /** The row's data. `undefined` for the filler rows the grid creates for missing parents in client-side tree data. */
+    /** The row's data. */
     data: TData | undefined;
 }
 

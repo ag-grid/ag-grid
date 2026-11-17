@@ -1222,12 +1222,6 @@
                             "type": "item",
                             "title": "High Frequency",
                             "path": "data-update-high-frequency"
-                        },
-                        {
-                            "type": "item",
-                            "title": "View Subscription",
-                            "path": "data-update-view-subscription",
-                            "isEnterprise": true
                         }
                     ]
                 },
