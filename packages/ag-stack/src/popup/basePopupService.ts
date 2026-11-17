@@ -494,6 +494,10 @@ export abstract class BasePopupService<
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
+            // Once only, forced or not: the client can have different paths, each one wanting to close.
+            if (popupHidden) {
+                return;
+            }
             const eventSourceToIgnore =
                 typeof params.eventSourceToIgnore === 'function'
                     ? params.eventSourceToIgnore()
@@ -510,10 +514,7 @@ export abstract class BasePopupService<
                     (!!eventSourceToIgnore &&
                         isSourceDismissalEvent &&
                         !!pointerEvent &&
-                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)) ||
-                    // this method should only be called once. the client can have different
-                    // paths, each one wanting to close, so this method may be called multiple times.
-                    popupHidden)
+                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)))
             ) {
                 return;
             }

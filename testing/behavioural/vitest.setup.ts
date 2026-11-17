@@ -68,6 +68,7 @@ afterAll(async () => {
     const [{ _resetModuleRegistry, _resetValidationLogging, getGridApi }, { _doOnce, _resetKeyboardMode }] =
         await Promise.all([import('ag-grid-community'), import('ag-stack')]);
     // Each step runs even when an earlier one throws: a half-reset page fails the next file instead of this one.
+    let leaks: string[] = [];
     try {
         // A grid the file left alive keeps its timers and document listeners, and would call into the next file.
         for (const root of Array.from(document.querySelectorAll('[grid-id]'))) {
@@ -104,10 +105,10 @@ afterAll(async () => {
             _resetValidationLogging();
             _resetKeyboardMode();
             _doOnce._set.clear();
+            leaks = restoreSharedObjects(baseline);
         }
     }
 
-    const leaks = restoreSharedObjects(baseline);
     if (leaks.length) {
         throw new Error(
             `This test file left shared globals or prototypes changed (put back, so the next file in the worker starts clean):\n` +
