@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -76,8 +76,8 @@ const VueExample = defineComponent({
         },
         // Updating an initial-only option after creation emits warning #22 on the targeted grid.
         triggerWarning(grid: string) {
-            const initialOnlyOptions: GridOptions = { tooltipInteraction: true };
-            this.apiFor(grid).updateGridOptions(initialOnlyOptions);
+            // @ts-expect-error deliberately updates an initial-only option
+            this.apiFor(grid).setGridOption('tooltipInteraction', true);
         },
         // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling
         // it on a client-side grid emits error #200, attributed to that grid, and no-ops without layout change.
