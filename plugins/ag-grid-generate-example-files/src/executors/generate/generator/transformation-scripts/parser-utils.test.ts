@@ -2,8 +2,10 @@ import {
     DARK_INTEGRATED_END,
     DARK_INTEGRATED_START,
     extractDevValidationsArgs,
+    getFetchedRowType,
     getIntegratedDarkModeCode,
     getIntegratedDarkModeInitialChartThemesCode,
+    getTypeImports,
     getVanillaDevValidationsPreamble,
     removeModuleRegistration,
 } from './parser-utils';
@@ -139,5 +141,30 @@ describe('dev validations guard', () => {
 
     it('returns empty args when there is no guard', () => {
         expect(extractDevValidationsArgs('const x = 1;')).toBe('');
+    });
+});
+
+describe('getTypeImports', () => {
+    it('imports grid types from ag-grid-community and chart types from ag-charts-community', () => {
+        expect(getTypeImports(['ColDef', 'AgChartThemeOverrides', 'GridApi'])).toEqual([
+            { module: "'ag-grid-community'", isNamespaced: false, imports: ['ColDef', 'GridApi'] },
+            { module: "'ag-charts-community'", isNamespaced: false, imports: ['AgChartThemeOverrides'] },
+        ]);
+    });
+});
+
+describe('getFetchedRowType', () => {
+    const data = { url: "'rows.json'", callback: '' };
+
+    it("uses the grid's row type when the callback declares no data type", () => {
+        expect(getFetchedRowType(data, 'IOlympicData')).toBe('IOlympicData');
+    });
+
+    it('uses the row type of the array the callback declares', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'IAccount[]' }, 'IOlympicData')).toBe('IAccount');
+    });
+
+    it('uses any when the callback declares a type that is not an array', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'unknown' }, 'IOlympicData')).toBe('any');
     });
 });

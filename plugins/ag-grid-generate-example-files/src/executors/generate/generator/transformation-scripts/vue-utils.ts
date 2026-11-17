@@ -56,6 +56,32 @@ export function getImport(filename: string, tokenReplace, replaceValue) {
     return `import ${getComponentName(filename, tokenReplace, replaceValue)} from './${filename.replace('.ts', '')}';`;
 }
 
+/**
+ * Rewrites the example's `gridApi` variable to the `gridApi` ref the Vue component holds, which is
+ * `null` until the grid is ready. Uses of the api assert it is set, as the vanilla example's do.
+ */
+export function toGridApiRef(code: string): string {
+    return code.replace(/\bgridApi\b(!(?!=))?/g, (match, nonNull: string | undefined, offset: number) => {
+        const before = code.slice(0, offset);
+        const after = code.slice(offset + match.length);
+        const isMemberAccess = after.startsWith('.');
+        // e.g. `refresh(gridApi)`, but not a condition such as `if (gridApi)`
+        const isArgument = /^\s*[,)]/.test(after) && /[(,]\s*$/.test(before) && !/\b(if|while)\s*\(\s*$/.test(before);
+        return nonNull || isMemberAccess || isArgument ? 'gridApi.value!' : 'gridApi.value';
+    });
+}
+
+/**
+ * The example's components are Vue component definitions rather than classes, so where one types the
+ * instance the grid returns, e.g. `getColumnFilterInstance<PartialMatchFilter>(…)`, use its instance type.
+ */
+export function toComponentInstanceTypes(code: string, componentNames: string[]): string {
+    return componentNames.reduce(
+        (result, name) => result.replace(new RegExp(`(\\w)<${name}>\\(`, 'g'), `$1<InstanceType<typeof ${name}>>(`),
+        code
+    );
+}
+
 export function indentTemplate(template: string, spaceWidth: number, start: number = 0) {
     let indent = start;
     return template

@@ -1,7 +1,14 @@
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
-import type { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
+import type {
+    BindingImport,
+    DataCallback,
+    ExampleConfig,
+    GridOptionsType,
+    InternalFramework,
+    ParsedBindings,
+} from '../types';
 
 export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
@@ -286,10 +293,11 @@ export function extractClassDeclarations(srcFile: ts.SourceFile) {
     return allClasses;
 }
 
+/** The interfaces and type aliases declared at the top level of the file. */
 export function extractInterfaces(srcFile: ts.SourceFile) {
     const allInterfaces = [];
     srcFile.statements.forEach((node) => {
-        if (ts.isInterfaceDeclaration(node)) {
+        if (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) {
             allInterfaces.push(node.getText());
         }
     });
@@ -457,7 +465,7 @@ export function getImport(filename: string) {
     return `import { ${componentName} } from './${componentFileName}';`;
 }
 
-export function getPropertyInterfaces(properties, fullFile?: string): string[] {
+export function getPropertyInterfaces(properties: { typings?: GridOptionsType }[], fullFile?: string): string[] {
     let propTypesUsed: string[] = [];
     properties.forEach((prop) => {
         if (prop.typings?.typesToInclude?.length > 0) {
@@ -470,6 +478,21 @@ export function getPropertyInterfaces(properties, fullFile?: string): string[] {
         imports = imports.filter((i) => new RegExp(`\\b${i}\\b`).test(fullFile));
     }
     return imports;
+}
+
+// Types grid options refer to that ag-grid-community does not export
+const TYPE_MODULES: Record<string, string> = {
+    AgChartThemeOverrides: 'ag-charts-community',
+};
+
+/** Imports for the given grid types, from ag-grid-community unless they are declared elsewhere. */
+export function getTypeImports(types: string[]): BindingImport[] {
+    const typesByModule = new Map<string, string[]>();
+    types.forEach((type) => {
+        const module = `'${TYPE_MODULES[type] ?? 'ag-grid-community'}'`;
+        typesByModule.set(module, [...(typesByModule.get(module) ?? []), type]);
+    });
+    return [...typesByModule].map(([module, imports]) => ({ module, isNamespaced: false, imports }));
 }
 
 /**
@@ -537,10 +560,11 @@ export function addBindingImports(bindingImports: any, imports: string[], ignore
 }
 
 /** Add imports such as "import { colors } from './colors.js';"
- * Does not include the imports for framework component
+ * Does not include the imports for framework component, or side-effect imports such as `import './style.css';`, as
+ * the generators import the example's stylesheets themselves
  */
 export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
-    const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');
+    const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_') && b.imports.length > 0;
     const bImports = [...(bindings.imports.filter((b) => filterOtherFiles(b)) || [])];
     if (bImports.length > 0) {
         bImports.forEach((b) => {
@@ -586,6 +610,14 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
         fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
     }
     return fileTxt;
+}
+
+/** The type of the fetched rows: the one the example's callback declares, or else the grid's row type. */
+export function getFetchedRowType(data: DataCallback, rowDataType: string): string {
+    if (!data.dataType) {
+        return rowDataType;
+    }
+    return data.dataType.endsWith('[]') ? data.dataType.slice(0, -2) : 'any';
 }
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {

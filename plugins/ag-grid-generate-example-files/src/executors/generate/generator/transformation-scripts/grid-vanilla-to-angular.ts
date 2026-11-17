@@ -1,4 +1,4 @@
-import type { ExampleConfig, ParsedBindings } from '../types';
+import type { DataCallback, ExampleConfig, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
@@ -9,9 +9,11 @@ import {
     convertFunctionToProperty,
     findLocaleImport,
     getEnableAGTestIdLogic,
+    getFetchedRowType,
     getIntegratedDarkModeCode,
     getIntegratedDarkModeInitialChartThemesCode,
     getPropertyInterfaces,
+    getTypeImports,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
@@ -42,8 +44,8 @@ function toRowDataSignal(rowDataType: string, value?: string | null): string {
 
 function getOnGridReadyCode(
     readyCode: string,
-    data: { url: string; callback: string },
-    rowDataType: string | undefined,
+    data: DataCallback,
+    rowDataType: string,
     hasApi: boolean,
     rowDataSignal: boolean
 ): string {
@@ -58,7 +60,9 @@ function getOnGridReadyCode(
         const setRowDataBlock = rowDataSignal
             ? callback.replace(new RegExp(ROW_DATA_FROM_RESPONSE, 'g'), 'this.rowData.set(')
             : replaceGridReadyRowData(callback, 'this.rowData');
-        additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
+        additionalLines.push(
+            `this.http.get<${getFetchedRowType(data, rowDataType)}[]>(${url}).subscribe(data => ${setRowDataBlock});`
+        );
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
     if (hasApi || additionalLines.length > 0) {
@@ -81,17 +85,13 @@ function addModuleImports(
     exampleConfig: ExampleConfig,
     allStylesheets: string[]
 ): string[] {
-    const { imports: bindingImports, properties } = bindings;
+    const { imports: bindingImports, properties, eventHandlers } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
 
-    const propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces([...properties, ...eventHandlers]);
     const bImports = [...(bindingImports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
-    });
+    bImports.push(...getTypeImports([...propertyInterfaces, 'GridReadyEvent', 'GridApi']));
 
     addLicenseManager(imports, exampleConfig);
 

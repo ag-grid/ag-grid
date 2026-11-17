@@ -1,5 +1,6 @@
 import ts from 'typescript';
 
+import { _GET_ALL_EVENTS } from '../src/executors/generate/generator/_copiedFromCore/eventTypes';
 import { _GET_ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
@@ -36,6 +37,16 @@ function getTypeLookupFunc(fileName) {
                 const pop = gridOptionsInterface.members.find(
                     (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
                 ) as ts.PropertySignature | ts.MethodSignature | undefined;
+                if (pop && ts.isMethodSignature(pop)) {
+                    // e.g. `onCellClicked?(event: CellClickedEvent<TData>): void`
+                    const parameters = pop.parameters.map((parameter) => parameter.getText()).join(', ');
+                    return {
+                        typeName: `(${parameters}) => ${pop.type?.getText() ?? 'void'}`,
+                        typesToInclude: pop.parameters.flatMap((parameter) =>
+                            parameter.type ? getTypes(parameter.type) : []
+                        ),
+                    };
+                }
                 if (pop && pop.type) {
                     return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
                 }
@@ -46,6 +57,14 @@ function getTypeLookupFunc(fileName) {
         const fullLookup = {};
         _GET_ALL_GRID_OPTIONS().forEach((prop) => {
             fullLookup[prop] = lookupType(prop as string);
+        });
+        // Event callbacks, e.g. `onCellClicked`
+        _GET_ALL_EVENTS().forEach((eventName) => {
+            const callbackName = 'on' + eventName[0].toUpperCase() + eventName.slice(1);
+            const typings = lookupType(callbackName);
+            if (typings) {
+                fullLookup[callbackName] = typings;
+            }
         });
         return fullLookup;
     }
