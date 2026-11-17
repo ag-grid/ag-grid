@@ -1,7 +1,8 @@
-import type { ITooltipFeature } from 'ag-stack';
+import type { ITooltipFeature, _SpaceKeyAction } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
@@ -56,6 +57,7 @@ const ToolPanelColumnElement: ElementParams = {
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly cbSelect: GridCheckbox = RefPlaceholder;
+    private spaceKeyAction: _SpaceKeyAction;
 
     public readonly column: AgColumn;
     public readonly columnDepth: number;
@@ -163,6 +165,7 @@ export class ToolPanelColumnComp extends Component {
             colDefChanged: this.onColDefChanged.bind(this),
             headerNameChanged: this.onColDefChanged.bind(this),
         });
+        this.spaceKeyAction = _addSpaceKeyAction(this, focusWrapper);
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
             contextmenu: this.onContextMenu.bind(this),
@@ -225,10 +228,7 @@ export class ToolPanelColumnComp extends Component {
         if (_isContextMenuKey(e)) {
             this.onContextMenu(e);
         } else if (e.key === KeyCode.SPACE) {
-            e.preventDefault();
-            if (this.isSelectable()) {
-                this.onSelectAllChanged(!this.isSelected());
-            }
+            this.armSelectionToggle(e);
         }
     }
 
@@ -427,6 +427,14 @@ export class ToolPanelColumnComp extends Component {
 
     public isSelected(): boolean | undefined {
         return this.cbSelect.getValue();
+    }
+
+    private armSelectionToggle(e: KeyboardEvent): void {
+        this.spaceKeyAction.arm(e, () => {
+            if (this.isSelectable()) {
+                this.onSelectAllChanged(!this.isSelected());
+            }
+        });
     }
 
     public isSelectable(): boolean {
