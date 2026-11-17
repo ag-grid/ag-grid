@@ -24,6 +24,12 @@
     background-color: unset;
     cursor: pointer;
     padding: 0;
+    border-radius: var(--ag-icon-button-border-radius);
+
+    &:focus-visible {
+        outline: var(--ag-internal-accessible-no-outline, revert);
+        box-shadow: var(--ag-focus-shadow);
+    }
 }
 
 .ag-tab {

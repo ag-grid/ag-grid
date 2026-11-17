@@ -120,6 +120,12 @@
         background-color: unset;
         cursor: pointer;
         padding: 0;
+        border-radius: 1px;
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
     }
 
     .ag-tab {

@@ -105,6 +105,13 @@
     inset: min(0px, calc(50% - 12px));
 }
 
+.ag-chart-settings-card-item::before {
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    margin-top: -12px;
+}
+
 /* the native inputs are transparent and take the clicks, so they can overflow their wrappers */
 @media not (forced-colors: active) {
     .ag-checkbox-input,

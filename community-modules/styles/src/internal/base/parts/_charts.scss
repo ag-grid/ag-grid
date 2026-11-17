@@ -286,6 +286,11 @@
         background-color: unset;
         padding: 0 2px;
         border-radius: 1px;
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
     }
 
     .ag-chart-mini-thumbnail {

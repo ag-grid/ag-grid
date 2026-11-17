@@ -289,7 +289,12 @@
     border: 0;
     background-color: unset;
     padding: 0 2px;
-    border-radius: 1px;
+    border-radius: var(--ag-icon-button-border-radius);
+
+    &:focus-visible {
+        outline: var(--ag-internal-accessible-no-outline, revert);
+        box-shadow: var(--ag-focus-shadow);
+    }
 }
 
 .ag-chart-data-column-drag-handle {

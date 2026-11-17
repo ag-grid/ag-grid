@@ -243,6 +243,7 @@ const highContrastParams = () =>
         chartMenuThumbnailBorderColor: highContrastSeparatorColor.tertiary,
         iconColor: { ref: 'textColor' },
         buttonTextColor: { ref: 'foregroundColor' },
+        buttonDisabledTextColor: foregroundBackgroundMix(0.5),
         buttonBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
         buttonActiveBorder: { width: highContrastBorderWidth, color: accentColor },
         rowHoverColor: accentMix(0.08),
@@ -264,6 +265,8 @@ const highContrastParams = () =>
         iconButtonBorderRadius: highContrastBorderRadius,
         colorPickerTrackBorderRadius: highContrastBorderRadius,
         colorPickerColorBorderRadius: highContrastBorderRadius,
+        dragAndDropImageBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
+        dragAndDropImageNotAllowedBorder: { width: highContrastBorderWidth, color: { ref: 'invalidColor' } },
     }) as const;
 
 const highContrastLightParams = () =>

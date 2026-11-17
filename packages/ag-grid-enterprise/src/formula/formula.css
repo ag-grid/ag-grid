@@ -1,10 +1,11 @@
+/* sized and shaped like the note indicator so the two corner markers match */
 .formula-error::after {
     content: '';
     position: absolute;
-    right: -6px;
-    top: -6px;
-    transform: rotate(45deg);
-    width: 12px;
-    height: 12px;
-    background-color: var(--ag-invalid-color);
+    top: 0;
+    right: 0;
+    border-style: solid;
+    border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
+    border-color: transparent var(--ag-invalid-color) transparent transparent;
+    pointer-events: none;
 }
