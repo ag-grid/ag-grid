@@ -99,6 +99,8 @@ The following example demonstrates applying the `AG_GRID_LOCALE_DE_DE` locale to
 
 {% note %}
 Some localisation variables have `${variable}` in them. When this occurs, it means that part of the string will be replaced by a variable value.
+
+The pagination keys (`paginationRowSummary`, `paginationRowSummaryUnknownTotal`, `ariaPaginationRowSummary`, `ariaPaginationPageSummary` and their variants) use named placeholders instead: `${first}`, `${last}`, `${count}`, `${page}` and `${total}`. A translation can place these in any order, for example `'全${count}件中 ${first}～${last}件'`. A custom value written with `${variable}` is still filled in order, but the visible row summary then shows it as plain text without the highlighted numbers.
 {% /note %}
 
 ## Customising a Provided Locale
