@@ -52,6 +52,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     private preDestroyed = false;
     /** Set while the grid is scrolled out of the browser viewport, or not displayed. */
     private offscreen = false;
+    /** The grid viewport, once the grid body is ready. */
+    private eViewport: HTMLElement | undefined;
+    /** The page visibility listener and the viewport observer exist only while a subscription is wanted. */
+    private removeVisibilityListener: (() => null) | undefined;
+    private stopObserving: (() => void) | undefined;
 
     public postConstruct(): void {
         const markDirty = () => this.schedule();
@@ -94,13 +99,36 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             _getRowIdCallback(this.beans) ? this.refresh() : this.stop()
         );
         this.addManagedPropertyListener('domLayout', markViewMoved);
-        this.addManagedListeners(_getDocument(this.beans), { visibilitychange: () => this.refresh() });
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
-            const stopObserving = _observeIntersection(this.beans, gridBodyCtrl.eGridViewport, (entry) =>
+            this.eViewport = gridBodyCtrl.eGridViewport;
+        });
+    }
+
+    private setWatching(watch: boolean): void {
+        if (!watch) {
+            this.stopWatching();
+            return;
+        }
+        if (!this.removeVisibilityListener) {
+            [this.removeVisibilityListener] = this.addManagedListeners(_getDocument(this.beans), {
+                visibilitychange: () => this.refresh(),
+            });
+        }
+        const eViewport = this.eViewport;
+        if (eViewport && !this.stopObserving) {
+            this.stopObserving = _observeIntersection(this.beans, eViewport, (entry) =>
                 this.setOffscreen(!entry.isIntersecting)
             );
-            this.addDestroyFunc(stopObserving);
-        });
+        }
+    }
+
+    private stopWatching(): void {
+        this.removeVisibilityListener?.();
+        this.stopObserving?.();
+        this.removeVisibilityListener = undefined;
+        this.stopObserving = undefined;
+        // Unknown until a new observer reports, so the grid counts as on screen until then.
+        this.offscreen = false;
     }
 
     private setOffscreen(offscreen: boolean): void {
@@ -113,12 +141,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
-        if (
-            !options ||
-            this.gos.get('viewSubscriptionActive') === false ||
-            this.preDestroyed ||
-            this.isPaused(options)
-        ) {
+        const wanted = !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed;
+        this.setWatching(wanted);
+        if (!options || !wanted || this.isPaused(options)) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
             this.stop(options ?? previousOptions);
         } else if (!this.sub) {
@@ -171,6 +196,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.stop();
+        this.stopWatching();
         super.destroy();
     }
 

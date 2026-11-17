@@ -482,6 +482,36 @@ describe('CSRM viewSubscription', () => {
                 expect(observers.length).toBeGreaterThan(0);
                 expect(observers.every((observer) => observer.disconnected)).toBe(true);
             });
+
+            test('a grid without the option watches neither the page nor its place on screen until it is set', async () => {
+                const addListener = vi.spyOn(document, 'addEventListener');
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+
+                const visibilityListeners = () =>
+                    addListener.mock.calls.filter(([type]) => type === 'visibilitychange');
+                expect(observers).toEqual([]);
+                expect(visibilityListeners()).toEqual([]);
+
+                subscribe(api, recorder);
+                expect(visibilityListeners()).toHaveLength(1);
+                setOnScreen(false);
+                expect(recorder.subscribed.size).toBe(0);
+                addListener.mockRestore();
+            });
+
+            test('turning the subscription off stops watching the page and its place on screen', async () => {
+                const removeListener = vi.spyOn(document, 'removeEventListener');
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+
+                setActive(api, false);
+
+                expect(observers.length).toBeGreaterThan(0);
+                expect(observers.every((observer) => observer.disconnected)).toBe(true);
+                expect(removeListener.mock.calls.filter(([type]) => type === 'visibilitychange')).toHaveLength(1);
+                removeListener.mockRestore();
+            });
         });
 
         test('setting the option again with the same handlers makes no call', async () => {
