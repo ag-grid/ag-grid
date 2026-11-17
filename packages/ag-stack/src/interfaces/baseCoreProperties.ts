@@ -13,7 +13,7 @@ export interface BaseCoreProperties {
     themeCssLayer?: string;
     styleNonce?: string;
     enableBrowserTooltips?: boolean;
-    tooltipTrigger?: 'hover' | 'focus';
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     tooltipShowDelay?: number;
     tooltipSwitchShowDelay?: number;
     tooltipHideDelay?: number;

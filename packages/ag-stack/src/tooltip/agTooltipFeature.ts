@@ -114,6 +114,14 @@ export class AgTooltipFeature<
         this.tooltipManager?.hideTooltip();
     }
 
+    public showTooltipOnFocus(): void {
+        this.tooltipManager?.showTooltipOnFocus();
+    }
+
+    protected setTooltipFocused(focused: boolean): void {
+        this.tooltipManager?.setFocused(focused);
+    }
+
     public setTooltipAndRefresh(tooltip: any): void {
         this.tooltip = tooltip;
         this.refreshTooltip();
@@ -125,9 +133,7 @@ export class AgTooltipFeature<
         // a tooltip on screen renders the value, component and params it was shown with; this refresh
         // means any of them may have moved on, and none can be updated in place, so take it down
         const tooltipManager = this.tooltipManager;
-        if (tooltipManager?.isShowing()) {
-            tooltipManager.hideTooltip(true);
-        }
+        tooltipManager?.refreshTooltip();
 
         if (this.browserTooltips) {
             this.updateTooltipText();

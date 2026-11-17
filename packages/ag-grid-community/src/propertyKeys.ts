@@ -373,6 +373,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'quickFilterParser',
     'quickFilterMatcher',
     'getLocaleText',
+    'getTooltipAriaDescription',
     'isExternalFilterPresent',
     'getRowHeight',
     'getRowClass',

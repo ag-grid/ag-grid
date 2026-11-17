@@ -2303,7 +2303,18 @@
             }
         },
         "tooltipShowMode": {},
-        "tooltipTrigger": {},
+        "tooltipTrigger": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
+        "getTooltipAriaDescription": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
         "tooltipInteraction": {
             "more": {
                 "name": "Interactive Tooltips",

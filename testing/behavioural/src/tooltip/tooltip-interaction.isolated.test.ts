@@ -176,11 +176,8 @@ describe('Tooltip interaction', () => {
         });
         const input = tooltip.querySelector('input')!;
         const button = tooltip.querySelector('button')!;
-        const tooltipId = tooltip.id;
-
         expect(tooltip).toHaveAttribute('role', 'dialog');
-        expect(tooltipId).not.toBe('');
-        expect(ageCell.getAttribute('aria-describedby')?.split(/\s+/)).toContain(tooltipId);
+        expect(ageCell).toHaveAccessibleDescription('19');
 
         await userEvent.keyboard('{Tab}');
         expect(input).toHaveFocus();
@@ -191,8 +188,10 @@ describe('Tooltip interaction', () => {
 
         await userEvent.keyboard('{Escape}');
         await waitFor(() => expect(visibleTooltip()).toBeUndefined());
-        expect(ageCell.getAttribute('aria-describedby') ?? '').not.toContain(tooltipId);
         expect(ageCell).toHaveFocus();
+        expect(ageCell).toHaveAccessibleDescription('19');
+        ageCell.blur();
+        expect(ageCell).not.toHaveAttribute('aria-describedby');
     });
 });
 

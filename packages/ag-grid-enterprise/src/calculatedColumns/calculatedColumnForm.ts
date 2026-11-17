@@ -444,13 +444,15 @@ export class CalculatedColumnForm extends Component {
     ): void {
         const invalid = !!errors?.length;
         const message = invalid ? errors.join('\n') : null;
-        if (message !== feedback.message) {
-            description.textContent = message ?? '';
-        }
-        feedback.message = message;
-        _setAriaDescribedBy(input, message ? description.id : undefined);
         input.classList.toggle('invalid', invalid);
         _setAriaInvalid(input, invalid);
+        if (message === feedback.message) {
+            return;
+        }
+        feedback.tooltip?.attemptToHideTooltip();
+        description.textContent = message ?? '';
+        feedback.message = message;
+        _setAriaDescribedBy(input, message ? description.id : undefined);
         if (message && !feedback.tooltip) {
             feedback.tooltip = this.createValidationTooltip(
                 () => input,
@@ -458,6 +460,9 @@ export class CalculatedColumnForm extends Component {
             );
         }
         feedback.tooltip?.setTooltipAndRefresh(message);
+        if (message) {
+            feedback.tooltip?.showTooltipOnFocus();
+        }
         // suppress the browser's validation tooltip, including after the grid tooltip changes
         input.setAttribute('title', '');
     }

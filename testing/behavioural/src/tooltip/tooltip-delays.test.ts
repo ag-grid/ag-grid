@@ -55,9 +55,8 @@ describe('Tooltips - the show, hide and switch delays', () => {
         expect(getTooltips()).toHaveLength(1);
 
         await user.unhover(cell);
-        await vi.advanceTimersByTimeAsync(0);
-        // Hidden immediately, but still attached and fading - which is exactly why the other tests must
-        // not poll for removal.
+        await vi.advanceTimersByTimeAsync(100);
+        // After the crossing grace period, the hidden tooltip stays attached until its fade ends.
         expect(getTooltips()).toHaveLength(0);
         expect(getAttachedTooltips()).toHaveLength(1);
         expect(getAttachedTooltips()[0]).toHaveClass('ag-tooltip-hiding');
@@ -149,7 +148,7 @@ describe('Tooltips - the show, hide and switch delays', () => {
 
         // Sampled below the 500ms `tooltipShowDelay`, so a switch delay ignored in favour of the ordinary show
         // delay fails here, which is the whole subject.
-        await vi.advanceTimersByTimeAsync(100);
+        await vi.advanceTimersByTimeAsync(200);
         expect(hasTooltipText('Row 1')).toBe(true);
 
         vi.useRealTimers();

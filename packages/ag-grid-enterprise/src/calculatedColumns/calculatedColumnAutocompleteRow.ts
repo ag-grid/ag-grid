@@ -32,6 +32,7 @@ export class CalculatedColumnAutocompleteRow extends Component<HighlightTooltipE
             this.beans.tooltipSvc?.createHighlightTooltip(
                 {
                     getGui: () => this.getGui(),
+                    getAriaElement: () => this.getGui().parentElement!,
                     getTooltipComponentDefinition: () => undefined,
                     getTooltipValue: () => this.tooltipValue,
                     getLocation: () => 'calculatedColumnAutocomplete',

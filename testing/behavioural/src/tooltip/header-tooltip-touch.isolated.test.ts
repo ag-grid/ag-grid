@@ -3,7 +3,7 @@ import { _isIOSUserAgent } from 'ag-stack';
 import { TestGridsManager, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
 
 import { AllCommunityModule, getGridElement } from 'ag-grid-community';
-import { ColumnMenuModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 vi.mock(import('ag-stack'), async (importOriginal) => ({
     ...(await importOriginal()),
@@ -100,5 +100,61 @@ describe.each([false, true])('header tooltip long press (iOS: %s)', (isIOS) => {
 
         expect(document.querySelector('.ag-menu .ag-filter')).not.toBeNull();
         expect(getVisibleTooltips()).toHaveLength(0);
+    });
+
+    test.each([
+        { target: 'cell', nativeFirst: true },
+        { target: 'header', nativeFirst: true },
+        { target: 'cell', nativeFirst: false },
+        { target: 'header', nativeFirst: false },
+        { target: 'legacy header', nativeFirst: true },
+        { target: 'legacy header', nativeFirst: false },
+    ])('opens one menu on a $target (native event first: $nativeFirst)', async ({ target, nativeFirst }) => {
+        const menuOpened = vi.fn();
+        const api = await gridMgr.createGridAndWait(
+            'native-touch-menu',
+            {
+                columnDefs: [{ field: 'value', tooltip: true, headerTooltip: true, filter: true }],
+                rowData: [{ value: 'First' }],
+                columnMenu: target === 'legacy header' ? 'legacy' : 'new',
+                tooltipShowDelay: 0,
+                getContextMenuItems: () => [{ name: 'Action' }],
+                onContextMenuVisibleChanged: (event) => {
+                    if (event.visible) {
+                        menuOpened();
+                    }
+                },
+                onColumnMenuVisibleChanged: (event) => {
+                    if (event.visible) {
+                        menuOpened();
+                    }
+                },
+            },
+            { modules: [ColumnMenuModule, ContextMenuModule] }
+        );
+        const element = getGridElement(api)!.querySelector<HTMLElement>(
+            target === 'cell' ? '.ag-cell' : '.ag-header-cell-text'
+        )!;
+        const touch = new Touch({ identifier: 1, target: element, clientX: 5, clientY: 5 });
+        vi.useFakeTimers();
+        element.dispatchEvent(
+            new TouchEvent('touchstart', {
+                bubbles: true,
+                cancelable: true,
+                touches: [touch],
+                changedTouches: [touch],
+            })
+        );
+        if (!nativeFirst) {
+            await vi.advanceTimersByTimeAsync(600);
+        }
+        element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+        await vi.advanceTimersByTimeAsync(600);
+        expect(document.querySelectorAll('.ag-menu')).toHaveLength(1);
+        expect(menuOpened).toHaveBeenCalledTimes(1);
+        expect(getVisibleTooltips()).toHaveLength(0);
+        const end = new TouchEvent('touchend', { bubbles: true, cancelable: true, changedTouches: [touch] });
+        element.dispatchEvent(end);
+        expect(end.defaultPrevented).toBe(true);
     });
 });
