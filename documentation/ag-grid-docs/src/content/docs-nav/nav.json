@@ -1222,11 +1222,6 @@
                             "type": "item",
                             "title": "High Frequency",
                             "path": "data-update-high-frequency"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Maintaining Rows in View",
-                            "path": "data-update-maintain-rows-in-view"
                         }
                     ]
                 },

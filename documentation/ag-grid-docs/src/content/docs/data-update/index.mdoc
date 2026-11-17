@@ -60,3 +60,9 @@ High Frequency (achieved with Async Transactions) is a mechanism of applying man
 Use Async Transactions for doing add, remove or update operations that are frequent, e.g. for managing streaming updates into the grid of tens, hundreds or thousands of updates a second.
 
 See [High Frequency Updates](./data-update-high-frequency/) for more details.
+
+## Rows in View
+
+When an update adds or removes rows above the rows the user is looking at, the grid scrolls by the same amount, so the rows in view stay where they are. This applies to row data updates when the rows have [Row IDs](./row-ids/), to transactions and async transactions, and to [Server-Side Transactions](./server-side-model-updating-transactions/). No configuration is needed.
+
+While the grid is scrolled to the top, rows added at the top come into view. While it is scrolled to the bottom, it stays at the bottom, so rows added at the end come into view. The focused cell and cell selection ranges stay on their rows.
