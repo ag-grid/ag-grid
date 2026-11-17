@@ -78,6 +78,36 @@ test('focus tooltips survive keyboard scrolling into view', async ({ page }) => 
     await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
+test('keyboard navigation keeps the tooltip at the focused cell until the pointer moves', async ({ page }) => {
+    const { cell } = await mountGrid(page, {
+        options: () => ({
+            columnDefs: [{ field: 'value', tooltip: true }],
+            rowData: Array.from({ length: 6 }, (_, i) => ({ value: `Row ${i}` })),
+            tooltipTrigger: 'hoverOrFocus',
+            tooltipMouseTrack: true,
+            tooltipShowDelay: 100,
+        }),
+    });
+    const tooltip = page.getByRole('tooltip');
+    await cell(4, 'value').click({ position: { x: 40, y: 15 } });
+    await expect(tooltip).toHaveText('Row 4');
+    await page.keyboard.press('ArrowUp');
+    await expect(tooltip).toHaveText('Row 3');
+    await page.keyboard.press('ArrowUp');
+    await expect(cell(2, 'value')).toBeFocused();
+    await expect(tooltip).toHaveText('Row 2');
+    // Allow the synthetic mouseenter from removing the overlapping tooltip to settle.
+    await page.waitForTimeout(300);
+    await expect(tooltip).toHaveText('Row 2');
+
+    await cell(4, 'value').hover({ position: { x: 60, y: 15 } });
+    await expect(tooltip).toHaveText('Row 4');
+    await expect(cell(2, 'value')).toBeFocused();
+    const initialBox = (await tooltip.boundingBox())!;
+    await cell(4, 'value').hover({ position: { x: 80, y: 15 } });
+    await expect.poll(async () => (await tooltip.boundingBox())!.x).toBeGreaterThan(initialBox.x);
+});
+
 test('a shadow-root grid opens its cell menu once and suppresses the later native menu', async ({ page }) => {
     const { cell } = await mountGrid(page, {
         enterprise: true,
@@ -228,3 +258,40 @@ test('Escape dismisses a validation tooltip without cancelling editing', async (
     await expect(tooltip).toHaveCount(0);
     expect(await withApi((api) => api.getEditingCells().length)).toBe(1);
 });
+
+for (const applyMode of ['live', 'deferred'] as const) {
+    test(`Escape dismisses a focused ${applyMode} calculated-column error before closing the dialog`, async ({
+        page,
+    }) => {
+        await mountGrid(page, {
+            enterprise: true,
+            options: () => ({
+                columnDefs: [{ colId: 'profit', headerName: 'Profit', calculatedExpression: '3' }],
+                rowData: [{}],
+                tooltipTrigger: 'hoverOrFocus',
+                tooltipShowDelay: 100,
+            }),
+        });
+        await page.evaluate((applyMode) => {
+            window.gridApi.setGridOption('calculatedColumns', { applyMode });
+            window.gridApi.openCalculatedColumnDialog('profit');
+        }, applyMode);
+        const dialog = page.getByRole('dialog');
+        const expression = dialog.getByRole('textbox', { name: 'Expression', exact: true });
+        const tooltip = page.getByRole('tooltip');
+        await expression.fill('1 +');
+        await expect(expression).toHaveAttribute('aria-invalid', 'true');
+        await expect(tooltip).toBeVisible();
+        await expect(expression).toBeFocused();
+        await page.keyboard.press('Escape');
+        await expect(tooltip).toHaveCount(0);
+        await expect(dialog).toBeVisible();
+        await expect(expression).toBeFocused();
+        // Observe beyond the show delay so unchanged validation cannot silently reopen the tooltip.
+        await expression.press('Space');
+        await page.waitForTimeout(200);
+        await expect(tooltip).toHaveCount(0);
+        await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
+    });
+}

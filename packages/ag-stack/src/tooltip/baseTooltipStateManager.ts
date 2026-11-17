@@ -21,11 +21,15 @@ enum TooltipStates {
 interface TooltipOwner {
     hideTooltip(forceHide?: boolean): void;
     isTooltipFocused(): boolean;
+    hasFocusedSourceWithin(element: HTMLElement): boolean;
+    isTooltipTriggeredByFocus(): boolean;
     isTooltipHoveredOrLeaving(): boolean;
 }
 
 interface SharedTooltipState {
     lastHideTime?: number;
+    lastMouseX?: number;
+    lastMouseY?: number;
     owner?: TooltipOwner;
 }
 
@@ -112,7 +116,8 @@ export abstract class BaseTooltipStateManager<
             sharedStateByGrid.set(this.gos, sharedState);
         }
         this.sharedState = sharedState;
-        this.tooltipTrigger = this.gos.get('tooltipTrigger') ?? 'hover';
+        const trigger = this.gos.get('tooltipTrigger');
+        this.tooltipTrigger = trigger === 'focus' || trigger === 'hoverOrFocus' ? trigger : 'hover';
         this.interactionEnabled = !!this.gos.get('tooltipInteraction');
         const el = this.tooltipCtrl.getGui();
 
@@ -126,6 +131,15 @@ export abstract class BaseTooltipStateManager<
                     this.hideWhenInactive(true);
                 },
                 mousemove: (event: MouseEvent) => {
+                    const owner = this.sharedState.owner;
+                    if (
+                        this.updateMousePosition(event) &&
+                        this.hoverGraceTimeout == null &&
+                        owner !== this &&
+                        owner?.isTooltipTriggeredByFocus()
+                    ) {
+                        this.prepareToShowTooltip(event);
+                    }
                     if (this.lastMouseEvent) {
                         this.lastMouseEvent = event;
                         if (this.gos.get('tooltipMouseTrack') && this.tooltipComp) {
@@ -169,6 +183,14 @@ export abstract class BaseTooltipStateManager<
         return this.state === TooltipStates.SHOWING;
     }
 
+    private updateMousePosition({ clientX, clientY }: MouseEvent): boolean {
+        const state = this.sharedState;
+        const moved = state.lastMouseX !== clientX || state.lastMouseY !== clientY;
+        state.lastMouseX = clientX;
+        state.lastMouseY = clientY;
+        return moved;
+    }
+
     public onMouseEnter(event: MouseEvent): void {
         const fromTouch = (event as MouseEvent & { sourceCapabilities?: { firesTouchEvents?: boolean } })
             .sourceCapabilities?.firesTouchEvents;
@@ -178,6 +200,10 @@ export abstract class BaseTooltipStateManager<
         this.clearLeaveTimeout();
         this.sourceHovered = true;
         const owner = this.sharedState.owner;
+        // Removing a tooltip beneath a stationary pointer can synthesise mouseenter on the old source.
+        if (!this.updateMousePosition(event) && owner !== this && owner?.isTooltipTriggeredByFocus()) {
+            return;
+        }
         if (owner !== this && owner?.isTooltipHoveredOrLeaving()) {
             // Allow the pointer to cross another source on its way to the current tooltip.
             window.clearTimeout(this.hoverGraceTimeout);
@@ -188,7 +214,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     public setFocused(focused: boolean): void {
-        if (this.sourceFocused === focused) {
+        if (this.tooltipTrigger === 'hover' || this.sourceFocused === focused) {
             return;
         }
         this.sourceFocused = focused;
@@ -202,6 +228,14 @@ export abstract class BaseTooltipStateManager<
             }
             this.hideWhenInactive(true);
         }
+    }
+
+    public showTooltipOnFocus(): void {
+        if (this.tooltipTrigger === 'hover' || !this.tooltipCtrl.getGui().contains(_getActiveDomElement(this.beans))) {
+            return;
+        }
+        this.setFocused(true);
+        this.prepareToShowTooltip();
     }
 
     public refreshTooltip(): void {
@@ -222,7 +256,7 @@ export abstract class BaseTooltipStateManager<
         window.clearTimeout(this.hoverGraceTimeout);
         this.hoverGraceTimeout = undefined;
         const owner = this.sharedState.owner;
-        if (owner !== this && owner?.isTooltipFocused()) {
+        if (owner !== this && (owner?.isTooltipFocused() || owner?.hasFocusedSourceWithin(this.tooltipCtrl.getGui()))) {
             return;
         }
         owner?.hideTooltip(true);
@@ -386,6 +420,15 @@ export abstract class BaseTooltipStateManager<
 
     public isTooltipFocused(): boolean {
         return !!this.interactionEnabled && !!this.tooltipComp?.getGui().contains(_getActiveDomElement(this.beans));
+    }
+
+    public isTooltipTriggeredByFocus(): boolean {
+        return this.sourceFocused && !this.lastMouseEvent;
+    }
+
+    public hasFocusedSourceWithin(element: HTMLElement): boolean {
+        const source = this.tooltipCtrl.getGui();
+        return this.sourceFocused && source !== element && element.contains(source) && this.canShowTooltip();
     }
 
     public isTooltipHoveredOrLeaving(): boolean {

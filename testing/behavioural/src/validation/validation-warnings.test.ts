@@ -23,6 +23,25 @@ describe('ag-grid validation warnings', () => {
         consoleWarnSpy.mockRestore();
     });
 
+    test.each(['hover', 'focus', 'hoverOrFocus', 'hoverAnddFocus'])(
+        'validates tooltipTrigger: %s',
+        (tooltipTrigger) => {
+            const options: GridOptions = { columnDefs: [], rowData: [] };
+            Object.assign(options, { tooltipTrigger });
+            gridsManager.createGrid('tooltip-trigger', options);
+
+            if (tooltipTrigger === 'hoverAnddFocus') {
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining('warning #320'),
+                    expect.stringContaining('tooltipTrigger'),
+                    expect.any(String)
+                );
+            } else {
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+            }
+        }
+    );
+
     test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],

@@ -248,7 +248,8 @@ describe('menu tooltip triggers', () => {
             const log = (await openMenuOption('Log Cell')).closest<HTMLElement>('.ag-menu-option')!;
             const country = (await openMenuOption('Country')).closest<HTMLElement>('.ag-menu-option')!;
 
-            await user.hover(country);
+            // Coordinate-less hovers land at (0,0) and read as a stationary pointer, which focus-owned tooltips ignore.
+            await user.pointer({ target: country, coords: { clientX: 20, clientY: 100 } });
             await openMenuOption('Ireland');
             await user.keyboard('{ArrowRight}{ArrowDown}');
             const uk = (await openMenuOption('UK')).closest<HTMLElement>('.ag-menu-option')!;
@@ -257,7 +258,7 @@ describe('menu tooltip triggers', () => {
                 await expectTooltip('uk');
             }
 
-            await user.hover(log);
+            await user.pointer({ target: log, coords: { clientX: 20, clientY: 40 } });
             await waitFor(() => expect(log).toHaveFocus());
             await asyncSetTimeout(0);
             expect(uk).not.toBeInTheDocument();

@@ -51,9 +51,6 @@ export class AgHighlightTooltipFeature<
     }
 
     private onHighlight(event: HighlightTooltipEvent): void {
-        if (this.gos.get('tooltipTrigger') === 'hover') {
-            return;
-        }
         this.setTooltipFocused(event.highlighted);
     }
 

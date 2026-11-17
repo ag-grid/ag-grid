@@ -114,6 +114,10 @@ export class AgTooltipFeature<
         this.tooltipManager?.hideTooltip();
     }
 
+    public showTooltipOnFocus(): void {
+        this.tooltipManager?.showTooltipOnFocus();
+    }
+
     protected setTooltipFocused(focused: boolean): void {
         this.tooltipManager?.setFocused(focused);
     }

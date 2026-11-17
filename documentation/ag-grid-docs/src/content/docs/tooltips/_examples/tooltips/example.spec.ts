@@ -1,25 +1,27 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Cell and header tooltips show on hover', async ({ agIdFor, page }) => {
+    test.eachFramework('Cell tooltips show the displayed value or fixed text on hover', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         // Exclude the previous, fading-out tooltip when moving between hover targets.
         const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
 
-        // Age column uses a fixed tooltip string.
-        await agIdFor.cell('0', 'age').hover();
+        // tooltip: true shows the displayed value.
+        const athlete = (await agIdFor.cell('0', 'athlete').innerText()).trim();
+        await agIdFor.cell('0', 'athlete').hover();
         await expect(tooltip).toBeVisible();
-        await expect(tooltip).toContainText('This is the Athlete');
+        await expect(tooltip).toHaveText(athlete);
 
-        // Year column uses a dynamic tooltip based on the cell value.
-        const yearValue = (await agIdFor.cell('0', 'year').innerText()).trim();
-        await agIdFor.cell('0', 'year').hover();
-        await expect(tooltip).toContainText(`dynamic tooltip using the value of ${yearValue}`);
+        // With a valueFormatter, tooltip: true shows the formatted value.
+        const total = (await agIdFor.cell('0', 'total').innerText()).trim();
+        expect(total).toMatch(/medals$/);
+        await agIdFor.cell('0', 'total').hover();
+        await expect(tooltip).toHaveText(total);
 
-        // Header tooltip.
-        await agIdFor.headerCell('athlete').hover();
-        await expect(tooltip).toContainText('Tooltip for Athlete Column Header');
+        // A string shows fixed text.
+        await agIdFor.cell('0', 'age').hover();
+        await expect(tooltip).toHaveText('Age at the time of the event');
     });
 });

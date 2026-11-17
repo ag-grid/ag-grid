@@ -609,6 +609,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return 'stickyRowsMaxViewportRatio: value should be a number between 0 and 1';
             },
         },
+        tooltipTrigger: {
+            validate: ({ tooltipTrigger }) => {
+                const allowed = ['hover', 'focus', 'hoverOrFocus'];
+                return tooltipTrigger != null && !allowed.includes(tooltipTrigger)
+                    ? _createValidationWarning(320, { property: 'tooltipTrigger', allowed, value: tooltipTrigger })
+                    : null;
+            },
+        },
         tooltipHideDelay: {
             validate: (options) => {
                 if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {

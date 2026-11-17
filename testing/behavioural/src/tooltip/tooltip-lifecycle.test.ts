@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { AgPromise } from 'ag-stack';
 import { TestGridsManager, fakeElementAttribute, getVisibleTooltips } from 'ag-test-utils';
 
-import { AllCommunityModule, getGridElement } from 'ag-grid-community';
+import { AllCommunityModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import type { GridOptions, ITooltipComp, ITooltipParams } from 'ag-grid-community';
 
 class InteractiveTooltip implements ITooltipComp {
@@ -27,6 +27,7 @@ describe('Tooltip lifecycle', () => {
         gridMgr.reset();
         vi.clearAllTimers();
         vi.useRealTimers();
+        vi.restoreAllMocks();
     });
 
     async function createGrid(options: GridOptions = {}) {
@@ -46,6 +47,50 @@ describe('Tooltip lifecycle', () => {
     const enter = (element: HTMLElement) => element.dispatchEvent(new MouseEvent('mouseenter'));
     const leave = (element: HTMLElement) => element.dispatchEvent(new MouseEvent('mouseleave'));
     const visibleText = () => getVisibleTooltips().map((element) => element.textContent);
+
+    test('invalid triggers fall back to hover without a focus description', async () => {
+        enableDevValidations({ throwOn: [] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const options: GridOptions = { tooltipShowDelay: 200 };
+        Object.assign(options, { tooltipTrigger: 'hoverAnddFocus' });
+        const { first } = await createGrid(options);
+        first.focus();
+        await vi.advanceTimersByTimeAsync(200);
+        expect(visibleText()).toEqual([]);
+        expect(first).not.toHaveAttribute('aria-describedby');
+
+        enter(first);
+        await vi.advanceTimersByTimeAsync(199);
+        expect(visibleText()).toEqual([]);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(visibleText()).toEqual(['First']);
+    });
+
+    test.each([false, true])(
+        'a stationary pointer does not reclaim a focus tooltip (dismissed: %s)',
+        async (dismiss) => {
+            const { first, second } = await createGrid({ tooltipTrigger: 'hoverOrFocus', tooltipMouseTrack: true });
+            const point = { clientX: 20, clientY: 80 };
+            first.dispatchEvent(new MouseEvent('mouseenter', point));
+            await vi.advanceTimersByTimeAsync(0);
+            second.focus();
+            await vi.advanceTimersByTimeAsync(200);
+            expect(visibleText()).toEqual(['Second']);
+
+            leave(first);
+            first.dispatchEvent(new MouseEvent('mouseenter', point));
+            first.dispatchEvent(new MouseEvent('mousemove', point));
+            await vi.advanceTimersByTimeAsync(200);
+            expect(visibleText()).toEqual(['Second']);
+            if (dismiss) {
+                second.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            }
+            first.dispatchEvent(new MouseEvent('mousemove', { ...point, clientX: 30 }));
+            await vi.advanceTimersByTimeAsync(200);
+            expect(visibleText()).toEqual(dismiss ? [] : ['First']);
+            expect(second).toHaveFocus();
+        }
+    );
 
     test('has no default timeout and remains open while the tooltip is hovered', async () => {
         const { first } = await createGrid();
@@ -348,10 +393,19 @@ describe('Tooltip lifecycle', () => {
         expect(visibleText()).toEqual([]);
     });
 
-    test.each(['hover', 'hoverOrFocus'] as const)(
-        'refreshing a pending %s tooltip preserves its show delay and uses the latest value',
-        async (tooltipTrigger) => {
-            const { api, first } = await createGrid({ tooltipTrigger, tooltipShowDelay: 200 });
+    test.each([
+        ['hover', 'First'],
+        ['hoverOrFocus', 'First'],
+        ['hover', ''],
+        ['hoverOrFocus', ''],
+    ] as const)(
+        'refreshing a pending %s tooltip preserves its show delay (initial value: "%s")',
+        async (tooltipTrigger, value) => {
+            const { api, first } = await createGrid({
+                tooltipTrigger,
+                tooltipShowDelay: 200,
+                rowData: [{ value }, { value: 'Second' }],
+            });
             if (tooltipTrigger === 'hoverOrFocus') {
                 first.focus();
             } else {
