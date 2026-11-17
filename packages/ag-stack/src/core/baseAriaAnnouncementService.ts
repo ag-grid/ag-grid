@@ -6,6 +6,7 @@ import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementSe
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _debounce } from '../utils/debounce';
+import { _getLocaleTextFunc } from '../utils/locale';
 import { AgAbstractBean } from './agAbstractBean';
 
 /** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
@@ -18,6 +19,9 @@ type PendingAnnouncement = {
     generation: number;
     value: string;
 };
+
+/** An empty string, or one that only contains spaces and dots. */
+const isBlankAnnouncement = (value: string): boolean => value.replace(/[ .]/g, '') === '';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseAriaAnnouncementService<
@@ -93,7 +97,14 @@ export class BaseAriaAnnouncementService<
             if (!current.length) {
                 return;
             }
-            this.handleAnnouncementUpdate(current.map(({ value }) => value).join('. '));
+            // Blank values are left out of the join so they cannot leave a lone separator behind.
+            const separator = _getLocaleTextFunc(this.beans?.localeSvc)('ariaAnnouncementSeparator', '. ');
+            this.handleAnnouncementUpdate(
+                current
+                    .map(({ value }) => value)
+                    .filter((value) => !isBlankAnnouncement(value))
+                    .join(separator)
+            );
         }, ANNOUNCE_REPEAT_DELAY);
     }
 
@@ -103,9 +114,8 @@ export class BaseAriaAnnouncementService<
         }
 
         let valueToAnnounce = value;
-        // if the value is null or an empty string, or if it's a string
-        // that only contains spaces and dots, it should not be announced
-        if (valueToAnnounce == null || valueToAnnounce.replace(/[ .]/g, '') == '') {
+        // if the value is null or blank it should not be announced
+        if (valueToAnnounce == null || isBlankAnnouncement(valueToAnnounce)) {
             this.lastAnnouncement = '';
             return;
         }

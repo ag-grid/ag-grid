@@ -3,7 +3,12 @@ import { RefPlaceholder } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import { Component } from '../widgets/component';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import {
+    _formatPaginationNumber,
+    _getPaginationTemplate,
+    _getPaginationText,
+    _splitPaginationTokens,
+} from './paginationUtils';
 
 export class RowSummaryComp extends Component {
     private pagination: PaginationService;
@@ -11,6 +16,7 @@ export class RowSummaryComp extends Component {
     private readonly lbFirstRowOnPage: HTMLElement = RefPlaceholder;
     private readonly lbLastRowOnPage: HTMLElement = RefPlaceholder;
     private readonly lbRecordCount: HTMLElement = RefPlaceholder;
+    private readonly eSummaryContent: HTMLElement = RefPlaceholder;
 
     public ariaStatus = '';
 
@@ -27,14 +33,15 @@ export class RowSummaryComp extends Component {
 
     public postConstruct(): void {
         const idPrefix = this.idPrefix;
-        const localeTextFunc = this.getLocaleTextFunc();
 
+        // The content is rebuilt from the localised phrase on refresh; these are the number spans it places.
         this.setTemplate({
             tag: 'span',
             cls: 'ag-paging-row-summary-panel',
             children: [
                 {
                     tag: 'span',
+                    ref: 'eSummaryContent',
                     cls: 'ag-paging-row-summary-content',
                     children: [
                         {
@@ -43,14 +50,12 @@ export class RowSummaryComp extends Component {
                             cls: 'ag-paging-row-summary-panel-number',
                             attrs: { id: `${idPrefix}-first-row` },
                         },
-                        { tag: 'span', attrs: { id: `${idPrefix}-to` }, children: localeTextFunc('to', 'to') },
                         {
                             tag: 'span',
                             ref: 'lbLastRowOnPage',
                             cls: 'ag-paging-row-summary-panel-number',
                             attrs: { id: `${idPrefix}-last-row` },
                         },
-                        { tag: 'span', attrs: { id: `${idPrefix}-of` }, children: localeTextFunc('of', 'of') },
                         {
                             tag: 'span',
                             ref: 'lbRecordCount',
@@ -100,42 +105,57 @@ export class RowSummaryComp extends Component {
 
         const formatNumber = (value: number) => _formatPaginationNumber(value, gos, this.getLocaleTextFunc.bind(this));
 
-        const lbFirstRowOnPage = formatNumber(startRow);
-        this.lbFirstRowOnPage.textContent = lbFirstRowOnPage;
+        const first = formatNumber(startRow);
+        const last = isLoadingPageSize ? localeTextFunc('pageLastRowUnknown', '?') : formatNumber(endRow);
+        const count = lastPageFound ? formatNumber(rowCount!) : localeTextFunc('more', 'more');
 
-        let lbLastRowOnPage: string;
-        if (isLoadingPageSize) {
-            lbLastRowOnPage = localeTextFunc('pageLastRowUnknown', '?');
-        } else {
-            lbLastRowOnPage = formatNumber(endRow);
-        }
-        this.lbLastRowOnPage.textContent = lbLastRowOnPage;
-
-        let lbRecordCount: string;
-        if (lastPageFound) {
-            lbRecordCount = formatNumber(rowCount!);
-        } else {
-            lbRecordCount = localeTextFunc('more', 'more');
-        }
-        this.lbRecordCount.textContent = lbRecordCount;
-
-        this.ariaStatus = this.getAriaStatus(lbFirstRowOnPage, lbLastRowOnPage, lbRecordCount, {
-            lastPageFound,
-            isLoadingPageSize,
-        });
-
-        const strTo = localeTextFunc('to', 'to');
-        const strOf = localeTextFunc('of', 'of');
-
-        const esc = (s: string) =>
-            s
-                .replace(/\\/g, '\\\\')
-                .replace(/'/g, String.raw`\'`)
-                .replace(/\s+/g, ' ');
-        this.getGui().style.setProperty(
-            '--ag-internal-pagination-width-string',
-            `'${lbRecordCount} ${esc(strTo)} ${lbRecordCount} ${esc(strOf)} ${lbRecordCount}'`.replaceAll(/\d/g, '0')
+        // Built from the existing words so a localeText without these keys reads as before.
+        const defaultTemplate = `\${first} ${localeTextFunc('to', 'to')} \${last} ${localeTextFunc('of', 'of')} \${count}`;
+        const template = _getPaginationTemplate(
+            localeTextFunc,
+            lastPageFound ? 'paginationRowSummary' : 'paginationRowSummaryUnknownTotal',
+            defaultTemplate,
+            { first, last, count }
         );
+        this.renderSummary(template, { first, last, count });
+
+        this.ariaStatus = this.getAriaStatus(first, last, count, { lastPageFound, isLoadingPageSize });
+
+        // Reserves the width of the widest phrase: every number at the width of the count.
+        const widthString = _splitPaginationTokens(template)
+            .map((part, i) => (i % 2 ? count : part))
+            .join('')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, String.raw`\'`)
+            .replace(/\s+/g, ' ')
+            .replaceAll(/\d/g, '0');
+        this.getGui().style.setProperty('--ag-internal-pagination-width-string', `'${widthString}'`);
+    }
+
+    /**
+     * Places the number spans where the phrase has their tokens. A token's first occurrence gets its span, a repeat is
+     * plain text, and a span whose token is missing is left out.
+     */
+    private renderSummary(template: string, values: { first: string; last: string; count: string }): void {
+        const spans: Record<string, HTMLElement> = {
+            first: this.lbFirstRowOnPage,
+            last: this.lbLastRowOnPage,
+            count: this.lbRecordCount,
+        };
+        const children = _splitPaginationTokens(template).map((part, i) => {
+            if (i % 2 === 0) {
+                return part;
+            }
+            const name = part as keyof typeof values;
+            const span = spans[name];
+            if (!span) {
+                return values[name] ?? '';
+            }
+            delete spans[name];
+            span.textContent = values[name];
+            return span;
+        });
+        this.eSummaryContent.replaceChildren(...children.filter((child) => child !== ''));
     }
 
     /** Builds a self-contained screen reader sentence; the unknown-total cases avoid announcing the visible `?` / `more`. */
@@ -147,19 +167,28 @@ export class RowSummaryComp extends Component {
     ): string {
         const localeTextFunc = this.getLocaleTextFunc();
         if (isLoadingPageSize) {
-            return localeTextFunc('ariaPaginationRowSummaryLoading', `Loading records from ${first}`, [first]);
-        }
-        if (!lastPageFound) {
-            return localeTextFunc(
-                'ariaPaginationRowSummaryUnknownTotal',
-                `Showing records ${first} to ${last}, total unknown`,
-                [first, last]
+            return _getPaginationText(
+                localeTextFunc,
+                'ariaPaginationRowSummaryLoading',
+                'Loading records from ${first}',
+                {
+                    first,
+                }
             );
         }
-        return localeTextFunc('ariaPaginationRowSummary', `Showing records ${first} to ${last} of ${count}`, [
-            first,
-            last,
-            count,
-        ]);
+        if (!lastPageFound) {
+            return _getPaginationText(
+                localeTextFunc,
+                'ariaPaginationRowSummaryUnknownTotal',
+                'Showing records ${first} to ${last}, total unknown',
+                { first, last }
+            );
+        }
+        return _getPaginationText(
+            localeTextFunc,
+            'ariaPaginationRowSummary',
+            'Showing records ${first} to ${last} of ${count}',
+            { first, last, count }
+        );
     }
 }
