@@ -553,6 +553,116 @@ describe('the rows drawn for the columns', () => {
 
         expect(seen).toEqual(['a:100px b:100px c:100px', 'a:100px c:100px']);
     });
+    test('a column call keeps the cell of every column that stays rendered, and initialises only the cells that arrive', async () => {
+        const inits: Record<string, number> = {};
+        class CountingRenderer {
+            private gui = document.createElement('span');
+            init(params: ICellRendererParams) {
+                const colId = params.column!.getColId();
+                inits[colId] = (inits[colId] ?? 0) + 1;
+            }
+            getGui() {
+                return this.gui;
+            }
+            refresh() {
+                return true;
+            }
+        }
+        const colIds = Array.from({ length: 30 }, (_, i) => `c${i}`);
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: colIds.map((colId) => ({ colId, width: 100, cellRenderer: CountingRenderer })),
+                rowData: [{}, {}, {}],
+                suppressColumnVirtualisation: false,
+            },
+            { modules: [ScrollApiModule] }
+        );
+        // keyed by lane too: a column pinned or unpinned arrives in another container's row
+        const readCells = () => {
+            const cells = new Map<string, Element>();
+            for (const row of getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index]')) {
+                const rowIndex = row.getAttribute('row-index');
+                for (const cell of row.querySelectorAll('.ag-cell[col-id]')) {
+                    const lane = cell.closest('.ag-grid-pinned-left-cells') ? 'left' : 'centre';
+                    cells.set(`${lane}:${rowIndex}:${cell.getAttribute('col-id')}`, cell);
+                }
+            }
+            return cells;
+        };
+        await waitFor(() => expect(readCells().size).toBeGreaterThan(0));
+        await asyncSetTimeout(0);
+
+        // each step with whether it brings cells into the rows
+        const steps: [string, () => void, boolean][] = [
+            ['sort', () => api.applyColumnState({ state: [{ colId: 'c1', sort: 'asc' }] }), false],
+            [
+                'applyColumnState with the current width',
+                () => api.applyColumnState({ state: [{ colId: 'c3', width: 100 }] }),
+                false,
+            ],
+            ['setColumnsVisible on a visible column', () => api.setColumnsVisible(['c1'], true), false],
+            ['moveColumns', () => api.moveColumns(['c3'], 1), false],
+            // the columns after it move left, so the next one beyond the viewport comes into view
+            ['hide', () => api.setColumnsVisible(['c2'], false), true],
+            ['show', () => api.setColumnsVisible(['c2'], true), true],
+            ['pin left', () => api.setColumnsPinned(['c4'], 'left'), true],
+            ['unpin', () => api.setColumnsPinned(['c4'], null), true],
+            ['setColumnWidths', () => api.setColumnWidths([{ key: 'c0', newWidth: 150 }]), false],
+            [
+                'equal columnDefs',
+                () =>
+                    api.setGridOption(
+                        'columnDefs',
+                        colIds.map((colId) => ({
+                            colId,
+                            width: colId === 'c0' ? 150 : 100,
+                            cellRenderer: CountingRenderer,
+                        }))
+                    ),
+                false,
+            ],
+            ['horizontal scroll', () => api.ensureColumnVisible('c25'), true],
+        ];
+
+        for (const [step, run, bringsCells] of steps) {
+            const before = readCells();
+            const initsBefore = { ...inits };
+            run();
+            await asyncSetTimeout(0);
+            const after = readCells();
+
+            const replaced: string[] = [];
+            const arrived: Record<string, number> = {};
+            for (const [key, cell] of after) {
+                const previous = before.get(key);
+                if (previous === undefined) {
+                    const colId = key.split(':')[2];
+                    arrived[colId] = (arrived[colId] ?? 0) + 1;
+                } else if (previous !== cell) {
+                    replaced.push(key);
+                }
+            }
+            const grown: Record<string, number> = {};
+            for (const colId of Object.keys(inits)) {
+                const delta = inits[colId] - (initsBefore[colId] ?? 0);
+                if (delta) {
+                    grown[colId] = delta;
+                }
+            }
+
+            const displayed = new Set(api.getAllDisplayedColumns().map((column) => column.getColId()));
+            const leftBehind = [...after.keys()].filter((key) => !displayed.has(key.split(':')[2]));
+
+            expect({ step, replaced, grown, leftBehind, brought: Object.keys(arrived).length > 0 }).toEqual({
+                step,
+                replaced: [],
+                grown: arrived,
+                leftBehind: [],
+                brought: bringsCells,
+            });
+        }
+    });
 });
 
 describe('a column update made from a layout event', () => {
