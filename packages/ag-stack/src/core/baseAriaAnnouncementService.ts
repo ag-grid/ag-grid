@@ -114,7 +114,6 @@ export class BaseAriaAnnouncementService<
         }
 
         let valueToAnnounce = value;
-        // if the value is null or blank it should not be announced
         if (valueToAnnounce == null || isBlankAnnouncement(valueToAnnounce)) {
             this.lastAnnouncement = '';
             return;

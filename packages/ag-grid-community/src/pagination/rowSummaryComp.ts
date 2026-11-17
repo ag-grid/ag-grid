@@ -34,7 +34,6 @@ export class RowSummaryComp extends Component {
     public postConstruct(): void {
         const idPrefix = this.idPrefix;
 
-        // The content is rebuilt from the localised phrase on refresh; these are the number spans it places.
         this.setTemplate({
             tag: 'span',
             cls: 'ag-paging-row-summary-panel',
