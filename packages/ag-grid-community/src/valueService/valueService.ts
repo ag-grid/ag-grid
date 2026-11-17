@@ -10,6 +10,8 @@ import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type {
+    AggValueGetterFunc,
+    AggValueGetterParams,
     ColDef,
     ColKey,
     KeyCreatorParams,
@@ -279,7 +281,20 @@ export class ValueService extends BeanStub implements NamedBean {
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
+    // The single place `colDef.aggValueGetter` is applied; a column without it pays one property read.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+        const value = this.getRawValueFromData(column, rowNode, ignoreAggData);
+        const aggValueGetter = column.aggValueGetter;
+        return aggValueGetter && !ignoreAggData
+            ? this.applyAggValueGetter(aggValueGetter, column, rowNode, value)
+            : value;
+    }
+
+    /**
+     * {@link getValueFromData} without `colDef.aggValueGetter`: the value the grid stores and derives from.
+     * For reads that must not see the getter's result, such as parent aggregation and group keys.
+     */
+    public getRawValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -879,6 +894,35 @@ export class ValueService extends BeanStub implements NamedBean {
             valueCache.setValue(rowNode as RowNode, column.colId, result);
         }
         return result;
+    }
+
+    /** Applies `aggValueGetter` to an aggregated column's value on a group, total, grand total or tree data parent
+     *  row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows and group columns. */
+    private applyAggValueGetter(
+        aggValueGetter: AggValueGetterFunc,
+        column: AgColumn,
+        rowNode: IRowNode,
+        value: any
+    ): any {
+        // `footer` admits the SSRM grand total row, which is not a group row.
+        if (!(rowNode.group || rowNode.footer) || !column.aggregationActive || column.showRowGroup) {
+            return value;
+        }
+        const aggData = rowNode.aggData;
+        const params: AggValueGetterParams = {
+            api: this.gridApi,
+            context: this.gridOptions.context,
+            data: rowNode.data,
+            node: rowNode,
+            column,
+            colDef: column.colDef,
+            getValue: (colKey) => this.getValueCallback(rowNode, colKey),
+            value,
+            aggFunc: column.aggFunc,
+            aggData,
+            aggValue: aggData?.[column.colId],
+        };
+        return aggValueGetter(params);
     }
 
     private getValueCallback(node: IRowNode, colKey: ColKey): any {

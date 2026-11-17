@@ -97,6 +97,48 @@ const gridOptions = {
 };
 ```
 
+## Transforming Aggregated Values
+
+To change the value an aggregated column shows on group rows, set the `aggValueGetter` column definition property
+to a function. It is called for group rows, group total rows, the grand total row and tree data parent rows while
+the column is aggregated, and returns the value of the cell. The aggregation function and its name in the header are
+kept.
+
+{% gridExampleRunner title="Aggregated Value Getter" name="agg-value-getter" /%}
+
+The example above shows a weighted price per unit on group rows, derived from the `revenue` and `units` aggregates,
+while the `unitPrice` column keeps its `avg` aggregation function:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'units', aggFunc: 'sum' },
+        { field: 'revenue', aggFunc: 'sum' },
+        {
+            field: 'unitPrice',
+            aggFunc: 'avg',
+            aggValueGetter: (params) => params.aggData.revenue / params.aggData.units,
+        },
+        // ... other column definitions
+    ],
+};
+```
+
+The function receives the same parameters as a `valueGetter`, plus:
+
+- `value`: the value the cell shows without `aggValueGetter`. Return it to keep that value.
+- `aggFunc`: the column's active aggregation function.
+- `aggData`: the row's computed aggregates, keyed by column ID. With the Server-Side Row Model this is
+  `undefined`, and `value` is read from the row's data.
+- `aggValue`: this column's computed aggregate, `undefined` with the Server-Side Row Model.
+
+The returned value is used everywhere the cell value is read, including sorting, filtering, export, the clipboard and
+`api.getCellValue`. It is not stored, so parent groups aggregate the computed aggregates of their children, and the
+`avg` function still weights each child group by its row count.
+
+`aggValueGetter` is not called for leaf rows, group columns, pivot result columns, or an open group whose aggregate is
+shown on its total row.
+
 ## Editing Aggregated Columns
 
 Aggregated columns can be made editable at the group row level, allowing users to edit a group total and

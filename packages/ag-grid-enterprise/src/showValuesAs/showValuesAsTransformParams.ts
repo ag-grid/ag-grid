@@ -34,7 +34,7 @@ export class ShowValuesAsTransformParamsImpl implements ShowValuesAsTransformPar
     /** This column's total down the rows: the grand total when not pivoting, this pivot column's total when pivoting. */
     public columnTotal(): number | null {
         const root = this.rootWithTotal();
-        return root ? readAggScalar(root, this.column) : null;
+        return root ? this.readTotal(root) : null;
     }
 
     /** The overall total: equal to {@link columnTotal} when not pivoting; when pivoting, the value field summed
@@ -44,7 +44,7 @@ export class ShowValuesAsTransformParamsImpl implements ShowValuesAsTransformPar
         if (!root) {
             return null;
         }
-        return this._beans.colModel.isPivotActive() ? this.rowTotalAt(root) : readAggScalar(root, this.column);
+        return this._beans.colModel.isPivotActive() ? this.rowTotalAt(root) : this.readTotal(root);
     }
 
     /** Root, ensuring its aggregate exists. The pipeline skips the root aggregate unless a grand-total row / pivot
@@ -67,7 +67,13 @@ export class ShowValuesAsTransformParamsImpl implements ShowValuesAsTransformPar
         if (parent.level === -1 && parent.aggData == null) {
             this._beans.aggStage?.aggregateRootOnly();
         }
-        return readAggScalar(parent, this.column);
+        return this.readTotal(parent);
+    }
+
+    /** A total on this column, read like the cell so an `aggValueGetter` shapes the denominator as it does the value. */
+    private readTotal(node: IRowNode): number | null {
+        const column = this.column;
+        return column.aggValueGetter ? readNodeValue(node, column) : readAggScalar(node, column);
     }
 
     public parentColumnTotal(): number | null {
