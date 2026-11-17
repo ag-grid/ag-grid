@@ -23,7 +23,7 @@ import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutp
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
-function getOnGridReadyCode(bindings: ParsedBindings): string {
+function getOnGridReadyCode(bindings: ParsedBindings, rowDataType: string): string {
     const { onGridReady, data } = bindings;
     const additionalLines = [];
 
@@ -37,7 +37,7 @@ function getOnGridReadyCode(bindings: ParsedBindings): string {
         const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
 
         additionalLines.push(`
-            const updateData = (data) => ${setRowDataBlock};
+            const updateData = (data: ${rowDataType}[]) => ${setRowDataBlock};
             
             fetch(${url})
                 .then(resp => resp.json())
@@ -118,7 +118,7 @@ function getPropertyBindings(
     }
 
     if (!propertyAssignments.find((item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0)) {
-        propertyAssignments.push(`const rowData = ref<${rowDataType}[]>(null);`);
+        propertyAssignments.push(`const rowData = ref<${rowDataType}[] | null>(null);`);
     }
 
     if (bindings.data && bindings.data.callback.indexOf("gridApi.setGridOption('rowData',") >= 0) {
@@ -215,7 +215,7 @@ export function vanillaToVue3(
 
     const rowDataType = bindings.tData || 'any';
 
-    const onGridReady = getOnGridReadyCode(bindings);
+    const onGridReady = getOnGridReadyCode(bindings, rowDataType);
     const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions, functionNames] =
         getAllMethods(bindings);
