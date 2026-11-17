@@ -281,20 +281,14 @@ export class ValueService extends BeanStub implements NamedBean {
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
-    // The single place `colDef.aggValueGetter` is applied; a column without it pays one property read.
-    public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
-        const value = this.getRawValueFromData(column, rowNode, ignoreAggData);
-        const aggValueGetter = column.aggValueGetter;
-        return aggValueGetter && !ignoreAggData
-            ? this.applyAggValueGetter(aggValueGetter, column, rowNode, value)
-            : value;
-    }
-
-    /**
-     * {@link getValueFromData} without `colDef.aggValueGetter`: the value the grid stores and derives from.
-     * For reads that must not see the getter's result, such as parent aggregation and group keys.
-     */
-    public getRawValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+    // `colDef.aggValueGetter` is applied at the end: a column without it pays one property read. Pass
+    // `skipAggValueGetter` for reads that need the stored value, such as parent aggregation and group keys.
+    public getValueFromData(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean = false,
+        skipAggValueGetter: boolean = false
+    ): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -308,6 +302,10 @@ export class ValueService extends BeanStub implements NamedBean {
             result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
         }
 
+        const aggValueGetter = column.aggValueGetter;
+        if (aggValueGetter && !ignoreAggData && !skipAggValueGetter) {
+            return this.applyAggValueGetter(aggValueGetter, column, rowNode, result);
+        }
         return result;
     }
 
@@ -581,25 +579,24 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        // A cell shown through `aggValueGetter` holds a value in the getter's units. On a group row with a group row
-        // setter, only a function `groupRowValueSetter` may write it, and then never into the group's own field.
-        const aggGetterCell = this.appliesAggValueGetter(column, rowNode);
-        const aggGetterEdit =
-            aggGetterCell && rowNode.group
-                ? this.rowGroupingEditValueSvc?.getAggGetterEditMode(rowNode, column)
-                : undefined;
-        if (aggGetterEdit === 'reject') {
-            return false;
+        // Get old value from stored data, ignoring any pending edit state
+        let oldValue;
+        let aggGetterEdit: 'setter' | 'reject' | undefined;
+        if (column.aggValueGetter && this.appliesAggValueGetter(column, rowNode)) {
+            // The cell shows the getter's result. On a group row with a group row setter, only a function
+            // `groupRowValueSetter` writes it, never into the group's own field.
+            const editSvc = this.rowGroupingEditValueSvc;
+            aggGetterEdit = rowNode.group ? editSvc?.getAggGetterEditMode(rowNode, column) : undefined;
+            if (aggGetterEdit === 'reject') {
+                return false;
+            }
+            // The old value is in the new value's units: the shown value for an edit through the function setter,
+            // the stored value for a field write or a child group written by distribution.
+            const editsShownValue = aggGetterEdit === 'setter' && !editSvc!.isDistributing(column);
+            oldValue = this.getValueFromData(column, rowNode, false, !editsShownValue);
+        } else {
+            oldValue = this.getValueFromData(column, rowNode);
         }
-
-        // Get old value from stored data, ignoring any pending edit state, in the same units as the new value: the
-        // getter's result for an edit through the function setter, the stored value for a field write or a child
-        // group written by distribution.
-        const editsGetterValue = aggGetterEdit === 'setter' && !this.rowGroupingEditValueSvc!.isDistributing(column);
-        const oldValue =
-            aggGetterCell && !editsGetterValue
-                ? this.getRawValueFromData(column, rowNode)
-                : this.getValueFromData(column, rowNode);
 
         const data = rowNode.data;
         const params: ValueSetterParams = {
@@ -698,9 +695,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
-        // Raw: a field write stores a raw value; the function group row setter passes the typed value as the override.
+        // Stored value: with `aggValueGetter`, the function group row setter passes the typed value as the override.
         const savedValue =
-            savedValueOverride === undefined ? this.getRawValueFromData(column, rowNode) : savedValueOverride;
+            savedValueOverride === undefined ? this.getValueFromData(column, rowNode, false, true) : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;

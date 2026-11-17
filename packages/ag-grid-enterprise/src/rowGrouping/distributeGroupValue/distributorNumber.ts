@@ -8,7 +8,14 @@ import type {
 } from 'ag-grid-community';
 
 import type { AggFuncInput, DistributionStrategy } from './valueConversion';
-import { detectPrecision, isNumericLike, readStoredValue, resolveStrategy, toNumber } from './valueConversion';
+import {
+    detectPrecision,
+    isNumericLike,
+    readStoredValue,
+    readsStoredAggregates,
+    resolveStrategy,
+    toNumber,
+} from './valueConversion';
 
 interface ValueAndCount {
     readonly value: number;
@@ -27,6 +34,7 @@ export class DistributorNumber {
     private readonly strategy: DistributionStrategy;
     private readonly getVal: ((params: DistributionGetValueParams) => unknown) | undefined;
     private readonly setVal: ((params: DistributionSetValueParams) => boolean) | undefined;
+    private readonly storedAggregates: boolean;
     private readonly isAvg: boolean;
 
     constructor(
@@ -40,6 +48,7 @@ export class DistributorNumber {
         const isAvg = aggFunc === 'avg';
         this.children = children;
         this.column = column;
+        this.storedAggregates = readsStoredAggregates(params.colDef, column);
         this.count = count;
         this.newValue = newValue;
         this.strategy = resolveStrategy(aggFunc, opts?.distribution);
@@ -103,7 +112,9 @@ export class DistributorNumber {
             const { colDef, api, context } = this.params;
             return toNumber(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
         }
-        return toNumber(readStoredValue(node, column, 'value'));
+        return toNumber(
+            this.storedAggregates ? readStoredValue(node, column, 'value') : node.getDataValue(column, 'value')
+        );
     }
 
     /**
@@ -118,7 +129,7 @@ export class DistributorNumber {
             const { colDef, api, context } = this.params;
             raw = getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params });
         } else {
-            raw = readStoredValue(node, column);
+            raw = this.storedAggregates ? readStoredValue(node, column) : node.getDataValue(column);
         }
         if (node.group) {
             if (raw != null && typeof raw === 'object') {

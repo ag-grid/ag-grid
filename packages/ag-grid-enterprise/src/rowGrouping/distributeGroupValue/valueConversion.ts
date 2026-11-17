@@ -156,11 +156,16 @@ export const detectPrecision = (colDef: ColDef): number | undefined => {
 };
 
 /**
- * A child's stored value for distribution. With `aggValueGetter`, a child group's value is its computed aggregate:
- * the getter's result is not stored, so distributing from it would write values in the getter's units.
+ * Whether children are read through {@link readStoredValue}: with `aggValueGetter` on an aggregated column, a child
+ * group's cell shows the getter's result, which is not stored, so distributing from it would write the getter's units.
+ * Decided once per distribution, so other columns keep the plain `getDataValue` read per child.
  */
+export const readsStoredAggregates = (colDef: ColDef, column: Column): boolean =>
+    !!colDef.aggValueGetter && column.isValueActive();
+
+/** A child's stored value: a child group's computed aggregate, else its data value. */
 export const readStoredValue = (node: IRowNode, column: Column, from?: 'value'): unknown => {
-    if (node.group && column.getColDef().aggValueGetter && column.isValueActive()) {
+    if (node.group) {
         const aggValue = node.aggData?.[column.getColId()];
         if (aggValue !== undefined) {
             return aggValue;

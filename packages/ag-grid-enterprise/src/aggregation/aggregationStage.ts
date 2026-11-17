@@ -311,14 +311,14 @@ const aggregateValuesOnly = (
                 if (colValues !== null) {
                     const vc = valueCols[j];
                     const v = childAggData[vc.colId];
-                    colValues[c] = v !== undefined ? v : valueSvc.getRawValueFromData(vc.column, child);
+                    colValues[c] = v !== undefined ? v : valueSvc.getValueFromData(vc.column, child, false, true);
                 }
             }
         } else {
             for (let j = 0; j < colCount; ++j) {
                 const colValues = values2d[j];
                 if (colValues !== null) {
-                    colValues[c] = valueSvc.getRawValueFromData(valueCols[j].column, child);
+                    colValues[c] = valueSvc.getValueFromData(valueCols[j].column, child, false, true);
                 }
             }
         }
@@ -397,7 +397,7 @@ const aggregateValuesAndPivot = (
             const nodeCount = aggregatedChildren.length;
             values = new Array<any>(nodeCount);
             for (let n = 0; n < nodeCount; ++n) {
-                values[n] = valueSvc.getRawValueFromData(column, aggregatedChildren[n]);
+                values[n] = valueSvc.getValueFromData(column, aggregatedChildren[n], false, true);
             }
         } else {
             // Regular column on non-leaf group — read aggData from children directly.
@@ -410,7 +410,7 @@ const aggregateValuesAndPivot = (
                 const childNode = aggregatedChildren[n];
                 const childAggData = childNode.aggData;
                 const v = childAggData ? childAggData[colId] : undefined;
-                values[n] = v !== undefined ? v : valueSvc.getRawValueFromData(column, childNode);
+                values[n] = v !== undefined ? v : valueSvc.getValueFromData(column, childNode, false, true);
             }
         }
 
