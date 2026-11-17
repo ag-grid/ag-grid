@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    ColDef,
     GroupRowValueSetterParams,
     IRowNode,
     NamedBean,
@@ -13,6 +14,9 @@ import { resolveStrategy } from './distributeGroupValue/valueConversion';
 
 export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRowGroupingEditValueSvc {
     beanName = 'rowGroupingEditValueSvc' as const;
+
+    /** Columns whose function `groupRowValueSetter` is running, so writes to their child groups are distribution. */
+    private readonly distributingCols = new Set<AgColumn>();
 
     public isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean {
         const colDef = column.colDef;
@@ -48,6 +52,33 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         return resolveStrategy(aggFunc, setter ?? undefined) !== false;
     }
 
+    public rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean {
+        // The built-in distribution cannot reverse aggValueGetter, so only a function setter may change the data
+        if (!column.colDef.aggValueGetter) {
+            return false;
+        }
+        const setter = this.resolveSetter(rowNode, column);
+        return !!setter && typeof setter !== 'function';
+    }
+
+    /**
+     * Resolves groupRowValueSetter: true or groupRowEditable → built-in distributeGroupValue,
+     * false → explicitly disabled, function/object → as-is.
+     * colDef is already deep-merged with defaultColDef (via _mergeDeep in colDefUtils),
+     * so object-type options inherit and merge with defaultColDef automatically.
+     * When groupRowEditable is a callback, evaluate it against the current row — only enable
+     * implicit distribution for rows where the callback returns true.
+     */
+    private resolveSetter(rowNode: IRowNode, column: AgColumn): ColDef['groupRowValueSetter'] {
+        const colDef = column.colDef;
+        const setter = colDef.groupRowValueSetter;
+        if (setter != null) {
+            return setter;
+        }
+        const gre = colDef.groupRowEditable;
+        return gre && column.isColumnFunc(rowNode, gre) ? true : undefined;
+    }
+
     public setGroupDataValue(
         rowNode: RowNode,
         column: AgColumn,
@@ -57,42 +88,44 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         valueChanged: boolean
     ): boolean | undefined {
         const colDef = column.colDef;
-
-        // Resolve groupRowValueSetter: true or groupRowEditable → built-in distributeGroupValue,
-        // false → explicitly disabled, function/object → as-is.
-        // colDef is already deep-merged with defaultColDef (via _mergeDeep in colDefUtils),
-        // so object-type options inherit and merge with defaultColDef automatically.
-        // When groupRowEditable is a callback, evaluate it against the current row — only enable
-        // implicit distribution for rows where the callback returns true.
-        let setter = colDef.groupRowValueSetter;
-        if (setter == null) {
-            const gre = colDef.groupRowEditable;
-            setter = gre && column.isColumnFunc(rowNode, gre) ? true : undefined;
-        }
+        const setter = this.resolveSetter(rowNode, column);
         if (!setter) {
             return undefined; // No groupRowValueSetter or false → caller uses normal path.
         }
-        if (colDef.aggValueGetter && typeof setter !== 'function') {
-            return false; // The built-in distribution cannot invert aggValueGetter: leave the data unchanged.
-        }
+
+        // A write to a child group while this column's function setter runs is distribution: its new value is
+        // already a stored aggregate, so it gets the stored old value too, not the getter's result.
+        const distributing = this.distributingCols.has(column);
+        const storedOldValue = distributing && !!colDef.aggValueGetter;
+        const paramsOldValue = storedOldValue ? this.beans.valueSvc.getRawValueFromData(column, rowNode) : oldValue;
 
         const params: GroupRowValueSetterParams = this.gos.addCommon({
             node: rowNode,
             data: rowNode.data,
-            oldValue,
+            oldValue: paramsOldValue,
             newValue,
             colDef,
             column,
             eventSource,
-            valueChanged,
+            valueChanged: storedOldValue ? newValue !== paramsOldValue : valueChanged,
+            distributing,
             aggregatedChildren: this.beans.aggChildrenSvc?.getAggregatedChildren(rowNode, column) ?? [],
         });
 
-        const result =
-            typeof setter === 'function'
-                ? setter(params)
-                : // true or options object — delegate to the built-in distributor.
-                  distributeGroupValue(params, setter === true ? undefined : setter);
+        let result: boolean | void;
+        if (typeof setter !== 'function') {
+            // true or options object — delegate to the built-in distributor.
+            result = distributeGroupValue(params, setter === true ? undefined : setter);
+        } else if (distributing) {
+            result = setter(params);
+        } else {
+            this.distributingCols.add(column);
+            try {
+                result = setter(params);
+            } finally {
+                this.distributingCols.delete(column);
+            }
+        }
 
         // Default to true if user forgot to return a value (possible without TypeScript).
         return result ?? true;

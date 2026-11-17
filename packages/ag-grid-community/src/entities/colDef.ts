@@ -1325,7 +1325,8 @@ export interface AggValueGetterParams<TData = any, TValue = any, TContext = any>
     TValue,
     TContext
 > {
-    /** The value shown without `aggValueGetter`. */
+    /** The value shown without `aggValueGetter`. For the built-in `avg` and `count` functions in the Client-Side Row
+     *  Model this is the aggregation's result object; read its `value` property for the number. */
     value: TValue | null | undefined;
     /** The column's active aggregation function. */
     aggFunc: string | IAggFunc<TData, TValue> | null | undefined;
@@ -1334,7 +1335,8 @@ export interface AggValueGetterParams<TData = any, TValue = any, TContext = any>
      * `undefined` with the Server-Side Row Model, where aggregates are read from `data`.
      */
     aggData: { [colId: string]: any } | undefined;
-    /** This column's computed aggregate. `undefined` with the Server-Side Row Model. */
+    /** This column's computed aggregate, a result object for the built-in `avg` and `count` functions.
+     *  `undefined` with the Server-Side Row Model. */
     aggValue: TValue | null | undefined;
 }
 export type AggValueGetterFunc<TData = any, TValue = any, TContext = any> = (

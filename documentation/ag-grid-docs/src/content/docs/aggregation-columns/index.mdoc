@@ -130,7 +130,8 @@ The function receives the same parameters as a `valueGetter`, plus:
 - `aggFunc`: the column's active aggregation function.
 - `aggData`: the row's computed aggregates, keyed by column ID. With the Server-Side Row Model this is
   `undefined`, and `value` is read from the row's data.
-- `aggValue`: this column's computed aggregate, `undefined` with the Server-Side Row Model.
+- `aggValue`: this column's computed aggregate, `undefined` with the Server-Side Row Model. For the built-in `avg`
+  and `count` functions, `value` and `aggValue` are result objects: read their `value` property for the number.
 
 The returned value is used everywhere the grid reads the cell value, including export, the clipboard,
 `api.getCellValue`, and sorting and filtering in the Client-Side Row Model. With the Server-Side Row Model, the server
@@ -139,10 +140,24 @@ their children, and the `avg` function still weights each child group by its row
 
 The grid cannot reverse an `aggValueGetter`, so its built-in distribution cannot turn a value typed into a group
 cell back into an aggregate. When the column is also [editable on group rows](./grouping-edit/), group cells are
-editable only when `groupRowValueSetter` is a function. The function receives the typed value and decides what to write
-to the descendant rows, for example by reversing the getter and passing the result to `distributeGroupValue`. Without
-one, group cells in the column are not editable, `setDataValue` on a group row leaves the data unchanged, and the grid
-logs a warning. Leaf rows stay editable.
+editable only when `groupRowValueSetter` is a function. The function receives the typed value as `newValue` and the
+value the cell showed as `oldValue`, both in the getter's units. It decides what to write to the descendant rows, for
+example by reversing the getter on both and passing the results to `distributeGroupValue`. When that distribution
+writes a child group, the function is called again with `distributing: true`, and `newValue` and `oldValue` are then
+stored aggregates, so reverse the getter only when `distributing` is `false`. Here `reverse` is the app's function
+that undoes its getter:
+
+```{% frameworkTransform=true %}
+groupRowValueSetter: (params) =>
+    distributeGroupValue(
+        params.distributing
+            ? params
+            : { ...params, newValue: reverse(params.newValue), oldValue: reverse(params.oldValue) }
+    ),
+```
+
+Without a function `groupRowValueSetter`, group cells in the column are not editable, `setDataValue` on a group row
+leaves the data unchanged, and the grid logs a warning. Leaf rows stay editable.
 
 `aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
 shown on its total row displays no value, so the getter is not called to display it.

@@ -13,6 +13,13 @@ export interface IRowGroupingEditValueSvc {
     isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean;
 
     /**
+     * Returns `true` when a group row edit must leave the data unchanged: the column has `aggValueGetter` and
+     * a `groupRowValueSetter` that is not a function, as the built-in distribution cannot reverse the getter.
+     * Checked before any field or `valueSetter` write.
+     */
+    rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean;
+
+    /**
      * Resolves and executes groupRowValueSetter for a group row edit.
      * Returns `undefined` if no groupRowValueSetter is configured (caller should use normal path).
      * Returns `true` if children were changed, `false` if not.
