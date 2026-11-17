@@ -49,42 +49,56 @@ export interface AgFrameworkComponent<T> {
     agInit(params: T): void;
 }
 
-export interface IHeaderGroupAngularComp extends AgFrameworkComponent<IHeaderGroupParams>, IHeaderGroup {}
+export interface IHeaderGroupAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IHeaderGroupParams<TData, TContext>>, IHeaderGroup<TData, TContext> {}
 
-export interface IInnerHeaderGroupAngularComp extends AgFrameworkComponent<IHeaderGroupParams>, IHeaderGroup {}
+export interface IInnerHeaderGroupAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IHeaderGroupParams<TData, TContext>>, IHeaderGroup<TData, TContext> {}
 
-export interface IHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>, IHeader {}
+export interface IHeaderAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IHeaderParams<TData, TContext>>, IHeader<TData, TContext> {}
 
-export interface IInnerHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>, IHeader {}
+export interface IInnerHeaderAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IHeaderParams<TData, TContext>>, IHeader<TData, TContext> {}
 
-export interface IFloatingFilterAngularComp<P = any>
-    extends AgFrameworkComponent<IFloatingFilterParams<P>>, IFloatingFilter {}
+export interface IFloatingFilterAngularComp<P = any, TData = any, TContext = any>
+    extends AgFrameworkComponent<IFloatingFilterParams<P, TData, TContext>>, IFloatingFilter<P, TData, TContext> {}
 
 export interface IFloatingFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
     extends
         AgFrameworkComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>>,
         FloatingFilterDisplay<TData, TContext, TModel, TCustomParams> {}
 
-export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
+export interface IDateAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IDateParams<TData, TContext>>, IDate<TData, TContext> {}
 
-export interface IDragAndDropImageAngularComponent
-    extends AgFrameworkComponent<IDragAndDropImageParams>, IDragAndDropImage {}
+export interface IDragAndDropImageAngularComponent<TData = any, TContext = any>
+    extends AgFrameworkComponent<IDragAndDropImageParams<TData, TContext>>, IDragAndDropImage {}
 
-export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
+export interface IFilterAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IFilterParams<TData, TContext>>, IFilter<TData, TContext> {}
 
 export interface IFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TState = any>
     extends
         AgFrameworkComponent<FilterDisplayParams<TData, TContext, TModel, TState>>,
         FilterDisplay<TData, TContext, TModel, TState> {}
 
-export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {}
+export interface ICellRendererAngularComp<TData = any, TValue = any, TContext = any>
+    extends
+        AgFrameworkComponent<ICellRendererParams<TData, TValue, TContext>>,
+        ICellRenderer<TData, TValue, TContext> {}
 
-export interface IColumnSelectionLabelRendererAngularComp
-    extends AgFrameworkComponent<IColumnSelectionLabelRendererParams>, IColumnSelectionLabelRenderer {}
+export interface IColumnSelectionLabelRendererAngularComp<TData = any, TContext = any>
+    extends
+        AgFrameworkComponent<IColumnSelectionLabelRendererParams<TData, TContext>>,
+        IColumnSelectionLabelRenderer<TData, TContext> {}
 
-export interface ICellEditorRendererAngularComp extends AgFrameworkComponent<ICellEditorRendererParams> {}
+export interface ICellEditorRendererAngularComp<TValue = any, TData = any, TContext = any> extends AgFrameworkComponent<
+    ICellEditorRendererParams<TValue, TData, TContext>
+> {}
 
-export interface ICellEditorAngularComp extends AgFrameworkComponent<ICellEditorParams>, ICellEditor {}
+export interface ICellEditorAngularComp<TData = any, TValue = any, TContext = any>
+    extends AgFrameworkComponent<ICellEditorParams<TData, TValue, TContext>>, ICellEditor<TValue, TData, TContext> {}
 
 export interface AgRendererComponent extends ICellRendererAngularComp {}
 
@@ -94,24 +108,41 @@ export interface AgFilterComponent extends IFilterAngularComp {}
 
 export interface AgFloatingFilterComponent extends IFloatingFilterAngularComp {}
 
-export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {}
+export interface ILoadingCellRendererAngularComp<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends AgFrameworkComponent<ILoadingCellRendererParams<TData, TValue, TContext>> {}
 
-export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams>, IOverlay {}
+export interface IOverlayAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IOverlayParams<TData, TContext>>, IOverlay<TData, TContext> {}
 
-export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
-export interface IExportingOverlayAngularComp
-    extends AgFrameworkComponent<IExportingOverlayParams>, IExportingOverlay {}
+export interface ILoadingOverlayAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<ILoadingOverlayParams<TData, TContext>>, ILoadingOverlay<TData, TContext> {}
+export interface IExportingOverlayAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IExportingOverlayParams<TData, TContext>>, IExportingOverlay<TData, TContext> {}
 
-export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {}
-export interface INoMatchingRowsOverlayAngularComp
-    extends AgFrameworkComponent<INoMatchingRowsOverlayParams>, INoMatchingRowsOverlay {}
+export interface INoRowsOverlayAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<INoRowsOverlayParams<TData, TContext>>, INoRowsOverlay<TData, TContext> {}
+export interface INoMatchingRowsOverlayAngularComp<TData = any, TContext = any>
+    extends
+        AgFrameworkComponent<INoMatchingRowsOverlayParams<TData, TContext>>,
+        INoMatchingRowsOverlay<TData, TContext> {}
 
-export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {}
+export interface IStatusPanelAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IStatusPanelParams<TData, TContext>>, IStatusPanel<TData, TContext> {}
 
-export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelParams>, IToolPanel {}
+export interface IToolPanelAngularComp<TData = any, TContext = any, TState = any>
+    extends AgFrameworkComponent<IToolPanelParams<TData, TContext, TState>>, IToolPanel<TData, TContext, TState> {}
 
-export interface IToolbarItemAngularComp extends AgFrameworkComponent<IToolbarItemParams>, IToolbarItem {}
+export interface IToolbarItemAngularComp<TData = any, TContext = any, TParams = any>
+    extends
+        AgFrameworkComponent<IToolbarItemParams<TData, TContext, TParams>>,
+        IToolbarItem<TData, TContext, TParams> {}
 
-export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {}
+export interface ITooltipAngularComp<TData = any, TValue = any, TContext = any> extends AgFrameworkComponent<
+    ITooltipParams<TData, TValue, TContext>
+> {}
 
-export interface IMenuItemAngularComp extends AgFrameworkComponent<IMenuItemParams>, IMenuItem {}
+export interface IMenuItemAngularComp<TData = any, TContext = any>
+    extends AgFrameworkComponent<IMenuItemParams<TData, TContext>>, IMenuItem {}

@@ -610,6 +610,7 @@ export class ColumnFilterService
         const { data, aggData } = node;
 
         const targetedFilters = targetAggregates ? this.activeAggregateFilters : this.activeColumnFilters;
+        // aggData is not TData, so `data` in doesFilterPass params must not be typed as the row data type
         const targetedData = targetAggregates ? aggData : data;
         const model = this.model;
         for (let i = 0; i < targetedFilters.length; i++) {

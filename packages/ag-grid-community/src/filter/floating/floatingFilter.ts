@@ -113,7 +113,7 @@ export interface BaseFloatingFilter {
     afterGuiAttached?(): void;
 }
 
-export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
+export interface IFloatingFilter<P = any, TData = any, TContext = any> extends BaseFloatingFilter {
     /**
      * Gets called every time the parent filter changes.
      * Your floating filter would typically refresh its UI to reflect the new filter state.
@@ -123,7 +123,7 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 
     /** A hook to perform any necessary operations when the column definition is updated. */
-    refresh?(params: IFloatingFilterParams<P>): void;
+    refresh?(params: IFloatingFilterParams<P, TData, TContext>): void;
 }
 
 export interface FloatingFilterDisplay<
@@ -136,7 +136,8 @@ export interface FloatingFilterDisplay<
     refresh(params: FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>): void;
 }
 
-export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
+export interface IFloatingFilterComp<P = any, TData = any, TContext = any>
+    extends IFloatingFilter<P, TData, TContext>, IComponent<IFloatingFilterParams<P, TData, TContext>> {}
 
 export interface FloatingFilterDisplayComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
     extends

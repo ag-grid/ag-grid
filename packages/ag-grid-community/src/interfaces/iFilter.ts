@@ -239,7 +239,7 @@ export interface BaseFilter extends SharedFilterUi, ReadOnlyFloatingFilterParent
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 }
 
-export interface IFilter extends BaseFilter {
+export interface IFilter<TData = any, TContext = any> extends BaseFilter {
     /**
      * Returns `true` if the filter is currently active, otherwise `false`.
      * If active then 1) the grid will show the filter icon in the column header
@@ -275,7 +275,7 @@ export interface IFilter extends BaseFilter {
      * @returns {boolean} - `true` means that the filter should be refreshed and kept.
      * `false` means that the filter will be destroyed and a new filter instance will be created.
      */
-    refresh?(newParams: IFilterParams): boolean;
+    refresh?(newParams: IFilterParams<TData, TContext>): boolean;
 }
 
 export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState = any> extends SharedFilterUi {
@@ -290,7 +290,8 @@ export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState
     refresh(newParams: FilterDisplayParams<TData, TContext, TModel, TState>): boolean;
 }
 
-export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {}
+export interface IFilterComp<TData = any, TContext = any>
+    extends IComponent<IFilterParams<TData, TContext>>, IFilter<TData, TContext> {}
 
 export interface FilterDisplayComp<TData = any, TContext = any, TModel = any>
     extends IComponent<FilterDisplayParams<TData, TContext, TModel>>, FilterDisplay<TData, TContext, TModel> {}
