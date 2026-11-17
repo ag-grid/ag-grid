@@ -117,7 +117,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setRowGroupInfo(rowNode: RowNode): void {
         // Use 'data' - group keys should be based on committed data, not pending edits.
-        // Raw: the key never goes through `aggValueGetter`, which can be set on a column that is grouped and aggregated.
+        // Stored value: the key never goes through `aggValueGetter`, which can be set on a column that is grouped and aggregated.
         rowNode.key = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode, false, true);
 
         if (rowNode.key === null || rowNode.key === undefined) {
@@ -253,8 +253,13 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 groupData = {};
                 rowNode._groupData = groupData;
             }
-            if (usingTreeData || col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
+            if (usingTreeData) {
                 groupData[col.colId] = key;
+            } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
+                // Use 'data' - group keys should be based on committed data, not pending edits.
+                // Stored value: the group shows its key, never the `aggValueGetter` result of the same column.
+                const groupValue = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode, false, true);
+                groupData[col.colId] = groupValue;
             }
         }
     }
