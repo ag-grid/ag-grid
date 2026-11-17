@@ -28,7 +28,7 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        vi.resetAllMocks();
+        vi.restoreAllMocks();
     });
 
     test('warns #282 and renders an empty panel when enableFilterHandlers is not set', async () => {

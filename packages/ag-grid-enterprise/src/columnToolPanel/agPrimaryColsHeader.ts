@@ -1,4 +1,5 @@
 import {
+    FAST_TEST_TIMINGS,
     RefPlaceholder,
     _addManagedElementListeners,
     _debounce,
@@ -18,7 +19,7 @@ export enum ExpandState {
     INDETERMINATE,
 }
 
-const DEBOUNCE_DELAY = 300;
+const DEBOUNCE_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
 
 const AgPrimaryColsHeaderElement: ElementParams = {

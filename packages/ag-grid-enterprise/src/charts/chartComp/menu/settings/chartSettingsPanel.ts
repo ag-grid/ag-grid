@@ -1,5 +1,6 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
 import {
+    FAST_TEST_TIMINGS,
     RefPlaceholder,
     _addManagedElementListeners,
     _areEqual,
@@ -21,6 +22,9 @@ import type { ChartTranslationService } from '../../services/chartTranslationSer
 import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
+
+/** Matches the `ag-animating` slide transition; a palette change is ignored until it ends. */
+const PALETTE_SLIDE_DURATION = FAST_TEST_TIMINGS ? 0 : 300;
 
 export class ChartSettingsPanel extends Component {
     private chartTranslation: ChartTranslationService;
@@ -252,7 +256,7 @@ export class ChartSettingsPanel extends Component {
             currentPalette.removeCss(animatingClass);
             futurePalette.removeCss(animatingClass);
             currentPalette.setDisplayed(false);
-        }, 300);
+        }, PALETTE_SLIDE_DURATION);
     }
 
     private destroyMiniCharts(): void {

@@ -380,8 +380,18 @@ describe('ag-grid calculated columns', () => {
         `);
 
         updateCalculatedColumnDef(api, 'calc', { calculatedExpression: '[b]' });
-        await nextAnimationFrame();
-        await nextAnimationFrame();
+        const gridEl = getGridElement(api)!;
+        const spannedText = (colId: string) =>
+            [...gridEl.querySelectorAll(`.ag-spanned-row [col-id="${colId}"]`)].map((cell) => cell.textContent?.trim());
+        const rowText = (rowId: string, colId: string) =>
+            gridEl.querySelector(`.ag-row[row-id="${rowId}"] [col-id="${colId}"]`)?.textContent?.trim() ?? null;
+        await waitFor(() =>
+            expect({
+                spanned: [spannedText('calc'), spannedText('dep')],
+                r1: [rowText('r1', 'calc'), rowText('r1', 'dep')],
+                r3: [rowText('r3', 'calc'), rowText('r3', 'dep')],
+            }).toEqual({ spanned: [['Q'], ['Q']], r1: ['P', 'P'], r3: [null, null] })
+        );
 
         await new GridRows(api, 'calc re-spans by [b] after expression edit', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -880,5 +890,23 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:44000 nextRevenue:58000 change:31.8
         `);
+    });
+
+    test('a calculated column referencing a column not yet defined evaluates once the column definitions add it', async () => {
+        const profit: ColDef = { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' };
+        const revenue: ColDef = { field: 'revenue' };
+        const api = createGrid('calculated-reference-added-later', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [revenue, profit],
+        });
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toMatch(/^#/)
+        );
+
+        api.setGridOption('columnDefs', [revenue, { field: 'cost' }, profit]);
+
+        await waitFor(() =>
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7)
+        );
     });
 });

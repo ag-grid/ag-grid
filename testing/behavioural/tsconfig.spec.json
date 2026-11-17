@@ -7,5 +7,6 @@
     "useDefineForClassFields": false,
     "types": ["vitest/globals", "node", "@testing-library/jest-dom"]
   },
-  "include": ["**/*"]
+  "include": ["**/*"],
+  "exclude": ["node_modules", "src/tmp"]
 }

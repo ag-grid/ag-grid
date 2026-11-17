@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule, getGridElement } from 'ag-grid-community';
 import { AdvancedFilterModule, ColumnMenuModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, SimplePRNG, benchCooldown, benchDefaults, untimedPrepare } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, bench, benchCooldown, untimedPrepare } from './bench-utils';
 
 const ROW_COUNT = 20_000;
 
@@ -99,7 +99,7 @@ suite('advanced filter set values vs set filter mini filter', () => {
             () => typeInto(expressionInput, ''),
             () => typeInto(expressionInput, '[Code] is any of [')
         ),
-        { ...benchDefaults(), setup: setUpExpression }
+        { setup: setUpExpression }
     );
 
     bench(
@@ -108,7 +108,7 @@ suite('advanced filter set values vs set filter mini filter', () => {
             typeInto(expressionInput, '[Code] is any of [cod');
             typeInto(expressionInput, '[Code] is any of [code');
         },
-        { ...benchDefaults(), setup: setUpExpression }
+        { setup: setUpExpression }
     );
 
     bench(
@@ -117,7 +117,7 @@ suite('advanced filter set values vs set filter mini filter', () => {
             typeInto(expressionInput, '[Code] is any of [code-1999');
             typeInto(expressionInput, '[Code] is any of [code-19999');
         },
-        { ...benchDefaults(), setup: setUpExpression }
+        { setup: setUpExpression }
     );
 
     // The same keystrokes in an expression every version parses, as `is any of` and its value list are newer.
@@ -127,7 +127,7 @@ suite('advanced filter set values vs set filter mini filter', () => {
             typeInto(expressionInput, '[Code] contains "code-1999');
             typeInto(expressionInput, '[Code] contains "code-19999');
         },
-        { ...benchDefaults(), setup: setUpExpression }
+        { setup: setUpExpression }
     );
 
     bench(
@@ -136,7 +136,7 @@ suite('advanced filter set values vs set filter mini filter', () => {
             typeInto(miniFilter, 'cod');
             typeInto(miniFilter, 'code');
         },
-        { ...benchDefaults(), setup: setUpMiniFilter }
+        { setup: setUpMiniFilter }
     );
 
     bench(
@@ -145,6 +145,6 @@ suite('advanced filter set values vs set filter mini filter', () => {
             typeInto(miniFilter, 'code-1999');
             typeInto(miniFilter, 'code-19999');
         },
-        { ...benchDefaults(), setup: setUpMiniFilter }
+        { setup: setUpMiniFilter }
     );
 });

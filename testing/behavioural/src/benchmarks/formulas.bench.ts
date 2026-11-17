@@ -1,5 +1,4 @@
-import type { BenchOptions } from 'vitest';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import {
@@ -11,7 +10,8 @@ import {
 } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import type { BenchOptions } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const FORMULA_MODULES = [
     ClientSideRowModelModule,
@@ -59,7 +59,6 @@ suite('formulas - flat grid evaluation', () => {
     let api!: GridApi;
     let toggle = 0;
     const benchOptions: BenchOptions = {
-        ...benchDefaults(),
         setup: async () => {
             await gridsManager.reset();
             api = createFlatGrid();
@@ -107,7 +106,6 @@ suite('formulas - dependent re-evaluation on update', () => {
     let api!: GridApi;
     let sourceValue = 10;
     const benchOptions: BenchOptions = {
-        ...benchDefaults(),
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('G', {
@@ -166,7 +164,6 @@ suite('formulas - large range aggregate', () => {
     let api!: GridApi;
     let toggle = 0;
     const benchOptions: BenchOptions = {
-        ...benchDefaults(),
         setup: async () => {
             await gridsManager.reset();
             api = createRangeGrid();
@@ -237,7 +234,6 @@ suite('formulas - column reorder', () => {
     let api!: GridApi;
     let forward = true;
     const benchOptions: BenchOptions = {
-        ...benchDefaults(),
         setup: async () => {
             await gridsManager.reset();
             api = createGrid();

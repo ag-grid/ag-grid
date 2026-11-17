@@ -1664,18 +1664,21 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             rowData: [{ field: 'keep' }],
             suppressClipboardApi: true,
         });
-        const user = userEvent.setup({ skipHover: true });
-        await user.click(getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!);
+        const user = userEvent.setup({ skipHover: true, advanceTimers: vi.advanceTimersByTime });
         const outside = document.body.appendChild(document.createElement('button'));
+        vi.useFakeTimers({ toFake: ['setTimeout'] });
         try {
+            await user.click(getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!);
             await user.keyboard('{Control>}v{/Control}');
             const textArea = document.activeElement!;
             textArea.dispatchEvent(new Event('paste', { cancelable: true }));
             textArea.dispatchEvent(new Event('paste', { cancelable: true }));
             outside.focus();
-            await waitFor(() => expect(textArea.isConnected).toBe(false));
+            vi.runAllTimers();
+            expect(textArea.isConnected).toBe(false);
             expect(document.activeElement).toBe(outside);
         } finally {
+            vi.useRealTimers();
             outside.remove();
         }
     });

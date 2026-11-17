@@ -20,6 +20,7 @@ import {
     ColumnApiModule,
     ColumnAutoSizeModule,
     RowSelectionModule,
+    ScrollApiModule,
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
@@ -355,6 +356,45 @@ describe('column layout events', () => {
         expect({ rendered: rendered(), told }).toEqual({ rendered: before.slice(0, -1), told: 1 });
     });
 
+    test('a move among columns out of view reports the displayed columns change but no virtual columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        expect(rendered).not.toContain('c28');
+        const heard: string[] = [];
+        api.addEventListener('virtualColumnsChanged', () => heard.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () => heard.push('displayedColumnsChanged'));
+
+        api.moveColumns(['c28'], 29);
+        await asyncSetTimeout(0);
+
+        expect(heard).toEqual(['displayedColumnsChanged']);
+    });
+
+    test('a horizontal scroll bringing new columns into view reports its virtual columns change as after a scroll', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
+                rowData: [{}],
+                suppressColumnVirtualisation: false,
+            },
+            { modules: [ScrollApiModule] }
+        );
+        await asyncSetTimeout(0);
+        const told: boolean[] = [];
+        api.addEventListener('virtualColumnsChanged', (event) => told.push(event.afterScroll));
+
+        api.ensureColumnVisible('c25');
+        await asyncSetTimeout(0);
+
+        expect(told).toEqual([true]);
+    });
+
     test('a refresh raises the grid events reporting it in a fixed order', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
@@ -393,6 +433,22 @@ describe('column layout events', () => {
             ],
             onMove: ['virtualColumnsChanged', 'displayedColumnsChanged', 'columnMoved'],
         });
+    });
+
+    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
+        let told = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [{}],
+            onVirtualColumnsChanged: () => ++told,
+        });
+        await asyncSetTimeout(0);
+        const atCreation = told;
+
+        api.setGridOption('columnDefs', [{ colId: 'a' }]);
+        await asyncSetTimeout(0);
+
+        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
     });
 });
 

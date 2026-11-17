@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 // Measures the live-preview keystroke flush WORK (rebuildCols + CSRM refreshModel + formula cache
 // wipe + viewport re-evaluation). requestAnimationFrame is overridden to fire synchronously so the
@@ -104,7 +104,6 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
                 readAllRows(api);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;

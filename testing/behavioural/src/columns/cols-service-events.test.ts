@@ -2,7 +2,7 @@ import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { Column, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { AggregationModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { AggregationModule, AllEnterpriseModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 /**
  * Event coverage for every public entry point of the cols services (rowGroup / pivot / value).
@@ -63,6 +63,29 @@ describe('Cols service events', () => {
 
             expect(events.length).toBe(0);
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('removing a hierarchy column not grouped from the row groups groups none of its levels', () => {
+            const api = gridsManager.createGrid(
+                'g',
+                {
+                    columnDefs: [
+                        { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                        { field: 'c' },
+                    ],
+                    rowData: [{ date: '2008-08-24', c: 1 }],
+                },
+                { modules: [AllEnterpriseModule] }
+            );
+
+            api.removeRowGroupColumns(['date']);
+            const afterRemove = ids(api.getRowGroupColumns());
+            api.applyColumnState({ state: [{ colId: 'date', rowGroup: false }] });
+
+            expect({ afterRemove, afterState: ids(api.getRowGroupColumns()) }).toEqual({
+                afterRemove: [],
+                afterState: [],
+            });
         });
 
         test('addRowGroupColumns then removeRowGroupColumns fire one event each', async () => {
@@ -310,6 +333,27 @@ describe('Cols service events', () => {
 
             expect(moved).toBe(true);
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['b', 'a', 'c']);
+        });
+
+        test('a column listener grouping by another column and setting the column definitions adds one columnEverythingChanged for both', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+            let reentered = false;
+            api.getColumn('a')!.addEventListener('columnRowGroupChanged', () => {
+                if (!reentered) {
+                    reentered = true;
+                    api.addRowGroupColumns(['b']);
+                    api.setGridOption('columnDefs', baseOptions().columnDefs);
+                }
+            });
+
+            api.addRowGroupColumns(['a']);
+            await asyncSetTimeout(0);
+
+            expect(reentered).toBe(true);
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+            expect(everything.length).toBe(2);
         });
     });
 

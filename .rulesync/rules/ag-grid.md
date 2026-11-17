@@ -31,7 +31,7 @@ Each script takes `--help`. Full flag reference lives in the guides below rather
 
 **Locally, never run `./checks.sh`, `./behave.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** (under `CI` or in a workflow, do the opposite: see below). They take minutes, and a foreground call blocks the whole session: the user cannot reach the agent, no other work proceeds, and the wait is dead time repeated at every gate. Start them with the agent harness's background mechanism, which delivers a completion event in a later turn, then keep working. **Never `sleep` to wait for one either** — that is the same block, wearing a different hat.
 
-Nothing needs to be arranged to read the result afterwards: every local run captures itself and prints the log path as its first line (`tmp/_<name>-output/<id>/output.log`). Grep that file — while the run is going to abort early on the first failure, or after it for the verdict; `--bail 1` makes the run stop itself there instead, which is what you want in a fix-one-error-at-a-time loop. `./behave.sh` also writes Vitest's machine-readable `result.json` beside the log; the other scripts leave only the log, the command and a status file. **All of this is local-only, and so is the rule above.** Backgrounding exists to keep an interactive session reachable; a CI job or workflow has nobody to block, so run these in the foreground there and read the output directly. The scripts capture nothing under `CI` for the same reason.
+Nothing needs to be arranged to read the result afterwards: every local run captures itself and prints the log path as its first line (`tmp/_<name>-output/<id>/output.log`). Grep that file — while the run is going to abort early on the first failure, or after it for the verdict; `--bail 1` makes the run stop itself there instead, which is what you want in a fix-one-error-at-a-time loop. `./behave.sh` also writes Vitest's machine-readable `result.json` beside the log; the other scripts leave only the log, the command and a status file. **Never pipe a gate** (`| tail`, `| grep`): the pipeline exits with the filter's status, so a red run reads green, and a backgrounded run's completion event carries that `0`, so the failure never surfaces. Ask the script for less instead: `--quiet` (the usual choice: summary and failures; `./checks.sh` is quiet already), `--log-tail N`, `--log-grep RE`. **All of this is local-only, and so is the rule above.** Backgrounding exists to keep an interactive session reachable; a CI job or workflow has nobody to block, so run these in the foreground there and read the output directly. The scripts capture nothing under `CI` for the same reason.
 
 ### Content Locations
 
@@ -60,7 +60,7 @@ On the **first response** of a conversation, verify that project skills are avai
 
 Skip this check in non-interactive runs (CI, GitHub Actions, automated PR reviews): nobody is there to act on the warning.
 
-**Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`
+**Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`. Claude Code loads them from the plugins with a prefix (`ag-product:example`, `ag-eng:dev-server`, `ag-eng:debug-trace`, `ag-eng:git-conventions`, `ag-product:jira`); either form counts as present.
 
 **Warning to display (if any canary skill is missing):**
 
@@ -108,7 +108,7 @@ AG Grid is a sophisticated TypeScript monorepo providing a high-performance data
 - **community-modules/locale/**: Internationalization support
 - **community-modules/styles/**: Grid styling and themes
 - **documentation/ag-grid-docs/**: Astro documentation site
-- **testing/**: E2E, behavioural, accessibility, and performance tests
+- **testing/**: E2E, behavioural (benchmarks included), accessibility, CSP and module-size tests
 - **plugins/**: Nx plugins for code generation
 - **external/**: Shared AG ecosystem code (ag-shared)
 
@@ -125,7 +125,7 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 ### Development Workflow
 
-**Behavioural tests are the primary test suite.** `testing/behavioural/` verifies grid behaviour as a black box; package unit tests are co-located in `packages/*/src`. `./behave.sh` runs both together as one multi-project Vitest run. The Testing Guide covers layer choice, async waiting patterns, and snapshots.
+**Behavioural tests are the primary test suite.** `testing/behavioural/` verifies grid behaviour as a black box; package unit tests are co-located in `packages/*/src`. `./behave.sh` runs both together as one multi-project Vitest run. The `behavioural` project runs **without per-file isolation**: each worker keeps one window and one module graph across its files, so a test must undo whatever global it patches (the Testing Guide says how). The Testing Guide covers layer choice, async waiting patterns, and snapshots.
 
 **Not every change needs a test.** Add one for logic, state, events, interaction and API behaviour. Do not add one for styling-only changes (never assert exact pixel or CSS values), copy, refactors with existing coverage, or type-only changes. Say "No test added: <reason>" in your summary. The Testing Guide's "Does this change need a test?" section has the criteria.
 
