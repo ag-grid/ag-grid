@@ -1,4 +1,5 @@
 import { createApp, defineComponent } from 'vue';
+import type { PropType } from 'vue';
 
 import type {
     ColDef,
@@ -39,6 +40,12 @@ ModuleRegistry.registerModules([
 ]);
 
 const SportRenderer = defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
     methods: {
         applyTransaction() {
@@ -104,10 +111,11 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: null,
-            rightRowData: null,
-            leftApi: null,
-            rightApi: null,
+            rawData: [] as any[],
+            leftRowData: null as any[] | null,
+            rightRowData: null as any[] | null,
+            leftApi: null as GridApi | null,
+            rightApi: null as GridApi | null,
             rowSelection: <RowSelectionOptions>{
                 mode: 'multiRow',
             },
@@ -126,7 +134,7 @@ const VueExample = defineComponent({
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
-                        return params.rowNode.data.athlete;
+                        return params.rowNode!.data.athlete;
                     },
                 },
                 { field: 'athlete' },
@@ -142,7 +150,7 @@ const VueExample = defineComponent({
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
-                        return params.rowNode.data.athlete;
+                        return params.rowNode!.data.athlete;
                     },
                 },
                 { field: 'athlete' },
@@ -160,7 +168,7 @@ const VueExample = defineComponent({
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())
             .then((data) => {
-                const athletes = [];
+                const athletes: any[] = [];
                 let i = 0;
 
                 while (athletes.length < 20 && i < data.length) {
@@ -175,7 +183,7 @@ const VueExample = defineComponent({
             });
     },
     methods: {
-        getRowId(params) {
+        getRowId(params: GetRowIdParams) {
             return params.data.athlete;
         },
 
@@ -200,11 +208,11 @@ const VueExample = defineComponent({
         },
 
         addGridDropZone() {
-            const dropZoneParams = this.rightApi.getRowDropZoneParams({
+            const dropZoneParams = this.rightApi!.getRowDropZoneParams({
                 onDragStop: (params) => {
                     const nodes = params.nodes;
 
-                    this.leftApi.applyTransaction({
+                    this.leftApi!.applyTransaction({
                         remove: nodes.map(function (node) {
                             return node.data;
                         }),
@@ -212,15 +220,19 @@ const VueExample = defineComponent({
                 },
             });
 
-            this.leftApi.addRowDropZone(dropZoneParams);
+            if (!dropZoneParams) {
+                return;
+            }
+
+            this.leftApi!.addRowDropZone(dropZoneParams);
         },
 
         onExcelExport() {
             const spreadsheets = [];
 
             spreadsheets.push(
-                this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
-                this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+                this.leftApi!.getSheetDataForExcel({ sheetName: 'Athletes' })!,
+                this.rightApi!.getSheetDataForExcel({ sheetName: 'Selected Athletes' })!
             );
 
             exportMultipleSheetsAsExcel({

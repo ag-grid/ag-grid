@@ -39,7 +39,7 @@ const CompanyLogoRenderer = defineComponent({
     `,
     setup(props) {
         const cellValue = props.params.value;
-        const cellValueLowerCase = cellValue.toLowerCase();
+        const cellValueLowerCase = cellValue?.toLowerCase();
         return {
             cellValue,
             cellValueLowerCase,

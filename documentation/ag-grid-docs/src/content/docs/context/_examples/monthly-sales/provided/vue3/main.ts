@@ -146,10 +146,10 @@ const VueExample = defineComponent({
             flex: 1,
             minWidth: 120,
         });
-        const context = ref(null);
-        const autoGroupColumnDef = ref<ColDef>(null);
-        const rowData = ref<any[]>(null);
-        const rowSelection = ref<RowSelectionOptions>(null);
+        const context = ref<{ month: number; months: string[] } | null>(null);
+        const autoGroupColumnDef = ref<ColDef | null>(null);
+        const rowData = ref<any[] | null>(null);
+        const rowSelection = ref<RowSelectionOptions | null>(null);
 
         onBeforeMount(() => {
             context.value = {
@@ -169,8 +169,8 @@ const VueExample = defineComponent({
             };
         });
 
-        const onChangeMonth = (i) => {
-            var newMonth = (context.value.month += i);
+        const onChangeMonth = (i: number) => {
+            var newMonth = (context.value!.month += i);
             if (newMonth < -1) {
                 newMonth = -1;
             }
@@ -178,13 +178,13 @@ const VueExample = defineComponent({
                 newMonth = 5;
             }
             // Mutate the context object in place
-            context.value.month = newMonth;
-            document.querySelector('#monthName').textContent = monthNames[newMonth + 1];
-            gridApi.value.refreshClientSideRowModel('aggregate');
-            gridApi.value.refreshCells();
+            context.value!.month = newMonth;
+            document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1];
+            gridApi.value!.refreshClientSideRowModel('aggregate');
+            gridApi.value!.refreshCells();
         };
         const onQuickFilterChanged = () => {
-            gridApi.value.setGridOption(
+            gridApi.value!.setGridOption(
                 'quickFilterText',
                 (document.getElementById('filter-text-box') as HTMLInputElement).value
             );
@@ -192,7 +192,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 rowData.value = data;
             };
 

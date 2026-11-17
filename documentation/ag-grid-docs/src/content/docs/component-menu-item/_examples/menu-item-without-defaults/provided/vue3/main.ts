@@ -1,5 +1,6 @@
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
+import type { GetMainMenuItems, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -52,7 +53,7 @@ const VueExample = {
         'ag-grid-vue': AgGridVue,
         MenuItem,
     },
-    setup(props) {
+    setup() {
         const columnDefs = ref([
             { field: 'athlete' },
             { field: 'country' },
@@ -69,8 +70,8 @@ const VueExample = {
             filter: true,
             suppressHeaderFilterButton: true,
         });
-        const getMainMenuItems = ref(null);
-        const rowData = ref(null);
+        const getMainMenuItems = ref<GetMainMenuItems | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             getMainMenuItems.value = (params) => {
@@ -88,10 +89,10 @@ const VueExample = {
             };
         });
 
-        const onGridReady = (params) => {
+        const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 rowData.value = data;
             };
 

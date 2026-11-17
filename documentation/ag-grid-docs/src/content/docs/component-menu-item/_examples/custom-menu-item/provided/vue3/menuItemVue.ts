@@ -1,6 +1,15 @@
 import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IMenuItemParams } from 'ag-grid-community';
 
 export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IMenuItemParams & { buttonValue: string }>,
+            required: true,
+        },
+    },
     template: `
         <div>
             <span class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>

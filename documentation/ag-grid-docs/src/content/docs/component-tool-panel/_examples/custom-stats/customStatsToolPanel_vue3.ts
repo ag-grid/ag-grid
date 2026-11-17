@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IToolPanelParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IToolPanelParams & { title: string }>,
+            required: true,
+        },
+    },
     template: `
       <div style="text-align: center">
       <span>
@@ -17,7 +28,7 @@ export default {
             numGold: 0,
             numSilver: 0,
             numBronze: 0,
-            title: undefined,
+            title: undefined as string | undefined,
         };
     },
     methods: {
@@ -40,4 +51,4 @@ export default {
     created() {
         this.params.api.addEventListener('modelUpdated', this.renderStats.bind(this));
     },
-};
+});

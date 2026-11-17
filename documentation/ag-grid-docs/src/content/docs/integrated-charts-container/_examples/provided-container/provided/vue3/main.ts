@@ -55,15 +55,15 @@ const VueExample = defineComponent({
         ]);
         const gridApi = shallowRef<GridApi | null>(null);
         const defaultColDef = ref<ColDef>({ flex: 1 });
-        const popupParent = ref(null);
-        const rowData = ref<any[]>(null);
+        const popupParent = ref<HTMLElement | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             popupParent.value = document.body;
         });
 
         const updateChart = (chartRef: ChartRef) => {
-            const eParent = document.querySelector('#chartParent');
+            const eParent = document.querySelector('#chartParent') as HTMLElement;
             eParent.innerHTML = ''; // Clear existing content
             const placeHolder = `<div class="chart-placeholder">Chart will be displayed here.</div>`;
             if (chartRef) {
@@ -77,9 +77,9 @@ const VueExample = defineComponent({
                     </div>
                   `;
                 eParent.insertAdjacentHTML('beforeend', chartWrapperHTML);
-                const eChartWrapper = eParent.lastElementChild;
-                eChartWrapper.querySelector('.chart-wrapper-body').appendChild(chartRef.chartElement);
-                eChartWrapper.querySelector('.chart-wrapper-close').addEventListener('click', () => {
+                const eChartWrapper = eParent.lastElementChild as HTMLElement;
+                eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(chartRef.chartElement);
+                eChartWrapper.querySelector('.chart-wrapper-close')!.addEventListener('click', () => {
                     chartRef.destroyChart();
                     eParent.innerHTML = placeHolder;
                 });
@@ -90,7 +90,7 @@ const VueExample = defineComponent({
 
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 rowData.value = data;
             };
 

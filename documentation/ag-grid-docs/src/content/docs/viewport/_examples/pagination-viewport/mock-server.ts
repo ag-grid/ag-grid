@@ -1,7 +1,25 @@
+export interface DataChange {
+    rowIndex: number;
+    columnId: string;
+    newValue: number;
+}
+
+export type ServerEvent =
+    | { eventType: 'rowCountChanged'; rowCount: number }
+    | { eventType: 'rowData'; rowDataMap: Record<number, any> }
+    | { eventType: 'dataUpdated'; changes: DataChange[] };
+
+interface Connection {
+    listener: (event: ServerEvent) => void;
+    rowsInClient: Record<number, boolean>;
+    firstRow: number;
+    lastRow: number;
+}
+
 export function createMockServer() {
     class MockServer {
-        allData: any[];
-        connections: Record<string, any>;
+        allData: any[] = [];
+        connections: Record<string, Connection>;
         nextConnectionId: number;
 
         constructor() {
@@ -12,7 +30,7 @@ export function createMockServer() {
 
         periodicallyUpdateData() {
             // keep a record of all the items that changed
-            const changes = [];
+            const changes: DataChange[] = [];
 
             // make some mock changes to the data
             this.makeSomePriceChanges(changes);
@@ -22,13 +40,13 @@ export function createMockServer() {
             this.informConnectionsOfChanges(changes);
         }
 
-        informConnectionsOfChanges(changes) {
+        informConnectionsOfChanges(changes: DataChange[]) {
             const that = this;
             // go through each connection
             Object.keys(this.connections).forEach(function (connectionId) {
                 const connection = that.connections[connectionId];
                 // create a list of changes that are applicable to this connection only
-                const changesThisConnection = [];
+                const changesThisConnection: DataChange[] = [];
                 changes.forEach(function (change) {
                     // see if the index of this change is within the connections viewport
                     const changeInRange =
@@ -47,7 +65,7 @@ export function createMockServer() {
             });
         }
 
-        makeSomeVolumeChanges(changes) {
+        makeSomeVolumeChanges(changes: DataChange[]) {
             for (let i = 0; i < 10; i++) {
                 // pick a data item at random
                 const index = Math.floor(this.allData.length * Math.random());
@@ -66,7 +84,7 @@ export function createMockServer() {
             }
         }
 
-        makeSomePriceChanges(changes) {
+        makeSomePriceChanges(changes: DataChange[]) {
             // randomly update data for some rows
             for (let i = 0; i < 10; i++) {
                 const index = Math.floor(this.allData.length * Math.random());
@@ -97,7 +115,7 @@ export function createMockServer() {
             }
         }
 
-        init(allData) {
+        init(allData: any[]) {
             this.allData = allData;
 
             // the sample data has just name and code, we need to add in dummy figures
@@ -113,12 +131,12 @@ export function createMockServer() {
             });
         }
 
-        setBidAndAsk(dataItem) {
+        setBidAndAsk(dataItem: any) {
             dataItem.bid = dataItem.mid * 0.98;
             dataItem.ask = dataItem.mid * 1.02;
         }
 
-        connect(listener) {
+        connect(listener: (event: ServerEvent) => void) {
             const connectionId = this.nextConnectionId;
             this.nextConnectionId++;
             // keep a record of the connection
@@ -143,18 +161,18 @@ export function createMockServer() {
         }
 
         // pretend we are on a network, send message to client after 20ms
-        sendEventAsync(connectionId, event) {
+        sendEventAsync(connectionId: number | string, event: ServerEvent) {
             const listener = this.connections[connectionId].listener;
             setTimeout(function () {
                 listener(event);
             }, 20);
         }
 
-        disconnect(connectionId) {
+        disconnect(connectionId: number) {
             delete this.connections[connectionId];
         }
 
-        setViewportRange(connectionId, firstRow, lastRow) {
+        setViewportRange(connectionId: number, firstRow: number, lastRow: number) {
             const connection = this.connections[connectionId];
             connection.firstRow = firstRow;
             connection.lastRow = lastRow;
@@ -166,7 +184,7 @@ export function createMockServer() {
         }
 
         // removes any entries outside the viewport (firstRow to lastRow)
-        purgeFromClientRows(rowsInClient, firstRow, lastRow) {
+        purgeFromClientRows(rowsInClient: Record<number, boolean>, firstRow: number, lastRow: number) {
             Object.keys(rowsInClient).forEach(function (rowIndexStr) {
                 const rowIndex = parseInt(rowIndexStr);
                 if (rowIndex < firstRow || rowIndex > lastRow) {
@@ -175,7 +193,7 @@ export function createMockServer() {
             });
         }
 
-        sendResultsToClient(connectionId, firstRow, lastRow) {
+        sendResultsToClient(connectionId: number, firstRow: number, lastRow: number) {
             if (firstRow < 0 || lastRow < firstRow) {
                 console.warn('start or end is not valid');
                 return;
@@ -185,7 +203,7 @@ export function createMockServer() {
             const rowsInClient = this.connections[connectionId].rowsInClient;
 
             // the map contains row indexes mapped to rows
-            const rowDataMap = {};
+            const rowDataMap: Record<number, any> = {};
             for (let i = firstRow; i <= lastRow; i++) {
                 // if client already has this row, don't send it again
                 if (rowsInClient[i]) {

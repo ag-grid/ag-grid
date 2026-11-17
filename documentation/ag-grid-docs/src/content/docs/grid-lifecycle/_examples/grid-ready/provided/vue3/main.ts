@@ -69,7 +69,7 @@ const VueExample = defineComponent({
 
         const gridApi = shallowRef<GridApi | null>(null);
 
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
         const isVisible = ref(true);
 
         onBeforeMount(() => {

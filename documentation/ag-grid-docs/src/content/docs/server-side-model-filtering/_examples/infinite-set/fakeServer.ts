@@ -12,15 +12,21 @@ import {
     textFilterSql,
 } from '@example-fake-servers/sql';
 
-export function FakeServer(allData) {
+import type { FilterModel, IServerSideGetRowsRequest, TextFilterModel } from 'ag-grid-community';
+
+interface SportFilterModel {
+    filterModels: (TextFilterModel | null)[];
+}
+
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
 
     return {
-        getData: function (request) {
+        getData: function (request: IServerSideGetRowsRequest) {
             const results = executeQuery(request);
-            results.forEach((row) => {
+            results.forEach((row: any) => {
                 row.country = {
                     code: row.countryCode,
                     name: row.countryName,
@@ -35,22 +41,22 @@ export function FakeServer(allData) {
                 lastRow: getLastRowIndex(request),
             };
         },
-        getCountries: function (sportFilter) {
-            const params = [allData];
+        getCountries: function (sportFilter?: SportFilterModel) {
+            const params: unknown[] = [allData];
             const textFilter = sportFilter?.filterModels[0]
                 ? ' WHERE ' + textFilterSql('sport', sportFilter.filterModels[0], params)
                 : '';
             const sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
 
-            return alasql(sql, params).map((row) => ({
+            return alasql(sql, params).map((row: any) => ({
                 code: row.countryCode,
                 name: row.countryName,
             }));
         },
-        getSports: function (countries, sportFilter) {
+        getSports: function (countries: string[] | null, sportFilter?: SportFilterModel) {
             console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
 
-            const params = [allData];
+            const params: unknown[] = [allData];
             const where = countries ? ' WHERE countryCode IN (' + placeholders(countries, params) + ')' : '';
             const operator = countries ? ' AND ' : ' WHERE ';
             const textFilter = sportFilter?.filterModels[0]
@@ -58,14 +64,14 @@ export function FakeServer(allData) {
                 : '';
             const sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
 
-            return alasql(sql, params).map(function (x) {
+            return alasql(sql, params).map(function (x: any) {
                 return x.sport;
             });
         },
     };
 
-    function executeQuery(request) {
-        const params = [allData];
+    function executeQuery(request: IServerSideGetRowsRequest) {
+        const params: unknown[] = [allData];
         const sql = buildSql(request, params);
 
         console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
@@ -73,7 +79,7 @@ export function FakeServer(allData) {
         return alasql(sql, params);
     }
 
-    function buildSql(request, params) {
+    function buildSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         return (
             'SELECT * FROM ?' +
             whereSql(request, params) +
@@ -85,23 +91,23 @@ export function FakeServer(allData) {
         );
     }
 
-    function column(colId) {
+    function column(colId: string) {
         return checkColumn(knownColumns, colId);
     }
 
-    function mapColumnKey(columnKey) {
+    function mapColumnKey(columnKey: string) {
         return columnKey === 'country' ? 'countryCode' : columnKey;
     }
 
-    function placeholders(values, params) {
+    function placeholders(values: (string | null)[], params: unknown[]) {
         // blanks arrive as `null`; bind '' instead, as AlaSQL never matches null in an IN list
         params.push(...values.map((value) => value ?? ''));
         return values.map(() => '?').join(', ');
     }
 
-    function whereSql(request, params) {
-        const whereParts = [];
-        const filterModel = request.filterModel;
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
+        const whereParts: string[] = [];
+        const filterModel = request.filterModel as FilterModel | null;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (columnKey) {
@@ -150,7 +156,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function getLastRowIndex(request) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

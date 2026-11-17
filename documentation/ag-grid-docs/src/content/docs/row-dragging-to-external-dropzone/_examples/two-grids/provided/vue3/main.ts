@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
 
 let rowIdSequence = 100;
 
-function createDataItem(color) {
+function createDataItem(color: string) {
     const obj = {
         id: rowIdSequence++,
         color: color,
@@ -121,10 +121,10 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: [],
-            rightRowData: [],
-            leftApi: null,
-            rightApi: null,
+            leftRowData: [] as any[],
+            rightRowData: [] as any[],
+            leftApi: null as GridApi | null,
+            rightApi: null as GridApi | null,
             rowClassRules: {
                 'red-row': 'data.color == "Red"',
                 'green-row': 'data.color == "Green"',
@@ -163,13 +163,13 @@ const VueExample = defineComponent({
             this.addGridDropZone(side, api);
         },
 
-        addRecordToGrid(side, data) {
+        addRecordToGrid(side: string, data: any) {
             // if data missing or data has no it, do nothing
             if (!data || data.id == null) {
                 return;
             }
 
-            const api = side === 'left' ? this.leftApi : this.rightApi;
+            const api = (side === 'left' ? this.leftApi : this.rightApi)!;
             // do nothing if row is already in the grid, otherwise we would have duplicates
             const rowAlreadyInGrid = !!api.getRowNode(data.id);
             let transaction;
@@ -186,16 +186,16 @@ const VueExample = defineComponent({
             api.applyTransaction(transaction);
         },
 
-        onFactoryButtonClick(e) {
-            var button = e.currentTarget,
-                buttonColor = button.getAttribute('data-color'),
-                side = button.getAttribute('data-side'),
+        onFactoryButtonClick(e: MouseEvent) {
+            var button = e.currentTarget as HTMLElement,
+                buttonColor = button.getAttribute('data-color')!,
+                side = button.getAttribute('data-side')!,
                 data = createDataItem(buttonColor);
 
             this.addRecordToGrid(side, data);
         },
 
-        binDrop(data) {
+        binDrop(data: any) {
             // if data missing or data has no id, do nothing
             if (!data || data.id == null) {
                 return;
@@ -206,39 +206,41 @@ const VueExample = defineComponent({
             };
 
             [this.leftApi, this.rightApi].forEach((api) => {
-                var rowsInGrid = !!api.getRowNode(data.id);
+                var rowsInGrid = !!api!.getRowNode(data.id);
 
                 if (rowsInGrid) {
-                    api.applyTransaction(transaction);
+                    api!.applyTransaction(transaction);
                 }
             });
         },
 
         addBinZone(api: GridApi) {
+            const eBin = this.$refs.eBin as HTMLElement;
+            const eBinIcon = this.$refs.eBinIcon as HTMLElement;
             const dropZone = <RowDropZoneParams>{
-                getContainer: () => this.$refs.eBinIcon,
+                getContainer: () => eBinIcon,
                 onDragEnter: () => {
-                    this.$refs.eBin.style.color = 'blue';
-                    this.$refs.eBinIcon.style.transform = 'scale(1.5)';
+                    eBin.style.color = 'blue';
+                    eBinIcon.style.transform = 'scale(1.5)';
                 },
                 onDragLeave: () => {
-                    this.$refs.eBin.style.removeProperty('color');
-                    this.$refs.eBinIcon.style.transform = 'scale(1)';
+                    eBin.style.removeProperty('color');
+                    eBinIcon.style.transform = 'scale(1)';
                 },
                 onDragStop: (params) => {
                     this.binDrop(params.node.data);
-                    this.$refs.eBin.style.removeProperty('color');
-                    this.$refs.eBinIcon.style.transform = 'scale(1)';
+                    eBin.style.removeProperty('color');
+                    eBinIcon.style.transform = 'scale(1)';
                 },
             };
 
             api.addRowDropZone(dropZone);
         },
 
-        addGridDropZone(side, api) {
+        addGridDropZone(side: string, api: GridApi) {
             const dropSide = side === 'Left' ? 'Right' : 'Left';
-            const dropZone = {
-                getContainer: () => (dropSide === 'Left' ? this.$refs.eLeftGrid : this.$refs.eRightGrid),
+            const dropZone: RowDropZoneParams = {
+                getContainer: () => (dropSide === 'Left' ? this.$refs.eLeftGrid : this.$refs.eRightGrid) as HTMLElement,
                 onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
             };
 

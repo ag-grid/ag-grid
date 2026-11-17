@@ -5,19 +5,21 @@
 // checked against allow-lists of known values.
 import { checkColumn, limitSql, numberFilterSql, orderBySql, textFilterSql } from '@example-fake-servers/sql';
 
-export function FakeServer(allData) {
+import type { AdvancedFilterModel, IServerSideGetRowsRequest, SetAdvancedFilterModel } from 'ag-grid-community';
+
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
 
     return {
-        getValues: function (field) {
+        getValues: function (field: string) {
             const rows = alasql('SELECT DISTINCT ' + column(field) + ' FROM ? ORDER BY ' + column(field), [allData]);
 
-            return rows.map((row) => String(row[field]));
+            return rows.map((row: any) => String(row[field]));
         },
 
-        getData: function (request) {
+        getData: function (request: IServerSideGetRowsRequest) {
             const results = executeQuery(request);
 
             return {
@@ -28,8 +30,8 @@ export function FakeServer(allData) {
         },
     };
 
-    function executeQuery(request) {
-        const params = [allData];
+    function executeQuery(request: IServerSideGetRowsRequest) {
+        const params: unknown[] = [allData];
         const sql = buildSql(request, params);
 
         console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
@@ -37,7 +39,7 @@ export function FakeServer(allData) {
         return alasql(sql, params);
     }
 
-    function buildSql(request, params) {
+    function buildSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         return (
             'SELECT * FROM ?' +
             whereSql(request, params) +
@@ -46,12 +48,12 @@ export function FakeServer(allData) {
         );
     }
 
-    function column(colId) {
+    function column(colId: string) {
         return checkColumn(knownColumns, colId);
     }
 
-    function whereSql(request, params) {
-        const filterModel = request.filterModel;
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
+        const filterModel = request.filterModel as AdvancedFilterModel | null;
 
         if (filterModel) {
             return ' WHERE ' + createFilterSql(filterModel, params);
@@ -60,7 +62,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function createFilterSql(model, params) {
+    function createFilterSql(model: AdvancedFilterModel, params: unknown[]): string {
         if (model.filterType === 'join') {
             const join = model.type === 'OR' ? ' OR ' : ' AND ';
             return '(' + model.conditions.map((condition) => createFilterSql(condition, params)).join(join) + ')';
@@ -80,7 +82,7 @@ export function FakeServer(allData) {
 
     // `is any of` / `is none of` send the Set Filter keys the written values resolved to, which are strings.
     // A blank is sent as a `null` key, so blank cells and the key are both folded to '' before comparing.
-    function setFilterMapper(key, item, params) {
+    function setFilterMapper(key: string, item: SetAdvancedFilterModel, params: unknown[]) {
         const values = item.values.map((value) => {
             params.push(value ?? '');
             return '?';
@@ -90,7 +92,7 @@ export function FakeServer(allData) {
         return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values.join(', ') + ')';
     }
 
-    function getLastRowIndex(request) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

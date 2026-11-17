@@ -8,6 +8,7 @@ import {
     GridApi,
     GridReadyEvent,
     ModuleRegistry,
+    RowGroupingDisplayType,
     enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -57,9 +58,9 @@ const VueExample = defineComponent({
             minWidth: 120,
         });
 
-        const groupRowRenderer = ref<string>(null);
-        const groupDisplayType = ref(null);
-        const rowData = ref<any[]>(null);
+        const groupRowRenderer = ref<string | null>(null);
+        const groupDisplayType = ref<RowGroupingDisplayType | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             groupRowRenderer.value = 'CustomGroupCellRenderer';
@@ -88,7 +89,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => (rowData.value = data);
+            const updateData = (data: any[]) => (rowData.value = data);
 
             fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
                 .then((resp) => resp.json())

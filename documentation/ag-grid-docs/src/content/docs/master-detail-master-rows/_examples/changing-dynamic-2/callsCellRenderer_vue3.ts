@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
         <span class="calls-cell-renderer">
             <button v-on:click="onAdd">+</button>
@@ -10,7 +21,7 @@ export default {
         return {};
     },
     computed: {
-        value() {
+        value(): number {
             return this.params.value;
         },
     },
@@ -30,7 +41,7 @@ export default {
             }); // add one item
 
             let minutes = 0;
-            newCallRecords.forEach(function (r) {
+            newCallRecords.forEach(function (r: { duration: number }) {
                 minutes += r.duration;
             });
 
@@ -59,7 +70,7 @@ export default {
             newCallRecords.pop(); // remove one item
 
             let minutes = 0;
-            newCallRecords.forEach(function (r) {
+            newCallRecords.forEach(function (r: { duration: number }) {
                 minutes += r.duration;
             });
 
@@ -74,4 +85,4 @@ export default {
             this.params.api.applyTransaction({ update: [newData] });
         },
     },
-};
+});

@@ -1,3 +1,5 @@
+import type { ServerSideTransaction } from 'ag-grid-community';
+
 const MIN_BOOK_COUNT = 1;
 const MAX_BOOK_COUNT = 5;
 const MIN_TRADE_COUNT = 1;
@@ -39,7 +41,7 @@ const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'
 let nextTradeId = 0;
 let nextBookId = 62472;
 
-export var data = [];
+export var data: Trade[] = [];
 
 // IIFE to create initial data
 (function () {
@@ -68,11 +70,19 @@ export var data = [];
     }
 })();
 
-export var dataObservers = [];
+export var dataObservers: ((transaction: ServerSideTransaction<Trade>) => void)[] = [];
 
-export function randomUpdates({ numRemove, numAdd, numUpdate }) {
+export function randomUpdates({
+    numRemove,
+    numAdd,
+    numUpdate,
+}: {
+    numRemove: number;
+    numAdd: number;
+    numUpdate: number;
+}) {
     // removes
-    const remove = [];
+    const remove: Trade[] = [];
     for (let i = 0; i < Math.ceil(numRemove); i++) {
         const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
@@ -81,19 +91,19 @@ export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     }
 
     // updates
-    const update = [];
+    const update: Trade[] = [];
     for (let i = 0; i < numUpdate; i++) {
         const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
         d.previous = d.current;
         d.current = d.previous + 13;
         d.lastUpdated = new Date();
-        d.updateCount = ++d.updateCount;
+        d.updateCount = (d.updateCount ?? 0) + 1;
         update.push(d);
     }
 
     // adds
-    const add = [];
+    const add: Trade[] = [];
     const lastUpdate = new Date();
     for (let i = 0; i < Math.ceil(numAdd); i++) {
         const product = products[randomBetween(0, products.length - 1)];
@@ -110,7 +120,7 @@ export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     dataObservers.forEach((obs) => obs({ update, add, remove }));
 }
 
-function randomBetween(min, max) {
+function randomBetween(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
