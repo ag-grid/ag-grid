@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaCalculatedColumn: 'Lajur dikira',
     ariaColumnShowValuesAs: 'Memaparkan Nilai Sebagai',
     ariaColumnSelectAll: 'Togol Keterlihatan Semua Lajur',
-    ariaColumnSelectExpandAll: 'Kembangkan atau Kuncupkan Semua Kumpulan Lajur',
+    ariaColumnSelectExpandAll: 'Kembangkan Semua Kumpulan Lajur',
+    ariaColumnSelectCollapseAll: 'Kuncupkan Semua Kumpulan Lajur',
     ariaDateFilterInput: 'Input Penapis Tarikh',
     ariaDefaultListName: 'Senarai',
     ariaFilterColumnsInput: 'Input Tapis Lajur',
@@ -878,6 +879,8 @@ export const AG_GRID_LOCALE_MS_MY = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Senarai Lajur',
     ariaFilterPanelList: 'Senarai Penapis',
+    ariaFilterPanelExpandAll: 'Kembangkan Semua Kumpulan Penapis',
+    ariaFilterPanelCollapseAll: 'Kuncupkan Semua Kumpulan Penapis',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Tambah Medan Penapis',

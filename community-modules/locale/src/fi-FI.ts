@@ -739,7 +739,8 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaCalculatedColumn: 'Laskettu sarake',
     ariaColumnShowValuesAs: 'Näytetään arvot muodossa',
     ariaColumnSelectAll: 'Vaihda kaikkien sarakkeiden näkyvyys',
-    ariaColumnSelectExpandAll: 'Laajenna tai tiivistä kaikki sarakeryhmät',
+    ariaColumnSelectExpandAll: 'Laajenna kaikki sarakeryhmät',
+    ariaColumnSelectCollapseAll: 'Tiivistä kaikki sarakeryhmät',
     ariaDateFilterInput: 'Päivämäärän suodattimen syöte',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Suodata sarakkeiden syöte',
@@ -855,6 +856,8 @@ export const AG_GRID_LOCALE_FI_FI = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Sarakeluettelo',
     ariaFilterPanelList: 'Suodatinluettelo',
+    ariaFilterPanelExpandAll: 'Laajenna kaikki suodatinryhmät',
+    ariaFilterPanelCollapseAll: 'Tiivistä kaikki suodatinryhmät',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',

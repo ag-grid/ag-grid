@@ -738,7 +738,8 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaCalculatedColumn: 'Hesaplanan sütun',
     ariaColumnShowValuesAs: 'Değerler Şu Şekilde Gösteriliyor',
     ariaColumnSelectAll: 'Tüm Sütunların Görünürlüğünü Değiştir',
-    ariaColumnSelectExpandAll: 'Tüm sütun gruplarını genişlet veya daralt',
+    ariaColumnSelectExpandAll: 'Tüm sütun gruplarını genişlet',
+    ariaColumnSelectCollapseAll: 'Tüm sütun gruplarını daralt',
     ariaDateFilterInput: 'Tarih Filtre Girişi',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Sütunları Filtrele Girişi',
@@ -856,6 +857,8 @@ export const AG_GRID_LOCALE_TR_TR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolon Listesi',
     ariaFilterPanelList: 'Filtre Listesi',
+    ariaFilterPanelExpandAll: 'Tüm Filtre Gruplarını Genişlet',
+    ariaFilterPanelCollapseAll: 'Tüm Filtre Gruplarını Daralt',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',

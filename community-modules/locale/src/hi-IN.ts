@@ -752,7 +752,8 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaCalculatedColumn: 'गणना किया गया कॉलम',
     ariaColumnShowValuesAs: 'मान इस रूप में दिखा रहा है',
     ariaColumnSelectAll: 'सभी कॉलम दृश्यता टॉगल करें',
-    ariaColumnSelectExpandAll: 'सभी कॉलम समूहों को विस्तृत या संक्षिप्त करें',
+    ariaColumnSelectExpandAll: 'सभी कॉलम समूहों को विस्तृत करें',
+    ariaColumnSelectCollapseAll: 'सभी कॉलम समूहों को संक्षिप्त करें',
     ariaDateFilterInput: 'दिनांक फ़िल्टर इनपुट',
     ariaDefaultListName: 'सूची',
     ariaFilterColumnsInput: 'फ़िल्टर कॉलम इनपुट',
@@ -877,6 +878,8 @@ export const AG_GRID_LOCALE_HI_IN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'कॉलम सूची',
     ariaFilterPanelList: 'फ़िल्टर सूची',
+    ariaFilterPanelExpandAll: 'सभी फ़िल्टर समूह विस्तृत करें',
+    ariaFilterPanelCollapseAll: 'सभी फ़िल्टर समूह संक्षिप्त करें',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',

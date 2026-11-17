@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaCalculatedColumn: 'Skaičiuojamasis stulpelis',
     ariaColumnShowValuesAs: 'Rodomos reikšmės kaip',
     ariaColumnSelectAll: 'Perjungti visų stulpelių matomumą',
-    ariaColumnSelectExpandAll: 'Išskleisti arba suskleisti visas stulpelių grupes',
+    ariaColumnSelectExpandAll: 'Išskleisti visas stulpelių grupes',
+    ariaColumnSelectCollapseAll: 'Suskleisti visas stulpelių grupes',
     ariaDateFilterInput: 'Datos filtro laukas',
     ariaDefaultListName: 'Sąrašas',
     ariaFilterColumnsInput: 'Stulpelių filtravimo laukas',
@@ -878,6 +879,8 @@ export const AG_GRID_LOCALE_LT_LT = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Stulpelių sąrašas',
     ariaFilterPanelList: 'Filtrų sąrašas',
+    ariaFilterPanelExpandAll: 'Išskleisti visas filtrų grupes',
+    ariaFilterPanelCollapseAll: 'Suskleisti visas filtrų grupes',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Pridėti filtro laukas',

@@ -737,7 +737,8 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaCalculatedColumn: 'Обчислювана колонка',
     ariaColumnShowValuesAs: 'Показ значень як',
     ariaColumnSelectAll: 'Перемкнути видимість усіх стовпців',
-    ariaColumnSelectExpandAll: 'Розгорнути або згорнути всі групи стовпців',
+    ariaColumnSelectExpandAll: 'Розгорнути всі групи стовпців',
+    ariaColumnSelectCollapseAll: 'Згорнути всі групи стовпців',
     ariaDateFilterInput: 'Ввід фільтру за датою',
     ariaDefaultListName: 'Список',
     ariaFilterColumnsInput: 'Ввід колонок для фільтрування',
@@ -853,6 +854,8 @@ export const AG_GRID_LOCALE_UK_UA = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Список колонок',
     ariaFilterPanelList: 'Список фільтрів',
+    ariaFilterPanelExpandAll: 'Розгорнути Всі Групи Фільтрів',
+    ariaFilterPanelCollapseAll: 'Згорнути Всі Групи Фільтрів',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Додати поле фільтра',

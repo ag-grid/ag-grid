@@ -750,7 +750,8 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaCalculatedColumn: 'Izračunata kolona',
     ariaColumnShowValuesAs: 'Prikazivanje vrednosti kao',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih kolona',
-    ariaColumnSelectExpandAll: 'Proširi ili skupi sve grupe kolona',
+    ariaColumnSelectExpandAll: 'Proširi sve grupe kolona',
+    ariaColumnSelectCollapseAll: 'Skupi sve grupe kolona',
     ariaDateFilterInput: 'Unos filtera datuma',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Unos za filtriranje kolona',
@@ -874,6 +875,8 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista kolona',
     ariaFilterPanelList: 'Lista filtera',
+    ariaFilterPanelExpandAll: 'Proširi sve grupe filtera',
+    ariaFilterPanelCollapseAll: 'Skupi sve grupe filtera',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj polje filtera',

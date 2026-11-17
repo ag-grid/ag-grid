@@ -734,7 +734,8 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaCalculatedColumn: '계산된 열',
     ariaColumnShowValuesAs: '값 표시 형식',
     ariaColumnSelectAll: '모든 열 가시성 전환',
-    ariaColumnSelectExpandAll: '모든 열 그룹 펼치기 또는 접기',
+    ariaColumnSelectExpandAll: '모든 열 그룹 펼치기',
+    ariaColumnSelectCollapseAll: '모든 열 그룹 접기',
     ariaDateFilterInput: '날짜 필터 입력',
     ariaDefaultListName: '목록',
     ariaFilterColumnsInput: '열 필터 입력',
@@ -850,6 +851,8 @@ export const AG_GRID_LOCALE_KO_KR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '열 목록',
     ariaFilterPanelList: '필터 목록',
+    ariaFilterPanelExpandAll: '모든 필터 그룹 확장',
+    ariaFilterPanelCollapseAll: '모든 필터 그룹 축소',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: '필터 필드 추가',

@@ -750,7 +750,8 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaCalculatedColumn: 'Arvutatud veerg',
     ariaColumnShowValuesAs: 'Näitab väärtusi kui',
     ariaColumnSelectAll: 'Lülita kõikide veergude nähtavus',
-    ariaColumnSelectExpandAll: 'Laienda või ahenda kõik veerurühmad',
+    ariaColumnSelectExpandAll: 'Laienda kõik veerurühmad',
+    ariaColumnSelectCollapseAll: 'Ahenda kõik veerurühmad',
     ariaDateFilterInput: 'Kuupäevafiltri sisend',
     ariaDefaultListName: 'Loend',
     ariaFilterColumnsInput: 'Filtri veergude sisend',
@@ -874,6 +875,8 @@ export const AG_GRID_LOCALE_ET_EE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Veergude loend',
     ariaFilterPanelList: 'Filtrite loend',
+    ariaFilterPanelExpandAll: 'Laienda kõik filtrirühmad',
+    ariaFilterPanelCollapseAll: 'Ahenda kõik filtrirühmad',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filtrivälja lisamine',

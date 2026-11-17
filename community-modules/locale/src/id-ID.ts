@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaCalculatedColumn: 'Kolom terhitung',
     ariaColumnShowValuesAs: 'Menampilkan Nilai Sebagai',
     ariaColumnSelectAll: 'Alihkan Visibilitas Semua Kolom',
-    ariaColumnSelectExpandAll: 'Perluas atau Ciutkan Semua Grup Kolom',
+    ariaColumnSelectExpandAll: 'Perluas Semua Grup Kolom',
+    ariaColumnSelectCollapseAll: 'Ciutkan Semua Grup Kolom',
     ariaDateFilterInput: 'Input Filter Tanggal',
     ariaDefaultListName: 'Daftar',
     ariaFilterColumnsInput: 'Input Filter Kolom',
@@ -877,6 +878,8 @@ export const AG_GRID_LOCALE_ID_ID = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Daftar Kolom',
     ariaFilterPanelList: 'Daftar Filter',
+    ariaFilterPanelExpandAll: 'Perluas Semua Grup Filter',
+    ariaFilterPanelCollapseAll: 'Ciutkan Semua Grup Filter',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Tambah Bidang Filter',

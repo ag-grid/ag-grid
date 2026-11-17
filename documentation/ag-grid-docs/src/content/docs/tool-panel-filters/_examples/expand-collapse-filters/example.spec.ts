@@ -23,11 +23,11 @@ test.agExample(import.meta, () => {
         await expect(expandedFilters).toHaveCount(1);
 
         // Collapse All -> no filters expanded.
-        await page.getByRole('button', { name: 'Collapse All' }).click();
+        await page.getByRole('button', { name: 'Collapse All', exact: true }).click();
         await expect(expandedFilters).toHaveCount(0);
 
         // Expand All -> every filter expanded.
-        await page.getByRole('button', { name: 'Expand All' }).click();
+        await page.getByRole('button', { name: 'Expand All', exact: true }).click();
         await expect(expandedFilters).toHaveCount(totalFilters);
     });
 

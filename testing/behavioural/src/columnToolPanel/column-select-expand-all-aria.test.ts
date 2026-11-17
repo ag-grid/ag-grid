@@ -18,7 +18,8 @@ const COLUMN_DEFS: ColGroupDef[] = [
     },
 ];
 
-const EXPAND_ALL_NAME = 'Expand or Collapse All Column Groups';
+const EXPAND_ALL_NAME = 'Expand All Column Groups';
+const COLLAPSE_ALL_NAME = 'Collapse All Column Groups';
 
 describe('column select expand/collapse-all control accessibility', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -47,23 +48,27 @@ describe('column select expand/collapse-all control accessibility', () => {
         return event;
     }
 
+    function expectNameAndState(control: HTMLElement, name: string, expanded: string): void {
+        expect(control.getAttribute('aria-label')).toBe(name);
+        expect(control.getAttribute('aria-expanded')).toBe(expanded);
+    }
+
     async function expectToggledByKeyboard(container: Element): Promise<void> {
         const control = getExpandControl(container);
 
         expect(control.getAttribute('role')).toBe('button');
-        expect(control.getAttribute('aria-label')).toBe(EXPAND_ALL_NAME);
-        expect(control.getAttribute('aria-expanded')).toBe('true');
+        expectNameAndState(control, COLLAPSE_ALL_NAME, 'true');
 
         const space = pressKey(control, ' ');
         expect(space.defaultPrevented).toBe(true);
-        await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('false'));
+        await waitFor(() => expectNameAndState(control, EXPAND_ALL_NAME, 'false'));
 
         const enter = pressKey(control, 'Enter');
         expect(enter.defaultPrevented).toBe(true);
-        await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('true'));
+        await waitFor(() => expectNameAndState(control, COLLAPSE_ALL_NAME, 'true'));
 
         pressKey(control, 'Enter');
-        await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('false'));
+        await waitFor(() => expectNameAndState(control, EXPAND_ALL_NAME, 'false'));
     }
 
     test('columns tool panel control has button role, name and state, and toggles with Enter and Space', async () => {
@@ -73,16 +78,16 @@ describe('column select expand/collapse-all control accessibility', () => {
         await expectToggledByKeyboard(panel);
     });
 
-    test('aria-expanded is false when only some groups are expanded, and activating expands all', async () => {
+    test('names the expand and reports collapsed when only some groups are expanded, and activating expands all', async () => {
         const api = await createGrid(true);
         const panel = getGridElement(api)!.querySelector('.ag-column-panel')!;
         const control = getExpandControl(panel);
 
         api.getToolPanelInstance('columns')!.collapseColumnGroups(['athleteDetails']);
-        await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('false'));
+        await waitFor(() => expectNameAndState(control, EXPAND_ALL_NAME, 'false'));
 
         pressKey(control, 'Enter');
-        await waitFor(() => expect(control.getAttribute('aria-expanded')).toBe('true'));
+        await waitFor(() => expectNameAndState(control, COLLAPSE_ALL_NAME, 'true'));
     });
 
     test('choose columns dialog control has button role, name and state, and toggles with Enter and Space', async () => {

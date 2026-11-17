@@ -737,7 +737,8 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaCalculatedColumn: 'Izračunati stupac',
     ariaColumnShowValuesAs: 'Prikazivanje vrijednosti kao',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih stupaca',
-    ariaColumnSelectExpandAll: 'Proširi ili sažmi sve grupe stupaca',
+    ariaColumnSelectExpandAll: 'Proširi sve grupe stupaca',
+    ariaColumnSelectCollapseAll: 'Sažmi sve grupe stupaca',
     ariaDateFilterInput: 'Unos filtera datuma',
     ariaDefaultListName: 'Popis',
     ariaFilterColumnsInput: 'Unos za filtriranje stupaca',
@@ -853,6 +854,8 @@ export const AG_GRID_LOCALE_HR_HR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Popis stupaca',
     ariaFilterPanelList: 'Popis filtara',
+    ariaFilterPanelExpandAll: 'Proširi sve grupe filtara',
+    ariaFilterPanelCollapseAll: 'Sažmi sve grupe filtara',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj polje filtera',

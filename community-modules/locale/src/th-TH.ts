@@ -749,7 +749,8 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaCalculatedColumn: 'คอลัมน์คำนวณ',
     ariaColumnShowValuesAs: 'กำลังแสดงค่าเป็น',
     ariaColumnSelectAll: 'สลับการมองเห็นทุกคอลัมน์',
-    ariaColumnSelectExpandAll: 'ขยายหรือยุบกลุ่มคอลัมน์ทั้งหมด',
+    ariaColumnSelectExpandAll: 'ขยายกลุ่มคอลัมน์ทั้งหมด',
+    ariaColumnSelectCollapseAll: 'ยุบกลุ่มคอลัมน์ทั้งหมด',
     ariaDateFilterInput: 'ช่องป้อนตัวกรองวันที่',
     ariaDefaultListName: 'รายการ',
     ariaFilterColumnsInput: 'ช่องป้อนกรองคอลัมน์',
@@ -873,6 +874,8 @@ export const AG_GRID_LOCALE_TH_TH = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'รายการคอลัมน์',
     ariaFilterPanelList: 'รายการตัวกรอง',
+    ariaFilterPanelExpandAll: 'ขยายกลุ่มตัวกรองทั้งหมด',
+    ariaFilterPanelCollapseAll: 'ยุบกลุ่มตัวกรองทั้งหมด',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'ฟิลด์เพิ่มตัวกรอง',

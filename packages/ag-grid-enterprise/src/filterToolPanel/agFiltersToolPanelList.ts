@@ -452,8 +452,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             state = EXPAND_STATE.INDETERMINATE;
         } else if (notExpandedCount > 0) {
             state = EXPAND_STATE.COLLAPSED;
-        } else {
+        } else if (expandedCount > 0) {
             state = EXPAND_STATE.EXPANDED;
+        } else {
+            state = EXPAND_STATE.NO_GROUPS;
         }
 
         this.dispatchLocalEvent({ type: 'groupExpanded', state: state });

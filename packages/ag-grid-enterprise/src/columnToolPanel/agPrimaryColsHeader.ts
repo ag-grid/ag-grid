@@ -79,7 +79,6 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         const translate = this.getLocaleTextFunc();
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle All Columns Visibility'));
-        _setAriaLabel(this.eExpand, translate('ariaColumnSelectExpandAll', 'Expand or Collapse All Column Groups'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
 
         this.activateTabIndex([this.eExpand]);
@@ -165,9 +164,18 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
+        const expanded = state === ExpandState.EXPANDED;
+        const translate = this.getLocaleTextFunc();
 
-        _setAriaExpanded(this.eExpand, state === ExpandState.EXPANDED);
-        _setDisplayed(this.eExpandChecked, state === ExpandState.EXPANDED);
+        // The name says what activating does, so it names the collapse only once every group is expanded.
+        _setAriaLabel(
+            this.eExpand,
+            expanded
+                ? translate('ariaColumnSelectCollapseAll', 'Collapse All Column Groups')
+                : translate('ariaColumnSelectExpandAll', 'Expand All Column Groups')
+        );
+        _setAriaExpanded(this.eExpand, expanded);
+        _setDisplayed(this.eExpandChecked, expanded);
         _setDisplayed(this.eExpandUnchecked, state === ExpandState.COLLAPSED);
         _setDisplayed(this.eExpandIndeterminate, state === ExpandState.INDETERMINATE);
     }

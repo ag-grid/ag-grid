@@ -740,7 +740,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaCalculatedColumn: 'Υπολογιζόμενη στήλη',
     ariaColumnShowValuesAs: 'Εμφάνιση τιμών ως',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
-    ariaColumnSelectExpandAll: 'Ανάπτυξη ή σύμπτυξη όλων των ομάδων στηλών',
+    ariaColumnSelectExpandAll: 'Ανάπτυξη όλων των ομάδων στηλών',
+    ariaColumnSelectCollapseAll: 'Σύμπτυξη όλων των ομάδων στηλών',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
     ariaDefaultListName: 'Λίστα',
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',
@@ -856,6 +857,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Λίστα Στηλών',
     ariaFilterPanelList: 'Λίστα Φίλτρων',
+    ariaFilterPanelExpandAll: 'Επέκταση Όλων των Ομάδων Φίλτρων',
+    ariaFilterPanelCollapseAll: 'Σύμπτυξη Όλων των Ομάδων Φίλτρων',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
