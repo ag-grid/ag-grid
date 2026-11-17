@@ -1,7 +1,7 @@
 import React, { StrictMode, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -32,7 +32,8 @@ const GridExample = () => {
     const apiFor = (grid: 'a' | 'b') => (grid === 'a' ? gridA : gridB).current!.api;
 
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
-    const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).setGridOption('tooltipInteraction', true);
+    const initialOnlyOptions: GridOptions = { tooltipInteraction: true };
+    const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).updateGridOptions(initialOnlyOptions);
 
     // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
     // on a client-side grid emits error #200, attributed to that grid, and no-ops without affecting layout.

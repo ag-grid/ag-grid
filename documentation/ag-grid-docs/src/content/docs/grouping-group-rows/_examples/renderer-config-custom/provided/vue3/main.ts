@@ -7,7 +7,6 @@ import {
     ColDef,
     GridApi,
     GridReadyEvent,
-    ICellRenderer,
     ModuleRegistry,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -58,7 +57,7 @@ const VueExample = defineComponent({
             minWidth: 120,
         });
 
-        const groupRowRenderer = ref<ICellRenderer>(null);
+        const groupRowRenderer = ref<string>(null);
         const groupDisplayType = ref(null);
         const rowData = ref<any[]>(null);
 

@@ -1,3 +1,6 @@
+// we'll be using the globally provided flatpickr for our example
+declare let flatpickr: any;
+
 export default {
     template: `
       <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">

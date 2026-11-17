@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "allowImportingTsExtensions": true,
+    "useDefineForClassFields": false,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@example-fake-servers/*": ["./src/example-fake-servers/*"]
+    }
+  },
+  "include": [
+    "src/types/index.d.ts",
+    "src/content/docs/**/_examples/**/*.ts",
+    "src/content/docs/**/_examples/**/*.tsx"
+  ],
+  "exclude": [
+    "src/content/docs/**/_examples/**/*.spec.ts",
+    "src/content/docs/**/_examples/**/*.spec.tsx",
+
+    // These import `./interfaces` or `./useFetchJson`, which the example generator adds alongside them.
+    "src/content/docs/ai-toolkit/_examples/natural-language-grid-state/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/component-cell-renderer/_examples/lazy-renderer/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/filter-external/_examples/external-filter/provided/angular/app.component.ts",
+    "src/content/docs/filter-external/_examples/external-filter/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/filter-external/_examples/external-filter/provided/vue3/main.ts",
+    "src/content/docs/grid-state/_examples/grid-state/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/grid-state/_examples/partial-column-state/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/side-bar/_examples/tool-panel-parent/provided/angular/app.component.ts",
+    "src/content/docs/side-bar/_examples/tool-panel-parent/provided/reactFunctionalTs/index.tsx",
+    "src/content/docs/side-bar/_examples/tool-panel-parent/provided/vue3/main.ts"
+  ]
+}

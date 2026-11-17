@@ -1,3 +1,5 @@
+import type Ajv from 'ajv';
+
 export {};
 
 declare global {
@@ -55,4 +57,7 @@ declare global {
      * Actual code will be added by the example generator
      */
     export const useFetchJson: <TData = any>(url: string, limit?: number) => { data: TData[]; loading: boolean };
+
+    /** Ajv's browser bundle, loaded by the example page as a script; `ajv7` is the name it exposes. */
+    export const ajv7: typeof Ajv;
 }

@@ -151,7 +151,7 @@ const VueExample = defineComponent({
             return String(params.data.id);
         },
 
-        onGridReady(params: GridReadyEvent, side: number) {
+        onGridReady(params: GridReadyEvent, side: 'Left' | 'Right') {
             const api = params.api;
             if (side === 'Left') {
                 this.leftApi = api;

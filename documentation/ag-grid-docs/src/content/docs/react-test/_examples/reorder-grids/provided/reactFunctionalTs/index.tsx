@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GetRowIdParams, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -99,7 +99,7 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
         console.log(`💥 [${title}] Grid destroying`);
     }, [title]);
 
-    const rowSelection = useMemo(() => {
+    const rowSelection = useMemo<RowSelectionOptions>(() => {
         return {
             mode: 'singleRow',
         };

@@ -187,7 +187,7 @@ export function FakeServer(allData) {
         return ' ORDER BY ' + sorts.join(', ');
     }
 
-    function limitSql(request, ignoreLimit) {
+    function limitSql(request, ignoreLimit?: boolean) {
         if (ignoreLimit || request.endRow == undefined || request.startRow == undefined) {
             return '';
         }

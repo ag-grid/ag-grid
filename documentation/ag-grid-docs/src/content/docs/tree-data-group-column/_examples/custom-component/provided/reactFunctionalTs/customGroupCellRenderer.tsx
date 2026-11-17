@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import type { RowEvent } from 'ag-grid-community';
+import type { ExpandedChangedEvent } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps) => {
@@ -8,7 +8,7 @@ export default (props: CustomCellRendererProps) => {
     const [expanded, setExpanded] = useState(node.expanded);
 
     useEffect(() => {
-        const expandListener = (event: RowEvent) => setExpanded(event.node.expanded);
+        const expandListener = (event: ExpandedChangedEvent) => setExpanded(event.node.expanded);
 
         node.addEventListener('expandedChanged', expandListener);
 

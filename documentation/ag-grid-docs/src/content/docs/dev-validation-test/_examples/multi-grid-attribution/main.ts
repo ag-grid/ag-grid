@@ -33,7 +33,8 @@ function apiFor(grid: string): GridApi {
 
 // Updating an initial-only option after creation emits warning #22 on the targeted grid.
 function triggerWarning(grid: string) {
-    apiFor(grid).setGridOption('tooltipInteraction', true);
+    const initialOnlyOptions: GridOptions = { tooltipInteraction: true };
+    apiFor(grid).updateGridOptions(initialOnlyOptions);
 }
 
 // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it on

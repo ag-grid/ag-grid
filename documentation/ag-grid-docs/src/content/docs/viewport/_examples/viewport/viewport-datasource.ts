@@ -1,11 +1,13 @@
-import type { IViewportDatasource } from 'ag-grid-community';
+import type { IViewportDatasource, IViewportDatasourceParams } from 'ag-grid-community';
 
 export function createViewportDatasource(mockServer): IViewportDatasource {
     // client code (ie your code) will call this constructor, pass in whatever you need for the
     // viewport to do its job
     class ViewportDatasource {
-        constructor(mockServer) {
-            this.mockServer = mockServer;
+        private connectionId: number;
+        private params: IViewportDatasourceParams;
+
+        constructor(private mockServer) {
             this.connectionId = this.mockServer.connect(this.eventListener.bind(this));
         }
 

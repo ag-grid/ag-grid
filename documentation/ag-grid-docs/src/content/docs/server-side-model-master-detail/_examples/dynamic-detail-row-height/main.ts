@@ -84,7 +84,7 @@ const gridOptions: GridOptions = {
     getRowHeight: (params: RowHeightParams) => {
         if (params.node && params.node.detail) {
             const offset = 60;
-            const sizes = params.api.getSizesForCurrentTheme() || {};
+            const sizes = params.api.getSizesForCurrentTheme();
             const allDetailRowHeight = params.data.callRecords.length * sizes.rowHeight;
             return allDetailRowHeight + (sizes.headerHeight || 0) + offset;
         }
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
+            const fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

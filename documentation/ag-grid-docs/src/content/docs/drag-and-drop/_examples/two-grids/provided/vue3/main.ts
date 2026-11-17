@@ -160,14 +160,14 @@ const VueExample = defineComponent({
             };
         },
 
-        dragStart($event, color) {
+        dragStart(event: DragEvent, color) {
             var newItem = this.createDataItem(color);
             var jsonData = JSON.stringify(newItem);
 
             event.dataTransfer.setData('application/json', jsonData);
         },
 
-        gridDragOver($event) {
+        gridDragOver(event: DragEvent) {
             var dragSupported = event.dataTransfer.types.length;
 
             if (dragSupported) {
@@ -176,7 +176,7 @@ const VueExample = defineComponent({
             }
         },
 
-        gridDrop($event, grid) {
+        gridDrop(event: DragEvent, grid) {
             event.preventDefault();
 
             var jsonData = event.dataTransfer.getData('application/json');
@@ -202,7 +202,7 @@ const VueExample = defineComponent({
             gridApi.applyTransaction(transaction);
         },
 
-        binDragOver($event) {
+        binDragOver(event: DragEvent) {
             var dragSupported = event.dataTransfer.types.length;
 
             if (dragSupported) {
@@ -211,7 +211,7 @@ const VueExample = defineComponent({
             }
         },
 
-        binDrop($event) {
+        binDrop(event: DragEvent) {
             event.preventDefault();
 
             var jsonData = event.dataTransfer.getData('application/json');

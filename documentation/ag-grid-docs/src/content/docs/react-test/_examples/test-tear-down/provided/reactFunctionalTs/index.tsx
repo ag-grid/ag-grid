@@ -3,6 +3,7 @@
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -54,7 +55,7 @@ function GridWrapper() {
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
     ];
 
-    const colDefs = [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }];
+    const colDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }];
 
     return <AgGridReact rowData={rowData} columnDefs={colDefs} />;
 }

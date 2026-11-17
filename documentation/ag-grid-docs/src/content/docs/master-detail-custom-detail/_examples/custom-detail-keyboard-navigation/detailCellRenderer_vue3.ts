@@ -51,7 +51,7 @@ export default {
             const currentRow = currentEl && parseInt(currentEl.getAttribute('row-index'), 10);
             const previousRow = previousRowEl && parseInt(previousRowEl.getAttribute('row-index'), 10);
 
-            const inputs = Array.from(currentEl.querySelectorAll('input')).filter((el) => {
+            const inputs = Array.from<HTMLInputElement>(currentEl.querySelectorAll('input')).filter((el) => {
                 if (el.checkVisibility) {
                     return el.checkVisibility({
                         checkOpacity: true,

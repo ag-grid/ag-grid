@@ -37,10 +37,10 @@ const GridExample = () => {
     const gridRef = useRef(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const popupRef = useRef<HTMLElement>(null);
-    const popupContentRef = useRef<HTMLElement>(null);
-    const drawerRef = useRef<HTMLElement>(null);
-    const drawerContentRef = useRef<HTMLElement>(null);
+    const popupRef = useRef<HTMLDivElement>(null);
+    const popupContentRef = useRef<HTMLDivElement>(null);
+    const drawerRef = useRef<HTMLDivElement>(null);
+    const drawerContentRef = useRef<HTMLDivElement>(null);
     const [popupParent, setPopupParent] = useState<HTMLElement | null>(document.body);
     const [columnDefs, setColumnDefs] = useState([
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
