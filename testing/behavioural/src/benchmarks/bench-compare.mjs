@@ -367,7 +367,8 @@ function runBenchmarks(projectDir, outputFile, sideEnv, prefix, selection) {
         return Promise.resolve(null);
     }
 
-    const benchArgs = ['vitest', 'bench', '--outputJson', outputFile];
+    const benchArgs = ['vitest', 'bench', '--mode', 'benchmark', '--reporter=default', '--reporter=json'];
+    benchArgs.push(`--outputFile.json=${outputFile}`);
     for (const ex of EXCLUDED_BENCH_FILES) {
         benchArgs.push('--exclude', `**/${ex}*`);
     }
@@ -411,6 +412,36 @@ function runBenchmarks(projectDir, outputFile, sideEnv, prefix, selection) {
 const isMeasured = (entry) => entry !== undefined && Number.isFinite(entry.hz) && entry.hz > 0;
 
 /**
+ * Every bench of a run file (vitest's json report): one per bench test, with its file, its suites as the group and
+ * its call statistics; a bench test that failed has none, so its `hz` is NaN.
+ */
+function runFileBenches(parsed) {
+    const benches = [];
+    for (const file of parsed.testResults ?? []) {
+        for (const test of file.assertionResults ?? []) {
+            const group = test.ancestorTitles.join(' > ');
+            const tasks = (test.benchmarks ?? []).flatMap((benchmark) => benchmark.tasks);
+            if (tasks.length === 0) {
+                benches.push({ filepath: file.name, group, name: test.title, hz: NaN });
+            }
+            for (const task of tasks) {
+                const latency = task.latency;
+                benches.push({
+                    filepath: file.name,
+                    group,
+                    name: task.name,
+                    hz: 1000 / latency.mean,
+                    mean: latency.mean,
+                    rme: latency.rme,
+                    sampleCount: latency.samplesCount,
+                });
+            }
+        }
+    }
+    return benches;
+}
+
+/**
  * Parse a freshly-written run file and classify each benchmark as valid (finite, positive hz) or
  * invalid (errored / not measurable — typically a feature absent in this checkout). Returns null
  * when the file is unusable (missing, unparseable, or zero valid benchmarks) — that's a real
@@ -418,20 +449,16 @@ const isMeasured = (entry) => entry !== undefined && Number.isFinite(entry.hz) &
  */
 function inspectRunFile(path) {
     const parsed = readJsonOrNull(path);
-    if (!parsed || !Array.isArray(parsed.files)) {
+    if (!parsed || !Array.isArray(parsed.testResults)) {
         return null;
     }
     const valid = [];
     const invalid = [];
-    for (const file of parsed.files) {
-        for (const group of file.groups ?? []) {
-            for (const bench of group.benchmarks ?? []) {
-                if (isMeasured(bench)) {
-                    valid.push(bench.name);
-                } else {
-                    invalid.push(bench.name);
-                }
-            }
+    for (const bench of runFileBenches(parsed)) {
+        if (isMeasured(bench)) {
+            valid.push(bench.name);
+        } else {
+            invalid.push(bench.name);
         }
     }
     if (valid.length === 0) {
@@ -756,16 +783,9 @@ function nextRoundSelection(dir, roundIndex) {
     if (open.length === 0) {
         return null;
     }
-    // vitest's -t matches getTaskFullName: suites then bench, never the file (a top-level suite has no parent task),
-    // so these anchored names select exactly them; the report's group name starts with the file, which is dropped.
-    const names = open.map((c) => {
-        const suites = c.group.split(' > ');
-        if (suites[0] === c.file) {
-            suites.shift();
-        }
-        suites.push(c.name);
-        return `^${escapeRegExp(suites.join(' '))}$`;
-    });
+    // vitest's -t matches a test's suites and name joined by ' > ', never the file, and each bench is a test of its
+    // own name, so these anchored names select exactly them.
+    const names = open.map((c) => `^${escapeRegExp(c.group ? `${c.group} > ${c.name}` : c.name)}$`);
     return { files: [...new Set(open.map((c) => basename(c.file)))], pattern: names.join('|'), count: open.length };
 }
 
@@ -1006,36 +1026,33 @@ function valueAtRank(runLengths, rank) {
 /** One round's benches by key, each with its slices' call statistics when the round recorded them. */
 function extractRound(round) {
     const map = new Map();
-    for (const file of round.parsed.files) {
-        if (isExcluded(file.filepath)) {
+    // Same-named benches in one file are told apart by occurrence, as their turn keys are.
+    const seen = new Map();
+    for (const bench of runFileBenches(round.parsed)) {
+        if (isExcluded(bench.filepath)) {
             continue;
         }
-        const fileId = fileIdentity(file.filepath);
-        // Same-named benches in one file are told apart by occurrence, as their turn keys are.
-        const seen = new Map();
-        for (const group of file.groups) {
-            for (const bench of group.benchmarks) {
-                const occurrence = (seen.get(bench.name) ?? 0) + 1;
-                seen.set(bench.name, occurrence);
-                const recorded = round.samples?.get(`${fileId}::${bench.name}#${occurrence}`);
-                let slices = recorded ? recorded.map(callStats) : null;
-                // A record whose call count disagrees with vitest's belongs to some other bench.
-                if (slices && slices.reduce((n, slice) => n + slice.count, 0) !== bench.sampleCount) {
-                    slices = null;
-                }
-                // Include fileId in the key — two files can legitimately share suite/bench names.
-                map.set(`${fileId} :: ${group.fullName} > ${bench.name}`, {
-                    name: bench.name,
-                    group: group.fullName,
-                    file: fileId,
-                    hz: bench.hz,
-                    mean: bench.mean,
-                    rme: bench.rme,
-                    sampleCount: bench.sampleCount,
-                    slices,
-                });
-            }
+        const fileId = fileIdentity(bench.filepath);
+        const turnKey = `${fileId}::${bench.name}`;
+        const occurrence = (seen.get(turnKey) ?? 0) + 1;
+        seen.set(turnKey, occurrence);
+        const recorded = round.samples?.get(`${turnKey}#${occurrence}`);
+        let slices = recorded ? recorded.map(callStats) : null;
+        // A record whose call count disagrees with vitest's belongs to some other bench.
+        if (slices && slices.reduce((n, slice) => n + slice.count, 0) !== bench.sampleCount) {
+            slices = null;
         }
+        // Include fileId in the key — two files can legitimately share suite/bench names.
+        map.set(`${fileId} :: ${bench.group} > ${bench.name}`, {
+            name: bench.name,
+            group: bench.group,
+            file: fileId,
+            hz: bench.hz,
+            mean: bench.mean,
+            rme: bench.rme,
+            sampleCount: bench.sampleCount,
+            slices,
+        });
     }
     return map;
 }

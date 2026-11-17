@@ -259,10 +259,6 @@ export interface ServerSideGroupLevelParams {
     cacheBlockSize?: number;
 }
 
-/**
- * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
-
 export type GetServerSideGroupLevelParams<TData = any, TContext = any> = (
     params: GetServerSideGroupLevelParamsParams<TData, TContext>
 ) => ServerSideGroupLevelParams;
@@ -293,18 +289,6 @@ export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = an
     data: TData;
     /** The row node being considered. */
     rowNode: IRowNode<TData>;
-}
-
-export type GetServerSideRowGroupKey<TData = any, TContext = any> = (
-    params: GetServerSideRowGroupKeyParams<TData, TContext>
-) => any;
-export interface GetServerSideRowGroupKeyParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The group row data as returned by the server. */
-    data: any;
-    /** The group row node. */
-    node: IRowNode<TData>;
-    /** The column the group row is grouped by. */
-    column: Column;
 }
 
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

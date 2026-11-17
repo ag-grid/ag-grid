@@ -303,14 +303,17 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProcessColDefParams,
     CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationErrors,
     CalculatedColumnValidationParams,
     CalculatedExpressionError,
     ICalculatedColumnsService,
     IsColumnReferenceableParams,
+    RefreshCalculatedColumnsParams,
 } from './interfaces/iCalculatedColumns';
 export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
@@ -750,6 +753,8 @@ export type { RowPosition } from './interfaces/iRowPosition';
 // Column Configuration
 export type {
     AbstractColDef,
+    AggValueGetterFunc,
+    AggValueGetterParams,
     CellClassFunc,
     CellClassParams,
     CellClassRules,
@@ -987,8 +992,6 @@ export type {
     GetMainMenuItemsParams,
     GetRowHeight,
     GetRowIdParams,
-    GetServerSideRowGroupKey,
-    GetServerSideRowGroupKeyParams,
     GetServerSideGroupLevelParams,
     GetServerSideGroupLevelParamsParams,
     GridContainerName,
@@ -1026,7 +1029,6 @@ export type {
     SendToClipboard,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
-    ServerSideStoreParams,
     SetFillValueCallback,
     TabToNextCell,
     TabToNextCellParams,
@@ -1147,6 +1149,7 @@ export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateCol
 export { FileInputOverlayModule } from './rendering/overlays/fileInputOverlayModule';
 export { forEachColDef } from './columns/columnUtils';
 export { RowApiModule, ScrollApiModule } from './api/apiModule';
+export { ScrollGestureModule } from './gridBodyComp/scrollGestureModule';
 export { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
@@ -1264,7 +1267,7 @@ export {
 export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
-export type { IconName, Icons } from './utils/icon';
+export type { IconKey, IconName, Icons } from './utils/icon';
 
 // Testing
 export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

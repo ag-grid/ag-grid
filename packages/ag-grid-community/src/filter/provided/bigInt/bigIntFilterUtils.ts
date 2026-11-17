@@ -31,6 +31,6 @@ export function mapValuesFromBigIntFilterModel(
     filterModel: BigIntFilterModel | null,
     optionsFactory: OptionsFactory
 ): Tuple<bigint> {
-    const { filter, filterTo, type } = filterModel || {};
+    const { filter, filterTo, type } = filterModel ?? {};
     return [_parseBigIntOrNull(filter), _parseBigIntOrNull(filterTo)].slice(0, getNumberOfInputs(type, optionsFactory));
 }

@@ -1,11 +1,14 @@
+import { styleText } from 'node:util';
 import type { Reporter, TestModule } from 'vitest/node';
 
 import {
     SLOWEST_FILE_MIN_MS,
     SLOWEST_MIN_MS,
     SLOWEST_TESTS_COUNT,
+    SLOW_FILE_FAIL_MS,
+    SLOW_FILE_WARN_MS,
+    SLOW_TEST_FAIL_MS,
     SLOW_TEST_WARN_MS,
-    TEST_TIMEOUT_MS,
     WAITING_MIN_MS,
 } from './timings';
 
@@ -14,6 +17,10 @@ interface TimedTest {
     file: string;
     duration: number;
     passed: boolean;
+    /** `costMs` where the setup measured it, else `duration`: what the slow-test thresholds judge. */
+    cost: number;
+    /** Failed by `output.setup.ts` for running past `SLOW_TEST_FAIL_MS`. */
+    tooSlow: boolean;
     /** Fraction of the test spent waiting rather than working, from the setup file's event-loop reads. */
     waitFraction?: number;
 }
@@ -74,15 +81,88 @@ export default class SlowTestsReporter implements Reporter {
             }
         }
 
-        // Failures are excluded: a test that timed out reports the timeout as its duration, which would
-        // top the warning list while saying nothing the run's own error output has not already said.
-        const slow = tests.filter((test) => test.passed && test.duration >= SLOW_TEST_WARN_MS);
+        // Every line prefixed, as `--quiet` prints only the lines `scripts/gate/gates/behave.mjs` matches.
+        // Failures are left out: a timed-out test's duration is the timeout, which its own error already says.
+        const slow = tests.filter((test) => test.passed && test.cost >= SLOW_TEST_WARN_MS);
         if (slow.length) {
+            const failsAt = Number.isFinite(SLOW_TEST_FAIL_MS)
+                ? ` before they fail at ${SLOW_TEST_FAIL_MS / 1000}s`
+                : '';
             console.warn(
-                `\n! ${slow.length} test(s) over ${SLOW_TEST_WARN_MS / 1000}s (testTimeout is ${TEST_TIMEOUT_MS / 1000}s):\n${format(slow)}`
+                styleText(
+                    'yellow',
+                    `\nSLOW: ${slow.length} test(s) over ${SLOW_TEST_WARN_MS / 1000}s of CPU and waiting - speed them up${failsAt}:\n${formatCost(slow, 'SLOW')}`,
+                    { stream: process.stderr }
+                )
+            );
+        }
+        const tooSlow = tests.filter((test) => test.tooSlow);
+        if (tooSlow.length) {
+            console.warn(
+                styleText(
+                    ['red', 'bold'],
+                    `\nTOO SLOW: ${tooSlow.length} test(s) over ${SLOW_TEST_FAIL_MS / 1000}s of CPU and waiting failed - test too slow - fix it:\n${formatCost(tooSlow, 'TOO SLOW')}`,
+                    { stream: process.stderr }
+                )
+            );
+        }
+
+        const files = collectFileCosts(testModules);
+        const slowFiles = files.filter((file) => !file.tooSlow && file.cost >= SLOW_FILE_WARN_MS);
+        if (slowFiles.length) {
+            const failsAt = Number.isFinite(SLOW_FILE_FAIL_MS)
+                ? ` before they fail at ${SLOW_FILE_FAIL_MS / 1000}s`
+                : '';
+            console.warn(
+                styleText(
+                    'yellow',
+                    `\nSLOW FILE: ${slowFiles.length} file(s) over ${SLOW_FILE_WARN_MS / 1000}s of CPU and waiting - split them or build less in beforeAll${failsAt}:\n${formatFileCost(slowFiles, 'SLOW FILE')}`,
+                    { stream: process.stderr }
+                )
+            );
+        }
+        const tooSlowFiles = files.filter((file) => file.tooSlow);
+        if (tooSlowFiles.length) {
+            console.warn(
+                styleText(
+                    ['red', 'bold'],
+                    `\nTOO SLOW FILE: ${tooSlowFiles.length} file(s) over ${SLOW_FILE_FAIL_MS / 1000}s of CPU and waiting failed - split them:\n${formatFileCost(tooSlowFiles, 'TOO SLOW FILE')}`,
+                    { stream: process.stderr }
+                )
             );
         }
     }
+}
+
+interface FileCost {
+    file: string;
+    /** The file's `fileCostMs`: CPU time plus waits from its first hook to its last. */
+    cost: number;
+    count: number;
+    tooSlow: boolean;
+}
+
+function collectFileCosts(modules: ReadonlyArray<TestModule>): FileCost[] {
+    const out: FileCost[] = [];
+    for (const module of modules) {
+        const meta = module.meta();
+        const cost = meta.fileCostMs;
+        if (cost != null) {
+            out.push({
+                file: fileKey(module),
+                cost,
+                count: [...module.children.allTests()].length,
+                tooSlow: meta.fileTooSlow === true,
+            });
+        }
+    }
+    return out.sort((a, b) => b.cost - a.cost);
+}
+
+function formatFileCost(files: FileCost[], prefix: string): string {
+    return files
+        .map(({ file, cost, count }) => `${prefix} ${secs(cost)} ${String(count).padStart(4)} tests  ${file}`)
+        .join('\n');
 }
 
 interface TimedFile {
@@ -178,14 +258,24 @@ function shortPath(project: string, file: string): string {
 
 const MAX_LINE = 120;
 
+// Names in a `test.each` matrix differ at the front and repeat at the back, so trim the tail. ASCII only -
+// a plain terminal renders a fancy separator or ellipsis as escape-sequence garbage.
+const trimLine = (line: string): string => (line.length > MAX_LINE ? `${line.slice(0, MAX_LINE - 3)}...` : line);
+
 function format(tests: TimedTest[]): string {
     return tests
-        .map(({ name, file, duration, passed, waitFraction }) => {
-            // Names in a `test.each` matrix differ at the front and repeat at the back, so trim the tail. ASCII
-            // only - a plain terminal renders a fancy separator or ellipsis as escape-sequence garbage.
-            const line = `  ${secs(duration)} ${wait(waitFraction)} ${file}${passed ? '' : ' (failed)'}  ${name}`;
-            return line.length > MAX_LINE ? `${line.slice(0, MAX_LINE - 3)}...` : line;
-        })
+        .map(({ name, file, duration, passed, waitFraction }) =>
+            trimLine(`  ${secs(duration)} ${wait(waitFraction)} ${file}${passed ? '' : ' (failed)'}  ${name}`)
+        )
+        .join('\n');
+}
+
+/** The slow-test blocks, which judge by cost: each line led by `prefix`, so `--quiet` can pick it out. */
+function formatCost(tests: TimedTest[], prefix: string): string {
+    return tests
+        .map(({ name, file, duration, cost, waitFraction }) =>
+            trimLine(`${prefix} ${secs(cost)} (${secs(duration).trim()} wall) ${wait(waitFraction)} ${file}  ${name}`)
+        )
         .join('\n');
 }
 
@@ -198,13 +288,18 @@ function collectTests(modules: ReadonlyArray<TestModule>): TimedTest[] {
             if (state !== 'passed' && state !== 'failed') {
                 continue;
             }
-            const { activeMs, idleMs } = test.meta();
+            const meta = test.meta();
+            const activeMs = meta.activeMs;
+            const idleMs = meta.idleMs;
             const loopMs = (activeMs ?? 0) + (idleMs ?? 0);
+            const duration = test.diagnostic()?.duration ?? 0;
             out.push({
                 name: test.name,
                 file: fileKey(module),
-                duration: test.diagnostic()?.duration ?? 0,
+                duration,
+                cost: meta.costMs ?? duration,
                 passed: state === 'passed',
+                tooSlow: meta.tooSlow === true,
                 waitFraction: loopMs > 0 ? (idleMs ?? 0) / loopMs : undefined,
             });
         }

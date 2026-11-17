@@ -1,11 +1,12 @@
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowApiModule, RowDragModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid row highlight', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowDragModule],
+        modules: [ClientSideRowModelModule, RowApiModule, RowDragModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -99,6 +100,11 @@ describe('ag-grid row highlight', () => {
         expect(getRowHighlight()).toEqual({ id: '3', position: 'above' });
         expect(getElementHighlight(element)).toEqual({ id: '3', position: 'above' });
 
+        // a row drawn again keeps the highlight it holds
+
+        api.redrawRows({ rowNodes: [node3] });
+        expect(getElementHighlight(element)).toEqual({ id: '3', position: 'above' });
+
         // remove the highlighted node
 
         api.setGridOption(
@@ -129,6 +135,30 @@ describe('ag-grid row highlight', () => {
             expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
             expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
         }
+    });
+
+    test('an embedded group row marks its own label in the section showing its group only, for the indicator to start from', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'athlete', pinned: 'left' },
+                { field: 'year' },
+            ],
+            rowData: [{ country: 'Ireland', sport: 'Sailing', athlete: 'John Von Neumann', year: '2000' }],
+            groupDisplayType: 'groupRows',
+            embedFullWidthRows: true,
+            groupDefaultExpanded: -1,
+        });
+
+        api.setRowDropPositionIndicator({ row: api.getDisplayedRowAtIndex(1)!, dropIndicatorPosition: 'above' });
+
+        const row = TestGridsManager.getHTMLElement(api)!.querySelector('.ag-row[row-index="1"]')!;
+        expect(row.classList.contains('ag-row-highlight-indent')).toBe(true);
+        const ownLabels = Array.from(row.querySelectorAll('.ag-group-cell-all-levels > .ag-group-value'));
+        expect(ownLabels.map((label) => [label.closest('[class*="-cells"]')!.classList[0], label.textContent])).toEqual(
+            [['ag-grid-pinned-left-cells', 'Sailing']]
+        );
     });
 });
 

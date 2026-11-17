@@ -43,6 +43,26 @@ describe('Cell Custom Styles', () => {
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'fn'))).not.toHaveClass('high');
     });
 
+    test('cellClass function returning false applies no class and still renders the cell', async () => {
+        const api = await gridMgr.createGridAndWait('falsyCellClassGrid', {
+            columnDefs: [
+                // @ts-expect-error -- the JS idiom `cond && 'cls'` returns `false`, outside the declared return type
+                { field: 'score', cellClass: (params) => params.value >= 50 && 'high' },
+            ],
+            rowData: [
+                { id: 'ROW_0', score: 10 },
+                { id: 'ROW_1', score: 80 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0); // flush the debounced test-id assignment
+
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'score'))).toHaveTextContent('10');
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'score'))).not.toHaveClass('high');
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'score'))).toHaveClass('high');
+    });
+
     test('cellStyle applies inline styles from object and function', async () => {
         const api = await gridMgr.createGridAndWait('cellStyleGrid', {
             columnDefs: [

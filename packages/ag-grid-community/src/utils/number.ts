@@ -32,6 +32,7 @@ export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () 
     // Split before substituting the decimal separator: grouping first would let a `.` thousand
     // separator (de-DE) be mistaken for the decimal point when rejoining.
     const [integerPart, fractionPart] = value.toString().split('.');
+    // eslint-disable-next-line sonarjs/super-linear-regex -- at most 21 digits: `toString()` uses exponent notation from 1e21
     const groupedInteger = integerPart.replace(/(\d)(?=(\d{3})+(?!\d))/g, (digit) => digit + thousandSeparator);
 
     return fractionPart === undefined ? groupedInteger : `${groupedInteger}${decimalSeparator}${fractionPart}`;

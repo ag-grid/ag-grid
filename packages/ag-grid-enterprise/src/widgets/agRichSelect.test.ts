@@ -49,10 +49,10 @@ describe('AgRichSelect', () => {
 
         richSelect.createListComponent();
         stateAnnouncementCallback?.('Loading...');
-        stateAnnouncementCallback?.('No matches to show');
+        stateAnnouncementCallback?.('No matches');
 
-        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelect');
-        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelect');
+        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelectState');
+        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches', 'richSelectState');
     });
 
     it('preserves explicit null initial values', () => {
@@ -93,6 +93,27 @@ describe('AgRichSelect', () => {
         richSelect.renderSelectedValue();
 
         expect(setValue).toHaveBeenCalledWith('', false);
+    });
+
+    it('keeps the allowTyping wrapper and input out of the Tab order while disabled', () => {
+        const richSelect = createRichSelect<string>({ allowTyping: true });
+        const wrapper = document.createElement('div');
+        const input = document.createElement('input');
+        richSelect.gos = { get: () => 0 };
+        richSelect.eWrapper = wrapper;
+        richSelect.eInput = { getFocusableElement: () => input };
+
+        richSelect.setDisabled(true);
+
+        expect(wrapper.getAttribute('tabindex')).toBe('-1');
+        expect(input.getAttribute('tabindex')).toBe('-1');
+        expect(input.getAttribute('aria-disabled')).toBe('true');
+
+        richSelect.setDisabled(false);
+
+        expect(wrapper.getAttribute('tabindex')).toBe('0');
+        expect(input.getAttribute('tabindex')).toBe('0');
+        expect(input.getAttribute('aria-disabled')).toBeNull();
     });
 
     it('rejects non-array values that cannot be resolved in the list', () => {

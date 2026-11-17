@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/dom';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 
@@ -113,10 +113,7 @@ describe('Toolbar quickFilter item', () => {
         input.value = 'Alice';
         input.dispatchEvent(new Event('input'));
 
-        // Input is debounced; wait past the debounce window before asserting
-        await new Promise<void>((resolve) => setTimeout(resolve, 350));
-
-        expect(api.getGridOption('quickFilterText')).toBe('Alice');
+        await waitFor(() => expect(api.getGridOption('quickFilterText')).toBe('Alice'));
         const clearButton = gridDiv.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
         expect(clearButton.classList.contains('ag-hidden')).toBe(false);
 

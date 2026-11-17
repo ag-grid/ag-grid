@@ -26,6 +26,46 @@ export function _escapeString(toEscape?: string | null): string | null {
     return _toString(toEscape)?.replace(reUnescapedHtml, (chr) => HTML_ESCAPES[chr]) ?? null;
 }
 
+const isLineTerminator = (char: string) => char === '\n' || char === '\r' || char === '\u2028' || char === '\u2029';
+
+/**
+ * Splits a string around each `[...]` segment, keeping the segments, so `'a[b]c'` gives `['a', '[b]', 'c']`.
+ * Matches `str.split(/(\[[^\]]*\])/)`, or `/(\[.*?\])/` when `stopAtLineBreaks` is set, in linear time.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _splitBracketed(str: string, stopAtLineBreaks = false): string[] {
+    const parts: string[] = [];
+    const len = str.length;
+    let partStart = 0;
+    let searchFrom = 0;
+
+    while (searchFrom < len) {
+        const open = str.indexOf('[', searchFrom);
+        if (open === -1) {
+            break;
+        }
+
+        let close = open + 1;
+        while (close < len && str[close] !== ']' && !(stopAtLineBreaks && isLineTerminator(str[close]))) {
+            ++close;
+        }
+
+        if (close === len) {
+            // OPTIMIZATION: no later `[` can find a `]` either, so stop rather than rescan.
+            break;
+        }
+
+        if (str[close] === ']') {
+            parts.push(str.slice(partStart, open), str.slice(open, close + 1));
+            partStart = close + 1;
+        }
+        searchFrom = close + 1;
+    }
+
+    parts.push(str.slice(partStart));
+    return parts;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isStringLargerThan(value: unknown, length: number, trim?: boolean): value is string {
     if (typeof value !== 'string') {
@@ -60,7 +100,7 @@ export function _camelCaseToHumanText(camelCase: string | undefined): string | n
     // either split on a lowercase followed by uppercase ie  asHereTo -> as Here To
     const rex = /([a-z])([A-Z])/g;
     // or starts with uppercase and we take all expect the last which is assumed to be part of next word if followed by lowercase HEREToThere -> HERE To There
-    const rexCaps = /([A-Z]+)([A-Z])([a-z])/g;
+    const rexCaps = /(?<![A-Z])([A-Z]+)([A-Z])([a-z])/g;
     const words: string[] = camelCase.replace(rex, '$1 $2').replace(rexCaps, '$1 $2$3').replace(/\./g, ' ').split(' ');
 
     return words

@@ -1,15 +1,16 @@
 import type {
     AgBaseComponent,
+    AgBeanCollection,
     AgComponentSelector,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
 import {
-    AgComponentStub,
+    AgAbstractComponent,
     RefPlaceholder,
+    _addManagedElementListeners,
     _isComponent,
     _removeAriaExpanded,
     _removeFromParent,
@@ -83,13 +84,13 @@ function getAgGroupComponentTemplate<TBeanCollection>(
 }
 
 export class AgGroupComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -153,14 +154,14 @@ export class AgGroupComponent<
         } = params;
 
         this.cssIdentifier = params.cssIdentifier || 'default';
-        this.enabled = enabled != null ? enabled : true;
-        this.items = items || [];
+        this.enabled = enabled ?? true;
+        this.items = items ?? [];
         this.useToggle = toggleMode ?? false;
 
         this.alignItems = params.alignItems || 'center';
 
         // expanded by default
-        this.expanded = expanded == null ? true : expanded;
+        this.expanded = expanded ?? true;
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
@@ -239,7 +240,7 @@ export class AgGroupComponent<
             expanded = true;
             silent = true;
         } else {
-            expanded = expanded != null ? expanded : !this.expanded;
+            expanded = expanded ?? !this.expanded;
 
             if (this.expanded === expanded) {
                 return this;
@@ -505,13 +506,13 @@ function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType exte
     };
 }
 class DefaultTitleBar<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
-> extends AgComponentStub<
+> extends AgAbstractComponent<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -561,7 +562,7 @@ class DefaultTitleBar<
         const iconSvc = this.beans.iconSvc;
         this.eGroupClosedIcon.appendChild(iconSvc.createIconNoSpan('accordionClosed')!);
         this.eGroupOpenedIcon.appendChild(iconSvc.createIconNoSpan('accordionOpen')!);
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
                 const { ENTER, SPACE, RIGHT, LEFT, UP, DOWN, PAGE_UP, PAGE_DOWN, PAGE_HOME, PAGE_END } = KeyCode;

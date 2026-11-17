@@ -205,20 +205,36 @@ export class ToolPanelHarness {
         return input;
     }
 
+    /** True when the column-list search shows its "No matches" message. */
+    public isSearchNoMatchesShown(): boolean {
+        const el = this.panel.querySelector('.ag-filter-toolpanel-no-matches');
+        return !!el && !el.classList.contains('ag-hidden');
+    }
+
+    /** Text the grid last wrote to its screen-reader live region. */
+    public announcement(): string {
+        const root: ParentNode = (getGridElement(this.api) as HTMLElement | undefined) ?? document;
+        return textOf(root.querySelector('.ag-aria-description-container'));
+    }
+
     public isSearchPresent(): boolean {
         const field = this.panel.querySelector('.ag-filter-toolpanel-search-input');
         return !!field && !field.classList.contains('ag-hidden');
     }
 
     /**
-     * Types into the column-list search box and waits past the 300ms debounce. The search result can
-     * legitimately be "nothing changed" (e.g. clearing a search that matched everything), so there is
-     * no positive signal to poll for here — callers assert the resulting title list themselves.
+     * Types into the column-list search box and waits past its debounce (0ms under `FAST_TEST_TIMINGS`); a
+     * search may change nothing, so there is no signal to poll: callers assert the resulting titles.
      */
     public async search(text: string): Promise<this> {
         setNativeInputValue(this.searchInput(), text);
-        // eslint-disable-next-line no-restricted-syntax -- waits for the 300ms search debounce in agFiltersToolPanelHeader.ts
-        await asyncSetTimeout(350);
+        await asyncSetTimeout(0);
+        return this;
+    }
+
+    /** Types into the column-list search, leaving its debounce still pending. */
+    public startSearch(text: string): this {
+        setNativeInputValue(this.searchInput(), text);
         return this;
     }
 

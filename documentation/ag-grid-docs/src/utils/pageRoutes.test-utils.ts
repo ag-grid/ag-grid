@@ -35,7 +35,7 @@ const DOCS_ROUTES = new Set(
     getDocsPages(DOCS_ENTRIES).map((route) => `${route?.params.framework}/${route?.params.pageName}`)
 );
 const isDocsRoute = (framework: string, pageName: string) => DOCS_ROUTES.has(`${framework}/${pageName}`);
-// `bryntum-scheduler-pro` is rendered from `schedulerpro.json`: the routes hyphenate two slugs.
+// `bryntum-task-board` is rendered from `taskboard.json`: the routes hyphenate the slug.
 const isBryntumCampaign = (product: string) =>
     /^bryntum-/.test(product) &&
     existsSync(join(CAMPAIGN_CONTENT_DIR, `${product.replace(/^bryntum-/, '').replaceAll('-', '')}.json`));

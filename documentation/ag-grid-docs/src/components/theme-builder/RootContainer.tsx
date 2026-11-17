@@ -1,15 +1,25 @@
 import { ImportExportButton } from '@ag-website-shared/components/theme-builder/ImportExportButton';
-import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
+import { renderThemeCodeSample } from '@ag-website-shared/components/theme-builder/themeImport';
+import { useRenderedTheme, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 
 import { EditorPanel } from './EditorPanel';
 import { GridPreview } from './GridPreview';
 import { PresetSelector } from './PresetSelector';
+import { renderChartThemeCode, useChartTheme } from './chartTheme';
+import { validateGridThemeCode } from './gridThemeImport';
 
 const IMPORT_PLACEHOLDER = 'Paste your theme code here:\n\nconst myTheme = themeQuartz.withParams({...});';
 
 export const RootContainer = () => {
     const renderedTheme = useRenderedTheme();
+    const renderedThemeInfo = useRenderedThemeInfo();
+    const chartTheme = useChartTheme();
+    const exportCode = useMemo(
+        () => `${renderThemeCodeSample(renderedThemeInfo)}\n${renderChartThemeCode(chartTheme)}`,
+        [renderedThemeInfo, chartTheme]
+    );
 
     return (
         <Container>
@@ -22,6 +32,8 @@ export const RootContainer = () => {
                         allowedPlacements={['right-end']}
                         dialogProps={{
                             downloadFileName: 'ag-grid-theme-builder.js',
+                            exportCode,
+                            validateImport: validateGridThemeCode,
                             importPlaceholder: IMPORT_PLACEHOLDER,
                         }}
                     />

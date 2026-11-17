@@ -1,51 +1,61 @@
 import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 
 type EventTypeToWrap = string;
+type WrappedListeners<TEventListener> = Map<EventTypeToWrap, Map<TEventListener, TEventListener>>;
 
 export class AngularFrameworkEventListenerService<
     TEventListener extends (e: any) => void,
     TGlobalEventListener extends (name: string, e: any) => void,
 > {
-    // Map from user listener to wrapped listener so we can remove listener provided by user
-    private readonly wrappedListeners: Map<EventTypeToWrap, Map<TEventListener, TEventListener>> = new Map();
-    private readonly wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
+    /** Per event type, the listener registered for each user listener, so a re-add reuses it and a remove finds it. */
+    private readonly wrappedListeners: WrappedListeners<TEventListener> = new Map();
+    /** As `wrappedListeners`, for async registrations: one function may be registered both ways. */
+    private asyncWrappedListeners: WrappedListeners<TEventListener> | undefined = undefined;
 
     constructor(private readonly frameworkOverrides: AngularFrameworkOverrides) {}
 
-    public wrap(eventType: EventTypeToWrap, userListener: TEventListener): TEventListener {
-        const { frameworkOverrides, wrappedListeners } = this;
-        let listener: any = userListener;
-
-        if (frameworkOverrides.shouldWrapOutgoing) {
-            listener = (event: any) => {
-                frameworkOverrides.wrapOutgoing(() => userListener(event));
-            };
-
-            let eventListeners = wrappedListeners.get(eventType);
-            if (!eventListeners) {
-                eventListeners = new Map();
-                wrappedListeners.set(eventType, eventListeners);
+    public wrap(eventType: EventTypeToWrap, userListener: TEventListener, async?: boolean): TEventListener {
+        const frameworkOverrides = this.frameworkOverrides;
+        let wrappedListeners: WrappedListeners<TEventListener> | undefined = this.wrappedListeners;
+        if (async) {
+            wrappedListeners = this.asyncWrappedListeners;
+            if (!wrappedListeners) {
+                wrappedListeners = new Map();
+                this.asyncWrappedListeners = wrappedListeners;
             }
+        }
+        let eventListeners = wrappedListeners.get(eventType);
+        if (!eventListeners) {
+            eventListeners = new Map();
+            wrappedListeners.set(eventType, eventListeners);
+        }
+        let listener = eventListeners.get(userListener);
+        if (!listener) {
+            listener = frameworkOverrides.shouldWrapOutgoing
+                ? (((event: any) => frameworkOverrides.wrapOutgoing(() => userListener(event))) as TEventListener)
+                : userListener;
             eventListeners.set(userListener, listener);
         }
         return listener;
     }
 
     public wrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
-        const { frameworkOverrides, wrappedGlobalListeners } = this;
-        let listener: any = userListener;
-
-        if (frameworkOverrides.shouldWrapOutgoing) {
-            listener = (eventType: any, event: any) => {
-                frameworkOverrides.wrapOutgoing(() => userListener(eventType, event));
-            };
-            wrappedGlobalListeners.set(userListener, listener);
+        const frameworkOverrides = this.frameworkOverrides;
+        if (!frameworkOverrides.shouldWrapOutgoing) {
+            return userListener;
         }
-        return listener;
+        return ((eventType: any, event: any) =>
+            frameworkOverrides.wrapOutgoing(() => userListener(eventType, event))) as TGlobalEventListener;
     }
 
-    public unwrap(eventType: EventTypeToWrap, userListener: TEventListener): TEventListener {
-        const { wrappedListeners } = this;
+    public unwrap(eventType: EventTypeToWrap, userListener: TEventListener, async?: boolean): TEventListener {
+        let wrappedListeners: WrappedListeners<TEventListener> | undefined = this.wrappedListeners;
+        if (async) {
+            wrappedListeners = this.asyncWrappedListeners;
+            if (!wrappedListeners) {
+                return userListener;
+            }
+        }
         const eventListeners = wrappedListeners.get(eventType);
         if (eventListeners) {
             const wrapped = eventListeners.get(userListener);
@@ -56,15 +66,6 @@ export class AngularFrameworkEventListenerService<
                 }
                 return wrapped;
             }
-        }
-        return userListener;
-    }
-    public unwrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
-        const { wrappedGlobalListeners } = this;
-        const wrapped = wrappedGlobalListeners.get(userListener);
-        if (wrapped) {
-            wrappedGlobalListeners.delete(userListener);
-            return wrapped;
         }
         return userListener;
     }

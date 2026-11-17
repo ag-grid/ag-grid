@@ -55,7 +55,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }): RowNode {
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : _getRowHeightAsNumber(this.beans);
+        const rowHeight = params.rowHeight ?? _getRowHeightAsNumber(this.beans);
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
@@ -116,12 +116,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        const column = rowNode.rowGroupColumn!;
-        const key = this.gos.get('getServerSideRowGroupKey')?.(
-            this.gos.addCommon({ data: rowNode.data, node: rowNode, column })
-        );
-        // Use 'data' - group keys should be based on committed data, not pending edits
-        rowNode.key = key === undefined ? this.valueSvc.getValueFromData(column, rowNode) : key;
+        // Use 'data' - group keys should be based on committed data, not pending edits.
+        // Raw: the key never goes through `aggValueGetter`, which can be set on a column that is grouped and aggregated.
+        rowNode.key = this.valueSvc.getRawValueFromData(rowNode.rowGroupColumn!, rowNode);
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {

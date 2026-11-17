@@ -11,15 +11,16 @@ import { getFrameworkFromInternalFramework } from '@utils/framework';
 import { useEffect } from 'react';
 
 /**
- * Sync framework store with the state of the page
+ * Sync framework store with the state of the page. Pass no framework for a page that isn't specific to one: the store
+ * is still marked as synced, but the visitor's selected framework is left alone.
  */
-export function useSyncFrameworkStoreState(framework: Framework) {
+export function useSyncFrameworkStoreState(framework?: Framework) {
     const internalFramework = useStore($internalFramework);
 
     useEffect(() => {
         // Update the internal framework store if it is different to the framework to sync with localstorage
         const frameworkFromInternalFramework = getFrameworkFromInternalFramework(internalFramework);
-        if (frameworkFromInternalFramework !== framework) {
+        if (framework && frameworkFromInternalFramework !== framework) {
             updateInternalFrameworkBasedOnFramework(framework);
         }
 

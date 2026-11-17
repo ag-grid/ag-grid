@@ -9,7 +9,7 @@ The Columns Tool Panel provides controls for managing the grid's columns. Use it
 
 ## Columns Tool Panel Sections
 
-The Columns Tool Panel is split into the following sections, from top to bottom.
+The Columns Tool Panel is split into the following sections, from top to bottom. The top area controls and the drop zones can be removed, see [Section Visibility](./tool-panel-columns-configuration/#section-visibility).
 
 ### Top Area
 
@@ -19,12 +19,16 @@ Turn [Pivot Mode](./pivoting/) on or off, expand or collapse all column groups, 
 
 Lists every column available to the grid, grouped by column group. Select a column to show or hide it or, in pivot mode, to group, aggregate or pivot it. Drag a column to reorder it, to move it into a drop zone or, when enabled, onto the grid to show it.
 
+To change the order of the list or replace it with a custom layout, see [Configuration](./tool-panel-columns-configuration/). To style or rename its columns, render custom labels, or change the context menu and drag image, see [Customisation](./tool-panel-columns-customising/).
+
 ### Drop Zones
 
 The **Row Groups Section**, **Values Section** and **Column Labels (Pivot) Section** hold the columns used for the grid's [Row Grouping](./grouping/), [Aggregation](./aggregation/) and [Pivoting](./pivoting/).
 
-## Next Steps
+{% note %}
+Columns can only be dragged into a drop zone when their column definition allows it: `enableRowGroup` for Row Groups, `enableValue` for Values and `enablePivot` for Column Labels. See [Configuration](./tool-panel-columns-configuration/).
+{% /note %}
 
-- [Configuration](./tool-panel-columns-configuration/) - showing and hiding sections and columns, column order and custom layouts, making grouping, aggregation and pivoting read only, and the full parameter and API reference.
-- [Deferred Updates](./tool-panel-columns-deferred-updates/) - adding Apply, Cancel and Reset buttons, and staging changes until they are applied.
-- [Customisation](./tool-panel-columns-customising/) - styling columns, custom label renderers, expanding and collapsing column groups, customising the context menu and the drag image.
+### Buttons
+
+Optional **Apply**, **Cancel** and **Reset** buttons at the bottom of the panel. **Apply** stages changes until the user applies them, and **Reset** restores the columns to the current column definitions. See [Deferred Updates](./tool-panel-columns-deferred-updates/).

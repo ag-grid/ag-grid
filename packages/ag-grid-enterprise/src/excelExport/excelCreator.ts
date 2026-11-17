@@ -466,7 +466,7 @@ export class ExcelCreator
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos, notesSvc, log } = this.beans;
-        const baseExcelStyles = gos.get('excelStyles') || [];
+        const baseExcelStyles = gos.get('excelStyles') ?? [];
         const styleLinker = this.createStyleLinker(baseExcelStyles);
 
         const config: ExcelGridSerializingParams = {

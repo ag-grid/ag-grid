@@ -1,7 +1,13 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowApiModule, _processOnChange } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    RowApiModule,
+    ScrollApiModule,
+    TextEditorModule,
+    _processOnChange,
+} from 'ag-grid-community';
 
 interface OrderRow {
     id: string;
@@ -16,7 +22,7 @@ interface OrderRow {
 
 describe('ensureDomOrder', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowApiModule],
+        modules: [ClientSideRowModelModule, RowApiModule, ScrollApiModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -84,6 +90,42 @@ describe('ensureDomOrder', () => {
             center: ['c2', 'c1'],
             right: ['r2', 'r1'],
         });
+    });
+
+    // A full row edit keeps every cell whose column scrolls out of the viewport, so a batch of them
+    // has to be merged back among the rendered cells at once. Inserting them one at a time, re-scanning
+    // after each, reversed them relative to each other.
+    test('keeps cells held by a full row edit in column order after scrolling', async () => {
+        const columnDefs: ColDef<OrderRow>[] = Array.from({ length: 50 }, (_, i) => ({
+            colId: `c${i}`,
+            field: 'value',
+            width: 200,
+        }));
+        const api = createGrid(gridsManager, true, {
+            columnDefs,
+            editType: 'fullRow',
+            defaultColDef: { editable: true, cellDataType: false },
+            rowData: [{ id: 'r1', value: 1 }],
+            // TestGridsManager disables virtualisation by default, but columns only leave the
+            // viewport - and so only get kept - when it is on.
+            suppressColumnVirtualisation: false,
+            suppressAnimationFrame: true,
+        });
+        await asyncSetTimeout(0);
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'c0' });
+        await asyncSetTimeout(0);
+
+        api.ensureColumnVisible('c40');
+        await asyncSetTimeout(0);
+
+        const rendered = getCellOrder(api, 'r1').center;
+        const displayedOrder = api.getAllDisplayedColumns().map((col) => col.getColId());
+
+        // the edit holds c0 on, well behind the scrolled viewport, so several cells are merged back
+        expect(rendered).toContain('c0');
+        expect(rendered.length).toBeGreaterThan(2);
+        expect(rendered).toEqual(displayedOrder.filter((colId) => rendered.includes(colId)));
     });
 
     test('does not reorder existing cell DOM nodes when disabled', async () => {

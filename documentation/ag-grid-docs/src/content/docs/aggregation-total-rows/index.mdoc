@@ -28,6 +28,17 @@ const gridOptions = {
 }
 ```
 
+### Showing the Grand Total Row with No Rows
+
+By default, the grand total row is hidden when the grid has no rows to display, for example when the row data is empty or all rows are filtered out. To keep it visible, set `alwaysShowGrandTotalRow` to `true`. The no-rows overlay is still shown.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    grandTotalRow: 'bottom',
+    alwaysShowGrandTotalRow: true,
+}
+```
+
 ## Enabling Group Total Rows
 
 A total row can be included in every group when using [Row Grouping](./grouping/) or [Tree Data](./tree-data/) by setting

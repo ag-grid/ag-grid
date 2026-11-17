@@ -1,3 +1,4 @@
+import { moveViteClientToEndOfBody } from '@ag-website-shared/utils/moveViteClientToEndOfBody';
 import { getIsProduction } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
@@ -17,6 +18,8 @@ const rewriteAstroGeneratedContent = (body: string) => {
                 script.setAttribute('src', new URL(src, env.PUBLIC_SITE_URL).toString());
             }
         });
+
+        moveViteClientToEndOfBody(html);
     }
     return html.toString();
 };

@@ -1,24 +1,21 @@
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import { _addRowHeightChangedListener, _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
-/**
- * Cache that maintains record of insertion order
- *
- * Allows lookup by key as well as insertion order (which is why we didn't use Map)
- */
-interface OrderedCache<T extends { id: string | undefined }> {
-    cache: Partial<Record<string, T>>;
-    order: string[];
+/** One section's pinned rows, in display order and by id. */
+interface OrderedCache {
+    readonly cache: Map<string, RowNode>;
+    order: RowNode[];
 }
 
 export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private nextId = 0;
-    private readonly pinnedTopRows: OrderedCache<RowNode> = { cache: {}, order: [] };
-    private readonly pinnedBottomRows: OrderedCache<RowNode> = { cache: {}, order: [] };
+    private readonly pinnedTopRows: OrderedCache = { cache: new Map(), order: [] };
+    private readonly pinnedBottomRows: OrderedCache = { cache: new Map(), order: [] };
     private topHeight = 0;
     private bottomHeight = 0;
 
@@ -28,7 +25,11 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
         this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
         this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
-        _addRowHeightChangedListener(this, () => this.estimateRowHeights());
+        _addRowHeightChangedListener(this, () => {
+            estimateSectionRowHeights(this.pinnedBottomRows.order);
+            estimateSectionRowHeights(this.pinnedTopRows.order);
+            this.ensureRowHeightsValid();
+        });
     }
 
     public reset(): void {
@@ -51,43 +52,20 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // Not implemented for static pinned row model
     }
 
-    private estimateRowHeights(): void {
-        const estimateRowHeight = (rowNode: RowNode) => {
-            rowNode.setRowHeight(rowNode.rowHeight, true);
-        };
-        forEach(this.pinnedBottomRows, estimateRowHeight);
-        forEach(this.pinnedTopRows, estimateRowHeight);
-    }
-
     public ensureRowHeightsValid(): boolean {
-        let anyChange = false;
-        let rowTop = 0;
-        const updateRowHeight = (rowNode: RowNode) => {
-            if (rowNode.rowHeightEstimated) {
-                rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode).height);
-                anyChange = true;
-            }
-            // Re-stack rowTop whenever the accumulated offset drifts from the stored value.
-            // Row heights can grow via column autoHeight without ever flipping rowHeightEstimated,
-            // so earlier rows would otherwise keep stale rowTop values and overlap later rows.
-            if (rowNode.rowTop !== rowTop) {
-                rowNode.setRowTop(rowTop);
-                anyChange = true;
-            }
-            rowTop += rowNode.rowHeight!;
-        };
-        forEach(this.pinnedBottomRows, updateRowHeight);
-        const bottomHeight = rowTop;
-        rowTop = 0;
-        forEach(this.pinnedTopRows, updateRowHeight);
+        const beans = this.beans;
+        const bottomChanged = ensureSectionRowHeightsValid(beans, this.pinnedBottomRows.order);
+        const topChanged = ensureSectionRowHeightsValid(beans, this.pinnedTopRows.order);
+        const topHeight = getTotalHeight(this.pinnedTopRows);
+        const bottomHeight = getTotalHeight(this.pinnedBottomRows);
 
         // A height applied outside this pass, by column autoHeight, moves no row top when it lands on the
         // last row of its section, so only the total reports it.
-        if (!anyChange && rowTop === this.topHeight && bottomHeight === this.bottomHeight) {
+        if (!bottomChanged && !topChanged && topHeight === this.topHeight && bottomHeight === this.bottomHeight) {
             return false;
         }
 
-        this.topHeight = rowTop;
+        this.topHeight = topHeight;
         this.bottomHeight = bottomHeight;
         this.eventSvc.dispatchEvent({ type: 'pinnedHeightChanged' });
         return true;
@@ -107,21 +85,24 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
      */
     private updateNodesFromRowData(allData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
         const nodes = this.getCache(floating);
+        const cache = nodes.cache;
 
         if (allData === undefined) {
-            nodes.order.length = 0;
-            nodes.cache = {};
+            const order = nodes.order;
+            for (let i = 0, len = order.length; i < len; ++i) {
+                order[i].clearRowTopAndRowIndex();
+            }
+            // replaced, not emptied, as a walk of the rows in progress reads up to the length it started with
+            nodes.order = [];
+            cache.clear();
             return;
         }
 
         const getRowId = _getRowIdCallback(this.beans);
         const idPrefix = floating === 'top' ? ROW_ID_PREFIX_TOP_PINNED : ROW_ID_PREFIX_BOTTOM_PINNED;
 
-        // We'll want to remove all nodes that aren't matched to data
-        const nodesToRemove = new Set(nodes.order);
-
         // Data that matches based on ID can nonetheless still appear in a different order than before
-        const newOrder: string[] = [];
+        const newOrder: RowNode[] = [];
 
         // Used for catching duplicate IDs/rows within `allData` itself
         const dataIds = new Set<string>();
@@ -138,32 +119,33 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
             i++;
             dataIds.add(id);
-            newOrder.push(id);
 
-            const existingNode = getById(nodes, id);
+            const existingNode = cache.get(id);
             if (existingNode !== undefined) {
                 if (existingNode.data !== data) {
                     existingNode.updateData(data);
                 }
                 nextRowTop += this.setRowTopAndRowIndex(existingNode, nextRowTop, i);
-
-                // existing nodes that are re-used/updated shouldn't be deleted
-                nodesToRemove.delete(id);
+                newOrder.push(existingNode);
             } else {
-                // new node
                 const rowNode = new RowNode(this.beans);
                 rowNode.id = id;
                 rowNode.data = data;
                 rowNode.rowPinned = floating;
                 nextRowTop += this.setRowTopAndRowIndex(rowNode, nextRowTop, i);
-                nodes.cache[id] = rowNode;
-                nodes.order.push(id);
+                cache.set(id, rowNode);
+                newOrder.push(rowNode);
             }
         }
 
-        for (const id of nodesToRemove) {
-            getById(nodes, id)?.clearRowTopAndRowIndex();
-            delete nodes.cache[id];
+        const oldOrder = nodes.order;
+        for (let j = 0, len = oldOrder.length; j < len; ++j) {
+            const oldNode = oldOrder[j];
+            const oldId = oldNode.id!;
+            if (!dataIds.has(oldId)) {
+                oldNode.clearRowTopAndRowIndex();
+                cache.delete(oldId);
+            }
         }
 
         nodes.order = newOrder;
@@ -185,33 +167,40 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedTopRowCount(): number {
-        return getSize(this.pinnedTopRows);
+        return this.pinnedTopRows.order.length;
     }
 
     public getPinnedBottomRowCount(): number {
-        return getSize(this.pinnedBottomRows);
+        return this.pinnedBottomRows.order.length;
     }
 
     public getPinnedTopRow(index: number): RowNode | undefined {
-        return getByIndex(this.pinnedTopRows, index);
+        return this.pinnedTopRows.order[index];
     }
 
     public getPinnedBottomRow(index: number): RowNode | undefined {
-        return getByIndex(this.pinnedBottomRows, index);
+        return this.pinnedBottomRows.order[index];
     }
 
     public getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined {
-        return getById(this.getCache(floating), id);
+        return this.getCache(floating).cache.get(id);
     }
 
     public forEachPinnedRow(
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        return forEach(this.getCache(floating), callback);
+        const { cache, order } = this.getCache(floating);
+        for (let i = 0, len = order.length; i < len; ++i) {
+            const node = order[i];
+            // a row the callback removed is skipped
+            if (cache.get(node.id!) === node) {
+                callback(node, i);
+            }
+        }
     }
 
-    private getCache(floating: RowPinnedType): OrderedCache<RowNode> {
+    private getCache(floating: RowPinnedType): OrderedCache {
         return floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
     }
 
@@ -224,50 +213,55 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // Not implemented for static pinned row model
     }
 
-    public getGrandTotalPinned(): RowPinnedType {
+    public getUserGrandTotalPinned(): RowPinnedType {
         // Not implemented for static pinned row model
         return;
     }
 
-    public setGrandTotalPinned(): void {
+    public setGrandTotalNode(): void {
+        // Not implemented for static pinned row model
+    }
+
+    public resetGrandTotalPin(): void {
         // Not implemented for static pinned row model
     }
 }
 
-function getTotalHeight(rowNodes: OrderedCache<RowNode>): number {
-    const size = getSize(rowNodes);
+function getTotalHeight(rowNodes: OrderedCache): number {
+    const order = rowNodes.order;
+    const size = order.length;
     if (size === 0) {
         return 0;
     }
 
-    const node = getByIndex(rowNodes, size - 1);
-    if (node === undefined) {
-        return 0;
-    }
-
+    const node = order[size - 1];
     return node.rowTop! + node.rowHeight!;
 }
 
-function getById<T extends { id: string | undefined }>(cache: OrderedCache<T>, id: string): T | undefined {
-    return cache.cache[id];
+function estimateSectionRowHeights(order: RowNode[]): void {
+    for (let i = 0, len = order.length; i < len; ++i) {
+        const rowNode = order[i];
+        rowNode.setRowHeight(rowNode.rowHeight, true);
+    }
 }
 
-function getByIndex<T extends { id: string | undefined }>(cache: OrderedCache<T>, i: number): T | undefined {
-    return getById(cache, cache.order[i]);
-}
-
-function forEach<T extends { id: string | undefined }>(
-    cache: OrderedCache<T>,
-    callback: (item: T, index: number) => void
-): void {
-    cache.order.forEach((id, index) => {
-        const node = getById(cache, id);
-        if (node) {
-            callback(node, index);
+/** Works out estimated heights and re-stacks row tops; true if any height or top changed. */
+function ensureSectionRowHeightsValid(beans: BeanCollection, order: RowNode[]): boolean {
+    let anyChange = false;
+    let rowTop = 0;
+    for (let i = 0, len = order.length; i < len; ++i) {
+        const rowNode = order[i];
+        if (rowNode.rowHeightEstimated) {
+            const rowHeight = _getRowHeightForNode(beans, rowNode).height;
+            anyChange ||= rowHeight !== rowNode.rowHeight;
+            rowNode.setRowHeight(rowHeight);
         }
-    });
-}
-
-function getSize<T extends { id: string | undefined }>(cache: OrderedCache<T>): number {
-    return cache.order.length;
+        // column autoHeight can grow a height without flipping rowHeightEstimated, so every row top is re-stacked
+        if (rowNode.rowTop !== rowTop) {
+            rowNode.setRowTop(rowTop);
+            anyChange = true;
+        }
+        rowTop += rowNode.rowHeight!;
+    }
+    return anyChange;
 }

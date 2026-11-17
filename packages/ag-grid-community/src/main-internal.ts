@@ -9,6 +9,7 @@ export type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -138,6 +139,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,
@@ -376,6 +378,7 @@ export {
     _findEnterpriseCoreModule,
     _getGridRegisteredModules,
     _registerModule,
+    _resetModuleRegistry,
     _setUmd,
 } from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
@@ -402,6 +405,7 @@ export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export { _getSortModel } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
+export { _getLayoutCssClass } from './styling/layoutFeature';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
     themeAlpineParams as _themeAlpineParams,
@@ -459,6 +463,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

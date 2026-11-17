@@ -1,14 +1,23 @@
+import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PinnedRowModule,
+    RowAutoHeightModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
-    const gridsManager = new TestGridsManager({ modules: [PinnedRowModule, ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowAutoHeightModule],
+    });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
@@ -237,6 +246,61 @@ describe('Pinned rows', () => {
             `);
         });
 
+        test('rows removed by an update or by clearing the row data report virtualRowRemoved once each and have no row index', async () => {
+            const removedRowIds: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                pinnedTopRowData: [
+                    { id: '3', athlete: 'Jake', sport: 'Top sport 0', age: 11 },
+                    { id: '4', athlete: 'Peter', sport: 'Top sport 1', age: 12 },
+                    { id: '5', athlete: 'Victor', sport: 'Top sport 2', age: 22 },
+                ],
+                getRowId: (p) => p.data.id,
+                onVirtualRowRemoved: (event) => removedRowIds.push(event.node.id),
+            });
+            const removedRow = api.getPinnedTopRow(1)!;
+
+            api.setGridOption('pinnedTopRowData', [
+                { id: '5', athlete: 'Charles', sport: 'new sport 0', age: 22 },
+                { id: '3', athlete: 'Jake', sport: 'new sport 1', age: 14 },
+            ]);
+            await waitFor(() => expect(removedRowIds).toEqual(['4']));
+            expect({ id: removedRow.id, rowIndex: removedRow.rowIndex, rowTop: removedRow.rowTop }).toEqual({
+                id: '4',
+                rowIndex: null,
+                rowTop: null,
+            });
+
+            const clearedRow = api.getPinnedTopRow(0)!;
+            api.setGridOption('pinnedTopRowData', undefined);
+            await waitFor(() => expect(removedRowIds.sort()).toEqual(['3', '4', '5']));
+            expect({ id: clearedRow.id, rowIndex: clearedRow.rowIndex, rowTop: clearedRow.rowTop }).toEqual({
+                id: '5',
+                rowIndex: null,
+                rowTop: null,
+            });
+        });
+
+        test('rows whose id is an object property name are shown and updated, top and bottom, also after a clear', async () => {
+            const row = (sport: string) => ({ id: 'constructor', athlete: 'Jake', sport, age: 11 });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                pinnedTopRowData: [row('top 0')],
+                pinnedBottomRowData: [row('bottom 0')],
+                getRowId: (p) => p.data.id,
+            });
+
+            api.setGridOption('pinnedTopRowData', [row('top 1')]);
+            api.setGridOption('pinnedBottomRowData', [row('bottom 1')]);
+            assertPinnedRowData([row('top 1')], 'top');
+            assertPinnedRowData([row('bottom 1')], 'bottom');
+
+            api.setGridOption('pinnedTopRowData', undefined);
+            api.setGridOption('pinnedTopRowData', [row('top 2')]);
+            api.setGridOption('pinnedTopRowData', [row('top 3')]);
+            assertPinnedRowData([row('top 3')], 'top');
+        });
+
         test('rows are cleared on setting undefined rowData', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
@@ -326,6 +390,23 @@ describe('Pinned rows', () => {
             `);
         });
 
+        // A pinned row is measured by the same auto-height pass as a body row, which reaches it among the
+        // rendered rows rather than through the pinned models.
+        test('a pinned row with an auto-height column is measured', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }, { field: 'sport', autoHeight: true }],
+                rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+                pinnedTopRowData: [{ athlete: 'A', sport: 'SA', age: 1 }],
+            });
+            const gridEl = getGridElement(api)!;
+            const pinnedCell = gridEl.querySelector('.ag-grid-pinned-top-rows-container [col-id="sport"]')!;
+            expect(pinnedCell).not.toBeNull();
+            // happy-dom lays nothing out, so the height a measurement would find has to be supplied.
+            Object.defineProperty(pinnedCell.firstElementChild, 'offsetHeight', { value: 90, configurable: true });
+
+            await waitFor(() => expect(getPinnedRowLayout(api, 'top').heights[0]).toBeGreaterThanOrEqual(90));
+        });
+
         // The only pinned row keeps its top at zero however tall it grows, so nothing but the section
         // total reports the change to the container that reserves its space.
         test('the container follows the only pinned row growing', async () => {
@@ -349,6 +430,45 @@ describe('Pinned rows', () => {
 
             expect(getPinnedRowLayout(api, 'top').tops).toEqual([0]);
             expect(Number.parseFloat(container.style.height)).toBe(containerHeight + 40);
+        });
+
+        test('a walk of the pinned rows skips the rows its callback removes, by an update or by clearing them', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                pinnedTopRowData: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+                getRowId: (params) => params.data.id,
+            });
+            const updateWalk: (string | undefined)[] = [];
+            const clearWalk: (string | undefined)[] = [];
+
+            api.forEachPinnedRow('top', (node) => {
+                updateWalk.push(node?.id);
+                if (node.id === 'a') {
+                    api.setGridOption('pinnedTopRowData', [{ id: 'a' }, { id: 'c' }]);
+                }
+            });
+            api.forEachPinnedRow('top', (node) => {
+                clearWalk.push(node?.id);
+                api.setGridOption('pinnedTopRowData', undefined);
+            });
+
+            expect({ updateWalk, clearWalk }).toEqual({ updateWalk: ['a', 'c'], clearWalk: ['a'] });
+        });
+
+        test('a rowHeight change reaches the top and bottom pinned rows of a grid with no body rows', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [],
+                pinnedTopRowData: [...topData, ...topData],
+                pinnedBottomRowData: [...bottomData, ...bottomData],
+            });
+            await waitFor(() => expect(getPinnedRowLayout(api, 'top').heights).toEqual([42, 42]));
+            expect(getPinnedRowLayout(api, 'bottom').heights).toEqual([42, 42]);
+
+            api.setGridOption('rowHeight', 80);
+
+            expect(getPinnedRowLayout(api, 'top')).toEqual({ tops: [0, 80], heights: [80, 80] });
+            expect(getPinnedRowLayout(api, 'bottom')).toEqual({ tops: [0, 80], heights: [80, 80] });
         });
     });
 

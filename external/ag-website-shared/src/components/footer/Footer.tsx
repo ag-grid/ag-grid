@@ -13,13 +13,24 @@ interface FooterProps {
     footerItems: FooterItem[];
 }
 
-const toggleCookiesPrefs = (event) => {
-    event.preventDefault();
-
+const openCookiesPrefs = () => {
     if (!window.__enzuzoApi) return;
 
     window.__enzuzoApi.prefCenter.show();
 };
+
+// Opens a dialog rather than a page, so it is a button: a link whose href is only a fragment is
+// crawled as a link to the page it sits on.
+const CookiesPrefsButton = ({ id, name }: { id: string; name: string }) => (
+    <button
+        type="button"
+        id={id}
+        className={classNames('button-style-none', styles.linkButton)}
+        onClick={openCookiesPrefs}
+    >
+        {name}
+    </button>
+);
 
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
@@ -34,20 +45,27 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
                     {title}
                 </span>
                 <ul className="list-style-none" aria-labelledby={titleId}>
-                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: FooterLink) => (
-                        <li key={`${title}_${name}`}>
-                            <a
-                                id={`${slugger.slug(name)}-nav`}
-                                tabIndex={0}
-                                href={urlWithBaseUrl(url)}
-                                onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
-                                {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
-                            >
-                                {iconName && <Icon name={iconName} />}
-                                {name}
-                            </a>
-                        </li>
-                    ))}
+                    {links.map(({ name, url, newTab, iconName, showCookiesPrefs }: FooterLink) => {
+                        const id = `${slugger.slug(name)}-nav`;
+
+                        return (
+                            <li key={`${title}_${name}`}>
+                                {showCookiesPrefs ? (
+                                    <CookiesPrefsButton id={id} name={name} />
+                                ) : (
+                                    <a
+                                        id={id}
+                                        tabIndex={0}
+                                        href={urlWithBaseUrl(url)}
+                                        {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                                    >
+                                        {iconName && <Icon name={iconName} />}
+                                        {name}
+                                    </a>
+                                )}
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         );
@@ -60,19 +78,26 @@ const LegalLinks = ({ group }: { group: FooterItem }) => {
 
     return (
         <ul className={classNames('list-style-none', 'text-sm', styles.legalLinks)} aria-label={group.title}>
-            {group.links.map(({ name, url, newTab, showCookiesPrefs }: FooterLink) => (
-                <li key={name}>
-                    <a
-                        id={`${slugger.slug(name)}-nav`}
-                        tabIndex={0}
-                        href={urlWithBaseUrl(url)}
-                        onClick={showCookiesPrefs ? toggleCookiesPrefs : undefined}
-                        {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
-                    >
-                        {name}
-                    </a>
-                </li>
-            ))}
+            {group.links.map(({ name, url, newTab, showCookiesPrefs }: FooterLink) => {
+                const id = `${slugger.slug(name)}-nav`;
+
+                return (
+                    <li key={name}>
+                        {showCookiesPrefs ? (
+                            <CookiesPrefsButton id={id} name={name} />
+                        ) : (
+                            <a
+                                id={id}
+                                tabIndex={0}
+                                href={urlWithBaseUrl(url)}
+                                {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                            >
+                                {name}
+                            </a>
+                        )}
+                    </li>
+                );
+            })}
         </ul>
     );
 };

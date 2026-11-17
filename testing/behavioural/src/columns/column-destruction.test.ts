@@ -534,6 +534,20 @@ describe('Column destruction', () => {
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBeNull();
         expect((yearAfter as any).isAlive()).toBe(false);
     });
+
+    test('a column replaced by new columnDefs has listeners removed and added without throwing', () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }] });
+        const column = api.getColumn('a')!;
+        api.setGridOption('columnDefs', [{ colId: 'b' }]);
+        expect(api.getColumn('a')).toBeNull();
+
+        const listener = () => {};
+        expect(() => {
+            column.removeEventListener('visibleChanged', listener);
+            column.addEventListener('visibleChanged', listener);
+            column.removeEventListener('visibleChanged', listener);
+        }).not.toThrow();
+    });
 });
 
 /** Walks `col.originalParent` upwards and returns the wrapper chain (excludes the leaf col).

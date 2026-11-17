@@ -306,7 +306,7 @@ describe('Focus override callbacks', () => {
             }
         });
 
-        test('tabToNextGridContainer default target: backwards into gridBody returns a real cell target', () => {
+        test('tabToNextGridContainer default target: backwards into gridBody is null when the last row has no node, else a real cell target', () => {
             const column = createColumn('athlete');
             const columnAny = column as any;
             columnAny.isSuppressNavigable = vi.fn(() => false);
@@ -316,10 +316,8 @@ describe('Focus override callbacks', () => {
             gui.appendChild(focusable);
 
             focusSvcAny.visibleCols = { allCols: [column] };
-            focusSvcAny.beans.rowModel = {
-                getRowCount: () => 1,
-                getRow: vi.fn(() => ({ id: 'row-0' })),
-            };
+            const getRow = vi.fn((_index: number): { id: string } | undefined => ({ id: 'row-0' }));
+            focusSvcAny.beans.rowModel = { getRowCount: () => 1, getRow, getType: () => 'clientSide' };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
                 getLastRow: () => 0,
@@ -329,17 +327,19 @@ describe('Focus override callbacks', () => {
                 getPinnedBottomRowCount: () => 0,
             };
             focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
+            const backwardsTarget = () =>
+                focusSvc.getDefaultTabToNextGridContainerTarget({
+                    backwards: true,
+                    focusableContainers: [container],
+                    nextIndex: 0,
+                });
 
-            const target = focusSvc.getDefaultTabToNextGridContainerTarget({
-                backwards: true,
-                focusableContainers: [container],
-                nextIndex: 0,
-            });
+            getRow.mockReturnValueOnce(undefined);
+            const noNode = backwardsTarget();
 
-            expect(target).toEqual({
-                rowIndex: 0,
-                rowPinned: null,
-                column,
+            expect({ noNode, node: backwardsTarget() }).toEqual({
+                noNode: null,
+                node: { rowIndex: 0, rowPinned: null, column },
             });
         });
 

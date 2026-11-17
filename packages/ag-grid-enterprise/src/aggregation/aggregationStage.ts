@@ -61,6 +61,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
+    /** The last aggregate was cleared and the getters reading it are not yet repainted. */
+    private aggCleared = false;
 
     /** The value columns the last full pass keyed aggData by, held as the service's own ref-stable array
      *  so identity alone answers whether the keys moved. */
@@ -72,21 +74,22 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     }
 
     /**
-     * A `valueGetter` or Show Values As mode reads a total without naming an aggData key, so the
+     * A `valueGetter`, `aggValueGetter` or Show Values As mode reads a total without naming an aggData key, so the
      * cell-changed events `setAggData` fires never reach it. Which rows moved cannot be known without
      * running the getters (one may read any ancestor's total), so this narrows by column only.
      * A `cellRenderer` or `valueFormatter` reading aggData is outside that boundary and stays stale.
      */
     public refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void {
         const beans = this.beans;
-        // Invariant for the whole sweep: a `valueGetter` can only derive from an aggregate once one
-        // exists, while an active Show Values As mode is a transform in its own right.
-        const hadAgg = this.hadAgg;
+        // A `valueGetter` or `aggValueGetter` derives only from an aggregate that exists or was just cleared;
+        // Show Values As always does.
+        const hadAgg = this.hadAgg || this.aggCleared;
+        this.aggCleared = false;
         const displayed = beans.visibleCols.allCols;
         let anyDependent = false;
         for (let i = 0, len = displayed.length; i < len; ++i) {
             const column = displayed[i];
-            if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+            if (isAggregateDependent(column, hadAgg)) {
                 anyDependent = true;
                 break;
             }
@@ -106,7 +109,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
                 const cellCtrl = cellCtrls[c];
                 const column = cellCtrl.column;
-                if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+                if (isAggregateDependent(column, hadAgg)) {
                     cellCtrl.refreshOrDestroyCell(AGG_DEPENDENT_REFRESH_PARAMS);
                 }
             }
@@ -137,6 +140,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
                 this.hadAgg = false;
+                this.aggCleared = true;
                 const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
@@ -249,6 +253,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     }
 }
 
+const isAggregateDependent = (column: AgColumn, hadAgg: boolean): boolean =>
+    column.showValuesAs != null || (hadAgg && (column.valueGetter != null || column.aggValueGetter != null));
+
 /** Aggregates value columns for a single group node (non-pivot path). */
 const aggregateValuesOnly = (
     rowNode: RowNode,
@@ -304,14 +311,14 @@ const aggregateValuesOnly = (
                 if (colValues !== null) {
                     const vc = valueCols[j];
                     const v = childAggData[vc.colId];
-                    colValues[c] = v !== undefined ? v : valueSvc.getValueFromData(vc.column, child);
+                    colValues[c] = v !== undefined ? v : valueSvc.getRawValueFromData(vc.column, child);
                 }
             }
         } else {
             for (let j = 0; j < colCount; ++j) {
                 const colValues = values2d[j];
                 if (colValues !== null) {
-                    colValues[c] = valueSvc.getValueFromData(valueCols[j].column, child);
+                    colValues[c] = valueSvc.getRawValueFromData(valueCols[j].column, child);
                 }
             }
         }
@@ -390,7 +397,7 @@ const aggregateValuesAndPivot = (
             const nodeCount = aggregatedChildren.length;
             values = new Array<any>(nodeCount);
             for (let n = 0; n < nodeCount; ++n) {
-                values[n] = valueSvc.getValueFromData(column, aggregatedChildren[n]);
+                values[n] = valueSvc.getRawValueFromData(column, aggregatedChildren[n]);
             }
         } else {
             // Regular column on non-leaf group — read aggData from children directly.
@@ -403,7 +410,7 @@ const aggregateValuesAndPivot = (
                 const childNode = aggregatedChildren[n];
                 const childAggData = childNode.aggData;
                 const v = childAggData ? childAggData[colId] : undefined;
-                values[n] = v !== undefined ? v : valueSvc.getValueFromData(column, childNode);
+                values[n] = v !== undefined ? v : valueSvc.getRawValueFromData(column, childNode);
             }
         }
 

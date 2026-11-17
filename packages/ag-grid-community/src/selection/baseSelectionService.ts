@@ -154,7 +154,14 @@ export abstract class BaseSelectionService extends BeanStub {
     protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     protected isRowSelectionBlocked(rowNode: RowNode): boolean {
-        return !rowNode.selectable || (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) || !_isRowSelection(this.gos);
+        return (
+            !rowNode.selectable ||
+            (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) ||
+            !_isRowSelection(this.gos) ||
+            (!!rowNode.footer &&
+                rowNode.level === -1 &&
+                _isInternalFeatureFlagEnabled(this.beans, 'grandTotalRowUnselectable'))
+        );
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
@@ -284,7 +291,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
         this.eventSvc.dispatchEvent({
             ..._createGlobalRowEvent(rowNode, this.gos, 'rowSelected'),
-            event: e || null,
+            event: e ?? null,
             source,
         });
 

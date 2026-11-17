@@ -677,6 +677,47 @@ describe('SSRM selection with a destroyed footer row node', () => {
         expect(selectionChanged).toHaveBeenCalledTimes(1);
     });
 
+    test.each([1, 2])(
+        'GroupSelectsChildrenStrategy: selecting all %i children of a group with a total row selects the group',
+        async (childCount) => {
+            const children = [
+                { id: 'ie-1', country: 'Ireland', value: 10 },
+                { id: 'ie-2', country: 'Ireland', value: 20 },
+            ].slice(0, childCount);
+            const api = gridMgr.createGrid(null, {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'value', aggFunc: 'sum' },
+                ],
+                rowModelType: 'serverSide',
+                rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+                groupTotalRow: 'bottom',
+                getRowId: (params: GetRowIdParams<any>) => params.data.id,
+                serverSideDatasource: {
+                    getRows(params) {
+                        const rowData: any[] = params.request.groupKeys.length
+                            ? children
+                            : [{ id: 'g-Ireland', country: 'Ireland', value: 30, group: true }];
+                        setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0);
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            api.getRowNode('g-Ireland')!.setExpanded(true);
+            await waitForNoLoadingRows(api);
+
+            const nodes = children.map(({ id }) => api.getRowNode(id)!);
+            api.setNodesSelected({ nodes, newValue: true, source: 'api' });
+
+            expect(api.getRowNode('g-Ireland')!.isSelected()).toBe(true);
+            expect(api.getServerSideSelectionState()).toEqual({
+                selectAllChildren: false,
+                toggledNodes: [{ nodeId: 'g-Ireland', selectAllChildren: true }],
+            });
+        }
+    );
+
     // A footer copies `selectable` when it is created and `updateSelectable` never revisits it, so changing
     // `isRowSelectable` afterwards leaves a selectable footer standing over an unselectable group.
     test('selecting a group total row whose group became unselectable keeps the existing selection', async () => {

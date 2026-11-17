@@ -52,6 +52,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         to: 'https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/',
     },
     { from: '/javascript-grid/client-side-model/', to: 'https://www.ag-grid.com/javascript-data-grid/row-models/' },
+    { from: '/javascript-grid/column-api/', to: 'https://www.ag-grid.com/javascript-data-grid/grid-api/' },
     {
         from: '/javascript-grid/component-cell-editor/',
         to: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/',
@@ -107,6 +108,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/javascript-grid/themes-provided/', to: 'https://www.ag-grid.com/javascript-data-grid/themes/' },
     { from: '/angular-grid/cell-rendering/', to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/' },
     { from: '/angular-grid/client-side-model/', to: 'https://www.ag-grid.com/angular-data-grid/row-models/' },
+    { from: '/angular-grid/column-api/', to: 'https://www.ag-grid.com/angular-data-grid/grid-api/' },
     { from: '/angular-grid/component-cell-editor/', to: 'https://www.ag-grid.com/angular-data-grid/cell-editors/' },
     { from: '/angular-grid/component-date/', to: 'https://www.ag-grid.com/angular-data-grid/filter-date/' },
     { from: '/angular-grid/component-header/', to: 'https://www.ag-grid.com/angular-data-grid/column-headers/' },
@@ -156,6 +158,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/angular-grid/themes-provided/', to: 'https://www.ag-grid.com/angular-data-grid/themes/' },
     { from: '/react-grid/cell-rendering/', to: 'https://www.ag-grid.com/react-data-grid/component-cell-renderer/' },
     { from: '/react-grid/client-side-model/', to: 'https://www.ag-grid.com/react-data-grid/row-models/' },
+    { from: '/react-grid/column-api/', to: 'https://www.ag-grid.com/react-data-grid/grid-api/' },
     { from: '/react-grid/component-date/', to: 'https://www.ag-grid.com/react-data-grid/filter-date/' },
     { from: '/react-grid/component-header/', to: 'https://www.ag-grid.com/react-data-grid/column-headers/' },
     { from: '/react-grid/component-overlay/', to: 'https://www.ag-grid.com/react-data-grid/overlays/' },
@@ -206,6 +209,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/react-grid/themes-provided/', to: 'https://www.ag-grid.com/react-data-grid/themes/' },
     { from: '/vue-grid/cell-rendering/', to: 'https://www.ag-grid.com/vue-data-grid/component-cell-renderer/' },
     { from: '/vue-grid/client-side-model/', to: 'https://www.ag-grid.com/vue-data-grid/row-models/' },
+    { from: '/vue-grid/column-api/', to: 'https://www.ag-grid.com/vue-data-grid/grid-api/' },
     { from: '/vue-grid/component-cell-editor/', to: 'https://www.ag-grid.com/vue-data-grid/cell-editors/' },
     { from: '/vue-grid/component-date/', to: 'https://www.ag-grid.com/vue-data-grid/filter-date/' },
     { from: '/vue-grid/component-header/', to: 'https://www.ag-grid.com/vue-data-grid/column-headers/' },
@@ -451,10 +455,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/documentation/javascript/server-side-model/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
     },
-    {
-        from: '/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series',
-        to: 'https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/',
-    },
     { from: '/javascript-charts-overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-charts/pie-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-grid-rendering-flow/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-content/' },
@@ -646,7 +646,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid-cell-rendering/', to: '/angular-data-grid/component-cell-renderer/' },
     { from: '/angular-grid-cell-template/', to: '/angular-data-grid/getting-started/' },
     { from: '/angular-grid-clipboard/', to: '/angular-data-grid/clipboard/' },
-    { from: '/angular-grid-column-api/', to: '/angular-data-grid/column-api/' },
+    { from: '/angular-grid-column-api/', to: '/angular-data-grid/grid-api/' },
     { from: '/angular-grid-column-definitions/', to: '/angular-data-grid/column-definitions/' },
     { from: '/angular-grid-column-menu/', to: '/angular-data-grid/column-menu/' },
     { from: '/angular-grid-context-menu/', to: '/angular-data-grid/context-menu/' },
@@ -727,7 +727,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/change-detection/', to: '/angular-data-grid/change-detection/' },
     { from: '/documentation/angular/client-side-model/', to: '/angular-data-grid/row-models/' },
     { from: '/documentation/angular/clipboard/', to: '/angular-data-grid/clipboard/' },
-    { from: '/documentation/angular/column-api/', to: '/angular-data-grid/column-api/' },
+    { from: '/documentation/angular/column-api/', to: '/angular-data-grid/grid-api/' },
     { from: '/documentation/angular/column-definitions/', to: '/angular-data-grid/column-definitions/' },
     { from: '/documentation/angular/column-groups/', to: '/angular-data-grid/column-groups/' },
     { from: '/documentation/angular/column-headers/', to: '/angular-data-grid/column-headers/' },
@@ -1026,7 +1026,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/javascript/change-detection/', to: '/javascript-data-grid/change-detection/' },
     { from: '/documentation/javascript/client-side-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/documentation/javascript/clipboard/', to: '/javascript-data-grid/clipboard/' },
-    { from: '/documentation/javascript/column-api/', to: '/javascript-data-grid/column-api/' },
+    { from: '/documentation/javascript/column-api/', to: '/javascript-data-grid/grid-api/' },
     { from: '/documentation/javascript/column-definitions/', to: '/javascript-data-grid/column-definitions/' },
     { from: '/documentation/javascript/column-groups/', to: '/javascript-data-grid/column-groups/' },
     { from: '/documentation/javascript/column-headers/', to: '/javascript-data-grid/column-headers/' },
@@ -1344,7 +1344,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/react/change-detection/', to: '/react-data-grid/change-detection/' },
     { from: '/documentation/react/client-side-model/', to: '/react-data-grid/row-models/' },
     { from: '/documentation/react/clipboard/', to: '/react-data-grid/clipboard/' },
-    { from: '/documentation/react/column-api/', to: '/react-data-grid/column-api/' },
+    { from: '/documentation/react/column-api/', to: '/react-data-grid/grid-api/' },
     { from: '/documentation/react/column-definitions/', to: '/react-data-grid/column-definitions/' },
     { from: '/documentation/react/column-groups/', to: '/react-data-grid/column-groups/' },
     { from: '/documentation/react/column-headers/', to: '/react-data-grid/column-headers/' },
@@ -1598,7 +1598,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/vue/change-detection/', to: '/vue-data-grid/change-detection/' },
     { from: '/documentation/vue/client-side-model/', to: '/vue-data-grid/row-models/' },
     { from: '/documentation/vue/clipboard/', to: '/vue-data-grid/clipboard/' },
-    { from: '/documentation/vue/column-api/', to: '/vue-data-grid/column-api/' },
+    { from: '/documentation/vue/column-api/', to: '/vue-data-grid/grid-api/' },
     { from: '/documentation/vue/column-definitions/', to: '/vue-data-grid/column-definitions/' },
     { from: '/documentation/vue/column-groups/', to: '/vue-data-grid/column-groups/' },
     { from: '/documentation/vue/column-headers/', to: '/vue-data-grid/column-headers/' },
@@ -1839,7 +1839,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid-change-detection/', to: '/javascript-data-grid/change-detection/' },
     { from: '/javascript-grid-client-side-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/javascript-grid-clipboard/', to: '/javascript-data-grid/clipboard/' },
-    { from: '/javascript-grid-column-api/', to: '/javascript-data-grid/column-api/' },
+    { from: '/javascript-grid-column-api/', to: '/javascript-data-grid/grid-api/' },
     { from: '/javascript-grid-column-definitions/', to: '/javascript-data-grid/column-definitions/' },
     { from: '/javascript-grid-column-header/', to: '/javascript-data-grid/column-headers/' },
     { from: '/javascript-grid-column-interface/', to: '/javascript-data-grid/column-interface/' },
@@ -2033,7 +2033,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/change-detection/', to: '/javascript-data-grid/change-detection/' },
     { from: '/javascript-grid/client-side-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/javascript-grid/clipboard/', to: '/javascript-data-grid/clipboard/' },
-    { from: '/javascript-grid/column-api/', to: '/javascript-data-grid/column-api/' },
+    { from: '/javascript-grid/column-api/', to: '/javascript-data-grid/grid-api/' },
     { from: '/javascript-grid/column-definitions/', to: '/javascript-data-grid/column-definitions/' },
     { from: '/javascript-grid/column-groups/', to: '/javascript-data-grid/column-groups/' },
     { from: '/javascript-grid/column-headers/', to: '/javascript-data-grid/column-headers/' },
@@ -2282,7 +2282,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/change-detection/', to: '/angular-data-grid/change-detection/' },
     { from: '/angular-grid/client-side-model/', to: '/angular-data-grid/row-models/' },
     { from: '/angular-grid/clipboard/', to: '/angular-data-grid/clipboard/' },
-    { from: '/angular-grid/column-api/', to: '/angular-data-grid/column-api/' },
+    { from: '/angular-grid/column-api/', to: '/angular-data-grid/grid-api/' },
     { from: '/angular-grid/column-definitions/', to: '/angular-data-grid/column-definitions/' },
     { from: '/angular-grid/column-groups/', to: '/angular-data-grid/column-groups/' },
     { from: '/angular-grid/column-headers/', to: '/angular-data-grid/column-headers/' },
@@ -2496,7 +2496,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/change-detection/', to: '/react-data-grid/change-detection/' },
     { from: '/react-grid/client-side-model/', to: '/react-data-grid/row-models/' },
     { from: '/react-grid/clipboard/', to: '/react-data-grid/clipboard/' },
-    { from: '/react-grid/column-api/', to: '/react-data-grid/column-api/' },
+    { from: '/react-grid/column-api/', to: '/react-data-grid/grid-api/' },
     { from: '/react-grid/column-definitions/', to: '/react-data-grid/column-definitions/' },
     { from: '/react-grid/column-groups/', to: '/react-data-grid/column-groups/' },
     { from: '/react-grid/column-headers/', to: '/react-data-grid/column-headers/' },
@@ -2707,7 +2707,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/change-detection/', to: '/vue-data-grid/change-detection/' },
     { from: '/vue-grid/client-side-model/', to: '/vue-data-grid/row-models/' },
     { from: '/vue-grid/clipboard/', to: '/vue-data-grid/clipboard/' },
-    { from: '/vue-grid/column-api/', to: '/vue-data-grid/column-api/' },
+    { from: '/vue-grid/column-api/', to: '/vue-data-grid/grid-api/' },
     { from: '/vue-grid/column-definitions/', to: '/vue-data-grid/column-definitions/' },
     { from: '/vue-grid/column-groups/', to: '/vue-data-grid/column-groups/' },
     { from: '/vue-grid/column-headers/', to: '/vue-data-grid/column-headers/' },
@@ -3150,7 +3150,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/about.php', to: '/about/' },
     { from: '/license-pricing.php', to: '/license-pricing/' },
     { from: '/example.php', to: '/example/' },
-    { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
+    // SE-219: the jobs board is gone; this redirected to a page that does not exist (404).
+    { from: '/ag-grid-jobs-board.php', gone: true },
 
     // Targets are deliberately slash-less: `Redirect` prefix-matches and appends the remainder,
     // so the slashed request lands on /whats-new/ exactly, while a slashed target yields
@@ -3212,6 +3213,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('server-side-operations-graphql', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-oracle', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-spark', 'server-side-model'),
+    ...pageForAllFrameworks('column-api', 'grid-api'),
 
     // ===== SE-61: legacy 404 redirects (non-/charts; /charts/* live in the ag-charts-website repo) =====
     // grid, documentation, examples, legacy entry points, gone (410) pages.
@@ -3345,6 +3347,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         to: '/angular-data-grid/theming-v32-upgrading-to-v28-sass/',
     },
     { from: '/vue-data-grid/vue2/', to: '/vue-data-grid/getting-started/' },
+    { from: '/vue-data-grid/vue3-script-setup/', to: '/vue-data-grid/components/' },
     { from: '/v31.3/javascript-data-grid/archive-31-3/', to: '/documentation-archive/' },
     // Forum landing pages 301 to the successor /community/ hub (preserve link equity);
     // individual forum threads have no equivalent and stay 410. Anchored patterns are used
@@ -3354,9 +3357,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/community-forums/$', to: '/community/' },
     { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
-    // The trailing slash is required: Apache's `Redirect` prefix-matches, so without it this
-    // would also swallow the live /blog/whats-new-in-ag-grid-v24-part-2/.
-    { from: '/blog/whats-new-in-ag-grid-v24/', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
     { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },
@@ -3392,6 +3392,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/core-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
     { from: '/vuejs-charts/', to: 'https://www.ag-grid.com/charts/' },
     { from: '/campaigns/beyond-the-prompt/', to: '/community/beyond-the-prompt/' },
+    { from: '/campaigns/bryntum-scheduler-pro/', to: '/campaigns/bryntum-scheduler/' },
+    { from: '/campaigns/bryntum-scheduler-pro.md', to: '/campaigns/bryntum-scheduler.md' },
     { fromPattern: '^/gallery/(.*)', to: 'https://www.ag-grid.com/charts/gallery/$1' },
     { fromPattern: '^/options(/.*)?', to: 'https://www.ag-grid.com/charts/options/' },
     { fromPattern: '^/vuejs-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
@@ -3409,6 +3411,28 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
     // SE-169: the static Word-export EULA files were replaced by the /eula/ pages. /eula/license-en.html
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
+    // Older versioned and translated EULA addresses also go to the current EULA.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v13.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v14.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v15.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v15.1.html', to: '/eula/commercial/' },
+    { from: '/eula/AG_Grid_EULA_web_v38_20260325.html', to: '/eula/commercial/' },
+    { from: '/eula/license-de.html', to: '/eula/commercial/' },
+    { from: '/eula/license-es.html', to: '/eula/commercial/' },
+    { from: '/eula/license-fr.html', to: '/eula/commercial/' },
+
+    // Addresses still being requested (from external links and search results) where a live page exists under another name.
+    // Absolute targets are left out of archive builds, so these two are not copied into other archives.
+    {
+        from: '/archive/35.2.0/react-data-grid/licensing/',
+        to: 'https://www.ag-grid.com/react-data-grid/community-vs-enterprise/',
+    },
+    { from: '/ag-studio/', to: 'https://www.ag-grid.com/studio/' },
+    { from: '/javascript-data-grid/license-install/Kind/', to: '/javascript-data-grid/license-install/' },
+    { from: '/pricing/', to: '/license-pricing/' },
+    { from: '/javascript-data-grid/row-grouping/', to: '/javascript-data-grid/grouping/' },
+    { from: '/react-data-grid/row-grouping/', to: '/react-data-grid/grouping/' },
 ];

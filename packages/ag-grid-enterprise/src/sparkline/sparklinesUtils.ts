@@ -53,9 +53,7 @@ export const getSparklineSummary = (data: any[], yKey: string): SparklineSummary
             continue;
         }
 
-        if (start == null) {
-            start = yValue;
-        }
+        start ??= yValue;
 
         end = yValue;
         count++;

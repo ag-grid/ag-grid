@@ -1,6 +1,11 @@
 @use 'ag';
 
 @mixin output {
+    .ag-no-matches {
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        text-align: center;
+    }
+
     .ag-checkbox,
     .ag-radio-button {
         .ag-input-wrapper {
@@ -120,7 +125,9 @@
     // `ag.text-input` padding — `.ag-theme-x .ag-ltr input[class^='ag-'][type='text']` in Alpine and
     // Balham — which is emitted after this file and would otherwise win the cascade
     .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='text'],
-    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='number'] {
+    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='number'],
+    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='date'],
+    .ag-input-field-search input.ag-input-field-input[class^='ag-'][type='datetime-local'] {
         @include ag.unthemed-rtl(
             (
                 padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
@@ -816,7 +823,7 @@
             -webkit-text-fill-color: currentcolor;
         }
 
-        .ag-text-area-mirror {
+        :where(.ag-text-area-mirror) {
             display: none;
         }
     }
@@ -1002,6 +1009,9 @@
     }
 
     .ag-panel-title-bar-button {
+        border: 0;
+        background-color: unset;
+        padding: 0;
         @include ag.unthemed-rtl(
             (
                 margin-left: var(--ag-grid-size),
@@ -1017,6 +1027,9 @@
         position: absolute;
         top: 0;
         right: 0;
+        inset-inline-start: auto;
+        border-radius: 0;
+        background-color: transparent;
         border-style: solid;
         border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
         border-color: transparent var(--ag-note-indicator-color) transparent transparent;

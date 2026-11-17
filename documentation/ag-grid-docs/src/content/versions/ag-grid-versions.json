@@ -1,5 +1,32 @@
 [
     {
+        "version": "36.3.0",
+        "date": "4th November 2026",
+        "landingPageHighlight": "Set Filter Persistent Selection, Calculated Columns Improvements, High-Contrast/Forced Color Mode Support, Accessibility Improvements, Performance Improvements",
+        "highlights": [
+            {
+                "text": "Set Filter Persistent Selection",
+                "path": "./filter-set-data-updates/#preserving-previous-values"
+            },
+            {
+                "text": "Calculated Columns Improvements",
+                "path": "./calculated-columns/"
+            },
+            {
+                "text": "High-Contrast/Forced Color Mode Support"
+            },
+            {
+                "text": "Accessibility Improvements",
+                "path": "./accessibility/"
+            },
+            {
+                "text": "Performance Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36-3",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "36.2.0",
         "date": "16th September 2026",
         "landingPageHighlight": "PDF Export, Set Filter Support for Advanced Filter, Custom Filter Option Support in Advanced Filter, Continuous Column Auto-sizing, Custom Renderers for Column Items in Columns Tool Panel",

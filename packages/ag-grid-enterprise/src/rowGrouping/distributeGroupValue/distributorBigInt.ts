@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 
 import type { AggFuncInput, DistributionStrategy } from './valueConversion';
-import { isNumericLike, resolveStrategy, toBigInt } from './valueConversion';
+import { isNumericLike, readStoredValue, resolveStrategy, toBigInt } from './valueConversion';
 
 /** Distributes a BigInt value to children using integer-safe arithmetic. */
 export class DistributorBigInt {
@@ -92,7 +92,7 @@ export class DistributorBigInt {
             const { colDef, api, context } = this.params;
             return toBigInt(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
         }
-        return toBigInt(node.getDataValue(column, 'value'));
+        return toBigInt(readStoredValue(node, column, 'value'));
     }
 
     /** Writes a value to a single child. */

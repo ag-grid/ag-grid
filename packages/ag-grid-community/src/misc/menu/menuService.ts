@@ -7,7 +7,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
 import { _isLegacyMenuEnabled } from '../../gridOptionsUtils';
-import type { HeaderCellCtrl } from '../../headerRendering/cells/column/headerCellCtrl';
+import { getColumnHeaderMenuAnchor } from '../../headerRendering/headerUtils';
 import type { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { IMenuFactory, ShowMenuAfterButtonClickOptions } from '../../interfaces/iMenuFactory';
@@ -26,11 +26,13 @@ interface BaseShowFilterMenuParams {
 
 interface MouseShowMenuParams {
     mouseEvent: MouseEvent | Touch;
+    getEventSource?: () => HTMLElement;
     positionBy: 'mouse';
 }
 
 interface ButtonShowMenuParams {
     buttonElement: HTMLElement;
+    getButtonElement?: () => HTMLElement | undefined;
     positionBy: 'button';
 }
 
@@ -48,6 +50,7 @@ type ToggleColumnMenuParams = ButtonShowMenuParams & BaseShowColumnMenuParams;
 type ToggleFilterMenuParams = ButtonShowMenuParams & BaseShowFilterMenuParams;
 type ButtonMenuParams = {
     buttonElement: HTMLElement;
+    getButtonElement?: () => HTMLElement | undefined;
     column?: Column;
     onClosedCallback?: () => void;
 };
@@ -55,7 +58,7 @@ type ButtonMenuParams = {
 export type PopupToggleResult = 'opened' | 'closed' | 'declined';
 
 interface ActiveButtonMenu {
-    buttonElement: HTMLElement;
+    getButtonElement: () => HTMLElement;
     menuFactory: IMenuFactory;
     token: object;
 }
@@ -96,10 +99,11 @@ export class MenuService extends BeanStub implements NamedBean {
     public showHeaderContextMenu(
         column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent?: MouseEvent,
-        touchEvent?: TouchEvent
+        touchEvent?: TouchEvent,
+        getEventSource?: () => HTMLElement
     ): void {
         this.setActiveButtonMenu();
-        this.activeMenuFactory?.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
+        this.activeMenuFactory?.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent, getEventSource);
     }
 
     public hidePopupMenu(): void {
@@ -125,7 +129,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
         const { activeButtonMenu } = this;
         const { buttonElement } = params;
-        if (activeButtonMenu?.menuFactory === menuFactory && activeButtonMenu.buttonElement === buttonElement) {
+        if (activeButtonMenu?.menuFactory === menuFactory && activeButtonMenu.getButtonElement() === buttonElement) {
             this.setActiveButtonMenu();
             menuFactory.hideActiveMenu();
             return 'closed';
@@ -153,16 +157,30 @@ export class MenuService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const { buttonElement } = params;
+        const { getButtonElement } = params;
         const token = {};
+        let buttonElement = params.buttonElement;
+        const resolveButtonElement = () => {
+            if (!buttonElement.isConnected) {
+                const resolved = getButtonElement?.();
+                if (resolved?.isConnected) {
+                    buttonElement = resolved;
+                    if (this.activeButtonMenu?.token === token) {
+                        buttonElement.classList.add(OPEN_MENU_CLASS);
+                    }
+                }
+            }
+            return buttonElement;
+        };
         let closed = false;
         const onClosedCallback = (event?: Event) => {
             closed = true;
+            const eventSource = resolveButtonElement();
             if (this.activeButtonMenu?.token === token) {
                 this.setActiveButtonMenu();
             }
-            if (event instanceof KeyboardEvent && buttonElement.isConnected) {
-                buttonElement.focus({ preventScroll: true });
+            if (event instanceof KeyboardEvent && eventSource.isConnected) {
+                eventSource.focus({ preventScroll: true });
             }
             params.onClosedCallback?.();
         };
@@ -171,21 +189,21 @@ export class MenuService extends BeanStub implements NamedBean {
             buttonElement,
             containerType,
             onClosedCallback,
-            options
+            { ...options, getEventSource: resolveButtonElement }
         );
 
         if (!opened || closed) {
             return false;
         }
 
-        this.setActiveButtonMenu({ buttonElement, menuFactory, token });
+        this.setActiveButtonMenu({ getButtonElement: resolveButtonElement, menuFactory, token });
         return true;
     }
 
     private setActiveButtonMenu(activeButtonMenu?: ActiveButtonMenu): void {
-        this.activeButtonMenu?.buttonElement.classList.remove(OPEN_MENU_CLASS);
+        this.activeButtonMenu?.getButtonElement().classList.remove(OPEN_MENU_CLASS);
         this.activeButtonMenu = activeButtonMenu;
-        activeButtonMenu?.buttonElement.classList.add(OPEN_MENU_CLASS);
+        activeButtonMenu?.getButtonElement().classList.add(OPEN_MENU_CLASS);
     }
 
     public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
@@ -277,8 +295,15 @@ export class MenuService extends BeanStub implements NamedBean {
             });
         } else if (positionBy === 'mouse') {
             this.setActiveButtonMenu();
-            const { mouseEvent } = params;
-            menuFactory?.showMenuAfterMouseEvent(column, mouseEvent, containerType, onClosedCallback, filtersOnly);
+            const { mouseEvent, getEventSource } = params;
+            menuFactory?.showMenuAfterMouseEvent(
+                column,
+                mouseEvent,
+                containerType,
+                onClosedCallback,
+                filtersOnly,
+                getEventSource
+            );
         } else if (column) {
             this.setActiveButtonMenu();
             const beans = this.beans;
@@ -287,15 +312,15 @@ export class MenuService extends BeanStub implements NamedBean {
             ctrlsSvc.getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
             _requestAnimationFrame(beans, () => {
-                const headerCellCtrl = ctrlsSvc.getHeaderRowContainerCtrl()?.getHeaderCtrlForColumn(column) as
-                    HeaderCellCtrl | undefined;
+                const buttonElement = getColumnHeaderMenuAnchor(beans, column, filtersOnly);
 
-                if (headerCellCtrl) {
+                if (buttonElement) {
                     this.showButtonMenu(
                         menuFactory,
                         {
                             column,
-                            buttonElement: headerCellCtrl.getAnchorElementForMenu(filtersOnly),
+                            buttonElement,
+                            getButtonElement: () => getColumnHeaderMenuAnchor(beans, column, filtersOnly),
                             onClosedCallback,
                         },
                         containerType,

@@ -1,12 +1,12 @@
 import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
 import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnStateUpdateParams, embedded = false) {
+    constructor(horizontal: boolean, params?: ColumnToolPanelChildParams, embedded = false) {
         super(horizontal, 'rowGroup', params, embedded);
     }
 

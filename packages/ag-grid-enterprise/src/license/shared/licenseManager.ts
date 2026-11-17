@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _splitBracketed } from 'ag-stack';
 
 import { _logPreInitWarn } from 'ag-grid-community';
 
@@ -11,13 +11,20 @@ const LICENSE_TYPES = {
 };
 const LICENSING_HELP_URL = 'https://www.ag-grid.com/licensing/';
 
+function getLicensedProductNames(licenseType: string): string {
+    if (licenseType === 'BOTH') {
+        return 'Grid and AG Charts';
+    }
+    return licenseType === 'GRID' ? 'Grid' : 'Charts';
+}
+
 export interface ILicenseManager {
     setLicenseKey: (key?: string, gridContext?: boolean) => void;
 }
 
 export class LicenseManager {
     // eslint-disable-next-line no-restricted-syntax
-    private static readonly RELEASE_INFORMATION: string = 'MTc4OTEzOTEwNjI1MA==';
+    private static readonly RELEASE_INFORMATION: string = 'MTc5Mzc4NDIzNzk4Mg==';
     // eslint-disable-next-line no-restricted-syntax
     private static licenseKey: string;
     // eslint-disable-next-line no-restricted-syntax
@@ -42,7 +49,7 @@ export class LicenseManager {
         const suppliedLicenseName =
             licenseDetails.suppliedLicenseType === undefined
                 ? ''
-                : `AG ${licenseDetails.suppliedLicenseType === 'BOTH' ? 'Grid and AG Charts' : licenseDetails.suppliedLicenseType === 'GRID' ? 'Grid' : 'Charts'} Enterprise`;
+                : `AG ${getLicensedProductNames(licenseDetails.suppliedLicenseType)} Enterprise`;
 
         if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {
@@ -183,7 +190,7 @@ export class LicenseManager {
     }
 
     private getHostname(): string {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { hostname = '' } = loc;
 
@@ -191,7 +198,7 @@ export class LicenseManager {
     }
 
     private isForceWatermark(): boolean {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { pathname } = loc;
 
@@ -310,8 +317,12 @@ export class LicenseManager {
             return ['legacy', false, undefined];
         }
 
-        const matches = licenseKey.match(/\[(.*?)\]/g)!.map((match) => match.replace('[', '').replace(']', ''));
-        if (!matches || matches.length === 0) {
+        const segments = _splitBracketed(licenseKey, true);
+        const matches: string[] = [];
+        for (let i = 1, len = segments.length; i < len; i += 2) {
+            matches.push(segments[i].slice(1, -1));
+        }
+        if (matches.length === 0) {
             return ['legacy', false, undefined];
         }
 

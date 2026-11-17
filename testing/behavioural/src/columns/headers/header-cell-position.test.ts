@@ -1,7 +1,8 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, getRevealedElements, installFocusScroll } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { onTestFinished } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import {
@@ -152,6 +153,107 @@ describe('header cell positions', () => {
 
         expect(headerPositions(api, 'c1').column).toBe('100px/100px');
         await waitFor(() => expect(headerPositions(api, 'c1').column).toBe('2500px/100px'));
+    });
+
+    test('a focused header is scrolled into view at once, or once the columns settle while they animate', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const header = (colId: string) => grid.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+        await waitFor(() => expect(header('model')).not.toBeNull());
+
+        api.setFocusedHeader('make');
+        expect(getRevealedElements()).toEqual([header('make')]);
+
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('model');
+        expect(document.activeElement).toBe(header('model'));
+        expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
+        expect(getRevealedElements()).toEqual([header('make')]);
+        await waitFor(() => expect(getRevealedElements()).toEqual([header('make'), header('model')]));
+    });
+
+    test('of headers focused one after another as columns animate, only the last is scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        await waitFor(() => expect(grid.querySelector('.ag-header-cell[col-id="model"]')).not.toBeNull());
+
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make');
+        api.setFocusedHeader('model');
+        expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
+        await waitFor(() => expect(grid.querySelector('.ag-column-moving')).toBeNull());
+        expect(getRevealedElements().map((element) => element.getAttribute('col-id'))).toEqual(['model']);
+    });
+
+    test('a header that loses focus before the columns settle is not scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const cell = () => grid.querySelector('.ag-cell[col-id="model"]');
+        await waitFor(() => expect(cell()).not.toBeNull());
+
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make');
+        api.setFocusedCell(0, 'model');
+        expect(document.activeElement).toBe(cell());
+        await waitFor(() => expect(grid.querySelector('.ag-column-moving')).toBeNull());
+        expect(getRevealedElements()).toEqual([cell()]);
+    });
+
+    test('a header whose focus moves into its own content as columns animate is still scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make', filter: true, floatingFilter: true }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const filterHeader = () => grid.querySelector('.ag-header-row-filter .ag-header-cell[col-id="make"]');
+        await waitFor(() => expect(filterHeader()?.querySelector('input')).toBeTruthy());
+
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make', true);
+        filterHeader()!.querySelector('input')!.focus();
+        await waitFor(() => expect(grid.querySelector('.ag-column-moving')).toBeNull());
+        expect(getRevealedElements().at(-1)).toBe(filterHeader());
+    });
+
+    test('a focused header still sliding once the columns settle is scrolled into view as its slide ends', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const header = () => grid.querySelector('.ag-header-cell[col-id="model"]');
+        await waitFor(() => expect(header()).not.toBeNull());
+        // happy-dom runs no transitions: the header reports its slide, and a fade the reveal does not wait for
+        let finishSlide!: () => void;
+        const slide = { transitionProperty: 'left', finished: new Promise<void>((resolve) => (finishSlide = resolve)) };
+        const fade = { transitionProperty: 'background-color', finished: new Promise<void>(() => {}) };
+        let running = [slide, fade];
+        Object.defineProperty(header(), 'getAnimations', { value: () => running });
+        const endSlide = () => {
+            running = [fade];
+            finishSlide();
+        };
+
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('model');
+        await waitFor(() => expect(grid.querySelector('.ag-column-moving')).toBeNull());
+        expect(getRevealedElements()).toEqual([]);
+        endSlide();
+        await waitFor(() => expect(getRevealedElements()).toEqual([header()]));
     });
 
     test('a header cell takes the pinned edge styles as the edges move', async () => {

@@ -84,12 +84,15 @@ describe('master/detail grid ARIA roles', () => {
         expect(container.getAttribute('role')).toBe('treegrid');
         expect(getRowElement(api, 'nora').getAttribute('aria-expanded')).toBe('false');
         expect(getRowElement(api, 'mila').hasAttribute('aria-expanded')).toBe(false);
+        expect(getRowElement(api, 'nora').getAttribute('aria-level')).toBe('1');
+        expect(getRowElement(api, 'mila').getAttribute('aria-level')).toBe('1');
 
         api.getRowNode('nora')!.setExpanded(true, undefined, true);
         await waitFor(() => expect(api.getDetailGridInfo('detail_nora')?.api).toBeDefined());
 
         expect(container.getAttribute('role')).toBe('treegrid');
         expect(getRowElement(api, 'nora').getAttribute('aria-expanded')).toBe('true');
+        expect(getRowElement(api, 'detail_nora').getAttribute('aria-level')).toBe('2');
         expect(getGridContainer(api.getDetailGridInfo('detail_nora')!.api!).getAttribute('role')).toBe('grid');
 
         api.getRowNode('nora')!.setExpanded(false, undefined, true);
@@ -246,12 +249,36 @@ describe('master/detail grid ARIA roles', () => {
         expect(getGridContainer(leafApi).getAttribute('role')).toBe('grid');
         expect(getRowElement(api, 'top').getAttribute('aria-expanded')).toBe('true');
         expect(getRowElement(middleApi, 'middle').getAttribute('aria-expanded')).toBe('true');
+        expect(getRowElement(api, 'top').getAttribute('aria-level')).toBe('1');
+        expect(getRowElement(api, 'detail_top').getAttribute('aria-level')).toBe('2');
+        expect(getRowElement(middleApi, 'middle').getAttribute('aria-level')).toBe('1');
+        expect(getRowElement(middleApi, 'detail_middle').getAttribute('aria-level')).toBe('2');
+        expect(getGridContainer(leafApi).querySelector('[aria-level]')).toBeNull();
 
         middleApi.applyTransaction({ update: [{ id: 'middle' }] });
 
         expect(getGridContainer(api).getAttribute('role')).toBe('treegrid');
         expect(getGridContainer(middleApi).getAttribute('role')).toBe('grid');
         expect(getRowElement(middleApi, 'middle').hasAttribute('aria-expanded')).toBe(false);
+        expect(getRowElement(middleApi, 'middle').hasAttribute('aria-level')).toBe(false);
+    });
+
+    test('places master and detail rows below their row group', async () => {
+        const api = gridsManager.createGrid(null, {
+            ...baseOptions,
+            columnDefs: [{ field: 'id', rowGroup: true }],
+            groupDefaultExpanded: -1,
+            rowData: [{ id: 'nora', children: [{ id: 'call' }] }],
+        });
+
+        await waitFor(() => expect(api.getDetailGridInfo('detail_nora')?.api).toBeDefined());
+        expect(getRowElement(api, api.getDisplayedRowAtIndex(0)!.id!).getAttribute('aria-level')).toBe('1');
+        expect(getRowElement(api, 'nora').getAttribute('aria-level')).toBe('2');
+        expect(getRowElement(api, 'detail_nora').getAttribute('aria-level')).toBe('3');
+
+        api.setRowGroupColumns([]);
+        expect(getRowElement(api, 'nora').getAttribute('aria-level')).toBe('1');
+        expect(getRowElement(api, 'detail_nora').getAttribute('aria-level')).toBe('2');
     });
 
     test('preserves treegrid for grouping when no rows are masters', () => {
@@ -320,10 +347,12 @@ describe('master/detail grid ARIA roles', () => {
         row[method]({ id: 'nora', children: [{ id: 'call' }] });
         await waitFor(() => expect(container.getAttribute('role')).toBe('treegrid'));
         expect(getRowElement(api, 'nora').getAttribute('aria-expanded')).toBe('false');
+        expect(getRowElement(api, 'nora').getAttribute('aria-level')).toBe('1');
 
         row[method]({ id: 'nora' });
         await waitFor(() => expect(container.getAttribute('role')).toBe('grid'));
         expect(getRowElement(api, 'nora').hasAttribute('aria-expanded')).toBe(false);
+        expect(getRowElement(api, 'nora').hasAttribute('aria-level')).toBe(false);
     });
 
     test.each([false, true])(

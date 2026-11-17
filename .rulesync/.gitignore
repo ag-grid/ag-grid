@@ -20,7 +20,6 @@ mcp.json
 # via packages/ag-grid-community/src).
 /commands/*.md
 /commands/docs/
-!/commands/docs-e2e-tests.md
 !/commands/manual-test.md
 
 # Plugin-delivered rules — allowlist local-only rules (ag-grid-specific).
@@ -39,6 +38,7 @@ mcp.json
 !/rules/grid-state.md
 !/rules/grid-styling.md
 !/rules/integrated-charts.md
+!/rules/scripts-and-ci.md
 !/rules/testing.md
 # docs-review-testing.md ships as a sibling asset of the ag-product docs-review
 # skill config (at skills/docs-review/ag-grid/), not as a top-level rule, so no

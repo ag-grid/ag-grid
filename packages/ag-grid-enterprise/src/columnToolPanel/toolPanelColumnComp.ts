@@ -1,4 +1,10 @@
-import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _setAriaDescribedBy,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -26,6 +32,7 @@ import {
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
+import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
@@ -64,7 +71,8 @@ export class ToolPanelColumnComp extends Component {
         private readonly params: ToolPanelColumnCompParams,
         private readonly eventType: ColumnEventType,
         private readonly source: ColumnSelectionPanelSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super();
         const { column, depth } = modelItem;
@@ -165,7 +173,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
-        this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();
@@ -189,7 +197,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(
                 this.column,
@@ -198,7 +206,8 @@ export class ToolPanelColumnComp extends Component {
                 this.params,
                 this.eventType,
                 this.source,
-                this.columnMove
+                this.columnMove,
+                this.refocusIfLost
             )
         );
         this.addDestroyFunc(() => {
@@ -209,7 +218,9 @@ export class ToolPanelColumnComp extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (e.key === KeyCode.SPACE) {
+        if (_isContextMenuKey(e)) {
+            this.onContextMenu(e);
+        } else if (e.key === KeyCode.SPACE) {
             e.preventDefault();
             if (this.isSelectable()) {
                 this.onSelectAllChanged(!this.isSelected());

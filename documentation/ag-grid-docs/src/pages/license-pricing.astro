@@ -1,6 +1,6 @@
 ---
-import { LicensePricing } from '@ag-website-shared/components/license-pricing/LicensePricing';
-import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+import LicensePricingPage from '@ag-website-shared/components/license-pricing/LicensePricingPage.astro';
+import { PRICING_PAGE } from '@ag-website-shared/components/license-pricing/pricingContent';
 import Layout from '@layouts/Layout.astro';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
@@ -9,23 +9,12 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/license
 ---
 
 <Layout
-    title="AG Grid: Licence and Pricing"
-    description="View licence and pricing details for AG Grid. Compare features in AG Grid Community vs. Enterprise. Purchase AG Grid Bundle for a discount Grid & Charts licences."
+    title={PRICING_PAGE.title}
+    description={PRICING_PAGE.description}
     showSearchBar={true}
     showDocsNav={false}
     showMicrosoftMessage={true}
     markdownUrl={markdownUrl}
 >
-    <PageHero
-        eyebrow="Licensing and Sales"
-        headline="Pricing"
-        subhead="Whether you are a startup, global enterprise or somewhere in between, AG Grid & AG Charts deliver best in class value."
-    >
-        <a class="button" href="#pricing">
-            See our pricing
-        </a>
-    </PageHero>
-    <LicensePricing client:load defaultSelection="grid" />
+    <LicensePricingPage defaultSelection="grid" />
 </Layout>
-
-<script is:inline defer src={urlWithBaseUrl('/scripts/license-pricing.js')}></script>

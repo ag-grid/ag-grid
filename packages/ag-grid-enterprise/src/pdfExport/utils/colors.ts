@@ -66,7 +66,7 @@ export function extractBorderColor(value?: string): string | undefined {
         return functionalColorMatch[1];
     }
 
-    const tokenColorMatch = /(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)\s*$/.exec(trimmed);
+    const tokenColorMatch = /(#[0-9a-fA-F]{3,8}|(?<![a-zA-Z])[a-zA-Z]+)\s*$/.exec(trimmed);
     if (!tokenColorMatch) {
         return undefined;
     }

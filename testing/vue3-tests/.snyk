@@ -1,6 +1,352 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.192Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.622Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.619Z
+  SNYK-JS-UNDICI-22370261:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.107Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.621Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.618Z
+  SNYK-JS-UNDICI-22291127:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.919Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.621Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.617Z
+  SNYK-JS-UNDICI-22291066:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.484Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.620Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.617Z
+  SNYK-JS-UNDICI-22290988:
+    - vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.036Z
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.620Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.616Z
+  SNYK-JS-OPEN-22112123:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:49:58.670Z
+  SNYK-JS-HIGHCHARTS-21826809:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:46:23.062Z
+  SNYK-JS-HIGHCHARTS-21826805:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:46:06.657Z
+  SNYK-JS-HIGHCHARTS-21826799:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:45:58.143Z
+  SNYK-JS-HIGHCHARTS-21816471:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:45:06.911Z
+  SNYK-JS-HIGHCHARTS-21816469:
+    - '@mobileaction/action-kit@1.61.3 > highcharts@12.5.0':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:55.168Z
+  SNYK-JS-DOMPURIFY-21755401:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:44:39.573Z
+  SNYK-JS-DOMPURIFY-21755399:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Test dependency - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-06T11:41:20.281Z
+  SNYK-JS-DOMPURIFY-21460653:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
+  SNYK-JS-DOMPURIFY-21460657:
+    - '@mobileaction/action-kit@1.61.3 > dompurify@3.4.15':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
+  SNYK-JS-FFLATE-20883305:
+    - 'ag-grid-community@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-PICOMATCH-21248802:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > picomatch@4.0.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-router@5.3.1 > @vue-macros/common@3.1.4 > unplugin-utils@0.3.1 > picomatch@4.0.7':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-router@5.3.1 > picomatch@4.0.5':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-router@5.3.1 > tinyglobby@0.2.17 > picomatch@4.0.4':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-router@5.3.1 > unplugin-utils@0.3.2 > picomatch@4.0.4':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-router@5.3.1 > unplugin@3.4.0 > picomatch@4.0.7':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vue-tsc@3.3.11 > @vue/language-core@3.3.11 > picomatch@4.0.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181005:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181009:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181011:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181013:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181015:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181017:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181019:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21185768:
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-VITE-21282024:
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite@6.4.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
   SNYK-JS-AGGRIDENTERPRISE-7414158:
     - ag-grid-enterprise@* > *:
         reason: >-

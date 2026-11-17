@@ -10,6 +10,7 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
+import type { AgColumn, BeanCollection, ICellComp } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -410,6 +411,58 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         `);
     });
 
+    test('dragging the fill handle over a cell whose component has not mounted yet does not throw', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardGridFillUnmountedComp', {
+            cellSelection: { handle: { mode: 'fill', direction: 'y' } },
+            columnDefs: [{ field: 'v', editable: true }],
+            rowData: [
+                { id: 'ROW_0', v: 'X' },
+                { id: 'ROW_1', v: 'A' },
+                { id: 'ROW_2', v: 'B' },
+                { id: 'ROW_3', v: 'C' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellFor = (rowId: string) => waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(rowId, 'v')));
+
+        const sourceCell = await cellFor('ROW_0');
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(sourceCell);
+        await cellSelectionChanged;
+
+        // No public API leaves a CellCtrl without its comp, so unmount ROW_2's comp directly.
+        const beans: BeanCollection = (api.getRowNode('ROW_2') as any).beans;
+        const cellCtrl = beans.rowRenderer
+            .getRowByPosition({ rowIndex: 2, rowPinned: null })!
+            .getCellCtrl(api.getColumn('v') as AgColumn)!;
+        const mountedComp = cellCtrl.comp;
+        expect(mountedComp).toBeDefined();
+        (cellCtrl as { comp?: ICellComp }).comp = undefined;
+
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        let clientY = 0;
+        for (const rowId of ['ROW_0', 'ROW_1', 'ROW_2', 'ROW_3']) {
+            clientY += 10;
+            (await cellFor(rowId)).dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY }));
+        }
+
+        cellCtrl.comp = mountedComp;
+        const fillEnd = waitForEvent('fillEnd', api);
+        (await cellFor('ROW_3')).dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY }));
+        await fillEnd;
+
+        await new GridRows(api, 'after filling over a cell whose comp mounted late').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 v:"X"
+            ├── LEAF id:ROW_1 v:"X"
+            ├── LEAF id:ROW_2 v:"X"
+            └── LEAF id:ROW_3 v:"X"
+        `);
+    });
+
     test('readOnlyEdit fill handle fires cellEditRequest once per target', async () => {
         const editRequests: string[] = [];
 
@@ -568,5 +621,37 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
                 `ROW_4:${field}:${val0}`,
             ]);
         }
+    });
+
+    test('a fill over read-only cells leaves the undo and redo stacks alone', async () => {
+        const api = await gridMgr.createGridAndWait('fillNoChangeUndo', {
+            undoRedoCellEditing: true,
+            cellSelection: { handle: { mode: 'fill' } },
+            columnDefs: [{ field: 'editable', editable: true }, { field: 'readOnly' }],
+            rowData: [
+                { id: 'ROW_0', editable: 'a', readOnly: 'b' },
+                { id: 'ROW_1', editable: 'c', readOnly: 'd' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        clipboardUtils.setText('X');
+        api.setFocusedCell(0, 'editable');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+        api.undoCellEditing();
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'readOnly'))));
+        await cellSelectionChanged;
+        const fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle())));
+        await fillEnd;
+
+        expect(api.getCurrentUndoSize()).toBe(0);
+        expect(api.getCurrentRedoSize()).toBe(1);
+        expect(api.getDisplayedRowAtIndex(1)?.data).toEqual({ id: 'ROW_1', editable: 'c', readOnly: 'd' });
     });
 });

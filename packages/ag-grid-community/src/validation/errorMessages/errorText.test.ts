@@ -2,7 +2,7 @@ import { BASE_URL } from '../../baseUrl';
 import { setValidationDocLink } from '../logging';
 import { AG_GRID_ERRORS, MAX_ERROR_ID } from './errorText';
 
-const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
+const trimTrailingSpaces = (s: string) => s.replace(/(?<! ) +\n/g, '\n');
 
 describe('Validate AG_GRID_ERRORS', () => {
     test.each(Object.entries(AG_GRID_ERRORS))(

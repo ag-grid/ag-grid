@@ -125,26 +125,6 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         });
     }
 
-    private extractDataFromEvent<T extends AgColumn | string>(event: ColumnEvent, func: (col: AgColumn) => T): T[] {
-        const result: T[] = [];
-        if (event.columns) {
-            event.columns.forEach((column: AgColumn) => {
-                result.push(func(column));
-            });
-        } else if (event.column) {
-            result.push(func(event.column as AgColumn));
-        }
-        return result;
-    }
-
-    public getMasterColumns(event: ColumnEvent): AgColumn[] {
-        return this.extractDataFromEvent(event, (col) => col);
-    }
-
-    public getColumnIds(event: ColumnEvent): string[] {
-        return this.extractDataFromEvent(event, (col) => col.colId);
-    }
-
     public onColumnEvent(event: AgEvent): void {
         this.onEvent(() => {
             switch (event.type) {
@@ -204,9 +184,6 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             return;
         }
 
-        // in time, all the methods below should use the column ids, it's a more generic way
-        // of handling columns, and also allows for single or multi column events
-        const masterColumns = this.getMasterColumns(colEvent);
         switch (colEvent.type) {
             case 'columnMoved':
                 // when the user moves columns via applyColumnState, we can't depend on moving specific columns
@@ -236,34 +213,51 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
                 break;
             case 'columnResized': {
-                const resizedEvent = colEvent as ColumnResizedEvent;
-
-                // don't set flex columns width
-                const flexColIds = new Set((resizedEvent.flexColumns ?? []).map((col) => col.getColId()));
-                const columnWidths: { key: string; newWidth: number; userSized: boolean }[] = [];
-                for (const column of masterColumns) {
-                    const colId = column.getColId();
-                    if (!flexColIds.has(colId)) {
-                        columnWidths.push({
-                            key: colId,
-                            newWidth: column.getActualWidth(),
-                            userSized: column.isUserSized(),
-                        });
+                const { flexColumns, finished } = colEvent as ColumnResizedEvent;
+                const masterColumns = colEvent.columns as AgColumn[];
+                // a bounded resize or a flex pass sets `flexColumns`; for anything else, re-flex them all here
+                const isResize = flexColumns != null;
+                // the other grid lists the cols its pass re-flexed last; any before them it resized itself
+                const resizedCount = isResize ? masterColumns.length - flexColumns.length : 0;
+                const columns: AgColumn[] = [];
+                const widths: number[] = [];
+                // the cols the other grid resized bound this grid's flex pass as they bounded its own
+                let resizingCols: AgColumn[] | undefined = isResize ? columns : undefined;
+                for (let i = 0, len = masterColumns.length; i < len; ++i) {
+                    const column = masterColumns[i];
+                    const flexedThere = isCenterFlex(column);
+                    // resized there yet still flexing, so it kept its width
+                    const held = flexedThere && i < resizedCount;
+                    const flexed = flexedThere && !held;
+                    const col = column === masterColumn ? otherColumn : colModel.getNonPivotCol(column.colId);
+                    if (!col) {
+                        continue;
                     }
-                }
-                colResize?.setColumnWidths(columnWidths, false, resizedEvent.finished, 'alignedGridChanged');
-
-                // aligned grids are one logical column set, so width ownership travels with the width:
-                // without it, continuous auto-sizing here would undo a user resize made in the master and,
-                // through the resize this grid fires back, undo it there as well. Only for the widths that
-                // landed — this grid's own min/max can reject them, and an unsynchronised column has to stay
-                // eligible for auto-sizing.
-                for (const { key, newWidth, userSized } of columnWidths) {
-                    const col = colModel.getNonPivotCol(key);
-                    if (col?.getActualWidth() === newWidth) {
-                        col.setUserSized(userSized);
+                    if (held && isCenterFlex(col)) {
+                        // here too it keeps its width and flex, and bounds the pass as it bounded the other grid's
+                        if (resizingCols === columns) {
+                            resizingCols = columns.slice();
+                        }
+                        resizingCols!.push(col);
+                        continue;
                     }
+                    if (isFlexedHere(column, col, flexed, isResize)) {
+                        continue;
+                    }
+                    // ownership travels with the width, else auto-sizing here undoes the other grid's user resize
+                    col.setUserSized(column.isUserSized());
+                    // a copied width is a fixed one, even where it leaves this col's width as it was
+                    col.flex = null;
+                    if (flexed && resizingCols === columns) {
+                        // flexed there and fixed here: its width is copied, but it bounds nothing
+                        resizingCols = columns.slice();
+                    } else if (!flexed && resizingCols !== columns) {
+                        resizingCols?.push(col);
+                    }
+                    columns.push(col);
+                    widths.push(column.actualWidth);
                 }
+                colResize?.setClampedColumnWidths(columns, widths, finished, 'alignedGridChanged', resizingCols);
                 break;
             }
         }
@@ -272,4 +266,13 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
         }
     }
+}
+
+function isCenterFlex(col: AgColumn): boolean {
+    return (col.flex ?? 0) > 0 && col.pinnedLane === 1;
+}
+
+/** Whether this grid's own flex pass sizes `other` as the other grid's sized `column`, so its width is not copied. */
+function isFlexedHere(column: AgColumn, other: AgColumn, flexedThere: boolean, isResize: boolean): boolean {
+    return flexedThere && (isResize || other.flex === column.flex) && isCenterFlex(other);
 }

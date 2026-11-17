@@ -33,3 +33,4 @@ osv-scanner.toml
 e2e/*
 playwright.config.ts
 esbuildBuild.cjs
+.build-staging-*

@@ -4,9 +4,17 @@ import { getSitemapXml } from '@ag-website-shared/utils/getSitemapXml';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
-import { DISABLE_MARKDOWN_DOCS, LIVE_SITEMAP_URL, PRODUCTION_GRID_SITE_URL, agGridVersion } from '@constants';
-import { buildLlmsTxt } from '@utils/agentReadinessFiles';
+import {
+    DEFAULT_FRAMEWORK,
+    DISABLE_MARKDOWN_DOCS,
+    LIVE_SITEMAP_URL,
+    PRODUCTION_GRID_SITE_URL,
+    SITE_BASE_URL,
+    agGridVersion,
+} from '@constants';
+import { archiveRoot, buildLlmsTxt } from '@utils/agentReadinessFiles';
 import { navPageNames, navSectionsToIndex } from '@utils/docsNavIndex';
+import { getIsArchive } from '@utils/env';
 import { buildSitePageIndex } from '@utils/sitePageIndex';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
@@ -52,10 +60,14 @@ export async function GET() {
     const output = buildLlmsTxt({
         siteRoot,
         majorVersion: parseVersion(agGridVersion).major,
-        gridDocsPrefix: getFrameworkPath(CANONICAL_FRAMEWORK),
+        // The curated links follow the header's Docs and API links, so they use the default framework.
+        gridDocsPrefix: getFrameworkPath(DEFAULT_FRAMEWORK),
+        chartsDocsPrefix: DEFAULT_FRAMEWORK,
         includeMarkdownDocs: !DISABLE_MARKDOWN_DOCS,
         docsIndex,
         siteIndex,
+        indexDocsPrefix: getFrameworkPath(CANONICAL_FRAMEWORK),
+        archive: getIsArchive() ? { root: archiveRoot(siteRoot, SITE_BASE_URL), version: agGridVersion } : undefined,
     });
 
     return new Response(output, {

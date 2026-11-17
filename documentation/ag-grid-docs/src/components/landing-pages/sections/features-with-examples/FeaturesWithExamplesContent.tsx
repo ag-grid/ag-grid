@@ -29,15 +29,21 @@ export interface FeatureConfig {
 interface FeaturesWithExamplesContentProps {
     features: FeatureConfig[];
     framework: InternalFramework;
+    /** Make the page's framework the visitor's selected framework. Only for pages specific to a framework. */
+    syncFramework?: boolean;
 }
 
-export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentProps> = ({ features, framework }) => {
+export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentProps> = ({
+    features,
+    framework,
+    syncFramework = false,
+}) => {
     const [activeTab, setActiveTab] = useState(0);
     const [contentTarget, setContentTarget] = useState<HTMLElement | null>(null);
 
-    // Sync framework store state so example runners can load correct framework
-    const frameworkForStore = getFrameworkFromInternalFramework(framework);
-    useSyncFrameworkStoreState(frameworkForStore);
+    // Ready the framework store for the example runners. Only a framework landing page also makes its framework the
+    // visitor's selection
+    useSyncFrameworkStoreState(syncFramework ? getFrameworkFromInternalFramework(framework) : undefined);
 
     // Find the content target element for the portal
     useEffect(() => {

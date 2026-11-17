@@ -134,10 +134,10 @@ const registerBorders = (borders: ExcelBorders): number => {
             return false;
         }
 
-        const { style: clS, color: clC } = left || ({} as Border);
-        const { style: crS, color: crC } = right || ({} as Border);
-        const { style: ctS, color: ctC } = top || ({} as Border);
-        const { style: cbS, color: cbC } = bottom || ({} as Border);
+        const { style: clS, color: clC } = left ?? ({} as Border);
+        const { style: crS, color: crC } = right ?? ({} as Border);
+        const { style: ctS, color: ctC } = top ?? ({} as Border);
+        const { style: cbS, color: cbC } = bottom ?? ({} as Border);
 
         if (clS != leftStyle || clC != leftColor) {
             return false;
@@ -291,7 +291,7 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
     getTemplate(defaultFontSize: number) {
         const numberFormats = numberFormatsFactory.getTemplate(registeredNumberFmts);
         const fonts = fontsFactory.getTemplate(
-            registeredFonts.map((font) => ({ ...font, size: font.size != null ? font.size : defaultFontSize }))
+            registeredFonts.map((font) => ({ ...font, size: font.size ?? defaultFontSize }))
         );
         const fills = fillsFactory.getTemplate(registeredFills);
         const borders = bordersFactory.getTemplate(registeredBorders);

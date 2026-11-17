@@ -280,3 +280,16 @@ test('validateAndConvertToPreset creates preset with warnings for invalid param 
     expect(warnings).toHaveLength(1);
     expect(warnings.some((w) => w.includes('accentColor'))).toBe(true);
 });
+
+test('validateAndConvertToPreset keeps a border set part by part', () => {
+    const wrapperBorder = { width: 3, color: '#FF0000', style: 'dashed' };
+    const { preset, warnings } = validateAndConvertToPreset({
+        success: true,
+        params: parse(`{ wrapperBorder: { width: 3, color: "#FF0000", style: "dashed" } }`).params,
+        parts: [],
+        variableWarnings: [],
+    });
+
+    expect(preset.params).toEqual({ wrapperBorder });
+    expect(warnings).toEqual([]);
+});

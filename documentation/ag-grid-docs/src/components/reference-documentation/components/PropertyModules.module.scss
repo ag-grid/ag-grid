@@ -22,12 +22,30 @@
     gap: $spacing-size-2;
 }
 
+.module {
+    display: flex;
+    align-items: center;
+}
+
+// Padded out to a 24px target for touch. The margins absorb the padding, so the icon keeps the
+// spacing it had when it sat inside the module link.
+.enterpriseLink {
+    display: flex;
+    flex-shrink: 0;
+    padding: $spacing-size-1;
+    margin: (-$spacing-size-1) $spacing-size-1 (-$spacing-size-1) 0;
+    border-radius: var(--radius-sm);
+
+    .moduleItem & svg {
+        margin: 0;
+    }
+}
+
 .enterpriseIcon {
     --icon-color: var(--color-enterprise-icon);
 
     height: 20px;
     width: 20px;
-    margin-left: $spacing-size-1;
 }
 
 .moduleCount {
@@ -112,20 +130,23 @@
     max-width: 400px;
     padding-top: $spacing-size-2;
 
-    > a {
-        --icon-color: var(--color-link);
-
-        color: var(--color-link);
-        display: block;
+    > .module {
         padding: $spacing-size-2 $spacing-size-3;
         border-bottom: 1px solid var(--color-border-secondary);
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
 
         &:last-child {
             border-bottom: none;
         }
+    }
+
+    .moduleLink {
+        --icon-color: var(--color-link);
+
+        color: var(--color-link);
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 

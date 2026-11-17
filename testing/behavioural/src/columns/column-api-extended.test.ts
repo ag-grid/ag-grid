@@ -1392,6 +1392,30 @@ describe('Column API — extended coverage', () => {
         });
     });
 
+    describe('setPivotResultColumns', () => {
+        test('pivot result columns without colId or field get ids no other column holds, restored after a clear too', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'A', valueGetter: () => 1 },
+                    { field: 'year', pivot: true, hide: true },
+                ],
+                pivotMode: true,
+            });
+            expect(api.getColumns()!.map((col) => col.getColId())).toEqual(['0', 'year']);
+
+            api.setPivotResultColumns([{ headerName: 'P', valueGetter: () => 2 }]);
+            expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual(['1']);
+            api.setPivotResultColumns(null);
+
+            api.setPivotResultColumns([
+                { headerName: 'P', valueGetter: () => 2 },
+                { headerName: 'Q', valueGetter: () => 3 },
+            ]);
+
+            expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual(['1', '2']);
+        });
+    });
+
     describe('edge cases — resetColumnState', () => {
         test('reset restores initial colDef order/visibility/pinning', async () => {
             const api = gridsManager.createGrid('myGrid', {

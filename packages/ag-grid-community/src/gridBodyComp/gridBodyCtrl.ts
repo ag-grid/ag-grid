@@ -1,4 +1,11 @@
-import { _debounce, _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+import {
+    _addManagedElementListeners,
+    _debounce,
+    _getInnerWidth,
+    _getScrollLeft,
+    _isElementChildOfClass,
+    _setScrollLeft,
+} from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -68,6 +75,7 @@ export class GridBodyCtrl extends BeanStub {
     public eGridBody: HTMLElement;
     public eGridViewport: HTMLElement;
     public eScrollingRows: HTMLElement;
+    public isTreeGrid = false;
     private eTop: HTMLElement;
     private eTopExtraRows: HTMLElement;
     private eBottom: HTMLElement;
@@ -399,11 +407,17 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
+        if (this.isTreeGrid !== isTreeGrid) {
+            this.isTreeGrid = isTreeGrid;
+            for (const rowCtrl of this.beans.rowRenderer.getAllRowCtrls()) {
+                rowCtrl.refreshAriaLevel();
+            }
+        }
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
         for (const element of elements) {
-            this.addManagedElementListeners(element, {
+            _addManagedElementListeners(this, element, {
                 focusin: (e: FocusEvent) => {
                     const { target } = e;
                     // element being focused is nested?
@@ -535,7 +549,7 @@ export class GridBodyCtrl extends BeanStub {
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
-        this.addManagedElementListeners(this.eGridBody, {
+        _addManagedElementListeners(this, this.eGridBody, {
             dragstart: (event: DragEvent) => {
                 if (event.target instanceof HTMLImageElement) {
                     event.preventDefault();
@@ -598,21 +612,24 @@ export class GridBodyCtrl extends BeanStub {
         // we want to listen for clicks directly on the eGridViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = this.onBodyViewportContextMenu.bind(this);
-        this.addManagedElementListeners(eGridViewport, { contextmenu: listener });
+        _addManagedElementListeners(this, eGridViewport, { contextmenu: listener });
         touchSvc?.mockBodyContextMenu(this, listener);
 
-        this.addManagedElementListeners(eGridViewport, {
+        _addManagedElementListeners(this, eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
         });
 
         const onStickyWheel = this.onStickyWheel.bind(this);
 
         for (const container of [eTop, eBottom]) {
-            this.addManagedElementListeners(container, { wheel: onStickyWheel });
+            _addManagedElementListeners(this, container, { wheel: onStickyWheel });
         }
     }
 
     private onStickyWheel(e: WheelEvent): void {
+        if (this.beans.scrollGestureSvc?.isActive()) {
+            return;
+        }
         const { deltaY } = e;
 
         const scrolled = this.scrollVertically(deltaY);
@@ -627,11 +644,11 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         if (this.gos.get('preventDefaultOnContextMenu')) {
-            const event = (mouseEvent || touchEvent)!;
+            const event = (mouseEvent ?? touchEvent)!;
             event.preventDefault();
         }
 
-        const target = (mouseEvent || touch)?.target;
+        const target = (mouseEvent ?? touch)?.target;
         const eTarget = target instanceof Element ? target : null;
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));

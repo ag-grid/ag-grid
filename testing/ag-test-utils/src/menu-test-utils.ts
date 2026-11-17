@@ -1,5 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 
+import { onFileEnd } from './fileScope';
+
 /**
  * happy-dom has no layout engine, so `HTMLElement.offsetParent` is always null and AG Grid's
  * visibility/focus-management code treats popups (menus) as hidden. Polyfill it so menus render
@@ -13,13 +15,20 @@ export function polyfillOffsetParent(): () => void {
             return this.closest('.ag-measurement-container') ? null : this.parentElement;
         },
     });
-    return () => {
+    let restored = false;
+    const restore = () => {
+        if (restored) {
+            return;
+        }
+        restored = true;
         if (original) {
             Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
         } else {
             delete (HTMLElement.prototype as any).offsetParent;
         }
     };
+    onFileEnd(restore);
+    return restore;
 }
 
 /** The rendered menu option element with the given visible text, or `null` if not present. */

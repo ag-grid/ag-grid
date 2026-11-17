@@ -149,7 +149,7 @@ function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
     if (cellEditing || rowEditing) {
         if (isCtrlEnter(event)) {
             // bulk edit, apply currently editing value to all selected cells
-            editSvc?.applyBulkEdit(cellCtrl, beans?.rangeSvc?.getCellRanges() || []);
+            editSvc?.applyBulkEdit(cellCtrl, beans?.rangeSvc?.getCellRanges() ?? []);
             return;
         }
 

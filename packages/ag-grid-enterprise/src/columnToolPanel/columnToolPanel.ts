@@ -1,4 +1,4 @@
-import { _areEqual, _clearElement, _last } from 'ag-stack';
+import { _areEqual, _clearElement, _findNextFocusableElement, _getActiveDomElement, _last } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -22,9 +22,17 @@ import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
+
+export interface ColumnToolPanelChildParams extends ColumnStateUpdateParams {
+    eWrapperPanel?: HTMLElement;
+}
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {}
+    extends
+        IToolPanelParams<TData, TContext, ColumnToolPanelState>,
+        IToolPanelColumnCompParams,
+        ColumnToolPanelChildParams {}
 
 /** Captures full grid state for no-op detection (includes width to distinguish from resize). */
 interface GridStateSnapshot {
@@ -99,6 +107,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const mergedParams = {
             ...defaultParams,
             ...params,
+            eWrapperPanel: this.getGui(),
         };
         this.params = mergedParams;
         this.appliedParams = params;
@@ -207,6 +216,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private readonly onDeferredApply = (): void => {
+        const applyHadFocus = _getActiveDomElement(this.beans) === this.buttonsComp?.getApplyButton();
+        // Found while Apply still has focus: disabling it below drops focus to the page body.
+        const eApplyNeighbour = applyHadFocus ? this.findApplyNeighbour() : null;
         this.isCommitting = true;
         try {
             this.beans.columnStateUpdateStrategy.commit(this.isDeferModeEnabled);
@@ -214,8 +226,26 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.isCommitting = false;
         }
         this.buttonsComp?.updateValidity(false);
+        if (eApplyNeighbour) {
+            eApplyNeighbour.focus();
+        } else if (applyHadFocus) {
+            this.primaryColsPanel.focusList();
+        }
         this.lastKnownGridState = this.captureGridState();
     };
+
+    /** The focusable button left of the focused Apply button, else the one to its right. */
+    private findApplyNeighbour(): HTMLElement | null {
+        const rootNode = this.buttonsComp?.getGui();
+        if (!rootNode) {
+            return null;
+        }
+        const beans = this.beans;
+        return (
+            _findNextFocusableElement({ beans, rootNode, backwards: true }) ??
+            _findNextFocusableElement({ beans, rootNode })
+        );
+    }
 
     private readonly onDeferredCancel = (): void => {
         this.beans.columnStateUpdateStrategy.reset(this.isDeferModeEnabled);

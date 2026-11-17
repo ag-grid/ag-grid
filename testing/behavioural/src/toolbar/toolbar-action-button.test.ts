@@ -1,6 +1,9 @@
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
 // Column chooser dialog focus management checks visibility via `offsetParent`. happy-dom does not
@@ -250,6 +253,108 @@ describe('Toolbar action button item', () => {
             └── LEAF id:0 name:"Alice"
         `);
     });
+
+    test.each([
+        ['csvExport', 'csv'],
+        ['chartsMenuAdd', 'plus'],
+        ['search', 'search'],
+    ] as const)('icon %s renders without its owning module registered', (icon, cssIcon) => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        onTestFinished(() => {
+            vi.restoreAllMocks();
+        });
+
+        const api = gridMgr.createGrid(`icon-name-${icon}`, {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: { items: [{ key: 'iconButton', icon, action: () => {} }] },
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(gridDiv.querySelector(`.ag-toolbar-button .ag-icon-${cssIcon}`)).not.toBeNull();
+        expect(errorSpy).not.toHaveBeenCalled();
+        expect(warnSpy).not.toHaveBeenCalled();
+    });
+});
+
+describe('Toolbar action button item icons', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ToolbarModule, ValidationModule],
+    });
+
+    let warnSpy: MockInstance;
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: [] });
+        warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        warnSpy.mockRestore();
+    });
+
+    async function createToolbarGrid(id: string, icon: string, icons?: GridOptions['icons']) {
+        const api = gridMgr.createGrid(id, {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            icons,
+            toolbar: {
+                items: [
+                    {
+                        key: 'clearFilters',
+                        tooltip: 'Clear Filters',
+                        icon,
+                        action: (params) => params.api.setFilterModel(null),
+                    },
+                ],
+            },
+        });
+        await new GridRows(api, `${id} setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
+        await waitForEvent('firstDataRendered', api);
+        return TestGridsManager.getHTMLElement(api)!.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+    }
+
+    test('renders the provided filter-remove icon without an unknown icon warning', async () => {
+        const button = await createToolbarGrid('action-button-filter-remove', 'filter-remove');
+
+        expect(button.querySelector('span.ag-icon.ag-icon-filter-remove')).not.toBeNull();
+        expect(warnSpy.mock.calls.flat().join(' ')).not.toContain('warning #134');
+    });
+
+    test('a gridOptions.icons override for filter-remove replaces the provided icon', async () => {
+        const button = await createToolbarGrid('action-button-filter-remove-override', 'filter-remove', {
+            'filter-remove': '<span class="custom-filter-remove"></span>',
+        });
+
+        expect(button.querySelector('.custom-filter-remove')).not.toBeNull();
+        expect(button.querySelector('.ag-icon-filter-remove')).toBeNull();
+    });
+
+    test('renders a custom icon registered under its own key in gridOptions.icons', async () => {
+        const button = await createToolbarGrid('action-button-custom-icon', 'my-clear-filters', {
+            'my-clear-filters': '<span class="my-clear-filters-icon"></span>',
+        });
+
+        expect(button.querySelector('.my-clear-filters-icon')).not.toBeNull();
+        expect(warnSpy.mock.calls.flat().join(' ')).not.toContain('warning #134');
+    });
+
+    test.each([
+        { icon: 'filterRemove', suggestion: '`filter-remove`' },
+        { icon: 'filtrAdd', suggestion: '`filterAdd`' },
+        { icon: 'csvExpor', suggestion: '`csvExport`' },
+    ])('an unknown icon $icon suggests $suggestion', async ({ icon, suggestion }) => {
+        await createToolbarGrid(`action-button-unknown-icon-${icon}`, icon);
+
+        const warnings = warnSpy.mock.calls.flat().join(' ');
+        expect(warnings).toContain('warning #134');
+        expect(warnings).toContain(`Did you mean ${suggestion}`);
+    });
 });
 
 describe('Toolbar action button item with column chooser', () => {
@@ -309,5 +414,27 @@ describe('Toolbar action button item with column chooser', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice" country:"Ireland"
             `);
+    });
+
+    test('pressing Escape from a column chooser opened from a button inside another component returns focus to that button', async () => {
+        const api = gridMgr.createGrid('column-chooser-opened-from-component', {
+            columnDefs: [{ field: 'name' }, { field: 'country' }],
+            rowData: [{ name: 'Alice', country: 'Ireland' }],
+        });
+        await waitForEvent('firstDataRendered', api);
+        const widget = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => widget.remove());
+        const button = widget.attachShadow({ mode: 'open' }).appendChild(document.createElement('button'));
+        button.focus();
+        api.showColumnChooser();
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(gridDiv.querySelector('.ag-dialog')).not.toBeNull();
+        await asyncSetTimeout(0);
+
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+        await asyncSetTimeout(0);
+
+        expect(gridDiv.querySelector('.ag-dialog')).toBeNull();
+        expect(widget.shadowRoot!.activeElement).toBe(button);
     });
 });

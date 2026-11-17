@@ -25,6 +25,7 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                 // keeps the JSON itself up to date.
                 '{workspaceRoot}/dist/plugins/ag-grid-generate-example-files/gridOptionsTypes.json',
                 '{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*',
+                `{workspaceRoot}/documentation/${parentProject}/src/example-fake-servers/**/*`,
                 '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
                 { env: 'AG_EXAMPLE_FORMAT' },
             ],

@@ -153,7 +153,6 @@ function createCrossFilterThemeOverrides(
                 series: {
                     fills: {
                         $applyCycle: [
-                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
                             { $palette: 'fills' },
                             {
                                 $if: [
@@ -166,7 +165,6 @@ function createCrossFilterThemeOverrides(
                     },
                     strokes: {
                         $applyCycle: [
-                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
                             { $palette: 'strokes' },
                             {
                                 $if: [

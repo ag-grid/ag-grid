@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
@@ -1067,6 +1068,48 @@ describe('Column Groups', () => {
     });
 
     describe('groups with pinned columns', () => {
+        test.each([
+            { pinned: 'left', keepPinnedVisible: false },
+            { pinned: 'right', keepPinnedVisible: false },
+            { pinned: 'left', keepPinnedVisible: true },
+            { pinned: 'right', keepPinnedVisible: true },
+        ] as const)(
+            'Enter keeps group focus (pinned=$pinned, keepPinnedVisible=$keepPinnedVisible)',
+            async ({ pinned, keepPinnedVisible }) => {
+                const api = await gridsManager.createGridAndWait('groupFocus', {
+                    columnDefs: [
+                        {
+                            groupId: 'medals',
+                            headerName: 'Medals',
+                            children: [
+                                { field: 'total', columnGroupShow: 'closed', pinned },
+                                { field: 'bronze', columnGroupShow: 'open', width: 100, flex: 0 },
+                                ...(keepPinnedVisible ? [{ field: 'silver', pinned }] : []),
+                            ],
+                        },
+                        { field: 'year' },
+                    ],
+                    rowData: [{ total: 3, bronze: 1, year: 2000 }],
+                });
+                api.setFocusedHeader(api.getColumnGroup('medals')!);
+                const originalHeader = document.activeElement;
+                expect(document.activeElement?.textContent).toContain('Medals');
+                const user = userEvent.setup();
+                for (const expanded of [true, false]) {
+                    await user.keyboard('{Enter}');
+                    expect(api.getColumnGroupState().find((group) => group.groupId === 'medals')?.open).toBe(expanded);
+                    await waitFor(() => {
+                        expect(document.activeElement?.classList.contains('ag-header-group-cell')).toBe(true);
+                        expect(document.activeElement?.textContent).toContain('Medals');
+                        expect(document.activeElement?.getAttribute('aria-expanded')).toBe(String(expanded));
+                        if (keepPinnedVisible) {
+                            expect(document.activeElement).toBe(originalHeader);
+                        }
+                    });
+                }
+            }
+        );
+
         test('group children in left pinned section', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {
@@ -1259,6 +1302,57 @@ describe('Column Groups', () => {
             expect(expandedEvents.length).toBeGreaterThan(0);
             // The displayed-children set flipped: 'detail' hid, 'summary' showed.
             expect(displayedChildrenEvents.length).toBeGreaterThan(0);
+        });
+
+        test('group listeners added async run after the change, apart from the same function added sync', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] }],
+            });
+            const calls: string[] = [];
+            const asyncListener = () => calls.push('async');
+            const bothWays = () => calls.push('sync');
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const group = api.getColumnGroup('g')!;
+            providedGroup.addEventListener('expandedChanged', asyncListener, true);
+            providedGroup.addEventListener('expandedChanged', bothWays);
+            providedGroup.addEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays, true);
+            group.addEventListener('displayedChildrenChanged', asyncListener, true);
+            group.addEventListener('displayedChildrenChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays, true);
+
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual(['sync', 'sync']);
+            await waitFor(() => expect(calls).toEqual(['sync', 'sync', 'async', 'async']));
+        });
+
+        test('a provided group with its children hidden ignores removing a listener never added', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a', hide: true }] }, { colId: 'b' }],
+            });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            providedGroup.removeEventListener('expandedChanged', () => {});
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual([true]);
+        });
+
+        test('a listener on a provided group the column definitions keep still hears it open', () => {
+            const columnDefs = (): (ColDef | ColGroupDef)[] => [
+                { groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: columnDefs() });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+
+            api.setGridOption('columnDefs', columnDefs());
+            expect(api.getProvidedColumnGroup('g')).toBe(providedGroup);
+            api.setColumnGroupOpened('g', true);
+
+            expect(calls).toEqual([true]);
         });
 
         test('expand a closed group via setColumnGroupOpened', async () => {
@@ -2215,6 +2309,106 @@ describe('Column Groups', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 a:1 b:2
             `);
+        });
+    });
+
+    describe('groups and padding across columnDefs updates', () => {
+        const ancestors = (api: GridApi, colId: string) => {
+            const found: { groupId: string; padding: boolean }[] = [];
+            for (let group = api.getColumn(colId)!.getOriginalParent(); group; group = group.getOriginalParent()) {
+                found.push({ groupId: group.getGroupId(), padding: group.isPadding() });
+            }
+            return found;
+        };
+
+        test('a group the column definitions keep under a new parent group reports its new level', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }] }],
+            });
+            const group = api.getProvidedColumnGroup('g')!;
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'p', children: [{ groupId: 'g', children: [{ colId: 'a' }] }] },
+            ]);
+
+            expect(api.getProvidedColumnGroup('g')).toBe(group);
+            expect(group.getLevel()).toBe(1);
+        });
+
+        test('a column beside a group sits under as many padding groups as the tree is deep after the tree deepens', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'x' }] }, { colId: 'a' }],
+            });
+            expect(ancestors(api, 'a').map((group) => group.padding)).toEqual([true]);
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'p', children: [{ groupId: 'g', children: [{ colId: 'x' }] }] },
+                { colId: 'a' },
+            ]);
+
+            expect(ancestors(api, 'a').map((group) => group.padding)).toEqual([true, true]);
+        });
+
+        test('columns from two padding groups moved into one group share one padding group holding both', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { groupId: 'k', children: [{ colId: 'b' }] },
+                    { groupId: 'g', children: [{ groupId: 'h', children: [{ colId: 'x' }] }] },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'k', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { groupId: 'g', children: [{ groupId: 'h', children: [{ colId: 'x' }] }] },
+            ]);
+
+            const parentOf = (colId: string) => api.getColumn(colId)!.getOriginalParent()!;
+            expect({
+                same: parentOf('a') === parentOf('b'),
+                children: parentOf('b')
+                    .getChildren()
+                    .map((child) => (child.isColumn ? child.getColId() : child.getGroupId())),
+                ancestors: ancestors(api, 'b'),
+            }).toEqual({
+                same: true,
+                children: ['a', 'b'],
+                ancestors: [
+                    { groupId: parentOf('b').getGroupId(), padding: true },
+                    { groupId: 'k', padding: false },
+                ],
+            });
+        });
+
+        test('a column taken out of a removed group gets a padding group, not the removed group', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'g', children: [{ colId: 'a' }] },
+                    { groupId: 'h', children: [{ colId: 'b' }] },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [{ groupId: 'h', children: [{ colId: 'b' }] }, { colId: 'a' }]);
+
+            const [parent] = ancestors(api, 'a');
+            expect(parent.padding).toBe(true);
+            expect(parent.groupId).not.toBe('g');
+        });
+
+        test('the column group state keeps a padding group the column definitions keep', () => {
+            const columnDefs = (): (ColDef | ColGroupDef)[] => [
+                { groupId: 'g', children: [{ colId: 'x' }] },
+                { colId: 'a' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: columnDefs() });
+            const before = api.getColumnGroupState().map((state) => state.groupId);
+            const [padding] = ancestors(api, 'a');
+            expect(before).toContain(padding.groupId);
+
+            api.setGridOption('columnDefs', columnDefs());
+
+            expect(ancestors(api, 'a')[0].groupId).toBe(padding.groupId);
+            expect(api.getColumnGroupState().map((state) => state.groupId)).toEqual(before);
         });
     });
 });

@@ -1,7 +1,7 @@
 import type {
+    AgBeanCollection,
     AgComponent,
     AgComponentEvent,
-    AgCoreBeanCollection,
     AgElementParams,
     AgStylesChangedEvent,
     BaseEvents,
@@ -20,13 +20,17 @@ import {
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
-    _waitUntil,
+    _throttleToFrame,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
 
 import agVirtualListCSS from './agVirtualList.css';
 import type { VirtualListModel } from './iVirtualList';
+
+/** How long `awaitStable` polls for the container to reach its height before running the callbacks anyway. */
+const AWAIT_STABLE_TIMEOUT_MS = 100;
+const AWAIT_STABLE_POLL_MS = 10;
 
 export interface VirtualListParams<C> {
     cssIdentifier?: string;
@@ -35,6 +39,8 @@ export interface VirtualListParams<C> {
     retainRoleWhenEmpty?: boolean;
     listName?: string;
     moveItemCallback?: (item: C, isUp: boolean) => void;
+    /** Called after every pass that draws the visible rows, whether a scroll, a resize or a refresh triggered it. */
+    onRowsDrawn?: () => void;
 }
 
 function getVirtualListTemplate<TComponentSelectorType extends string>(
@@ -55,11 +61,11 @@ function getVirtualListTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgVirtualList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     C extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> = AgComponent<
         TBeanCollection,
@@ -94,7 +100,10 @@ export class AgVirtualList<
     private isHeightFromTheme: boolean = true;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
+    /** 0 while nothing waits: timer handles are always positive. */
+    private awaitStableInterval = 0;
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
+    private readonly onRowsDrawn?: () => void;
 
     constructor(
         private readonly stopPropagationCallbacks?: StopPropagationCallbacks,
@@ -103,13 +112,20 @@ export class AgVirtualList<
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
         this.registerCSS(agVirtualListCSS);
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
+        const {
+            cssIdentifier = 'default',
+            ariaRole = 'listbox',
+            listName,
+            moveItemCallback,
+            onRowsDrawn,
+        } = params ?? {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
         this.retainRoleWhenEmpty = params?.retainRoleWhenEmpty ?? false;
         this.listName = listName;
         this.moveItemCallback = moveItemCallback;
+        this.onRowsDrawn = onRowsDrawn;
     }
 
     public postConstruct(): void {
@@ -141,7 +157,7 @@ export class AgVirtualList<
 
     private refreshAriaProperties(): void {
         const translate = this.getLocaleTextFunc();
-        const listName = translate('ariaDefaultListName', this.listName || 'List');
+        const listName = this.listName || translate('ariaDefaultListName', 'List');
         const ariaEl = this.eContainer;
 
         _setAriaRole(
@@ -156,7 +172,11 @@ export class AgVirtualList<
         const destroyObserver = _observeResize(
             this.beans,
             this.getGui(),
-            this.throttleToFrame(() => this.drawVirtualRows())
+            _throttleToFrame(
+                this,
+                () => this.beans,
+                () => this.drawVirtualRows()
+            )
         );
         this.addDestroyFunc(destroyObserver);
     }
@@ -340,7 +360,7 @@ export class AgVirtualList<
             return false;
         }
 
-        const rowTopPixel = index * this.rowHeight;
+        const rowTopPixel = this.eContainer.offsetTop + index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
         const eGui = this.getGui();
 
@@ -418,25 +438,35 @@ export class AgVirtualList<
     }
 
     public awaitStable(callback: () => void): void {
+        if (!this.isAlive()) {
+            return;
+        }
         this.awaitStableCallbacks.push(callback);
         if (this.awaitStableCallbacks.length > 1) {
             return;
         }
         const rowCount = this.model.getRowCount();
-        _waitUntil(
-            this,
-            () => this.eContainer.clientHeight >= rowCount * this.rowHeight,
-            () => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                const callbacks = this.awaitStableCallbacks;
-                this.awaitStableCallbacks = [];
-                for (const c of callbacks) {
-                    c();
-                }
+        const startTime = Date.now();
+        const runIfStable = (): boolean => {
+            if (
+                this.eContainer.clientHeight < rowCount * this.rowHeight &&
+                Date.now() - startTime <= AWAIT_STABLE_TIMEOUT_MS
+            ) {
+                return false;
             }
-        );
+            // Cleared before the callbacks run: one of them may start the next wait.
+            window.clearInterval(this.awaitStableInterval);
+            this.awaitStableInterval = 0;
+            const callbacks = this.awaitStableCallbacks;
+            this.awaitStableCallbacks = [];
+            for (let i = 0, len = callbacks.length; i < len; ++i) {
+                callbacks[i]();
+            }
+            return true;
+        };
+        if (!runIfStable()) {
+            this.awaitStableInterval = window.setInterval(runIfStable, AWAIT_STABLE_POLL_MS);
+        }
     }
 
     private canSoftRefresh(softRefresh: boolean | undefined): boolean {
@@ -472,6 +502,8 @@ export class AgVirtualList<
 
             this.ensureRowsRendered(firstRow, lastRow, softRefresh);
         }
+
+        this.onRowsDrawn?.();
     }
 
     private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
@@ -586,6 +618,8 @@ export class AgVirtualList<
         }
 
         this.clearVirtualRows();
+        window.clearInterval(this.awaitStableInterval);
+        this.awaitStableInterval = 0;
         this.awaitStableCallbacks.length = 0;
         super.destroy();
     }

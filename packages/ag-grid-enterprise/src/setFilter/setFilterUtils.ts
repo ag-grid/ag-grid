@@ -120,25 +120,15 @@ export function translateForSetFilter(
 export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans: BeanCollection): void {
     // apply default options to match Excel behaviour, unless they have already been specified
     if (params.excelMode === 'windows') {
-        if (!params.buttons) {
-            params.buttons = ['apply', 'cancel'];
-        }
+        params.buttons ??= ['apply', 'cancel'];
 
-        if (params.closeOnApply == null) {
-            params.closeOnApply = true;
-        }
+        params.closeOnApply ??= true;
     } else if (params.excelMode === 'mac') {
-        if (!params.buttons) {
-            params.buttons = ['reset'];
-        }
+        params.buttons ??= ['reset'];
 
-        if (params.applyMiniFilterWhileTyping == null) {
-            params.applyMiniFilterWhileTyping = true;
-        }
+        params.applyMiniFilterWhileTyping ??= true;
 
-        if (params.debounceMs == null) {
-            params.debounceMs = 500;
-        }
+        params.debounceMs ??= 500;
     }
     if (params.excelMode && params.defaultToNothingSelected) {
         params.defaultToNothingSelected = false;

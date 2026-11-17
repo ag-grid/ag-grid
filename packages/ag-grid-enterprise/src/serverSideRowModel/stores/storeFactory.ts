@@ -55,10 +55,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
         ssrmParams: SSRMParams,
         userStoreParams?: ServerSideGroupLevelParams
     ): number | undefined {
-        const maxBlocksInCache =
-            userStoreParams?.maxBlocksInCache != null
-                ? userStoreParams.maxBlocksInCache
-                : this.gos.get('maxBlocksInCache');
+        const maxBlocksInCache = userStoreParams?.maxBlocksInCache ?? this.gos.get('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -80,8 +77,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
     }
 
     private getBlockSize(userStoreParams?: ServerSideGroupLevelParams): number | undefined {
-        const blockSize =
-            userStoreParams?.cacheBlockSize != null ? userStoreParams.cacheBlockSize : this.gos.get('cacheBlockSize');
+        const blockSize = userStoreParams?.cacheBlockSize ?? this.gos.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;

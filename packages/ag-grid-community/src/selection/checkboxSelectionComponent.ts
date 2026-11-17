@@ -113,7 +113,7 @@ export class CheckboxSelectionComponent extends Component {
         });
 
         const isRowSelectableFunc = _getIsRowSelectable(this.gos);
-        const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
+        const checkboxVisibleIsDynamic = isRowSelectableFunc ?? typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);

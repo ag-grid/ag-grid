@@ -270,8 +270,8 @@ export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
 /** @knipIgnore Used in tests */
 export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 /** @knipIgnore Used in tests */
-export type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
-    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+export type NestedPath<TData, Prefix extends string, TValue, TDepth extends any[]> = TData extends object
+    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TData, TValue, TDepth>}`
     : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -373,7 +373,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     refData?: RefData;
     /**
      * Function to return a string key for a value.
-     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
+     * This string is used for grouping and Set filtering.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
      */
     keyCreator?: KeyCreatorFunc<TData, TValue>;
@@ -914,7 +914,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
+     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. `min` and `max` support `number`, `bigint` and date values (`date`, `dateTime`, `dateString` and `dateTimeString` cell data types). Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
@@ -924,6 +924,19 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
+    /**
+     * Function to compute the value shown for this column on group rows, total rows, the grand total row and
+     * tree data parent rows, while the column is aggregated. Not called for leaf rows, group columns or pivot
+     * result columns. An open group whose aggregate is shown on its total row displays no value, so the getter is
+     * not called to display it.
+     * <br /><br />
+     * The returned value is the cell value used for rendering, export, clipboard and `api.getCellValue`, and for
+     * client-side sorting and filtering. It is not stored, so parent groups still aggregate the computed aggregates
+     * of their children.
+     * Return `params.value` to keep the value shown without this function.
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    aggValueGetter?: AggValueGetterFunc<TData, TValue>;
     /**
      * The position of this column in the order of value columns when aggregating in pivot mode.
      * When aggregating by a single column, any number can be used. When aggregating by multiple
@@ -988,16 +1001,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `ShowValuesAsModule`
      */
     enableShowValuesAs?: boolean;
-    /**
-     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
-     *
-     * This can be used to group/pivot by values derived from a source column. The grid provides hierarchy types related to date components.
-     * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
-     * @agModule `RowGroupingModule` / `PivotModule`
-     *
-     * @deprecated
-     */
-    rowGroupingHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
     /**
      * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *
@@ -1313,6 +1316,26 @@ export interface ValueGetterParams<TData = any, TValue = any, TContext = any> ex
 }
 export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueGetterParams<TData, TValue, TContext>
+) => TValue | null | undefined;
+export interface AggValueGetterParams<TData = any, TValue = any, TContext = any> extends ValueGetterParams<
+    TData,
+    TValue,
+    TContext
+> {
+    /** The value shown without `aggValueGetter`. */
+    value: TValue | null | undefined;
+    /** The column's active aggregation function. */
+    aggFunc: string | IAggFunc<TData, TValue> | null | undefined;
+    /**
+     * The group row's computed aggregates, keyed by column ID. Read-only.
+     * `undefined` with the Server-Side Row Model, where aggregates are read from `data`.
+     */
+    aggData: { [colId: string]: any } | undefined;
+    /** This column's computed aggregate. `undefined` with the Server-Side Row Model. */
+    aggValue: TValue | null | undefined;
+}
+export type AggValueGetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: AggValueGetterParams<TData, TValue, TContext>
 ) => TValue | null | undefined;
 export type HeaderLocation =
     | 'chart'

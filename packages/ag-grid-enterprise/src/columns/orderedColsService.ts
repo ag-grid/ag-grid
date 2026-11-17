@@ -46,21 +46,24 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
     }
 
     public override extractCol(col: AgColumn, colIsNew: boolean): void {
-        const colDef = col.colDef;
-        const indexProp = this.indexProp;
-        const initialIndexProp = this.initialIndexProp;
-        let include = decideExtractCol(colDef[this.enableProp], colDef[indexProp]);
-        if (include === undefined) {
-            // At extract time membership still reflects the prior state — the order set is the role-generic read.
-            include = colIsNew
-                ? decideExtractCol(colDef[this.initialEnableProp], colDef[initialIndexProp])
-                : this.activeColSet.has(col);
-        }
-        if (!include) {
+        if (!this.willExtractCol(col, colIsNew)) {
             return;
         }
-        const key = colDef[indexProp] ?? (colIsNew ? colDef[initialIndexProp] : null);
+        const colDef = col.colDef;
+        const key = colDef[this.indexProp] ?? (colIsNew ? colDef[this.initialIndexProp] : null);
         this.bucketByKey(col, key);
+    }
+
+    public willExtractCol(col: AgColumn, colIsNew: boolean): boolean {
+        const colDef = col.colDef;
+        const include = decideExtractCol(colDef[this.enableProp], colDef[this.indexProp]);
+        if (include !== undefined) {
+            return include;
+        }
+        // At extract time membership still reflects the prior state — the order set is the role-generic read.
+        return colIsNew
+            ? !!decideExtractCol(colDef[this.initialEnableProp], colDef[this.initialIndexProp])
+            : this.activeColSet.has(col);
     }
 
     /** This col's hierarchy virtuals (date-part group levels) to seat immediately before it; undefined if none. */

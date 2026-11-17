@@ -12,6 +12,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
+import { getColumnHeaderMenuAnchor } from '../../headerUtils';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
@@ -292,6 +293,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             this.beans.menuSvc?.toggleColumnMenu({
                 column: params.column,
                 buttonElement: element,
+                getButtonElement: () => getColumnHeaderMenuAnchor(this.beans, params.column as AgColumn),
                 positionBy: 'button',
                 onClosedCallback: () => {
                     if (!currentSuppressMenuHide) {
@@ -463,6 +465,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
                     this.beans.menuSvc?.toggleFilterMenu({
                         column: params.column,
                         buttonElement: eFilterButton,
+                        getButtonElement: () => getColumnHeaderMenuAnchor(this.beans, params.column as AgColumn, true),
                         containerType: 'columnFilter',
                         positionBy: 'button',
                     }) ?? 'declined'

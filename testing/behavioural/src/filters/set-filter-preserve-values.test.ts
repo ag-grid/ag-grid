@@ -569,17 +569,17 @@ describe('Set Filter preservePreviousValues', () => {
             expect(handlerOf(api).getFilterKeys().sort()).toEqual(['C1', 'K']);
         });
 
-        test('defaults to 100 unchecked retained values, and a new limit applies from the next reload', async () => {
+        test('defaults to 1000 unchecked retained values, and a new limit applies from the next reload', async () => {
             const api = createGrid(rows('K'));
             await asyncSetTimeout(0);
             await setModel(api, ['K']);
             const churnMany = async (prefix: string) => {
-                await setRowData(api, rows('K', ...Array.from({ length: 105 }, (_, i) => `${prefix}${i}`)));
+                await setRowData(api, rows('K', ...Array.from({ length: 1005 }, (_, i) => `${prefix}${i}`)));
                 await setRowData(api, rows('K'));
             };
 
             await churnMany('u');
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(101);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(1001);
 
             api.setGridOption('columnDefs', [
                 {
@@ -590,7 +590,7 @@ describe('Set Filter preservePreviousValues', () => {
             ]);
             await asyncSetTimeout(0);
             await churnMany('v');
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(2006);
 
             api.setGridOption('columnDefs', [
                 {
@@ -600,7 +600,7 @@ describe('Set Filter preservePreviousValues', () => {
                 },
             ]);
             await asyncSetTimeout(0);
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(2006);
             await setRowData(api, rows('K'));
             expect(handlerOf(api).getFilterKeys()).toHaveLength(11);
         });

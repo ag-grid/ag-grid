@@ -1,3 +1,4 @@
+import noMismatchedGenericArgs from '../../eslint-rules/no-mismatched-generic-args.mjs';
 import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
@@ -13,6 +14,19 @@ export default [
         },
     },
     {
-        ignores: ['updateGridAndColumnProperties.cjs', 'eslint.config.mjs', 'vite.config.d.ts'],
+        ignores: ['updateGridAndColumnProperties.cjs', 'eslint.config.mjs', 'vite.config.d.ts', 'vite.config.d.mts'],
+    },
+    {
+        files: ['src/**/*.ts'],
+        plugins: { ag: { rules: { 'no-mismatched-generic-args': noMismatchedGenericArgs } } },
+        languageOptions: {
+            parserOptions: {
+                project: ['./tsconfig.app.json'],
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        rules: {
+            'ag/no-mismatched-generic-args': 'error',
+        },
     },
 ];

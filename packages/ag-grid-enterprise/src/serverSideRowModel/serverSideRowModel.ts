@@ -1,4 +1,4 @@
-import { _areEqual, _debounce, _jsonEquals } from 'ag-stack';
+import { _areEqual, _jsonEquals } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -96,8 +96,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private storeParams: SSRMParams;
 
     private started = false;
+    private rowCountReady = false;
 
-    private lastDefaultRowHeight?: number;
+    private lastRowHeight?: number;
 
     private managingPivotResultColumns = false;
 
@@ -143,7 +144,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 /**
                  * Following properties omitted as they are likely to come with undesired  side effects.
                  * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
-                 * 'getServerSideRowGroupKey',
                  * */
                 'masterDetail',
                 'treeData',
@@ -152,10 +152,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
-        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow'], () =>
-            this.onStoreUpdated()
+        this.addManagedPropertyListeners(
+            ['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow', 'alwaysShowGrandTotalRow'],
+            () => this.onStoreUpdated()
         );
-        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
         this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
@@ -354,17 +354,15 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private onRowHeightStyleChanged(): void {
-        const { rootNode, beans } = this;
-        if (!rootNode || beans.rowAutoHeight?.active) {
+        if (!this.rootNode) {
             return;
         }
-        // `resetRowHeights` walks every node, so skip a change that leaves the height alone. The
-        // dummy root is not a displayed row, and resolving it would hand `getRowHeight` empty data.
-        const defaultRowHeight = beans.environment.getDefaultRowHeight();
-        if (defaultRowHeight === this.lastDefaultRowHeight) {
+        // `resetRowHeights` walks every node, so skip a change that leaves the configured uniform height alone.
+        const rowHeight = _getRowHeightAsNumber(this.beans);
+        if (rowHeight === this.lastRowHeight) {
             return;
         }
-        this.lastDefaultRowHeight = defaultRowHeight;
+        this.lastRowHeight = rowHeight;
         this.resetRowHeights();
     }
 
@@ -375,15 +373,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
-        const rootNodeHeight = _getRowHeightForNode(this.beans, this.rootNode);
-        this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
-        if (this.rootNode.sibling) {
-            const rootNodeSibling = _getRowHeightForNode(this.beans, this.rootNode.sibling);
-            this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
+        // The dummy root is never displayed, but its sibling is the grand total row.
+        const grandTotal = this.rootNode.sibling;
+        if (grandTotal) {
+            this.resetRowHeight(grandTotal);
         }
 
-        // when pivotMode but pivot not active, root node is displayed on its own
-        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
         if (atLeastOne) {
             this.onRowHeightChanged();
         }
@@ -391,24 +386,40 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private resetRowHeightsForAllRowNodes(): boolean {
         let atLeastOne = false;
+        // A loading row has no data to answer `getRowHeight` for, so it takes the uniform height, as when it was made.
+        const loadingRowHeight = _getRowHeightAsNumber(this.beans);
         this.forEachNode((rowNode) => {
-            const rowHeightForNode = _getRowHeightForNode(this.beans, rowNode);
-            rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
+            atLeastOne = true;
+            if (rowNode.stub) {
+                rowNode.setRowHeight(loadingRowHeight);
+                return;
+            }
+            this.resetRowHeight(rowNode);
             const detailNode = rowNode.detailNode;
             if (detailNode) {
-                const detailRowHeight = _getRowHeightForNode(this.beans, detailNode);
-                detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
+                this.resetRowHeight(detailNode);
             }
 
             const sibling = rowNode.sibling;
             if (sibling) {
-                const siblingRowHeight = _getRowHeightForNode(this.beans, sibling);
-                sibling.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+                this.resetRowHeight(sibling);
             }
-            atLeastOne = true;
         });
 
         return atLeastOne;
+    }
+
+    private resetRowHeight(rowNode: RowNode): void {
+        const rowHeight = _getRowHeightForNode(this.beans, rowNode);
+        rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+    }
+
+    /** Called by the root store as it is constructed: dispatches `rowCountReady` once per grid. */
+    public onRootStoreCreated(): void {
+        if (!this.rowCountReady) {
+            this.rowCountReady = true;
+            this.eventSvc.dispatchEvent({ type: 'rowCountReady' });
+        }
     }
 
     public resetRootStore(): void {
@@ -418,6 +429,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.beans.selectionSvc?.syncInRowNode(this.rootNode);
+        this.lastRowHeight = _getRowHeightAsNumber(this.beans);
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();
@@ -617,7 +629,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public getOverlayType(): OverlayType | null {
         // server side does not use the loading overlay as it has its own mechanism
         const rootStore = this.getRootStore();
-        if (rootStore?.getDisplayIndexEnd() === 0) {
+        // the display indexes count an inline grand total row, which is not a data row
+        const grandTotalRowCount = this.rootNode?.sibling?.displayed ? 1 : 0;
+        if (rootStore?.getDisplayIndexEnd() === grandTotalRowCount) {
             return this.filterManager?.isAnyFilterPresent() ? 'noMatchingRows' : 'noRows';
         }
         return null;
@@ -679,8 +693,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public refreshStore(params: RefreshServerSideParams = {}): void {
-        const route = params.route ? params.route : [];
-        this.executeOnStore(route, (store) => store.refreshStore(params.purge == true));
+        const route = params.route ?? [];
+        this.executeOnStore(route, (store) => store.refreshStore(params.purge === true));
     }
 
     public getStoreState(): ServerSideGroupLevelState[] {
@@ -774,13 +788,5 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();
-    }
-
-    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
-    /**
-     * @deprecated v33.1
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 }

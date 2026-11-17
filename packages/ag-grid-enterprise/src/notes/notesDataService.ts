@@ -84,7 +84,11 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
     private isFullWidthDataSource(
         dataSource?: NotesDataSource | FullWidthNotesDataSource
     ): dataSource is FullWidthNotesDataSource {
-        return !!dataSource && 'supportsFullWidthRows' in dataSource && dataSource.supportsFullWidthRows === true;
+        if (!dataSource || !('supportsFullWidthRows' in dataSource)) {
+            return false;
+        }
+        const supportsFullWidthRows: unknown = dataSource.supportsFullWidthRows;
+        return supportsFullWidthRows === true;
     }
 
     public override destroy(): void {

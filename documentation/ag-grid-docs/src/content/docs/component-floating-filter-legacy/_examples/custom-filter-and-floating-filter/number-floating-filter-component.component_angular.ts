@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
@@ -12,7 +12,7 @@ import type { IFloatingFilterParams } from 'ag-grid-community';
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
     params!: IFloatingFilterParams;
-    currentValue: number | null | string = null;
+    currentValue = signal<number | null | string>(null);
 
     agInit(params: IFloatingFilterParams): void {
         this.params = params;
@@ -21,14 +21,14 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
     onParentModelChanged(parentModel: any) {
         // When the filter is empty we will receive a null value here
         if (parentModel == null) {
-            this.currentValue = null;
+            this.currentValue.set(null);
         } else {
-            this.currentValue = parentModel;
+            this.currentValue.set(parentModel);
         }
     }
 
     onInputBoxChanged() {
-        if (this.currentValue == null) {
+        if (this.currentValue() == null) {
             // Remove the filter
             this.params.parentFilterInstance((instance: any) => {
                 instance.myMethodForTakingValueFromFloatingFilter(null);
@@ -37,7 +37,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
         }
 
         this.params.parentFilterInstance((instance: any) => {
-            instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
+            instance.myMethodForTakingValueFromFloatingFilter(this.currentValue());
         });
     }
 }

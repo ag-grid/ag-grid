@@ -10,6 +10,8 @@ import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type {
+    AggValueGetterFunc,
+    AggValueGetterParams,
     ColDef,
     ColKey,
     KeyCreatorParams,
@@ -279,7 +281,20 @@ export class ValueService extends BeanStub implements NamedBean {
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
+    // The single place `colDef.aggValueGetter` is applied; a column without it pays one property read.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+        const value = this.getRawValueFromData(column, rowNode, ignoreAggData);
+        const aggValueGetter = column.aggValueGetter;
+        return aggValueGetter && !ignoreAggData
+            ? this.applyAggValueGetter(aggValueGetter, column, rowNode, value)
+            : value;
+    }
+
+    /**
+     * {@link getValueFromData} without `colDef.aggValueGetter`: the value the grid stores and derives from.
+     * For reads that must not see the getter's result, such as parent aggregation and group keys.
+     */
+    public getRawValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -387,7 +402,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 } else if (data) {
                     // field read deferred to here — skipped entirely on the valueGetter branch above
                     const field = column.field;
-                    if (field) {
+                    if (field && !column.fieldHasProtoKey) {
                         const fieldPath = column.fieldPath;
                         treeValue = fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
                     }
@@ -439,7 +454,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return ignoreSsrmAggData ? undefined : this.executeValueGetter(valueGetter, data, column, rowNode);
         }
         const field = column.field;
-        if (!field || !data || ignoreSsrmAggData) {
+        if (!field || !data || ignoreSsrmAggData || column.fieldHasProtoKey) {
             return undefined;
         }
         const fieldPath = column.fieldPath;
@@ -492,6 +507,10 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        // preserve evaluated errors; ordinary strings and successful calculations still use the formatter
+        if (this.formula?.isFormulaErrorValue(column, node, value)) {
+            return value;
+        }
         let result: string | null = null;
         // supplied formatter wins (e.g. set filter items have their own); otherwise use the column's
         const formatter = suppliedFormatter ?? (useFormatterFromColumn ? column.valueFormatter : undefined);
@@ -562,8 +581,9 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        // Get old value from stored data, ignoring any pending edit state
-        const oldValue = this.getValueFromData(column, rowNode);
+        // Get old value from stored data, ignoring any pending edit state. Raw: on a group row an edit replaces the
+        // stored aggregate, so `aggValueGetter`'s result is not the value being replaced.
+        const oldValue = this.getRawValueFromData(column, rowNode);
 
         const data = rowNode.data;
         const params: ValueSetterParams = {
@@ -663,7 +683,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.valueCache?.onDataChanged();
 
         const savedValue =
-            savedValueOverride === undefined ? this.getValueFromData(column, rowNode) : savedValueOverride;
+            savedValueOverride === undefined ? this.getRawValueFromData(column, rowNode) : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
@@ -773,7 +793,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        if (!rowData || !field) {
+        if (!rowData || !field || column.fieldHasProtoKey) {
             return false;
         }
         const fieldPath = column.fieldPath;
@@ -784,11 +804,17 @@ export class ValueService extends BeanStub implements NamedBean {
                 rowData[field] = newValue;
             }
         } else {
-            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`)
+            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`). Only objects
+            // are written through, so a write never lands on a function (such as `constructor`) or a primitive.
             let currentObject = rowData;
             const lastIndex = fieldPath.length - 1;
             for (let i = 0; i < lastIndex && currentObject; ++i) {
-                currentObject = currentObject[fieldPath[i]];
+                const key = fieldPath[i];
+                const nextObject = currentObject[key];
+                if (nextObject != null && typeof nextObject !== 'object') {
+                    return this.refuseFieldWrite(field, key);
+                }
+                currentObject = nextObject;
             }
             if (currentObject) {
                 const lastPiece = fieldPath[lastIndex];
@@ -799,6 +825,12 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
         return !valuesAreSame;
+    }
+
+    /** Warns (once per field and key) that a write through `field` was refused at `key`, and reports no change. */
+    private refuseFieldWrite(field: string, key: string): false {
+        this.beans.log.warn(339, { field, key });
+        return false;
     }
 
     private dispatchCellValueChangedEvent(
@@ -863,6 +895,35 @@ export class ValueService extends BeanStub implements NamedBean {
             valueCache.setValue(rowNode as RowNode, column.colId, result);
         }
         return result;
+    }
+
+    /** Applies `aggValueGetter` to an aggregated column's value on a group, total, grand total or tree data parent
+     *  row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows and group columns. */
+    private applyAggValueGetter(
+        aggValueGetter: AggValueGetterFunc,
+        column: AgColumn,
+        rowNode: IRowNode,
+        value: any
+    ): any {
+        // `footer` admits the SSRM grand total row, which is not a group row.
+        if (!(rowNode.group || rowNode.footer) || !column.aggregationActive || column.showRowGroup) {
+            return value;
+        }
+        const aggData = rowNode.aggData;
+        const params: AggValueGetterParams = {
+            api: this.gridApi,
+            context: this.gridOptions.context,
+            data: rowNode.data,
+            node: rowNode,
+            column,
+            colDef: column.colDef,
+            getValue: (colKey) => this.getValueCallback(rowNode, colKey),
+            value,
+            aggFunc: column.aggFunc,
+            aggData,
+            aggValue: aggData?.[column.colId],
+        };
+        return aggValueGetter(params);
     }
 
     private getValueCallback(node: IRowNode, colKey: ColKey): any {

@@ -235,31 +235,35 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsById([getRowIdRaw({ data: { country: 'United States' }, api })], api);
             });
 
-            test("with click toggle, clicking a group that is its parent's only row deselects it", async () => {
-                const [api, actions] = await createGridAndWait(
-                    {
-                        ...groupGridOptions,
-                        rowSelection: {
-                            mode: 'multiRow',
-                            groupSelects: 'descendants',
-                            enableClickSelection: true,
+            test.each([undefined, 'bottom'] as const)(
+                "with click toggle, clicking a group that is its parent's only row deselects it, group total row %s",
+                async (groupTotalRow) => {
+                    const [api, actions] = await createGridAndWait(
+                        {
+                            ...groupGridOptions,
+                            groupTotalRow,
+                            rowSelection: {
+                                mode: 'multiRow',
+                                groupSelects: 'descendants',
+                                enableClickSelection: true,
+                            },
                         },
-                    },
-                    clickToggleSelection
-                );
+                        clickToggleSelection
+                    );
 
-                const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
-                const gymnastics = getRowIdRaw({ data: { sport: 'Gymnastics' }, parentKeys: ['Russia'], api });
-                api.getRowNode(russia)!.setExpanded(true);
-                await waitFor(() => expect(api.getRowNode(gymnastics)).toBeDefined());
+                    const russia = getRowIdRaw({ data: { country: 'Russia' }, api });
+                    const gymnastics = getRowIdRaw({ data: { sport: 'Gymnastics' }, parentKeys: ['Russia'], api });
+                    api.getRowNode(russia)!.setExpanded(true);
+                    await waitFor(() => expect(api.getRowNode(gymnastics)).toBeDefined());
 
-                // Russia holds this sport alone, so selecting it marks Russia selected as well
-                actions.clickRowByIndex(2);
-                assertSelectedRowsById([russia, gymnastics], api);
+                    // Russia holds this sport alone, so selecting it marks Russia selected as well
+                    actions.clickRowByIndex(2);
+                    assertSelectedRowsById([russia, gymnastics], api);
 
-                actions.clickRowByIndex(2);
-                assertSelectedRowsById([], api);
-            });
+                    actions.clickRowByIndex(2);
+                    assertSelectedRowsById([], api);
+                }
+            );
 
             test('with click toggle, clicking a row does not deselect it while filtered-out siblings are selected', async () => {
                 const rows = [

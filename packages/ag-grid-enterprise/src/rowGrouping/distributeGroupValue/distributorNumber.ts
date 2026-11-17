@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 
 import type { AggFuncInput, DistributionStrategy } from './valueConversion';
-import { detectPrecision, isNumericLike, resolveStrategy, toNumber } from './valueConversion';
+import { detectPrecision, isNumericLike, readStoredValue, resolveStrategy, toNumber } from './valueConversion';
 
 interface ValueAndCount {
     readonly value: number;
@@ -103,7 +103,7 @@ export class DistributorNumber {
             const { colDef, api, context } = this.params;
             return toNumber(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
         }
-        return toNumber(node.getDataValue(column, 'value'));
+        return toNumber(readStoredValue(node, column, 'value'));
     }
 
     /**
@@ -118,7 +118,7 @@ export class DistributorNumber {
             const { colDef, api, context } = this.params;
             raw = getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params });
         } else {
-            raw = node.getDataValue(column);
+            raw = readStoredValue(node, column);
         }
         if (node.group) {
             if (raw != null && typeof raw === 'object') {

@@ -12,7 +12,7 @@ This section covers how custom aggregation functions can be supplied and used in
 Custom functions can be registered to the grid by name via the `aggFuncs` grid option. The functions can
 then be applied to columns by referencing the function name in the column definition. The default values of
 `"sum"`, `"min"`, `"max"`, `"first"`, `"last"`, `"count"` and `"avg"` can also be overwritten with custom
-implementations.
+implementations. Overwriting `"min"` or `"max"` replaces their built-in support for date values.
 
 The above example demonstrates the following configuration to register a custom `"range"` function and applies
 it to the `total` column:

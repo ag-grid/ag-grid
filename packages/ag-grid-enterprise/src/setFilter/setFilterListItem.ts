@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -232,12 +233,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', beans, null));
         eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', beans, null));
         const listener = this.onExpandOrContractClicked.bind(this);
-        this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
-        this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupClosedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         if (hasIndeterminateExpandState) {
             eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', beans, null));
-            this.addManagedElementListeners(eGroupIndeterminateIcon, {
+            _addManagedElementListeners(this, eGroupIndeterminateIcon, {
                 click: listener,
             });
         }
@@ -331,7 +332,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const translate = this.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _setAriaLabel(ariaEl, `${value} ${itemLabel}${this.getMissingSuffix()}`);
+        const missingLabel = this.getMissingLabel();
+        // The label goes right after the value, as it is shown, before the item label.
+        const ariaLabel = missingLabel
+            ? `${value}, ${missingLabel} ${itemLabel}`
+            : `${value} ${itemLabel}${this.getMissingSuffix()}`;
+        _setAriaLabel(ariaEl, ariaLabel);
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
@@ -347,11 +353,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             _setAriaLabel(ariaEl, null);
             _setAriaDescribedBy(ariaEl);
         } else {
-            _setAriaLabel(
-                ariaEl,
-                isMissing ? this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue) : null
-            );
+            _setAriaLabel(ariaEl, isMissing ? this.getMissingAriaLabel() : null);
         }
+    }
+
+    /** The configured label replaces `ariaNotInCurrentData`, so the name holds the text shown. */
+    private getMissingAriaLabel(): string {
+        const text = this.formattedValue ?? _toStringOrNull(this.cellRendererParams.value) ?? '';
+        const missingLabel = this.getMissingLabel();
+        return missingLabel ? `${text}, ${missingLabel}` : `${text}${this.getMissingSuffix()}`;
+    }
+
+    /** The label shown after a missing value, if any. */
+    private getMissingLabel(): string | undefined {
+        return (this.isMissing && this.params.preservePreviousValuesLabel) || undefined;
     }
 
     private getMissingSuffix(): string {
@@ -507,7 +522,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getDefaultTooltipText(value: V | null | (() => string), formattedValue: string | null): string | null {
-        const text = formattedValue != null ? formattedValue : _toStringOrNull(value);
+        const text = formattedValue ?? _toStringOrNull(value);
         return this.isMissing ? `${text ?? ''}${this.getMissingSuffix()}` : text;
     }
 
@@ -550,7 +565,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private renderCellWithoutCellRenderer(): void {
         const { valueFormatted, value } = this.cellRendererParams;
-        let valueToRender = valueFormatted == null ? value : valueFormatted;
+        let valueToRender = valueFormatted ?? value;
         if (typeof valueToRender !== 'string') {
             this.beans.log.warn(208);
             valueToRender = '';
@@ -570,7 +585,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (content === undefined) {
             return;
         }
-        const missingLabel = this.isMissing ? this.params.preservePreviousValuesLabel : undefined;
+        const missingLabel = this.getMissingLabel();
         if (!missingLabel) {
             this.eCheckbox.setLabel(content);
             return;

@@ -5,8 +5,9 @@ import { fileURLToPath } from 'node:url';
 import { FRAMEWORKS, FRAMEWORK_LANDING_HUBS } from '../../constants';
 import { getHtaccessContent } from './htaccessRules';
 import { compileHtaccess, followRedirects, route, samplePath } from './htaccessSimulator';
+import { handledByDocroot, isOwnedElsewhere } from './linkRedirects';
 import type { Redirect } from './redirects';
-import { IGNORE_PAGES, SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
+import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 const SRC = fileURLToPath(new URL('../../', import.meta.url));
 const WWW = 'https://www.ag-grid.com';
@@ -77,16 +78,6 @@ function buildSiteRoutes() {
         isForwarder: (path: string) => forwarders.has(path),
     };
 }
-
-// Paths served by something other than this build: the blog (reverse-proxied Ghost), the
-// /charts/ and /studio/ sites (their own repos), and the pages IGNORE_PAGES names.
-const isOwnedElsewhere = (path: string) =>
-    /^\/(blog|charts|studio)\//.test(path) || IGNORE_PAGES.some((page) => path.startsWith(page));
-
-const handledByDocroot = (url: URL) =>
-    /(^|\.)ag-grid\.com$/.test(url.hostname) &&
-    url.hostname !== 'charts.ag-grid.com' &&
-    !isOwnedElsewhere(url.pathname);
 
 const fromOf = (redirect: Redirect) => ('from' in redirect ? redirect.from : redirect.fromPattern);
 

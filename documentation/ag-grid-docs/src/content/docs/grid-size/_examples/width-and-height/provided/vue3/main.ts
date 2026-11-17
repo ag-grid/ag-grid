@@ -13,11 +13,13 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="display: flex; flex-direction: column; height: 100%">
-            <div style="margin-bottom: 5px;">
-                <button @click="fillLarge">Fill 100%</button>
-                <button @click="fillMedium">Fill 60%</button>
-                <button @click="fillExact">Exactly 400 x 400 pixels</button>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <button @click="fillLarge">Fill 100%</button>
+                    <button @click="fillMedium">Fill 60%</button>
+                    <button @click="fillExact">Exactly 400 x 400 pixels</button>
+                </div>
             </div>
             <div style="width: 100%; flex: 1 1 auto;">
                 <ag-grid-vue :style="{width, height}"

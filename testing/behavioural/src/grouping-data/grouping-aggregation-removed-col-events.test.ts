@@ -2,7 +2,12 @@ import '@testing-library/jest-dom/vitest';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { CellChangedEvent, IRowNode } from 'ag-grid-community';
-import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    PinnedRowModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 /**
@@ -12,7 +17,13 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
  */
 describe('grouping aggregation: events for a column dropped from aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule, RowGroupingModule],
+        modules: [
+            ClientSideRowModelModule,
+            ClientSideRowModelApiModule,
+            ColumnApiModule,
+            PinnedRowModule,
+            RowGroupingModule,
+        ],
     });
 
     afterEach(() => gridsManager.reset());
@@ -97,16 +108,24 @@ describe('grouping aggregation: events for a column dropped from aggregation', (
         expect(removed).toEqual([['a', 3]]);
     });
 
-    // Clearing the last aggregate only happens on a full refresh, which redraws the rows, so a getter
-    // reading the removed total is repainted without the post-aggregation sweep reaching it.
-    test('a getter reading a removed total blanks when the last value column goes', async () => {
+    // The full refresh clearing the last aggregate redraws the body rows but keeps the pinned grand total row, so
+    // only the post-aggregation sweep repaints a getter there.
+    test('a getter reading a removed total blanks when the last value column goes, pinned grand total included', async () => {
+        let getterCalls = 0;
         const api = await gridsManager.createGridAndWait('agg-cleared-getter', {
             columnDefs: [
                 { field: 'group', rowGroup: true, hide: true },
                 { field: 'a', aggFunc: 'sum' },
-                { colId: 'derived', valueGetter: (params) => params.node?.parent?.aggData?.a ?? '' },
+                {
+                    colId: 'derived',
+                    valueGetter: (params) => {
+                        ++getterCalls;
+                        return params.node?.aggData?.a ?? params.node?.parent?.aggData?.a ?? '';
+                    },
+                },
             ],
             groupDefaultExpanded: -1,
+            grandTotalRow: 'pinnedBottom',
             suppressAggFuncInHeader: true,
             getRowId: ({ data }) => data.id,
             rowData: [
@@ -115,14 +134,24 @@ describe('grouping aggregation: events for a column dropped from aggregation', (
             ],
         });
 
-        const derived = () =>
-            document.querySelector('#agg-cleared-getter [row-id="1"] [col-id="derived"]')?.textContent?.trim();
+        const derived = (row: string) =>
+            document.querySelector(`#agg-cleared-getter ${row} [col-id="derived"]`)?.textContent?.trim();
+        const leaf = '[row-id="1"]';
+        const grandTotal = '[row-id="b-bottom-rowGroupFooter_ROOT_NODE_ID"]';
 
-        expect(derived()).toBe('3');
+        expect([derived(leaf), derived(grandTotal)]).toEqual(['3', '3']);
+        getterCalls = 0;
+        api.refreshClientSideRowModel('map');
+        expect(getterCalls).toBeGreaterThan(0);
 
         api.applyColumnState({ state: [{ colId: 'a', aggFunc: null }] });
         await asyncSetTimeout(0);
 
-        expect(derived()).toBe('');
+        expect([derived(leaf), derived(grandTotal)]).toEqual(['', '']);
+
+        // With no aggregate left, a refresh keeping the rows no longer re-runs the getters.
+        getterCalls = 0;
+        api.refreshClientSideRowModel('map');
+        expect(getterCalls).toBe(0);
     });
 });

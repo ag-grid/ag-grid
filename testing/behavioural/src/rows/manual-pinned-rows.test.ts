@@ -17,10 +17,19 @@ import {
     GridStateModule,
     PaginationModule,
     PinnedRowModule,
+    RowSelectionModule,
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
-import type { GridApi, GridOptions, GridState, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
+import type {
+    GridApi,
+    GridOptions,
+    GridState,
+    GridStateKey,
+    IRowNode,
+    RowNode,
+    RowPinnedType,
+} from 'ag-grid-community';
 import {
     CellSelectionModule,
     ContextMenuModule,
@@ -58,6 +67,7 @@ describe('Manual pinned rows', () => {
             PivotModule,
             TextFilterModule,
             GridStateModule,
+            RowSelectionModule,
             ContextMenuModule,
             CellSelectionModule,
             CellSpanModule,
@@ -109,6 +119,22 @@ describe('Manual pinned rows', () => {
         expect(pinnedRugby.rowHeight).toBe(30);
         expect(pinnedRugby.pinnedSibling!.rowHeight).toBe(50);
         expect(pinnedRugby.rowTop).toBe(30);
+    });
+
+    test('a rowHeight change reaches a grand total row pinned after the grid started', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'sport', rowGroup: true, hide: true },
+                { colId: 'count', field: 'sport', aggFunc: 'count' },
+            ],
+            rowData,
+        });
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await waitFor(() => expect(getPinnedRows(api, 'bottom')).toHaveLength(1));
+
+        api.setGridOption('rowHeight', 80);
+
+        expect(getPinnedRows(api, 'bottom')[0].rowHeight).toBe(80);
     });
 
     test('exports manually pinned rows and optionally omits their body duplicates', async () => {
@@ -368,13 +394,17 @@ describe('Manual pinned rows', () => {
     test('a grand total pinned by `grandTotalRow` stays there when a context menu item pins or unpins it', async () => {
         const restoreOffsetParent = polyfillOffsetParent();
         try {
+            const isRowPinned = vi.fn((_node: IRowNode) => null);
             const api = await gridsManager.createGridAndWait('myGrid', {
                 columnDefs,
                 rowData,
                 enableRowPinning: true,
                 grandTotalRow: 'pinnedBottom',
                 getContextMenuItems: () => ['pinTop', 'unpinRow'],
+                isRowPinned,
             });
+            // the rows `isRowPinned` can pin: the grand total is not one of them
+            expect(isRowPinned.mock.calls.map(([node]) => node.id)).toEqual(['0', '1', '2', '3', '4', '5', '6']);
             const pinnedBottomElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned[row-index^="b"]');
             const expectPinnedBottomOnly = () => {
                 assertPinnedRows(api, 'top', []);
@@ -401,19 +431,371 @@ describe('Manual pinned rows', () => {
     });
 
     test('a grand total pinned by `grandTotalRow` stays there when the row pinning state names it', async () => {
-        const api = await gridsManager.createGridAndWait('myGrid', {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            rowData,
+            rowData: [],
             enableRowPinning: true,
             grandTotalRow: 'pinnedBottom',
         });
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await asyncSetTimeout(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
 
+        api.setGridOption('rowData', rowData);
         api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
         await asyncSetTimeout(0);
 
         assertPinnedRows(api, 'top', []);
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
         expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('a row pinning state naming the grand total pins nothing and is not saved while `grandTotalRow` is unset', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        api.setGridOption('grandTotalRow', undefined);
+
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await asyncSetTimeout(0);
+        assertPinnedRows(api, 'top', []);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('a row pinning state reports the rows it unpins, then those it pins, then the grand total', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+            getRowId: (params) => params.data.sport,
+        });
+        api.setState({ rowPinning: { top: ['rugby', GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await waitFor(() => expect(api.getPinnedTopRowCount()).toBe(2));
+        const events: string[] = [];
+        for (const id of ['football', 'rugby', GRAND_TOTAL_ROW_ID]) {
+            api.getRowNode(id)!.addEventListener('rowPinned', ({ node }) =>
+                events.push(`${node.id} ${(node as RowNode).pinnedSibling?.rowPinned ?? null}`)
+            );
+        }
+
+        api.setState({ rowPinning: { top: ['football'], bottom: [] } });
+        await waitFor(() => expect(events).toHaveLength(3));
+        expect(events).toEqual(['rugby null', 'football top', `${GRAND_TOTAL_ROW_ID} null`]);
+    });
+
+    test.each([
+        ['pinnedTop', 'top', 't-top-rowGroupFooter_ROOT_NODE_ID'],
+        ['pinnedBottom', 'bottom', 'b-bottom-rowGroupFooter_ROOT_NODE_ID'],
+    ] as const)(
+        'a grand total pinned by `grandTotalRow: %s` is removed whenever the grid has no rows to show',
+        async (grandTotalRow, floating, pinnedId) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'sport', filter: true }],
+                rowData: [],
+                grandTotalRow,
+            });
+            const pinnedRowElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned');
+            const expectGrandTotalPinned = async (pinned: boolean) => {
+                assertPinnedRows(api, floating, pinned ? [pinnedId] : []);
+                assertPinnedRows(api, floating === 'top' ? 'bottom' : 'top', []);
+                await waitFor(() => expect(pinnedRowElements().length).toBe(pinned ? 1 : 0));
+            };
+            await expectGrandTotalPinned(false);
+
+            api.setGridOption('rowData', rowData);
+            await expectGrandTotalPinned(true);
+            const rowPinned = vi.fn();
+            api.getRowNode(GRAND_TOTAL_ROW_ID)!.addEventListener('rowPinned', rowPinned);
+
+            api.setGridOption('rowData', []);
+            await expectGrandTotalPinned(false);
+            expect(rowPinned).toHaveBeenCalledTimes(1);
+
+            api.setGridOption('rowData', rowData);
+            await expectGrandTotalPinned(true);
+            expect(rowPinned).toHaveBeenCalledTimes(2);
+
+            api.setFilterModel({ sport: { type: 'equals', filter: 'chess' } });
+            await expectGrandTotalPinned(false);
+
+            api.setFilterModel(null);
+            await expectGrandTotalPinned(true);
+
+            api.applyTransaction({ remove: rowData });
+            await expectGrandTotalPinned(false);
+        }
+    );
+
+    test('a grand total pinned by `grandTotalRow` is exported once, from its pinned container, and not walked', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'sport' }, { field: 'medals', aggFunc: 'sum' }],
+            rowData: [
+                { sport: 'football', medals: 1 },
+                { sport: 'rugby', medals: 2 },
+            ],
+            grandTotalRow: 'pinnedBottom',
+            rowSelection: { mode: 'multiRow' },
+        });
+        const rows = ['Sport,Medals', 'football,1', 'rugby,2'];
+        expect(api.getDataAsCsv({ suppressQuotes: true })).toBe([...rows, ',3'].join('\r\n'));
+        api.selectAll();
+        api.getPinnedBottomRow(0)!.setSelected(true);
+        expect(api.getDataAsCsv({ suppressQuotes: true, onlySelectedAllPages: true })).toBe(
+            [...rows, ',3'].join('\r\n')
+        );
+        expect(api.getDataAsCsv({ suppressQuotes: true, skipPinnedBottom: true })).toBe(rows.join('\r\n'));
+        const walked: string[] = [];
+        api.forEachNode((node) => walked.push(node.id!), true);
+        expect(walked).toEqual(['0', '1']);
+
+        api.setGridOption('grandTotalRow', 'pinnedTop');
+        expect(api.getDataAsCsv({ suppressQuotes: true })).toBe(
+            ['Sport,Medals', ',3', 'football,1', 'rugby,2'].join('\r\n')
+        );
+        expect(api.getDataAsCsv({ suppressQuotes: true, skipPinnedTop: true })).toBe(rows.join('\r\n'));
+
+        // a grand total the user pinned also stays in the body, so both are exported, as for any pinned row
+        api.updateGridOptions({ grandTotalRow: 'bottom', enableRowPinning: true });
+        api.setState({ ...api.getState(), rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        api.getPinnedTopRow(0)!.setSelected(true);
+        expect(api.getDataAsCsv({ suppressQuotes: true, onlySelectedAllPages: true })).toBe(
+            ['Sport,Medals', ',3', 'football,1', 'rugby,2', ',3'].join('\r\n')
+        );
+    });
+
+    test('a grand total the user unpinned stays unpinned when the rows refresh', async () => {
+        const restoreOffsetParent = polyfillOffsetParent();
+        try {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs,
+                rowData,
+                enableRowPinning: true,
+                grandTotalRow: 'bottom',
+                getContextMenuItems: () => ['pinTop', 'unpinRow'],
+            });
+            const gridElement = getGridElement(api)!;
+            await userEvent.pointer({
+                keys: '[MouseRight]',
+                target: gridElement.querySelector<HTMLElement>(`[row-id="${GRAND_TOTAL_ROW_ID}"] .ag-cell`)!,
+            });
+            await clickMenuOption('Pin to Top');
+            await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+
+            await userEvent.pointer({
+                keys: '[MouseRight]',
+                target: gridElement.querySelector<HTMLElement>('.ag-row-pinned .ag-cell')!,
+            });
+            await clickMenuOption('Unpin Row');
+            await waitFor(() => assertPinnedRows(api, 'top', []));
+            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+            api.setGridOption('rowData', rowData);
+            assertPinnedRows(api, 'top', []);
+        } finally {
+            restoreOffsetParent();
+        }
+    });
+
+    test('a pinned grand total is removed in pivot mode without row groups, where the root row shows the totals', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'sport', rowGroup: true },
+                { field: 'medals', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { sport: 'football', medals: 1 },
+                { sport: 'rugby', medals: 2 },
+            ],
+            pivotMode: true,
+            grandTotalRow: 'pinnedBottom',
+        });
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+
+        api.setRowGroupColumns([]);
+        assertPinnedRows(api, 'bottom', []);
+
+        api.setRowGroupColumns(['sport']);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+    });
+
+    test('a grand total the user pinned leaves an empty grid, returns with the rows and is unpinned by `grandTotalRow`', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+
+        api.setGridOption('rowData', []);
+        assertPinnedRows(api, 'top', []);
+        expect(api.getState().rowPinning).toEqual({ top: [GRAND_TOTAL_ROW_ID], bottom: [] });
+
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+
+        api.setGridOption('grandTotalRow', 'top');
+        assertPinnedRows(api, 'top', []);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('a grand total the user pinned is unpinned by `grandTotalRow` after row pinning is enabled at runtime', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', { columnDefs, rowData, grandTotalRow: 'bottom' });
+        api.setGridOption('enableRowPinning', true);
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+
+        api.setGridOption('grandTotalRow', 'top');
+        assertPinnedRows(api, 'top', []);
+        await asyncSetTimeout(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+    });
+
+    test('a grand total the user pinned is unpinned by `grandTotalRow` changed in one batch after `rowData`', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+
+        api.updateGridOptions({ rowData: rowData.slice(), grandTotalRow: 'top' });
+        assertPinnedRows(api, 'top', []);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+        // also when the batch empties the grid, so no pinned row moves
+        api.setState({ rowPinning: { top: [], bottom: [GRAND_TOTAL_ROW_ID] } });
+        await waitFor(() => assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']));
+        api.updateGridOptions({ rowData: [], grandTotalRow: 'bottom' });
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'bottom', []);
+    });
+
+    test('a grand total the user pinned is unpinned with `rowPinned` when row pinning is turned off, alone or with `rowData`', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        const rowPinned = vi.fn();
+        api.getRowNode(GRAND_TOTAL_ROW_ID)!.addEventListener('rowPinned', rowPinned);
+        const updates: GridOptions[] = [
+            { rowData: rowData.slice(), enableRowPinning: false },
+            { enableRowPinning: false, rowData: rowData.slice() },
+            { enableRowPinning: false },
+        ];
+        for (const update of updates) {
+            api.updateGridOptions({ rowData: rowData.slice(), enableRowPinning: true });
+            api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+            await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+            rowPinned.mockClear();
+
+            api.updateGridOptions(update);
+            assertPinnedRows(api, 'top', []);
+            expect(rowPinned).toHaveBeenCalledTimes(1);
+        }
+    });
+
+    test('a grand total `grandTotalRow` pins in one batch after `rowData` is pinned, and unpinned with `rowPinned` when it turns inline', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', { columnDefs, rowData, grandTotalRow: 'bottom' });
+        api.updateGridOptions({ rowData: rowData.slice(), grandTotalRow: 'pinnedBottom' });
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        const rowPinned = vi.fn();
+        api.getRowNode(GRAND_TOTAL_ROW_ID)!.addEventListener('rowPinned', rowPinned);
+
+        api.setGridOption('grandTotalRow', 'bottom');
+        assertPinnedRows(api, 'bottom', []);
+        expect(rowPinned).toHaveBeenCalledTimes(1);
+    });
+
+    test('an initial row pinning state naming the grand total pins it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+            initialState: { rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } },
+        });
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+        expect(api.getState().rowPinning).toEqual({ top: [GRAND_TOTAL_ROW_ID], bottom: [] });
+    });
+
+    test('a row pinning state applied while the grid is empty lists the grand total the user pinned once, where it puts it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        api.setState({ rowPinning: { top: [], bottom: [GRAND_TOTAL_ROW_ID] } });
+        await waitFor(() => assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']));
+        api.setGridOption('rowData', []);
+
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await waitFor(() => expect(api.getState().rowPinning).toEqual({ top: [GRAND_TOTAL_ROW_ID], bottom: [] }));
+
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+        assertPinnedRows(api, 'bottom', []);
+    });
+
+    test('a grand total `isRowPinned` pins leaves an empty grid and returns with the rows, without re-rendering the body', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+            isRowPinned: (node) => (node.footer ? 'top' : null),
+        });
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+        const inlineTotal = () => getGridElement(api)!.querySelector(`.ag-row[row-id="${GRAND_TOTAL_ROW_ID}"]`);
+        const rendered = inlineTotal();
+        expect(rendered).not.toBeNull();
+        api.setGridOption('isRowPinned', (node) => (node.footer ? 'top' : null));
+        expect(inlineTotal()).toBe(rendered);
+
+        api.setGridOption('rowData', []);
+        assertPinnedRows(api, 'top', []);
+
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+    });
+
+    test('an `isRowPinned` returning `undefined` for the grand total re-maps nothing', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+        });
+        const remapped = vi.fn();
+        api.addEventListener('modelUpdated', ({ keepRenderedRows }) => {
+            if (!keepRenderedRows) {
+                remapped();
+            }
+        });
+        api.setGridOption('isRowPinned', () => undefined);
+        await asyncSetTimeout(0);
+        expect(remapped).not.toHaveBeenCalled();
+    });
+
+    test('a grand total switched to pinned while the grid is empty is pinned once rows arrive', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', { columnDefs, rowData, grandTotalRow: 'bottom' });
+        api.setGridOption('rowData', []);
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        assertPinnedRows(api, 'bottom', []);
+
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
     });
 
     test('can move position of pinned grand total row with `grandTotalRow`', async () => {
@@ -1791,7 +2173,7 @@ describe('Manual pinned rows', () => {
         expect(api.getState().rowPinning).toEqual({ top: ['rugby'], bottom: [] });
     });
 
-    test('the grand total row id in the state pins the grand total row', async () => {
+    test('the grand total row id in the state pins the grand total row, and its absence unpins it', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
             rowData: [
@@ -1801,9 +2183,43 @@ describe('Manual pinned rows', () => {
             enableRowPinning: true,
             grandTotalRow: 'bottom',
         });
-        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } }, ['rowGroup', 'columnVisibility']);
+        // every other section, so `setState` applies the row pinning alone; the type fails on a section added later
+        const otherSections: Record<Exclude<GridStateKey, 'rowPinning'>, true> = {
+            aggregation: true,
+            columnGroup: true,
+            columnOrder: true,
+            columnPinning: true,
+            columnSizing: true,
+            columnVisibility: true,
+            columnHeaderName: true,
+            filter: true,
+            find: true,
+            quickFilter: true,
+            focusedCell: true,
+            pagination: true,
+            pivot: true,
+            cellSelection: true,
+            rowGroup: true,
+            rowGroupExpansion: true,
+            ssrmRowGroupExpansion: true,
+            rowSelection: true,
+            scroll: true,
+            sideBar: true,
+            sort: true,
+            showValuesAs: true,
+            userColumns: true,
+        };
+        const notRowPinning = Object.keys(otherSections) as GridStateKey[];
+        const rowPinned = vi.fn();
+        api.getRowNode(GRAND_TOTAL_ROW_ID)!.addEventListener('rowPinned', rowPinned);
+        const isInlineTotalPinnedSource = () =>
+            getGridElement(api)!
+                .querySelector(`.ag-row[row-id="${GRAND_TOTAL_ROW_ID}"]`)
+                ?.classList.contains('ag-row-pinned-source');
+
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } }, notRowPinning);
         await waitFor(() => expect(api.getPinnedTopRow(0)?.footer).toBe(true));
-        // A model update re-derives the grand total's place, so it must have been pinned through `grandTotalRow`.
+        // the pin is the user's, so a model update keeps it
         api.refreshClientSideRowModel('aggregate');
         await new GridRows(api, 'grand total pinned top').check(`
             PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total "
@@ -1814,7 +2230,36 @@ describe('Manual pinned rows', () => {
             │ └── LEAF hidden id:1 country:"France" sport:"Football"
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total "
         `);
+        expect(api.getState().rowPinning).toEqual({ top: [GRAND_TOTAL_ROW_ID], bottom: [] });
+        await waitFor(() => expect(isInlineTotalPinnedSource()).toBe(true));
+        expect(rowPinned).toHaveBeenCalledTimes(1);
+        await asyncSetTimeout(0); // deliver the events the pin queued before listening
+        const pinnedRowsChanged = vi.fn();
+        const remapped = vi.fn();
+        api.addEventListener('pinnedRowsChanged', pinnedRowsChanged);
+        api.addEventListener('modelUpdated', ({ keepRenderedRows }) => {
+            if (!keepRenderedRows) {
+                remapped();
+            }
+        });
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } }, notRowPinning);
+        await waitFor(() => expect(pinnedRowsChanged).toHaveBeenCalled());
+        await asyncSetTimeout(0);
+        expect(remapped).not.toHaveBeenCalled();
+        expect(rowPinned).toHaveBeenCalledTimes(1);
+
+        api.setState({ rowPinning: { top: [], bottom: [GRAND_TOTAL_ROW_ID] } }, notRowPinning);
+        await waitFor(() => assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']));
+        assertPinnedRows(api, 'top', []);
+        expect(rowPinned).toHaveBeenCalledTimes(2);
+        await asyncSetTimeout(0);
+        expect(remapped).not.toHaveBeenCalled(); // moving the pin re-renders no body row
+
+        api.setState({ rowPinning: { top: [], bottom: [] } }, notRowPinning);
+        await waitFor(() => expect(isInlineTotalPinnedSource()).toBe(false));
+        assertPinnedRows(api, 'bottom', []);
         expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        expect(rowPinned).toHaveBeenCalledTimes(3);
     });
 
     test('removing row grouping unpins every pinned group row with one pinnedRowsChanged', async () => {

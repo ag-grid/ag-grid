@@ -77,7 +77,13 @@ export class DragEventDispatcher {
         this.html5DragDrop = html5DragDrop;
     }
 
-    public async startDrag(dragHandle: Element, clientX: number, clientY: number): Promise<void> {
+    /** `modifiers` are held on the press, e.g. `{ shiftKey: true }` for a shift-drag. */
+    public async startDrag(
+        dragHandle: Element,
+        clientX: number,
+        clientY: number,
+        modifiers?: Pick<EventModifierInit, 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'>
+    ): Promise<void> {
         const { down } = INTERACTION_EVENT_NAMES[this.eventType];
 
         this.dragHandle = dragHandle;
@@ -85,7 +91,7 @@ export class DragEventDispatcher {
         const moveTarget = this.getMoveTarget();
         this.upTarget = moveTarget;
 
-        await this.fire(dragHandle, down, { clientX, clientY, buttons: 1, button: 0 });
+        await this.fire(dragHandle, down, { clientX, clientY, buttons: 1, button: 0, ...modifiers });
 
         this._currentDropTarget = null;
         this._currentX = clientX;

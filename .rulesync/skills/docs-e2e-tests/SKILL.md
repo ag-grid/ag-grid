@@ -12,55 +12,34 @@ If the user names a doc page (e.g., `aggregation-total-rows`) or a path, work th
 
 ## Prerequisites
 
-- The dev server must be running (`yarn nx dev`). Check `node_modules/.cache/ag-watch-status.json` for status.
-- Playwright browsers must be installed. If not, run: `npx playwright install --with-deps chromium` from `documentation/ag-grid-docs/`.
+- **The docs dev server must be serving** (`yarn nx dev`): specs run against `https://localhost:<PORT>` (`PORT` from `.env.local` or `.env`, default 4610), so a stopped server fails every spec in a way that looks like a broken example. `node_modules/.cache/ag-watch-status.json` reports the package build watch (`STARTING`, `RUNNING`, `BUILDING`, `IDLE`, `STOPPED`), not whether the site answers on its port: check that with `curl -sk -o /dev/null -w '%{http_code}' https://localhost:4610/` (200), and otherwise start `yarn nx dev` and wait for it to answer.
+- Playwright browsers: `npx playwright install --with-deps chromium` from `documentation/ag-grid-docs/`.
 
 ## STEP 1: Discover and Plan
 
 ### 1a. Locate the doc page
 
-Find the doc page directory under `documentation/ag-grid-docs/src/content/docs/`. The user's argument may be:
-
-- A page name: `aggregation-total-rows`
-- A path fragment: `docs/aggregation-total-rows`
-- A full path to the directory
+The page directory is `documentation/ag-grid-docs/src/content/docs/<page>/`; the argument may be the page name, a path fragment or the full path.
 
 ### 1b. Read the index.mdoc
 
-Read the page's `index.mdoc` to understand:
-
-- **Page topic:** What feature area does this page document?
-- **Example references:** Find all `{% gridExampleRunner ... %}` tags. Each has a `title` and `name` attribute. The `name` maps to a folder in `_examples/`.
-- **Surrounding prose:** What does the documentation say each example demonstrates? This context is critical for knowing what to test.
+Read the page's `index.mdoc` for its topic, its `{% gridExampleRunner title="…" name="…" /%}` tags (`name` is the folder under `_examples/`), and what the prose says each example demonstrates: that prose decides what to test.
 
 ### 1c. Enumerate all examples
 
-List all subdirectories under the page's `_examples/` directory. Each subdirectory is one example.
+Each subdirectory of the page's `_examples/` is one example.
 
 ### 1d. Read example source code
 
-For **each** example, read:
+Read every file in each example folder: `main.ts` (column definitions, grid options such as `getRowId`, the data source, controls that call the grid API, custom `aggFunc`/`valueFormatter`/`cellRenderer`), `data.ts`, `index.html` (controls outside the grid), `styles.css`, `exampleConfig.json` (`supportedFrameworks`, `usesWebWorker`), the component files at the folder root (`<name>_typescript.ts`, `<name>_reactFunctionalTs.tsx`, `<name>_vue3.ts`, `<name>.component_angular.ts`) and per-framework overrides under `provided/<framework>/`.
 
-- `main.ts` — the primary source. Understand:
-    - **Column definitions** (fields, `rowGroup`, `aggFunc`, `valueGetter`, `cellRenderer`, etc.)
-    - **Grid options** (`grandTotalRow`, `groupTotalRow`, `getRowId`, `rowSelection`, etc.)
-    - **Data source** — inline data, `fetch()` URL, or `data.ts` import
-    - **Interactive controls** — buttons, dropdowns, or other UI that trigger grid API calls
-    - **Custom functions** — custom `aggFunc`, `valueFormatter`, `cellRenderer`, etc.
-- `data.ts` (if present) — understand the data shape and sample values
-- `styles.css` (if present) — any relevant custom styling
-- `index.html` — check for external buttons/controls outside the grid
+If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values. A run against a deployed site gets the copy published on `www.ag-grid.com`, so an edit to the file reaches it only once released.
 
-If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values.
-
-**Randomised data is still deterministic — assert explicit values.** An example that builds its rows with `Math.random()` produces the *same* rows on every run and in every framework: the example generator rewrites every `Math.random()` call to the seeded `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), which the example runner seeds with a fixed seed before the example's own script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.js`). Treat `Math.random()` in an example exactly like a hard-coded dataset. See Pitfall 13.
+Data built with `Math.random()` is seeded: assert explicit values (Pitfall 13).
 
 ### 1e. Check for existing tests
 
-For each example, check if `example.spec.ts` already exists and whether it is:
-
-- **Placeholder** — contains `PLACEHOLDER` comment or only calls `ensureGridReady`/`waitForGridContent`/`clickAllButtons`
-- **Real test** — has meaningful assertions with `agIdFor`, `expect`, etc.
+For each example, check whether `example.spec.ts` is still the placeholder: a `PLACEHOLDER` comment, or only `ensureGridReady`/`waitForGridContent`/`clickAllButtons`.
 
 ### 1f. Build the plan
 
@@ -68,95 +47,67 @@ Create a plan listing each example that needs a test written or updated. For eac
 
 - **Example name** and path
 - **What it demonstrates** (from index.mdoc context + source code analysis)
-- **Key behaviours to verify** — specific assertions to make **and interactions to perform**. Do not stop at static cell values, and do not stop at a single interaction. Enumerate every distinct behaviour the example is there to demonstrate — work through the doc prose that references it plus the controls/features in `main.ts` (each button, each configured feature, each interaction the page calls out) — and plan one test block per behaviour (expand a group to a leaf/sub-group, sort by the feature's column, toggle each control, apply each filter mode). The doc prose for that example is your coverage checklist: a multi-feature example needs multiple interactions, not one (see Pitfall 12).
-- **Data expectations** — expected cell values, group names, aggregation results (calculated from source data)
-- **Status** — new test, replacing placeholder, or extending existing test
+- **Key behaviours to verify**: one test block per behaviour the doc prose and the controls in `main.ts` call out, each driven by an interaction where one is possible (Pitfall 12).
+- **Data expectations**: expected cell values, group names, aggregation results (calculated from source data)
+- **Status**: new test, replacing placeholder, or extending existing test
 
 Present this plan to the user before proceeding. Wait for approval.
 
 ## STEP 2: Write Tests With a Subagent
 
-For each example in the approved plan, use a subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
-
-1.  The core test reference (the "Test Reference" section below) **and** the situational pitfalls/patterns that apply to this example (from `reference/pitfalls-and-patterns.md` — see the index below)
-2.  The example's source code (main.ts, data.ts, etc.)
-3.  The specific behaviours to test from the plan
-4.  Any existing `example.spec.ts` files from neighbouring examples as style reference
-5.  The doc page context explaining what the example demonstrates
-6.  The deterministic-waits principle below — tests must not be flaky
-
-The subagent should write the test file and return it. You then write it to disk.
+For each example in the approved plan, have a subagent (Agent tool) write `example.spec.ts`, giving it the Test Reference and Deterministic sections below, the pitfall entries that apply (index below), the example's source, the planned behaviours, a neighbouring `example.spec.ts` for style and the doc prose for the example. It returns the file; you write it to disk.
 
 ## STEP 3: Run the Tests
 
-**First, confirm the dev server is serving.** The tests run against `https://localhost:4610`, so a stopped server makes every spec fail for environmental reasons that look like the example is broken. Read `node_modules/.cache/ag-watch-status.json`; if it is not serving, start it with `yarn nx dev` and wait for it to come up before running.
-
-Run each spec with the `docs-e2e.sh` helper from the **repository root**:
+From the repo root, **in the background** (`AGENTS.md` Quick Reference: never a test script in the foreground locally):
 
 ```bash
-./docs-e2e.sh "<example-folder-name>"
+./docs-e2e.sh "docs/<page>/_examples/<example>/"
 ```
 
-**Important:**
-
-- Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
-- **The default run validates every framework except the production React build.** With no `--framework` flag, `eachFramework` runs the spec against typescript, vanilla, reactFunctionalTs_Dev, angular and vue3 in chromium. Add `--all-variants` to include the production `reactFunctionalTs` build (CI always does). You do **not** need a separate run per framework.
-- Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
-- To run a single test by name, append `--grep "<test-name>"`.
-- To narrow to one framework while debugging a failure, use `--framework <name>` (valid: `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`).
-- To test all browsers (not just chromium), add `--all-browsers`.
+- **Filter by `docs/<page>/_examples/<example>/`.** Playwright matches the argument as an unanchored regex against the spec's path, so a bare folder name also runs same-named examples on other pages (folder names repeat across pages) and every name containing it; a leading `/` makes it a regex literal whose slashes are dropped, so `/<page>/_examples/<example>/` also runs `<example>-selectively`. Never a glob with `**/`.
+- **One run validates every framework** the example has pages for (its `exampleConfig.json` `supportedFrameworks`, when set), in chromium, except the production React build (`reactFunctionalTs`): `--all-variants` adds it, and CI always runs it.
+- `--grep "<test name>"` runs one test, `--all-browsers` adds firefox and webkit, and `--framework <name>` runs one CI shard's framework: `typescript`, `vanilla`, `reactFunctionalTs` (both React builds: every example on the production one, plus the tests naming `reactFunctionalTs_Dev`), `reactFunctionalTs_Dev` (only the tests naming it), `angular` or `vue3` (validated against `ALL_FRAMEWORKS` in `documentation/ag-grid-docs/src/utils/grid/test/exampleFrameworks.ts`). Every flag: `./docs-e2e.sh --help`.
 
 ## STEP 4: Iterate
 
-If a test fails, diagnose the failure, fix it, and re-run. When several tests (or several frameworks/browsers) fail at once, re-run **only the failures** with `--last-failed` instead of the whole suite — this is much faster to loop on:
+Fix a failure, then re-run only the failures with `--last-failed`, which reads Playwright's `.last-run.json` from the previous run. Keep the same `--framework` and browser flags so the failure set stays the same:
 
 ```bash
-./docs-e2e.sh "<example-folder-name>"   # initial run records failures
-# ...fix a failing test...
-./docs-e2e.sh --last-failed                                    # re-runs only what failed; repeat until green
+./docs-e2e.sh "docs/<page>/_examples/<example>/"   # records the failures
+./docs-e2e.sh --last-failed                     # re-runs only those; repeat until green
 ```
-
-`--last-failed` reads Playwright's `.last-run.json` from the previous run, so run it after an initial pass. Keep the same `--framework`/browser settings across passes so the failure set stays consistent.
-
-Common fixes:
-
-1.  Add `.first()` for strict mode violations.
-2.  Correct expected values by recalculating from source data.
-3.  Add an expand/scroll step if a row isn't visible.
-4.  Use `toContainText` with a shorter substring for decimal values.
 
 ### Interpreting Failures
 
-- **Strict mode violation (resolved to N elements):** Use `.first()` on the locator (see Pitfall 1 in the pitfalls reference).
-- **Timeout waiting for element:** The row may not be visible — check if it needs expanding, scrolling, or if the row ID is correct.
-- **Expected text not found:** Recalculate expected values from the data source. Check aggFunc logic carefully.
+- **Strict mode violation (resolved to N elements):** `.first()` on the locator (Pitfall 1).
+- **Timeout waiting for an element:** the row may need expanding or scrolling into view (Pitfall 8), or its row ID is wrong (Row ID Conventions).
+- **Expected text not found:** recalculate the value from the source data, checking the `aggFunc` logic; for a long decimal, `toContainText` with a shorter prefix (Pitfall 4).
 
 ## Writing Deterministic (Non-Flaky) Tests
 
-These tests run across every framework and all browsers, so timing-dependent flakiness is the main failure mode. **Never use a fixed `page.waitForTimeout(...)` to wait for grid state to settle.** A fixed sleep is either too short (flaky) or too long (slow), and it encodes a race rather than removing it. Use a deterministic signal instead:
+These tests run in every framework and browser, so timing is the main source of flakiness. **Never wait for grid state with a fixed `page.waitForTimeout(...)`**: it is too short (flaky) or too long (slow), and encodes the race instead of removing it. Wait on a signal:
 
-- **Web-first assertions auto-retry.** `expect(locator).toContainText(...)`, `.toBeVisible()`, `.toHaveAttribute(...)` etc. already poll until they pass or time out. Assert the end state directly rather than sleeping then asserting.
-- **Wait for row re-render / animations** after an action that reorders or re-renders rows (sort, transaction, group expand) with `waitForRowAnimations(page)`. It flushes a frame and waits until no container has duplicate ("zombie") rows. This is also the correct way to open the gap between two header clicks so they aren't read as a double-click (see Pitfall 11) — not a fixed timeout.
-- **Retry a read-and-assert block** for values you pull off the page (console messages, computed ordering, `scrollTop`) with `await expect(callback).toPass()`. The custom `expect` does not expose `expect.poll()`; `.toPass()` is the idiom (see Pitfall 10).
-- **`ensureGridReady` / `waitForGridContent`** gate the initial grid load — call them before interacting.
+- **Web-first assertions retry** (`toContainText`, `toBeVisible`, `toHaveAttribute`, ...) until they pass or time out: assert the end state directly.
+- **`waitForRowAnimations(page)`** after an action that reorders or re-renders rows (sort, transaction, group expand): it flushes a frame and waits until no container holds duplicate ("zombie") rows. It is also the gap between two header clicks, so they are not read as a double-click (Pitfall 11).
+- **Retry a value read off the page** (console messages, computed order, `scrollTop`) with `expect.poll(...)` or `expect(async () => { ... }).toPass()` (Pitfall 10).
+- **`ensureGridReady(page)` / `waitForGridContent(page)`** gate the initial load: call them before interacting.
 
-The only acceptable fixed wait is a deliberate, documented debounce where no observable signal exists — and even then, prefer a deterministic helper first. If you find yourself reaching for `waitForTimeout`, treat it as a smell and find the signal you're actually waiting for.
+A fixed wait is acceptable only for a deliberate debounce with no observable signal, with a comment naming it.
 
 ## Definition of Done
 
-- Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass across every framework (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — i.e. a `./docs-e2e.sh "<example-name>" --all-variants` run is green.
-- Assertions cover the behaviours described in the documentation for each example.
-- Every distinct behaviour the example's doc prose calls out has its own test block — not just one interaction (expand/sort/filter/toggle each behaviour the example demonstrates), and never value-only where an interaction is possible (see Pitfall 12).
-- No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
-- Starting values are asserted explicitly, never read back off the page to dodge "randomised" data — example data is seeded and stable (see Pitfall 13).
-- Tests follow existing conventions (see nearby `example.spec.ts` files for style).
+- Every targeted example has an `example.spec.ts` with meaningful assertions, no placeholder.
+- `./docs-e2e.sh "docs/<page>/_examples/<example>/" --all-variants` is green: every framework the example has pages for, in chromium.
+- Each behaviour the example's doc prose calls out has its own test block, driven by an interaction where possible (Pitfall 12).
+- No fixed `waitForTimeout` for grid state; starting values asserted explicitly, never read back off the page (Pitfall 13).
+- Style follows the neighbouring `example.spec.ts` files.
 
 ---
 
 ## Test Reference
 
-The core conventions below apply to almost every test — include them when delegating to the subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
+Pass these core conventions to the subagent; pull situational entries from `reference/pitfalls-and-patterns.md` through the index at the end.
 
 ### Imports
 
@@ -164,18 +115,14 @@ The core conventions below apply to almost every test — include them when dele
 import { expect, test } from '@utils/grid/test-utils';
 ```
 
-Common helpers exported from the same module:
-
-- `ensureGridReady(page)` / `waitForGridContent(page)` — gate the initial grid load before interacting.
-- `waitForRowAnimations(page)` — deterministic wait after actions that reorder/re-render rows (sort, transaction, expand); also the correct gap between two header clicks (see the deterministic-waits principle). Prefer this over any fixed `waitForTimeout`.
-- `expectConsistentFrameworkDom(page, options?)` — opt-in snapshot assertion that the grid DOM subtree is structurally consistent across frameworks, catching wrapper drift. Use it on examples where framework-specific DOM differences would be a real regression; disable text comparison for volatile data.
+The same module exports the helpers named in this skill (`ensureGridReady`, `waitForGridContent`, `waitForRowAnimations`, `expectRowIdAtIndex`, `clickHeaderToSort`, `scrollGridRelative`) and `expectConsistentFrameworkDom(page, options?)`: an opt-in snapshot that the grid DOM is structurally the same in every framework, for examples where a wrapper's DOM drift would be a regression (`includeText: false` for volatile text).
 
 ### Test Structure
 
 ```typescript
 test.agExample(import.meta, () => {
     test.eachFramework('Test Name', async ({ agIdFor, page }) => {
-        // Test body - runs against all frameworks
+        // Test body - runs against each framework of the run that the example has pages for
     });
 });
 ```
@@ -186,34 +133,33 @@ The `agIdFor` object wraps AG Grid test IDs into Playwright locators. Key method
 
 **Rows and Cells:**
 
-- `agIdFor.rowNode(rowId)` — locator for a row
-- `agIdFor.cell(rowId, colId)` — locator for a cell
-- `agIdFor.autoGroupCell(rowId)` — shorthand for `cell(rowId, 'ag-Grid-AutoColumn')`
+- `agIdFor.rowNode(rowId)`: a row
+- `agIdFor.cell(rowId, colId)`: a cell
+- `agIdFor.autoGroupCell(rowId)`: shorthand for `cell(rowId, 'ag-Grid-AutoColumn')`
 
 **Group Expand/Collapse:**
 
-- `agIdFor.groupContracted(rowId, colId)` — the expand icon for a collapsed group
-- `agIdFor.groupExpanded(rowId, colId)` — the collapse icon for an expanded group
-- `agIdFor.autoGroupContracted(rowId)` — shorthand for auto group column
-- `agIdFor.autoGroupExpanded(rowId)` — shorthand for auto group column
+- `agIdFor.groupContracted(rowId, colId)`: the expand icon of a collapsed group
+- `agIdFor.groupExpanded(rowId, colId)`: the collapse icon of an expanded group
+- `agIdFor.autoGroupContracted(rowId)` / `agIdFor.autoGroupExpanded(rowId)`: the same, in the auto group column
 
 **Headers:**
 
-- `agIdFor.headerCell(colId)` — header cell
-- `agIdFor.headerGroupCell(colId)` — header group cell
+- `agIdFor.headerCell(colId)`: header cell
+- `agIdFor.headerGroupCell(colId)`: header group cell
 
 **Full API:** See `packages/ag-grid-community/src/testing/testIdUtils.ts` for all available selectors.
 
 ### Row ID Conventions
 
-AG Grid assigns row IDs based on row type:
-
-| Row Type     | ID Pattern                    | Example                                          |
-| ------------ | ----------------------------- | ------------------------------------------------ |
-| Data row     | `0`, `1`, `2`, ...            | `agIdFor.cell('0', 'name')`                      |
-| Group row    | `row-group-{field}-{value}`   | `'row-group-country-Netherlands'`                |
-| Group footer | `rowGroupFooter_{groupRowId}` | `'rowGroupFooter_row-group-country-Netherlands'` |
-| Grand total  | `rowGroupFooter_ROOT_NODE_ID` | `'rowGroupFooter_ROOT_NODE_ID'`                  |
+| Row Type                     | ID Pattern                                  | Example                                          |
+| ---------------------------- | ------------------------------------------- | ------------------------------------------------ |
+| Data row, no `getRowId`      | `0`, `1`, `2`, ... in data order            | `agIdFor.cell('0', 'name')`                      |
+| Data row, with `getRowId`    | what `getRowId` returns                     |                                                  |
+| Group row                    | `row-group-{field}-{value}`, nested levels appended | `'row-group-country-Australia-year-2004'` |
+| Tree data filler (Pitfall 7) | `row-group-0-{key}-1-{key}...`, one pair per level | `'row-group-0-Documents-1-Work'`          |
+| Group footer                 | `rowGroupFooter_{groupRowId}`               | `'rowGroupFooter_row-group-country-Netherlands'` |
+| Grand total                  | `rowGroupFooter_ROOT_NODE_ID`               | `'rowGroupFooter_ROOT_NODE_ID'`                  |
 
 ### Avoid Remote Grid API
 
@@ -221,7 +167,7 @@ Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwri
 
 ### Pitfalls & Patterns Index
 
-Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the subagent, pass through just the entries that match.
+Read, and pass to the subagent, only the entries of `reference/pitfalls-and-patterns.md` that match the example.
 
 | # | Pitfall | Read when the example… |
 | - | ------- | ---------------------- |
@@ -231,12 +177,12 @@ Read the relevant entries from `reference/pitfalls-and-patterns.md` based on wha
 | 4 | Aggregation display values (incl. `IAggFuncResult`) | uses `aggFunc` / custom aggregation |
 | 5 | `toContainText` over `toHaveText` | asserts any cell text (general) |
 | 6 | Blank cells | has empty aggregation/footer cells |
-| 7 | Tree data filler nodes (unknown row IDs) | uses `getDataPath` tree data |
-| 8 | Virtual scrolling hides off-screen rows | has more rows than fit the viewport |
+| 7 | Tree data filler nodes (path-built row IDs) | uses `getDataPath` tree data |
+| 8 | Virtual scrolling hides off-screen rows (`.ag-grid-viewport`, `scrollGridRelative`) | has more rows than fit the viewport |
 | 9 | Selection state / checkbox classes | uses row selection or checkboxes |
-| 10 | Retrying assertions — `.toPass()`, not `expect.poll()` | reads console messages / computed values off the page |
-| 11 | Sorting rows — `expectRowIdAtIndex`, not a row's row-index; & the double-click trap | asserts sort ordering via clicks |
+| 10 | Retrying a value read off the page (`expect.poll`, `.toPass()`) | reads console messages / computed values off the page |
+| 11 | Sorting rows: `clickHeaderToSort`, `expectRowIdAtIndex`, the double-click trap | asserts sort ordering via clicks |
 | 12 | Prefer value + interaction, not value alone | supports any interaction (nearly all) |
-| 13 | Randomised data is seeded — assert explicit values | generates any of its data with `Math.random()` |
+| 13 | Randomised data is seeded: assert explicit values | generates any of its data with `Math.random()` |
 
-**Worked patterns** (also in the reference file): row grouping with aggregation & totals; aggregation with sort + expand interactions; tree data with filler nodes.
+**Worked pattern** (also in the reference file): aggregation with sort and expand interactions.

@@ -50,6 +50,8 @@ export interface RowNumbersOptions extends Pick<
 
     /**
      * The default width for the row number column.
+     * When set, the column never auto-sizes narrower than it, unless `maxWidth` is smaller.
+     * Updating `rowNumbers` keeps a width the user has resized the column to, within its new `minWidth` and `maxWidth`, unless the update sets a different `width` of at least `minWidth`.
      * @default 60
      */
     width?: number;
@@ -65,11 +67,13 @@ export interface RowNumbersOptions extends Pick<
 export interface IRowNumbersService {
     column: AgColumn | null;
     refreshCols(): AgColumn<any> | null;
-    /** Restore the colDef width and hand the width back to autosize, as a column state reset does for user columns. */
+    /** Restore the colDef width and let the next autosize measure from scratch, for a column state reset. */
     resetColumnState(source: ColumnEventType): void;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;
+    /** Selects all cells on Space or Enter on the row number header, after `suppressHeaderKeyboardEvent`. */
+    handleKeyDownOnHeader(column: AgColumn, event: KeyboardEvent): void;
     createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
 }
 

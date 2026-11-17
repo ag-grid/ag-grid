@@ -299,6 +299,11 @@ function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, 
             changes[propKey] = propValue;
         }
     }
+    for (const propKey of Object.keys(prevProps)) {
+        if (!(propKey in nextProps) && !excludeReactCompProps.has(propKey)) {
+            changes[propKey] = undefined;
+        }
+    }
 
     return changes;
 }

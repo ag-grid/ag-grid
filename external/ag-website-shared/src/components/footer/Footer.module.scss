@@ -49,6 +49,14 @@
     opacity: 0.85;
 }
 
+// `button-style-none` strips the design system's focus ring, and the base button rule removes the
+// outline too; the control is keyboard reachable, so give it an indicator of its own.
+.linkButton:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
 .footerInfo {
     margin-top: -4%;
     display: flex;
@@ -111,7 +119,8 @@
         overflow: hidden;
     }
 
-    li a {
+    li a,
+    li .linkButton {
         text-decoration: underline;
         display: inline-block;
         min-width: $spacing-size-12;
@@ -214,7 +223,8 @@
         position: relative;
     }
 
-    a {
+    a,
+    .linkButton {
         color: var(--color-text-secondary);
         font-weight: var(--text-regular);
 

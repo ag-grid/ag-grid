@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type {
     BeanCollection,
     BeanStub,
@@ -41,7 +43,7 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
             return;
         }
 
-        const { canView, canCreate } = this.notesSvc.getNoteAccess(this.activeTarget.noteParams) || {};
+        const { canView, canCreate } = this.notesSvc.getNoteAccess(this.activeTarget.noteParams) ?? {};
         if (!canView && !canCreate) {
             this.closeNotePopup(false);
         }
@@ -285,7 +287,7 @@ export class AgNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
-        this.compBean.addManagedElementListeners(this.ctrl.eGui, {
+        _addManagedElementListeners(this.compBean, this.ctrl.eGui, {
             pointerenter: (event: PointerEvent) => {
                 if (this.ctrl.isNoteHoverSuppressed()) {
                     return;
@@ -400,9 +402,7 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
 
             const noteTarget = this.getNoteTargetForFullWidthTarget(fullWidthTarget);
 
-            if (!firstTarget) {
-                firstTarget = noteTarget;
-            }
+            firstTarget ??= noteTarget;
 
             const normalisedPinned =
                 fullWidthTarget.pinned === 'left' || fullWidthTarget.pinned === 'right'

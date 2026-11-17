@@ -8,6 +8,7 @@ import {
     _isVisible,
     _makeNull,
     _setAriaExpanded,
+    _setAriaLevel,
     _setAriaRowIndex,
 } from 'ag-stack';
 
@@ -29,14 +30,16 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _canSkipShowingRowGroup,
+    _getConfiguredRowHeight,
     _getGrandTotalRow,
-    _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isRowSelection,
+    _isServerSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
@@ -202,9 +205,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         this.rowStyles = this.processStylesFromGridOptions();
         this.rowModeFeature = this.createRowModeFeature();
 
-        this.addListeners();
-
-        this.rowModeFeature.prepareInitialCellCtrls?.();
+        try {
+            this.addListeners();
+            this.rowModeFeature.prepareInitialCellCtrls?.();
+        } catch (e) {
+            // the row's callbacks have run, so it reports virtualRowRemoved like any row a draw discards
+            this.destroyFirstPass(true);
+            this.destroySecondPass();
+            throw e;
+        }
     }
 
     private isClientSideLoadingRow(): boolean {
@@ -299,11 +308,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         // Cells apply their own edit styles on creation; rows otherwise only pick theirs up from
         // postProcessCss, which never runs for a row that renders once and never changes index.
         this.beans.editSvc?.applyRowEditStyles(this);
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
         this.executeSlideAndFadeAnimations();
 
         if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
         }
+        this.refreshAriaLevel();
 
         this.setRowCompRowId();
         this.setRowCompRowBusinessKey();
@@ -370,16 +383,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             return;
         }
 
+        // the row can be destroyed before the batch runs; finishing its entry animation then would
+        // undo the exit animation destroyFirstPass started
         if (this.slideInAnimation) {
             _batchCall(() => {
-                this.onTopChanged();
+                if (this.active) {
+                    this.onTopChanged();
+                }
             });
             this.slideInAnimation = false;
         }
 
         if (this.fadeInAnimation) {
             _batchCall(() => {
-                rowGui.rowComp.toggleCss('ag-opacity-zero', false);
+                if (this.active) {
+                    rowGui.rowComp.toggleCss('ag-opacity-zero', false);
+                }
             });
             this.fadeInAnimation = false;
         }
@@ -538,8 +557,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         return this.rowType !== 'Normal';
     }
 
-    /** Called by NormalRowFeature after refreshing cells */
-    public onNormalRowRefreshed(): void {
+    /** Called after refreshing cells or retaining a full width renderer. */
+    public onRowRefreshed(): void {
         // push only what changed: an unchanged value still re-renders a React row
         if (_escapeString(this.rowNode.id) !== this.rowId) {
             this.setRowCompRowId();
@@ -637,6 +656,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             cellEditValuesChanged: releaseAfterEdit,
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: () => {
+                this.refreshAriaLevel();
                 // Pinned bottom rows depend on displayed row count for absolute aria row index.
                 if (this.rowNode.rowPinned === 'bottom') {
                     this.updateRowIndexes();
@@ -682,9 +702,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     }
 
     public refreshRow(params?: RefreshRowsParams & { newData?: boolean }): void {
-        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== !!isNodeFullWidthCell(this.beans, this.rowNode);
-        if (fullWidthChanged) {
+        // a row whose type changed is drawn anew, as each type renders differently
+        if (getRowTypeForNode(this.beans, this.rowNode) !== this.rowType) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
@@ -900,6 +919,32 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
         this.rowModeFeature.setupDetailRowAutoHeight?.(eDetailGui);
+    }
+
+    public refreshAriaLevel(): void {
+        const { rowGui, rowNode, beans, gos } = this;
+        if (!rowGui) {
+            return;
+        }
+
+        let level: number | undefined;
+        if (beans.ctrlsSvc.get('gridBodyCtrl')?.isTreeGrid) {
+            level = 1;
+            if (!rowNode.rowPinned) {
+                level = Math.max(1, calculateRowLevel(rowNode) + 1);
+                const hideUnbalancedGroups = _isServerSideRowModel(gos) && gos.get('groupAllowUnbalanced');
+                // Only child promotion changes depth; hiding an open parent does not.
+                for (let parent = rowNode.parent; parent && parent.level >= 0; parent = parent.parent) {
+                    if (
+                        (parent.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, parent)) ||
+                        (hideUnbalancedGroups && parent.group && parent.key === '')
+                    ) {
+                        --level;
+                    }
+                }
+            }
+        }
+        _setAriaLevel(rowGui.element, level);
     }
 
     private onUiLevelChanged(): void {
@@ -1199,7 +1244,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
 
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
         const isHeightFromFunc = _isGetRowHeightFunction(this.gos) && !this.isClientSideLoadingRow();
-        const heightFromFunc = isHeightFromFunc ? _getRowHeightForNode(this.beans, this.rowNode).height : undefined;
+        const heightFromFunc = isHeightFromFunc ? _getConfiguredRowHeight(this.beans, this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.rowGui?.element.style.setProperty('height', `${rowHeight}px`);
@@ -1242,9 +1287,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             }
         }
 
-        // if this was focused; focus will need recovered
+        // the grid owes back the focus it held in this row, as when a focused cell is removed
         if (this.isFullWidth() && this.rowGui?.element.contains(_getActiveDomElement(this.beans))) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.oweFocus();
         }
 
         rowNode.setHovered(false);

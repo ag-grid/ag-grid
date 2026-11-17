@@ -1,5 +1,37 @@
 import type { CalculatedColumnChanges, ColDef, UserColumnPropertyKey } from 'ag-grid-community';
-import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
+import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES, _normaliseCalculatedExpression } from 'ag-grid-community';
+
+const PROTECTED_COL_DEF_VALUES = {
+    editable: false,
+    suppressPaste: true,
+    field: undefined,
+    valueGetter: undefined,
+    valueSetter: undefined,
+    cellEditor: undefined,
+    cellEditorSelector: undefined,
+} as const satisfies ColDef;
+const PROTECTED_COL_DEF_KEYS = Object.keys(PROTECTED_COL_DEF_VALUES) as (keyof typeof PROTECTED_COL_DEF_VALUES)[];
+
+/** Normalises the expression and enforces calculated-column value-source and editing invariants. */
+export function toCalculatedColDef(colDef: ColDef, colId: string): ColDef {
+    return {
+        ...colDef,
+        colId,
+        calculatedExpression: _normaliseCalculatedExpression(colDef.calculatedExpression),
+        ...PROTECTED_COL_DEF_VALUES,
+    };
+}
+
+/** Identifies callback overrides that conflict with the column's identity or calculated-column invariants. */
+export function getIgnoredCalculatedColDefProperties(colDef: ColDef, colId: string): string[] {
+    const ignored: string[] = PROTECTED_COL_DEF_KEYS.filter(
+        (key) => colDef[key] !== undefined && colDef[key] !== PROTECTED_COL_DEF_VALUES[key]
+    );
+    if (colDef.colId !== undefined && colDef.colId !== colId) {
+        ignored.push('colId');
+    }
+    return ignored;
+}
 
 /** The definition properties persisted by the Calculated Column dialog. Only these
  *  are recorded in the user-column layer: the rest is derived on build (`editable`,

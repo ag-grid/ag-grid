@@ -1,6 +1,6 @@
 import type {
+    AgBeanCollection,
     AgComponentSelector,
-    AgCoreBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -15,11 +15,11 @@ export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
 export type AgAbstractFieldEvent = 'fieldValueChanged';
 
 export abstract class AgAbstractField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,

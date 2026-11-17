@@ -1,24 +1,14 @@
 ---
 targets: ['*']
 description: 'Running and creating performance benchmarks for AG Grid'
-globs: ['**/benchmark*']
+globs: ['testing/behavioural/src/benchmarks/**']
 ---
 
-# Benchmarks Guide
+# Benchmarks
 
-This guide covers running and creating performance benchmarks for AG Grid.
+Behavioural benchmarks (`testing/behavioural/src/benchmarks/*.bench.ts(x)`, Vitest bench) run through `./benches.sh` in headless Chromium (Playwright), so layout-dependent work meets a real layout engine. They import the packages from source (no build) and keep per-file isolation. `./benches.sh --help` prints Vitest's `bench --help`, then the script's own options.
 
-## Overview
-
-Performance benchmarks help detect regressions and validate optimizations.
-
-Behavioural benchmarks (Vitest) live in `testing/behavioural/` and measure specific operations.
-
-## Running Benchmarks
-
-Behavioural benchmarks run via `./benches.sh`, in a real headless Chromium (Playwright), so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage — it prints vitest's `bench --help` followed by benches.sh's own options.
-
-An agent must start it in the background, never in the foreground: a benchmark run takes minutes, and a foreground call blocks the session for all of it. Every local run prints its log path first and streams stdout+stderr there (`tmp/_bench-output/<id>/output.log`), so the numbers are readable afterwards without a redirect. Benchmark timings are also the one thing a parallel workload distorts — leave the machine alone while one runs, rather than filling the wait with other work.
+Run it in the background (root `AGENTS.md`); the log is `tmp/_bench-output/<id>/output.log`. **Leave the machine idle while it runs**: timings are the one result a parallel workload distorts.
 
 ```bash
 # Run all behavioural benchmarks
@@ -34,7 +24,7 @@ An agent must start it in the background, never in the foreground: a benchmark r
 ./benches.sh --watch
 ```
 
-### Profiling
+## Profiling
 
 For method-cost analysis, `--profile` CPU-profiles each bench's measured run in Chromium (through CDP) and writes one `.cpuprofile` per bench (directory printed after the run) to open in Chrome DevTools or speedscope. Profiling distorts timing, so it is for call trees, not numbers:
 
@@ -42,7 +32,7 @@ For method-cost analysis, `--profile` CPU-profiles each bench's measured run in 
 ./benches.sh --profile "tree-data-path"
 ```
 
-### Comparing runs
+## Comparing runs
 
 `--bench-compare` forwards to `bench-compare.mjs` for baseline/compare workflows (`base`, `test`, `compare`, `all`, `backup`); everything after it is passed through verbatim:
 
@@ -63,43 +53,10 @@ Each bench is reported as test's speed relative to base, as the likeliest of `�
 
 Between processes, most pairs agree within a few percent but some land far off, on any bench: a bench's spread in one run does not predict its spread in the next. So the noise is one mixture per machine (the typical spread, and how often and how far an outlier pair lands), learned from every bench measured in two process pairs (`process-noise.json` beside the results), and each bench's rounds are weighed by how well they agree, so one outlier round neither makes nor hides a change. Confidences are rescaled to the run's own spread across benches. The noise is fitted once the history holds 30 benches seen in two process pairs, the prior once the run itself has 30 benches, and the rescaling needs 10; below those, defaults are used. `--runs 1` is a screen only; `--all-rounds` reruns every bench, to seed the noise history. `base` and `test` run one round each, in separate sessions: the machine can shift a whole round's times by as much as 18% as it heats, which only pairing in time cancels, so with at least 10 benches their comparison takes out the run-wide median shift and states it in the report. Use `all` for a decision, and separate sessions as a screen.
 
-## Key Performance Areas
+## Writing benchmarks
 
-### Grid Rendering
-
-- Initial render time
-- Virtual scrolling performance
-- Row/column update speed
-
-### Data Operations
-
-- Sorting performance
-- Filtering speed
-- Grouping operations
-
-### Memory Usage
-
-- Memory footprint with large datasets
-- Memory cleanup after destroy
-
-## Writing Benchmarks
-
-When creating new benchmarks:
-
-1. Focus on realistic scenarios
-2. Use consistent data sizes
-3. Measure both time and memory
-4. Document expected baseline values
-5. Run multiple iterations for accuracy
+A bench measures a realistic scenario at a fixed data size (`bench-data.ts`), registers the modules it uses (an unregistered API no-ops with `error #200`), and uses the helpers in `bench-utils.ts`. Import `bench` from there, not from `vitest` (whose `bench` is a test fixture): `bench(name, fn, { setup, teardown })` registers one test per bench, which `bench-measure.ts` measures. `setup` and `teardown` run once each, untimed, around the bench's turn.
 
 Each bench measures for 0.5 s per side: noise between processes (~3%) dwarfs a window's own, so a longer one buys nothing. It warms up for 250 ms first, and at least 10 calls: JIT tiers up on work done, not on calls, so a fast bench needs the same warmup time as a slow one. A side collects its garbage after teardown, in its own turn, so V8's idle-time GC does not run while the other side measures. A synchronous bench call runs on a virtual clock: `setTimeout` is recorded during the call, and the timers due within the following idle gap (1 s, an action then a pause) run inside the measured time, so work the grid defers, such as destroying removed rows, is part of the call's cost rather than piling up across calls. Timers still pending after warmup run before the measured window, and those pending at the end before teardown. `Date.now()` is not virtual, so a timer that re-arms until real time has passed spins until the clock's re-arm limit throws. CSS transitions and animations are zero-length on every bench page, as a timed loop never yields the frames that would finish them. Drive a scroll gesture with `scrollStep` from `bench-utils`: its steps are one frame apart, so scroll-end and other debounced timers wait for the gesture to end. Take its positions from `sweep(i)`, which goes out and back, so every call is one step rather than one in twenty being a jump back to the start. An `async` bench keeps real timers.
 
 When a call needs a starting state, wrap the bench fn in `untimedPrepare(prepare, measure)` rather than undoing the previous call inside the measured one: `prepare` runs before every call, on the same virtual clock but untimed, so a call measures one operation (`benchRebuild` does this for rebuilding rows from empty).
-
-## Best Practices
-
-1. Run benchmarks before and after changes
-2. Use production builds for accurate results
-3. Close other applications during benchmarking
-4. Document any environmental factors
-5. Track trends over time, not just absolute values

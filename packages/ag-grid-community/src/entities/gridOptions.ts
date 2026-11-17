@@ -160,7 +160,6 @@ import type {
     GetRowHeight,
     GetRowIdParams,
     GetServerSideGroupLevelParams,
-    GetServerSideRowGroupKey,
     InitialGroupOrderComparator,
     IsApplyServerSideTransactionParams,
     IsExternalFilterPresent,
@@ -201,7 +200,6 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
-import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
@@ -517,20 +515,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup';
-
-    /**
-     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-     */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean;
-
-    /**
-     * If `true`, when you drag a column into a row group panel the column is not hidden.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-     */
-    suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /**
@@ -1014,18 +998,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressFocusAfterRefresh?: boolean;
-    /**
-     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-     * @default false
-     * @initial
-     */
-    suppressBrowserResizeObserver?: boolean;
-    /**
-     * @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-     * @default false
-     * @initial
-     */
-    suppressPropertyNamesCheck?: boolean;
     /**
      * Disables change detection.
      * @default false
@@ -1591,6 +1563,14 @@ export interface GridOptions<TData = any> {
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
     /**
+     * When `true`, the grand total row is shown even when the grid has no rows to display,
+     * for example when the row data is empty or all rows are filtered out.
+     * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     */
+    alwaysShowGrandTotalRow?: boolean;
+
+    /**
      * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
@@ -1621,18 +1601,6 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule`
      */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly';
-    /**
-     * Set to `true` to collapse groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-     */
-    groupRemoveSingleChildren?: boolean;
-    /**
-     * Set to `true` to collapse lowest level groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-     */
-    groupRemoveLowestSingleChildren?: boolean;
     /**
      * Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
@@ -1916,12 +1884,23 @@ export interface GridOptions<TData = any> {
 
     // *** Scrolling *** //
     /**
+     * Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+     * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+     * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+     * Keyboard, API scrolling and scrollbar dragging are unaffected.
+     * @default 'native'
+     * @agModule `ScrollGestureModule`
+     */
+    scrollGestureMode?: 'native' | 'axisLocked';
+    /**
      * Set to `true` to always show the horizontal scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     alwaysShowHorizontalScroll?: boolean;
     /**
      * Set to `true` to always show the vertical scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     alwaysShowVerticalScroll?: boolean;
@@ -2070,22 +2049,10 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /**
-     * Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default ['asc', 'desc', null]
-     * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-     */
-    sortingOrder?: SortDirection[];
-    /**
      * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      * @default false
      */
     accentedSort?: boolean;
-    /**
-     * Set to `true` to show the 'no sort' icon.
-     * @default false
-     * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-     */
-    unSortIcon?: boolean;
     /**
      * Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
@@ -2522,13 +2489,6 @@ export interface GridOptions<TData = any> {
      * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
-    /**
-     * SSRM Row Grouping: Allows specifying group keys, so the server can return them under a different field from the grouped column.
-     * Use this to group by and aggregate the same column, with the aggregate returned under the column's field.
-     * Returning `undefined` reads the key from the row data. Not called for tree data, which uses `getServerSideGroupKey`.
-     * @agModule `ServerSideRowModelModule`
-     */
-    getServerSideRowGroupKey?: GetServerSideRowGroupKey<TData>;
 
     // *** Rows *** //
     /**
@@ -2657,7 +2617,7 @@ export interface GridOptions<TData = any> {
      */
     onCalculatedColumnCreated?(event: CalculatedColumnCreatedEvent<TData>): void;
     /**
-     * A calculated column's title, data type, expression or group visibility has changed.
+     * A calculated column's title, data type, expression, group visibility or expression validation has changed.
      * Fires once per committed update, not during initialisation or Grid State restoration.
      * Live updates can contain incomplete or invalid expressions.
      */

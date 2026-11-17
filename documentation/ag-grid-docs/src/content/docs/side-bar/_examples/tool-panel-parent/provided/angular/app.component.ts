@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, GridReadyEvent, SideBarDef, ToolPanelDef } from 'ag-grid-community';
@@ -35,9 +35,11 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `<div id="wrapper" class="example-wrapper">
-            <div class="example-header">
-                <button (click)="openPopup()">Open Columns Tool Panel</button>
-                <button (click)="openDrawer()">Open Filters Tool Panel</button>
+            <div class="example-header example-controls">
+                <div class="controls-row">
+                    <button (click)="openPopup()">Open Columns Tool Panel</button>
+                    <button (click)="openDrawer()">Open Filters Tool Panel</button>
+                </div>
             </div>
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
@@ -47,21 +49,25 @@ ModuleRegistry.registerModules([
                 [defaultColDef]="defaultColDef"
                 [autoGroupColumnDef]="autoGroupColumnDef"
                 [sideBar]="sideBar"
-                [rowData]="rowData"
+                [rowData]="rowData()"
                 (gridReady)="onGridReady($event)"
             />
         </div>
 
         <div id="popup" #popup>
             <div class="inner">
-                <div><button (click)="closePopup()">Close</button></div>
+                <div class="example-controls">
+                    <div class="controls-row"><button (click)="closePopup()">Close</button></div>
+                </div>
                 <div class="content" #popupContent></div>
             </div>
         </div>
 
         <div id="drawer" #drawer>
             <div class="inner">
-                <div><button (click)="closeDrawer()">Close</button></div>
+                <div class="example-controls">
+                    <div class="controls-row"><button (click)="closeDrawer()">Close</button></div>
+                </div>
                 <div class="content" #drawerContent></div>
             </div>
         </div> `,
@@ -103,7 +109,7 @@ export class AppComponent {
 
     defaultColDef: ColDef = { flex: 1, minWidth: 100, filter: true };
     autoGroupColumnDef: ColDef = { minWidth: 200 };
-    rowData!: IOlympicData[];
+    rowData = signal<IOlympicData[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -144,6 +150,6 @@ export class AppComponent {
 
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

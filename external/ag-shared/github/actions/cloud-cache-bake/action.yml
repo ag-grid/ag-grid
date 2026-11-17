@@ -5,7 +5,7 @@ description: Bake a fully-scripted node_modules tarball and publish it as a rele
 #
 #   - A cloud environment's setup script has a ~5 minute cap. A full install of
 #     these monorepos does not fit (measured: 534s for ag-charts), so the setup
-#     script installs with --ignore-scripts and leaves the patches, allow-scripts
+#     script installs with YARN_ENABLE_SCRIPTS=false and leaves the patches, allow-scripts
 #     and nx plugin build to a ~150s in-session finish-setup.sh. Even that pass is
 #     marginal: the same install measured 144s against a 249s budget on one
 #     environment build and overran a 199s budget on another. Which side of the

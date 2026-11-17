@@ -3,7 +3,7 @@
 // the row-positioning work without the grouping, aggregation or sorting stages ahead of it.
 // The three shapes differ in how many of the tree's nodes end up displayed: all of them (flat),
 // most of them (expanded groups), or almost none (collapsed groups).
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
@@ -11,7 +11,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { FlatRow, GroupedRow } from './bench-data';
 import { buildFlatData, buildGroupedData } from './bench-data';
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const ROW_COUNT = 20_000;
 
@@ -29,7 +29,7 @@ suite(`map stage — flat (${ROW_COUNT} rows)`, () => {
             api.refreshClientSideRowModel('map');
             api.flushAllAnimationFrames();
         },
-        benchDefaults({
+        {
             setup: async () => {
                 await gridsManager.reset();
                 api = gridsManager.createGrid('map-flat', {
@@ -38,7 +38,7 @@ suite(`map stage — flat (${ROW_COUNT} rows)`, () => {
                     getRowId: ({ data }) => data.id,
                 });
             },
-        })
+        }
     );
 });
 
@@ -66,7 +66,7 @@ suite(`map stage — grouped (3 levels, ${ROW_COUNT} rows)`, () => {
                 api.refreshClientSideRowModel('map');
                 api.flushAllAnimationFrames();
             },
-            benchDefaults({
+            {
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(`map-grouped-${expanded ? 'expanded' : 'collapsed'}`, {
@@ -76,7 +76,7 @@ suite(`map stage — grouped (3 levels, ${ROW_COUNT} rows)`, () => {
                         getRowId: ({ data }) => data.id,
                     });
                 },
-            })
+            }
         );
     }
 });

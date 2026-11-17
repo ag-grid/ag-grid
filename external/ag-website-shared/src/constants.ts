@@ -23,15 +23,29 @@ export const CONSENT_FIELD_IDS = {
     },
 };
 
+/**
+ * Salesforce field identifiers for the web-to-lead selects shown only on the pricing page form
+ */
+export const PRICING_FORM_FIELD_IDS = {
+    default: {
+        productOfInterestId: '00NPu00000P90f8',
+        applicationAudienceId: '00NPu00000P90f7',
+    },
+    production: {
+        productOfInterestId: '00NPz00000ZCPD0',
+        applicationAudienceId: '00NPz00000ZCPCz',
+    },
+};
+
 export const CONTACT_FORM_DATA = {
     default: {
-        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
-        orgId: '00DS9000004CVdh',
-        textAreaId: '00NS900000A3S21',
+        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DPu00000FWrNA',
+        orgId: '00DPu00000FWrNA',
+        textAreaId: '00NQ500000B4jZh',
         leadSource: 'AG Grid Contact Form',
         messagePlaceholder: 'Tell us about your interest in AG Grid',
         formLocationId: '00NS900000BCx1C',
-        enquiryTypeId: '00NS900000IEZRl',
+        enquiryTypeId: '00NQ500000IALbt',
         captchaSiteKey: '6Ld_ro4sAAAAACjXUk0goeMBFJvD630upERER7pr',
         captchaSettingsKeyName: 'agGridStagingV2',
     },
@@ -50,9 +64,9 @@ export const CONTACT_FORM_DATA = {
 
 export const STUDIO_FORM_DATA = {
     default: {
-        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
-        orgId: '00DS9000004CVdh',
-        textAreaId: '00NS900000A3S21',
+        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DPu00000FWrNA',
+        orgId: '00DPu00000FWrNA',
+        textAreaId: '00NQ500000B4jZh',
         leadSource: 'Studio Lead',
         messagePlaceholder: 'Tell us about your interest in AG Studio',
         formLocationId: '00NS900000BCx1C',

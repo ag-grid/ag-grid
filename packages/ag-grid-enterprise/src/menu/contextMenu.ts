@@ -251,9 +251,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             value = this.beans.valueSvc.getDisplayValue(column, rowNode, 'edit', false);
         }
 
-        if (anchorToElement == null) {
-            anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
-        }
+        anchorToElement ??= this.getContextMenuAnchorElement(rowNode, column);
 
         (this.beans.menuUtils as MenuUtils).onContextMenu({
             mouseEvent: (params as MouseShowContextMenuParams).mouseEvent ?? null,
@@ -275,7 +273,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         cellCtrl: CellCtrl | null
     ): void {
         // prio cell ctrl first, in case of spanned cell, then rowCtrl in case of full width row
-        const fullWidthInfo = rowCtrl?.findInfoForEvent(mouseEvent || touchEvent);
+        const fullWidthInfo = rowCtrl?.findInfoForEvent(mouseEvent ?? touchEvent);
         const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
         const column =
             cellCtrl?.column ??
@@ -344,13 +342,13 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 
     private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
-        const { rowIndex, rowPinned } = rowNode || {};
+        const { rowIndex, rowPinned } = rowNode ?? {};
 
         if (rowIndex == null) {
             return;
         }
 
-        return this.beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
+        return this.beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) ?? undefined;
     }
 
     private getCellGui(rowCtrl?: RowCtrl, column?: AgColumn | null): HTMLElement | undefined {
@@ -360,7 +358,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const cellCtrl = rowCtrl.getCellCtrl(column);
 
-        return cellCtrl?.eGui || undefined;
+        return cellCtrl?.eGui ?? undefined;
     }
 
     private getContextMenuAnchorElement(rowNode: RowNode | null, column?: AgColumn | null): HTMLElement {

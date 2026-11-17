@@ -24,7 +24,7 @@ const createRows = (): PdfRow[] => [
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
 
 const parseRectangles = (pdf: string): Array<{ x: number; y: number; width: number; height: number }> =>
-    [...pdf.matchAll(/(-?[\d.]+) (-?[\d.]+) ([\d.]+) ([\d.]+) re S/g)].map((match) => ({
+    [...pdf.matchAll(/(?<![\d.])(-?[\d.]+) (-?[\d.]+) ([\d.]+) ([\d.]+) re S/g)].map((match) => ({
         x: Number(match[1]),
         y: Number(match[2]),
         width: Number(match[3]),

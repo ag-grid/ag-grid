@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -23,8 +23,8 @@ import {
     _resolvePivotSort,
 } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -43,7 +43,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ghost: boolean,
         private readonly dropZonePurpose: TDropZone,
         horizontal: boolean,
-        private readonly updateParams?: ColumnStateUpdateParams
+        private readonly updateParams?: ColumnToolPanelChildParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
         this.deferApply = isDeferredMode(updateParams);
@@ -175,7 +175,17 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     public override isMovable(): boolean {
-        return this.isDraggable();
+        if (!this.isDraggable() || !this.column.primary) {
+            return false;
+        }
+        switch (this.dropZonePurpose) {
+            case 'rowGroup':
+                return this.column.isAllowRowGroup();
+            case 'pivot':
+                return this.column.isAllowPivot();
+            case 'aggregation':
+                return this.column.isAllowValue();
+        }
     }
 
     protected override isDraggable(): boolean {
@@ -385,7 +395,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+        const [focusoutListener] = _addManagedElementListeners(this, ePopup, {
             focusout: (e: FocusEvent) => {
                 if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
                     addPopupRes.hideFunc();

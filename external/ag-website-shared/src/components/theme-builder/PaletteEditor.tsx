@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { Link2, Plus, Trash2, Unlink2 } from 'lucide-react';
 
-import { Checkbox } from './Checkbox';
 import { ColorPicker } from './ColorPicker';
 import { FormField } from './FormField';
 import {
@@ -10,10 +9,11 @@ import {
     type PaletteAccent,
     type PaletteAccentKey,
     type SeriesColor,
+    type StrokeDirection,
     deriveStroke,
     fromSeriesColors,
+    resolveAccent,
     strokeIsDerived,
-    strokesAreEnabled,
     toSeriesColors,
     withAccentColors,
     withAccentFill,
@@ -22,7 +22,6 @@ import {
     withDerivedStroke,
     withFill,
     withStroke,
-    withStrokesEnabled,
 } from './palette';
 
 /**
@@ -38,6 +37,16 @@ export interface PaletteEditorProps {
      * fixed 20 palette params; AG Charts' palette array is unbounded.
      */
     maxSeriesColors?: number;
+    /** Which way linked strokes move from their fill, following the theme's background. */
+    strokeDirection?: StrokeDirection;
+    /**
+     * Whether the host's previews draw series strokes. Not part of the palette or
+     * the theme: when false the series stroke inputs are greyed out, as they would
+     * change nothing on screen.
+     */
+    seriesStrokesPreviewed?: boolean;
+    /** Off for a host whose charts have no series that reads the up, down and neutral colours. */
+    showSemanticColors?: boolean;
 }
 
 /** A new slot when there is no previous colour to clone - AG Charts' first fill. */
@@ -52,14 +61,20 @@ const ACCENT_LABELS: Record<PaletteAccentKey, string> = {
 const SERIES_DOCS = 'Each series takes the next slot, cycling once a chart has more series than the palette.';
 
 const SERIES_STROKE_DOCS =
-    'Fills colour the series; strokes outline it, and only appear where the series is drawn with a stroke width. A linked stroke is recoloured whenever its fill changes; setting one by hand unlinks it.';
+    'Fills colour the series; strokes colour its outline. A linked stroke follows its fill, darker on a light background and lighter on a dark one; picking a colour for it unlinks it.';
 
 const STROKES_DOCS =
-    'An outline for every fill. Most charts draw one only where a series asks for a stroke width, though box plots, candlesticks and treemap groups always do. Turning this off matches every stroke to its fill, so none of them show.';
+    'Strokes are not switched on by a theme. Most series, bars included, draw one only when their own options set a stroke width, though box plots, candlesticks and treemap groups always do. Turn on Series Strokes in the preview features to see them; until then the series stroke inputs are greyed out.';
 
-export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEditorProps) => {
-    const showStrokes = strokesAreEnabled(value);
-    const colors = toSeriesColors(value);
+export const PaletteEditor = ({
+    value,
+    onChange,
+    maxSeriesColors,
+    strokeDirection = 'darken',
+    seriesStrokesPreviewed = true,
+    showSemanticColors = true,
+}: PaletteEditorProps) => {
+    const colors = toSeriesColors(value, strokeDirection);
     const canAdd = maxSeriesColors == null || colors.length < maxSeriesColors;
 
     const setColors = (next: SeriesColor[]) => onChange(fromSeriesColors(value, next));
@@ -78,22 +93,9 @@ export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEdito
 
     return (
         <Fields>
-            {/* Above both groups, because it governs both - and first, because
-                it decides how many columns the rows below have. */}
-            <FormField label="Strokes" docs={STROKES_DOCS}>
-                <StrokesToggle
-                    checked={showStrokes}
-                    onChange={(enabled) => onChange(withStrokesEnabled(value, enabled))}
-                >
-                    Outline every fill
-                </StrokesToggle>
-            </FormField>
-            <FormField
-                label="Series Colors"
-                docs={[SERIES_DOCS, showStrokes && SERIES_STROKE_DOCS].filter(Boolean).join(' ')}
-            >
+            <FormField label="Series Colors" docs={`${SERIES_DOCS} ${SERIES_STROKE_DOCS} ${STROKES_DOCS}`}>
                 <Rows>
-                    <ColumnHeadings gutter={SERIES_LABEL_WIDTH} showStrokes={showStrokes} />
+                    <ColumnHeadings gutter={SERIES_LABEL_WIDTH} />
                     {colors.map((color, index) => (
                         <Row key={index}>
                             <SeriesIndex>{index + 1}</SeriesIndex>
@@ -103,29 +105,34 @@ export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEdito
                                 value={color.fill}
                                 onChange={(fill) => setColor(index, withFill(color, fill ?? color.fill))}
                             />
-                            {showStrokes && (
-                                <ColorPicker
-                                    preventTransparency={false}
-                                    ariaLabel={`Series color ${index + 1} stroke`}
-                                    value={color.stroke}
-                                    // Cleared means "no stroke of my own", so it
-                                    // follows the fill. An accent differs below.
-                                    onChange={(stroke) =>
-                                        setColor(
-                                            index,
-                                            stroke == null ? withDerivedStroke(color, true) : withStroke(color, stroke)
-                                        )
-                                    }
-                                />
-                            )}
+                            <ColorPicker
+                                preventTransparency={false}
+                                ariaLabel={`Series color ${index + 1} stroke`}
+                                value={color.stroke}
+                                // Opening a linked stroke unlinks it, keeping the colour shown.
+                                // Greyed out too while the previews hide strokes, but still
+                                // editable: the theme exports the stroke either way.
+                                muted={strokeIsDerived(color.strokeDerived) || !seriesStrokesPreviewed}
+                                onOpen={
+                                    strokeIsDerived(color.strokeDerived)
+                                        ? () => setColor(index, withDerivedStroke(color, false))
+                                        : undefined
+                                }
+                                // Cleared means "no stroke of my own", so it
+                                // follows the fill. An accent differs below.
+                                onChange={(stroke) =>
+                                    setColor(
+                                        index,
+                                        stroke == null ? withDerivedStroke(color, true) : withStroke(color, stroke)
+                                    )
+                                }
+                            />
                             <Controls>
-                                {showStrokes && (
-                                    <DeriveButton
-                                        label={`series color ${index + 1}`}
-                                        derived={strokeIsDerived(color.strokeDerived)}
-                                        onChange={(derived) => setColor(index, withDerivedStroke(color, derived))}
-                                    />
-                                )}
+                                <DeriveButton
+                                    label={`series color ${index + 1}`}
+                                    derived={strokeIsDerived(color.strokeDerived)}
+                                    onChange={(derived) => setColor(index, withDerivedStroke(color, derived))}
+                                />
                                 <IconButton
                                     type="button"
                                     aria-label={`Remove series color ${index + 1}`}
@@ -146,23 +153,24 @@ export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEdito
             )}
             {/* One group rather than three fields, so the two columns are named
                 once and the three rows read as the set they are. */}
-            <FormField
-                label="Financial Colors"
-                docs="Rising, falling and unchanged prices in candlestick and OHLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
-            >
-                <Rows>
-                    <ColumnHeadings gutter={ACCENT_LABEL_WIDTH} showStrokes={showStrokes} />
-                    {PALETTE_ACCENT_KEYS.map((key) => (
-                        <AccentEditor
-                            key={key}
-                            label={ACCENT_LABELS[key]}
-                            value={value[key]}
-                            showStrokes={showStrokes}
-                            onChange={(accent) => onChange(withAccentColors(value, key, accent))}
-                        />
-                    ))}
-                </Rows>
-            </FormField>
+            {showSemanticColors && (
+                <FormField
+                    label="Semantic Colors"
+                    docs="Rising, falling and unchanged values, such as prices in candlestick, OHLC and HLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
+                >
+                    <Rows>
+                        <ColumnHeadings gutter={ACCENT_LABEL_WIDTH} />
+                        {PALETTE_ACCENT_KEYS.map((key) => (
+                            <AccentEditor
+                                key={key}
+                                label={ACCENT_LABELS[key]}
+                                value={resolveAccent(value[key], strokeDirection)}
+                                onChange={(accent) => onChange(withAccentColors(value, key, accent))}
+                            />
+                        ))}
+                    </Rows>
+                </FormField>
+            )}
         </Fields>
     );
 };
@@ -172,13 +180,13 @@ export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEdito
  * also names itself, a screen reader not reading a heading as a label.
  * `gutter` is the width of the row-label column these sit beside.
  */
-const ColumnHeadings = ({ gutter, showStrokes }: { gutter: number; showStrokes: boolean }) => (
+const ColumnHeadings = ({ gutter }: { gutter: number }) => (
     <Row>
         <RowLabel style={{ width: gutter }} />
         <ColumnHeading>Fill</ColumnHeading>
-        {showStrokes && <ColumnHeading>Stroke</ColumnHeading>}
+        <ColumnHeading>Stroke</ColumnHeading>
         <Controls>
-            {showStrokes && <TrailingGutter />}
+            <TrailingGutter />
             <TrailingGutter />
         </Controls>
     </Row>
@@ -187,12 +195,10 @@ const ColumnHeadings = ({ gutter, showStrokes }: { gutter: number; showStrokes: 
 interface AccentEditorProps {
     label: string;
     value: PaletteAccent | undefined;
-    /** Whether this row has a stroke column, which the palette can switch off. */
-    showStrokes: boolean;
     onChange: (value: PaletteAccent) => void;
 }
 
-const AccentEditor = ({ label, value, showStrokes, onChange }: AccentEditorProps) => (
+const AccentEditor = ({ label, value, onChange }: AccentEditorProps) => (
     <Row>
         <RowLabel>{label}</RowLabel>
         <ColorPicker
@@ -201,22 +207,24 @@ const AccentEditor = ({ label, value, showStrokes, onChange }: AccentEditorProps
             value={value?.fill ?? ''}
             onChange={(fill) => onChange(withAccentFill(value, fill ?? undefined))}
         />
-        {showStrokes && (
-            <ColorPicker
-                preventTransparency={false}
-                ariaLabel={`${label} stroke`}
-                value={value?.stroke ?? ''}
-                onChange={(stroke) => onChange(withAccentStroke(value, stroke ?? undefined))}
-            />
-        )}
+        <ColorPicker
+            preventTransparency={false}
+            ariaLabel={`${label} stroke`}
+            value={value?.stroke ?? ''}
+            muted={strokeIsDerived(value?.strokeDerived)}
+            onOpen={
+                strokeIsDerived(value?.strokeDerived)
+                    ? () => onChange(withDerivedAccentStroke(value, false))
+                    : undefined
+            }
+            onChange={(stroke) => onChange(withAccentStroke(value, stroke ?? undefined))}
+        />
         <Controls>
-            {showStrokes && (
-                <DeriveButton
-                    label={label.toLowerCase()}
-                    derived={strokeIsDerived(value?.strokeDerived)}
-                    onChange={(derived) => onChange(withDerivedAccentStroke(value, derived))}
-                />
-            )}
+            <DeriveButton
+                label={label.toLowerCase()}
+                derived={strokeIsDerived(value?.strokeDerived)}
+                onChange={(derived) => onChange(withDerivedAccentStroke(value, derived))}
+            />
             {/* Matches the series rows' remove button, so both groups end flush. */}
             <TrailingGutter />
         </Controls>
@@ -240,7 +248,11 @@ const DeriveButton = ({ label, derived, onChange }: DeriveButtonProps) => (
         type="button"
         aria-pressed={derived}
         aria-label={`Derive the ${label} stroke from its fill`}
-        title={derived ? 'Stroke follows the fill' : 'Stroke was set by hand - link it to the fill'}
+        title={
+            derived
+                ? 'Stroke follows the fill - pick a colour to unlink it'
+                : 'Stroke was set by hand - link it to the fill'
+        }
         className={derived ? 'is-active' : undefined}
         onClick={() => onChange(!derived)}
     >
@@ -252,13 +264,6 @@ const DeriveButton = ({ label, derived, onChange }: DeriveButtonProps) => (
 const ACCENT_LABEL_WIDTH = 40;
 /** Enough for a two-digit slot number. */
 const SERIES_LABEL_WIDTH = 16;
-
-// The row font, not the checkbox's inherited one: it labels a control that sits
-// among the palette's own small print rather than in a settings dialog.
-const StrokesToggle = styled(Checkbox)`
-    color: var(--color-fg-secondary);
-    font-size: 12px;
-`;
 
 const Fields = styled('div')`
     display: flex;

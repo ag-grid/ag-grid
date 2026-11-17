@@ -3,6 +3,13 @@ import path from 'node:path';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 
+declare global {
+    interface Window {
+        /** The API of the grid `mountGrid` created, for code evaluated in the page. */
+        gridApi: GridApi;
+    }
+}
+
 const GRID_SELECTOR = '#myGrid';
 const REPO_ROOT = path.join(__dirname, '../../..');
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
@@ -31,6 +38,12 @@ export interface MountGridParams {
     integratedCharts?: boolean;
     width?: number;
     height?: number;
+    /** Extra CSS for the page, such as an application's style overrides. */
+    css?: string;
+    /** Classes for the grid's container element, such as a legacy theme's `ag-theme-*` class. */
+    className?: string;
+    /** Create the grid inside an open shadow root. */
+    shadowDom?: boolean;
     /**
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
@@ -48,27 +61,47 @@ export interface MountedGrid {
 
 export async function mountGrid(
     page: Page,
-    { enterprise = false, integratedCharts = false, width = 800, height = 500, options }: MountGridParams
+    {
+        enterprise = false,
+        integratedCharts = false,
+        width = 800,
+        height = 500,
+        css,
+        className = '',
+        shadowDom = false,
+        options,
+    }: MountGridParams
 ): Promise<MountedGrid> {
     await page.setContent(
         `<!DOCTYPE html><html><head><style>*{margin:0}${GRID_SELECTOR}{width:${width}px;height:${height}px}</style></head>` +
-            `<body><div id="myGrid"></div></body></html>`
+            `<body><div id="myGrid" class="${className}"></div></body></html>`
     );
+    if (css) {
+        await page.addStyleTag({ content: css });
+    }
     if (integratedCharts) {
         await page.addScriptTag(bundleSource('node_modules', 'ag-charts-enterprise/dist/umd/ag-charts-enterprise'));
     }
     await page.addScriptTag(gridBundle(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
     await page.evaluate(
-        ({ optionsSource, selector }) => {
+        ({ optionsSource, selector, shadowDom, width, height }) => {
             const gridOptions = new Function(`return (${optionsSource})()`)();
             const gridDiv = document.querySelector<HTMLElement>(selector)!;
-            (window as any).gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
+            if (shadowDom) {
+                const host = document.createElement('div');
+                host.id = 'shadow-host';
+                gridDiv.before(host);
+                host.attachShadow({ mode: 'open' }).appendChild(gridDiv);
+                gridDiv.style.width = `${width}px`;
+                gridDiv.style.height = `${height}px`;
+            }
+            window.gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
         },
-        { optionsSource: options.toString(), selector: GRID_SELECTOR }
+        { optionsSource: options.toString(), selector: GRID_SELECTOR, shadowDom, width, height }
     );
 
     const grid = page.locator(GRID_SELECTOR);
-    await grid.locator('.ag-root-wrapper').waitFor();
+    await grid.locator('.ag-root-wrapper').first().waitFor();
 
     return {
         grid,

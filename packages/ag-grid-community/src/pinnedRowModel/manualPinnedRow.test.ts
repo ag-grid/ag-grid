@@ -7,7 +7,7 @@ const CSS_PATH = path.join(__dirname, 'manualPinnedRow.css');
 // `.css` imports resolve to an empty string under the package vitest config, so read the shipped file.
 function selectorForPinnedRowBackground(): string {
     const css = fs.readFileSync(CSS_PATH, 'utf-8');
-    const rules = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+    const rules = css.match(/(?<![^{}])[^{}]+\{[^{}]*\}/g) ?? [];
     const rule = rules.find((r) => r.includes('var(--ag-pinned-row-background-color)'));
     expect(rule, 'expected a rule declaring var(--ag-pinned-row-background-color)').toBeDefined();
     return rule!.slice(0, rule!.indexOf('{')).trim();

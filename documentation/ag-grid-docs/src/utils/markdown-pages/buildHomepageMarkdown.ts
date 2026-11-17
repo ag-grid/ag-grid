@@ -1,5 +1,6 @@
 import { htmlInlineToMarkdown } from '@ag-website-shared/markdoc/htmlInlineToMarkdown';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { resolveMarkdownLinks } from '@ag-website-shared/markdown-pages/landing-pages/buildLandingPageMarkdown';
 import { getOrderedQuotes, quotesData, statsData } from '@components/quotes/quotesData';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -78,8 +79,13 @@ function whatsNewSection(): string {
         .join('\n\n');
 }
 
-function faqSection(): string {
-    return (faqData as FaqItem[]).map((item) => `### ${item.question}\n\n${item.answer}`).join('\n\n');
+function faqSection(siteRoot?: string): string {
+    // FAQ answers are Markdoc rendered with the page framework, so their './' links are
+    // framework-relative and need the prefixing helper to land on a docs page.
+    const resolveFaqUrl = (url: string) => urlWithPrefix({ framework: FRAMEWORK, url });
+    return (faqData as FaqItem[])
+        .map((item) => `### ${item.question}\n\n${resolveMarkdownLinks(item.answer, resolveFaqUrl, siteRoot)}`)
+        .join('\n\n');
 }
 
 /** The headline metrics shown above the quotes, as a list. */
@@ -114,7 +120,7 @@ function sectionBlock(section: HomepageSection, siteRoot?: string): string {
         parts.push(whatsNewSection());
     }
     if (section.id === 'faq-section') {
-        parts.push(faqSection());
+        parts.push(faqSection(siteRoot));
     }
     return parts.join('\n\n');
 }

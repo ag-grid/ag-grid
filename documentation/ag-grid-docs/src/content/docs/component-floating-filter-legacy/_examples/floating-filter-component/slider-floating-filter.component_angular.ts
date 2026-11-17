@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { AgFrameworkComponent } from 'ag-grid-angular';
@@ -26,16 +26,16 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
     private params!: SliderFloatingFilterParams;
 
     public maxValue!: number;
-    public currentValue!: number;
+    currentValue = signal(0);
 
     agInit(params: SliderFloatingFilterParams): void {
         this.params = params;
         this.maxValue = this.params.maxValue;
-        this.currentValue = 0;
+        this.currentValue.set(0);
     }
 
     valueChanged() {
-        const valueToUse = this.currentValue === 0 ? null : this.currentValue;
+        const valueToUse = this.currentValue() === 0 ? null : this.currentValue();
         this.params.parentFilterInstance(function (instance) {
             instance.onFloatingFilterChanged('greaterThan', valueToUse);
         });
@@ -43,11 +43,11 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
 
     onParentModelChanged(parentModel: NumberFilterModel): void {
         if (!parentModel) {
-            this.currentValue = 0;
+            this.currentValue.set(0);
         } else {
             // note that the filter could be anything here, but our purposes we're assuming a greater than filter only,
             // so just read off the value and use that
-            this.currentValue = parentModel.filter!;
+            this.currentValue.set(parentModel.filter!);
         }
     }
 }

@@ -12,6 +12,10 @@ export interface InternalFeatureFlags {
      * Space obeys `enableClickSelection` as a click does, except on a cell showing a selection checkbox.
      */
     spaceKeyFollowsClickSelection?: boolean;
+    /**
+     * The grand total row cannot be selected by clicking it or pressing Space on it.
+     */
+    grandTotalRowUnselectable?: boolean;
 }
 
 export type InternalFeatureFlag = keyof InternalFeatureFlags;

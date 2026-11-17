@@ -841,6 +841,59 @@ describe('Set Filter — value model & UI (coverage)', () => {
         `);
     });
 
+    describe('keyboard', () => {
+        const COUNTRIES = [{ country: 'Australia' }, { country: 'France' }, { country: 'Italy' }];
+        const press = (target: Element, key: string) =>
+            target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+        const focusItem = (label: string) => {
+            const item = Array.from(
+                document.querySelectorAll<HTMLElement>('.ag-filter-menu .ag-virtual-list-item')
+            ).find((row) => row.querySelector('.ag-checkbox-label')?.textContent?.trim() === label)!;
+            item.focus();
+            return item;
+        };
+        const createGrid = (filterParams: ISetFilterParams) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams }],
+                rowData: COUNTRIES,
+            });
+
+        test('Enter in the mini filter selects only the values it shows and applies them at once, Apply button or not', async () => {
+            const api: GridApi = await createGrid({ buttons: ['apply'] });
+            const filter = await ColumnFilterHarness.open(api, 'country');
+            await filter.miniFilterSearch('al');
+            expect(api.getFilterModel()).toEqual({});
+            press(document.querySelector('.ag-filter-menu .ag-mini-filter input')!, 'Enter');
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({ country: { filterType: 'set', values: ['Australia', 'Italy'] } });
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
+        test.each([
+            { params: {}, model: { filterType: 'set', values: ['Australia', 'Italy'] } },
+            { params: { readOnly: true }, model: null },
+        ])('Space on a focused item toggles it unless the filter is read-only ($params)', async ({ params, model }) => {
+            const api: GridApi = await createGrid(params);
+            await ColumnFilterHarness.open(api, 'country');
+            press(focusItem('France'), ' ');
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('country')).toEqual(model);
+        });
+
+        test('in Excel mode, Space on a focused item stages it and Enter applies it', async () => {
+            const api: GridApi = await createGrid({ excelMode: 'windows' });
+            await ColumnFilterHarness.open(api, 'country');
+            press(focusItem('France'), ' ');
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('country')).toBeNull();
+
+            press(focusItem('Italy'), 'Enter');
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['Australia', 'Italy'] });
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+    });
+
     test('setColumnFilterModel round-trips including a null (Blanks) value', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
@@ -1300,12 +1353,11 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             rowData: COUNTRY_ROWS,
         });
         await filterCountries(api, ['France']);
-        await ColumnFilterHarness.open(api, 'country');
+        const filter = await ColumnFilterHarness.open(api, 'country');
 
         api.setGridOption('columnDefs', [{ field: 'athlete' }, countryByCode]);
         await asyncSetTimeout(0);
 
-        const filter = await ColumnFilterHarness.open(api, 'country');
         await new FilterDom(api, 'reset selection', { colId: 'country' }).checkFilterDom(`
             COLUMN FILTER (set)
             mini-filter: ""

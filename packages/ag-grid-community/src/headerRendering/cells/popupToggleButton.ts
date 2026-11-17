@@ -1,15 +1,17 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type { BeanStub } from '../../context/beanStub';
 import type { PopupToggleResult } from '../../misc/menu/menuService';
 import { TouchListener } from '../../widgets/touchListener';
 
-type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedElementListeners' | 'addDestroyFunc'>;
+type PopupToggleListenerOwner = Pick<BeanStub, 'addManagedListeners' | 'addDestroyFunc'>;
 
 export function _addPopupToggleButtonListeners(
     owner: PopupToggleListenerOwner,
     button: HTMLElement,
     togglePopup: () => PopupToggleResult
 ): void {
-    owner.addManagedElementListeners(button, {
+    _addManagedElementListeners(owner, button, {
         mousedown: (event: MouseEvent) => {
             if (event.button === 0 && togglePopup() === 'opened') {
                 event.preventDefault();

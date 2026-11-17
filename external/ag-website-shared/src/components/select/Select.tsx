@@ -2,7 +2,7 @@ import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import * as RadixSelect from '@radix-ui/react-select';
 import classnames from 'classnames';
 import { ChevronDown } from 'lucide-react';
-import { forwardRef, useCallback } from 'react';
+import { forwardRef } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 
 import styles from './Select.module.scss';
@@ -30,7 +30,7 @@ type SelectProps<O> = {
 export function Select<O>({
     value,
     options,
-    triggerAriaLabel = 'Framework selector',
+    triggerAriaLabel,
     onChange,
     renderItem,
     getKey = defaultGetKey,
@@ -44,7 +44,7 @@ export function Select<O>({
     side,
     contentClassName,
 }: SelectProps<O>) {
-    const getOptionContent = useCallback((option: O) => {
+    const getOptionContent = (option: O) => {
         const key = getKey(option) ?? '';
         let label: string | undefined = getLabel?.(option);
         if (label == null) {
@@ -60,7 +60,7 @@ export function Select<O>({
             key,
             optionContent,
         };
-    }, []);
+    };
 
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};

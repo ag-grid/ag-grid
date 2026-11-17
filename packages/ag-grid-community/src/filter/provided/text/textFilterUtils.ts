@@ -39,6 +39,6 @@ export function mapValuesFromTextFilterModel(
     filterModel: TextFilterModel | null,
     optionsFactory: OptionsFactory
 ): Tuple<string> {
-    const { filter, filterTo, type } = filterModel || {};
+    const { filter, filterTo, type } = filterModel ?? {};
     return [filter || null, filterTo || null].slice(0, getNumberOfInputs(type, optionsFactory));
 }

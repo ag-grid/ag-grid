@@ -413,7 +413,7 @@ export class EditCellValidationModel {
     private cellValidations: EditValidationMap = new Map();
 
     public getCellValidation(position?: EditPosition): EditValidation | undefined {
-        const { rowNode, column } = position || {};
+        const { rowNode, column } = position ?? {};
         return this.cellValidations?.get(rowNode!)?.get(column!);
     }
 
@@ -464,7 +464,7 @@ export class EditRowValidationModel {
     private rowValidations: EditRowValidationMap = new Map();
 
     public getRowValidation(position?: EditRowPosition): EditValidation | undefined {
-        const { rowNode } = position || {};
+        const { rowNode } = position ?? {};
         return this.rowValidations.get(rowNode!);
     }
 

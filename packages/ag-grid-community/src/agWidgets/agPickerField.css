@@ -38,6 +38,11 @@
     &:where(.invalid) {
         box-shadow: var(--ag-focus-error-shadow);
     }
+
+    /* forced colours hides the focus shadow so use an outline */
+    @media (forced-colors: active) {
+        outline: 2px solid Highlight;
+    }
 }
 
 .ag-picker-field-wrapper:disabled {

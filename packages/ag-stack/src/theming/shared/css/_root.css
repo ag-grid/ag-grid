@@ -13,10 +13,15 @@
 
     --ag-indentation-level: 0;
 
+    /* Colour transitions break system colours in forced colour mode. `none` is not a valid transition
+       mode, but it has the effect of disabling colour transitions */
+    --ag-internal-accessible-color-transition-mode: none;
+
     /* We use this to hide focus outlines when we are rendering a more attractive box
        shadow, but forced colour mode hides hides box shadows and requires outlines. */
     @media not (forced-colors: active) {
         --ag-internal-accessible-no-outline: none;
+        --ag-internal-accessible-color-transition-mode: ease;
     }
 }
 

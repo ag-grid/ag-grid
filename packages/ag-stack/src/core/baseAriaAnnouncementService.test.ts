@@ -43,4 +43,24 @@ describe('BaseAriaAnnouncementService', () => {
 
         service.destroy();
     });
+
+    test('cancelAnnouncement drops a pending value without forgetting the last one announced', () => {
+        vi.useFakeTimers();
+        const { container, service } = createService();
+
+        service.announceValue('No matches', 'noMatches');
+        vi.runAllTimers();
+        expect(container.textContent).toBe('No matches');
+
+        service.announceValue('No matches', 'noMatches');
+        service.cancelAnnouncement('noMatches');
+        vi.runAllTimers();
+        expect(container.textContent).toBe('No matches');
+
+        service.announceValue('No matches', 'noMatches');
+        vi.runAllTimers();
+        expect(container.textContent).toBe('No matches\u200B');
+
+        service.destroy();
+    });
 });

@@ -46,6 +46,10 @@ function onUpdateSomeValues() {
     }
 }
 
+function onFlashColourChanged(value: string) {
+    document.body.style.setProperty('--ag-value-change-value-highlight-background-color', value);
+}
+
 function createRowData() {
     const rowData = [];
 

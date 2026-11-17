@@ -1,4 +1,4 @@
-import { findByText, queryByText, waitFor } from '@testing-library/dom';
+import { findByText, fireEvent, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
@@ -10,14 +10,31 @@ import type {
     GridApi,
     GridOptions,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { ScrollApiModule, getGridElement } from 'ag-grid-community';
+import {
+    CalculatedColumnsModule,
+    ColumnHeaderEditModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    FormulaModule,
+    PivotModule,
+    RowGroupingModule,
+} from 'ag-grid-enterprise';
 
 import { getColumnEntry, openToolPanelContextMenu as openContextMenu } from './toolPanelContextMenuHarness';
 
 describe('ToolPanelContextMenu', () => {
     const gridMgr = new TestGridsManager({
-        modules: [AllEnterpriseModule],
+        modules: [
+            ColumnsToolPanelModule,
+            ColumnMenuModule,
+            RowGroupingModule,
+            PivotModule,
+            CalculatedColumnsModule,
+            FormulaModule,
+            ColumnHeaderEditModule,
+            ScrollApiModule,
+        ],
     });
 
     const rowDataFactory = () => [
@@ -39,6 +56,8 @@ describe('ToolPanelContextMenu', () => {
     });
 
     afterEach(() => {
+        // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
+        document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         gridMgr.reset();
         vi.resetAllMocks();
         vi.clearAllMocks();
@@ -142,6 +161,22 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Add Age to values');
 
             await waitFor(() => expect(gridApi.getValueColumns().map((c) => c.getColId())).toStrictEqual(['age']));
+        });
+
+        // happy-dom, like WebKit, does not turn these keys into a contextmenu event, so the grid must handle them.
+        test.each([
+            ['Shift+F10', { key: 'F10', shiftKey: true }],
+            ['the context menu key', { key: 'ContextMenu' }],
+        ])('%s opens the menu and Escape restores focus', async (_name, keyInit) => {
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            entry.focus();
+
+            expect(fireEvent.keyDown(entry, keyInit)).toBe(false);
+            await findByText(gridDiv, 'Group by Athlete');
+
+            await userEvent.keyboard('{Escape}');
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+            expect(document.activeElement).toBe(entry);
         });
     });
 
@@ -397,6 +432,19 @@ describe('ToolPanelContextMenu', () => {
             expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: null, columnGroup }));
         });
 
+        test('Shift+F10 opens the menu for a column group', async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ headerName: 'Athlete Details', groupId: 'details', children: [{ field: 'athlete' }] }],
+                { getColumnMenuItems: () => [{ name: 'Highlight group' }] }
+            );
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete Details');
+            entry.focus();
+            fireEvent.keyDown(entry, { key: 'F10', shiftKey: true });
+
+            await findByText(gridDiv, 'Highlight group');
+        });
+
         test('custom sub menu item actions receive the column the menu was opened for', async () => {
             const action = vi.fn();
             const { gridApi, gridDiv, toolPanel } = await createGrid(columnDefs, {
@@ -478,7 +526,7 @@ describe('ToolPanelContextMenu', () => {
             await findByText(gridDiv, 'Pin Column');
         });
 
-        test('under functionsReadOnly a callback receives navigation defaults without movement', async () => {
+        test('under functionsReadOnly a callback receives navigation and movement defaults', async () => {
             const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
                 ...params.defaultItems,
                 { name: 'Read-only custom' },
@@ -492,7 +540,12 @@ describe('ToolPanelContextMenu', () => {
 
             await findByText(gridDiv, 'Read-only custom');
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
-            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['scrollIntoView']);
+            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual([
+                'scrollIntoView',
+                'separator',
+                'moveUp',
+                'moveDown',
+            ]);
         });
 
         test('under functionsReadOnly with no callback the menu still offers scroll into view', async () => {
@@ -510,7 +563,7 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Scroll Athlete into View');
         });
 
-        test('under functionsReadOnly a pinned column has no default menu items', async () => {
+        test('under functionsReadOnly a pinned column still offers movement', async () => {
             const { gridDiv, toolPanel } = await createGrid(
                 [{ field: 'athlete', minWidth: 200, pinned: 'left' }, { field: 'age' }],
                 { functionsReadOnly: true }
@@ -519,8 +572,8 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
 
             // Pinning removes scroll-into-view; read-only functions remove grouping actions.
-            expect(queryByText(gridDiv, 'Move Up')).toBeNull();
-            expect(queryByText(gridDiv, 'Move Down')).toBeNull();
+            expect(await findByText(gridDiv, 'Move Up')).toBeTruthy();
+            expect(await findByText(gridDiv, 'Move Down')).toBeTruthy();
             expect(queryByText(gridDiv, 'Scroll Athlete into View')).toBeNull();
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });

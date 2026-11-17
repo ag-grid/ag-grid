@@ -1,12 +1,12 @@
 import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean, params?: ColumnStateUpdateParams) {
+    constructor(horizontal: boolean, params?: ColumnToolPanelChildParams) {
         super(horizontal, 'aggregation', params);
     }
 

@@ -1,8 +1,14 @@
 import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { afterEach, describe, expect, test } from 'vitest';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    PinnedRowModule,
+    RowAutoHeightModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 
 const buildCols = (count: number): ColDef[] => {
     const cols: ColDef[] = [];
@@ -172,6 +178,110 @@ describe('Column refresh layout reads', () => {
         } finally {
             column!.getLeft = getLeft;
         }
+    });
+
+    test('the rendered columns are those within 200px of the viewport, a column touching that edge included', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(30),
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const rendered = () => api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        const scrollTo = async (left: number) => {
+            const viewport = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            viewport.scrollLeft = left;
+            viewport.dispatchEvent(new Event('scroll'));
+            await asyncSetTimeout(0);
+        };
+
+        // 1000px of viewport and 200px columns: c6 starts on the right edge, 1200px
+        expect(rendered()).toEqual(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6']);
+        // c0 ends on the left edge, 200px, and c8 starts on the right one, 1600px
+        await scrollTo(400);
+        expect(rendered()).toEqual(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']);
+        // the last of them, c23 ending on the left edge, 4800px
+        await scrollTo(5000);
+        expect(rendered()).toEqual(['c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29']);
+    });
+
+    test('a column made autoHeight by a columnDefs update stays rendered wherever the viewport is', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            { columnDefs: buildCols(30), rowData: [{ c0: 1 }], suppressColumnVirtualisation: false },
+            { modules: [RowAutoHeightModule] }
+        );
+        await asyncSetTimeout(0);
+        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c25');
+
+        const columnDefs = buildCols(30);
+        columnDefs[25] = { colId: 'c25', field: 'c25', autoHeight: true };
+        api.setGridOption('columnDefs', columnDefs);
+        await asyncSetTimeout(0);
+
+        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).toContain('c25');
+    });
+
+    test('group headers keep every autoHeaderHeight column the rendered columns leave out, across a scroll', async () => {
+        const columnDefs: (ColDef | ColGroupDef)[] = buildCols(30);
+        for (const index of [28, 25]) {
+            columnDefs[index] = {
+                groupId: `g${index}`,
+                headerName: `g${index}`,
+                children: [{ colId: `c${index}`, autoHeaderHeight: true }],
+            };
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const groupHeaders = () =>
+            Array.from(root.querySelectorAll('.ag-header-group-cell'), (el) => el.textContent?.trim()).filter(
+                (name) => name === 'g25' || name === 'g28'
+            );
+
+        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c25');
+        expect(groupHeaders()).toEqual(['g25', 'g28']);
+
+        // a scroll that renders the same columns keeps the same header set
+        const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        viewport.scrollLeft = 10;
+        viewport.dispatchEvent(new Event('scroll'));
+        await asyncSetTimeout(0);
+        expect(groupHeaders()).toEqual(['g25', 'g28']);
+
+        // the last one hidden leaves the others as they were
+        api.setColumnsVisible(['c28'], false);
+        await asyncSetTimeout(0);
+        expect(groupHeaders()).toEqual(['g25']);
+    });
+
+    test('an autoHeight column the viewport leaves out stays rendered, so its row height can be measured', async () => {
+        const columnDefs = buildCols(30);
+        columnDefs[25] = { colId: 'c25', field: 'c25', autoHeight: true };
+        const api = gridsManager.createGrid(
+            'myGrid',
+            { columnDefs, rowData: [{ c0: 1 }], suppressColumnVirtualisation: false },
+            { modules: [RowAutoHeightModule] }
+        );
+        await asyncSetTimeout(0);
+
+        const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        expect(rendered).toContain('c25');
+        expect(rendered).not.toContain('c24');
+
+        // a col span sends each row through its own pick of the columns, which keeps it too
+        const spanned = buildCols(30);
+        spanned[0] = { colId: 'c0', field: 'c0', colSpan: () => 1 };
+        spanned[25] = { colId: 'c25', field: 'c25', autoHeight: true };
+        api.setGridOption('columnDefs', spanned);
+        await asyncSetTimeout(0);
+        const root = TestGridsManager.getHTMLElement(api)!;
+        expect(root.querySelector('.ag-row .ag-cell[col-id="c25"]')).not.toBeNull();
+        expect(root.querySelector('.ag-row .ag-cell[col-id="c24"]')).toBeNull();
     });
 
     // The fake vertical scrollbar re-reads the viewport height to size its container, and one pinned-row

@@ -17,10 +17,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
-        private readonly destroyRowCtrls: (
-            rowCtrlsMap: Record<string, RowCtrl> | null | undefined,
-            animate: boolean
-        ) => void
+        private readonly destroyRowCtrls: (rowCtrls: RowCtrl[]) => void
     ) {
         super();
     }
@@ -182,7 +179,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                         return false;
                     }
                 }
-                if (row.level === -1 && pinnedRowModel?.getGrandTotalPinned()) {
+                if (row.level === -1 && pinnedRowModel?.getUserGrandTotalPinned()) {
                     return false;
                 }
                 if (container === 'bottom') {
@@ -218,7 +215,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             }
 
             if (row.isExpandable()) {
-                if (suppressGroupsSticky === true) {
+                if (suppressGroupsSticky) {
                     return false;
                 }
                 if (container === 'bottom') {
@@ -352,32 +349,30 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         this.refreshNodesAndContainerHeight('bottom', new Set(), 0);
     }
 
+    /** Replaces the node's sticky row ctrl, built before the old one is destroyed, so a throw leaves it shown. */
     public refreshStickyNode(stickRowNode: RowNode): void {
-        const allStickyNodes = new Set<RowNode>();
-        if (this.stickyTopRowCtrls.some((ctrl) => ctrl.rowNode === stickRowNode)) {
-            for (let i = 0; i < this.stickyTopRowCtrls.length; i++) {
-                const currentNode = this.stickyTopRowCtrls[i].rowNode;
-                if (currentNode !== stickRowNode) {
-                    allStickyNodes.add(currentNode);
-                }
-            }
-
-            if (this.refreshNodesAndContainerHeight('top', allStickyNodes, this.topContainerHeight)) {
-                this.checkStickyRows();
-            }
-            return;
-        }
-
-        for (let i = 0; i < this.stickyBottomRowCtrls.length; i++) {
-            const currentNode = this.stickyBottomRowCtrls[i].rowNode;
-            if (currentNode !== stickRowNode) {
-                allStickyNodes.add(currentNode);
+        let ctrls = this.stickyTopRowCtrls;
+        let index = indexOfRowCtrl(ctrls, stickRowNode);
+        const isTop = index >= 0;
+        if (!isTop) {
+            ctrls = this.stickyBottomRowCtrls;
+            index = indexOfRowCtrl(ctrls, stickRowNode);
+            // a sticky row whose ctrl is being built has none yet
+            if (index < 0) {
+                return;
             }
         }
 
-        if (this.refreshNodesAndContainerHeight('bottom', allStickyNodes, this.bottomContainerHeight)) {
-            this.checkStickyRows();
+        const newCtrl = this.createRowCon(stickRowNode, false, false);
+        // replaced, not written into, as a React row container keeps the array it was given
+        const newCtrls = ctrls.slice();
+        newCtrls[index] = newCtrl;
+        if (isTop) {
+            this.stickyTopRowCtrls = newCtrls;
+        } else {
+            this.stickyBottomRowCtrls = newCtrls;
         }
+        this.destroyRowCtrls([ctrls[index]]);
     }
 
     /**
@@ -392,16 +387,13 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         const previousCtrls = isTop ? this.stickyTopRowCtrls : this.stickyBottomRowCtrls;
 
         // find removed ctrls and remaining ctrls
-        const removedCtrlsMap: Record<string, RowCtrl> = {};
+        const removedCtrls: RowCtrl[] = [];
         const remainingCtrls: RowCtrl[] = [];
         for (let i = 0; i < previousCtrls.length; i++) {
             const node = previousCtrls[i].rowNode;
             const hasBeenRemoved = !newStickyNodes.has(node);
             if (hasBeenRemoved) {
-                removedCtrlsMap[node.id!] = previousCtrls[i];
-
-                // if no longer sticky, remove sticky flag.
-                node.sticky = false;
+                removedCtrls.push(previousCtrls[i]);
                 continue;
             }
 
@@ -414,16 +406,33 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             existingNodes.add(remainingCtrls[i].rowNode);
         }
 
-        // find the new ctrls to add
+        // find the new ctrls to add; a throw leaves the sticky rows shown as they were
         const newCtrls: RowCtrl[] = [];
-        newStickyNodes.forEach((node) => {
-            if (existingNodes.has(node)) {
-                return;
+        try {
+            for (const node of newStickyNodes) {
+                if (existingNodes.has(node)) {
+                    continue;
+                }
+                // ensure new node is set to sticky and create the new ctrl
+                node.sticky = true;
+                newCtrls.push(this.createRowCon(node, false, false));
             }
-            // ensure new node is set to sticky and create the new ctrl
-            node.sticky = true;
-            newCtrls.push(this.createRowCon(node, false, false));
-        });
+        } catch (e) {
+            // the nodes get their sticky flag back and the ctrls built are destroyed
+            for (const node of newStickyNodes) {
+                node.sticky = existingNodes.has(node);
+            }
+            for (let i = 0, len = newCtrls.length; i < len; ++i) {
+                const rowCtrl = newCtrls[i];
+                rowCtrl.destroyFirstPass();
+                rowCtrl.destroySecondPass();
+            }
+            throw e;
+        }
+
+        for (let i = 0, len = removedCtrls.length; i < len; ++i) {
+            removedCtrls[i].rowNode.sticky = false;
+        }
 
         // check if anything has changed
         let hasSomethingChanged = !!newCtrls.length || remainingCtrls.length !== previousCtrls.length;
@@ -440,7 +449,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         }
 
         // clean up removed ctrls
-        this.destroyRowCtrls(removedCtrlsMap, false);
+        this.destroyRowCtrls(removedCtrls);
 
         // set up new ctrls list
         const newCtrlsList = [...remainingCtrls, ...newCtrls];
@@ -567,4 +576,13 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
     }
     // if not expandable, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;
+}
+
+function indexOfRowCtrl(rowCtrls: RowCtrl[], rowNode: RowNode): number {
+    const len = rowCtrls.length;
+    let i = 0;
+    while (i < len && rowCtrls[i].rowNode !== rowNode) {
+        ++i;
+    }
+    return i < len ? i : -1;
 }

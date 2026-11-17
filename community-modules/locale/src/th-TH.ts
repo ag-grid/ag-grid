@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     advancedFilterCancel: 'ยกเลิก',
     advancedFilterClear: 'ล้าง',
     advancedFilterBuilder: 'ตัวสร้าง',
+    advancedFilterPlaceholder: 'ตัวกรองขั้นสูง',
     advancedFilterValidationMissingColumn: 'ไม่มีคอลัมน์',
     advancedFilterValidationMissingOption: 'ไม่มีตัวเลือก',
     advancedFilterValidationMissingValue: 'ไม่มีค่า',
@@ -748,6 +749,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaCalculatedColumn: 'คอลัมน์คำนวณ',
     ariaColumnShowValuesAs: 'กำลังแสดงค่าเป็น',
     ariaColumnSelectAll: 'สลับการมองเห็นทุกคอลัมน์',
+    ariaColumnSelectExpandAll: 'ขยายหรือยุบกลุ่มคอลัมน์ทั้งหมด',
     ariaDateFilterInput: 'ช่องป้อนตัวกรองวันที่',
     ariaDefaultListName: 'รายการ',
     ariaFilterColumnsInput: 'ช่องป้อนกรองคอลัมน์',
@@ -779,6 +781,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaRowSelect: 'กด SPACE เพื่อเลือกแถวนี้',
     ariaRowSelectionDisabled: 'การเลือกแถวถูกปิดใช้งานสำหรับแถวนี้',
     ariaSearch: 'ค้นหา',
+    ariaSortPriority: 'ลำดับความสำคัญในการเรียง ${priority} จาก ${count}',
     ariaSortableColumn: 'กด ENTER เพื่อเรียงลำดับ',
     ariaSortableColumnWithCellSelection: 'กด ALT ENTER เพื่อเรียงลำดับ',
     ariaToggleVisibility: 'กด SPACE เพื่อสลับการมองเห็น',
@@ -787,8 +790,17 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaVisible: 'มองเห็นได้',
     ariaSearchFilterValues: 'ค้นหาค่าตัวกรอง',
     ariaPageSizeSelectorLabel: 'ขนาดหน้า',
+    ariaPageSizeSelectorDescription: 'การเปลี่ยนขนาดหน้าจะอัปเดตแถวที่แสดงในตาราง',
+    ariaPaginationRowSummary: 'กำลังแสดงระเบียนที่ ${variable} ถึง ${variable} จากทั้งหมด ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'กำลังแสดงระเบียนที่ ${variable} ถึง ${variable} ไม่ทราบจำนวนทั้งหมด',
+    ariaPaginationRowSummaryLoading: 'กำลังโหลดระเบียนตั้งแต่ ${variable}',
+    ariaPaginationPanelLabel: 'การแบ่งหน้าของตาราง',
     ariaChartMenuClose: 'ปิดเมนูแก้ไขชาร์ต',
     ariaChartSelected: 'ถูกเลือก',
+    ariaChartSeriesChartType: 'ชนิดชาร์ตของ ${variable}',
+    ariaChartPalettePrevious: 'จานสีก่อนหน้า',
+    ariaChartPaletteNext: 'จานสีถัดไป',
+    ariaChartPalettePage: 'จานสี ${variable} จาก ${variable}',
     ariaSparklineChartDescription:
         'สปาร์กไลน์ - ${chartType} แสดงค่า ${count} ค่าระหว่าง ${min} และ ${max} เริ่มต้นที่ ${start} และสิ้นสุดที่ ${end}',
     ariaSparklineChartDescriptionSingleValue: 'สปาร์กไลน์ - ${chartType} แสดง 1 ค่า คือ ${value}',
@@ -816,12 +828,24 @@ export const AG_GRID_LOCALE_TH_TH = {
 
     ariaLabelDialog: 'กล่องโต้ตอบ',
 
+    ariaLabelClose: 'ปิด',
+
+    ariaLabelMaximize: 'ขยายใหญ่สุด',
+
+    ariaLabelRestore: 'คืนค่า',
+    ariaLabelColorPickerSpectrum: 'ความอิ่มตัวและความสว่าง',
+    ariaValueColorPickerSpectrum: 'ความอิ่มตัว ${variable}%, ความสว่าง ${variable}%',
+    ariaLabelColorPickerHue: 'เฉดสี',
+    ariaLabelColorPickerAlpha: 'ความทึบแสง',
+    ariaLabelColorPickerHex: 'สีฐานสิบหก',
+
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',
 
     ariaLabelSelectField: 'เลือกฟิลด์',
 
     // Cell Editor
+    ariaLabelCellEditor: 'ตัวแก้ไขเซลล์',
     ariaValidationErrorPrefix: 'การตรวจสอบตัวแก้ไขเซลล์',
     ariaFullRowValidationError: 'การตรวจสอบทั้งแถว: ${variable}',
     ariaFullRowEditValidationFailed: 'ไม่สามารถแก้ไขแถวให้สมบูรณ์ได้ ${variable}',
@@ -854,6 +878,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelAddFilterField: 'ฟิลด์เพิ่มตัวกรอง',
     ariaLabelFilterCardDelete: 'ลบตัวกรอง',
     ariaLabelFilterCardHasEdits: 'มีการแก้ไข',
+    ariaLabelFilterCardType: 'ประเภทตัวกรอง',
     ariaHasNote: 'เซลล์นี้มีบันทึกช่วยจำ',
 
     // Number Format (Status Bar, Pagination Panel)

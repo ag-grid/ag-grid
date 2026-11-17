@@ -37,6 +37,8 @@ export interface IColsService {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IOrderedColsService extends IColsService {
+    /** Whether {@link IColsService.extractCol} would make `col` active, without staging it. */
+    willExtractCol(col: AgColumn, colIsNew: boolean): boolean;
     /** Assigns synthetic indexes to `incoming` and adds new entries to `accumulator`; both mutated. */
     restoreColumnOrder(incoming: { [colId: string]: ColumnState }, accumulator: { [colId: string]: ColumnState }): void;
     sortByPendingState(): void;

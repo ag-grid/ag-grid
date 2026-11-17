@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     advancedFilterCancel: 'বাতিল করুন',
     advancedFilterClear: 'পরিষ্কার করুন',
     advancedFilterBuilder: 'বিল্ডার',
+    advancedFilterPlaceholder: 'অ্যাডভান্সড ফিল্টার',
     advancedFilterValidationMissingColumn: 'কলাম অনুপস্থিত',
     advancedFilterValidationMissingOption: 'অপশন অনুপস্থিত',
     advancedFilterValidationMissingValue: 'মান অনুপস্থিত',
@@ -749,6 +750,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaCalculatedColumn: 'গণনাকৃত কলাম',
     ariaColumnShowValuesAs: 'মান দেখানো হচ্ছে হিসেবে',
     ariaColumnSelectAll: 'সব কলামের দৃশ্যমানতা টগল করুন',
+    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত বা সংকুচিত করুন',
     ariaDateFilterInput: 'তারিখ ফিল্টার ইনপুট',
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'কলাম ফিল্টার ইনপুট',
@@ -780,6 +782,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaRowSelect: 'এই রো নির্বাচন করতে SPACE চাপুন',
     ariaRowSelectionDisabled: 'এই রোয়ের জন্য রো নির্বাচন নিষ্ক্রিয়',
     ariaSearch: 'সার্চ',
+    ariaSortPriority: 'সাজানোর অগ্রাধিকার ${count}টির মধ্যে ${priority}',
     ariaSortableColumn: 'সর্ট করতে ENTER চাপুন',
     ariaSortableColumnWithCellSelection: 'সর্ট করতে ALT ENTER চাপুন',
     ariaToggleVisibility: 'দৃশ্যমানতা টগল করতে SPACE চাপুন',
@@ -788,8 +791,17 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaVisible: 'দৃশ্যমান',
     ariaSearchFilterValues: 'ফিল্টার মান সার্চ করুন',
     ariaPageSizeSelectorLabel: 'পৃষ্ঠার আকার',
+    ariaPageSizeSelectorDescription: 'পৃষ্ঠার আকার পরিবর্তন করলে গ্রিডে দেখানো রো-গুলি আপডেট হয়',
+    ariaPaginationRowSummary: '${variable} থেকে ${variable} পর্যন্ত রেকর্ড দেখানো হচ্ছে, মোট ${variable}টি',
+    ariaPaginationRowSummaryUnknownTotal: '${variable} থেকে ${variable} পর্যন্ত রেকর্ড দেখানো হচ্ছে, মোট সংখ্যা অজানা',
+    ariaPaginationRowSummaryLoading: '${variable} থেকে রেকর্ড লোড হচ্ছে',
+    ariaPaginationPanelLabel: 'গ্রিড পৃষ্ঠাবিন্যাস',
     ariaChartMenuClose: 'চার্ট এডিট মেনু বন্ধ করুন',
     ariaChartSelected: 'নির্বাচিত',
+    ariaChartSeriesChartType: '${variable} চার্ট ধরণ',
+    ariaChartPalettePrevious: 'পূর্ববর্তী প্যালেট',
+    ariaChartPaletteNext: 'পরবর্তী প্যালেট',
+    ariaChartPalettePage: 'প্যালেট ${variable} এর মধ্যে ${variable}',
     ariaSparklineChartDescription:
         'স্পার্কলাইন - ${chartType} যাতে ${min} এবং ${max} এর মধ্যে ${count}টি মান দেখানো হচ্ছে। শুরু হয় ${start} থেকে এবং শেষ হয় ${end} এ।',
     ariaSparklineChartDescriptionSingleValue: 'স্পার্কলাইন - ${chartType} যাতে ১টি মান, ${value} দেখানো হচ্ছে।',
@@ -817,12 +829,24 @@ export const AG_GRID_LOCALE_BN_IN = {
 
     ariaLabelDialog: 'ডায়ালগ',
 
+    ariaLabelClose: 'বন্ধ করুন',
+
+    ariaLabelMaximize: 'বড় করুন',
+
+    ariaLabelRestore: 'পুনরুদ্ধার করুন',
+    ariaLabelColorPickerSpectrum: 'স্যাচুরেশন ও উজ্জ্বলতা',
+    ariaValueColorPickerSpectrum: 'স্যাচুরেশন ${variable}%, উজ্জ্বলতা ${variable}%',
+    ariaLabelColorPickerHue: 'হিউ',
+    ariaLabelColorPickerAlpha: 'অস্বচ্ছতা',
+    ariaLabelColorPickerHex: 'হেক্স রঙ',
+
     ariaLabelColumnMenu: 'কলাম মেনু',
     ariaLabelColumnFilter: 'কলাম ফিল্টার',
 
     ariaLabelSelectField: 'ফিল্ড নির্বাচন করুন',
 
     // Cell Editor
+    ariaLabelCellEditor: 'সেল এডিটর',
     ariaValidationErrorPrefix: 'সেল এডিটর ভ্যালিডেশন',
     ariaFullRowValidationError: 'সম্পূর্ণ রো ভ্যালিডেশন: ${variable}',
     ariaFullRowEditValidationFailed: 'রো সম্পাদনা সম্পূর্ণ করা যায়নি। ${variable}',
@@ -855,6 +879,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',
     ariaLabelFilterCardDelete: 'ফিল্টার মুছুন',
     ariaLabelFilterCardHasEdits: 'পরিবর্তন আছে',
+    ariaLabelFilterCardType: 'ফিল্টারের ধরন',
     ariaHasNote: 'এই সেলে একটি নোট আছে।',
 
     // Number Format (Status Bar, Pagination Panel)

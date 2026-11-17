@@ -44,6 +44,13 @@ describe('CellSpan Arrow Key Navigation', () => {
         gridsManager.reset();
     });
 
+    test('Arrow Down in a column that does not span moves one row', () => {
+        api.setFocusedCell(0, 'value');
+        dispatchKeyDown(KeyCode.DOWN);
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('value');
+    });
+
     test('Arrow Down from span head skips entire span to next item', () => {
         // The span treats rows 0-1 as a single unit. Down from the head (row 0)
         // jumps past the whole span and lands on the first row after it (row 2).

@@ -19,6 +19,7 @@ export const productionConfigFields = [
     'showIntegratedChartPopup',
     'statusBar',
     'pagination',
+    'toolbar',
 ] as const;
 
 const debugConfigFields = [
@@ -145,6 +146,12 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
                 { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
                 { statusPanel: 'agAggregationComponent', align: 'right' },
             ],
+        };
+    }
+
+    if (config.toolbar) {
+        options.toolbar = {
+            items: ['agQuickFilterToolbarItem', 'separator', 'agFindToolbarItem'],
         };
     }
 

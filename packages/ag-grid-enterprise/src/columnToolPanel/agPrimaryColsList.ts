@@ -1,4 +1,4 @@
-import { _exists, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+import { _exists, _getActiveDomElement, _getDocument, _setAriaLabel, _setAriaLevel } from 'ag-stack';
 
 import type {
     AbstractColDef,
@@ -25,6 +25,7 @@ import {
     toolPanelCreateColumnTree,
 } from '../sideBar/common/toolPanelColDefService';
 import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -67,6 +68,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
+    private noMatchesComp: NoMatchesComp;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
@@ -133,6 +135,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.expandGroupsByDefault = !contractColumnSelection;
 
         this.isPreventMove = !!suppressColumnMove || !!suppressSyncLayoutWithGrid;
+
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-column-select-no-matches'));
+        this.appendChild(this.noMatchesComp);
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
@@ -236,16 +241,47 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.eventType
         );
         refreshDeferredToolPanelUi(this.beans, this.params);
-        const nextIndex = this.displayedColsList.findIndex((next) =>
+        void this.focusRowIfAlive(this.indexOfItem(item, move.columns[0])).then(() => {
+            this.skipRefocus = false;
+        });
+    }
+
+    private indexOfItem(item: ColumnModelItem, leafColumn?: AgColumn): number {
+        return this.displayedColsList.findIndex((next) =>
             item.group
                 ? next.group &&
                   next.columnGroup.groupId === item.columnGroup.groupId &&
-                  next.columnGroup.getLeafColumns().includes(move.columns[0])
+                  (!leafColumn || next.columnGroup.getLeafColumns().includes(leafColumn))
                 : !next.group && next.column === item.column
         );
-        void this.focusRowIfAlive(nextIndex).then(() => {
-            this.skipRefocus = false;
-        });
+    }
+
+    /** Only refocuses when the rebuild dropped focus, so focus an action moved on purpose (e.g. to an editor) stays put. */
+    private refocusItemIfLost(item: ColumnModelItem, eOldRow: HTMLElement): void {
+        // After the redraw `refresh` queued, and after the closing menu has restored focus.
+        this.virtualList.awaitStable(() =>
+            window.setTimeout(() => {
+                if (eOldRow.isConnected || !this.isAlive()) {
+                    return;
+                }
+                const activeEl = _getActiveDomElement(this.beans);
+                const focusLost = !activeEl || activeEl === eOldRow || activeEl === _getDocument(this.beans).body;
+                if (focusLost) {
+                    // A group split by column order has several rows sharing its groupId; a leaf picks this one.
+                    const leafColumn = item.group ? item.columnGroup.getLeafColumns()[0] : undefined;
+                    void this.focusRowIfAlive(this.indexOfItem(item, leafColumn));
+                }
+            }, 0)
+        );
+    }
+
+    /** Returns false when the list has no rows to focus, e.g. a search with no matches. */
+    public focusList(): boolean {
+        if (this.displayedColsList.length === 0) {
+            return false;
+        }
+        void this.focusRowIfAlive(this.virtualList.getLastFocusedRow() ?? 0);
+        return true;
     }
 
     private createComponentFromItem(
@@ -259,6 +295,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                   canMove: (isUp: boolean) => !!this.getMoveTarget(item, isUp),
                   move: (isUp: boolean) => this.moveItems(item, isUp),
               };
+        const refocusIfLost = (eOldRow: HTMLElement) => this.refocusItemIfLost(item, eOldRow);
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(
                 item,
@@ -267,7 +304,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 listItemElement,
                 params,
                 source,
-                columnMove
+                columnMove,
+                refocusIfLost
             );
             this.createBean(renderedGroup);
 
@@ -282,7 +320,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             params,
             eventType,
             source,
-            columnMove
+            columnMove,
+            refocusIfLost
         );
         this.createBean(columnComp);
 
@@ -511,7 +550,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.flattenAndFilterModel();
     }
 
-    private flattenAndFilterModel(): void {
+    private flattenAndFilterModel(fromSearchInput = false): void {
         this.displayedColsList = [];
 
         const recursiveFunc = (item: ColumnModelItem) => {
@@ -533,6 +572,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             recursiveFunc(allColsTree[i]);
         }
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
+
+        const noMatches = this.filterText != null && this.displayedColsList.length === 0;
+        this.noMatchesComp.setNoMatches(noMatches, fromSearchInput);
+        virtualList.setDisplayed(!noMatches);
+
         let focusedRow: number | null = null;
 
         if (!this.skipRefocus) {
@@ -717,7 +761,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     public setFilterText(filterText: string) {
         this.filterText = _exists(filterText) ? filterText.toLowerCase() : null;
         this.markFilteredColumns();
-        this.flattenAndFilterModel();
+        this.flattenAndFilterModel(true);
     }
 
     private markFilteredColumns(): void {

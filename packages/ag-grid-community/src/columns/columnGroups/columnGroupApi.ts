@@ -15,7 +15,7 @@ export function setColumnGroupOpened(
 
 export function getColumnGroup(beans: BeanCollection, name: string, instanceId?: number): ColumnGroup | null {
     const instances = name != null ? beans.colModel.colsGroupsById.get(name)?.displayInstances : undefined;
-    return (instances && (typeof instanceId === 'number' ? instances[instanceId] : instances[0])) || null;
+    return (instances && (typeof instanceId === 'number' ? instances[instanceId] : instances[0])) ?? null;
 }
 
 export function getProvidedColumnGroup(beans: BeanCollection, name: string): ProvidedColumnGroup | null {

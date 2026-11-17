@@ -3,7 +3,7 @@ import { BasePopupService } from './basePopupService';
 // Concrete subclass for testing
 class TestPopupService extends BasePopupService<any, any, any, any, any, any> {
     protected getDefaultPopupParent(): HTMLElement {
-        return document.body;
+        return document.createElement('div');
     }
     protected isStopPropagation(): boolean {
         return false;
@@ -272,6 +272,51 @@ describe('BasePopupService', () => {
                     parentRect: offsetParent,
                 });
                 expect(pos).toEqual({ x: 300, y: 200 });
+            });
+        });
+
+        describe('popupParent is body and the page is scrolled 1000px down a 3000px document', () => {
+            // htmlHeight 800 models html { height: 100% } in an 800px viewport (content overflows <html>); 3000 is an auto-height html
+            function getBodyParentedPosition(
+                htmlHeight: number,
+                headerSource: Partial<DOMRect>
+            ): { x: number; y: number } {
+                vi.spyOn(document.documentElement, 'clientHeight', 'get').mockReturnValue(800);
+
+                const svc = Object.create(TestPopupService.prototype) as TestPopupService;
+                (svc as any).popupList = [];
+                (svc as any).gos = { get: vi.fn((key: string) => (key === 'popupParent' ? document.body : undefined)) };
+                vi.spyOn(svc, 'getParentRect').mockReturnValue({
+                    top: -1000,
+                    left: 0,
+                    right: 1280,
+                    bottom: htmlHeight - 1000,
+                });
+
+                const eventSource = createMockElement(headerSource);
+                const ePopup = createMockElement({}, { offsetWidth: 250, offsetHeight: 320 });
+                const spy = vi.spyOn(svc, 'positionPopup').mockImplementation(() => {});
+
+                svc.positionPopupByComponent({ ePopup, eventSource, position: 'under', type: 'columnMenu' });
+
+                return spy.mock.calls[0][0].updatePosition!();
+            }
+
+            it('opens under the source when the viewport has room below it', () => {
+                const pos = getBodyParentedPosition(800, { top: 51, left: 0, right: 200, bottom: 99 });
+                // under (tl-bl): y = header.bottom - html.top = 99 + 1000
+                expect(pos.y).toBe(1099);
+            });
+
+            it('opens above the source when it sits near the bottom of the viewport', () => {
+                const pos = getBodyParentedPosition(800, { top: 700, left: 0, right: 200, bottom: 748 });
+                // above (bl-tl): y = header.top - html.top - popupHeight = 700 + 1000 - 320
+                expect(pos.y).toBe(1380);
+            });
+
+            it('opens above the source near the viewport bottom even when an auto-height html extends below it', () => {
+                const pos = getBodyParentedPosition(3000, { top: 700, left: 0, right: 200, bottom: 748 });
+                expect(pos.y).toBe(1380);
             });
         });
     });

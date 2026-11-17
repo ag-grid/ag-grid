@@ -1,4 +1,4 @@
-import { _clearElement } from 'ag-stack';
+import { _addManagedElementListeners, _clearElement } from 'ag-stack';
 
 import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
 import { Component, KeyCode, _focusNextGridCoreContainer, _stopPropagationForAgGrid } from 'ag-grid-community';
@@ -20,7 +20,7 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     }
 
     public postConstruct(): void {
-        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
+        _addManagedElementListeners(this, this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
     private handleKeyDown(e: KeyboardEvent): void {

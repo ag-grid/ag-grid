@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridOptions, Module, Params } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, NumberFilterModule, TextEditorModule } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults, untimedPrepare } from './bench-utils';
+import { BenchGridsManager, bench, untimedPrepare } from './bench-utils';
 
 suite('render cells with different module sets', () => {
     const rowData = buildRandomData(100);
@@ -13,15 +13,14 @@ suite('render cells with different module sets', () => {
 
     const gridsManager = new BenchGridsManager();
 
-    const makeBenchOptions = (modules: Module[] = []) =>
-        benchDefaults({
-            setup: () => {
-                params = { modules };
-            },
-            teardown: async () => {
-                await gridsManager.reset();
-            },
-        });
+    const makeBenchOptions = (modules: Module[] = []) => ({
+        setup: () => {
+            params = { modules };
+        },
+        teardown: async () => {
+            await gridsManager.reset();
+        },
+    });
 
     const gridOptions: GridOptions = { columnDefs, rowData };
 

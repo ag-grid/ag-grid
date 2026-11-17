@@ -7,4 +7,8 @@
     width: 12px;
     height: 12px;
     background-color: var(--ag-invalid-color);
+
+    @media (forced-colors: active) {
+        background-color: Mark;
+    }
 }

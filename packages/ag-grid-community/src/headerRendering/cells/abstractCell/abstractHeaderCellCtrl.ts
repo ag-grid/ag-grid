@@ -1,11 +1,11 @@
 import type { HorizontalDirection } from 'ag-stack';
 import {
     KeyCode,
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _batchCall,
     _exists,
     _getActiveDomElement,
-    _getDocument,
     _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
@@ -17,6 +17,7 @@ import { destroyCompBean } from '../../../components/emptyBean';
 import { BeanStub } from '../../../context/beanStub';
 import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
+import { getDragSign } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
@@ -27,7 +28,9 @@ import {
     getPrintLayoutOffset,
     isRightAnchored,
 } from '../../../rendering/features/horizontalPositionUtils';
+import { _isStopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _isHeaderFocusSuppressed } from '../../../utils/gridFocus';
+import { createHeaderMenuSource } from '../../headerUtils';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
@@ -61,7 +64,7 @@ export abstract class AbstractHeaderCellCtrl<
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
 
-    private isResizing: boolean;
+    private isResizing = false;
     private resizeToggleTimeout = 0;
     protected resizeMultiplier = 1;
 
@@ -73,7 +76,6 @@ export abstract class AbstractHeaderCellCtrl<
     public lastFocusEvent: KeyboardEvent | null = null;
 
     protected dragSource: GridDragSource | null = null;
-    protected reAttemptToFocus: boolean = false;
 
     // what was last written to the comp, so a layout that leaves it costs no write; `-1` or null for a new one
     private drawnWidth = -1;
@@ -83,8 +85,9 @@ export abstract class AbstractHeaderCellCtrl<
     private drawnRightAnchored = false;
     /** The column `left` the cell was last placed for, so an animated move does not undo a later layout. */
     private targetLeft: number | null = null;
+    private userStyleKeys: string[] | undefined;
 
-    protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
+    protected abstract resizeHeader(delta: number, takeFromAdjacent: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
 
     constructor(
@@ -118,8 +121,7 @@ export abstract class AbstractHeaderCellCtrl<
 
         // Post SetComp
         // Actions that need to be done after the component is setup and all the features and listeners are wired
-        if (this.reAttemptToFocus) {
-            this.reAttemptToFocus = false;
+        if (this.beans.focusSvc.takeOwedHeaderFocus(this)) {
             this.focus(this.lastFocusEvent ?? undefined);
         }
     }
@@ -169,7 +171,7 @@ export abstract class AbstractHeaderCellCtrl<
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
-        compBean.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(compBean, this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
 
@@ -195,9 +197,29 @@ export abstract class AbstractHeaderCellCtrl<
             styles = headerStyle;
         }
 
+        styles = this.addHeaderStyleCleanup(styles);
         if (styles) {
             this.comp.setUserStyles(styles);
         }
+    }
+
+    private addHeaderStyleCleanup(styles: HeaderStyle | null | undefined): HeaderStyle | null | undefined {
+        const previousStyleKeys = this.userStyleKeys;
+        const styleKeys = styles ? Object.keys(styles) : [];
+        this.userStyleKeys = styleKeys;
+
+        if (!previousStyleKeys?.length) {
+            return styles;
+        }
+
+        const removedStyles: HeaderStyle = {};
+        for (const key of previousStyleKeys) {
+            if (!styleKeys.includes(key)) {
+                removedStyles[key] = '';
+            }
+        }
+        // clear removed properties first, so a longhand cannot erase a newly applied shorthand.
+        return { ...removedStyles, ...styles };
     }
 
     private onGuiFocus(): void {
@@ -229,8 +251,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = _getDocument(beans);
-                const notYetInDom = !doc?.contains(wrapperElement);
+                const notYetInDom = !wrapperElement.isConnected;
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
@@ -313,10 +334,14 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {
+        // a resize held as the focus leaves, or the header goes, never gets its keyup here
+        const endKeyboardResize = this.endKeyboardResize.bind(this);
         compBean.addManagedListeners(this.eGui, {
             keydown: this.onGuiKeyDown.bind(this),
             keyup: this.onGuiKeyUp.bind(this),
+            focusout: endKeyboardResize,
         });
+        compBean.addDestroyFunc(endKeyboardResize);
     }
 
     private refreshTabIndex(): void {
@@ -327,8 +352,12 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const activeEl = _getActiveDomElement(this.beans);
-
+        // registered after the focus feature, whose keydown has already asked suppressHeaderKeyboardEvent
+        if (_isStopPropagationForAgGrid(e)) {
+            return;
+        }
+        // that feature does not ask for a key already prevented, as by a header comp registered before it
+        const prevented = e.defaultPrevented;
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
         if (this.isResizing) {
@@ -337,81 +366,76 @@ export abstract class AbstractHeaderCellCtrl<
         }
 
         if (
-            // if elements within the header are focused, we don't process the event
-            activeEl !== this.eGui ||
             // if shiftKey, ctrlKey, metaKey and altKey are not pressed, it's cell navigation so we don't process the event
-            (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey)
+            (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) ||
+            // if elements within the header are focused, we don't process the event
+            _getActiveDomElement(this.beans) !== this.eGui
         ) {
             return;
         }
 
-        if (this.isResizing || isLeftOrRight) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-        }
-
         const isCopy = (e.ctrlKey || e.metaKey) && _normaliseQwertyAzerty(e) === KeyCode.C;
+
+        if ((!isCopy && !isLeftOrRight) || (prevented && this.shouldStopEventPropagation(e))) {
+            return;
+        }
 
         if (isCopy) {
             return this.beans.clipboardSvc?.copyToClipboard();
         }
 
-        if (!isLeftOrRight) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        if (!e.altKey) {
+            const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
+            this.moveHeader(isLeft ? 'left' : 'right');
             return;
         }
-
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
-        const direction = isLeft ? 'left' : 'right';
-
-        if (e.altKey) {
-            this.isResizing = true;
-            this.resizeMultiplier += 1;
-            const diff = this.getViewportAdjustedResizeDiff(e);
-            this.resizeHeader(diff, e.shiftKey);
-            this.resizeFeature?.toggleColumnResizing(true);
-        } else {
-            this.moveHeader(direction);
+        if (!this.column.isResizable()) {
+            return;
         }
+        // a hold resumed within a release's delay keeps resizing, so that release's end is dropped
+        window.clearTimeout(this.resizeToggleTimeout);
+        this.isResizing = true;
+        this.resizeMultiplier += 1;
+        const takeFromAdjacent = !!this.beans.colResize?.takesFromAdjacent(e.shiftKey);
+        this.resizeHeader(this.getViewportAdjustedResizeDiff(e, takeFromAdjacent), takeFromAdjacent);
+        this.resizeFeature?.toggleColumnResizing(true);
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
         this.beans.colMoves?.moveHeader(hDirection, this.eGui, this.column, this.column.getPinned(), this);
     }
 
-    private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
-        const diff = this.getResizeDiff(e);
-        const { pinnedCols } = this.beans;
-        return pinnedCols ? pinnedCols.getHeaderResizeDiff(diff, this.column, e.shiftKey) : diff;
-    }
-
-    private getResizeDiff(e: KeyboardEvent): number {
-        const { gos, column } = this;
-        let isLeft = (e.key === KeyCode.LEFT) !== gos.get('enableRtl');
-
-        const lane = column.pinnedLane;
-        const isRtl = gos.get('enableRtl');
-        if (lane !== 1 && isRtl !== (lane === 2)) {
-            isLeft = !isLeft;
-        }
-
-        return (isLeft ? -1 : 1) * this.resizeMultiplier;
+    private getViewportAdjustedResizeDiff(e: KeyboardEvent, takeFromAdjacent: boolean): number {
+        const column = this.column;
+        const sign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
+        const diff = (e.key === KeyCode.RIGHT ? sign : -sign) * this.resizeMultiplier;
+        // the last step fills the room left, whatever the multiplier
+        return this.beans.pinnedCols?.limitResize(column, takeFromAdjacent, diff) ?? diff;
     }
 
     private onGuiKeyUp(): void {
         if (!this.isResizing) {
             return;
         }
-        if (this.resizeToggleTimeout) {
-            window.clearTimeout(this.resizeToggleTimeout);
-            this.resizeToggleTimeout = 0;
-        }
-
         this.isResizing = false;
         this.resizeMultiplier = 1;
 
-        this.resizeToggleTimeout = window.setTimeout(() => {
-            this.resizeFeature?.toggleColumnResizing(false);
-        }, 150);
+        this.resizeToggleTimeout = window.setTimeout(() => this.endKeyboardResize(), 150);
+    }
+
+    /** Ends a keyboard resize, and any pending end of one, at once. */
+    private endKeyboardResize(): void {
+        if (!this.isResizing && !this.resizeToggleTimeout) {
+            return;
+        }
+        window.clearTimeout(this.resizeToggleTimeout);
+        this.resizeToggleTimeout = 0;
+        this.isResizing = false;
+        this.resizeMultiplier = 1;
+        this.resizeFeature?.toggleColumnResizing(false);
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -444,10 +468,10 @@ export abstract class AbstractHeaderCellCtrl<
         const { eGui } = this;
 
         if (!eGui) {
-            this.reAttemptToFocus = true;
+            this.beans.focusSvc.deferFocus(this);
         } else {
-            this.lastFocusEvent = event || null;
-            eGui.focus();
+            this.lastFocusEvent = event ?? null;
+            this.beans.focusSvc.focusGridElement(eGui);
         }
 
         return true;
@@ -475,7 +499,12 @@ export abstract class AbstractHeaderCellCtrl<
             event.preventDefault();
         }
         if (menuSvc?.isHeaderContextMenuEnabled(column)) {
-            menuSvc.showHeaderContextMenu(column, mouseEvent, touchEvent);
+            menuSvc.showHeaderContextMenu(
+                column,
+                mouseEvent,
+                touchEvent,
+                createHeaderMenuSource(this.beans, this.column, event.target as HTMLElement)
+            );
         }
 
         this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
@@ -590,12 +619,14 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected clearComponent(): void {
         this.removeDragSource();
-        (this.resizeFeature as any) = null;
+        this.userStyleKeys = undefined;
+        this.resizeFeature = null;
         (this.comp as any) = null;
         (this.eGui as any) = null;
     }
 
     public override destroy(): void {
+        this.beans.focusSvc.dropOwedHeaderFocus(this);
         destroyCompBean(this);
         super.destroy();
 

@@ -38,6 +38,28 @@ describe('Number Filter — conditions coverage', () => {
 
     const MIXED = [{ val: -10 }, { val: -2.5 }, { val: 0 }, { val: 3 }, { val: 7.5 }, { val: 10 }];
 
+    test.each([false, true])(
+        'with enableFilterHandlers %s, an open filter given a model naming an option it lacks shows no model, as it applies none',
+        async (enableFilterHandlers) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+                rowData: MIXED,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'val');
+
+            await api.setColumnFilterModel('val', { filterType: 'number', type: 'banana', filter: 3 });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            expect({
+                model: api.getColumnFilterModel('val'),
+                displayed: api.getDisplayedRowCount(),
+                input: filter.input('number').value,
+            }).toEqual({ model: null, displayed: 6, input: '' });
+        }
+    );
+
     test('comparison operators over a mixed positive/negative/decimal dataset', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
@@ -446,6 +468,49 @@ describe('Number Filter — conditions coverage', () => {
             ├── LEAF id:3 val:"Invalid Number"
             └── LEAF id:4 val:-5
         `);
+    });
+
+    test('includeBlanksInLessThan set through new default or column definitions re-filters the rows once, with the new params', async () => {
+        const filterValueGetter = vi.fn(({ data }: { data: { val?: number | string | null } }) => data.val);
+        const rowData = [{ val: 1 }, { val: null }, { val: 9 }, {}, { val: '' }];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterValueGetter }],
+            defaultColDef: { filterParams: { includeBlanksInLessThan: false } },
+            rowData,
+        });
+        api.setFilterModel({ val: { filterType: 'number', type: 'lessThan', filter: 5 } });
+        await asyncSetTimeout(0);
+        filterValueGetter.mockClear();
+
+        api.setGridOption('defaultColDef', { filterParams: { includeBlanksInLessThan: true } });
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'blank rows included by the new default params').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 val:1
+            ├── LEAF id:1 val:null
+            ├── LEAF id:3
+            └── LEAF id:4 val:"Invalid Number"
+        `);
+        // one pass: every row once, and the first whose result changed once more
+        expect(filterValueGetter).toHaveBeenCalledTimes(rowData.length + 1);
+        filterValueGetter.mockClear();
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'val',
+                filter: 'agNumberColumnFilter',
+                filterValueGetter,
+                filterParams: { includeBlanksInLessThan: false },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'blank rows excluded by the new column params').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 val:1
+        `);
+        expect(filterValueGetter).toHaveBeenCalledTimes(rowData.length + 1);
     });
 
     test('includeBlanksInRange keeps blank rows in an inRange filter', async () => {

@@ -11,6 +11,9 @@
 
         // a nested grid must not inherit the highlight of the row hosting it
         --ag-internal-row-highlight-content: initial;
+        --ag-internal-row-highlight-anchor: initial;
+
+        anchor-scope: --ag-internal-row-highlight-label;
     }
 
     .ag-row > .ag-cell-wrapper.ag-row-group {
@@ -173,6 +176,9 @@
         content: var(--ag-internal-row-highlight-content, none);
         position: absolute;
         inset: var(--ag-internal-row-highlight-inset, auto);
+
+        // only the section holding the row's group label resolves the anchor; the others start at their edge
+        inset-inline-start: anchor(--ag-internal-row-highlight-label start, 0);
         height: var(--ag-row-drag-indicator-width);
         background-color: var(--ag-row-drag-indicator-color);
         border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
@@ -189,12 +195,12 @@
         --ag-internal-row-highlight-inset: auto 0 0;
     }
 
-    .ag-row-highlight-indent > .ag-grid-scrolling-cells::after,
-    .ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
-        margin-left: calc(
-            2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
-                var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
-        );
+    .ag-row-highlight-indent {
+        --ag-internal-row-highlight-anchor: --ag-internal-row-highlight-label;
+    }
+
+    :where(.ag-group-cell-all-levels) > .ag-group-value {
+        anchor-name: var(--ag-internal-row-highlight-anchor, none);
     }
 
     .ag-row-highlight-inside {
@@ -275,8 +281,13 @@
         );
     }
 
-    .ag-column-hover {
+    :where(.ag-cell).ag-column-hover {
         background-color: var(--ag-column-hover-color);
+    }
+
+    // use a background image to overlay on top of the background-color set by range selections with `enableHeaderHighlight`
+    :where(.ag-header-cell).ag-column-hover {
+        background-image: linear-gradient(var(--ag-column-header-hover-color), var(--ag-column-header-hover-color));
     }
 
     .ag-header-range-highlight {
@@ -402,7 +413,10 @@
         width: 100%;
         height: 1em;
         border-radius: 0.25rem;
-        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+
+        @media (prefers-reduced-motion: no-preference) {
+            animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+        }
     }
 
     @keyframes ag-skeleton-loading {

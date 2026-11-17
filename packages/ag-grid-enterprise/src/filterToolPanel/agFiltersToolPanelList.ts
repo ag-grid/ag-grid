@@ -12,6 +12,7 @@ import type {
 import { Component, _addGridCommonParams, _mergeDeep, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
@@ -33,6 +34,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
+    private noMatchesComp: NoMatchesComp;
 
     // null is used to check if we should search filters when new cols are loaded
     private searchFilterText: string | null;
@@ -43,6 +45,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     constructor() {
         super({ tag: 'div', cls: 'ag-filter-list-panel', role: 'group' });
+    }
+
+    public postConstruct(): void {
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-filter-toolpanel-no-matches'));
+        this.appendChild(this.noMatchesComp);
     }
 
     public init(params: ToolPanelFiltersCompParams, isStateRestore = false): void {
@@ -141,11 +148,14 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
             this.setFirstAndLastVisible(0, len - 1);
         }
+        this.appendChild(this.noMatchesComp);
 
         const searchFilterText = this.searchFilterText;
         // perform search if searchFilterText exists
         if (_exists(searchFilterText)) {
             this.searchFilters(searchFilterText);
+        } else {
+            this.noMatchesComp.setNoMatches(false, false);
         }
 
         // notify header of expand
@@ -451,10 +461,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     public performFilterSearch(searchText: string) {
         this.searchFilterText = _exists(searchText) ? searchText.toLowerCase() : null;
-        this.searchFilters(this.searchFilterText);
+        this.searchFilters(this.searchFilterText, true);
     }
 
-    private searchFilters(searchFilter: string | null) {
+    private searchFilters(searchFilter: string | null, fromSearchInput = false) {
         const passesFilter = (groupName: string) => {
             return !_exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
@@ -514,6 +524,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         });
 
         this.setFirstAndLastVisible(firstVisible, lastVisible);
+        this.noMatchesComp.setNoMatches(searchFilter != null && firstVisible === undefined, fromSearchInput);
         this.refreshAriaLabel();
     }
 

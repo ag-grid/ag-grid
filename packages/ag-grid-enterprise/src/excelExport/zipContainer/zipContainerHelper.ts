@@ -6,19 +6,19 @@ import { getCrcFromCrc32Table } from './crcTable';
 import type { ZipFile } from './zipContainer';
 
 interface ZipFileHeader {
-    localFileHeader: Uint8Array;
-    centralDirectoryHeader: Uint8Array;
+    localFileHeader: Uint8Array<ArrayBuffer>;
+    centralDirectoryHeader: Uint8Array<ArrayBuffer>;
 }
 
 export interface ProcessedZipFile extends ZipFileHeader {
-    content: Uint8Array;
+    content: Uint8Array<ArrayBuffer>;
     isCompressed: boolean;
 }
 
 export interface PreprocessedZipFile {
-    rawContent: Uint8Array;
+    rawContent: Uint8Array<ArrayBuffer>;
     rawSize: number;
-    deflatedContent?: Uint8Array;
+    deflatedContent?: Uint8Array<ArrayBuffer>;
     deflatedSize?: number;
     isCompressed: boolean;
 }
@@ -130,7 +130,7 @@ export const getHeaders = (
     const dt = convertDate(creationDate);
 
     const crcFlag = getCrcFromCrc32Table(rawContent);
-    const zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
+    const zipSize = deflatedSize ?? rawSize;
 
     const utfPath = _utf8_encode(path);
     const isUTF8 = utfPath !== path;
@@ -173,12 +173,12 @@ export const getHeaders = (
 };
 
 const getDecodedContent = (
-    content: string | Uint8Array
+    content: string | Uint8Array<ArrayBuffer>
 ): {
     size: number;
-    content: Uint8Array;
+    content: Uint8Array<ArrayBuffer>;
 } => {
-    let contentToUse: Uint8Array;
+    let contentToUse: Uint8Array<ArrayBuffer>;
     // base64 content is passed as string
     if (typeof content === 'string') {
         const base64String = atob(content.split(';base64,')[1]);
@@ -200,7 +200,7 @@ export const preprocessFileForZip = async (currentFile: ZipFile): Promise<Prepro
         ? { size: 0, content: Uint8Array.from([]) }
         : getDecodedContent(content);
 
-    let deflatedContent: Uint8Array | undefined;
+    let deflatedContent: Uint8Array<ArrayBuffer> | undefined;
     let deflatedSize: number | undefined;
     let deflationPerformed = false;
 
@@ -235,7 +235,7 @@ export const getHeaderAndContent = (currentFile: ZipFile, offset: number): Proce
     };
 };
 
-export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen: number): Uint8Array => {
+export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen: number): Uint8Array<ArrayBuffer> => {
     const str =
         'PK\x05\x06' + // central folder end
         '\x00\x00' +

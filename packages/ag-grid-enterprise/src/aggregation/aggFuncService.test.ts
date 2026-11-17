@@ -1,26 +1,38 @@
-import type { AgColumn, GridOptionsService, IAggFuncParams } from 'ag-grid-community';
+import { _parseDateTimeFromString } from 'ag-stack';
+
+import type { AgColumn, DataTypeService, GridOptionsService, IAggFuncParams } from 'ag-grid-community';
 
 import { mock } from '../test-utils/mock';
 import { AggFuncService } from './aggFuncService';
 
-function createService(): AggFuncService {
+function createService(dataTypeSvc?: Partial<DataTypeService>): AggFuncService {
     const gridOptionsService = mock<GridOptionsService>('get');
 
     const service = new AggFuncService() as any;
 
     service.gos = gridOptionsService;
+    service.beans = { dataTypeSvc };
 
     return service;
+}
+
+/** Mimics the data type service for a column whose base data type is `baseDataType`, with the default ISO parser. */
+function createDataTypeSvc(baseDataType: string): Partial<DataTypeService> {
+    return {
+        getBaseDataType: () => baseDataType as any,
+        getDateParserFunction: () => (value) => _parseDateTimeFromString(value) ?? undefined,
+    };
 }
 
 function createColumn(allowedAggFuncs?: string[]): AgColumn {
     return { colDef: { allowedAggFuncs } } as AgColumn;
 }
 
-function createParams(values: any[]): IAggFuncParams {
+function createParams(values: any[], column?: AgColumn): IAggFuncParams {
     return {
         values: values,
-    } as IAggFuncParams;
+        column,
+    } as unknown as IAggFuncParams;
 }
 
 describe('getFuncNames', () => {
@@ -207,6 +219,75 @@ describe('aggMax', () => {
 
     it('returns null for invalid values', () => {
         expect(max(createParams(['foo', undefined, null]))).toBeNull();
+    });
+});
+
+describe.each([
+    { name: 'min', isMax: false },
+    { name: 'max', isMax: true },
+])('agg $name with dates', ({ name, isMax }) => {
+    const pick = <T>(earliest: T, latest: T): T => (isMax ? latest : earliest);
+    const column = {} as AgColumn;
+
+    it('returns the original Date instance of the earliest / latest date', () => {
+        const fn = createService().getAggFunc(name);
+        const earliest = new Date(2000, 9, 1);
+        const latest = new Date(2012, 7, 12, 12, 25, 59);
+
+        const result = fn(createParams([new Date(2008, 7, 24), latest, null, earliest, undefined], column));
+
+        expect(result).toBe(pick(earliest, latest));
+    });
+
+    it('ignores invalid dates', () => {
+        const fn = createService().getAggFunc(name);
+        const valid = new Date(2008, 7, 24);
+
+        expect(fn(createParams([new Date(Number.NaN), valid, new Date('foo')], column))).toBe(valid);
+        expect(fn(createParams([new Date(Number.NaN)], column))).toBeNull();
+    });
+
+    it('returns the numeric result when numbers and dates are mixed', () => {
+        const fn = createService().getAggFunc(name);
+
+        expect(fn(createParams([new Date(2008, 7, 24), 5, new Date(2012, 7, 12), 3], column))).toBe(pick(3, 5));
+    });
+
+    it('returns the original string for date string columns', () => {
+        const fn = createService(createDataTypeSvc('dateString')).getAggFunc(name);
+
+        const result = fn(createParams(['2008-08-24', 'foo', '2012-08-12', '2000-10-01', null], column));
+
+        expect(result).toBe(pick('2000-10-01', '2012-08-12'));
+    });
+
+    it('compares date time strings by their time', () => {
+        const fn = createService(createDataTypeSvc('dateTimeString')).getAggFunc(name);
+
+        const result = fn(createParams(['2012-08-12T09:00:00', '2012-08-12T12:25:59', '2012-08-12T08:15:00'], column));
+
+        expect(result).toBe(pick('2012-08-12T08:15:00', '2012-08-12T12:25:59'));
+    });
+
+    it('uses the date parser of the column', () => {
+        const parseDayMonthYear = (value: string | undefined) => {
+            const [day, month, year] = (value ?? '').split('/').map(Number);
+            return year ? new Date(year, month - 1, day) : undefined;
+        };
+        const fn = createService({
+            getBaseDataType: () => 'dateString',
+            getDateParserFunction: () => parseDayMonthYear,
+        }).getAggFunc(name);
+
+        const result = fn(createParams(['24/08/2008', '29/08/2004', '12/08/2012'], column));
+
+        expect(result).toBe(pick('29/08/2004', '12/08/2012'));
+    });
+
+    it('ignores strings in columns which do not hold date strings', () => {
+        const fn = createService(createDataTypeSvc('text')).getAggFunc(name);
+
+        expect(fn(createParams(['2008-08-24', '2012-08-12'], column))).toBeNull();
     });
 });
 

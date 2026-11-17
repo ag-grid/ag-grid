@@ -19,7 +19,6 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -34,14 +33,14 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div>
-                <span class="button-group">
+            <div class="example-controls">
+                <div class="controls-row">
                     <button (click)="recreateWithCurrentState()">Recreate with State</button>
                     <button (click)="saveState()">Save State</button>
                     <button (click)="recreateWithNoState()">Recreate without State</button>
                     <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print State</button>
-                </span>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular
@@ -60,7 +59,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     [enableRowPinning]="true"
                     [suppressColumnMoveAnimation]="true"
                     [ensureDomOrder]="true"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     [initialState]="initialState"
                     [gridOptions]="gridOptions"
                     (stateUpdated)="onStateUpdated($event)"
@@ -108,7 +107,7 @@ export class AppComponent {
         mode: 'multiRow',
     };
     public toolbar: Toolbar = { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] };
-    public rowData?: IOlympicData[];
+    public rowData = signal<IOlympicData[] | undefined>(undefined);
     public gridVisible = signal(true);
     public initialState?: GridState;
     public gridOptions: GridOptions = {
@@ -144,7 +143,7 @@ export class AppComponent {
     private recreateGrid(initialState?: GridState): void {
         this.gridVisible.set(false);
         this.initialState = initialState;
-        this.rowData = undefined;
+        this.rowData.set(undefined);
         setTimeout(() => {
             this.gridVisible.set(true);
         });
@@ -162,6 +161,6 @@ export class AppComponent {
         this.gridApi = params.api;
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

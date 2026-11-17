@@ -22,7 +22,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const { rowNode: currentRowNode, beans } = this;
-        const { rowNode } = position || {};
+        const { rowNode } = position ?? {};
         const oldRowCtrl = _getRowCtrl(beans, { rowNode: currentRowNode });
 
         if (!oldRowCtrl) {

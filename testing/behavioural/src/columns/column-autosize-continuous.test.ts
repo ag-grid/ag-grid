@@ -13,7 +13,7 @@
  * moving first — proof the sizing pass actually ran — and only then assert the protected width.
  */
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -22,6 +22,7 @@ import {
     ColumnAutoSizeModule,
     PaginationModule,
 } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -33,30 +34,32 @@ describe('Continuous Column Autosize', () => {
     });
 
     afterEach(() => {
+        vi.useRealTimers();
         gridsManager.reset();
     });
 
     const widthOf = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
 
+    // The tests sampling the scheduler's windows switch to the fake clock before creating the grid, so a pass
+    // still pending from startup cannot land on the real clock after they clear what they record.
+
+    /** Runs the fake clock until startup's passes, retries and echo frames have all landed. */
+    const settleOnFakeClock = (): Promise<unknown> => vi.advanceTimersByTimeAsync(1000);
+
     /**
-     * Lets a continuous re-size scheduled by the preceding statement run, so that "no re-size happened" is
-     * asserted after the frame rather than ahead of it. Every assertion using this is negative, so there is
-     * nothing to poll for: the scheduler's `setTimeout(0)` plus animation frame is the window being sampled
-     * past (`scheduleContinuousAutoSize` in `columnAutosizeService.ts`).
+     * Runs the fake clock past a continuous re-size scheduled by the preceding statement: the scheduler's
+     * `setTimeout(0)` plus animation frame (`scheduleContinuousAutoSize` in `columnAutosizeService.ts`).
      */
-    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize scheduling frame; every assertion that follows it is negative
-    const flushScheduledResize = (): Promise<void> => asyncSetTimeout(50);
+    const flushScheduledResize = (): Promise<unknown> => vi.advanceTimersByTimeAsync(50);
 
     /**
      * Shorter than the 150ms debounce the streaming triggers settle on
      * (`CONTINUOUS_STREAMING_DEBOUNCE` in `columnAutosizeService.ts`), so a trigger sent after this wait
      * still lands inside the window opened by the previous one and postpones it again.
      */
-    // eslint-disable-next-line no-restricted-syntax -- samples inside the continuous-resize debounce window, which is the behaviour under test
-    const insideDebounceWindow = (): Promise<void> => asyncSetTimeout(40);
+    const insideDebounceWindow = (): Promise<unknown> => vi.advanceTimersByTimeAsync(40);
 
-    // eslint-disable-next-line no-restricted-syntax -- samples past the continuous-resize debounce window
-    const pastDebounceWindow = (): Promise<void> => asyncSetTimeout(300);
+    const pastDebounceWindow = (): Promise<unknown> => vi.advanceTimersByTimeAsync(300);
 
     /** Stands in for an internal trigger the grid would dispatch itself, payload and all. */
     const dispatchGridEvent = (api: GridApi, event: { type: string } & Record<string, unknown>): void =>
@@ -262,6 +265,97 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
         });
+
+        test('resetting column state leaves the group column fitting its contents, its width only a start', async () => {
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { colId: 'country', field: 'country', rowGroup: true, hide: true },
+                        { colId: 'eligible', field: 'eligible', width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                    autoGroupColumnDef: { width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    rowData: [{ country: 'x', eligible: 'b' }],
+                    autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+                },
+                { modules: [RowGroupingModule] }
+            );
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            api.resetColumnState();
+
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        const createGroupedGrid = (): GridApi =>
+            gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { colId: 'country', field: 'country', rowGroup: true, hide: true },
+                        { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                    autoGroupColumnDef: { minWidth: MEASURED_WIDTH },
+                    rowData: [{ country: 'x', eligible: 'b' }],
+                    autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+                },
+                { modules: [RowGroupingModule] }
+            );
+        const NEW_GROUPED_DATA = [{ country: 'a much longer country', eligible: 'b much longer value' }];
+
+        test.each([
+            [
+                'autoGroupColumnDef',
+                (api: GridApi) =>
+                    api.setGridOption('autoGroupColumnDef', { minWidth: MEASURED_WIDTH, width: START_WIDTH }),
+            ],
+            ['defaultColDef', (api: GridApi) => api.setGridOption('defaultColDef', { width: START_WIDTH })],
+        ])('a width a new `%s` gives the group column is only a starting width', async (_option, setWidth) => {
+            const api = createGroupedGrid();
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            setWidth(api);
+            expect(widthOf(api, 'ag-Grid-AutoColumn')).toBe(START_WIDTH);
+            api.setGridOption('rowData', NEW_GROUPED_DATA);
+
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+        });
+
+        test('a width the inferred data type gives through its column types is only a starting width', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'eligible', field: 'eligible', minWidth: MEASURED_WIDTH }],
+                columnTypes: { wide: { width: START_WIDTH } },
+                dataTypeDefinitions: {
+                    wideText: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        columnTypes: ['wide'],
+                        dataTypeMatcher: (value) => typeof value === 'string',
+                    },
+                },
+                autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+            });
+
+            api.setGridOption('rowData', [{ eligible: 'b' }]);
+            expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a group column the user sized stays theirs at the width a new `autoGroupColumnDef` gives it', async () => {
+            const api = createGroupedGrid();
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', width: 260 }] });
+            api.setGridOption('autoGroupColumnDef', { minWidth: MEASURED_WIDTH, width: START_WIDTH });
+            // widen `eligible` without owning it, so its return to 120 proves the follow-up pass ran
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.setGridOption('rowData', NEW_GROUPED_DATA);
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            expect(widthOf(api, 'ag-Grid-AutoColumn')).toBe(START_WIDTH);
+        });
     });
 
     describe('triggers', () => {
@@ -300,6 +394,7 @@ describe('Continuous Column Autosize', () => {
         });
 
         test('sorting alone is not a data change for the width-distribution strategies', async () => {
+            vi.useFakeTimers();
             const reasons: string[] = [];
             const api = createGrid({
                 columnDefs: [
@@ -315,20 +410,18 @@ describe('Continuous Column Autosize', () => {
                     },
                 },
             });
-            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
             // startup schedules an initial pass of its own; let it land before clearing, or it turns up
             // afterwards and looks like a re-size the statement under test caused
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(reasons.length).toBeGreaterThan(0);
             reasons.length = 0;
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
-
-            // applying the sort re-creates the displayed columns, so `columnsChanged` is the frame this waits
-            // on. `dataChanged` outranks it, so a sort that had scheduled one would be reported in its place
-            // and this would time out rather than silently pass.
-            await waitFor(() => expect(reasons).toContain('columnsChanged'));
             await flushScheduledResize();
 
+            // applying the sort re-creates the displayed columns, so `columnsChanged` is the frame sampled.
+            // `dataChanged` outranks it, so a sort that had scheduled one would be reported in its place.
+            expect(reasons).toContain('columnsChanged');
             // re-ordering rows changes neither the column set nor the width to share out
             expect(reasons).not.toContain('dataChanged');
         });
@@ -361,9 +454,10 @@ describe('Continuous Column Autosize', () => {
          * new rows come into view, which is what makes a scroll re-size at all.
          */
         test('a stream of viewport triggers re-sizes once, after the triggers stop', async () => {
+            vi.useFakeTimers();
             const { api, reasons } = createGridRecordingReasons();
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
             reasons.length = 0;
 
             // a scroll's worth of triggers, each arriving inside the 150ms debounce window of the last
@@ -375,13 +469,15 @@ describe('Continuous Column Autosize', () => {
             // 200ms of triggers so far, and every one of them still postponed
             expect(reasons).toEqual([]);
 
-            await waitFor(() => expect(reasons).toEqual(['viewportChanged']));
+            await pastDebounceWindow();
+            expect(reasons).toEqual(['viewportChanged']);
         });
 
         test('a viewport trigger is ignored when no callback opts into it', async () => {
+            vi.useFakeTimers();
             const api = createGrid();
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
 
             api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
             dispatchGridEvent(api, { type: 'viewportChanged', firstRow: 0, lastRow: 10 });
@@ -392,9 +488,10 @@ describe('Continuous Column Autosize', () => {
 
         /** A data change must still be sized within the frame, rather than held back by the debounce. */
         test('a data change is not held back by the debounce', async () => {
+            vi.useFakeTimers();
             const { api, reasons } = createGridRecordingReasons();
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
             reasons.length = 0;
 
             api.setGridOption('rowData', LONGER_DATA);
@@ -410,6 +507,7 @@ describe('Continuous Column Autosize', () => {
          * chase the drag.
          */
         test('a stream of grid-size triggers re-sizes once, after the triggers stop', async () => {
+            vi.useFakeTimers();
             const reasons: string[] = [];
             const api = createGrid({
                 columnDefs: [
@@ -425,8 +523,8 @@ describe('Continuous Column Autosize', () => {
                     },
                 },
             });
-            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(reasons.length).toBeGreaterThan(0);
             reasons.length = 0;
 
             for (let i = 0; i < 5; i++) {
@@ -436,7 +534,8 @@ describe('Continuous Column Autosize', () => {
 
             expect(reasons).toEqual([]);
 
-            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+            await pastDebounceWindow();
+            expect(reasons).toEqual(['gridSizeChanged']);
         });
 
         test('a page change re-sizes eligible columns', async () => {
@@ -476,6 +575,7 @@ describe('Continuous Column Autosize', () => {
         });
 
         test('a page change re-sizes once, as a data change', async () => {
+            vi.useFakeTimers();
             const reasons: string[] = [];
             const api = createGrid({
                 pagination: true,
@@ -495,8 +595,8 @@ describe('Continuous Column Autosize', () => {
                     },
                 },
             });
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
-            await pastDebounceWindow();
+            await settleOnFakeClock();
+            expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
             reasons.length = 0;
 
             api.paginationGoToNextPage();
@@ -511,9 +611,10 @@ describe('Continuous Column Autosize', () => {
          * pending reason the debounce was holding, and the drag re-sizes once per frame instead of once.
          */
         test('a shrink gesture re-sizes once, like a widen gesture', async () => {
+            vi.useFakeTimers();
             const { api, reasons } = createGridFittingGridWidth();
-            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(reasons.length).toBeGreaterThan(0);
             reasons.length = 0;
 
             for (let i = 0; i < 5; i++) {
@@ -522,7 +623,8 @@ describe('Continuous Column Autosize', () => {
                 await insideDebounceWindow();
             }
 
-            await waitFor(() => expect(reasons).toEqual(['gridSizeChanged']));
+            await pastDebounceWindow();
+            expect(reasons).toEqual(['gridSizeChanged']);
             await flushScheduledResize();
             expect(reasons).toEqual(['gridSizeChanged']);
         });
@@ -532,9 +634,10 @@ describe('Continuous Column Autosize', () => {
          * width-distribution strategies, so it must not wait out the debounce.
          */
         test('a scrollbar change outside a gesture is not held back by the debounce', async () => {
+            vi.useFakeTimers();
             const { api, reasons } = createGridFittingGridWidth();
-            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(reasons.length).toBeGreaterThan(0);
             reasons.length = 0;
 
             dispatchGridEvent(api, { type: 'scrollVisibilityChanged' });
@@ -545,16 +648,18 @@ describe('Continuous Column Autosize', () => {
         });
 
         test('the strategy stays one-shot when `continuous` is omitted', async () => {
+            vi.useFakeTimers();
             const api = createGrid({
                 autoSizeStrategy: { type: 'fitCellContents', skipHeader: true },
             });
             // the one-shot pass runs on first data render and, by design, ignores ownership
-            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            await settleOnFakeClock();
+            expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
 
             api.applyColumnState({ state: [{ colId: 'eligible', width: START_WIDTH }] });
             api.setGridOption('rowData', LONGER_DATA);
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
             await flushScheduledResize();
+            expect(api.getDisplayedRowCount()).toBe(1);
 
             expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
         });
@@ -616,6 +721,7 @@ describe('Continuous Column Autosize', () => {
          * strategies had been wired to them. The scroll itself is covered by the docs e2e suite.
          */
         test('the width-distribution strategies never report a viewport change', async () => {
+            vi.useFakeTimers();
             const reasons: string[] = [];
             const api = createGrid({
                 columnDefs: [
@@ -631,14 +737,15 @@ describe('Continuous Column Autosize', () => {
                     },
                 },
             });
-            await waitFor(() => expect(reasons.length).toBeGreaterThan(0));
             // startup schedules an initial pass of its own; let it land before clearing, or it turns up
             // afterwards and looks like a re-size the statement under test caused
-            await flushScheduledResize();
+            await settleOnFakeClock();
+            expect(reasons.length).toBeGreaterThan(0);
             reasons.length = 0;
 
             api.setColumnsVisible(['b'], false);
-            await waitFor(() => expect(reasons).toContain('columnsChanged'));
+            await flushScheduledResize();
+            expect(reasons).toContain('columnsChanged');
             await flushScheduledResize();
 
             expect(reasons).not.toContain('viewportChanged');
@@ -766,6 +873,29 @@ describe('Continuous Column Autosize', () => {
             expect(seen[seen.length - 1]).toEqual(['eligible']);
         });
 
+        test('a re-size that finds the grid with no width runs again once it has one', async () => {
+            const gridWidth = mockGridLayout.gridWidth;
+            mockGridLayout.gridWidth = 0;
+            vi.useFakeTimers();
+            try {
+                const api = createGrid({
+                    columnDefs: [
+                        { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                });
+                api.setGridOption('rowData', [{ eligible: 'a' }]);
+                await flushScheduledResize();
+                expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+
+                // the grid is shown before the retries run out
+                mockGridLayout.gridWidth = 1000;
+                await settleOnFakeClock();
+                expect(widthOf(api, 'eligible')).toBe(MEASURED_WIDTH);
+            } finally {
+                mockGridLayout.gridWidth = gridWidth;
+            }
+        });
+
         test('`colIds` restricts sizing to the listed columns', async () => {
             const api = createGrid({
                 columnDefs: [
@@ -874,7 +1004,8 @@ describe('Continuous Column Autosize', () => {
             // nor, through the resize grid1 would fire back, the resize the user made in grid2
             api1.setGridOption('rowData', LONGER_DATA);
             api2.setGridOption('rowData', LONGER_DATA);
-            await flushScheduledResize();
+            // eslint-disable-next-line no-restricted-syntax -- the drag runs on the real clock, so this samples past the continuous-resize frame on it; the assertions after it are negative
+            await asyncSetTimeout(50);
 
             expect(widthOf(api2, 'eligible')).toBe(draggedWidth);
             expect(widthOf(api1, 'eligible')).toBe(draggedWidth);
@@ -895,23 +1026,26 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api2, 'eligible', MEASURED_WIDTH);
         });
 
-        test('a width this grid rejects leaves the column eligible', async () => {
-            // grid2 caps the column below the width grid1 propagates, so `setColumnWidths` rejects the set
-            const REJECTED_WIDTH = 400;
+        test("a width past this grid's maxWidth lands on it, owned as in the other grid", async () => {
+            vi.useFakeTimers();
             const { api1, api2 } = createAlignedGrids({ maxWidth: 250 });
-            await expectWidth(api1, 'eligible', MEASURED_WIDTH);
-            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
-
-            // an explicit state width takes ownership in grid1, so ownership is there to be propagated
-            api1.applyColumnState({ state: [{ colId: 'eligible', width: REJECTED_WIDTH }] });
-            await expectWidth(api1, 'eligible', REJECTED_WIDTH);
+            await settleOnFakeClock();
+            expect(widthOf(api1, 'eligible')).toBe(MEASURED_WIDTH);
             expect(widthOf(api2, 'eligible')).toBe(MEASURED_WIDTH);
 
-            // widen grid2 without owning it, so its return to 120 proves it is still being auto-sized
-            api2.setColumnWidths([{ key: 'eligible', newWidth: 240 }]);
-            api2.setGridOption('rowData', LONGER_DATA);
+            // an explicit state width takes ownership in grid1, so ownership is there to be propagated
+            api1.applyColumnState({ state: [{ colId: 'eligible', width: 400 }] });
+            await flushScheduledResize();
+            expect(widthOf(api1, 'eligible')).toBe(400);
+            expect(widthOf(api2, 'eligible')).toBe(250);
 
-            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+            // owned in both, so neither continuous pass sizes it back to what it measures
+            api1.setGridOption('rowData', LONGER_DATA);
+            api2.setGridOption('rowData', LONGER_DATA);
+            await flushScheduledResize();
+
+            expect(widthOf(api1, 'eligible')).toBe(400);
+            expect(widthOf(api2, 'eligible')).toBe(250);
         });
     });
 });

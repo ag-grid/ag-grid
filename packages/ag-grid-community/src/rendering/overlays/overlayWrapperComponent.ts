@@ -2,6 +2,7 @@ import {
     AgPromise,
     KeyCode,
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _findNextFocusableElement,
     _focusInto,
@@ -96,7 +97,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
 
         this.beans.overlays!.setWrapperComp(this, false);
-        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
+        _addManagedElementListeners(this, this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
         this.addManagedEventListeners({ gridSizeChanged: this.refreshWrapperPadding.bind(this) });
     }
 

@@ -65,7 +65,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             cellCtrls[i].refreshCell(params);
         }
 
-        this.rowCtrl.onNormalRowRefreshed();
+        this.rowCtrl.onRowRefreshed();
     }
 
     public shouldCreateCellSections(): boolean {

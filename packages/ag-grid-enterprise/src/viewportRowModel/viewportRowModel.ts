@@ -26,6 +26,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     // datasource tells us this
     private rowCount = -1;
+    private rowCountReady = false;
     private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private datasource: IViewportDatasource;
@@ -61,7 +62,6 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         _addRowHeightChangedListener(this, () => this.refreshRowHeight());
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
-        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
     }
 
     private refreshRowHeight(): void {
@@ -399,9 +399,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = rowCount;
 
         const eventSvc = this.eventSvc;
-        eventSvc.dispatchEventOnce({
-            type: 'rowCountReady',
-        });
+        if (!this.rowCountReady) {
+            this.rowCountReady = true;
+            eventSvc.dispatchEvent({ type: 'rowCountReady' });
+        }
 
         eventSvc.dispatchEvent({
             type: 'modelUpdated',

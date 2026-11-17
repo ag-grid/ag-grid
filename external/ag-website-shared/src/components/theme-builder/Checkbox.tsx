@@ -10,20 +10,21 @@ export type CheckboxProps = {
     disabled?: boolean;
     className?: string;
     useSwitch?: boolean;
+    /** The accessible name, for a checkbox with no text of its own. */
+    ariaLabel?: string;
 };
 
 export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(
-    ({ checked, onChange, children, disabled, className, useSwitch }, ref) => (
+    ({ checked, onChange, children, disabled, className, useSwitch, ariaLabel }, ref) => (
         <Container ref={ref} className={classnames(className, { 'is-disabled': disabled })}>
-            {useSwitch && <span className="text-tertiary">off</span>}
             <input
                 type="checkbox"
                 className={useSwitch ? 'switch' : undefined}
                 checked={checked}
                 onChange={(e) => onChange(e.target.checked)}
                 disabled={disabled}
+                aria-label={ariaLabel}
             />
-            {useSwitch && <span className="text-tertiary">on</span>}
             {children}
         </Container>
     )

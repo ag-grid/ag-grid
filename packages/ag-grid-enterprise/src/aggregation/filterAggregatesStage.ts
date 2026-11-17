@@ -41,7 +41,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
         // The predicate to determine whether filters should apply to this row. Either defined by the user in groupAggFiltering or a default depending
         // on current pivot mode status.
         const applyFilterToNode =
-            _getGroupAggFiltering(this.gos) ||
+            _getGroupAggFiltering(this.gos) ??
             (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
         const setAllChildrenCount = isTreeData
@@ -84,7 +84,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
                     }
                     const hasChildPassed = child.childrenAfterAggFilter?.length;
                     return hasChildPassed;
-                }) || null;
+                }) ?? null;
 
             if (node.hasChildren()) {
                 setAllChildrenCount(node);

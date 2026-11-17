@@ -3,15 +3,21 @@ import { readAsJsFile } from '../transformation-scripts/parser-utils';
 import type { FileContents, InternalFramework, TransformTsFileExt } from '../types';
 import { FRAMEWORKS } from '../types';
 import { convertTsxToJsx, getFileList } from './fileUtils';
+import { inlineSqlHelpers } from './inlineSqlHelpers';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
     sourceFileList,
+    sharedFiles,
     transformTsFileExt,
     internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
+    /**
+     * TypeScript files shared between examples, generated as if they were in the example folder
+     */
+    sharedFiles: FileContents;
     /**
      * File extension for .ts files to be converted to
      */
@@ -33,10 +39,16 @@ const getOtherTsGeneratedFiles = async ({
             return !toExclude.some((framework) => fileName.includes('_' + framework));
         });
 
-    const tsFileContents = await getFileList({
-        folderPath,
-        fileList: otherTsFiles,
-    });
+    const tsFileContents = {
+        ...(await getFileList({
+            folderPath,
+            fileList: otherTsFiles,
+        })),
+        ...sharedFiles,
+    };
+    for (const [fileName, contents] of Object.entries(tsFileContents)) {
+        tsFileContents[fileName] = await inlineSqlHelpers({ folderPath, fileName, contents });
+    }
 
     const generatedFiles = {} as FileContents;
     Object.keys(tsFileContents).forEach((tsFileName) => {
@@ -137,17 +149,20 @@ const getComponentFiles = ({
 export const getOtherScriptFiles = async ({
     folderPath,
     sourceFileList,
+    sharedFiles = {},
     transformTsFileExt,
     internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
+    sharedFiles?: FileContents;
     transformTsFileExt?: TransformTsFileExt;
     internalFramework: InternalFramework;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
         sourceFileList,
+        sharedFiles,
         transformTsFileExt,
         internalFramework,
     });

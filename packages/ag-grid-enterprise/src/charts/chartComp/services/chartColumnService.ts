@@ -118,9 +118,7 @@ export class ChartColumnService extends BeanStub {
 
         let cellValue = row.getDataValue(col, 'data');
 
-        if (cellValue == null) {
-            cellValue = this.extractLeafData(row, col);
-        }
+        cellValue ??= this.extractLeafData(row, col);
 
         if (cellValue != null) {
             // unwrap value objects if present

@@ -155,17 +155,22 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
         };
 
-        const success = (params: LoadSuccessParams) => {
+        let settled = false;
+        const settle = (applyResult: () => void) => {
+            if (settled) {
+                this.warn(338);
+                return;
+            }
+            settled = true;
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
+            // cleared first so the store update fired by the result can evict these rows
             removeNodesFromLoadingMap();
+            applyResult();
         };
 
-        const fail = () => {
-            this.onLoadComplete();
-            cache.onLoadFailed(startRow, endRow - startRow);
-            removeNodesFromLoadingMap();
-        };
+        const success = (params: LoadSuccessParams) =>
+            settle(() => cache.onLoadSuccess(startRow, endRow - startRow, params));
+        const fail = () => settle(() => cache.onLoadFailed(startRow, endRow - startRow));
 
         const isRootStore = parentNode.level === -1;
         const store = isRootStore ? cache.store : undefined;
@@ -226,12 +231,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         for (const cache of this.cacheLoadingNodesMap.keys()) {
             const nodesToRefresh = cache.getNodesToRefresh();
             nodesToRefresh.forEach((node) => {
-                if (node.rowIndex == null) {
-                    nodeToRefresh = node;
-                    cacheToRefresh = cache;
-                    return;
-                }
-
                 const lazyNode = cache.getNodes().getBy('node', node);
                 if (!lazyNode) {
                     return;
@@ -239,6 +238,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
                 const loadingNodes = this.cacheLoadingNodesMap.get(cache);
                 if (loadingNodes?.has(lazyNode.index)) {
+                    return;
+                }
+
+                if (node.rowIndex == null) {
+                    nodeToRefresh = node;
+                    cacheToRefresh = cache;
                     return;
                 }
 

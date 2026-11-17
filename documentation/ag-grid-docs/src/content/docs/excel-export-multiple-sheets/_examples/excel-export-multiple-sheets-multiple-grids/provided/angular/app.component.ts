@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -70,14 +70,16 @@ export class SportRenderer implements ICellRendererAngularComp {
     standalone: true,
     imports: [AgGridAngular],
     selector: 'my-app',
-    template: ` <div class="top-container">
-        <div>
-            <button type="button" class="btn btn-default excel" style="margin-right: 5px;" (click)="onExcelExport()">
-                <i class="far fa-file-excel" style="margin-right: 5px; color: green;"></i>Export to Excel
-            </button>
-            <button type="button" class="btn btn-default reset" (click)="reset()">
-                <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
-            </button>
+    template: ` <div class="example-wrapper">
+        <div class="example-controls">
+            <div class="controls-row">
+                <button type="button" class="excel" (click)="onExcelExport()">
+                    <i class="far fa-file-excel" style="margin-right: 5px; color: green;"></i>Export to Excel
+                </button>
+                <button type="button" class="reset" (click)="reset()">
+                    <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
+                </button>
+            </div>
         </div>
         <div class="grid-wrapper">
             <div class="panel panel-primary" style="margin-right: 10px;">
@@ -92,7 +94,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
                             [suppressMoveWhenRowDragging]="true"
-                            [rowData]="leftRowData"
+                            [rowData]="leftRowData()"
                             [columnDefs]="leftColumns"
                             (gridReady)="onGridReady($event, 0)"
                         />
@@ -108,7 +110,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             [defaultColDef]="defaultColDef"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
-                            [rowData]="rightRowData"
+                            [rowData]="rightRowData()"
                             [columnDefs]="rightColumns"
                             (gridReady)="onGridReady($event, 1)"
                         />
@@ -120,8 +122,8 @@ export class SportRenderer implements ICellRendererAngularComp {
 })
 export class AppComponent {
     rawData: any[] = [];
-    leftRowData: any[] = [];
-    rightRowData: any[] = [];
+    leftRowData = signal<any[]>([]);
+    rightRowData = signal<any[]>([]);
     leftApi!: GridApi;
     rightApi!: GridApi;
 
@@ -196,8 +198,8 @@ export class AppComponent {
     }
 
     loadGrids = () => {
-        this.leftRowData = [...this.rawData.slice(0, this.rawData.length / 2)];
-        this.rightRowData = [...this.rawData.slice(this.rawData.length / 2)];
+        this.leftRowData.set([...this.rawData.slice(0, this.rawData.length / 2)]);
+        this.rightRowData.set([...this.rawData.slice(this.rawData.length / 2)]);
     };
 
     reset = () => {

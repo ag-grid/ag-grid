@@ -1,5 +1,5 @@
 import type { AgColorType } from 'ag-charts-types';
-import { _getDocument, _setAriaLabel } from 'ag-stack';
+import { _getDocument, _setAriaLabel, _setAriaPressed, _setAriaRole } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _createElement } from 'ag-grid-community';
@@ -42,7 +42,6 @@ const miniChartMapping: MiniChartMenuMapping = {
     pieGroup: {
         pie: { range: true, pivot: true, enterprise: false, chartType: 'pie' },
         donut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
-        doughnut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
     },
     lineGroup: {
         line: { range: true, pivot: true, enterprise: false, chartType: 'line' },
@@ -217,6 +216,10 @@ export class MiniChartsContainer extends Component {
                     suppressKeyboardNavigation: true,
                 })
             );
+            const eGroup = groupComponent.getGui();
+            _setAriaRole(eGroup, 'group');
+            _setAriaLabel(eGroup, label);
+            _setAriaRole(groupComponent.eContainer, 'list');
 
             for (const menuItem of items) {
                 const { chartType } = menuItem;
@@ -241,6 +244,7 @@ export class MiniChartsContainer extends Component {
                     },
                 });
 
+                _setAriaLabel(miniWrapper, this.chartTranslation.translate(getFullChartNameTranslationKey(chartType)));
                 this.wrappers.set(chartType, miniWrapper);
 
                 const template = getMiniChartSvgTemplate(chartType, this.isCustomTheme, solidFills, doc);
@@ -253,10 +257,13 @@ export class MiniChartsContainer extends Component {
                         this.chartTranslation.translate(template.tooltip)
                     );
                 }
-                groupComponent.addItem(miniWrapper);
+                const listItem = _createElement({ tag: 'div' });
+                _setAriaRole(listItem, 'listitem');
+                listItem.appendChild(miniWrapper);
+                groupComponent.addItem(listItem);
             }
 
-            eGui.appendChild(groupComponent.getGui());
+            eGui.appendChild(eGroup);
         }
 
         this.updateSelectedMiniChart();
@@ -267,12 +274,7 @@ export class MiniChartsContainer extends Component {
         this.wrappers.forEach((miniChart, miniChartType) => {
             const selected = miniChartType === selectedChartType;
             miniChart.classList.toggle('ag-selected', selected);
-
-            const chartName = this.chartTranslation.translate(getFullChartNameTranslationKey(miniChartType));
-            const ariaLabel = selected
-                ? `${chartName}. ${this.chartTranslation.translate('ariaChartSelected')}`
-                : chartName;
-            _setAriaLabel(miniChart, ariaLabel);
+            _setAriaPressed(miniChart, selected);
         });
     }
 
