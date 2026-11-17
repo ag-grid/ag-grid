@@ -56,8 +56,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Feature Set",
             "heading": "All the Right Features",
-            "body_html": "<p>The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow:</p> <ul> <li>Tailor the rendering and styling of cards, columns and swimlanes.</li> <li>Flip features on or off at runtime via a flexible API.</li> <li>Scroll smoothly through <a href=\"/products/taskboard/examples/bigdataset/\">huge datasets</a>.</li> </ul>",
-            "body_text": "The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow: Tailor the rendering and styling of cards, columns and swimlanes. Flip features on or off at runtime via a flexible API. Scroll smoothly through huge datasets .",
+            "body_html": "<p>The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow:</p> <ul> <li>Tailor the rendering and styling of cards, columns and swimlanes.</li> <li>Flip features on or off at runtime via a flexible API.</li> <li>Scroll smoothly through <a href=\"/products/taskboard/examples/bigdataset/\">huge datasets</a>.</li> </ul> <p>Partial virtual rendering for large boards comes with Task Board Enterprise.</p>",
+            "body_text": "The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow: Tailor the rendering and styling of cards, columns and swimlanes. Flip features on or off at runtime via a flexible API. Scroll smoothly through huge datasets . Partial virtual rendering for large boards comes with Task Board Enterprise.",
             "links": [
                 {
                     "text": "All the Right Features",
@@ -92,8 +92,8 @@
             "modifiers": ["video-file", "added-shadow"],
             "eyebrow": "Organisation",
             "heading": "Group Tasks Into Swimlanes and Columns",
-            "body_html": "<p>On a busy team? Stay on top of tasks by tailoring your Task Board with <a href=\"/products/taskboard/examples/swimlanes/\">swimlanes</a> and any number of columns.</p> <ul> <li><a href=\"/products/taskboard/examples/locked-column/\">Pin an important column</a> in place for fast access.</li> <li>Tuck away lower-priority tasks by collapsing swimlanes and columns.</li> <li><a href=\"/products/taskboard/examples/filtering/\">Filter</a> and <a href=\"/products/taskboard/examples/sorting/\">sort</a> tasks to keep your top priorities in view.</li> </ul>",
-            "body_text": "On a busy team? Stay on top of tasks by tailoring your Task Board with swimlanes and any number of columns. Pin an important column in place for fast access. Tuck away lower-priority tasks by collapsing swimlanes and columns. Filter and sort tasks to keep your top priorities in view.",
+            "body_html": "<p>On a busy team? Stay on top of tasks by tailoring your Task Board with <a href=\"/products/taskboard/examples/swimlanes/\">swimlanes</a> and any number of columns.</p> <ul> <li><a href=\"/products/taskboard/examples/locked-column/\">Pin an important column</a> in place for fast access.</li> <li>Tuck away lower-priority tasks by collapsing swimlanes and columns.</li> <li><a href=\"/products/taskboard/examples/filtering/\">Filter</a> and <a href=\"/products/taskboard/examples/sorting/\">sort</a> tasks to keep your top priorities in view.</li> </ul> <p>Locked columns and sorting tasks within a column come with Task Board Enterprise.</p>",
+            "body_text": "On a busy team? Stay on top of tasks by tailoring your Task Board with swimlanes and any number of columns. Pin an important column in place for fast access. Tuck away lower-priority tasks by collapsing swimlanes and columns. Filter and sort tasks to keep your top priorities in view. Locked columns and sorting tasks within a column come with Task Board Enterprise.",
             "links": [
                 {
                     "text": "Group Tasks Into Swimlanes and Columns",

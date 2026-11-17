@@ -154,8 +154,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Workflows",
             "heading": "Build Advanced Workflows",
-            "body_html": "<p>Give users advanced scheduling capabilities so they can:</p> <ul> <li>Map <a href=\"/products/scheduler/examples/dependencies/\">task dependencies</a></li> <li><a href=\"/products/scheduler/examples/partners/\">Sync events</a></li> <li><a href=\"/products/scheduler/examples/merge-cells/\">Merge events</a></li> </ul>",
-            "body_text": "Give users advanced scheduling capabilities so they can: Map task dependencies Sync events Merge events",
+            "body_html": "<p>Give users advanced scheduling capabilities so they can:</p> <ul> <li>Map <a href=\"/products/scheduler/examples/dependencies/\">task dependencies</a></li> <li><a href=\"/products/scheduler/examples/partners/\">Sync events</a></li> <li><a href=\"/products/scheduler/examples/merge-cells/\">Merge cells</a> in the resource grid</li> </ul> <p>Merging cells comes with Scheduler Enterprise.</p>",
+            "body_text": "Give users advanced scheduling capabilities so they can: Map task dependencies Sync events Merge cells in the resource grid Merging cells comes with Scheduler Enterprise.",
             "links": [
                 {
                     "text": "task dependencies",
@@ -381,8 +381,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
-            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Scheduler app.</li> <li class=\"li1\">Collect input with date pickers, colour pickers, day selectors and radio buttons.</li> <li class=\"li1\">Present data with menus, button groups, tags and line charts.</li> </ul>",
-            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Scheduler app. Collect input with date pickers, colour pickers, day selectors and radio buttons. Present data with menus, button groups, tags and line charts.",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Scheduler app.</li> <li class=\"li1\">Collect input with date pickers, colour pickers, day selectors and radio buttons.</li> <li class=\"li1\">Present data with menus, button groups, tags and line charts.</li> </ul> <p>Charts come with Scheduler Enterprise.</p>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Scheduler app. Collect input with date pickers, colour pickers, day selectors and radio buttons. Present data with menus, button groups, tags and line charts. Charts come with Scheduler Enterprise.",
             "links": [
                 {
                     "text": "broad set of UI elements",
