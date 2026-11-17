@@ -1,0 +1,35 @@
+---
+import styles from '../DecisionPage.module.scss';
+import { ctaAttributes } from '../decisionPageCta';
+import type { DecisionPageSite } from '../types';
+
+interface Props {
+    site: DecisionPageSite;
+    analyticsPrefix: string;
+}
+
+const { site, analyticsPrefix } = Astro.props;
+const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started', placement: 'get-started' });
+const trial = ctaAttributes({ site, analyticsPrefix, action: 'trial', placement: 'get-started' });
+---
+
+<div class={styles.getStarted}>
+    <h3>{site.getStarted.heading}</h3>
+    <p>{site.getStarted.body}</p>
+    <div class={styles.heroCtas}>
+        <a
+            {...getStarted.attributes}
+            class:list={['button', getStarted.analyticsClass]}
+            href={site.resolveUrl(site.urls.getStarted)}
+        >
+            Get started
+        </a>
+        <a
+            {...trial.attributes}
+            class:list={['button-tertiary', trial.analyticsClass]}
+            href={site.resolveUrl(site.urls.trial)}
+        >
+            Start a free trial
+        </a>
+    </div>
+</div>

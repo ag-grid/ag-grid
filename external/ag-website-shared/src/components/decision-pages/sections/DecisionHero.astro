@@ -1,0 +1,48 @@
+---
+import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+
+import styles from '../DecisionPage.module.scss';
+import { ctaAttributes } from '../decisionPageCta';
+import { formatLastUpdated } from '../decisionPageText';
+import type { DecisionPageSite } from '../types';
+
+interface Props {
+    site: DecisionPageSite;
+    /** The cluster name shown in the breadcrumb, e.g. `Compare`. */
+    hubName: string;
+    heading: string;
+    subHeading: string;
+    lastUpdated: Date;
+    analyticsPrefix: string;
+}
+
+const { site, hubName, heading, subHeading, lastUpdated, analyticsPrefix } = Astro.props;
+const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started', placement: 'hero' });
+const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: 'hero' });
+---
+
+<PageHero headline={heading} subhead={subHeading}>
+    <span slot="eyebrow" class={styles.breadcrumbs}>
+        <a href={site.resolveUrl(site.urls.home)}>{site.productName}</a> /{' '}
+        <a href={site.resolveUrl(site.urls.hub)}>{hubName}</a>
+    </span>
+    <div class={styles.heroCtas}>
+        <a
+            {...getStarted.attributes}
+            class:list={['button', getStarted.analyticsClass]}
+            href={site.resolveUrl(site.urls.getStarted)}
+        >
+            Get started free
+        </a>
+        <a
+            {...demo.attributes}
+            class:list={['button-tertiary', demo.analyticsClass]}
+            href={site.resolveUrl(site.urls.demo)}
+        >
+            See the live demo
+        </a>
+    </div>
+    <p class={styles.lastUpdated}>
+        Last updated <time datetime={lastUpdated.toISOString().slice(0, 10)}>{formatLastUpdated(lastUpdated)}</time>
+    </p>
+</PageHero>

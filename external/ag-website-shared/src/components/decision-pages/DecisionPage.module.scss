@@ -1,0 +1,429 @@
+@use 'design-system' as *;
+
+// Shared by every decision page section: comparison, alternative, solution and migration pages.
+
+.section {
+    width: 100%;
+    max-width: calc(var(--layout-max-width-small) + var(--layout-horizontal-margins) * 2);
+    margin: 0 auto;
+    padding: $spacing-size-12 var(--layout-horizontal-margins) 0;
+
+    &:last-child {
+        padding-bottom: $spacing-size-24;
+    }
+}
+
+.sectionEyebrow {
+    margin: 0 0 $spacing-size-1;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
+}
+
+.sectionHeading {
+    margin: 0 0 $spacing-size-2;
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    line-height: var(--text-lh-ratio-tight);
+}
+
+// Keeps a section heading in the outline and accessibility tree when the section's content carries its own
+// visible heading.
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sectionSubHeading {
+    margin: 0 0 $spacing-size-6;
+    color: var(--color-fg-secondary);
+}
+
+// The short answer callout: a tinted panel with a brand bar down its left edge
+.shortAnswer {
+    padding: $spacing-size-5 $spacing-size-6;
+    border-left: 3px solid var(--color-util-brand-600);
+    background: var(--color-bg-secondary);
+    font-size: var(--text-fs-lg);
+
+    // The dark secondary background is too light for a panel this size
+    #{$selector-darkmode} & {
+        background: var(--color-bg-tertiary);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    p + p {
+        margin-top: $spacing-size-3;
+    }
+}
+
+// Hero
+
+.breadcrumbs {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-regular);
+
+    a {
+        color: inherit;
+    }
+}
+
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-4;
+}
+
+.lastUpdated {
+    width: 100%;
+    margin: $spacing-size-2 0 0;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+}
+
+// Key figures: the figure in a fixed-width column on the left, so every card's text starts at the same edge
+
+.keyFigures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-size-4;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.keyFigure {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-5;
+    margin: 0;
+    padding: $spacing-size-5 $spacing-size-6;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+}
+
+.keyFigureValue {
+    flex: 0 0 112px;
+    font-size: var(--text-fs-3xl);
+    font-weight: var(--text-bold);
+    line-height: 1;
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-text-brand-primary);
+    }
+}
+
+.keyFigureText {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+}
+
+.keyFigureSuffix {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-secondary);
+}
+
+.keyFigureLabel {
+    font-weight: var(--text-semibold);
+}
+
+.keyFigureDetail {
+    color: var(--color-fg-secondary);
+}
+
+// Tables (feature matrix and pricing)
+
+.tableWrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+}
+
+.table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: $spacing-size-3 $spacing-size-4;
+        border-bottom: 1px solid var(--color-border-secondary);
+        text-align: left;
+        vertical-align: top;
+    }
+
+    thead th {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-bold);
+        border-bottom-color: var(--color-border-primary);
+    }
+
+    tbody th {
+        font-weight: var(--text-semibold);
+    }
+
+    tbody:last-child tr:last-child > * {
+        border-bottom: none;
+    }
+}
+
+// Feature matrix `<col>`s: equal widths for the two products, and a tint on the product column that
+// runs unbroken through the group rows.
+.featureColumn {
+    width: 24%;
+}
+
+.productColumn {
+    width: 38%;
+    background: color-mix(in srgb, transparent, var(--color-brand-500) 4%);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, transparent, var(--color-brand-400) 10%);
+    }
+}
+
+.competitorColumn {
+    width: 38%;
+}
+
+.groupRow th {
+    padding-top: $spacing-size-5;
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-fg-secondary);
+}
+
+.productHeading {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.productLogo {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+// Feature pills follow the bordered, tinted treatment of the shared `Pill` component.
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-1;
+    padding: 2px $spacing-size-2 2px 6px;
+    border: 1px solid;
+    border-radius: var(--radius-4xl);
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-semibold);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.pillFree {
+    color: var(--color-success);
+    background-color: color-mix(in srgb, var(--color-green-100) 50%, transparent);
+    border-color: var(--color-success);
+
+    #{$selector-darkmode} & {
+        color: var(--color-green-300);
+        background-color: color-mix(in srgb, var(--color-green-950) 50%, transparent);
+        border-color: color-mix(in srgb, var(--color-green-600) 30%, transparent);
+    }
+}
+
+.pillPaid {
+    color: var(--color-brand-500);
+    background-color: color-mix(in srgb, var(--color-brand-100) 50%, transparent);
+    border-color: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-300);
+        background-color: color-mix(in srgb, var(--color-brand-900) 10%, var(--color-negative) 3%);
+        border-color: color-mix(in srgb, var(--color-brand-300) 30%, transparent);
+    }
+}
+
+.pillLimited {
+    color: var(--color-warning-500);
+    background-color: color-mix(in srgb, var(--color-warning-100) 50%, transparent);
+    border-color: var(--color-warning-400);
+
+    #{$selector-darkmode} & {
+        color: var(--color-warning-300);
+        background-color: color-mix(in srgb, var(--color-warning-950) 50%, transparent);
+        border-color: color-mix(in srgb, var(--color-warning-600) 30%, transparent);
+    }
+}
+
+.pillNone {
+    color: var(--color-fg-secondary);
+    background-color: color-mix(in srgb, var(--color-gray-100) 50%, transparent);
+    border-color: var(--color-border-primary);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-gray-800) 50%, transparent);
+    }
+}
+
+.cellDetail {
+    margin-top: $spacing-size-1;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+}
+
+.tableNote {
+    margin: $spacing-size-3 0 0;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+}
+
+.pricingTables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: $spacing-size-6;
+}
+
+.pricingTableHeading {
+    margin: 0 0 $spacing-size-2;
+    font-size: var(--text-fs-lg);
+}
+
+// Choose-if lists
+
+.chooseIf {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-size-6;
+}
+
+.chooseIfCard {
+    padding: $spacing-size-5;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+
+    h3 {
+        margin: 0 0 $spacing-size-3;
+        font-size: var(--text-fs-lg);
+    }
+
+    ul {
+        margin: 0;
+        padding-left: $spacing-size-5;
+    }
+
+    li + li {
+        margin-top: $spacing-size-2;
+    }
+}
+
+.chooseIfProduct {
+    border-color: var(--color-util-brand-300);
+}
+
+// Get started
+
+.getStarted {
+    padding: $spacing-size-8;
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, transparent, var(--color-brand-500) 6%);
+    text-align: center;
+
+    h3 {
+        margin: 0 0 $spacing-size-2;
+        font-size: var(--text-fs-xl);
+    }
+
+    p {
+        max-width: 60ch;
+        margin: 0 auto;
+    }
+}
+
+// Related pages
+
+.relatedGroups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-size-6;
+
+    h3 {
+        margin: 0 0 $spacing-size-2;
+        font-size: var(--text-fs-sm);
+        font-weight: var(--text-bold);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-fg-secondary);
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li + li {
+        margin-top: $spacing-size-1;
+    }
+}
+
+// Hub
+
+.hubCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-size-4;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hubCard {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    height: 100%;
+    padding: $spacing-size-5;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        border-color: var(--color-util-brand-400);
+    }
+
+    strong {
+        font-size: var(--text-fs-lg);
+        color: var(--color-link);
+    }
+
+    span {
+        color: var(--color-fg-secondary);
+    }
+}

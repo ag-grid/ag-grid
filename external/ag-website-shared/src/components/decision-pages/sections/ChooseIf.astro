@@ -1,0 +1,23 @@
+---
+import styles from '../DecisionPage.module.scss';
+import { chooseIfHeading } from '../decisionPageText';
+
+interface Props {
+    options: Array<{ name: string; reasons: string[]; isProduct?: boolean }>;
+}
+
+const { options } = Astro.props;
+---
+
+<div class={styles.chooseIf}>
+    {options.map(({ name, reasons, isProduct }) => (
+        <div class:list={[styles.chooseIfCard, isProduct && styles.chooseIfProduct]}>
+            <h3>{chooseIfHeading(name)}</h3>
+            <ul>
+                {reasons.map((reason) => (
+                    <li>{reason}</li>
+                ))}
+            </ul>
+        </div>
+    ))}
+</div>

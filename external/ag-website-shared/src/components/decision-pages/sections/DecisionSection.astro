@@ -1,0 +1,24 @@
+---
+import styles from '../DecisionPage.module.scss';
+
+interface Props {
+    id: string;
+    heading: string;
+    /** A short line above the heading, e.g. `AG Grid vs TanStack Table`. */
+    eyebrow?: string;
+    subHeading?: string;
+    /** Hide the heading visually, for sections whose content carries its own visible heading. */
+    headingHidden?: boolean;
+}
+
+const { id, heading, eyebrow, subHeading, headingHidden } = Astro.props;
+---
+
+<section id={id} class={styles.section} aria-labelledby={`${id}-heading`}>
+    {eyebrow && <p class={styles.sectionEyebrow}>{eyebrow}</p>}
+    <h2 id={`${id}-heading`} class:list={[styles.sectionHeading, headingHidden && styles.visuallyHidden]}>
+        {heading}
+    </h2>
+    {subHeading && <p class={styles.sectionSubHeading}>{subHeading}</p>}
+    <slot />
+</section>

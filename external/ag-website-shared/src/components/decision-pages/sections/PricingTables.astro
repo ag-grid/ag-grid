@@ -1,0 +1,46 @@
+---
+import styles from '../DecisionPage.module.scss';
+import type { PricingRow } from '../types';
+import ProductHeading from './ProductHeading.astro';
+
+interface Props {
+    tables: Array<{ name: string; logo?: string; rows: PricingRow[] }>;
+    productName: string;
+    pricingUrl: string;
+}
+
+const { tables, productName, pricingUrl } = Astro.props;
+---
+
+<div class={styles.pricingTables}>
+    {tables.map(({ name, logo, rows }) => (
+        <div>
+            <h3 class={styles.pricingTableHeading}>
+                <ProductHeading name={name} logo={logo} />
+            </h3>
+            <div class={styles.tableWrapper}>
+                <table class={styles.table}>
+                    <thead>
+                        <tr>
+                            <th scope="col">Plan</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Licence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.map((row) => (
+                            <tr>
+                                <th scope="row">{row.plan}</th>
+                                <td>{row.price}</td>
+                                <td>{row.licence}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    ))}
+</div>
+<p class={styles.tableNote}>
+    See <a href={pricingUrl}>{productName} pricing</a> for volume and deployment terms.
+</p>

@@ -7,19 +7,24 @@ import type { FunctionComponent } from 'react';
 import styles from './LandingPageFAQ.module.scss';
 import type { RenderedFAQItem } from './renderFAQAnswers';
 
+const DEFAULT_ANALYTICS_EVENT_NAME = 'react-table-expand-faq';
+
 interface FAQItemProps {
     itemData: RenderedFAQItem;
     isOpen: boolean;
     onClick: () => void;
+    analyticsEventName: string;
 }
 
 interface Props {
     FAQData: RenderedFAQItem[];
+    /** Plausible tagged-event name recorded when a question is expanded. */
+    analyticsEventName?: string;
 }
 
-const FAQItem: FunctionComponent<FAQItemProps> = ({ itemData, isOpen, onClick }) => {
+const FAQItem: FunctionComponent<FAQItemProps> = ({ itemData, isOpen, onClick, analyticsEventName }) => {
     return (
-        <div className={classnames(styles.questionContainer, 'plausible-event-name=react-table-expand-faq')}>
+        <div className={classnames(styles.questionContainer, `plausible-event-name=${analyticsEventName}`)}>
             <div className={styles.titleContainer} onClick={onClick}>
                 <span className={styles.question}>{itemData.question}</span>
                 <Icon svgClasses={classnames(styles.expandIcon, { [styles.iconDown]: isOpen })} name={'chevronRight'} />
@@ -32,7 +37,10 @@ const FAQItem: FunctionComponent<FAQItemProps> = ({ itemData, isOpen, onClick })
     );
 };
 
-export const LandingPageFAQ: FunctionComponent<Props> = ({ FAQData }) => {
+export const LandingPageFAQ: FunctionComponent<Props> = ({
+    FAQData,
+    analyticsEventName = DEFAULT_ANALYTICS_EVENT_NAME,
+}) => {
     const [activeItemIndex, setActiveItemIndex] = useState(-1);
 
     const clickHandler = (activeIndex: number) => {
@@ -51,6 +59,7 @@ export const LandingPageFAQ: FunctionComponent<Props> = ({ FAQData }) => {
                     onClick={() => {
                         clickHandler(i);
                     }}
+                    analyticsEventName={analyticsEventName}
                 />
             );
         });

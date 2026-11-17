@@ -14,6 +14,7 @@ import {
     getDocsTopicId,
     getSoftwareApplicationId,
     getTechArticleId,
+    markdownToPlainText,
     siteRootUrl,
 } from '@ag-website-shared/utils/structuredData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@components/docs/constants';
@@ -66,17 +67,6 @@ export function buildSiteStructuredData({
         }),
     ];
 }
-
-// Covers the inline markdown used in the FAQ answers: images, links, bold/italic emphasis, inline
-// code, and line-leading heading/quote/list markers.
-const markdownToPlainText = (markdown: string): string =>
-    markdown
-        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images -> alt text
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> link text
-        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
-        .replace(/(\*|_)(.*?)\1/g, '$2') // italic
-        .replace(/`([^`]+)`/g, '$1') // inline code
-        .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
 
 /**
  * The home page `FAQPage`. Answers are reduced from markdown to plain text so the structured data
