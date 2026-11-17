@@ -6,7 +6,7 @@ Tooltips can be set for cells and column headers.
 
 ## Cell Tooltips
 
-Use `tooltip: true` for the common case where the tooltip should match the displayed cell value. This uses `valueFormatted` when present, otherwise `value`, regardless of whether the value came from `field` or `valueGetter`. A string value shows fixed text instead.
+Use `tooltip: true` for the common case where the tooltip should match the displayed cell value. This uses `valueFormatted` when present, otherwise `value`, whatever produced them: `field`, a [Value Getter](./value-getters/), [Aggregation](./aggregation/), [Show Values As](./aggregation-show-values-as/) or a [Calculated Column](./calculated-columns/). A string value shows fixed text instead.
 
 {% apiDocumentation source="column-properties/properties.json" section="tooltips" names=["tooltip"] /%}
 
