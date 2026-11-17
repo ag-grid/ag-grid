@@ -24,7 +24,7 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-import { GridActions } from './utils';
+import { GridActions, holdSpaceKey, releaseSpaceKey } from './utils';
 
 describe('Row Numbers Cell Selection', () => {
     let consoleErrorSpy: MockInstance;
@@ -461,7 +461,9 @@ describe('Row Numbers Keyboard Navigation', () => {
     }
 
     function pressKey(element: HTMLElement, key: string, opts?: KeyboardEventInit): void {
-        element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key, bubbles: true }));
+        const init = { ...opts, key, bubbles: true, cancelable: true };
+        element.dispatchEvent(new KeyboardEvent('keydown', init));
+        element.dispatchEvent(new KeyboardEvent('keyup', init));
     }
 
     function getAriaAnnouncementText(gridDiv: HTMLElement): string {
@@ -762,6 +764,29 @@ describe('Row Numbers Keyboard Navigation', () => {
             ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
             └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
         `);
+    });
+
+    test('the row number header selects all cells when Space is released, but as soon as Enter is pressed', async () => {
+        const api = await createGrid({ columnDefs, rowData, cellSelection: true, rowNumbers: true });
+        const allCells = [{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }];
+
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+        holdSpaceKey(rowNumberHeader);
+        await asyncSetTimeout(0);
+        expect(api.getCellRanges() ?? []).toEqual([]);
+
+        releaseSpaceKey(rowNumberHeader);
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
+
+        api.clearCellSelection();
+        rowNumberHeader.dispatchEvent(new KeyboardEvent('keydown', { key: KeyCode.ENTER, bubbles: true }));
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
     });
 
     test('suppressHeaderKeyboardEvent on the row number header stops Space and Enter selecting all cells', async () => {

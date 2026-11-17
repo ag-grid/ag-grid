@@ -130,8 +130,24 @@ export class GridActions {
     }
 }
 
+function spaceKeyInit(opts?: KeyboardEventInit): KeyboardEventInit {
+    return { ...opts, key: KeyCode.SPACE, bubbles: true, cancelable: true };
+}
+
 export function pressSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
-    element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.SPACE, bubbles: true }));
+    element.dispatchEvent(new KeyboardEvent('keydown', spaceKeyInit(opts)));
+    releaseSpaceKey(element, opts);
+}
+
+/** Presses Space and keeps it held through two auto-repeats, without releasing it. */
+export function holdSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
+    element.dispatchEvent(new KeyboardEvent('keydown', spaceKeyInit(opts)));
+    element.dispatchEvent(new KeyboardEvent('keydown', spaceKeyInit({ ...opts, repeat: true })));
+    element.dispatchEvent(new KeyboardEvent('keydown', spaceKeyInit({ ...opts, repeat: true })));
+}
+
+export function releaseSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
+    element.dispatchEvent(new KeyboardEvent('keyup', spaceKeyInit(opts)));
 }
 
 export function pressAKey(element: HTMLElement, opts?: KeyboardEventInit): void {
