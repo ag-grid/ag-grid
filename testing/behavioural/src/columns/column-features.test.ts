@@ -2118,8 +2118,9 @@ describe('Column Features', () => {
             expect(fired).toBe(firedAfterFirstResize);
         });
 
-        test('getSortDef reflects current sort + absolute-sort initialSort exercises absolute sort-types path', async () => {
-            // Combined: cycling sort through asc/desc on a regular col covers getSortDef(). A second col with `initialSort: { type: 'absolute' }` exercises
+        test('deprecated sort helpers reflect current sort + absolute-sort initialSort exercises absolute sort-types path', async () => {
+            // Combined: cycling sort through asc/desc on a regular col covers isSortNone/Ascending/
+            // Descending/Sorting. A second col with `initialSort: { type: 'absolute' }` exercises
             // the DEFAULT_ABSOLUTE_SORTING_ORDER selection in getSortingOrder.
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -2127,24 +2128,31 @@ describe('Column Features', () => {
                     { colId: 'b', sortable: true, initialSort: { type: 'absolute', direction: 'asc' } as any },
                 ],
             });
-            await new GridColumns(api, `getSortDef reflects current sort + absolute-sort initialSort exercis setup`)
-                .checkColumns(`
+            await new GridColumns(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+            ).checkColumns(`
                 CENTER
                 ├── a width:200
                 └── b width:200 sort:asc
             `);
-            await new GridRows(api, `getSortDef reflects current sort + absolute-sort initialSort exercis setup`)
-                .check(`
+            await new GridRows(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+            ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             const a = api.getColumn('a')!;
-            expect(a.getSortDef()).toBeNull();
+            expect(a.isSortNone()).toBe(true);
+            expect(a.isSorting()).toBe(false);
+            expect(a.isSortAscending()).toBe(false);
+            expect(a.isSortDescending()).toBe(false);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
             await new GridColumns(
                 api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState`
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
             ).checkColumns(`
                 CENTER
                 ├── a width:200 sort:asc
@@ -2152,16 +2160,17 @@ describe('Column Features', () => {
             `);
             await new GridRows(
                 api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState`
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            expect(a.getSortDef()?.direction).toBe('asc');
+            expect(a.isSortAscending()).toBe(true);
+            expect(a.isSorting()).toBe(true);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
             await new GridColumns(
                 api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState #2`
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
             ).checkColumns(`
                 CENTER
                 ├── a width:200 sort:desc
@@ -2169,11 +2178,11 @@ describe('Column Features', () => {
             `);
             await new GridRows(
                 api,
-                `getSortDef reflects current sort + absolute-sort initialSort exercis after applyColumnState #2`
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            expect(a.getSortDef()?.direction).toBe('desc');
+            expect(a.isSortDescending()).toBe(true);
 
             // Absolute-sort initial state surfaces in column state
             const bState = api.getColumnState().find((s) => s.colId === 'b')!;

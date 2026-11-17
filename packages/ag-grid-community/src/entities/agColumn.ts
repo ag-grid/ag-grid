@@ -648,6 +648,25 @@ export class AgColumn<TValue = any>
         return this.colDef.sortable ?? true;
     }
 
+    /** @deprecated v32 use col.getSort() === 'asc */
+    public isSortAscending(): boolean {
+        return this.getSort() === 'asc';
+    }
+
+    /** @deprecated v32 use col.getSort() === 'desc */
+    public isSortDescending(): boolean {
+        return this.getSort() === 'desc';
+    }
+    /** @deprecated v32 use col.getSort() === undefined */
+    public isSortNone(): boolean {
+        return !this.getSort();
+    }
+
+    /** @deprecated v32 use col.getSort() !== undefined */
+    public isSorting(): boolean {
+        return this.getSort() != null;
+    }
+
     public getSortIndex(): number | null | undefined {
         return this.sortIndex;
     }

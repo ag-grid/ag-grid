@@ -115,12 +115,10 @@ The Server-Side Row Model does not populate `childrenAfterSort`, so there is no 
 
 ### Column
 
-- `isSortAscending()` and `isSortDescending()` - removed, use `column.getSortDef()?.direction === 'asc'` and `column.getSortDef()?.direction === 'desc'` instead.
-- `isSortNone()` and `isSorting()` - removed, use `column.getSortDef() === null` and `column.getSortDef() !== null` instead.
 - `getRight()` - removed, use `column.getLeft() + column.getActualWidth()` instead.
 - `isHovered()` - removed, use `api.isColumnHovered(column)` instead.
-- `getInstanceId()`, `isFieldContainsDots()`, `isTooltipFieldContainsDots()`, `isGreaterThanMax()`, `isAnyFunctionActive()` and `isAnyFunctionAllowed()` - removed, they were internal and have no replacement.
-- `ColumnGroup.getPartId()` and `ProvidedColumnGroup.getInstanceId()` - removed, they were internal and have no replacement.
+- `getInstanceId()`, `isFieldContainsDots()`, `isTooltipFieldContainsDots()`, `isGreaterThanMax()`, `isAnyFunctionActive()` and `isAnyFunctionAllowed()` - removed from the `Column` interface, they were deprecated in v32 as internal methods and have no replacement.
+- `ColumnGroup.getPartId()` and `ProvidedColumnGroup.getInstanceId()` - removed, they were deprecated in v32 as internal methods and have no replacement.
 
 ### Interfaces and Types
 
