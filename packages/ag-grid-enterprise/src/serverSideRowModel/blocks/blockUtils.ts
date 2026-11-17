@@ -253,12 +253,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 groupData = {};
                 rowNode._groupData = groupData;
             }
-            if (usingTreeData) {
+            if (usingTreeData || col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
                 groupData[col.colId] = key;
-            } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                // Use 'data' - group keys should be based on committed data, not pending edits
-                const groupValue = this.valueSvc.getRawValueFromData(rowNode.rowGroupColumn!, rowNode);
-                groupData[col.colId] = groupValue;
             }
         }
     }
