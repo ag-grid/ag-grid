@@ -28,6 +28,11 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
             return true;
         }
 
+        // The built-in distribution cannot invert aggValueGetter, so only a function setter makes the cell editable
+        if (colDef.aggValueGetter) {
+            return false;
+        }
+
         const aggFunc = colDef.aggFunc ?? null;
 
         // Options object: resolve per-aggFunc records and defaults, then check strategy
@@ -66,6 +71,9 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         }
         if (!setter) {
             return undefined; // No groupRowValueSetter or false → caller uses normal path.
+        }
+        if (colDef.aggValueGetter && typeof setter !== 'function') {
+            return false; // The built-in distribution cannot invert aggValueGetter: leave the data unchanged.
         }
 
         const params: GroupRowValueSetterParams = this.gos.addCommon({
