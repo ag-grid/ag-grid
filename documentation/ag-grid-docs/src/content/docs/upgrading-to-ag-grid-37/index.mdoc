@@ -47,6 +47,12 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
 
+### Keyboard Interaction
+
+- {% kbd "␣ Space" /%} now selects, toggles and expands when it is released rather than when it is pressed, as native buttons and checkboxes do, so holding it acts once instead of repeating. This applies to row selection from a cell or full-width row, the header and row number header select-all, boolean checkbox cells, Set Filter values, the Columns Tool Panel, group title bars in the Filters Tool Panel and chart settings, and multi-select Rich Select items. {% kbd "↵ Enter" /%} still acts when pressed. See [Keyboard Interaction](./keyboard-navigation/#selection).
+- `suppressKeyboardEvent` and `suppressHeaderKeyboardEvent` are still only called for the key press, and suppressing {% kbd "␣ Space" /%} there still stops the action. A `cellKeyDown` listener sees the row selection from before the change.
+- Tests that simulate {% kbd "␣ Space" /%} with only a `keydown` event, such as `fireEvent.keyDown`, must also dispatch `keyup`.
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
