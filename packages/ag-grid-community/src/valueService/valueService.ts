@@ -581,8 +581,9 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        // Get old value from stored data, ignoring any pending edit state
-        const oldValue = this.getValueFromData(column, rowNode);
+        // Get old value from stored data, ignoring any pending edit state. Raw: on a group row an edit replaces the
+        // stored aggregate, so `aggValueGetter`'s result is not the value being replaced.
+        const oldValue = this.getRawValueFromData(column, rowNode);
 
         const data = rowNode.data;
         const params: ValueSetterParams = {
@@ -682,7 +683,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.valueCache?.onDataChanged();
 
         const savedValue =
-            savedValueOverride === undefined ? this.getValueFromData(column, rowNode) : savedValueOverride;
+            savedValueOverride === undefined ? this.getRawValueFromData(column, rowNode) : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;

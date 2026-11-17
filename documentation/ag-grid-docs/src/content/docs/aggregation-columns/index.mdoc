@@ -141,8 +141,8 @@ When the column is also [editable on group rows](./grouping-edit/), the editor s
 edited value is distributed to the descendant rows as a new aggregate. The getter is then applied to the new
 aggregates.
 
-`aggValueGetter` is not called for leaf rows, group columns, pivot result columns, or an open group whose aggregate is
-shown on its total row.
+`aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
+shown on its total row displays no value, so the getter is not called to display it.
 
 ## Editing Aggregated Columns
 

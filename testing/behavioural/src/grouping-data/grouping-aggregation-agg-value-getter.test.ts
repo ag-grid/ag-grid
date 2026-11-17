@@ -242,7 +242,7 @@ describe('colDef.aggValueGetter', () => {
                     field: 'revenue',
                     aggFunc: 'sum',
                     showValuesAs: 'percentOfGrandTotal',
-                    aggValueGetter: (params) => (params.aggValue as number) * 2,
+                    aggValueGetter: (params) => (params.aggValue as number) + 100,
                 },
             ],
             groupDefaultExpanded: -1,
@@ -250,11 +250,11 @@ describe('colDef.aggValueGetter', () => {
             rowData: SALES,
         });
 
-        // the grand total is 2 * 130: groups divide their doubled value by it, leaves their own value
+        // groups divide their returned value by the returned grand total, leaves their own value by the stored total
         expect(groupNode(api, 'row-group-country-Ireland').getDataValue('revenue', 'transformed')).toBeCloseTo(
-            220 / 260
+            210 / 230
         );
-        expect(groupNode(api, '1').getDataValue('revenue', 'transformed')).toBeCloseTo(10 / 260);
+        expect(groupNode(api, '1').getDataValue('revenue', 'transformed')).toBeCloseTo(10 / 130);
     });
 
     test('is called for tree data parents and not for leaves', () => {

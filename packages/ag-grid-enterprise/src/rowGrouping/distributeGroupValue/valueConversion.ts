@@ -1,4 +1,4 @@
-import type { ColDef, GroupRowValueSetterDistribution } from 'ag-grid-community';
+import type { ColDef, Column, GroupRowValueSetterDistribution, IRowNode } from 'ag-grid-community';
 
 /** Resolved distribution strategy. `false` means suppressed (disabled by default for count/min/max/first/last/custom aggFuncs, or explicit false/null). */
 export type DistributionStrategy = GroupRowValueSetterDistribution | false;
@@ -153,4 +153,18 @@ export const detectPrecision = (colDef: ColDef): number | undefined => {
         return 0;
     }
     return undefined;
+};
+
+/**
+ * A child's stored value for distribution. With `aggValueGetter`, a child group's value is its computed aggregate:
+ * the getter's result is not stored, so distributing from it would write values in the getter's units.
+ */
+export const readStoredValue = (node: IRowNode, column: Column, from?: 'value'): unknown => {
+    if (node.group && column.getColDef().aggValueGetter) {
+        const aggValue = node.aggData?.[column.getColId()];
+        if (aggValue !== undefined) {
+            return aggValue;
+        }
+    }
+    return node.getDataValue(column, from);
 };

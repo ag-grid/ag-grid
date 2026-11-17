@@ -70,10 +70,13 @@ export class ShowValuesAsTransformParamsImpl implements ShowValuesAsTransformPar
         return this.readTotal(parent);
     }
 
-    /** A total on this column, read like the cell so an `aggValueGetter` shapes the denominator as it does the value. */
+    /** A total on this column, read like the cell's own value: through `aggValueGetter` for a row the getter applies
+     *  to, so its numerator and denominator share units, and as the stored aggregate for a leaf row. */
     private readTotal(node: IRowNode): number | null {
-        const column = this.column;
-        return column.aggValueGetter ? readNodeValue(node, column) : readAggScalar(node, column);
+        const { column, node: cellNode } = this;
+        return column.aggValueGetter && (cellNode.group || cellNode.footer)
+            ? readNodeValue(node, column)
+            : readAggScalar(node, column);
     }
 
     public parentColumnTotal(): number | null {

@@ -927,7 +927,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Function to compute the value shown for this column on group rows, total rows, the grand total row and
      * tree data parent rows, while the column is aggregated. Not called for leaf rows, group columns or pivot
-     * result columns, nor for an open group whose aggregate is shown on its total row.
+     * result columns. An open group whose aggregate is shown on its total row displays no value, so the getter is
+     * not called to display it.
      * <br /><br />
      * The returned value is the cell value used for rendering, export, clipboard and `api.getCellValue`, and for
      * client-side sorting and filtering. It is not stored, so parent groups still aggregate the computed aggregates
