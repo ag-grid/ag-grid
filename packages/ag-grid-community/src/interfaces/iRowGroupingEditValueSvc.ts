@@ -13,11 +13,11 @@ export interface IRowGroupingEditValueSvc {
     isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean;
 
     /**
-     * Returns `true` when a group row edit must leave the data unchanged: the column has `aggValueGetter` and
-     * a `groupRowValueSetter` that is not a function, as the built-in distribution cannot reverse the getter.
-     * Checked before any field or `valueSetter` write.
+     * How a group cell shown through `aggValueGetter` is written. `'setter'`: only the function `groupRowValueSetter`
+     * writes it. `'reject'`: a non-function setter is configured, and the built-in distribution cannot reverse the
+     * getter, so the data is left unchanged. `undefined`: no group row setter, so the cell's field is written as usual.
      */
-    rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean;
+    getAggGetterEditMode(rowNode: IRowNode, column: AgColumn): 'setter' | 'reject' | undefined;
 
     /** Whether the column's function `groupRowValueSetter` is running, so a write to a child group is distribution. */
     isDistributing(column: AgColumn): boolean;

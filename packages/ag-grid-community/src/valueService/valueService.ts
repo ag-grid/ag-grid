@@ -581,16 +581,23 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (rowNode.group && this.rowGroupingEditValueSvc?.rejectsGroupValueChange(rowNode, column)) {
+        // A cell shown through `aggValueGetter` holds a value in the getter's units. On a group row with a group row
+        // setter, only a function `groupRowValueSetter` may write it, and then never into the group's own field.
+        const aggGetterCell = this.appliesAggValueGetter(column, rowNode);
+        const aggGetterEdit =
+            aggGetterCell && rowNode.group
+                ? this.rowGroupingEditValueSvc?.getAggGetterEditMode(rowNode, column)
+                : undefined;
+        if (aggGetterEdit === 'reject') {
             return false;
         }
 
-        // Get old value from stored data, ignoring any pending edit state. On a group cell shown through
-        // `aggValueGetter`, the old value is in the same units as the new one: the getter's result for an edit, and
-        // the stored aggregate for a child group written by distribution.
-        const aggGetterCell = rowNode.group && this.appliesAggValueGetter(column, rowNode);
+        // Get old value from stored data, ignoring any pending edit state, in the same units as the new value: the
+        // getter's result for an edit through the function setter, the stored value for a field write or a child
+        // group written by distribution.
+        const editsGetterValue = aggGetterEdit === 'setter' && !this.rowGroupingEditValueSvc!.isDistributing(column);
         const oldValue =
-            aggGetterCell && this.rowGroupingEditValueSvc?.isDistributing(column)
+            aggGetterCell && !editsGetterValue
                 ? this.getRawValueFromData(column, rowNode)
                 : this.getValueFromData(column, rowNode);
 
@@ -608,9 +615,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let valueSetterChanged = false;
 
-        // A group cell shown through `aggValueGetter` holds a value in the getter's units, so only the function
-        // `groupRowValueSetter` writes it: never the group's own field or `valueSetter`.
-        if (data && !aggGetterCell) {
+        if (data && aggGetterEdit !== 'setter') {
             const externalFormulaResult = this.handleExternalFormulaChange({
                 column,
                 eventSource,
@@ -693,8 +698,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
+        // Raw: a field write stores a raw value; the function group row setter passes the typed value as the override.
         const savedValue =
-            savedValueOverride === undefined ? this.getValueFromData(column, rowNode) : savedValueOverride;
+            savedValueOverride === undefined ? this.getRawValueFromData(column, rowNode) : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
@@ -908,10 +914,12 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    /** Applies `aggValueGetter` to an aggregated column's value on a group, total, grand total or tree data parent
-     *  row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows and group columns. */
-    /** Whether `colDef.aggValueGetter` computes this cell's value. */
-    private appliesAggValueGetter(column: AgColumn, rowNode: IRowNode): boolean {
+    /**
+     * Whether `colDef.aggValueGetter` computes this cell's value: an aggregated column on a group, total, grand total
+     * or tree data parent row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows
+     * and group columns.
+     */
+    public appliesAggValueGetter(column: AgColumn, rowNode: IRowNode): boolean {
         // `footer` admits the SSRM grand total row, which is not a group row.
         return (
             !!column.aggValueGetter &&

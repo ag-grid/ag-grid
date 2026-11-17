@@ -117,6 +117,31 @@ test('a tree data parent with its own data keeps its field: only the function se
     expect(api.getCellValue({ rowNode: hq, colKey: 'budget' })).toBe(1200);
 });
 
+test('without a group row setter, setDataValue writes the field of a tree data parent as usual', async () => {
+    const api = await gridsManager.createGridAndWait('distribute-agg-value-getter-tree-field', {
+        treeData: true,
+        treeDataChildrenField: undefined,
+        getDataPath: (data: any) => data.path,
+        columnDefs: [{ field: 'budget', aggFunc: 'sum', aggValueGetter }],
+        rowData: [
+            { id: 'hq', path: ['HQ'], budget: 5 },
+            { id: 'eng', path: ['HQ', 'Engineering'], budget: 40 },
+        ],
+        groupDefaultExpanded: -1,
+        getRowId: (params) => params.data.id,
+    });
+    const hq = api.getRowNode('hq')!;
+    const events: { oldValue: unknown; newValue: unknown }[] = [];
+    api.addEventListener('cellValueChanged', (e) => events.push({ oldValue: e.oldValue, newValue: e.newValue }));
+
+    expect(hq.setDataValue('budget', 7, 'ui')).toBe(true);
+    await asyncSetTimeout(0);
+
+    expect(hq.data.budget).toBe(7);
+    // the event carries stored values, as without the getter: the parent's aggregate, not the getter's result
+    expect(events).toEqual([{ oldValue: 40, newValue: 40 }]);
+});
+
 test('undo replays the shown value through the reversing setter', async () => {
     const api = await createGrid('distribute-agg-value-getter-undo', {
         aggValueGetter,
@@ -199,6 +224,29 @@ describe('group-row editing with aggValueGetter and no function groupRowValueSet
         expect(api.getRowNode('eng')!.data.budget).toBe(40);
         expect(api.getCellValue({ rowNode: hq, colKey: 'budget' })).toBe(1100);
         expect(changedEvents).toBe(0);
+        warnSpy.mockRestore();
+    });
+
+    test('a column that is not aggregated keeps its group row editing', async () => {
+        const control = await createGrid('distribute-agg-value-getter-not-aggregated-control', { aggFunc: undefined });
+        const api = await createGrid('distribute-agg-value-getter-not-aggregated', {
+            aggValueGetter,
+            aggFunc: undefined,
+        });
+        const editable = (gridApi: typeof api) =>
+            gridApi.getColumn('amount')!.isCellEditable(gridApi.getRowNode('row-group-region-Americas')!);
+
+        expect(editable(api)).toBe(editable(control));
+        expect(api.getCellValue({ rowNode: api.getRowNode('row-group-region-Americas')!, colKey: 'amount' })).toBe(
+            control.getCellValue({ rowNode: control.getRowNode('row-group-region-Americas')!, colKey: 'amount' })
+        );
+    });
+
+    test('does not warn for a column that cannot be aggregated', async () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        await createGrid('distribute-agg-value-getter-no-agg-no-warning', { aggValueGetter, aggFunc: undefined });
+
+        expect(warnSpy.mock.calls.flat().join(' ')).not.toContain('warning #322');
         warnSpy.mockRestore();
     });
 

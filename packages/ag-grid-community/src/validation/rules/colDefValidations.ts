@@ -299,8 +299,17 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             },
         },
         aggValueGetter: {
-            validate: ({ aggValueGetter, groupRowEditable, groupRowValueSetter }) => {
-                if (aggValueGetter && groupRowEditable && typeof groupRowValueSetter !== 'function') {
+            validate: ({
+                aggValueGetter,
+                aggFunc,
+                initialAggFunc,
+                enableValue,
+                groupRowEditable,
+                groupRowValueSetter,
+            }) => {
+                // only columns that can be aggregated, so a getter in `defaultColDef` warns for those alone
+                const aggregatable = aggFunc != null || initialAggFunc != null || !!enableValue;
+                if (aggValueGetter && aggregatable && groupRowEditable && typeof groupRowValueSetter !== 'function') {
                     return '`colDef.groupRowEditable` has no effect with `colDef.aggValueGetter` unless `colDef.groupRowValueSetter` is a function. The built-in distribution cannot reverse the getter, so group cells in this column are not editable.';
                 }
                 return null;

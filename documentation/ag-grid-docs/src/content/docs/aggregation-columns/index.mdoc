@@ -157,8 +157,10 @@ groupRowValueSetter: (params) =>
 ```
 
 The grid does not write the edited value into the group row's own data, as the function decides what to write.
-Without a function `groupRowValueSetter`, group cells in the column are not editable, `setDataValue` on a group row
-leaves the data unchanged, and the grid logs a warning. Leaf rows stay editable.
+With `groupRowEditable` or `groupRowValueSetter` set but no function `groupRowValueSetter`, group cells in the
+column are not editable while it is aggregated, `setDataValue` on a group row leaves the data unchanged, and the grid
+logs a warning. Leaf rows stay editable. With neither set, `setDataValue` writes the cell's field as it does for a
+column with a `valueGetter`.
 
 `aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
 shown on its total row displays no value, so the getter is not called to display it.

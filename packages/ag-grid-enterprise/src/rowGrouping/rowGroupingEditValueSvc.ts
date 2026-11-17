@@ -33,7 +33,7 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         }
 
         // The built-in distribution cannot invert aggValueGetter, so only a function setter makes the cell editable
-        if (colDef.aggValueGetter) {
+        if (this.beans.valueSvc.appliesAggValueGetter(column, rowNode)) {
             return false;
         }
 
@@ -56,13 +56,13 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         return this.distributingCols.has(column);
     }
 
-    public rejectsGroupValueChange(rowNode: IRowNode, column: AgColumn): boolean {
-        // The built-in distribution cannot reverse aggValueGetter, so only a function setter may change the data
-        if (!column.colDef.aggValueGetter) {
-            return false;
-        }
+    public getAggGetterEditMode(rowNode: IRowNode, column: AgColumn): 'setter' | 'reject' | undefined {
         const setter = this.resolveSetter(rowNode, column);
-        return !!setter && typeof setter !== 'function';
+        if (!setter) {
+            return undefined;
+        }
+        // The built-in distribution cannot reverse aggValueGetter, so only a function setter may change the data
+        return typeof setter === 'function' ? 'setter' : 'reject';
     }
 
     /**

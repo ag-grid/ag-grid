@@ -160,7 +160,7 @@ export const detectPrecision = (colDef: ColDef): number | undefined => {
  * the getter's result is not stored, so distributing from it would write values in the getter's units.
  */
 export const readStoredValue = (node: IRowNode, column: Column, from?: 'value'): unknown => {
-    if (node.group && column.getColDef().aggValueGetter) {
+    if (node.group && column.getColDef().aggValueGetter && column.isValueActive()) {
         const aggValue = node.aggData?.[column.getColId()];
         if (aggValue !== undefined) {
             return aggValue;
