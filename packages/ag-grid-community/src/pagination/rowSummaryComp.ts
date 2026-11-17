@@ -116,12 +116,13 @@ export class RowSummaryComp extends Component {
             defaultTemplate,
             { first, last, count }
         );
-        this.renderSummary(template, { first, last, count });
+        const parts = _splitPaginationTokens(template);
+        this.renderSummary(parts, { first, last, count });
 
         this.ariaStatus = this.getAriaStatus(first, last, count, { lastPageFound, isLoadingPageSize });
 
         // Reserves the width of the widest phrase: every number at the width of the count.
-        const widthString = _splitPaginationTokens(template)
+        const widthString = parts
             .map((part, i) => (i % 2 ? count : part))
             .join('')
             .replace(/\\/g, '\\\\')
@@ -135,13 +136,13 @@ export class RowSummaryComp extends Component {
      * Places the number spans where the phrase has their tokens. A token's first occurrence gets its span, a repeat is
      * plain text, and a span whose token is missing is left out.
      */
-    private renderSummary(template: string, values: { first: string; last: string; count: string }): void {
+    private renderSummary(parts: string[], values: { first: string; last: string; count: string }): void {
         const spans: Record<string, HTMLElement> = {
             first: this.lbFirstRowOnPage,
             last: this.lbLastRowOnPage,
             count: this.lbRecordCount,
         };
-        const children = _splitPaginationTokens(template).map((part, i) => {
+        const children = parts.map((part, i) => {
             if (i % 2 === 0) {
                 return part;
             }
