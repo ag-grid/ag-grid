@@ -137,6 +137,29 @@ describe('SSRM viewSubscription integration', () => {
             });
         }
 
+        test('a tree row that loses its children is subscribed again without a route', async () => {
+            const api = createTreeGrid();
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+
+            api.applyServerSideTransaction({ update: [{ id: 'C', group: false }] });
+
+            await waitFor(() => expect(recorder.subscribed.get('C')).toMatchObject({ hasChildren: false }));
+            expect(recorder.unsubscribedRefs).toEqual([
+                { type: 'tree', id: 'C', parentKeys: [], level: 0, route: ['C'] },
+            ]);
+            expect(recorder.subscribed.get('C')).toEqual({
+                type: 'tree',
+                id: 'C',
+                parentKeys: [],
+                level: 0,
+                hasChildren: false,
+                data: { id: 'C', group: false },
+            });
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('expanding a tree group subscribes its children once they load, with their route', async () => {
             const api = createTreeGrid();
             await waitForNoLoadingRows(api);

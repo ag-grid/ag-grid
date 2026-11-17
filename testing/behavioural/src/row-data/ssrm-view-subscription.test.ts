@@ -856,6 +856,19 @@ describe('SSRM viewSubscription', () => {
                 expect(removeListener.mock.calls.filter(([type]) => type === 'visibilitychange')).toHaveLength(1);
                 removeListener.mockRestore();
             });
+
+            test('without getRowId it watches neither the page nor its place on screen', async () => {
+                const addListener = vi.spyOn(document, 'addEventListener');
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ getRowId: undefined });
+
+                expect(() => subscribe(api, recorder)).toThrow('warning #188');
+
+                expect(observers).toEqual([]);
+                expect(addListener.mock.calls.filter(([type]) => type === 'visibilitychange')).toEqual([]);
+                expect(recorder.calls).toEqual([]);
+                addListener.mockRestore();
+            });
         });
 
         test('setting the option again with the same handlers makes no call', async () => {

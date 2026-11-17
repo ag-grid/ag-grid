@@ -1631,7 +1631,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
      * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
      * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
-     * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+     * Requires `getRowId`. Supported by the Server-Side Row Model.
      * @agModule `ViewSubscriptionModule`
      */
     @Input() public viewSubscription: ViewSubscriptionOptions<TData> | undefined = undefined;
