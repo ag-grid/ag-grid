@@ -26,7 +26,7 @@ Setting `headerTooltip: false` does not disable a tooltip supplied at runtime by
 
 ## Tooltip Callback
 
-Pass a callback to `tooltip` or `headerTooltip` to derive the content from the row. Cell and header callbacks receive the same parameters: `value` is the underlying cell value or displayed header name, and `valueFormatted` contains the formatted value when available.
+Pass a callback to `tooltip` or `headerTooltip` to generate content dynamically. Cell callbacks can also access the row's data; header callbacks receive column/header information. Both use `TooltipCallbackParams`: `value` is the underlying cell value or displayed header name, and `valueFormatted` contains the formatted value when available.
 
 In the example below:
 
