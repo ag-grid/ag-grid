@@ -1651,7 +1651,7 @@ describe('Column Mutations', () => {
             const api = gridsManager.createGrid('expandGroupIdTaken', { columnDefs: [group] });
             api.setColumnGroupOpened('g', true);
 
-            api.setGridOption('columnDefs', [{ field: 'g' }, group]);
+            api.setGridOption('columnDefs', [{ colId: 'g' }, group]);
 
             const parent = api.getColumn('a')!.getOriginalParent()!;
             expect([parent.getGroupId(), parent.isExpanded()]).toEqual(['g_1', true]);

@@ -476,6 +476,66 @@ describe('Column Mutations', () => {
             ]);
         });
 
+        test('a column state re-asserting a grouping already in place moves nothing, also when it groups another column', () => {
+            const year = 'ag-Grid-HierarchyColumn-date-year';
+            const api = gridsManager.createGrid('spliceAlone', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enableRowGroup: true },
+                    { field: 'country', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', country: 'Italy', date: new Date(2020, 5, 15) }],
+            });
+            const ids = () => api.getRowGroupColumns().map((col) => col.getColId());
+            const apart = ['date', 'sport', year];
+            const apply = (state: { colId: string; rowGroup: true }[]) => {
+                api.setRowGroupColumns(apart);
+                expect(ids()).toEqual(apart);
+                api.applyColumnState({ state });
+                return ids();
+            };
+
+            expect({
+                hierarchyColumnAlone: apply([{ colId: year, rowGroup: true }]),
+                hierarchyColumnAndAnother: apply([
+                    { colId: year, rowGroup: true },
+                    { colId: 'country', rowGroup: true },
+                ]),
+                sourceAndAnother: apply([
+                    { colId: 'date', rowGroup: true },
+                    { colId: 'country', rowGroup: true },
+                ]),
+            }).toEqual({
+                hierarchyColumnAlone: ['date', 'sport', year],
+                hierarchyColumnAndAnother: ['date', 'sport', year, 'country'],
+                sourceAndAnother: ['date', 'sport', year, 'country'],
+            });
+        });
+
+        test('a column state re-asserting a pivot already in place moves nothing, also when it pivots another column', () => {
+            const year = 'ag-Grid-HierarchyColumn-date-year';
+            const api = gridsManager.createGrid('splicePivot', {
+                columnDefs: [
+                    { field: 'date', enablePivot: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enablePivot: true },
+                    { field: 'country', enablePivot: true },
+                ],
+                pivotMode: true,
+                rowData: [{ sport: 'Rowing', country: 'Italy', date: new Date(2020, 5, 15) }],
+            });
+            api.setPivotColumns(['date', 'sport', year]);
+            expect(api.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'sport', year]);
+
+            api.applyColumnState({
+                state: [
+                    { colId: year, pivot: true },
+                    { colId: 'country', pivot: true },
+                ],
+            });
+
+            expect(api.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'sport', year, 'country']);
+        });
+
         test('a column state naming neither a hierarchy column grouped apart from its source nor the source leaves it there', () => {
             const api = gridsManager.createGrid('splicePos', {
                 columnDefs: [

@@ -914,7 +914,7 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
         const out = () => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'out' });
         const withoutB = out();
-        expect(withoutB).not.toBe(12);
+        expect(withoutB).toMatch(/^#/);
 
         api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'out', allowFormula: true }]);
         await asyncSetTimeout(rowNumberRefreshBufferMs);

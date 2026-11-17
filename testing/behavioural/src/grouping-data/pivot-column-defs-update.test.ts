@@ -705,6 +705,42 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(hidden()).toBe(0);
     });
 
+    test('a columnDefs update made while pivot mode is off applies width, sort and pinned but not hide to the pivot result columns shown when pivot mode is turned back on', async () => {
+        const defs = (gold: ColDef): ColDef[] => [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            gold,
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs({ field: 'gold', aggFunc: 'sum' }),
+            defaultColDef: { width: 200 },
+            pivotMode: true,
+        });
+        applyTransactionChecked(api, {
+            add: [{ id: 1, country: 'USA', sport: 'Swimming', gold: 2 }],
+        });
+        await asyncSetTimeout(0);
+        api.setColumnWidths([{ key: 'pivot_sport_Swimming_gold', newWidth: 333 }]);
+
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(0);
+        api.setGridOption(
+            'columnDefs',
+            defs({ field: 'gold', aggFunc: 'sum', width: 250, sort: 'asc', pinned: 'left', hide: true })
+        );
+        await asyncSetTimeout(0);
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(0);
+
+        const col = api.getColumn('pivot_sport_Swimming_gold');
+        expect({
+            width: col?.getActualWidth(),
+            sort: col?.getSort(),
+            pinned: col?.getPinned(),
+            visible: col?.isVisible(),
+        }).toEqual({ width: 250, sort: 'asc', pinned: 'left', visible: true });
+    });
+
     test('a value column header change reaches the pivot result columns new data added since the last change', async () => {
         const liveDefs: ColDef[] = [
             { field: 'country', rowGroup: true },

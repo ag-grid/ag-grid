@@ -402,7 +402,7 @@ describe('Cols service events', () => {
         });
     });
 
-    test('an aggregation change a column listener makes and then throws runs before the next column is told', () => {
+    test('an aggregation change a column listener makes and then throws runs before the next column’s listener', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'a' },
