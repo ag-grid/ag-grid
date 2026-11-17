@@ -281,7 +281,7 @@ export {
     _toStringOrNull,
 } from './utils/generic';
 export type { StringComparator } from './utils/generic';
-export { _isEventFromPrintableCharacter } from './utils/keyboard';
+export { _SpaceKeyAction, _addSpaceKeyAction, _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
 export { _isPromise } from './utils/promise';
 export {
