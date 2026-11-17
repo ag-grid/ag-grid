@@ -929,8 +929,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * tree data parent rows, while the column is aggregated. Not called for leaf rows, group columns or pivot
      * result columns, nor for an open group whose aggregate is shown on its total row.
      * <br /><br />
-     * The returned value is the cell value used for rendering, sorting, filtering, export, clipboard and `api.getCellValue`.
-     * It is not stored, so parent groups still aggregate the computed aggregates of their children.
+     * The returned value is the cell value used for rendering, export, clipboard and `api.getCellValue`, and for
+     * client-side sorting and filtering. It is not stored, so parent groups still aggregate the computed aggregates
+     * of their children.
      * Return `params.value` to keep the value shown without this function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */

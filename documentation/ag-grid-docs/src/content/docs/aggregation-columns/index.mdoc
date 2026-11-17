@@ -132,9 +132,14 @@ The function receives the same parameters as a `valueGetter`, plus:
   `undefined`, and `value` is read from the row's data.
 - `aggValue`: this column's computed aggregate, `undefined` with the Server-Side Row Model.
 
-The returned value is used everywhere the cell value is read, including sorting, filtering, export, the clipboard and
-`api.getCellValue`. It is not stored, so parent groups aggregate the computed aggregates of their children, and the
-`avg` function still weights each child group by its row count.
+The returned value is used everywhere the grid reads the cell value, including export, the clipboard,
+`api.getCellValue`, and sorting and filtering in the Client-Side Row Model. With the Server-Side Row Model, the server
+sorts and filters group rows. The returned value is not stored, so parent groups aggregate the computed aggregates of
+their children, and the `avg` function still weights each child group by its row count.
+
+When the column is also [editable on group rows](./grouping-edit/), the editor starts from the returned value, and the
+edited value is distributed to the descendant rows as a new aggregate. The getter is then applied to the new
+aggregates.
 
 `aggValueGetter` is not called for leaf rows, group columns, pivot result columns, or an open group whose aggregate is
 shown on its total row.
