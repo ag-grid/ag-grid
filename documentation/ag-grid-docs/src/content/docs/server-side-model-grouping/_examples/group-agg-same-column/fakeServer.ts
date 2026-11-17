@@ -42,11 +42,10 @@ export function FakeServer(allData) {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            // the group key is returned under `groupKey`, so the grouped column can hold its aggregate
-            const colsToSelect = [rowGroupCol.id + ' AS groupKey'];
+            const colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
+                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + aggregateName(request, valueCol.id));
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -97,8 +96,8 @@ export function FakeServer(allData) {
             ? request.rowGroupCols[request.groupKeys.length]
             : undefined;
         const sorts = sortModel.map(function (s) {
-            // a group level sorted by its own column is ordered by key
-            const sortBy = rowGroupCol && s.colId === rowGroupCol.id ? 'groupKey' : s.colId;
+            // a group level sorted by its own column is ordered by key, and by aggregate otherwise
+            const sortBy = rowGroupCol && s.colId !== rowGroupCol.id ? aggregateName(request, s.colId) : s.colId;
             return sortBy + ' ' + s.sort.toUpperCase();
         });
 
@@ -112,6 +111,17 @@ export function FakeServer(allData) {
 
         const blockSize = request.endRow - request.startRow;
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
+    }
+
+    // the aggregate of a grouped column is returned under `<aggFunc>_<field>`, as its field holds the group key
+    function aggregateName(request, colId) {
+        const valueCol = request.valueCols.find(function (col) {
+            return col.id === colId;
+        });
+        const isGrouped = request.rowGroupCols.some(function (col) {
+            return col.id === colId;
+        });
+        return valueCol && isGrouped ? valueCol.aggFunc + '_' + colId : colId;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {

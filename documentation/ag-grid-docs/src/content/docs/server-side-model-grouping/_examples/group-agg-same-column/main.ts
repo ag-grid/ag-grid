@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import type { AggValueGetterParams, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { ColumnsToolPanelModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -12,6 +12,13 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([ColumnsToolPanelModule, RowGroupingModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
+
+// a grouped column keeps its key under its field, and the server returns its aggregate under `<aggFunc>_<field>`
+function getAggValue(params: AggValueGetterParams) {
+    const aggValue = params.data?.[`${params.aggFunc}_${params.colDef.field}`];
+    return aggValue !== undefined ? aggValue : params.value;
+}
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'gold', rowGroup: true, aggFunc: 'sum', sort: 'asc' },
@@ -25,6 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 120,
         enableRowGroup: true,
         enableValue: true,
+        aggValueGetter: getAggValue,
     },
     autoGroupColumnDef: {
         flex: 1,
@@ -32,9 +40,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         field: 'athlete',
     },
     sideBar: 'columns',
-
-    // the server returns the group key under `groupKey`, and aggregates under their column's field
-    getServerSideRowGroupKey: ({ data }) => data.groupKey,
 
     rowModelType: 'serverSide',
 };
