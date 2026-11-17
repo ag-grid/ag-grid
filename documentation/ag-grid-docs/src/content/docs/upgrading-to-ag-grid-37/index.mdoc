@@ -47,6 +47,10 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
 
+### Cell Editing
+
+- When `allowTyping` is not enabled and no `searchType` is set, typing in the [Rich Select Cell Editor](./provided-cell-editors-rich-select-customisation/#search-values) now moves the highlight to the first value that starts with the typed text, as in the Select Cell Editor, instead of to the closest fuzzy match. Repeating a character cycles through the values that start with it, and characters typed less than a second apart combine, up from 300ms. The Advanced Filter Builder dropdowns behave the same way. To keep the previous behaviour, set `searchType: 'fuzzy'`.
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.

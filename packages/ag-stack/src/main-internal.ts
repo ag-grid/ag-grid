@@ -265,6 +265,7 @@ export {
 export { _debounce } from './utils/debounce';
 export { _batchCall, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
+export { AgTypeAhead } from './utils/typeAhead';
 export {
     _defaultComparator,
     _exists,

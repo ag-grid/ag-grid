@@ -403,7 +403,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         if (eventKey === KeyCode.BACKSPACE) {
             this.eEditor.searchTextFromString(null);
         } else if (eventKey?.length === 1) {
-            this.eEditor.searchTextFromString(eventKey);
+            const richSelect = this.eEditor;
+            if (richSelect.isTypeAheadSearch()) {
+                richSelect.typeAheadCharacter(eventKey);
+            } else {
+                richSelect.searchTextFromString(eventKey);
+            }
         }
     }
 
