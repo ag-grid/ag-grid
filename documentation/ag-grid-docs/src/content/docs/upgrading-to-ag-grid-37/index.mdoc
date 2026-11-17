@@ -80,9 +80,7 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 ### Keyboard Interaction
 
-- {% kbd "␣ Space" /%} now selects, toggles and expands when it is released rather than when it is pressed, as native buttons and checkboxes do, so holding it acts once instead of repeating. This applies to row selection from a cell or full-width row, the header and row number header select-all, boolean checkbox cells, Set Filter values, the Columns Tool Panel, group title bars in the Filters Tool Panel and chart settings, and multi-select Rich Select items. {% kbd "↵ Enter" /%} still acts when pressed. See [Keyboard Interaction](./keyboard-navigation/#selection).
-- `suppressKeyboardEvent` and `suppressHeaderKeyboardEvent` are still only called for the key press, and suppressing {% kbd "␣ Space" /%} there still stops the action. A `cellKeyDown` listener sees the row selection from before the change.
-- Tests that simulate {% kbd "␣ Space" /%} with only a `keydown` event, such as `fireEvent.keyDown`, must also dispatch `keyup`.
+- {% kbd "␣ Space" /%} now selects, toggles and expands when released rather than when pressed, as native checkboxes and buttons do, so holding it no longer repeats the action. Tests that simulate {% kbd "␣ Space" /%} with only a `keydown` event must also dispatch `keyup`.
 
 ### Validation
 
