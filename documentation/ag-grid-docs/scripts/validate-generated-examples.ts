@@ -12,6 +12,8 @@ import { stripOutExampleGeneratorCode } from '../src/components/example-runner/c
  * Type-checks the framework variants `generate-examples` produces, i.e. the code users get in the
  * docs code viewer, Plunker and CodeSandbox, after the same harness stripping those apply. Each
  * framework's variants are written out as files and checked by one `tsc` run with `strict` on.
+ *
+ * Pass example paths (`docs/<page>/_examples/<example>`) or example names to check only those.
  */
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WORKSPACE_ROOT = join(__dirname, '..', '..', '..');
@@ -56,6 +58,12 @@ async function findExampleDirs(): Promise<string[]> {
         }
     }
     return exampleDirs;
+}
+
+// A filter with a slash is a path to an example (or a page of examples); one without is an example name.
+function matchesFilter(exampleDir: string, filter: string): boolean {
+    const path = filter.replace(/\/+$/, '');
+    return path.includes('/') ? `${exampleDir}/`.startsWith(`${path}/`) : exampleDir.endsWith(`/${path}`);
 }
 
 async function writeFramework(framework: string, exampleDirs: string[]): Promise<number> {
@@ -116,7 +124,14 @@ function typeCheck(framework: string): Promise<{ framework: string; output: stri
 async function main() {
     const frameworks = Object.keys(FRAMEWORK_OPTIONS);
     await rm(OUTPUT_ROOT, { recursive: true, force: true });
-    const exampleDirs = await findExampleDirs();
+    const filters = process.argv.slice(2);
+    const exampleDirs = (await findExampleDirs()).filter(
+        (exampleDir) => filters.length === 0 || filters.some((filter) => matchesFilter(exampleDir, filter))
+    );
+    if (exampleDirs.length === 0) {
+        console.error(`No examples match ${filters.join(', ')}`);
+        process.exit(1);
+    }
     for (const framework of frameworks) {
         console.log(`${framework}: ${await writeFramework(framework, exampleDirs)} examples`);
     }
