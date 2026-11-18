@@ -419,7 +419,7 @@ export class AgGroupComponent<
         let labelId: string | undefined;
 
         if (eToggle) {
-            labelId = this.params.title ? eToggle.getLabelId() : undefined;
+            labelId = this.params.title?.trim() ? eToggle.getLabelId() : undefined;
         } else if (eTitleBar?.hasTitle()) {
             labelId = eTitleBar.getTitleId();
         }
@@ -644,7 +644,7 @@ class DefaultTitleBar<
     }
 
     public hasTitle(): boolean {
-        return this.title != null;
+        return !!this.title?.trim();
     }
 
     public getTitleId(): string {

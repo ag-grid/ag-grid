@@ -978,25 +978,30 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             ).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
         });
 
-        test('an accordion child with an empty title has an unnamed, role-less container', async () => {
-            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-                enableFilterHandlers,
-                columnDefs: [
-                    {
-                        field: 'name',
-                        filter: 'agMultiColumnFilter',
-                        filterParams: { filters: [{ filter: 'agSetColumnFilter', display: 'accordion', title: '' }] },
-                    },
-                ],
-                rowData: ROWS,
-            });
-            await ColumnFilterHarness.open(api, 'name');
-            const container = multiFilterIn(api, '.ag-filter-menu').querySelector('.ag-multi-filter-group-container')!;
-            expect({
-                role: container.getAttribute('role'),
-                labelledBy: container.getAttribute('aria-labelledby'),
-            }).toEqual({ role: null, labelledBy: null });
-        });
+        test.each(['', '   '])(
+            'an accordion child with a blank title (%j) has an unnamed, role-less container',
+            async (title) => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [
+                        {
+                            field: 'name',
+                            filter: 'agMultiColumnFilter',
+                            filterParams: { filters: [{ filter: 'agSetColumnFilter', display: 'accordion', title }] },
+                        },
+                    ],
+                    rowData: ROWS,
+                });
+                await ColumnFilterHarness.open(api, 'name');
+                const container = multiFilterIn(api, '.ag-filter-menu').querySelector(
+                    '.ag-multi-filter-group-container'
+                )!;
+                expect({
+                    role: container.getAttribute('role'),
+                    labelledBy: container.getAttribute('aria-labelledby'),
+                }).toEqual({ role: null, labelledBy: null });
+            }
+        );
 
         test('in the filters tool panel, a sub-menu child shows as an accordion', async () => {
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
