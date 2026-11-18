@@ -11,6 +11,7 @@ import type {
     Validations,
 } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
+import { validateAccentedSort } from './accentedSortValidation';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -600,6 +601,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         serverSideSortAllLevels: {
             supportedRowModels: ['serverSide'],
+        },
+        accentedSort: {
+            validate: ({ accentedSort }) => validateAccentedSort('accentedSort', accentedSort),
         },
         stickyRowsMaxViewportRatio: {
             validate({ stickyRowsMaxViewportRatio: ratio }) {

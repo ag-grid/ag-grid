@@ -23,6 +23,8 @@ export class SortService extends BeanStub implements NamedBean {
     private cols: AgColumn[] | null = null;
     private map: Map<AgColumn, number> | null = null;
     private opts: SortOption[] | null = null;
+    /** The `colModel.accentedSortVersion` `opts` was resolved with, as its string comparators depend on it. */
+    private optsAccentedSortVersion = 0;
     private displaySortCount = 0;
 
     public override destroy(): void {
@@ -268,7 +270,9 @@ export class SortService extends BeanStub implements NamedBean {
 
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
-        if (opts === null) {
+        const { colModel } = this.beans;
+        const accentedSortVersion = colModel.accentedSortVersion;
+        if (opts === null || accentedSortVersion !== this.optsAccentedSortVersion) {
             opts = [];
             const cols = this.getSortedCols();
             for (let i = 0, len = cols.length; i < len; ++i) {
@@ -284,11 +288,13 @@ export class SortService extends BeanStub implements NamedBean {
                         leafComparator: undefined,
                         descending: false,
                         absolute: false,
+                        stringComparator: undefined,
                     });
                 }
             }
-            _resolveSortOptions(opts, this.beans.colModel);
+            _resolveSortOptions(opts, colModel, this.gos);
             this.opts = opts;
+            this.optsAccentedSortVersion = accentedSortVersion;
         }
         return opts;
     }
