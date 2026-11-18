@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /* eslint-disable no-console */
 import { spawn } from 'child_process';
-import { existsSync } from 'fs';
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'fs/promises';
-import { dirname, join, relative } from 'path';
+import { existsSync, globSync } from 'fs';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
+import { dirname, join, posix, relative, sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { stripOutExampleGeneratorCode } from '../src/components/example-runner/components/stripOutExampleGeneratorCode';
@@ -19,7 +19,7 @@ import { stripOutExampleGeneratorCode } from '../src/components/example-runner/c
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WORKSPACE_ROOT = join(__dirname, '..', '..', '..');
 const GENERATED_ROOT = join(WORKSPACE_ROOT, 'dist', 'generated-examples', 'ag-grid-docs');
-const DOCS_ROOT = join(__dirname, '..', 'src', 'content', 'docs');
+const SRC_ROOT = join(__dirname, '..', 'src');
 const TSC = join(WORKSPACE_ROOT, 'node_modules', '.bin', 'tsc');
 
 const FRAMEWORK_OPTIONS: Record<string, Record<string, unknown>> = {
@@ -29,7 +29,8 @@ const FRAMEWORK_OPTIONS: Record<string, Record<string, unknown>> = {
     vue3: {},
 };
 
-// Globals the example page provides at runtime rather than through an import.
+// Globals the example page provides at runtime rather than through an import. `ajv7` and `alasql` come from
+// the matching extras in `Extras.astro`; `src/types/index.d.ts` documents the same globals for the docs build.
 const RUNTIME_GLOBALS = `import type Ajv from 'ajv';
 
 declare global {
@@ -44,34 +45,33 @@ declare global {
 const TYPE_CHECKED_FILE = /\.tsx?$/;
 const SPEC_FILE = /\.spec\.tsx?$/;
 
-// Generated output is not cleaned between runs, so start from the examples that exist in the source tree.
-async function findExampleDirs(): Promise<string[]> {
-    const exampleDirs: string[] = [];
-    for (const page of await readdir(DOCS_ROOT, { withFileTypes: true })) {
-        const examplesRoot = join(DOCS_ROOT, page.name, '_examples');
-        if (page.isDirectory() && existsSync(examplesRoot)) {
-            for (const example of await readdir(examplesRoot, { withFileTypes: true })) {
-                if (example.isDirectory()) {
-                    exampleDirs.push(join('docs', page.name, '_examples', example.name));
-                }
-            }
-        }
-    }
-    return exampleDirs;
+// Generated output is not cleaned between runs, so start from the source tree, using the generator's
+// rule that an example is an `_examples` folder with a `main.ts`. IDs use `/` on every platform.
+function findExampleDirs(): string[] {
+    return globSync('**/_examples/*/main.ts', { cwd: SRC_ROOT })
+        .map((entryFile) => posix.dirname(entryFile.split(sep).join('/')))
+        .map((exampleDir) => exampleDir.split('/').slice(1).join('/'))
+        .sort();
 }
 
 // A filter with a slash is a path to an example (or a page of examples); one without is an example name.
 function matchesFilter(exampleDir: string, filter: string): boolean {
-    const path = filter.replace(/\/+$/, '');
+    const path = filter.replace(/\\/g, '/').replace(/\/+$/, '');
     return path.includes('/') ? `${exampleDir}/`.startsWith(`${path}/`) : exampleDir.endsWith(`/${path}`);
 }
 
-async function writeFramework(outputRoot: string, framework: string, exampleDirs: string[]): Promise<number> {
+async function writeFramework(
+    outputRoot: string,
+    framework: string,
+    exampleDirs: string[],
+    missing: string[]
+): Promise<number> {
     const frameworkRoot = join(outputRoot, framework);
     let exampleCount = 0;
     for (const example of exampleDirs) {
         const contentsPath = join(GENERATED_ROOT, example, framework, 'contents.json');
         if (!existsSync(contentsPath)) {
+            missing.push(relative(WORKSPACE_ROOT, contentsPath));
             continue;
         }
         const { excluded, files, boilerPlateFiles } = JSON.parse(await readFile(contentsPath, 'utf8'));
@@ -132,7 +132,7 @@ function typeCheck(
 
 async function main() {
     const filters = process.argv.slice(2);
-    const exampleDirs = (await findExampleDirs()).filter(
+    const exampleDirs = findExampleDirs().filter(
         (exampleDir) => filters.length === 0 || filters.some((filter) => matchesFilter(exampleDir, filter))
     );
     if (exampleDirs.length === 0) {
@@ -146,12 +146,19 @@ async function main() {
     const outputRoot = await mkdtemp(join(WORKSPACE_ROOT, 'tmp', 'generated-examples-type-check-'));
     try {
         const frameworks: string[] = [];
+        const missing: string[] = [];
         for (const framework of Object.keys(FRAMEWORK_OPTIONS)) {
-            const exampleCount = await writeFramework(outputRoot, framework, exampleDirs);
+            const exampleCount = await writeFramework(outputRoot, framework, exampleDirs, missing);
             console.log(`${framework}: ${exampleCount} examples`);
             if (exampleCount > 0) {
                 frameworks.push(framework);
             }
+        }
+        if (missing.length > 0) {
+            console.error(`\nMissing generated output, so run generate-examples first:`);
+            missing.forEach((contentsPath) => console.error(`  ${contentsPath}`));
+            process.exitCode = 1;
+            return;
         }
 
         const results = await Promise.all(frameworks.map((framework) => typeCheck(outputRoot, framework)));

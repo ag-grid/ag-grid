@@ -180,6 +180,15 @@ describe('convertFunctionalTemplate', () => {
             '<input onInput={(event) => onSizeChanged(event.currentTarget.valueAsNumber)} />'
         );
     });
+
+    it("passes React's event to a handler that takes the event itself", () => {
+        expect(convertFunctionalTemplate('<input type="checkbox" onchange="onToggle(event)">')).toBe(
+            '<input type="checkbox" onChange={(event) => onToggle(event)} />'
+        );
+        expect(convertFunctionalTemplate('<input onchange="onPick(\'a\', event)">')).toBe(
+            "<input onChange={(event) => onPick('a', event)} />"
+        );
+    });
 });
 
 describe('convertTemplate numeric attributes', () => {

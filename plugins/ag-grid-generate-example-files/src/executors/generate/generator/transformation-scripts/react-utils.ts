@@ -33,7 +33,6 @@ function convertStyles(code: string) {
 function convertAttributes(template: string) {
     template = template
         .replace(/(\s(?:rows|cols|size))="(\d+)"/g, '$1={$2}')
-        .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
@@ -59,7 +58,7 @@ export function convertTemplate(template: string) {
         template = template.replace(matcher, `${jsEvent}={() => this.$1($2)}`);
     });
 
-    return convertAttributes(template);
+    return convertAttributes(template.replace(/,\s+event([),])/g, '$1'));
 }
 
 /**
@@ -85,8 +84,8 @@ export function convertFunctionalTemplate(template: string, handlersWithParamete
                 // 0 original call, 1 function name, 2 arguments
                 const [, handler, args] = meta;
                 let jsHandler: string;
-                if (/\bevent\./.test(args)) {
-                    // Reads the event, e.g. `event.target.value`, so takes React's rather than the global `window.event`
+                if (/\bevent\b/.test(args)) {
+                    // Uses the event, e.g. `event.target.value`, so takes React's rather than the global `window.event`
                     jsHandler = `(event) => ${handler}(${args.replace(/\bevent\.target\b/g, 'event.currentTarget')})`;
                 } else if (args || handlersWithParameters.includes(handler)) {
                     jsHandler = `() => ${handler}(${args})`;
