@@ -1468,7 +1468,7 @@ export interface Props<TData> {
          */
     viewSubscription?: ViewSubscriptionOptions<TData>,
     /** Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
-         * them configured, for example while the grid is hidden. Set back to `true` to subscribe to the rows in view again.
+         * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
          * @default true
          * @agModule `ViewSubscriptionModule`
          */
