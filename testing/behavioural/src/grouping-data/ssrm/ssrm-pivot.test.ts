@@ -169,24 +169,13 @@ describe('SSRM pivot (characterisation)', () => {
             });
             await waitForNoLoadingRows(api);
 
-            const sportGroups = new Map<string, boolean>();
-            const yearGroups = new Map<string, boolean>();
-            for (const column of api.getPivotResultColumns() ?? []) {
-                const groups = [];
-                for (let group = column.getParent(); group; group = group.getParent()) {
-                    if (!group.isPadding()) {
-                        groups.unshift(group.getProvidedColumnGroup());
-                    }
-                }
-                sportGroups.set(groups[0].getGroupId(), groups[0].isExpanded());
-                yearGroups.set(groups[1].getGroupId(), groups[1].isExpanded());
-            }
-            expect({
-                sports: Array.from(sportGroups.values()),
-                years: Array.from(yearGroups.values()),
-            }).toEqual({
-                sports: [sportOpen, sportOpen],
-                years: [yearOpen, yearOpen, yearOpen, yearOpen],
+            expect(pivotGroups(api)).toEqual({
+                Swim: { open: sportOpen, expandable: false },
+                'Swim > 2000': { open: yearOpen, expandable: false },
+                'Swim > 2004': { open: yearOpen, expandable: false },
+                Run: { open: sportOpen, expandable: false },
+                'Run > 2000': { open: yearOpen, expandable: false },
+                'Run > 2004': { open: yearOpen, expandable: false },
             });
         }
     );
@@ -234,3 +223,23 @@ describe('SSRM pivot (characterisation)', () => {
         `);
     });
 });
+
+/** Each pivot result column group, keyed by its header path, with whether it is open and whether it can open. */
+function pivotGroups(api: GridApi): Record<string, { open: boolean; expandable: boolean }> {
+    const result: Record<string, { open: boolean; expandable: boolean }> = {};
+    for (const column of api.getPivotResultColumns() ?? []) {
+        const groups = [];
+        for (let group = column.getParent(); group; group = group.getParent()) {
+            if (!group.isPadding()) {
+                groups.unshift(group.getProvidedColumnGroup());
+            }
+        }
+        let path = '';
+        for (const group of groups) {
+            const headerName = group.getColGroupDef()?.headerName ?? '';
+            path = path ? `${path} > ${headerName}` : headerName;
+            result[path] = { open: group.isExpanded(), expandable: group.isExpandable() };
+        }
+    }
+    return result;
+}

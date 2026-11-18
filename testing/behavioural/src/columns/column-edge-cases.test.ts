@@ -1030,7 +1030,10 @@ describe('Column Edge Cases', () => {
                     .map((c: Column) => c.getColId())
                     .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
                 expect(autoColumnIds).toEqual(['ag-Grid-AutoColumn']);
-                expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
+                expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                    'ag-Grid-AutoColumn',
+                    'year',
+                ]);
                 const warnMsg = warnSpy.mock.calls.map((c) => String(c[0])).join(' ');
                 expect(warnMsg).toContain('#182');
             } finally {

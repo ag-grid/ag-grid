@@ -1131,10 +1131,6 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             pivotGrids.reset();
         });
 
-        const keyOrders: { keys: string; first: 'columnTypes' | 'pivotMode' }[] = [
-            { keys: 'pivotMode first', first: 'pivotMode' },
-        ];
-
         const createPivotGrid = (id: string, processColDef: ProcessColDef) =>
             pivotGrids.createGrid(id, {
                 rowData: ROW_DATA,
@@ -1144,50 +1140,44 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
                 calculatedColumns: { processColDef },
             });
 
-        test.each(keyOrders)(
-            'sourceColumn is null in every call when one option update switches pivot mode on and changes columnTypes ($keys)',
-            async (row) => {
-                const processColDef = vi.fn<ProcessColDef>();
-                const api = createPivotGrid(`pcd-source-auto-pivot-on-${row.first}`, processColDef);
-                await waitForColumn(api, 'ag-Grid-AutoColumn');
-                await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-                processColDef.mockClear();
-                const types = { columnTypes: { t: { width: 90 } } };
-                const mode = { pivotMode: true };
+        test('sourceColumn is null in every call when one option update switches pivot mode on and changes columnTypes (pivotMode first)', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = createPivotGrid(`pcd-source-auto-pivot-on-pivotMode`, processColDef);
+            await waitForColumn(api, 'ag-Grid-AutoColumn');
+            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            processColDef.mockClear();
+            const types = { columnTypes: { t: { width: 90 } } };
+            const mode = { pivotMode: true };
 
-                api.updateGridOptions(row.first === 'columnTypes' ? { ...types, ...mode } : { ...mode, ...types });
+            api.updateGridOptions({ ...mode, ...types });
 
-                expect(api.isPivotMode()).toBe(true);
-                expect(processColDef).toHaveBeenCalled();
-                for (const [params] of processColDef.mock.calls) {
-                    expect(params.sourceColumn).toBeNull();
-                }
+            expect(api.isPivotMode()).toBe(true);
+            expect(processColDef).toHaveBeenCalled();
+            for (const [params] of processColDef.mock.calls) {
+                expect(params.sourceColumn).toBeNull();
             }
-        );
+        });
 
-        test.each(keyOrders)(
-            'sourceColumn is the auto group column in every call when one option update switches pivot mode off and changes columnTypes ($keys)',
-            async (row) => {
-                const processColDef = vi.fn<ProcessColDef>();
-                const api = createPivotGrid(`pcd-source-auto-pivot-off-${row.first}`, processColDef);
-                await waitForColumn(api, 'ag-Grid-AutoColumn');
-                await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-                api.setGridOption('pivotMode', true);
-                processColDef.mockClear();
-                const types = { columnTypes: { t: { width: 90 } } };
-                const mode = { pivotMode: false };
+        test('sourceColumn is the auto group column in every call when one option update switches pivot mode off and changes columnTypes (pivotMode first)', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = createPivotGrid(`pcd-source-auto-pivot-off-pivotMode`, processColDef);
+            await waitForColumn(api, 'ag-Grid-AutoColumn');
+            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            api.setGridOption('pivotMode', true);
+            processColDef.mockClear();
+            const types = { columnTypes: { t: { width: 90 } } };
+            const mode = { pivotMode: false };
 
-                api.updateGridOptions(row.first === 'columnTypes' ? { ...types, ...mode } : { ...mode, ...types });
+            api.updateGridOptions({ ...mode, ...types });
 
-                const autoColumn = api.getColumn('ag-Grid-AutoColumn');
-                expect(api.isPivotMode()).toBe(false);
-                expect(autoColumn).not.toBeNull();
-                expect(processColDef).toHaveBeenCalled();
-                for (const [params] of processColDef.mock.calls) {
-                    expect(params.sourceColumn).toBe(autoColumn);
-                }
+            const autoColumn = api.getColumn('ag-Grid-AutoColumn');
+            expect(api.isPivotMode()).toBe(false);
+            expect(autoColumn).not.toBeNull();
+            expect(processColDef).toHaveBeenCalled();
+            for (const [params] of processColDef.mock.calls) {
+                expect(params.sourceColumn).toBe(autoColumn);
             }
-        );
+        });
     });
 
     describe('without the row grouping module', () => {
@@ -1538,17 +1528,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             }
         });
 
-        test.each([
-            {
-                outcome: 'an unknown reference once the auto group column is gone',
-                enabled: false,
-                autoColumnStays: false,
-                expected: { valid: false, reason: 'unknownReference' },
-            },
-        ])('expressionValidation of a reference to the auto group column is $outcome', async (row) => {
-            const enabledValue = row.enabled;
+        test('expressionValidation of a reference to the auto group column is an unknown reference once the auto group column is gone', async () => {
             const { processColDef, groupedId, enabled } = groupingCallback();
-            const api = createGrid(`pcd-valid-auto-ref-${enabledValue}`, {
+            const api = createGrid(`pcd-valid-auto-ref-false`, {
                 ...GROUPED_BY_TYPE,
                 calculatedColumns: { processColDef },
                 initialState: { userColumns: userColumnsState('z', '[ag-Grid-AutoColumn] + 1') },
@@ -1556,16 +1538,16 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             await waitForColumn(api, 'z');
             await waitForColumn(api, 'ag-Grid-AutoColumn');
             groupedId.value = await addViaDialog(api, 'a', '[b] * 2');
-            enabled.value = enabledValue;
+            enabled.value = false;
             processColDef.mockClear();
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });
 
             const callsForZ = processColDef.mock.calls.filter(([params]) => params.colDef.colId === 'z');
-            expect(api.getColumn('ag-Grid-AutoColumn') !== null).toBe(row.autoColumnStays);
+            expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
             expect(callsForZ.length).toBeGreaterThan(0);
             for (const [params] of callsForZ) {
-                expect(params.expressionValidation).toEqual(row.expected);
+                expect(params.expressionValidation).toEqual({ valid: false, reason: 'unknownReference' });
             }
         });
     });

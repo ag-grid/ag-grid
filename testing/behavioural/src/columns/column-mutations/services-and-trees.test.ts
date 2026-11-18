@@ -843,27 +843,21 @@ describe('Column Mutations', () => {
             });
         });
 
-        test.each<[string, ColDef, ColDef | undefined, ColDef]>([
-            ['rowGroup false, nothing enabled, as before', {}, undefined, { rowGroup: false }],
-        ])(
-            'a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: %s',
-            (_name, enabled, defaultColDef, patch) => {
-                const hierarchy: ColDef = { field: 'date', groupHierarchy: ['year', 'month'] };
-                const api = gridsManager.createGrid('ungroup', {
-                    columnDefs: [{ ...hierarchy, ...enabled, rowGroup: true }],
-                    defaultColDef,
-                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
-                });
-                const before = api.getRowGroupColumns().map((col) => col.getColId());
+        test('a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: rowGroup false, nothing enabled, as before', () => {
+            const hierarchy: ColDef = { field: 'date', groupHierarchy: ['year', 'month'] };
+            const api = gridsManager.createGrid('ungroup', {
+                columnDefs: [{ ...hierarchy, rowGroup: true }],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            const before = api.getRowGroupColumns().map((col) => col.getColId());
 
-                api.setGridOption('columnDefs', [{ ...hierarchy, ...enabled, ...patch }]);
+            api.setGridOption('columnDefs', [{ ...hierarchy, rowGroup: false }]);
 
-                expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
-                    before: ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month', 'date'],
-                    after: [],
-                });
-            }
-        );
+            expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                before: ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month', 'date'],
+                after: [],
+            });
+        });
 
         test('column state grouping by a hierarchy source with a null defaultState for the rest groups by the source alone', () => {
             const api = gridsManager.createGrid('defaultNull', {

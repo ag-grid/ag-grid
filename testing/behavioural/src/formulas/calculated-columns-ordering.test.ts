@@ -1025,7 +1025,7 @@ describe('calculated columns - display ordering', () => {
         await waitFor(() => expect(api.getPivotResultColumns()?.length).toBeGreaterThan(0));
         const pivoted = api.getAllDisplayedColumns().map((col) => col.getColId());
         expect(pivoted).not.toContain(added);
-        const pivotResultColumns = api.getPivotResultColumns()!;
+        const pivotResultColumns = [...api.getPivotResultColumns()!];
 
         api.setGridOption('columnTypes', { someType: { width: 99 } });
         await nextAnimationFrame();

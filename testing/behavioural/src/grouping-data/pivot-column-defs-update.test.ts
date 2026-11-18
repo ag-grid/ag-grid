@@ -1,7 +1,7 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef, Column, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ColDef, Column, GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -984,48 +984,28 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
-    test.each<{ keys: string; first: 'pivotDefaultExpanded' | 'pivotMode' }>([
-        { keys: 'pivotDefaultExpanded first', first: 'pivotDefaultExpanded' },
-    ])(
-        'one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group ($keys)',
-        (row) => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { field: 'country', rowGroup: true, hide: true },
-                    { field: 'sport', pivot: true, hide: true },
-                    { field: 'year', pivot: true, hide: true },
-                    { field: 'gold', aggFunc: 'sum' },
-                ],
-                pivotDefaultExpanded: 0,
-                rowData: olympicLikeRows,
-            });
-            const mode = { pivotMode: true };
-            const expanded = { pivotDefaultExpanded: -1 };
+    test('one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group (pivotDefaultExpanded first)', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotDefaultExpanded: 0,
+            rowData: olympicLikeRows,
+        });
+        api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
 
-            api.updateGridOptions(row.first === 'pivotMode' ? { ...mode, ...expanded } : { ...expanded, ...mode });
-
-            const firstLevel = new Map<string, boolean>();
-            const secondLevel = new Map<string, boolean>();
-            for (const column of api.getPivotResultColumns() ?? []) {
-                const groups = [];
-                for (let group = column.getParent(); group; group = group.getParent()) {
-                    if (!group.isPadding()) {
-                        groups.unshift(group.getProvidedColumnGroup());
-                    }
-                }
-                if (groups[0]) {
-                    firstLevel.set(groups[0].getGroupId(), groups[0].isExpanded());
-                }
-                if (groups[1]) {
-                    secondLevel.set(groups[1].getGroupId(), groups[1].isExpanded());
-                }
-            }
-            expect({
-                firstLevel: Array.from(firstLevel.values()),
-                secondLevel: Array.from(secondLevel.values()),
-            }).toEqual({ firstLevel: [true, true], secondLevel: [true, true, true, true] });
-        }
-    );
+        expect(pivotGroups(api)).toEqual({
+            Gymnastics: { open: true, expandable: true },
+            'Gymnastics > 2008': { open: true, expandable: false },
+            'Gymnastics > 2012': { open: true, expandable: false },
+            Swimming: { open: true, expandable: true },
+            'Swimming > 2008': { open: true, expandable: false },
+            'Swimming > 2012': { open: true, expandable: false },
+        });
+    });
 
     test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -1040,26 +1020,14 @@ describe('pivot column identity across columnDefs updates', () => {
             rowData: olympicLikeRows,
         });
 
-        const firstLevel = new Map<string, boolean>();
-        const secondLevel = new Map<string, boolean>();
-        for (const column of api.getPivotResultColumns() ?? []) {
-            const groups = [];
-            for (let group = column.getParent(); group; group = group.getParent()) {
-                if (!group.isPadding()) {
-                    groups.unshift(group.getProvidedColumnGroup());
-                }
-            }
-            if (groups[0]) {
-                firstLevel.set(groups[0].getGroupId(), groups[0].isExpanded());
-            }
-            if (groups[1]) {
-                secondLevel.set(groups[1].getGroupId(), groups[1].isExpanded());
-            }
-        }
-        expect({
-            firstLevel: Array.from(firstLevel.values()),
-            secondLevel: Array.from(secondLevel.values()),
-        }).toEqual({ firstLevel: [true, true], secondLevel: [false, false, false, false] });
+        expect(pivotGroups(api)).toEqual({
+            Gymnastics: { open: true, expandable: true },
+            'Gymnastics > 2008': { open: false, expandable: false },
+            'Gymnastics > 2012': { open: false, expandable: false },
+            Swimming: { open: true, expandable: true },
+            'Swimming > 2008': { open: false, expandable: false },
+            'Swimming > 2012': { open: false, expandable: false },
+        });
     });
 
     test('api.getColumn by field in pivot mode resolves primary col via lazy colsByDef map', async () => {
@@ -1265,3 +1233,23 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(shown).toEqual([1, 3]);
     });
 });
+
+/** Each pivot result column group, keyed by its header path, with whether it is open and whether it can open. */
+function pivotGroups(api: GridApi): Record<string, { open: boolean; expandable: boolean }> {
+    const result: Record<string, { open: boolean; expandable: boolean }> = {};
+    for (const column of api.getPivotResultColumns() ?? []) {
+        const groups = [];
+        for (let group = column.getParent(); group; group = group.getParent()) {
+            if (!group.isPadding()) {
+                groups.unshift(group.getProvidedColumnGroup());
+            }
+        }
+        let path = '';
+        for (const group of groups) {
+            const headerName = group.getColGroupDef()?.headerName ?? '';
+            path = path ? `${path} > ${headerName}` : headerName;
+            result[path] = { open: group.isExpanded(), expandable: group.isExpandable() };
+        }
+    }
+    return result;
+}
