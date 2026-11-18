@@ -5,6 +5,7 @@ import {
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
+    getTypeImports,
     wrapTearDownExample,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
@@ -26,11 +27,7 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     const bImports = [...(bindingImports || [])];
     const propertyInterfaces = getPropertyInterfaces(properties, currFile);
     if (propertyInterfaces.length > 0) {
-        bImports.push({
-            module: `'ag-grid-community'`,
-            isNamespaced: false,
-            imports: [...propertyInterfaces],
-        });
+        bImports.push(...getTypeImports(propertyInterfaces));
     }
 
     if (bImports.length > 0) {

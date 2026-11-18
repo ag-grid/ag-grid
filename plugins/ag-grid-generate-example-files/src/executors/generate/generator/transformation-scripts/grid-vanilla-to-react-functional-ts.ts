@@ -9,9 +9,12 @@ import {
     convertFunctionToConstPropertyTs,
     findLocaleImport,
     getEnableAGTestIdLogic,
+    getFetchedDataType,
+    getFetchedRowType,
     getFunctionName,
     getIntegratedDarkModeInitialChartThemesCode,
     getPropertyInterfaces,
+    getTypeImports,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
@@ -23,6 +26,7 @@ import {
     addChartsDarkModeIfRequired,
     convertFunctionToConstCallbackTs,
     convertFunctionalTemplate,
+    getCallbackTypeArgument,
     getImport,
     getValueType,
 } from './react-utils';
@@ -40,13 +44,9 @@ function getModuleImports(
         "import { AgGridReact, AgGridProvider } from 'ag-grid-react';",
     ];
 
-    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
+    const propertyInterfaces = getPropertyInterfaces([...bindings.properties, ...bindings.eventHandlers]);
     const bImports = [...(bindings.imports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces, ...extraCoreTypes],
-    });
+    bImports.push(...getTypeImports([...propertyInterfaces, ...extraCoreTypes]));
 
     addLicenseManager(imports, exampleConfig);
 
@@ -122,7 +122,10 @@ function getTemplate(
         ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$'))
         : agGridTag;
 
-    return convertFunctionalTemplate(template);
+    const handlersWithParameters = bindings.externalEventHandlers
+        .filter((handler) => !/^function\s+\w+\s*\(\s*\)/.test(handler.body))
+        .map((handler) => handler.name);
+    return convertFunctionalTemplate(template, handlersWithParameters);
 }
 
 function extractComponentInformation(properties, componentFilenames: string[]): { [key: string]: string } {
@@ -194,12 +197,14 @@ export function vanillaToReactFunctionalTs(
                 .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
 
             const cleanedCallback = callback.replaceAll('\n', '').trim();
+            const fetchedRowType = getFetchedRowType(data, rowDataType);
             if (
-                cleanedCallback.match(/^setRowData\(data\)(;?)$/) ||
-                cleanedCallback.match(/^setRowData\(data\.slice\((\d+), (\d+)\)\)(;?)$/)
+                fetchedRowType &&
+                (cleanedCallback.match(/^setRowData\(data\)(;?)$/) ||
+                    cleanedCallback.match(/^setRowData\(data\.slice\((\d+), (\d+)\)\)(;?)$/))
             ) {
                 // get url from data
-                useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
+                useFetchHook = `    const { data, loading } = useFetchJson<${fetchedRowType}>(
                 ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
             );`;
                 componentProps.push('rowData={data}');
@@ -209,7 +214,7 @@ export function vanillaToReactFunctionalTs(
                 additionalInReady.push(`
                     fetch(${data.url})
                     .then(resp => resp.json())
-                    .then((data: ${rowDataType}[]) => ${setRowDataBlock});`);
+                    .then((data: ${getFetchedDataType(data, rowDataType)}) => ${setRowDataBlock});`);
             }
         }
 
@@ -299,7 +304,7 @@ export function vanillaToReactFunctionalTs(
                             } else {
                                 if (EventAndCallbackNames.has(property.name)) {
                                     stateProperties.push(
-                                        `const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`
+                                        `const ${property.name} = useCallback${getCallbackTypeArgument(property.typings)}(${property.value}, [${callbackDependencies[property.name] || ''}]);`
                                     );
                                 } else {
                                     stateProperties.push(

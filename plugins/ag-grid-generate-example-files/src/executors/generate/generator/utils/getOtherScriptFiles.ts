@@ -146,6 +146,13 @@ const getComponentFiles = ({
     });
 };
 
+/**
+ * Component files are renamed without their framework suffix, so the relative imports between them must be too,
+ * e.g. `from './numberFilterComponent_typescript'` becomes `from './numberFilterComponent'`.
+ */
+export const renameRelativeImports = (content: string, suffix: string, replacement: string) =>
+    content.replace(new RegExp(`(from\\s+['"]\\.\\/[^'"]*?)${suffix}(['"])`, 'g'), `$1${replacement}$2`);
+
 export const getOtherScriptFiles = async ({
     folderPath,
     sourceFileList,
@@ -189,7 +196,12 @@ export const getOtherScriptFiles = async ({
                     if (internalFramework === 'reactFunctional') {
                         filteredToFramework[file.replace('_reactFunctionalTs.tsx', '.jsx')] = convertTsxToJsx(content);
                     } else {
-                        filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                        const componentSuffix = frameworkComponentSuffix(framework);
+                        filteredToFramework[file.replace(suffix, componentSuffix)] = renameRelativeImports(
+                            content,
+                            suffix,
+                            componentSuffix
+                        );
                     }
                 } else {
                     // Is a framework file, but not the current framework so we don't want to include it

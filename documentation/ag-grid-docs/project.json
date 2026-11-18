@@ -135,7 +135,12 @@
     },
     "test": {
       "executor": "nx:noop",
-      "dependsOn": ["test:vitest", "test:validate-example-specs", "test:validate-example-dev-validations"],
+      "dependsOn": [
+        "test:vitest",
+        "test:validate-example-specs",
+        "test:validate-example-dev-validations",
+        "test:validate-generated-examples"
+      ],
       "inputs": ["default", "buildOutputExcludes", "^production", "generators", "exampleSpecs"],
       "outputs": [],
       "options": {
@@ -311,6 +316,29 @@
       "cache": true,
       "options": {
         "commands": ["npx tsc -p {projectRoot}/tsconfig.examples.json"]
+      }
+    },
+    "test:validate-generated-examples": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "generate-examples",
+        {
+          "projects": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "@ag-grid-community/locale"],
+          "target": "build:types"
+        },
+        { "projects": ["ag-grid-angular", "ag-grid-vue3"], "target": "build" }
+      ],
+      "inputs": [
+        "{projectRoot}/scripts/validate-generated-examples.ts",
+        "{projectRoot}/src/components/example-runner/components/stripOutExampleGeneratorCode.ts",
+        "{projectRoot}/src/components/example-runner/utils/isSpecFile.ts",
+        { "dependentTasksOutputFiles": "**/contents.json" },
+        "tsDeclarations"
+      ],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["npx tsx scripts/validate-generated-examples.ts"]
       }
     },
     "test:validate-example-specs": {
