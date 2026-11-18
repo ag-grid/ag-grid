@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@utils/grid/test-utils';
+import { describe, expect, gridApiHandle, gridEventLog, test } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 import type { ICellEditorParams } from 'ag-grid-community';
@@ -20,8 +20,8 @@ test.agExample(import.meta, () => {
     });
 
     describe('edit + stop/cancel', () => {
-        test.eachFramework('dblclick + stop', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page);
+        test.eachFramework('dblclick + stop', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page);
             const cell = agIdFor.cell('0', 'firstName');
 
             // initiate cell editing by double clicking the cell
@@ -31,14 +31,14 @@ test.agExample(import.meta, () => {
 
             await page.keyboard.type('Fred'); // type in a new value
 
-            await remoteApi.stopEditing();
+            await api.evaluate((api) => api.stopEditing());
 
             await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
             await expect(cell).toHaveText('Fred'); // verify the cell has the new value
         });
 
-        test.eachFramework('dblclick + cancel', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page);
+        test.eachFramework('dblclick + cancel', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page);
             const cell = agIdFor.cell('0', 'firstName');
 
             // initiate cell editing by double clicking the cell
@@ -48,7 +48,7 @@ test.agExample(import.meta, () => {
 
             await page.keyboard.type('Fred'); // type in a new value
 
-            await remoteApi.stopEditing(true);
+            await api.evaluate((api) => api.stopEditing(true));
 
             await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
             await expect(cell).toHaveText('Bob'); // verify the cell has the new value
@@ -94,17 +94,22 @@ test.agExample(import.meta, () => {
         });
 
         [{ readOnlyEdit: false }, { readOnlyEdit: true }].forEach(({ readOnlyEdit }) => {
-            test.eachFramework(`Start - Change - Stop [readOnlyEdit=${readOnlyEdit}]`, async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
-                await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
+            test.eachFramework(`Start - Change - Stop [readOnlyEdit=${readOnlyEdit}]`, async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
+                // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                const log = await gridEventLog(page, '1');
+                await log.exposeToPage('logEvent');
+                await api.evaluate((api) =>
+                    api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                );
 
-                await remoteApi.setGridOption('readOnlyEdit', false);
+                await api.evaluate((api) => api.setGridOption('readOnlyEdit', false));
 
                 await setEditor(page, 'firstName', 'TestEditor');
 
-                await remoteApi.logEvent('cellEditingStarted', ['value']);
-                await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
 
                 const cell = page.getByRole('gridcell', { name: 'Alice' });
                 await cell.dblclick();
@@ -117,327 +122,10 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Enter');
 
-                const eventLog = await remoteGrid.waitForEventlog(250);
-
                 if (readOnlyEdit) {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        [
-                            'cellEditingStarted',
-                            {
-                                value: 'Alice',
-                            },
-                        ],
-                        ['isCancelAfterEnd', []],
-                        ['getValue', []],
-                        [
-                            'cellValueChanged',
-                            {
-                                newValue: 'AliceFred',
-                                oldValue: 'Alice',
-                                source: 'edit',
-                            },
-                        ],
-                        [
-                            'cellEditingStopped',
-                            {
-                                newValue: 'AliceFred',
-                                oldValue: 'Alice',
-                                value: 'AliceFred',
-                                valueChanged: true,
-                            },
-                        ],
-                    ]);
-                } else {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        ['cellEditingStarted', { value: 'Alice' }],
-                        ['isCancelAfterEnd', []],
-                        ['getValue', []],
-                        ['cellValueChanged', { newValue: 'AliceFred', oldValue: 'Alice', source: 'edit' }],
-                        [
-                            'cellEditingStopped',
-                            { newValue: 'AliceFred', oldValue: 'Alice', value: 'AliceFred', valueChanged: true },
-                        ],
-                    ]);
-                }
-            });
-
-            test.eachFramework(`Edit + Enter [readOnlyEdit=${readOnlyEdit}]`, async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
-                await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
-                await setEditor(page, 'firstName', 'TestEditor');
-
-                await remoteApi.logEvent('cellEditingStarted', ['value']);
-                await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
-
-                const cell = page.getByRole('gridcell', { name: 'Alice' });
-                await cell.dblclick();
-                const cellEditor = cell.locator('input');
-                await cellEditor.focus();
-                await expect(cellEditor).toBeVisible();
-                await expect(cellEditor).toHaveValue('Alice');
-                await expect(cellEditor).toBeFocused();
-
-                await page.keyboard.type('Fred');
-                await page.keyboard.press('Enter');
-
-                const eventLog = await remoteGrid.waitForEventlog(250);
-
-                if (readOnlyEdit) {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        [
-                            'cellEditingStarted',
-                            {
-                                value: 'Alice',
-                            },
-                        ],
-                        ['isCancelAfterEnd', []],
-                        ['getValue', []],
-                        [
-                            'cellValueChanged',
-                            {
-                                newValue: 'AliceFred',
-                                oldValue: 'Alice',
-                                source: 'edit',
-                            },
-                        ],
-                        [
-                            'cellEditingStopped',
-                            {
-                                newValue: 'AliceFred',
-                                oldValue: 'Alice',
-                                value: 'AliceFred',
-                                valueChanged: true,
-                            },
-                        ],
-                    ]);
-                } else {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        ['cellEditingStarted', { value: 'Alice' }],
-                        ['isCancelAfterEnd', []],
-                        ['getValue', []],
-                        ['cellValueChanged', { newValue: 'AliceFred', oldValue: 'Alice', source: 'edit' }],
-                        [
-                            'cellEditingStopped',
-                            { newValue: 'AliceFred', oldValue: 'Alice', value: 'AliceFred', valueChanged: true },
-                        ],
-                    ]);
-                }
-            });
-
-            test.eachFramework(`Edit + Cancel [readOnlyEdit=${readOnlyEdit}]`, async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
-                await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
-                await setEditor(page, 'firstName', 'TestEditor');
-
-                await remoteApi.logEvent('cellEditingStarted', ['value']);
-                await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
-
-                const cell = page.getByRole('gridcell', { name: 'Alice' });
-                await cell.dblclick();
-                const cellEditor = cell.locator('input');
-                await cellEditor.focus();
-                await expect(cellEditor).toBeVisible();
-                await expect(cellEditor).toHaveValue('Alice');
-                await expect(cellEditor).toBeFocused();
-
-                await page.keyboard.type('Fred');
-                await page.keyboard.press('Escape');
-
-                const eventLog = await remoteGrid.waitForEventlog(250);
-
-                if (readOnlyEdit) {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        [
-                            'cellEditingStarted',
-                            {
-                                value: 'Alice',
-                            },
-                        ],
-                        [
-                            'cellEditingStopped',
-                            {
-                                newValue: undefined,
-                                oldValue: 'Alice',
-                                value: 'Alice',
-                                valueChanged: false,
-                            },
-                        ],
-                    ]);
-                } else {
-                    expect(eventLog).toEqual([
-                        ['isCancelBeforeStart', []],
-                        ['cellEditingStarted', { value: 'Alice' }],
-                        [
-                            'cellEditingStopped',
-                            { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
-                        ],
-                    ]);
-                    await expect(cell).toHaveText('Alice');
-                }
-            });
-
-            test.eachFramework(
-                `Edit + CancelBeforeStart [readOnlyEdit=${readOnlyEdit}]`,
-                async ({ page, remoteGrid, agFramework }) => {
-                    const remoteApi = remoteGrid(page, '1');
-                    await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
-                    await setEditor(page, 'firstName', 'TestEditor');
-
-                    await remoteApi.logEvent('cellEditingStarted', ['value']);
-                    await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                    await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
-
-                    await page.evaluate(() => {
-                        (window as any).isCancelBeforeStart = true;
-                    });
-
-                    const cell = page.getByRole('gridcell', { name: 'Alice' });
-                    await cell.dblclick();
-                    const cellEditor = cell.locator('input');
-                    await expect(cellEditor).not.toBeAttached();
-
-                    const eventLog = await remoteGrid.waitForEventlog(250);
-
-                    if (readOnlyEdit) {
-                        if (agFramework.startsWith('react')) {
-                            expect(eventLog).toEqual([
-                                ['isCancelBeforeStart', []],
-                                [
-                                    'cellEditingStarted',
-                                    {
-                                        value: 'Alice',
-                                    },
-                                ],
-                                [
-                                    'cellEditingStopped',
-                                    {
-                                        newValue: undefined,
-                                        oldValue: 'Alice',
-                                        value: 'Alice',
-                                        valueChanged: false,
-                                    },
-                                ],
-                            ]);
-                        } else {
-                            expect(eventLog).toEqual([['isCancelBeforeStart', []]]);
-                        }
-                    } else {
-                        if (agFramework.startsWith('react')) {
-                            expect(eventLog).toEqual([
-                                ['isCancelBeforeStart', []],
-                                ['cellEditingStarted', { value: 'Alice' }],
-                                [
-                                    'cellEditingStopped',
-                                    { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
-                                ],
-                            ]);
-                        } else {
-                            expect(eventLog).toEqual([['isCancelBeforeStart', []]]);
-                        }
-
-                        await expect(cell).toHaveText('Alice');
-                    }
-                }
-            );
-
-            test.eachFramework(
-                `Edit + Enter + CancelAfterEnd [readOnlyEdit=${readOnlyEdit}]`,
-                async ({ page, remoteGrid }) => {
-                    const remoteApi = remoteGrid(page, '1');
-                    await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
-                    await setEditor(page, 'firstName', 'TestEditor');
-
-                    await remoteApi.logEvent('cellEditingStarted', ['value']);
-                    await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                    await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
-
-                    await page.evaluate(() => {
-                        (window as any).isCancelAfterEnd = true;
-                    });
-
-                    const cell = page.getByRole('gridcell', { name: 'Alice' });
-                    await cell.dblclick();
-                    const cellEditor = cell.locator('input');
-                    await cellEditor.focus();
-                    await expect(cellEditor).toBeVisible();
-                    await expect(cellEditor).toHaveValue('Alice');
-                    await expect(cellEditor).toBeFocused();
-
-                    await page.keyboard.type('Fred');
-                    await page.keyboard.press('Enter');
-
-                    const eventLog = await remoteGrid.waitForEventlog(250);
-
-                    if (readOnlyEdit) {
-                        expect(eventLog).toEqual([
-                            ['isCancelBeforeStart', []],
-                            [
-                                'cellEditingStarted',
-                                {
-                                    value: 'Alice',
-                                },
-                            ],
-                            ['isCancelAfterEnd', []],
-                            [
-                                'cellEditingStopped',
-                                {
-                                    newValue: undefined,
-                                    oldValue: 'Alice',
-                                    value: 'Alice',
-                                    valueChanged: false,
-                                },
-                            ],
-                        ]);
-                    } else {
-                        expect(eventLog).toEqual([
-                            ['isCancelBeforeStart', []],
-                            ['cellEditingStarted', { value: 'Alice' }],
-                            ['isCancelAfterEnd', []],
-                            [
-                                'cellEditingStopped',
-                                { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
-                            ],
-                        ]);
-
-                        await expect(cell).toHaveText('Alice');
-                    }
-                }
-            );
-
-            test.eachFramework(
-                `Edit + Editor + stopEdit commit [readOnlyEdit=${readOnlyEdit}]`,
-                async ({ page, remoteGrid }) => {
-                    const remoteApi = remoteGrid(page, '1');
-                    await remoteApi.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }]);
-                    await setEditor(page, 'firstName', 'TestEditor');
-
-                    await remoteApi.logEvent('cellEditingStarted', ['value']);
-                    await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                    await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
-
-                    const cell = page.getByRole('gridcell', { name: 'Alice' });
-                    await cell.dblclick();
-                    const cellEditor = cell.locator('input');
-                    await cellEditor.focus();
-                    await expect(cellEditor).toBeVisible();
-                    await expect(cellEditor).toHaveValue('Alice');
-                    await expect(cellEditor).toBeFocused();
-
-                    await page.keyboard.type('Fred');
-
-                    await remoteApi.stopEditing();
-
-                    const eventLog = await remoteGrid.waitForEventlog(250);
-
-                    if (readOnlyEdit) {
-                        expect(eventLog).toEqual([
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
                             ['isCancelBeforeStart', []],
                             [
                                 'cellEditingStarted',
@@ -465,8 +153,361 @@ test.agExample(import.meta, () => {
                                 },
                             ],
                         ]);
+                } else {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            ['cellEditingStarted', { value: 'Alice' }],
+                            ['isCancelAfterEnd', []],
+                            ['getValue', []],
+                            ['cellValueChanged', { newValue: 'AliceFred', oldValue: 'Alice', source: 'edit' }],
+                            [
+                                'cellEditingStopped',
+                                { newValue: 'AliceFred', oldValue: 'Alice', value: 'AliceFred', valueChanged: true },
+                            ],
+                        ]);
+                }
+            });
+
+            test.eachFramework(`Edit + Enter [readOnlyEdit=${readOnlyEdit}]`, async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
+                // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                const log = await gridEventLog(page, '1');
+                await log.exposeToPage('logEvent');
+                await api.evaluate((api) =>
+                    api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                );
+                await setEditor(page, 'firstName', 'TestEditor');
+
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+
+                const cell = page.getByRole('gridcell', { name: 'Alice' });
+                await cell.dblclick();
+                const cellEditor = cell.locator('input');
+                await cellEditor.focus();
+                await expect(cellEditor).toBeVisible();
+                await expect(cellEditor).toHaveValue('Alice');
+                await expect(cellEditor).toBeFocused();
+
+                await page.keyboard.type('Fred');
+                await page.keyboard.press('Enter');
+
+                if (readOnlyEdit) {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            [
+                                'cellEditingStarted',
+                                {
+                                    value: 'Alice',
+                                },
+                            ],
+                            ['isCancelAfterEnd', []],
+                            ['getValue', []],
+                            [
+                                'cellValueChanged',
+                                {
+                                    newValue: 'AliceFred',
+                                    oldValue: 'Alice',
+                                    source: 'edit',
+                                },
+                            ],
+                            [
+                                'cellEditingStopped',
+                                {
+                                    newValue: 'AliceFred',
+                                    oldValue: 'Alice',
+                                    value: 'AliceFred',
+                                    valueChanged: true,
+                                },
+                            ],
+                        ]);
+                } else {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            ['cellEditingStarted', { value: 'Alice' }],
+                            ['isCancelAfterEnd', []],
+                            ['getValue', []],
+                            ['cellValueChanged', { newValue: 'AliceFred', oldValue: 'Alice', source: 'edit' }],
+                            [
+                                'cellEditingStopped',
+                                { newValue: 'AliceFred', oldValue: 'Alice', value: 'AliceFred', valueChanged: true },
+                            ],
+                        ]);
+                }
+            });
+
+            test.eachFramework(`Edit + Cancel [readOnlyEdit=${readOnlyEdit}]`, async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
+                // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                const log = await gridEventLog(page, '1');
+                await log.exposeToPage('logEvent');
+                await api.evaluate((api) =>
+                    api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                );
+                await setEditor(page, 'firstName', 'TestEditor');
+
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+
+                const cell = page.getByRole('gridcell', { name: 'Alice' });
+                await cell.dblclick();
+                const cellEditor = cell.locator('input');
+                await cellEditor.focus();
+                await expect(cellEditor).toBeVisible();
+                await expect(cellEditor).toHaveValue('Alice');
+                await expect(cellEditor).toBeFocused();
+
+                await page.keyboard.type('Fred');
+                await page.keyboard.press('Escape');
+
+                if (readOnlyEdit) {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            [
+                                'cellEditingStarted',
+                                {
+                                    value: 'Alice',
+                                },
+                            ],
+                            [
+                                'cellEditingStopped',
+                                {
+                                    newValue: undefined,
+                                    oldValue: 'Alice',
+                                    value: 'Alice',
+                                    valueChanged: false,
+                                },
+                            ],
+                        ]);
+                } else {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            ['cellEditingStarted', { value: 'Alice' }],
+                            [
+                                'cellEditingStopped',
+                                { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
+                            ],
+                        ]);
+                    await expect(cell).toHaveText('Alice');
+                }
+            });
+
+            test.eachFramework(
+                `Edit + CancelBeforeStart [readOnlyEdit=${readOnlyEdit}]`,
+                async ({ page, agFramework }) => {
+                    const api = await gridApiHandle(page, '1');
+                    // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                    const log = await gridEventLog(page, '1');
+                    await log.exposeToPage('logEvent');
+                    await api.evaluate((api) =>
+                        api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                    );
+                    await setEditor(page, 'firstName', 'TestEditor');
+
+                    await log.record('cellEditingStarted', ['value']);
+                    await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                    await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+
+                    await page.evaluate(() => {
+                        (window as any).isCancelBeforeStart = true;
+                    });
+
+                    const cell = page.getByRole('gridcell', { name: 'Alice' });
+                    await cell.dblclick();
+                    const cellEditor = cell.locator('input');
+                    await expect(cellEditor).not.toBeAttached();
+
+                    if (readOnlyEdit) {
+                        if (agFramework.startsWith('react')) {
+                            await expect
+                                .poll(() => log.entries())
+                                .toEqual([
+                                    ['isCancelBeforeStart', []],
+                                    [
+                                        'cellEditingStarted',
+                                        {
+                                            value: 'Alice',
+                                        },
+                                    ],
+                                    [
+                                        'cellEditingStopped',
+                                        {
+                                            newValue: undefined,
+                                            oldValue: 'Alice',
+                                            value: 'Alice',
+                                            valueChanged: false,
+                                        },
+                                    ],
+                                ]);
+                        } else {
+                            // Gives a wrongly-fired cellEditingStarted or cellEditingStopped time to arrive.
+                            await page.waitForTimeout(250);
+                            expect(await log.entries()).toEqual([['isCancelBeforeStart', []]]);
+                        }
                     } else {
-                        expect(eventLog).toEqual([
+                        if (agFramework.startsWith('react')) {
+                            await expect
+                                .poll(() => log.entries())
+                                .toEqual([
+                                    ['isCancelBeforeStart', []],
+                                    ['cellEditingStarted', { value: 'Alice' }],
+                                    [
+                                        'cellEditingStopped',
+                                        { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
+                                    ],
+                                ]);
+                        } else {
+                            // Gives a wrongly-fired cellEditingStarted or cellEditingStopped time to arrive.
+                            await page.waitForTimeout(250);
+                            expect(await log.entries()).toEqual([['isCancelBeforeStart', []]]);
+                        }
+
+                        await expect(cell).toHaveText('Alice');
+                    }
+                }
+            );
+
+            test.eachFramework(`Edit + Enter + CancelAfterEnd [readOnlyEdit=${readOnlyEdit}]`, async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
+                // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                const log = await gridEventLog(page, '1');
+                await log.exposeToPage('logEvent');
+                await api.evaluate((api) =>
+                    api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                );
+                await setEditor(page, 'firstName', 'TestEditor');
+
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+
+                await page.evaluate(() => {
+                    (window as any).isCancelAfterEnd = true;
+                });
+
+                const cell = page.getByRole('gridcell', { name: 'Alice' });
+                await cell.dblclick();
+                const cellEditor = cell.locator('input');
+                await cellEditor.focus();
+                await expect(cellEditor).toBeVisible();
+                await expect(cellEditor).toHaveValue('Alice');
+                await expect(cellEditor).toBeFocused();
+
+                await page.keyboard.type('Fred');
+                await page.keyboard.press('Enter');
+
+                if (readOnlyEdit) {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            [
+                                'cellEditingStarted',
+                                {
+                                    value: 'Alice',
+                                },
+                            ],
+                            ['isCancelAfterEnd', []],
+                            [
+                                'cellEditingStopped',
+                                {
+                                    newValue: undefined,
+                                    oldValue: 'Alice',
+                                    value: 'Alice',
+                                    valueChanged: false,
+                                },
+                            ],
+                        ]);
+                } else {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            ['cellEditingStarted', { value: 'Alice' }],
+                            ['isCancelAfterEnd', []],
+                            [
+                                'cellEditingStopped',
+                                { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
+                            ],
+                        ]);
+
+                    await expect(cell).toHaveText('Alice');
+                }
+            });
+
+            test.eachFramework(`Edit + Editor + stopEdit commit [readOnlyEdit=${readOnlyEdit}]`, async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
+                // The TestEditor reports the editor methods the grid calls through `window.logEvent`.
+                const log = await gridEventLog(page, '1');
+                await log.exposeToPage('logEvent');
+                await api.evaluate((api) =>
+                    api.setGridOption('rowData', [{ firstName: 'Alice', lastName: 'Johnson' }])
+                );
+                await setEditor(page, 'firstName', 'TestEditor');
+
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+
+                const cell = page.getByRole('gridcell', { name: 'Alice' });
+                await cell.dblclick();
+                const cellEditor = cell.locator('input');
+                await cellEditor.focus();
+                await expect(cellEditor).toBeVisible();
+                await expect(cellEditor).toHaveValue('Alice');
+                await expect(cellEditor).toBeFocused();
+
+                await page.keyboard.type('Fred');
+
+                await api.evaluate((api) => api.stopEditing());
+
+                if (readOnlyEdit) {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
+                            ['isCancelBeforeStart', []],
+                            [
+                                'cellEditingStarted',
+                                {
+                                    value: 'Alice',
+                                },
+                            ],
+                            ['isCancelAfterEnd', []],
+                            ['getValue', []],
+                            [
+                                'cellValueChanged',
+                                {
+                                    newValue: 'AliceFred',
+                                    oldValue: 'Alice',
+                                    source: 'edit',
+                                },
+                            ],
+                            [
+                                'cellEditingStopped',
+                                {
+                                    newValue: 'AliceFred',
+                                    oldValue: 'Alice',
+                                    value: 'AliceFred',
+                                    valueChanged: true,
+                                },
+                            ],
+                        ]);
+                } else {
+                    await expect
+                        .poll(() => log.entries())
+                        .toEqual([
                             ['isCancelBeforeStart', []],
                             ['cellEditingStarted', { value: 'Alice' }],
                             ['isCancelAfterEnd', []],
@@ -478,27 +519,29 @@ test.agExample(import.meta, () => {
                             ],
                         ]);
 
-                        await expect(cell).toHaveText('AliceFred');
-                    }
+                    await expect(cell).toHaveText('AliceFred');
                 }
-            );
+            });
 
             test.vanilla(
                 `Double-click Edit and click another cell [readOnlyEdit=${readOnlyEdit}]`,
-                async ({ page, agIdFor, remoteGrid }) => {
-                    const remoteApi = remoteGrid(page, '1');
-                    await remoteApi.updateGridOptions({
-                        columnDefs: [
-                            {
-                                field: 'firstName',
-                                editable: true,
-                            },
-                        ],
-                    });
+                async ({ page, agIdFor }) => {
+                    const api = await gridApiHandle(page, '1');
+                    const log = await gridEventLog(page, '1');
+                    await api.evaluate((api) =>
+                        api.updateGridOptions({
+                            columnDefs: [
+                                {
+                                    field: 'firstName',
+                                    editable: true,
+                                },
+                            ],
+                        })
+                    );
 
-                    await remoteApi.logEvent('cellEditingStarted', ['value']);
-                    await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                    await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+                    await log.record('cellEditingStarted', ['value']);
+                    await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                    await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
 
                     const cell = agIdFor.cell('0', 'firstName');
                     await cell.dblclick();
@@ -507,37 +550,37 @@ test.agExample(import.meta, () => {
                     const anotherCell = agIdFor.cell('1', 'firstName');
                     await anotherCell.click();
 
-                    const eventLog = await remoteGrid.waitForEventlog(250);
-
                     if (readOnlyEdit) {
-                        expect(eventLog).toEqual([
-                            [
-                                'cellEditingStarted',
-                                {
-                                    value: 'Bob',
-                                },
-                            ],
-                            [
-                                'cellValueChanged',
-                                {
-                                    newValue: 'Fred',
-                                    oldValue: 'Bob',
-                                    source: 'edit',
-                                },
-                            ],
-                            [
-                                'cellEditingStopped',
-                                {
-                                    newValue: 'Fred',
-                                    oldValue: 'Bob',
-                                    value: 'Fred',
-                                    valueChanged: true,
-                                },
-                            ],
-                        ]);
+                        await expect
+                            .poll(() => log.entries())
+                            .toEqual([
+                                [
+                                    'cellEditingStarted',
+                                    {
+                                        value: 'Bob',
+                                    },
+                                ],
+                                [
+                                    'cellValueChanged',
+                                    {
+                                        newValue: 'Fred',
+                                        oldValue: 'Bob',
+                                        source: 'edit',
+                                    },
+                                ],
+                                [
+                                    'cellEditingStopped',
+                                    {
+                                        newValue: 'Fred',
+                                        oldValue: 'Bob',
+                                        value: 'Fred',
+                                        valueChanged: true,
+                                    },
+                                ],
+                            ]);
                     } else {
-                        expect(eventLog.length).toBe(3);
-                        expect(eventLog).toEqual([
+                        await expect.poll(async () => (await log.entries()).length).toBe(3);
+                        expect(await log.entries()).toEqual([
                             ['cellEditingStarted', { value: 'Bob' }],
                             [
                                 'cellValueChanged',

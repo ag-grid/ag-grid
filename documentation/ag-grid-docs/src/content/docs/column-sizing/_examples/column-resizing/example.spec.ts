@@ -1,4 +1,4 @@
-import { type AgGridFixtures, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { type AgGridFixtures, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Locator, Page } from 'playwright/test';
 
 import type { ColDef } from 'ag-grid-community';
@@ -120,59 +120,60 @@ test.agExample(import.meta, () => {
         ).toBeGreaterThan(600);
     });
 
-    test.eachFramework(
-        'fitCellContents on an empty grid sizes headers to content',
-        async ({ page, remoteGrid, agIdFor }) => {
-            const remoteApi = remoteGrid(page, '1');
-            await remoteApi.setGridOption('columnDefs', [
+    test.eachFramework('fitCellContents on an empty grid sizes headers to content', async ({ page, agIdFor }) => {
+        const api = await gridApiHandle(page, '1');
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
                 { field: 'athlete', minWidth: 40 },
                 { field: 'age', headerName: 'Age of Athlete', minWidth: 40 },
                 { field: 'country', minWidth: 40 },
                 { field: 'year', minWidth: 40 },
                 { field: 'date', minWidth: 40 },
-            ]);
+            ])
+        );
 
-            await waitForGridContent(page);
+        await waitForGridContent(page);
 
-            // the fetch that populates rowData only fires once on load, so clearing it leaves the grid
-            // empty for the rest of the test
-            await remoteApi.setGridOption('rowData', []);
+        // the fetch that populates rowData only fires once on load, so clearing it leaves the grid
+        // empty for the rest of the test
+        await api.evaluate((api) => api.setGridOption('rowData', []));
 
-            await remoteApi.autoSizeAllColumns({});
-            await waitForAnimation(page);
+        await api.evaluate((api) => api.autoSizeAllColumns({}));
+        await waitForAnimation(page);
 
-            const headers = getHeaders(agIdFor);
-            const widths = await getHeaderWidths(headers);
+        const headers = getHeaders(agIdFor);
+        const widths = await getHeaderWidths(headers);
 
-            // when a column measures its width against the (display:none) row container it collapses to
-            // minWidth; every column would then share the same floor width. Sizing against the header
-            // content instead gives the longer "Age of Athlete" label a wider column than "Year".
-            expect(widths.age).toBeGreaterThan(widths.year);
-            expect(widths.year).toBeGreaterThan(40);
-            expect(widths.country).toBeGreaterThan(40);
-            expect(widths.date).toBeGreaterThan(40);
-        }
-    );
+        // when a column measures its width against the (display:none) row container it collapses to
+        // minWidth; every column would then share the same floor width. Sizing against the header
+        // content instead gives the longer "Age of Athlete" label a wider column than "Year".
+        expect(widths.age).toBeGreaterThan(widths.year);
+        expect(widths.year).toBeGreaterThan(40);
+        expect(widths.country).toBeGreaterThan(40);
+        expect(widths.date).toBeGreaterThan(40);
+    });
 
     test.describe('Example modifications', () => {
         test.use({ agModules: ['RowSelectionModule'] });
 
-        test.eachFramework('fitCellContents + pinned col + selection col', async ({ page, remoteGrid, agIdFor }) => {
+        test.eachFramework('fitCellContents + pinned col + selection col', async ({ page, agIdFor }) => {
             const headers = getHeaders(agIdFor);
 
-            const remoteApi = remoteGrid(page, '1');
-            await remoteApi.setGridOption('rowSelection', { mode: 'multiRow' });
-            await remoteApi.setGridOption('columnDefs', [
-                { field: 'athlete', width: 150, pinned: 'left' },
-                {
-                    field: 'age',
-                    headerName: 'Age of Athlete',
-                    width: 90,
-                },
-                { field: 'country', width: 120 },
-                { field: 'year', width: 90 },
-                { field: 'date', width: 110 },
-            ]);
+            const api = await gridApiHandle(page, '1');
+            await api.evaluate((api) => api.setGridOption('rowSelection', { mode: 'multiRow' }));
+            await api.evaluate((api) =>
+                api.setGridOption('columnDefs', [
+                    { field: 'athlete', width: 150, pinned: 'left' },
+                    {
+                        field: 'age',
+                        headerName: 'Age of Athlete',
+                        width: 90,
+                    },
+                    { field: 'country', width: 120 },
+                    { field: 'year', width: 90 },
+                    { field: 'date', width: 110 },
+                ])
+            );
             const baseHeaderWidths = await getHeaderWidths(headers);
 
             await waitForGridContent(page);
@@ -201,13 +202,13 @@ test.agExample(import.meta, () => {
 
         test.eachFramework(
             'fitCellToContents + scaleUpToFitGridWidth wide screen, no down-scaling',
-            async ({ agIdFor, page, remoteGrid }) => {
+            async ({ agIdFor, page }) => {
                 await page.setViewportSize({ width: 1600, height: 800 });
 
                 await waitForGridContent(page);
 
-                const remoteApi = remoteGrid(page, '1');
-                const colDefs: ColDef[] = [
+                const api = await gridApiHandle(page, '1');
+                const colDefs = [
                     { field: 'athlete', width: 150, suppressAutoSize: true },
                     {
                         field: 'age',
@@ -224,18 +225,19 @@ test.agExample(import.meta, () => {
                     { field: 'gold', width: 90 },
                     { field: 'total', width: 90 },
                     { field: 'test', width: 200 },
-                ];
-                await remoteApi.setGridOption('columnDefs', colDefs);
+                ] satisfies ColDef[];
+                await api.evaluate((api, colDefs) => api.setGridOption('columnDefs', colDefs), colDefs);
 
-                const rowData = await remoteApi.getGridOption('rowData');
-                await remoteApi.setGridOption(
-                    'rowData',
-                    rowData.map((d: any) => {
-                        d['test'] = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.';
-                        return d;
-                    })
+                await api.evaluate((api) =>
+                    api.setGridOption(
+                        'rowData',
+                        api.getGridOption('rowData')!.map((d) => ({
+                            ...d,
+                            test: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+                        }))
+                    )
                 );
-                await remoteApi.autoSizeAllColumns({});
+                await api.evaluate((api) => api.autoSizeAllColumns({}));
 
                 const columnWidths = Object.fromEntries(
                     await Promise.all(

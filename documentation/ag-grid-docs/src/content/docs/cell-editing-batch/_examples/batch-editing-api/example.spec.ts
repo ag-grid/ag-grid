@@ -1,4 +1,4 @@
-import { expect, gridApiHandle, test } from '@utils/grid/test-utils';
+import { expect, gridApiHandle, gridEventLog, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     if (process.env.PRE_34_VERSION) {
@@ -61,12 +61,12 @@ test.agExample(import.meta, () => {
         });
     });
 
-    test.eachFramework('GridApi + Styles + Enter', async ({ agIdFor, page, remoteGrid }) => {
-        const gridApi = remoteGrid(page);
+    test.eachFramework('GridApi + Styles + Enter', async ({ agIdFor, page }) => {
+        const api = await gridApiHandle(page);
 
-        await gridApi.startBatchEdit();
+        await api.evaluate((api) => api.startBatchEdit());
 
-        const result = await gridApi.isBatchEditing();
+        const result = await api.evaluate((api) => api.isBatchEditing());
         expect(result).toBeTruthy();
 
         const cell1 = agIdFor.cell('0', 'gold');
@@ -84,11 +84,11 @@ test.agExample(import.meta, () => {
             await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
             await expect(cell1).toHaveText('100'); // verify the cell has the new value
             await expect(cell1).toHaveClass(/ag-cell-batch-edit/);
-            expect(await gridApi.isBatchEditing()).toBeTruthy();
+            expect(await api.evaluate((api) => api.isBatchEditing())).toBeTruthy();
         });
 
         await page.keyboard.press('Tab'); // press Tab to move to the next cell
-        expect(await gridApi.isBatchEditing()).toBeTruthy();
+        expect(await api.evaluate((api) => api.isBatchEditing())).toBeTruthy();
 
         await page.waitForTimeout(100); // give the grid a moment to update
 
@@ -104,16 +104,16 @@ test.agExample(import.meta, () => {
             await expect(cell2).toHaveText('2'); // verify the cell has the new value
             await expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
 
-            expect(await gridApi.isBatchEditing()).toBeTruthy();
+            expect(await api.evaluate((api) => api.isBatchEditing())).toBeTruthy();
         });
     });
 
-    test.eachFramework('GridApi + Styles', async ({ agIdFor, page, remoteGrid }) => {
-        const gridApi = remoteGrid(page);
+    test.eachFramework('GridApi + Styles', async ({ agIdFor, page }) => {
+        const api = await gridApiHandle(page);
 
-        await gridApi.startBatchEdit();
+        await api.evaluate((api) => api.startBatchEdit());
 
-        const result = await gridApi.isBatchEditing();
+        const result = await api.evaluate((api) => api.isBatchEditing());
         expect(result).toBeTruthy();
 
         const cell = agIdFor.cell('0', 'gold');
@@ -212,13 +212,13 @@ test.agExample(import.meta, () => {
         await expect(targetCell).toHaveText('1'); // reverted to original
     });
 
-    test.eachFramework('GridApi + Styles: multiple batches', async ({ agIdFor, page, remoteGrid }) => {
-        const gridApi = remoteGrid(page);
+    test.eachFramework('GridApi + Styles: multiple batches', async ({ agIdFor, page }) => {
+        const api = await gridApiHandle(page);
 
         await test.step('First Batch', async () => {
-            await gridApi.startBatchEdit();
+            await api.evaluate((api) => api.startBatchEdit());
 
-            const result = await gridApi.isBatchEditing();
+            const result = await api.evaluate((api) => api.isBatchEditing());
             expect(result).toBeTruthy();
 
             const cell = agIdFor.cell('0', 'gold');
@@ -239,7 +239,7 @@ test.agExample(import.meta, () => {
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
 
             // now commit the batch
-            await gridApi.commitBatchEdit();
+            await api.evaluate((api) => api.commitBatchEdit());
 
             await page.waitForTimeout(100); // give the grid a moment to update
 
@@ -252,10 +252,10 @@ test.agExample(import.meta, () => {
         });
 
         await test.step('2nd Batch', async () => {
-            await gridApi.setFocusedCell(1, 'gold');
-            await gridApi.startBatchEdit();
+            await api.evaluate((api) => api.setFocusedCell(1, 'gold'));
+            await api.evaluate((api) => api.startBatchEdit());
 
-            const result = await gridApi.isBatchEditing();
+            const result = await api.evaluate((api) => api.isBatchEditing());
             expect(result).toBeTruthy();
 
             const cell = agIdFor.cell('1', 'gold');
@@ -276,11 +276,10 @@ test.agExample(import.meta, () => {
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
 
             // now commit the batch
-            await gridApi.commitBatchEdit();
+            await api.evaluate((api) => api.commitBatchEdit());
 
             await page.waitForTimeout(100); // give the grid a moment to update
 
-            const api = await gridApiHandle(page);
             const editingCellCount = await test.step('getEditingCells()', () =>
                 api.evaluate((api) => api.getEditingCells().length));
 
@@ -294,143 +293,143 @@ test.agExample(import.meta, () => {
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
         });
     });
-    test.eachFramework(
-        'cellValueChanged is deferred until the batch is committed',
-        async ({ agIdFor, page, remoteGrid }) => {
-            // Documented claim: "cellValueChanged and rowValueChanged are deferred - they only fire when
-            // commitBatchEdit() is called."
-            const remoteApi = remoteGrid(page, '1');
-            await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-
-            const cell = agIdFor.cell('0', 'gold');
-            await expect(cell).toBeVisible();
-
-            await remoteApi.startBatchEdit();
-            await cell.dblclick();
-            const cellEditor = cell.locator('input');
-            await expect(cellEditor).toBeVisible();
-            await page.keyboard.type('100');
-            await page.keyboard.press('Enter');
-            await expect(cell).toHaveText('100');
-            await expect(cell).toHaveClass(/ag-cell-batch-edit/);
-
-            // Nothing fired while the edit is only pending.
-            expect(await remoteGrid.waitForEventlog(250)).toEqual([]);
-
-            await remoteApi.commitBatchEdit();
-
-            // Exactly one event, carrying the committed transition.
-            expect(await remoteGrid.waitForEventlog(250)).toEqual([
-                ['cellValueChanged', { newValue: 100, oldValue: 1, source: 'edit' }],
-            ]);
-        }
-    );
-
-    test.eachFramework('cancelBatchEdit fires no value-changed events', async ({ agIdFor, page, remoteGrid }) => {
-        // Documented claim: "If cancelBatchEdit() is called instead, pending values are discarded and
-        // no value-changed events fire."
-        const remoteApi = remoteGrid(page, '1');
-        await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
+    test.eachFramework('cellValueChanged is deferred until the batch is committed', async ({ agIdFor, page }) => {
+        // Documented claim: "cellValueChanged and rowValueChanged are deferred - they only fire when
+        // commitBatchEdit() is called."
+        const api = await gridApiHandle(page, '1');
+        const log = await gridEventLog(page, '1');
+        await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
 
         const cell = agIdFor.cell('0', 'gold');
         await expect(cell).toBeVisible();
 
-        await remoteApi.startBatchEdit();
+        await api.evaluate((api) => api.startBatchEdit());
+        await cell.dblclick();
+        const cellEditor = cell.locator('input');
+        await expect(cellEditor).toBeVisible();
+        await page.keyboard.type('100');
+        await page.keyboard.press('Enter');
+        await expect(cell).toHaveText('100');
+        await expect(cell).toHaveClass(/ag-cell-batch-edit/);
+
+        // Nothing fired while the edit is only pending.
+        // Gives a wrongly-fired cellValueChanged time to arrive.
+        await page.waitForTimeout(250);
+        expect(await log.entries()).toEqual([]);
+
+        await api.evaluate((api) => api.commitBatchEdit());
+
+        // Exactly one event, carrying the committed transition.
+        await expect
+            .poll(() => log.entries())
+            .toEqual([['cellValueChanged', { newValue: 100, oldValue: 1, source: 'edit' }]]);
+    });
+
+    test.eachFramework('cancelBatchEdit fires no value-changed events', async ({ agIdFor, page }) => {
+        // Documented claim: "If cancelBatchEdit() is called instead, pending values are discarded and
+        // no value-changed events fire."
+        const api = await gridApiHandle(page, '1');
+        const log = await gridEventLog(page, '1');
+        await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+
+        const cell = agIdFor.cell('0', 'gold');
+        await expect(cell).toBeVisible();
+
+        await api.evaluate((api) => api.startBatchEdit());
         await cell.dblclick();
         await expect(cell.locator('input')).toBeVisible();
         await page.keyboard.type('100');
         await page.keyboard.press('Enter');
         await expect(cell).toHaveText('100');
 
-        expect(await remoteGrid.waitForEventlog(250)).toEqual([]);
+        // Gives a wrongly-fired cellValueChanged time to arrive.
+        await page.waitForTimeout(250);
+        expect(await log.entries()).toEqual([]);
 
-        await remoteApi.cancelBatchEdit();
+        await api.evaluate((api) => api.cancelBatchEdit());
 
         await expect(cell).toHaveText('1');
         await expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
-        expect(await remoteGrid.waitForEventlog(250)).toEqual([]);
+        // Gives a wrongly-fired cellValueChanged time to arrive.
+        await page.waitForTimeout(250);
+        expect(await log.entries()).toEqual([]);
     });
 
-    test.eachFramework(
-        'batchEditingStarted and batchEditingStopped are dispatched',
-        async ({ agIdFor, page, remoteGrid }) => {
-            // Documented claim: "Two batch-specific events are also available" - batchEditingStarted and
-            // batchEditingStopped.
-            const remoteApi = remoteGrid(page, '1');
-            await remoteApi.logEvent('batchEditingStarted', []);
-            await remoteApi.logEvent('batchEditingStopped', ['changes']);
+    test.eachFramework('batchEditingStarted and batchEditingStopped are dispatched', async ({ agIdFor, page }) => {
+        // Documented claim: "Two batch-specific events are also available" - batchEditingStarted and
+        // batchEditingStopped.
+        const api = await gridApiHandle(page, '1');
+        const log = await gridEventLog(page, '1');
+        await log.record('batchEditingStarted', []);
+        await log.record('batchEditingStopped', ['changes']);
 
-            const cell = agIdFor.cell('0', 'gold');
-            await expect(cell).toBeVisible();
+        const cell = agIdFor.cell('0', 'gold');
+        await expect(cell).toBeVisible();
 
-            await remoteApi.startBatchEdit();
-            await cell.dblclick();
-            await expect(cell.locator('input')).toBeVisible();
-            await page.keyboard.type('100');
-            await page.keyboard.press('Enter');
-            await expect(cell).toHaveText('100');
+        await api.evaluate((api) => api.startBatchEdit());
+        await cell.dblclick();
+        await expect(cell.locator('input')).toBeVisible();
+        await page.keyboard.type('100');
+        await page.keyboard.press('Enter');
+        await expect(cell).toHaveText('100');
 
-            // The started event is dispatched on the first real edit, before any commit.
-            let eventLog = await remoteGrid.waitForEventlog(250);
-            expect(eventLog.map(([type]) => type)).toEqual(['batchEditingStarted']);
+        // The started event is dispatched on the first real edit, before any commit.
+        await expect.poll(async () => (await log.entries()).map(([type]) => type)).toEqual(['batchEditingStarted']);
 
-            await remoteApi.commitBatchEdit();
+        await api.evaluate((api) => api.commitBatchEdit());
 
-            eventLog = await remoteGrid.waitForEventlog(250);
-            expect(eventLog.map(([type]) => type)).toEqual(['batchEditingStarted', 'batchEditingStopped']);
-            expect(eventLog[1][1].changes).toEqual([
-                expect.objectContaining({ columnId: 'gold', newValue: 100, oldValue: 1 }),
-            ]);
-        }
-    );
+        await expect
+            .poll(async () => (await log.entries()).map(([type]) => type))
+            .toEqual(['batchEditingStarted', 'batchEditingStopped']);
+        const eventLog = await log.entries();
+        expect(eventLog[1][1].changes).toEqual([
+            expect.objectContaining({ columnId: 'gold', newValue: 100, oldValue: 1 }),
+        ]);
+    });
 
-    test.eachFramework(
-        'Aggregation uses committed data until the batch is committed',
-        async ({ agIdFor, page, remoteGrid }) => {
-            // Documented claim: "Data features (sorting, filtering, grouping, aggregation) use committed data
-            // until the batch is committed." Age has aggFunc 'avg' and grandTotalRow is 'bottom'.
-            const remoteApi = remoteGrid(page, '1');
-            const ageCell = agIdFor.cell('0', 'age');
-            const grandTotalAge = agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'age').first();
+    test.eachFramework('Aggregation uses committed data until the batch is committed', async ({ agIdFor, page }) => {
+        // Documented claim: "Data features (sorting, filtering, grouping, aggregation) use committed data
+        // until the batch is committed." Age has aggFunc 'avg' and grandTotalRow is 'bottom'.
+        const api = await gridApiHandle(page, '1');
+        const ageCell = agIdFor.cell('0', 'age');
+        const grandTotalAge = agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'age').first();
 
-            await expect(ageCell).toBeVisible();
-            await expect(grandTotalAge).toBeVisible();
-            const committedAverage = (await grandTotalAge.innerText()).trim();
-            expect(committedAverage).not.toBe('');
+        await expect(ageCell).toBeVisible();
+        await expect(grandTotalAge).toBeVisible();
+        const committedAverage = (await grandTotalAge.innerText()).trim();
+        expect(committedAverage).not.toBe('');
 
-            await remoteApi.startBatchEdit();
-            await ageCell.dblclick();
-            await expect(ageCell.locator('input')).toBeVisible();
-            await page.keyboard.type('999');
-            await page.keyboard.press('Enter');
+        await api.evaluate((api) => api.startBatchEdit());
+        await ageCell.dblclick();
+        await expect(ageCell.locator('input')).toBeVisible();
+        await page.keyboard.type('999');
+        await page.keyboard.press('Enter');
 
-            // The edited cell shows the pending value...
-            await expect(ageCell).toHaveText('999');
-            await expect(ageCell).toHaveClass(/ag-cell-batch-edit/);
-            // ...but the grand total row still aggregates the committed data.
-            await expect(grandTotalAge).toHaveText(committedAverage);
+        // The edited cell shows the pending value...
+        await expect(ageCell).toHaveText('999');
+        await expect(ageCell).toHaveClass(/ag-cell-batch-edit/);
+        // ...but the grand total row still aggregates the committed data.
+        await expect(grandTotalAge).toHaveText(committedAverage);
 
-            await remoteApi.commitBatchEdit();
+        await api.evaluate((api) => api.commitBatchEdit());
 
-            await expect(ageCell).not.toHaveClass(/ag-cell-batch-edit/);
-            await expect(grandTotalAge).not.toHaveText(committedAverage);
-        }
-    );
+        await expect(ageCell).not.toHaveClass(/ag-cell-batch-edit/);
+        await expect(grandTotalAge).not.toHaveText(committedAverage);
+    });
 
-    test.eachFramework('Get Editing Cells reports the open editor', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Get Editing Cells reports the open editor', async ({ agIdFor, page }) => {
         // The example exposes api.getEditingCells() behind the 'Get Editing Cells' button.
-        const remoteApi = remoteGrid(page, '1');
+        const api = await gridApiHandle(page, '1');
         const consoleLines: string[] = [];
         page.on('console', (message) => consoleLines.push(message.text()));
 
         const cell = agIdFor.cell('0', 'gold');
         await expect(cell).toBeVisible();
 
-        await remoteApi.startBatchEdit();
+        await api.evaluate((api) => api.startBatchEdit());
         await cell.dblclick();
         await expect(cell.locator('input')).toBeVisible();
 
-        const api = await gridApiHandle(page);
         const editingCellCount = await api.evaluate((api) => api.getEditingCells().length);
         expect(editingCellCount).toBe(1);
 

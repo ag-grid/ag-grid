@@ -1,18 +1,20 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragOverTo, expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.describe('Bulk Edit', () => {
-        test.vanilla('F2', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+        test.vanilla('F2', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page, '1');
 
-            await remoteApi.updateGridOptions({
-                columnDefs: [
-                    {
-                        field: 'athlete',
-                        editable: true,
-                    },
-                ],
-            });
+            await api.evaluate((api) =>
+                api.updateGridOptions({
+                    columnDefs: [
+                        {
+                            field: 'athlete',
+                            editable: true,
+                        },
+                    ],
+                })
+            );
 
             const source = agIdFor.cell('0', 'athlete');
             const target = agIdFor.cell('1', 'athlete');
@@ -27,17 +29,19 @@ test.agExample(import.meta, () => {
             await expect(target).toHaveText('Natalie Coughlin test');
         });
 
-        test.vanilla('Typing', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+        test.vanilla('Typing', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page, '1');
 
-            await remoteApi.updateGridOptions({
-                columnDefs: [
-                    {
-                        field: 'athlete',
-                        editable: true,
-                    },
-                ],
-            });
+            await api.evaluate((api) =>
+                api.updateGridOptions({
+                    columnDefs: [
+                        {
+                            field: 'athlete',
+                            editable: true,
+                        },
+                    ],
+                })
+            );
 
             const source = agIdFor.cell('0', 'athlete');
             const target = agIdFor.cell('1', 'athlete');

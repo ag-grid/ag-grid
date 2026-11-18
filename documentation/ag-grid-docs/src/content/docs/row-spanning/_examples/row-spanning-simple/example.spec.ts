@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 async function expectCellOwnsItsCentre(page: Page, selector: string, minimumHeight = 1): Promise<void> {
     await page.waitForFunction(
@@ -80,15 +80,17 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-spanned-cell[col-id="sport"]').first()).toBeVisible();
     });
 
-    test.eachFramework('a pinned spanning column remains visible above centre spans', async ({ page, remoteGrid }) => {
+    test.eachFramework('a pinned spanning column remains visible above centre spans', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const api = remoteGrid(page);
-        await api.applyColumnState({
-            defaultState: { flex: null, pinned: null, width: 250 },
-            state: [{ colId: 'sport', pinned: 'left' }],
-        });
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.applyColumnState({
+                defaultState: { flex: null, pinned: null, width: 250 },
+                state: [{ colId: 'sport', pinned: 'left' }],
+            })
+        );
 
         await expectCellOwnsItsCentre(
             page,
@@ -102,7 +104,7 @@ test.agExample(import.meta, () => {
             60
         );
 
-        await api.applyColumnState({ state: [{ colId: 'sport', pinned: 'right' }] });
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'sport', pinned: 'right' }] }));
         await expectCellOwnsItsCentre(
             page,
             '.ag-spanning-container .ag-grid-pinned-right-cells .ag-cell[col-id="sport"]',
@@ -110,15 +112,17 @@ test.agExample(import.meta, () => {
         );
     });
 
-    test.eachFramework('a pinned regular column remains visible beside centre spans', async ({ page, remoteGrid }) => {
+    test.eachFramework('a pinned regular column remains visible beside centre spans', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const api = remoteGrid(page);
-        await api.applyColumnState({
-            defaultState: { flex: null, pinned: null, width: 250 },
-            state: [{ colId: 'athlete', pinned: 'left' }],
-        });
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.applyColumnState({
+                defaultState: { flex: null, pinned: null, width: 250 },
+                state: [{ colId: 'athlete', pinned: 'left' }],
+            })
+        );
 
         const leftCell =
             '.ag-grid-scrolling-container > .ag-row[row-index="0"] .ag-grid-pinned-left-cells .ag-cell[col-id="athlete"]';
@@ -126,7 +130,7 @@ test.agExample(import.meta, () => {
         await scrollHorizontally(page);
         await expectCellOwnsItsCentre(page, leftCell);
 
-        await api.applyColumnState({ state: [{ colId: 'athlete', pinned: 'right' }] });
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'athlete', pinned: 'right' }] }));
         await expectCellOwnsItsCentre(
             page,
             '.ag-grid-scrolling-container > .ag-row[row-index="0"] .ag-grid-pinned-right-cells .ag-cell[col-id="athlete"]'

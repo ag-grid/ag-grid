@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 /** Returns col-ids of header cells inside the given container selector, ordered by aria-colindex. */
 async function getPinnedHeaderColIds(page: import('playwright/test').Page, containerSelector: string) {
@@ -67,69 +67,75 @@ test.agExample(import.meta, () => {
 
         test.vanilla(
             'sizeColumnsToFit should not unpin left-pinned columns when no center columns exist',
-            async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
+            async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
 
-                await remoteApi.setGridOption('columnDefs', [
-                    { field: 'athlete', pinned: 'left' },
-                    { field: 'age', pinned: 'left' },
-                    { colId: 'country', field: 'country', hide: true },
-                ]);
+                await api.evaluate((api) =>
+                    api.setGridOption('columnDefs', [
+                        { field: 'athlete', pinned: 'left' },
+                        { field: 'age', pinned: 'left' },
+                        { colId: 'country', field: 'country', hide: true },
+                    ])
+                );
                 await waitForGridContent(page);
 
                 const headersBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(headersBefore).toEqual(['athlete', 'age']);
 
-                await remoteApi.sizeColumnsToFit({});
+                await api.evaluate((api) => api.sizeColumnsToFit({}));
                 await page.waitForTimeout(600);
 
                 const headersAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(headersAfter).toEqual(['athlete', 'age']);
 
-                const state = (await remoteApi.getColumnState()) as any[];
-                expect(state.find((s) => s.colId === 'athlete').pinned).toBe('left');
-                expect(state.find((s) => s.colId === 'age').pinned).toBe('left');
+                const state = await api.evaluate((api) => api.getColumnState());
+                expect(state.find((s) => s.colId === 'athlete')?.pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'age')?.pinned).toBe('left');
             }
         );
 
         test.vanilla(
             'sizeColumnsToFit should not unpin right-pinned columns when no center columns exist',
-            async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
+            async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
 
-                await remoteApi.setGridOption('columnDefs', [
-                    { field: 'gold', pinned: 'right' },
-                    { field: 'silver', pinned: 'right' },
-                    { colId: 'bronze', field: 'bronze', hide: true },
-                ]);
+                await api.evaluate((api) =>
+                    api.setGridOption('columnDefs', [
+                        { field: 'gold', pinned: 'right' },
+                        { field: 'silver', pinned: 'right' },
+                        { colId: 'bronze', field: 'bronze', hide: true },
+                    ])
+                );
                 await waitForGridContent(page);
 
                 const headersBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(headersBefore).toEqual(['gold', 'silver']);
 
-                await remoteApi.sizeColumnsToFit({});
+                await api.evaluate((api) => api.sizeColumnsToFit({}));
                 await page.waitForTimeout(600);
 
                 const headersAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(headersAfter).toEqual(['gold', 'silver']);
 
-                const state = (await remoteApi.getColumnState()) as any[];
-                expect(state.find((s) => s.colId === 'gold').pinned).toBe('right');
-                expect(state.find((s) => s.colId === 'silver').pinned).toBe('right');
+                const state = await api.evaluate((api) => api.getColumnState());
+                expect(state.find((s) => s.colId === 'gold')?.pinned).toBe('right');
+                expect(state.find((s) => s.colId === 'silver')?.pinned).toBe('right');
             }
         );
 
         test.vanilla(
             'sizeColumnsToFit should not unpin mixed left+right columns when no center columns exist',
-            async ({ page, remoteGrid }) => {
-                const remoteApi = remoteGrid(page, '1');
+            async ({ page }) => {
+                const api = await gridApiHandle(page, '1');
 
-                await remoteApi.setGridOption('columnDefs', [
-                    { field: 'athlete', pinned: 'left' },
-                    { field: 'age', pinned: 'left' },
-                    { field: 'gold', pinned: 'right' },
-                    { colId: 'country', field: 'country', hide: true },
-                ]);
+                await api.evaluate((api) =>
+                    api.setGridOption('columnDefs', [
+                        { field: 'athlete', pinned: 'left' },
+                        { field: 'age', pinned: 'left' },
+                        { field: 'gold', pinned: 'right' },
+                        { colId: 'country', field: 'country', hide: true },
+                    ])
+                );
                 await waitForGridContent(page);
 
                 const leftBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
@@ -137,7 +143,7 @@ test.agExample(import.meta, () => {
                 const rightBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(rightBefore).toEqual(['gold']);
 
-                await remoteApi.sizeColumnsToFit({});
+                await api.evaluate((api) => api.sizeColumnsToFit({}));
                 await page.waitForTimeout(600);
 
                 const leftAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
@@ -145,10 +151,10 @@ test.agExample(import.meta, () => {
                 const rightAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(rightAfter).toEqual(['gold']);
 
-                const state = (await remoteApi.getColumnState()) as any[];
-                expect(state.find((s) => s.colId === 'athlete').pinned).toBe('left');
-                expect(state.find((s) => s.colId === 'age').pinned).toBe('left');
-                expect(state.find((s) => s.colId === 'gold').pinned).toBe('right');
+                const state = await api.evaluate((api) => api.getColumnState());
+                expect(state.find((s) => s.colId === 'athlete')?.pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'age')?.pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'gold')?.pinned).toBe('right');
             }
         );
     });
