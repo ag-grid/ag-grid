@@ -335,8 +335,7 @@
         "{projectRoot}/scripts/validate-generated-examples.ts",
         "{projectRoot}/src/components/example-runner/components/stripOutExampleGeneratorCode.ts",
         { "dependentTasksOutputFiles": "**/contents.json" },
-        "tsDeclarations",
-        { "externalDependencies": ["npm:typescript"] }
+        "tsDeclarations"
       ],
       "cache": true,
       "options": {
