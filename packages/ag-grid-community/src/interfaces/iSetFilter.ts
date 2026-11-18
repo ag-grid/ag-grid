@@ -224,10 +224,17 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      */
     showTooltips?: boolean;
     /**
-     * If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.
+     * If `true`, enables case-sensitivity of the values in the Filter List, so values that differ only by case
+     * are listed and filtered separately. The Mini Filter search still ignores case unless `miniFilterCaseSensitive` is also `true`.
      * @default false
      */
     caseSensitive?: boolean;
+    /**
+     * If `true`, the Mini Filter search is case-sensitive.
+     * Only has an effect when `caseSensitive` is also `true`.
+     * @default false
+     */
+    miniFilterCaseSensitive?: boolean;
     /**
      * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.
      */

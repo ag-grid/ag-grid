@@ -453,6 +453,47 @@ describe('Set Filter — treeListPathGetter and treeListFormatter', () => {
     });
 });
 
+describe('Set Filter — tree list with caseSensitive', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [SetFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    test('a lower-case search finds the leaf and selecting it puts every casing in the model', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        treeList: true,
+                        caseSensitive: true,
+                        defaultToNothingSelected: true,
+                        treeListPathGetter: (value: string | null) => (value ? [value] : null),
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ name: 'Michael' }, { name: 'michael' }, { name: 'MICHAEL' }, { name: 'Sarah' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await filter.miniFilterSearch('mich');
+        await asyncSetTimeout(0);
+        expect(setItemLabels()).toHaveLength(2);
+
+        await filter.toggleSetItem('(Select All)');
+        await asyncSetTimeout(0);
+        expect((filter.getModel() as any).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect(api.getDisplayedRowCount()).toBe(3);
+    });
+});
+
 describe('Set Filter — a tree path several values share', () => {
     const gridsManager = new TestGridsManager({
         modules: [SetFilterModule, ClientSideRowModelModule],
@@ -779,6 +820,36 @@ describe('Set Filter — excelMode', () => {
             ├── LEAF id:1 country:"Australia"
             └── LEAF id:2 country:"France"
         `);
+    });
+
+    test('windows mode: a lower-case search selects every casing, Select All Search Results re-selects them and Enter applies', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { excelMode: 'windows', caseSensitive: true } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ name: 'Michael' }, { name: 'michael' }, { name: 'MICHAEL' }, { name: null }, { name: 'Sarah' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await filter.miniFilterSearch('mich');
+        await asyncSetTimeout(0);
+        const labels = setItemLabels();
+        expect(labels).not.toContain('(Blanks)');
+        expect(labels.filter((l) => l.toLowerCase() === 'michael')).toHaveLength(3);
+
+        await filter.toggleSetItem('(Select All Search Results)');
+        await filter.toggleSetItem('(Select All Search Results)');
+        document
+            .querySelector('.ag-filter-menu .ag-mini-filter input')!
+            .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        await asyncSetTimeout(0);
+
+        expect((filter.getModel() as any).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect(api.getDisplayedRowCount()).toBe(3);
     });
 
     test('mac mode shows a single Reset button', async () => {

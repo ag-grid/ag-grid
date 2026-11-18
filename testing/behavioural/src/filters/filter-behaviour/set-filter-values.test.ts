@@ -44,7 +44,7 @@ import {
 
 /**
  * Black-box coverage for the agSetColumnFilter value model + UI, targeting gaps left by
- * set-filter-reuse / set-filter-complex-objects: async value callbacks, mini-filter case-sensitivity,
+ * set-filter-reuse / set-filter-complex-objects: async value callbacks, mini-filter case-insensitivity under caseSensitive,
  * (Select All) tri-state, (Blanks), keyCreator label-vs-key, apply-button, model round-trip, suppressMiniFilter.
  */
 describe('Set Filter — value model & UI (coverage)', () => {
@@ -166,42 +166,122 @@ describe('Set Filter — value model & UI (coverage)', () => {
         expect([...new Set(sources)]).toEqual(['columnFilter']);
     });
 
-    test('caseSensitive mini-filter only matches the exact case', async () => {
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [
-                {
-                    field: 'country',
-                    filter: 'agSetColumnFilter',
-                    filterParams: { caseSensitive: true } as ISetFilterParams,
-                },
-            ],
-            rowData: [{ country: 'Australia' }, { country: 'Austria' }, { country: 'Italy' }],
+    describe('caseSensitive with a case-insensitive mini-filter', () => {
+        const NAMES = [
+            { name: 'Michael' },
+            { name: 'michael' },
+            { name: 'MICHAEL' },
+            { name: 'Mike' },
+            { name: 'Sarah' },
+        ];
+        const MICHAELS = ['Michael', 'michael', 'MICHAEL'];
+        const createGrid = (filterParams: ISetFilterParams) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'name', filter: 'agSetColumnFilter', filterParams }],
+                rowData: NAMES,
+            });
+
+        test('typed or API-set search ignores case while every casing stays a separate item', async () => {
+            const api: GridApi = await createGrid({ caseSensitive: true });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toHaveLength(6);
+
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+            const typed = filter.setFilterItemLabels();
+            expect(typed).toHaveLength(4);
+            expect(typed.slice(1).sort()).toEqual([...MICHAELS].sort());
+
+            await filter.miniFilterSearch('');
+            await asyncSetTimeout(0);
+            const instance = (await api.getColumnFilterInstance('name')) as any;
+            instance.setMiniFilter('mich');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(typed);
         });
 
-        const filter = await ColumnFilterHarness.open(api, 'country');
-        await filter.miniFilterSearch('aus');
-        await asyncSetTimeout(0);
-        // Lowercase 'aus' matches nothing when case-sensitive.
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)']);
+        test('Select All after a search selects every matching casing and the model keeps the exact values', async () => {
+            const api: GridApi = await createGrid({ caseSensitive: true, defaultToNothingSelected: true });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+            await filter.toggleSetItem('(Select All)');
+            await asyncSetTimeout(0);
 
-        await filter.miniFilterSearch('Aus');
-        await asyncSetTimeout(0);
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Australia', 'Austria']);
-        await new FilterDom(api, 'case-sensitive mini-filter', { colId: 'country' }).checkFilterDom(`
-            COLUMN FILTER (set)
-            mini-filter: "Aus"
-            ☑ (Select All)
-            ☑ Australia
-            ☑ Austria
-            model: null
-        `);
-        // Case-sensitive search still leaves displayed rows untouched (model null).
-        await new GridRows(api, 'case-sensitive mini-filter rows').check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 country:"Australia"
-            ├── LEAF id:1 country:"Austria"
-            └── LEAF id:2 country:"Italy"
-        `);
+            expect((filter.getModel() as any).values.slice().sort()).toEqual([...MICHAELS].sort());
+            await new GridRows(api, 'select all matching casings rows').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Michael"
+                ├── LEAF id:1 name:"michael"
+                └── LEAF id:2 name:"MICHAEL"
+            `);
+        });
+
+        test('applyMiniFilterWhileTyping filters the rows to every casing', async () => {
+            const api: GridApi = await createGrid({ caseSensitive: true, applyMiniFilterWhileTyping: true });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+
+            expect((filter.getModel() as any).values.slice().sort()).toEqual([...MICHAELS].sort());
+            await new GridRows(api, 'apply while typing rows').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Michael"
+                ├── LEAF id:1 name:"michael"
+                └── LEAF id:2 name:"MICHAEL"
+            `);
+        });
+
+        test('miniFilterCaseSensitive restores the exact-case search, typed or API-set', async () => {
+            const api: GridApi = await createGrid({ caseSensitive: true, miniFilterCaseSensitive: true });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'michael']);
+
+            await filter.miniFilterSearch('Mich');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Michael']);
+
+            await filter.miniFilterSearch('');
+            await asyncSetTimeout(0);
+            const instance = (await api.getColumnFilterInstance('name')) as any;
+            instance.setMiniFilter('MICH');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'MICHAEL']);
+        });
+
+        test('miniFilterCaseSensitive has no effect without caseSensitive', async () => {
+            const api: GridApi = await createGrid({ miniFilterCaseSensitive: true });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toHaveLength(4);
+
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toHaveLength(2);
+        });
+
+        test('changing miniFilterCaseSensitive at runtime re-evaluates the displayed list', async () => {
+            const colDefs = (miniFilterCaseSensitive: boolean): ColDef[] => [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { caseSensitive: true, miniFilterCaseSensitive } as ISetFilterParams,
+                },
+            ];
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: colDefs(false),
+                rowData: NAMES,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            await filter.miniFilterSearch('mich');
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toHaveLength(4);
+
+            api.setGridOption('columnDefs', colDefs(true));
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'michael']);
+        });
     });
 
     test('a value listed in the case seen first keeps that case when another filter hides the row it came from', async () => {

@@ -83,7 +83,9 @@ The formatter is also passed the grid `api` and `context` as a second argument, 
 
 By default the Mini Filter is case-insensitive. Practically this means that searching for `bl` would match Filter List values of `Black`, `blue` and `BLONDE`.
 
-Case-sensitive searches can be enabled by using the `caseSensitive` filter parameter:
+This also applies when the `caseSensitive` filter parameter is enabled: values that differ only by case are listed separately, but searching for `black` matches `Black`, `black` and `BLACK`.
+
+Case-sensitive searches can be enabled by using the `miniFilterCaseSensitive` filter parameter together with `caseSensitive`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -92,7 +94,8 @@ const gridOptions = {
             field: 'colour',
             filter: 'agSetColumnFilter',
             filterParams: {
-                caseSensitive: true
+                caseSensitive: true,
+                miniFilterCaseSensitive: true
             }
         }
     ]
@@ -100,7 +103,7 @@ const gridOptions = {
 ```
 
 {% note %}
-The `caseSensitive` option also affects the values presented in the [Filter List](./filter-set-filter-list/#enabling-value-case-sensitivity) and [API](./filter-set-api/#enabling-case-sensitivity) behaviours.
+`miniFilterCaseSensitive` has no effect unless `caseSensitive` is also enabled. The `caseSensitive` option also affects the values presented in the [Filter List](./filter-set-filter-list/#enabling-value-case-sensitivity) and [API](./filter-set-api/#enabling-case-sensitivity) behaviours.
 {% /note %}
 
 See [Example: Filter List Case-Sensitivity](./filter-set-filter-list/#enabling-value-case-sensitivity) for a demonstration of the change in behaviour.
