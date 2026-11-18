@@ -93,6 +93,7 @@ type Assert<T extends true> = T;
 export type EventInterfaceMapChecks = [
     Assert<MappedEventKeys extends AgPublicEventType ? true : false>,
     Assert<keyof EventInterfaceMap extends MappedEventKeys ? true : false>,
+    Assert<MappedEventKeys extends keyof EventInterfaceMap ? true : false>,
 ];
 
 /**

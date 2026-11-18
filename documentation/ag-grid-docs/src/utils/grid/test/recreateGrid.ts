@@ -3,6 +3,8 @@ import type { Page } from 'playwright/test';
 import type * as AgGridCommunity from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
+import { gridApiHandle } from './gridApiHandle';
+
 declare global {
     interface Window {
         /** The UMD bundle's namespace, on pages that load the grid that way. */
@@ -16,14 +18,15 @@ declare global {
  * destroyed grid's API.
  */
 export async function recreateGrid(page: Page, gridOptions: GridOptions, grid: string = '1'): Promise<void> {
-    await page.evaluate(
-        ({ optionsJson, grid }) => {
+    const api = await gridApiHandle(page, grid);
+    await api.evaluate(
+        (api, { optionsJson, grid }) => {
             const { agGrid } = window;
             if (!agGrid) {
                 throw new Error('recreateGrid needs the UMD bundle, which exposes `agGrid`');
             }
             const container = document.querySelector<HTMLElement>('#myGrid')!;
-            window.getGridApi(grid)?.destroy();
+            api.destroy();
             agGrid.createGrid(container, { ...JSON.parse(optionsJson), gridId: grid });
             window.getGridApi = agGrid.getGridApi;
         },

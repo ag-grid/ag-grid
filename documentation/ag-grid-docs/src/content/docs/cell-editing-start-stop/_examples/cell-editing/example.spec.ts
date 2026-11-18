@@ -735,15 +735,13 @@ const addCustomEditor = (page: Page) => {
     });
 };
 
-const setEditor = async (page: Page, field: string, editor: string) =>
-    await page.evaluate(`
-        window.getGridApi('1').updateGridOptions({
-            columnDefs: [
-                {
-                    field: '${field}',
-                    editable: true,
-                    cellEditor: window.${editor},
-                },
-            ],
-        })
-`);
+const setEditor = async (page: Page, field: string, editor: string) => {
+    const api = await gridApiHandle(page);
+    await api.evaluate(
+        (api, { field, editor }) =>
+            api.updateGridOptions({
+                columnDefs: [{ field, editable: true, cellEditor: Reflect.get(window, editor) }],
+            }),
+        { field, editor }
+    );
+};

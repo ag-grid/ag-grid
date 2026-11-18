@@ -10,8 +10,8 @@ declare global {
 }
 
 /**
- * A handle to the `GridApi` of a grid on the page, found by grid ID, CSS selector or element, as
- * `getGridApi` accepts, once that grid exists. Call its methods in the page with `handle.evaluate((api) => ...)`.
+ * A handle to the `GridApi` of a grid on the page, found by grid ID or CSS selector, as `getGridApi`
+ * accepts, once that grid exists. Call its methods in the page with `handle.evaluate((api) => ...)`.
  */
 export async function gridApiHandle(page: Page, grid: string = '1'): Promise<JSHandle<GridApi>> {
     const found = await page.waitForFunction((grid) => {
