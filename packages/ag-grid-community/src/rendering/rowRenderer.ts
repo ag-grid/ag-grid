@@ -778,7 +778,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     /** Runs a row data update that redraws synchronously, keeping the rows in view, focused cell and cell ranges on their rows. */
     public maintainRowsInView<T>(update: () => T): T {
         const { beans, gridBodyCtrl, printLayout, rowsInViewAnchor, followRows } = this;
-        if (rowsInViewAnchor || followRows || !gridBodyCtrl) {
+        if (rowsInViewAnchor || followRows || !gridBodyCtrl || this.isRowsInViewIdle()) {
             return update();
         }
         // the focused cell and cell ranges follow their rows wherever the viewport is
@@ -799,6 +799,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 rowAutoHeight.requestCheckAutoHeight(); // so the anchor expires even if no height changes
             }
         }
+    }
+
+    /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */
+    private isRowsInViewIdle(): boolean {
+        const { beans, focusSvc } = this;
+        return (
+            !focusSvc.getFocusedCell() &&
+            (beans.rangeSvc?.isEmpty() ?? true) &&
+            beans.pageBounds.getPixelOffset() === 0 &&
+            this.gridBodyCtrl.scrollFeature.isCachedVScrollAtTop()
+        );
     }
 
     /** Scrolls to keep the rows in view during a draw. True if it scrolled. */

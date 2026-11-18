@@ -464,6 +464,8 @@ describe('maintaining rows in view', () => {
 
         test('uses a scroll position whose scroll event has not fired yet', () => {
             const api = createGrid();
+            // scrolled from the top first, as at the cached top with nothing focused the update is not anchored
+            scrollTo(api, ROW_HEIGHT);
             mockGridLayout.asyncScrollEvents = true;
             getViewport(api).scrollTop = SCROLL_TOP;
 
