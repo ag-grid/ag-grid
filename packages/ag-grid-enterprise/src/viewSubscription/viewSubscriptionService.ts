@@ -9,7 +9,6 @@ import {
 } from 'ag-grid-community';
 import type {
     BodyScrollEvent,
-    DisplayedRowsChangedEvent,
     NamedBean,
     PaginationChangedEvent,
     RowNode,
@@ -65,12 +64,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             gridReady: () => this.refresh(),
             modelUpdated: markDirty,
             viewportChanged: markScrolled,
-            // A partial redraw can change whether a row is full width, without a model or viewport change.
-            displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
-                if (!event.afterScroll) {
-                    markDirty();
-                }
-            },
             // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
             bodyHeightChanged: markViewMoved,
             // Fired after every model update too, so only a new page moves the view.
@@ -437,10 +430,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
     private isSubscribable(node: RowNode): boolean {
         // Level -1 is the root row, shown in pivot mode without row groups. It holds totals, like the grand total row.
-        if (node.level === -1 || node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
-            return false;
-        }
-        const isFullWidthRow = this.gos.getCallback('isFullWidthRow');
-        return !isFullWidthRow?.({ rowNode: node });
+        return !(node.level === -1 || node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null);
     }
 }

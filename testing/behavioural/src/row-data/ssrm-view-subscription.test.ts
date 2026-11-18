@@ -118,6 +118,19 @@ describe('SSRM viewSubscription', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('full width rows in view are subscribed like other rows', async () => {
+        const api = await createFlatGrid({
+            isFullWidthRow: ({ rowNode }) => Number(rowNode.id) % 2 === 0,
+            fullWidthCellRenderer: () => 'full width',
+        });
+        const recorder = createRecorder();
+
+        subscribe(api, recorder);
+
+        expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+        expect(recorder.violations).toEqual([]);
+    });
+
     test('scrolling unsubscribes rows that leave the view before subscribing rows that enter it', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
