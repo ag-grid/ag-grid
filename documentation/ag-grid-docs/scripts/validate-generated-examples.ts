@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import { spawn } from 'child_process';
 import { existsSync } from 'fs';
-import { mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'fs/promises';
 import { dirname, join, relative } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,6 +12,7 @@ import { stripOutExampleGeneratorCode } from '../src/components/example-runner/c
  * Type-checks the framework variants `generate-examples` produces, i.e. the code users get in the
  * docs code viewer, Plunker and CodeSandbox, after the same harness stripping those apply. Each
  * framework's variants are written out as files and checked by one `tsc` run with `strict` on.
+ * Angular and Vue templates are strings to `tsc`, so their bindings are not checked.
  *
  * Pass example paths (`docs/<page>/_examples/<example>`) or example names to check only those.
  */
@@ -19,7 +20,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const WORKSPACE_ROOT = join(__dirname, '..', '..', '..');
 const GENERATED_ROOT = join(WORKSPACE_ROOT, 'dist', 'generated-examples', 'ag-grid-docs');
 const DOCS_ROOT = join(__dirname, '..', 'src', 'content', 'docs');
-const OUTPUT_ROOT = join(WORKSPACE_ROOT, 'tmp', 'generated-examples-type-check');
 const TSC = join(WORKSPACE_ROOT, 'node_modules', '.bin', 'tsc');
 
 const FRAMEWORK_OPTIONS: Record<string, Record<string, unknown>> = {
@@ -66,15 +66,18 @@ function matchesFilter(exampleDir: string, filter: string): boolean {
     return path.includes('/') ? `${exampleDir}/`.startsWith(`${path}/`) : exampleDir.endsWith(`/${path}`);
 }
 
-async function writeFramework(framework: string, exampleDirs: string[]): Promise<number> {
-    const frameworkRoot = join(OUTPUT_ROOT, framework);
+async function writeFramework(outputRoot: string, framework: string, exampleDirs: string[]): Promise<number> {
+    const frameworkRoot = join(outputRoot, framework);
     let exampleCount = 0;
     for (const example of exampleDirs) {
         const contentsPath = join(GENERATED_ROOT, example, framework, 'contents.json');
         if (!existsSync(contentsPath)) {
             continue;
         }
-        const { files, boilerPlateFiles } = JSON.parse(await readFile(contentsPath, 'utf8'));
+        const { excluded, files, boilerPlateFiles } = JSON.parse(await readFile(contentsPath, 'utf8'));
+        if (excluded) {
+            continue;
+        }
         const exampleDir = join(frameworkRoot, example);
         const allFiles: Record<string, string> = { ...boilerPlateFiles, ...files };
         stripOutExampleGeneratorCode(allFiles);
@@ -86,6 +89,9 @@ async function writeFramework(framework: string, exampleDirs: string[]): Promise
             }
         }
         exampleCount++;
+    }
+    if (exampleCount === 0) {
+        return 0;
     }
 
     await writeFile(join(frameworkRoot, 'runtime-globals.d.ts'), RUNTIME_GLOBALS);
@@ -111,9 +117,12 @@ async function writeFramework(framework: string, exampleDirs: string[]): Promise
     return exampleCount;
 }
 
-function typeCheck(framework: string): Promise<{ framework: string; output: string; failed: boolean }> {
+function typeCheck(
+    outputRoot: string,
+    framework: string
+): Promise<{ framework: string; output: string; failed: boolean }> {
     return new Promise((resolve) => {
-        const child = spawn(TSC, ['-p', join(OUTPUT_ROOT, framework, 'tsconfig.json'), '--pretty', 'false']);
+        const child = spawn(TSC, ['-p', join(outputRoot, framework, 'tsconfig.json'), '--pretty', 'false']);
         let output = '';
         child.stdout.on('data', (chunk) => (output += chunk));
         child.stderr.on('data', (chunk) => (output += chunk));
@@ -122,35 +131,47 @@ function typeCheck(framework: string): Promise<{ framework: string; output: stri
 }
 
 async function main() {
-    const frameworks = Object.keys(FRAMEWORK_OPTIONS);
-    await rm(OUTPUT_ROOT, { recursive: true, force: true });
     const filters = process.argv.slice(2);
     const exampleDirs = (await findExampleDirs()).filter(
         (exampleDir) => filters.length === 0 || filters.some((filter) => matchesFilter(exampleDir, filter))
     );
     if (exampleDirs.length === 0) {
         console.error(`No examples match ${filters.join(', ')}`);
-        process.exit(1);
-    }
-    for (const framework of frameworks) {
-        console.log(`${framework}: ${await writeFramework(framework, exampleDirs)} examples`);
+        process.exitCode = 1;
+        return;
     }
 
-    const results = await Promise.all(frameworks.map(typeCheck));
-    let errorCount = 0;
-    for (const { framework, output, failed } of results) {
-        const errors = output.split('\n').filter((line) => line.includes('error TS'));
-        errorCount += errors.length;
-        console.log(`\n${framework}: ${failed ? `${errors.length} errors` : 'OK'}`);
-        errors.forEach((line) => console.log(`  ${relative(OUTPUT_ROOT, line)}`));
-        if (failed && errors.length === 0) {
-            console.log(output);
+    // A directory per run, so concurrent runs never delete or compile each other's files.
+    await mkdir(join(WORKSPACE_ROOT, 'tmp'), { recursive: true });
+    const outputRoot = await mkdtemp(join(WORKSPACE_ROOT, 'tmp', 'generated-examples-type-check-'));
+    try {
+        const frameworks: string[] = [];
+        for (const framework of Object.keys(FRAMEWORK_OPTIONS)) {
+            const exampleCount = await writeFramework(outputRoot, framework, exampleDirs);
+            console.log(`${framework}: ${exampleCount} examples`);
+            if (exampleCount > 0) {
+                frameworks.push(framework);
+            }
         }
-    }
 
-    if (results.some((result) => result.failed)) {
-        console.error(`\nGenerated examples failed to type-check (${errorCount} errors).`);
-        process.exit(1);
+        const results = await Promise.all(frameworks.map((framework) => typeCheck(outputRoot, framework)));
+        let errorCount = 0;
+        for (const { framework, output, failed } of results) {
+            const errors = output.split('\n').filter((line) => line.includes('error TS'));
+            errorCount += errors.length;
+            console.log(`\n${framework}: ${failed ? `${errors.length} errors` : 'OK'}`);
+            errors.forEach((line) => console.log(`  ${relative(outputRoot, line)}`));
+            if (failed && errors.length === 0) {
+                console.log(output);
+            }
+        }
+
+        if (results.some((result) => result.failed)) {
+            console.error(`\nGenerated examples failed to type-check (${errorCount} errors).`);
+            process.exitCode = 1;
+        }
+    } finally {
+        await rm(outputRoot, { recursive: true, force: true });
     }
 }
 

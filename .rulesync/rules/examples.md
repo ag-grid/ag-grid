@@ -114,6 +114,9 @@ example:
   Angular and Vue variants users get in the code viewer, Plunker and CodeSandbox. CI runs it as part
   of the docs `test` target. Pass example paths, a page path or example names to check only those.
 
+Neither checks Angular or Vue templates, which are strings to TypeScript: run the example in those
+frameworks (its `example.spec.ts` does) to catch a broken binding or handler call.
+
 Fix a type error at its source, with the grid's types, rather than with `as any` or `@ts-ignore`.
 An error that appears only in a generated variant usually needs a generator fix.
 
