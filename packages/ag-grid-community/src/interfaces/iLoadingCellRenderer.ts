@@ -13,4 +13,5 @@ export interface ILoadingCellRendererParams<TData = any, TValue = any, TContext 
     deferRender?: boolean;
 }
 export interface ILoadingCellRenderer {}
-export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}
+export interface ILoadingCellRendererComp<TData = any, TValue = any, TContext = any>
+    extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams<TData, TValue, TContext>> {}
