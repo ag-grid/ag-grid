@@ -7,6 +7,7 @@ import { dirname, join, posix, relative, sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { stripOutExampleGeneratorCode } from '../src/components/example-runner/components/stripOutExampleGeneratorCode';
+import { isSpecFile } from '../src/components/example-runner/utils/isSpecFile';
 
 /**
  * Type-checks the framework variants `generate-examples` produces, i.e. the code users get in the
@@ -43,7 +44,6 @@ declare global {
 `;
 
 const TYPE_CHECKED_FILE = /\.tsx?$/;
-const SPEC_FILE = /\.spec\.tsx?$/;
 
 // Generated output is not cleaned between runs, so start from the source tree, using the generator's
 // rule that an example is an `_examples` folder with a `main.ts`. IDs use `/` on every platform.
@@ -82,7 +82,7 @@ async function writeFramework(
         const allFiles: Record<string, string> = { ...boilerPlateFiles, ...files };
         stripOutExampleGeneratorCode(allFiles);
         for (const fileName of Object.keys(allFiles)) {
-            if (TYPE_CHECKED_FILE.test(fileName) && !SPEC_FILE.test(fileName)) {
+            if (TYPE_CHECKED_FILE.test(fileName) && !isSpecFile(fileName)) {
                 const filePath = join(exampleDir, fileName);
                 await mkdir(dirname(filePath), { recursive: true });
                 await writeFile(filePath, allFiles[fileName]);

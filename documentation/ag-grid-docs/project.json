@@ -331,6 +331,7 @@
       "inputs": [
         "{projectRoot}/scripts/validate-generated-examples.ts",
         "{projectRoot}/src/components/example-runner/components/stripOutExampleGeneratorCode.ts",
+        "{projectRoot}/src/components/example-runner/utils/isSpecFile.ts",
         { "dependentTasksOutputFiles": "**/contents.json" },
         "tsDeclarations"
       ],

@@ -2,6 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@components/example-generator/types';
 import type { FileContents, GeneratedContents } from '@components/example-generator/types';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
+import { isSpecFile } from '@components/example-runner/utils/isSpecFile';
 import { EXAMPLE_STYLE_FILE_NAME } from '@constants';
 
 export interface ExampleViewerFiles {
@@ -10,8 +11,6 @@ export interface ExampleViewerFiles {
     /** File selected when the code viewer opens */
     mainFileName: string;
 }
-
-const isSpecFile = (fileName: string) => fileName.includes('.spec.') || fileName.includes('.test.');
 
 /**
  * Drop the generated files the example runner code viewer does not show for the internal framework:
