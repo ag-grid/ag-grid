@@ -38,7 +38,7 @@ import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 import type { RowsInViewAnchor } from './rowsInViewAnchor';
-import { _captureRowsInView, _correctRowsInView, _recordRemovedRow, _restoreRowsInView } from './rowsInViewAnchor';
+import { _captureRowsInView, _correctRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -686,11 +686,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.updateContainerHeights();
             this.scrollToTopIfNewData(params);
             const rowsInViewAnchor = rowsInView?.anchor ?? null;
-            if (params.keepRowsInView) {
-                // kept until the rows drawn are measured, as their auto heights move the rows in view again
-                this.rowsInViewAnchorForHeights = this.beans.rowAutoHeight?.active ? rowsInViewAnchor : null;
-            }
             let keptRowsInView = !!rowsInViewAnchor && this.restoreRowsInView(rowsInViewAnchor);
+            if (params.keepRowsInView) {
+                // kept until the rows drawn are measured, as their auto heights move the rows in view again, but only
+                // after an update that moved them
+                this.rowsInViewAnchorForHeights =
+                    keptRowsInView && this.beans.rowAutoHeight?.active ? rowsInViewAnchor : null;
+            }
 
             // never recycle rows on layout change as rows could change from normal DOM layout
             // back to the grid's row positioning.
@@ -855,14 +857,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
         if (!measured) {
             this.rowsInViewAnchorForHeights = anchor;
-        }
-    }
-
-    /** Called as a server-side group is removed, before its store goes, so a data update kept in view knows the rows it removed. */
-    public onRowNodeRemoved(rowNode: RowNode): void {
-        const rowsInViewAnchor = this.rowsInView?.anchor;
-        if (rowsInViewAnchor) {
-            _recordRemovedRow(rowsInViewAnchor, rowNode);
         }
     }
 
