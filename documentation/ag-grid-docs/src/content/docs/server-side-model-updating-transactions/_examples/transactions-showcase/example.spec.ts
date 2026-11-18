@@ -74,27 +74,28 @@ test.agExample(import.meta, () => {
 
             // The rows the fake server updates and removes are random across ~1,300 trades and mostly
             // off-screen, so record the transactions the root store applies rather than what is rendered.
-            const counts = await page.evaluateHandle(() => ({ add: 0, update: 0, remove: 0 }));
+            const applied = await page.evaluateHandle(() => [] as { add: number; update: number; remove: number }[]);
             const api = await gridApiHandle(page);
-            await api.evaluate((api, counts) => {
+            await api.evaluate((api, applied) => {
                 api.setGridOption('isApplyServerSideTransaction', ({ transaction, parentNode }) => {
                     if (parentNode.level === -1) {
-                        counts.add += transaction.add?.length ?? 0;
-                        counts.update += transaction.update?.length ?? 0;
-                        counts.remove += transaction.remove?.length ?? 0;
+                        applied.push({
+                            add: transaction.add?.length ?? 0,
+                            update: transaction.update?.length ?? 0,
+                            remove: transaction.remove?.length ?? 0,
+                        });
                     }
                     return true;
                 });
-            }, counts);
+            }, applied);
 
             await page.getByRole('button', { name: 'Start Updates' }).click();
 
-            // Each tick updates 5 trades, adds 2 and removes 2; all three reach the ungrouped grid.
+            // Each tick updates 5 trades, adds 2 and removes 2, all in one transaction for the flat list.
             await expect(async () => {
-                const { add, update, remove } = await counts.jsonValue();
-                expect(add).toBeGreaterThan(0);
-                expect(update).toBeGreaterThan(0);
-                expect(remove).toBeGreaterThan(0);
+                const transactions = await applied.jsonValue();
+                expect(transactions.length).toBeGreaterThan(0);
+                expect(transactions).toEqual(transactions.map(() => ({ add: 2, update: 5, remove: 2 })));
             }).toPass({ timeout: 15000 });
 
             await page.getByRole('button', { name: 'Stop Updates' }).click();
