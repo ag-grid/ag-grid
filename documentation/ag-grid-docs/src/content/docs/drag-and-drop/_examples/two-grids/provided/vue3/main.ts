@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, RowClassRules } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -81,15 +81,15 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftGridOptions: null,
-            rightGridOptions: null,
-            leftGridApi: null,
-            rightGridApi: null,
-            leftColumnDefs: null,
-            rightColumnDefs: null,
-            rowClassRules: null,
-            leftRowData: null,
-            rightRowData: null,
+            leftGridOptions: null as GridOptions | null,
+            rightGridOptions: null as GridOptions | null,
+            leftGridApi: null as GridApi | null,
+            rightGridApi: null as GridApi | null,
+            leftColumnDefs: null as ColDef[] | null,
+            rightColumnDefs: null as ColDef[] | null,
+            rowClassRules: null as RowClassRules | null,
+            leftRowData: null as any[] | null,
+            rightRowData: null as any[] | null,
             rowIdSequence: 100,
         };
     },
@@ -142,8 +142,8 @@ const VueExample = defineComponent({
     },
 
     mounted() {
-        this.leftGridApi = <GridApi>this.$refs.leftGrid.api;
-        this.rightGridApi = <GridApi>this.$refs.rightGrid.api;
+        this.leftGridApi = (this.$refs.leftGrid as { api: GridApi }).api;
+        this.rightGridApi = (this.$refs.rightGrid as { api: GridApi }).api;
     },
 
     methods: {
@@ -151,7 +151,7 @@ const VueExample = defineComponent({
             return ['Red', 'Green', 'Blue'].map((color) => this.createDataItem(color));
         },
 
-        createDataItem(color) {
+        createDataItem(color: string) {
             return {
                 id: this.rowIdSequence++,
                 color: color,
@@ -160,26 +160,26 @@ const VueExample = defineComponent({
             };
         },
 
-        dragStart(event: DragEvent, color) {
+        dragStart(event: DragEvent, color: string) {
             var newItem = this.createDataItem(color);
             var jsonData = JSON.stringify(newItem);
 
-            event.dataTransfer.setData('application/json', jsonData);
+            event.dataTransfer!.setData('application/json', jsonData);
         },
 
         gridDragOver(event: DragEvent) {
-            var dragSupported = event.dataTransfer.types.length;
+            var dragSupported = event.dataTransfer!.types.length;
 
             if (dragSupported) {
-                event.dataTransfer.dropEffect = 'copy';
+                event.dataTransfer!.dropEffect = 'copy';
                 event.preventDefault();
             }
         },
 
-        gridDrop(event: DragEvent, grid) {
+        gridDrop(event: DragEvent, grid: string) {
             event.preventDefault();
 
-            var jsonData = event.dataTransfer.getData('application/json');
+            var jsonData = event.dataTransfer!.getData('application/json');
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no it, do nothing
@@ -187,7 +187,7 @@ const VueExample = defineComponent({
                 return;
             }
 
-            var gridApi = grid == 'left' ? this.leftGridApi : this.rightGridApi;
+            var gridApi = (grid == 'left' ? this.leftGridApi : this.rightGridApi)!;
 
             // do nothing if row is already in the grid, otherwise we would have duplicates
             var rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
@@ -203,10 +203,10 @@ const VueExample = defineComponent({
         },
 
         binDragOver(event: DragEvent) {
-            var dragSupported = event.dataTransfer.types.length;
+            var dragSupported = event.dataTransfer!.types.length;
 
             if (dragSupported) {
-                event.dataTransfer.dropEffect = 'move';
+                event.dataTransfer!.dropEffect = 'move';
                 event.preventDefault();
             }
         },
@@ -214,7 +214,7 @@ const VueExample = defineComponent({
         binDrop(event: DragEvent) {
             event.preventDefault();
 
-            var jsonData = event.dataTransfer.getData('application/json');
+            var jsonData = event.dataTransfer!.getData('application/json');
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no id, do nothing
@@ -226,14 +226,14 @@ const VueExample = defineComponent({
                 remove: [data],
             };
 
-            var rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
+            var rowIsInLeftGrid = !!this.leftGridApi!.getRowNode(data.id);
             if (rowIsInLeftGrid) {
-                this.leftGridApi.applyTransaction(transaction);
+                this.leftGridApi!.applyTransaction(transaction);
             }
 
-            var rowIsInRightGrid = !!this.rightGridApi.getRowNode(data.id);
+            var rowIsInRightGrid = !!this.rightGridApi!.getRowNode(data.id);
             if (rowIsInRightGrid) {
-                this.rightGridApi.applyTransaction(transaction);
+                this.rightGridApi!.applyTransaction(transaction);
             }
         },
     },

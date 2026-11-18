@@ -3,14 +3,16 @@
 // To keep things simple it does the bare minimum to support the example.
 // Request values are bound as `?` parameters, and column names, sort directions and
 // aggregation functions are checked against allow-lists of known values.
-export function FakeServer(allData) {
+import type { ColumnVO, IServerSideGetRowsRequest, SortModelItem } from 'ag-grid-community';
+
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
     const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     return {
-        getData: (request) => {
+        getData: (request: IServerSideGetRowsRequest) => {
             const result = executeQuery(request);
             return {
                 success: true,
@@ -21,7 +23,7 @@ export function FakeServer(allData) {
         },
     };
 
-    function executeQuery(request) {
+    function executeQuery(request: IServerSideGetRowsRequest) {
         const { pivotCols, valueCols } = request;
         const [pivotCol] = pivotCols;
 
@@ -29,11 +31,11 @@ export function FakeServer(allData) {
             return [];
         }
 
-        const results = [];
+        const results: any[] = [];
         valueCols.forEach((valueCol) => {
             const pivotResults = executePivotQuery(request, pivotCol, valueCol);
 
-            pivotResults.forEach((pivotResult, i) => {
+            pivotResults.forEach((pivotResult: any, i: number) => {
                 results[i] = { ...results[i], ...pivotResult };
             });
         });
@@ -41,21 +43,21 @@ export function FakeServer(allData) {
         return alasql(`SELECT * FROM ?${orderBySql(request, results)}`, [results]);
     }
 
-    function column(colId, columns = knownColumns) {
+    function column(colId: string, columns = knownColumns) {
         if (!columns.has(colId)) {
             throw new Error('Unknown column: ' + colId);
         }
         return colId;
     }
 
-    function aggFunc(name) {
-        if (!aggFuncs.has(name)) {
+    function aggFunc(name?: string) {
+        if (!name || !aggFuncs.has(name)) {
             throw new Error('Unsupported aggregation: ' + name);
         }
         return name;
     }
 
-    function orderBySql({ sortModel }, results) {
+    function orderBySql({ sortModel }: { sortModel: SortModelItem[] }, results: any[]) {
         // the pivot results hold the group column and pivot result fields, sorts on anything else are ignored
         const resultColumns = new Set<string>(results.flatMap((row) => Object.keys(row)));
         const sorts = sortModel
@@ -65,13 +67,13 @@ export function FakeServer(allData) {
         return ` ORDER BY ${sorts.join(', ')}`;
     }
 
-    function executePivotQuery(request, pivotCol, valueCol) {
+    function executePivotQuery(request: IServerSideGetRowsRequest, pivotCol: ColumnVO, valueCol: ColumnVO) {
         const { groupKeys, rowGroupCols } = request;
         const groupsToUse = rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
         const selectGroupCols = groupsToUse.map((groupCol) => column(groupCol.id)).join(', ');
         const pivotId = column(pivotCol.id);
         const valueId = column(valueCol.id);
-        const params = [allData];
+        const params: unknown[] = [allData];
 
         const SQL = `SELECT ${selectGroupCols}, (${pivotId} + '_${valueId}') AS ${pivotId}, ${valueId} FROM ? PIVOT (${aggFunc(
             valueCol.aggFunc
@@ -82,7 +84,7 @@ export function FakeServer(allData) {
         return extractRowsForBlock(request, alasql(SQL, params));
     }
 
-    function whereSql({ rowGroupCols, groupKeys }, params) {
+    function whereSql({ rowGroupCols, groupKeys }: IServerSideGetRowsRequest, params: unknown[]) {
         const whereParts = groupKeys
             ? groupKeys.map((key, i) => {
                   params.push(key);
@@ -92,12 +94,12 @@ export function FakeServer(allData) {
         return whereParts.length > 0 ? ` WHERE ${whereParts.join(' AND ')}` : '';
     }
 
-    function extractRowsForBlock({ startRow, endRow }, results) {
-        const blockSize = endRow - startRow + 1;
-        return results.slice(startRow, startRow + blockSize);
+    function extractRowsForBlock({ startRow, endRow }: IServerSideGetRowsRequest, results: any[]) {
+        const blockSize = endRow! - startRow! + 1;
+        return results.slice(startRow, startRow! + blockSize);
     }
 
-    function getPivotFields({ pivotCols, valueCols }) {
+    function getPivotFields({ pivotCols, valueCols }: IServerSideGetRowsRequest) {
         const [pivotCol] = pivotCols;
         const result = flatten(
             valueCols.map((valueCol) => {
@@ -109,13 +111,13 @@ export function FakeServer(allData) {
         return flatten(result.map((x) => x[pivotCol.id]));
     }
 
-    function getLastRowIndex({ startRow, endRow }, results) {
+    function getLastRowIndex({ startRow, endRow }: IServerSideGetRowsRequest, results: any[]) {
         if (!results || results.length === 0) {
             return null;
         }
-        const currentLastRow = startRow + results.length;
-        return currentLastRow <= endRow ? currentLastRow : -1;
+        const currentLastRow = startRow! + results.length;
+        return currentLastRow <= endRow! ? currentLastRow : -1;
     }
 }
 
-const flatten = (arrayOfArrays) => [].concat(...arrayOfArrays);
+const flatten = (arrayOfArrays: any[]): any[] => [].concat(...arrayOfArrays);

@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
       <div draggable="true" v-on:dragstart="onDragStart">Drag Me!</div>
     `,
@@ -6,8 +17,8 @@ export default {
         return {};
     },
     methods: {
-        onDragStart(event) {
-            event.dataTransfer.setData('text/plain', 'Dragged item with ID: ' + this.params.node.data.id);
+        onDragStart(event: DragEvent) {
+            event.dataTransfer!.setData('text/plain', 'Dragged item with ID: ' + this.params.node.data.id);
         },
     },
-};
+});

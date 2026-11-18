@@ -82,7 +82,7 @@ export const data = [
 ];
 
 let currentServerRecordId = data.length;
-export function createRowOnServer(portfolio, product, book) {
+export function createRowOnServer(portfolio: string, product: string, book: string) {
     const groupDidExist = data.some((record) => record.portfolio === 'Aggressive');
     const newRecord = {
         tradeId: ++currentServerRecordId,

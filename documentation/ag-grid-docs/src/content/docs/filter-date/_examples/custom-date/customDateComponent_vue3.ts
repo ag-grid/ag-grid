@@ -1,7 +1,23 @@
+import { defineComponent, markRaw } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IDateParams } from 'ag-grid-community';
+
 // we'll be using the globally provided flatpickr for our example
 declare let flatpickr: any;
 
-export default {
+interface FlatpickrInstance {
+    calendarContainer: HTMLElement;
+    setDate(date: Date | null): void;
+}
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IDateParams>,
+            required: true,
+        },
+    },
     template: `
       <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
       <input type="text" ref="eInput" data-input style="width: 100%;"/>
@@ -12,43 +28,51 @@ export default {
     `,
     data: function () {
         return {
-            date: null,
-            ariaLabel: undefined,
+            date: null as Date | null,
+            ariaLabel: undefined as string | undefined,
+            picker: null as FlatpickrInstance | null,
+            eInput: null as HTMLInputElement | null,
         };
     },
     mounted() {
-        this.picker = flatpickr(this.$refs['flatpickr'], {
-            onChange: this.onDateChanged.bind(this),
-            dateFormat: 'd/m/Y',
-            wrap: true,
-        });
+        const picker: FlatpickrInstance = markRaw(
+            flatpickr(this.$refs['flatpickr'], {
+                onChange: this.onDateChanged.bind(this),
+                dateFormat: 'd/m/Y',
+                wrap: true,
+            })
+        );
+        this.picker = picker;
 
-        this.eInput = this.$refs['eInput'];
+        const eInput = this.$refs['eInput'] as HTMLInputElement;
+        this.eInput = eInput;
 
-        this.picker.calendarContainer.classList.add('ag-custom-component-popup');
+        picker.calendarContainer.classList.add('ag-custom-component-popup');
 
-        this.eInput.setAttribute('aria-label', this.ariaLabel);
+        if (this.ariaLabel) {
+            eInput.setAttribute('aria-label', this.ariaLabel);
+        }
     },
     methods: {
-        onDateChanged(selectedDates) {
+        onDateChanged(selectedDates: Date[]) {
             this.date = selectedDates[0] || null;
             this.params.onDateChanged();
         },
 
-        getDate() {
+        getDate(): Date | null {
             return this.date;
         },
 
-        setDate(date) {
-            this.picker.setDate(date);
+        setDate(date: Date | null) {
+            this.picker!.setDate(date);
             this.date = date || null;
         },
 
-        setInputPlaceholder(placeholder) {
-            this.eInput.setAttribute('placeholder', placeholder);
+        setInputPlaceholder(placeholder: string) {
+            this.eInput!.setAttribute('placeholder', placeholder);
         },
 
-        setInputAriaLabel(label) {
+        setInputAriaLabel(label: string) {
             if (this.eInput) {
                 this.eInput.setAttribute('aria-label', label);
             } else {
@@ -56,4 +80,4 @@ export default {
             }
         },
     },
-};
+});

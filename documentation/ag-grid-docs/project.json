@@ -306,10 +306,7 @@
         "{projectRoot}/src/**/_examples/**/*.{ts,tsx}",
         "{projectRoot}/src/types/**/*.d.ts",
         "{projectRoot}/src/example-fake-servers/**/*.ts",
-        "tsDeclarations",
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
+        "tsDeclarations"
       ],
       "cache": true,
       "options": {

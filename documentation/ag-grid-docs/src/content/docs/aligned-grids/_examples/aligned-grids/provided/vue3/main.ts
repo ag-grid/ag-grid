@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, ColGroupDef, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
@@ -81,6 +81,7 @@ const VueExample = defineComponent({
                 },
             ],
             rowData: [],
+            topGridApi: null as GridApi | null,
             topOptions: <GridOptions>{
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
@@ -106,19 +107,19 @@ const VueExample = defineComponent({
             .then((rowData) => (this.rowData = rowData));
     },
     methods: {
-        onCbAthlete(value) {
+        onCbAthlete(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['athlete'], value);
+            this.topGridApi!.setColumnsVisible(['athlete'], value);
         },
 
-        onCbAge(value) {
+        onCbAge(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['age'], value);
+            this.topGridApi!.setColumnsVisible(['age'], value);
         },
 
-        onCbCountry(value) {
+        onCbCountry(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['country'], value);
+            this.topGridApi!.setColumnsVisible(['country'], value);
         },
 
         onGridReady(params: GridReadyEvent) {

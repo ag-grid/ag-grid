@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
         minWidth: 160,
     },
     defaultPdfExportParams: {
-        columnWidth: ({ column }) => (column.getColId() === 'url' ? 300 : 160),
+        columnWidth: ({ column }) => (column?.getColId() === 'url' ? 300 : 160),
         processCellHyperlinkCallback: (params) => (params.column.getColId() === 'url' ? params.value : undefined),
         appendContent: [
             [

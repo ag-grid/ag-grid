@@ -1,20 +1,22 @@
-const createBlob = (response) => response.blob();
+import type { IOlympicData } from './interfaces';
 
-const fromBlobToBase64 = (blob) =>
-    new Promise((res) => {
+const createBlob = (response: Response) => response.blob();
+
+const fromBlobToBase64 = (blob: Blob) =>
+    new Promise<string>((res) => {
         const reader = new FileReader();
-        reader.onloadend = () => res(reader.result);
+        reader.onloadend = () => res(reader.result as string);
         reader.readAsDataURL(blob);
     });
 
-const createBase64ImageFromURL = (url) =>
+const createBase64ImageFromURL = (url: string) =>
     fetch(url)
         .then(createBlob)
         .then((blob) => fromBlobToBase64(blob));
 
-const createBase64ImagesFromURLArray = (arr) => {
-    const map = new Map();
-    const promiseArray = arr.reduce((promises, currentUrl) => {
+const createBase64ImagesFromURLArray = (arr: string[]) => {
+    const map = new Map<string, string>();
+    const promiseArray = arr.reduce<Promise<string>[]>((promises, currentUrl) => {
         if (!map.has(currentUrl)) {
             const promise = createBase64ImageFromURL(currentUrl);
             promise.then((base64) => map.set(currentUrl, base64));
@@ -28,7 +30,7 @@ const createBase64ImagesFromURLArray = (arr) => {
 };
 
 // Example specific code
-const createCountryCodeMap = (countryCodeObject) =>
+const createCountryCodeMap = (countryCodeObject: Record<string, string>) =>
     fetch('https://flagcdn.com/en/codes.json')
         .then((response) => response.json())
         .then((codes) => {
@@ -36,12 +38,18 @@ const createCountryCodeMap = (countryCodeObject) =>
             return countryCodeObject;
         });
 
-export const createBase64FlagsFromResponse = (response, countryCodeObject, base64FlagsObject) => {
+export const createBase64FlagsFromResponse = (
+    response: Response,
+    countryCodeObject: Record<string, string>,
+    base64FlagsObject: Record<string, string>
+) => {
     const urlPrefix = 'https://flagcdn.com/w20/';
     const extension = '.png';
     return response
         .json()
-        .then((data) => createCountryCodeMap(countryCodeObject).then(() => data.filter((rec) => rec.country != null)))
+        .then((data: IOlympicData[]) =>
+            createCountryCodeMap(countryCodeObject).then(() => data.filter((rec) => rec.country != null))
+        )
         .then((data) => {
             const urls = data.map((rec) => {
                 const countryCode = countryCodeObject[rec.country];

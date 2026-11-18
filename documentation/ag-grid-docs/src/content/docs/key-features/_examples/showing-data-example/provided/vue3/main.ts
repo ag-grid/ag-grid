@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GridReadyEvent, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -61,8 +61,8 @@ const VueExample = defineComponent({
                     flex: 1,
                 },
             ],
-            gridApi: null,
-            rowData: null,
+            gridApi: null as GridApi | null,
+            rowData: null as any[] | null,
         };
     },
     created() {

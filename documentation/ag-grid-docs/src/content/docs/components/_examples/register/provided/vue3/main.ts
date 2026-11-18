@@ -45,7 +45,7 @@ const VueExample = defineComponent({
             minWidth: 100,
         });
 
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())

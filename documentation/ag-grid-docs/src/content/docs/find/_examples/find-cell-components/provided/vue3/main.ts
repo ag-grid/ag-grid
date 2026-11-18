@@ -75,7 +75,7 @@ const VueExample = defineComponent({
                 },
             },
         ]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             columnDefs,

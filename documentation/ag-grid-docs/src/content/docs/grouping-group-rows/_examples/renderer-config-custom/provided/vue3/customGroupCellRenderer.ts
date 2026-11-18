@@ -1,11 +1,20 @@
 import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
 
 export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     data() {
         return {
-            isGroup: null,
-            paddingLeft: null,
-            rotation: null,
+            isGroup: undefined as boolean | undefined,
+            paddingLeft: null as string | null,
+            rotation: null as string | null,
         };
     },
     template: `

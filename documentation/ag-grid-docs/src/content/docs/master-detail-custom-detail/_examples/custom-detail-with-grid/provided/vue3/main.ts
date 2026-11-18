@@ -71,11 +71,11 @@ const VueExample = defineComponent({
                     valueFormatter: "x.toLocaleString() + 'm'",
                 },
             ],
-            gridApi: null,
+            gridApi: null as GridApi | null,
             defaultColDef: <ColDef>{ flex: 1 },
-            detailRowHeight: null,
-            detailCellRenderer: null,
-            rowData: null,
+            detailRowHeight: null as number | null,
+            detailCellRenderer: null as string | null,
+            rowData: null as any[] | null,
             collapsed: false,
         };
     },
@@ -86,26 +86,26 @@ const VueExample = defineComponent({
     methods: {
         onFirstDataRendered(params: FirstDataRenderedEvent) {
             setTimeout(function () {
-                params.api.getDisplayedRowAtIndex(1).setExpanded(true);
+                params.api.getDisplayedRowAtIndex(1)!.setExpanded(true);
             }, 0);
         },
         expandCollapseAll() {
-            this.gridApi.forEachNode((node) => {
+            this.gridApi!.forEachNode((node) => {
                 node.expanded = this.collapsed;
             });
             this.collapsed = !this.collapsed;
-            this.gridApi.onGroupExpandedOrCollapsed();
+            this.gridApi!.onGroupExpandedOrCollapsed();
         },
         printDetailGridInfo() {
             console.log("Currently registered detail grid's: ");
-            this.gridApi.forEachDetailGridInfo(function (detailGridInfo) {
+            this.gridApi!.forEachDetailGridInfo(function (detailGridInfo) {
                 console.log(detailGridInfo);
             });
         },
         onGridReady(params: GridReadyEvent) {
             this.gridApi = params.api;
 
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 this.rowData = data;
             };
 

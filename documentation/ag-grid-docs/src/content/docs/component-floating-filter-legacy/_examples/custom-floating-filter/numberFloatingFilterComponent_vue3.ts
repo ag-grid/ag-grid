@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IFloatingFilterParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IFloatingFilterParams & { color: string }>,
+            required: true,
+        },
+    },
     template: `
       <span>
         &gt; <input v-bind:style="{ borderColor: params.color, width: '30px' }" type="number" min="0" v-model="currentValue"
@@ -7,7 +18,7 @@ export default {
     `,
     data: function () {
         return {
-            currentValue: null,
+            currentValue: null as number | string | null,
         };
     },
     methods: {
@@ -25,7 +36,7 @@ export default {
             });
         },
 
-        onParentModelChanged(parentModel) {
+        onParentModelChanged(parentModel: any) {
             // When the filter is empty we will receive a null value here
             if (!parentModel) {
                 this.currentValue = '';
@@ -34,4 +45,4 @@ export default {
             }
         },
     },
-};
+});

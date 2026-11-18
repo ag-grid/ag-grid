@@ -1,6 +1,22 @@
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FloatingFilterDisplayParams, ICombinedSimpleModel, NumberFilterModel } from 'ag-grid-community';
 import { isCombinedFilterModel } from 'ag-grid-community';
 
-export default {
+type NumberFloatingFilterParams = FloatingFilterDisplayParams<
+    any,
+    any,
+    NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>
+> & { color: string };
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<NumberFloatingFilterParams>,
+            required: true,
+        },
+    },
     template: `
       <span>
         &gt; <input v-bind:style="{ borderColor: params.color, width: '30px' }" type="number" min="0" v-model="currentValue"
@@ -9,7 +25,7 @@ export default {
     `,
     data: function () {
         return {
-            currentValue: null,
+            currentValue: null as string | null,
         };
     },
     methods: {
@@ -27,7 +43,7 @@ export default {
             });
         },
 
-        refresh(params) {
+        refresh(params: NumberFloatingFilterParams) {
             // if the update is from the floating filter, we don't need to update the UI
             if (params.source !== 'ui') {
                 const model = params.model;
@@ -43,4 +59,4 @@ export default {
     mounted: function () {
         this.refresh(this.params);
     },
-};
+});

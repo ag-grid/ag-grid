@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderGroupParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderGroupParams>,
+            required: true,
+        },
+    },
     template: `
         <div class="ag-header-group-cell-label">
             <div ref="label" class="customHeaderLabel">{{params.displayName}}</div>
@@ -16,10 +27,11 @@ export default {
             .getProvidedColumnGroup()
             .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
         this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) {
+            const label = this.$refs.label as HTMLElement | undefined;
+            if (!label) {
                 return false;
             }
-            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
+            return label.scrollWidth > label.clientWidth;
         });
         this.syncExpandButtons();
     },
@@ -32,4 +44,4 @@ export default {
             this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         },
     },
-};
+});

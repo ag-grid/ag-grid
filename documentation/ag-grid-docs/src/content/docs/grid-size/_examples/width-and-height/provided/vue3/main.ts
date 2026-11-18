@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, defineComponent } from 'vue';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const VueExample = {
+const VueExample = defineComponent({
     template: `
         <div class="example-wrapper">
             <div class="example-controls">
@@ -35,8 +35,8 @@ const VueExample = {
     },
     data: function () {
         return {
-            columnDefs: null,
-            rowData: null,
+            columnDefs: null as ColDef[] | null,
+            rowData: null as any[] | null,
             height: '100%',
             width: '100%',
         };
@@ -65,18 +65,18 @@ const VueExample = {
         fillExact() {
             this.setWidthAndHeight('400px', '400px');
         },
-        setWidthAndHeight(width, height) {
+        setWidthAndHeight(width: string, height: string) {
             this.width = width;
             this.height = height;
         },
         onGridReady(params: GridReadyEvent) {
-            const updateData = (data) => (this.rowData = data);
+            const updateData = (data: any[]) => (this.rowData = data);
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         },
     },
-};
+});
 
 createApp(VueExample).mount('#app');

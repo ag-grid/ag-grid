@@ -3,6 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import type { ColDef } from 'ag-grid-enterprise';
 import {
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
@@ -33,7 +34,7 @@ const modules = [
 ];
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const popupRef = useRef<HTMLDivElement>(null);
@@ -41,7 +42,7 @@ const GridExample = () => {
     const drawerRef = useRef<HTMLDivElement>(null);
     const drawerContentRef = useRef<HTMLDivElement>(null);
     const [popupParent, setPopupParent] = useState<HTMLElement | null>(document.body);
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
         { field: 'date', minWidth: 150 },
@@ -89,29 +90,29 @@ const GridExample = () => {
     );
 
     const closePopup = useCallback(() => {
-        const drawer = popupRef.current;
+        const drawer = popupRef.current!;
         drawer.classList.toggle('active', false);
-        gridRef.current.api.closeToolPanel();
+        gridRef.current!.api.closeToolPanel();
     }, [popupRef.current]);
 
     const closeDrawer = useCallback(() => {
-        const drawer = drawerRef.current;
+        const drawer = drawerRef.current!;
         drawer.classList.toggle('active', false);
-        gridRef.current.api.closeToolPanel();
+        gridRef.current!.api.closeToolPanel();
     }, [drawerRef.current]);
 
     const openPopup = useCallback(() => {
         closeDrawer();
-        const popup = popupRef.current;
+        const popup = popupRef.current!;
         popup.classList.toggle('active', true);
-        gridRef.current.api.openToolPanel(columnsToolPanel.id);
+        gridRef.current!.api.openToolPanel(columnsToolPanel.id);
     }, [popupRef.current, closeDrawer, columnsToolPanel]);
 
     const openDrawer = useCallback(() => {
         closePopup();
-        const drawer = drawerRef.current;
+        const drawer = drawerRef.current!;
         drawer.classList.toggle('active', true);
-        gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
+        gridRef.current!.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
     }, [drawerRef, closePopup, filtersToolPanel]);
 
     return (
@@ -166,7 +167,7 @@ const GridExample = () => {
     );
 };
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
         <GridExample />

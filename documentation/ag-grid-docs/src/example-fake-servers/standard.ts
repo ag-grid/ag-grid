@@ -12,17 +12,19 @@ import {
     textFilterSql,
 } from '@example-fake-servers/sql';
 
+import type { ColumnVO, FilterModel, IServerSideGetRowsRequest } from 'ag-grid-community';
+
 // The ID AG Grid uses for the grand total row. Exported as GRAND_TOTAL_ROW_ID from 'ag-grid-community'
 const GRAND_TOTAL_ROW_ID = 'rowGroupFooter_ROOT_NODE_ID';
 
-export function FakeServer(allData) {
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
     const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     return {
-        getData: function (request, needsGrandTotal) {
+        getData: function (request: IServerSideGetRowsRequest, needsGrandTotal?: boolean) {
             const rows = executeQuery(request);
             const grandTotalData = needsGrandTotal ? computeGrandTotal(request) : undefined;
 
@@ -33,23 +35,25 @@ export function FakeServer(allData) {
                 grandTotalData,
             };
         },
-        getDistinctValues: function (field) {
+        getDistinctValues: function (field: string) {
             const id = column(field);
 
-            return alasql('SELECT DISTINCT ' + id + ' FROM ? ORDER BY ' + id + ' ASC', [allData]).map(function (row) {
+            return alasql('SELECT DISTINCT ' + id + ' FROM ? ORDER BY ' + id + ' ASC', [allData]).map(function (
+                row: any
+            ) {
                 return row[id];
             });
         },
     };
 
-    function executeQuery(request) {
-        const params = [allData];
+    function executeQuery(request: IServerSideGetRowsRequest) {
+        const params: unknown[] = [allData];
         const sql = buildSql(request, params);
         console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
         return alasql(sql, params);
     }
 
-    function computeGrandTotal(request) {
+    function computeGrandTotal(request: IServerSideGetRowsRequest) {
         const valueCols = request.valueCols ?? [];
         // If no value columns are configured there is nothing meaningful to aggregate.
         if (valueCols.length === 0) {
@@ -62,7 +66,7 @@ export function FakeServer(allData) {
             const id = column(col.id);
             return `${aggFunc(col.aggFunc)}(${id}) AS ${id}`;
         });
-        const params = [allData];
+        const params: unknown[] = [allData];
         const sql = `SELECT ${selects.join(', ')} FROM ?` + whereSql({ ...request, groupKeys: [] }, params);
         console.log('[FakeServer] - about to execute grand total query:', sql, params.slice(1));
         const result = alasql(sql, params)[0] ?? {};
@@ -75,7 +79,7 @@ export function FakeServer(allData) {
         return { id: GRAND_TOTAL_ROW_ID, ...result };
     }
 
-    function buildSql(request, params) {
+    function buildSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         return (
             selectSql(request) +
             ' FROM ?' +
@@ -86,18 +90,18 @@ export function FakeServer(allData) {
         );
     }
 
-    function column(colId) {
+    function column(colId: string) {
         return checkColumn(knownColumns, colId);
     }
 
-    function aggFunc(name) {
-        if (!aggFuncs.has(name)) {
+    function aggFunc(name?: string) {
+        if (!name || !aggFuncs.has(name)) {
             throw new Error('Unsupported aggregation: ' + name);
         }
         return name;
     }
 
-    function selectSql(request) {
+    function selectSql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const valueCols = request.valueCols;
         const groupKeys = request.groupKeys;
@@ -117,11 +121,11 @@ export function FakeServer(allData) {
         return 'SELECT *';
     }
 
-    function whereSql(request, params) {
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
-        const filterModel = request.filterModel;
-        const whereParts = [];
+        const filterModel = request.filterModel as FilterModel | null;
+        const whereParts: string[] = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
@@ -153,7 +157,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function groupBySql(request) {
+    function groupBySql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const groupKeys = request.groupKeys;
 
@@ -164,12 +168,12 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function isDoingGrouping(rowGroupCols, groupKeys) {
+    function isDoingGrouping(rowGroupCols: ColumnVO[], groupKeys: string[]) {
         // we are not doing grouping if at the lowest level
         return rowGroupCols.length > groupKeys.length;
     }
 
-    function getLastRowIndex(request) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

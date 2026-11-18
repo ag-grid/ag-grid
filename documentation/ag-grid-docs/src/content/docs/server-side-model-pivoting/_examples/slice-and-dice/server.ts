@@ -1,8 +1,17 @@
-export function createServerSideDatasource(fakeServer) {
-    class ServerSideDatasource {
+import type {
+    ColumnVO,
+    FilterModel,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+    SortModelItem,
+} from 'ag-grid-community';
+
+export function createServerSideDatasource(fakeServer: FakeServer) {
+    class ServerSideDatasource implements IServerSideDatasource {
         constructor(private fakeServer: FakeServer) {}
 
-        getRows(params) {
+        getRows(params: IServerSideGetRowsParams) {
             this.fakeServer.getData(params.request, (resultForGrid, lastRow, pivotFields) => {
                 params.success({
                     rowData: resultForGrid,
@@ -16,7 +25,7 @@ export function createServerSideDatasource(fakeServer) {
     return new ServerSideDatasource(fakeServer);
 }
 
-export function createFakeServer(data) {
+export function createFakeServer(data: any[]) {
     // THIS IS NOT PRODUCTION CODE
     // in your application, you should be implementing the server logic in your server, maybe in JavaScript, but
     // also maybe in Java, C# or another server side language. The server side would then typically query a database
@@ -30,7 +39,10 @@ export function createFakeServer(data) {
 class FakeServer {
     constructor(private allData: any[]) {}
 
-    getData(request, callback) {
+    getData(
+        request: IServerSideGetRowsRequest,
+        callback: (rowData: any[], lastRow: number, pivotFields?: string[]) => void
+    ) {
         let {
             // Filtering
             filterModel,
@@ -54,10 +66,10 @@ class FakeServer {
         const pivotActive = pivotMode && pivotCols.length > 0 && valueCols.length > 0;
 
         /** Filter data */
-        let rowData = this.filterList(this.allData, filterModel);
+        let rowData = this.filterList(this.allData, filterModel as FilterModel | null);
 
         /** Pivot data */
-        let pivotFields = null;
+        let pivotFields: string[] | undefined;
         if (pivotActive) {
             const pivotResult = this.pivot(pivotCols, rowGroupCols, valueCols, rowData);
             // Pivoted row data
@@ -101,7 +113,7 @@ class FakeServer {
         }, 1000);
     }
 
-    sortList(data, sortModel) {
+    sortList(data: any[], sortModel: SortModelItem[]) {
         const sortPresent = sortModel && sortModel.length > 0;
         if (!sortPresent) {
             return data;
@@ -130,13 +142,13 @@ class FakeServer {
         return resultOfSort;
     }
 
-    filterList(data, filterModel) {
+    filterList(data: any[], filterModel: FilterModel | null) {
         const filterPresent = filterModel && Object.keys(filterModel).length > 0;
         if (!filterPresent) {
             return data;
         }
 
-        const resultOfFilter = [];
+        const resultOfFilter: any[] = [];
         for (let i = 0; i < data.length; i++) {
             const item = data[i];
 
@@ -181,12 +193,12 @@ class FakeServer {
     // if you are using the AG Grid Enterprise Row Model, remember this would all be done on your server side with a
     // database or something that does pivoting for you - this messy code is just for demo purposes on how to use
     // ag-Gird, it's not supposed to be beautiful production quality code.
-    pivot(pivotCols, rowGroupCols, valueCols, data) {
-        const pivotData = [];
-        const aggColsList = [];
-        const pivotFields = new Set();
+    pivot(pivotCols: ColumnVO[], rowGroupCols: ColumnVO[], valueCols: ColumnVO[], data: any[]) {
+        const pivotData: Record<string, any>[] = [];
+        const aggColsList: ColumnVO[] = [];
+        const pivotFields = new Set<string>();
         data.forEach(function (item) {
-            const pivotValues = [];
+            const pivotValues: string[] = [];
             pivotCols.forEach(function (pivotCol) {
                 const pivotField = pivotCol.id;
                 const pivotValue = item[pivotField];
@@ -196,7 +208,7 @@ class FakeServer {
                     pivotValues.push('-');
                 }
             });
-            const pivotItem = {};
+            const pivotItem: Record<string, any> = {};
 
             valueCols.forEach(function (valueCol) {
                 const valField = valueCol.id;
@@ -208,6 +220,7 @@ class FakeServer {
                     // add value col so server can aggregate later
                     aggColsList.push({
                         id: colKey,
+                        displayName: colKey,
                         field: colKey,
                         aggFunc: valueCol.aggFunc,
                     });
@@ -232,7 +245,7 @@ class FakeServer {
         };
     }
 
-    buildGroupsFromData(rowData, rowGroupCols, groupKeys, valueCols) {
+    buildGroupsFromData(rowData: any[], rowGroupCols: ColumnVO[], groupKeys: string[], valueCols: ColumnVO[]) {
         const rowGroupCol = rowGroupCols[groupKeys.length];
         const field = rowGroupCol.id;
         const mappedRowData = this.groupBy(rowData, field);
@@ -241,7 +254,7 @@ class FakeServer {
             return [];
         }
 
-        const groups = [];
+        const groups: Record<string, any>[] = [];
         const that = this;
         for (const key in mappedRowData) {
             const thisRowData = mappedRowData[key];
@@ -252,8 +265,8 @@ class FakeServer {
         return groups;
     }
 
-    aggregateList(rowData, valueCols) {
-        const result = {};
+    aggregateList(rowData: any[], valueCols: ColumnVO[]) {
+        const result: Record<string, any> = {};
 
         for (let i = 0; i < valueCols.length; i++) {
             const col = valueCols[i];
@@ -313,7 +326,7 @@ class FakeServer {
     // if user is down some group levels, we take everything else out. eg
     // if user has opened the two groups United States and 2002, we filter
     // out everything that is not equal to United States and 2002.
-    filterOutOtherGroups(originalData, groupKeys, rowGroupCols) {
+    filterOutOtherGroups(originalData: any[], groupKeys: string[], rowGroupCols: ColumnVO[]) {
         let filteredData = originalData;
         const that = this;
 
@@ -331,8 +344,8 @@ class FakeServer {
         return filteredData;
     }
 
-    groupBy(data, field) {
-        const result = {};
+    groupBy(data: any[], field: string) {
+        const result: Record<string, any[]> = {};
         data.forEach(function (item) {
             const key = item[field];
             let listForThisKey = result[key];
@@ -345,8 +358,8 @@ class FakeServer {
         return result;
     }
 
-    filter(data, callback) {
-        const result = [];
+    filter(data: any[], callback: (item: any) => boolean) {
+        const result: any[] = [];
         data.forEach(function (item) {
             if (callback(item)) {
                 result.push(item);
