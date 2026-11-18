@@ -54,6 +54,10 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
 
+### Keyboard Interaction
+
+- {% kbd "␣ Space" /%} now selects, toggles and expands when released rather than when pressed, as native checkboxes and buttons do, so holding it no longer repeats the action. Tests that simulate {% kbd "␣ Space" /%} with only a `keydown` event must also dispatch `keyup`.
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.

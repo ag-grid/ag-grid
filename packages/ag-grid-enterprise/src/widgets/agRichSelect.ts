@@ -1,8 +1,9 @@
-import type { IAriaAnnouncementService, VerticalDirection } from 'ag-stack';
+import type { IAriaAnnouncementService, VerticalDirection, _SpaceKeyAction } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
     _addOrRemoveAttribute,
+    _addSpaceKeyAction,
     _clearElement,
     _debounce,
     _exists,
@@ -108,6 +109,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private searchStrings?: string[];
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
+    private spaceKeyAction: _SpaceKeyAction;
     private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[] | undefined;
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
@@ -184,6 +186,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             })
         );
         super.postConstruct();
+        this.spaceKeyAction = _addSpaceKeyAction(this, this.getAriaElement());
         this.createListComponent();
         this.eDeselect.appendChild(_createIconNoSpan('richSelectRemove', this.beans)!);
 
@@ -1266,11 +1269,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             e.preventDefault();
         }
 
-        if (shouldToggleSelectionWithSpace && listComponent) {
-            const lastItemHovered = listComponent.getLastItemHovered();
-            if (lastItemHovered !== undefined) {
-                listComponent.toggleListItemSelection(lastItemHovered);
-            }
+        const lastItemHovered = shouldToggleSelectionWithSpace ? listComponent?.getLastItemHovered() : undefined;
+        if (lastItemHovered !== undefined) {
+            this.spaceKeyAction.arm(e, () => listComponent?.toggleListItemSelection(lastItemHovered));
         }
     }
 

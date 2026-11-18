@@ -843,8 +843,12 @@ describe('Set Filter — value model & UI (coverage)', () => {
 
     describe('keyboard', () => {
         const COUNTRIES = [{ country: 'Australia' }, { country: 'France' }, { country: 'Italy' }];
-        const press = (target: Element, key: string) =>
-            target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+        const dispatchKey = (target: Element, type: 'keydown' | 'keyup', key: string, repeat = false) =>
+            target.dispatchEvent(new KeyboardEvent(type, { key, repeat, bubbles: true, cancelable: true }));
+        const press = (target: Element, key: string) => {
+            dispatchKey(target, 'keydown', key);
+            dispatchKey(target, 'keyup', key);
+        };
         const focusItem = (label: string) => {
             const item = Array.from(
                 document.querySelectorAll<HTMLElement>('.ag-filter-menu .ag-virtual-list-item')
@@ -878,6 +882,22 @@ describe('Set Filter — value model & UI (coverage)', () => {
             press(focusItem('France'), ' ');
             await asyncSetTimeout(0);
             expect(api.getColumnFilterModel('country')).toEqual(model);
+        });
+
+        test('holding Space on a focused item toggles it once, when Space is released', async () => {
+            const api: GridApi = await createGrid({});
+            await ColumnFilterHarness.open(api, 'country');
+            const item = focusItem('France');
+
+            dispatchKey(item, 'keydown', ' ');
+            dispatchKey(item, 'keydown', ' ', true);
+            dispatchKey(item, 'keydown', ' ', true);
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('country')).toBeNull();
+
+            dispatchKey(item, 'keyup', ' ');
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['Australia', 'Italy'] });
         });
 
         test('in Excel mode, Space on a focused item stages it and Enter applies it', async () => {
