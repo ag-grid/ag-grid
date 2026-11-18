@@ -99,7 +99,7 @@ A fixed wait is acceptable only for a deliberate debounce with no observable sig
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions, no placeholder.
 - `./docs-e2e.sh "docs/<page>/_examples/<example>/" --all-variants` is green: every framework the example has pages for, in chromium.
-- The spec type-checks: `yarn nx run ag-grid-docs:validate-example-specs-types`, which `./checks.sh` also runs.
+- The spec type-checks: `yarn nx run ag-grid-docs:build:test`, which `./checks.sh` also runs.
 - Each behaviour the example's doc prose calls out has its own test block, driven by an interaction where possible (Pitfall 12).
 - No fixed `waitForTimeout` for grid state; starting values asserted explicitly, never read back off the page (Pitfall 13).
 - Style follows the neighbouring `example.spec.ts` files.
