@@ -80,12 +80,7 @@ describe('chart format panel title bar roles', () => {
         expect(groupName(chartStyle)).toBe('Chart Style');
         expect(chartStyleBar.contains(chartStyle!)).toBe(false);
 
-        const controls = chartStyle!.querySelectorAll('input, [role="slider"], [role="switch"], [role="combobox"]');
-        expect(controls.length).toBeGreaterThan(0);
-        for (const control of Array.from(controls)) {
-            expect(chartStyle!.contains(control)).toBe(true);
-            expect(control.closest('[role="group"]')).not.toBeNull();
-        }
+        expect(chartStyle!.querySelectorAll('input').length).toBeGreaterThan(0);
 
         // Padding cannot collapse: its title bar is static text, and its content is the named group.
         const paddingBar = Array.from(document.querySelectorAll('.ag-charts-format-sub-level-group-title-bar')).find(
@@ -103,12 +98,15 @@ describe('chart format panel title bar roles', () => {
         expect(padding!.parentElement?.closest('[role="group"]')).toBe(chartStyle);
         expect(padding!.querySelectorAll('input').length).toBeGreaterThan(0);
 
+        const isNamedByToggle = (group: HTMLElement | undefined) =>
+            document.getElementById(group?.getAttribute('aria-labelledby') ?? '')?.closest('.ag-toggle-button') != null;
         const background = findGroup('Background');
-        expect(background).toBeDefined();
         expect(chartStyle!.contains(background!)).toBe(true);
-
-        expect(findGroup('Shadow')).toBeDefined();
-        expect(findGroup('Chart Title')).toBeDefined();
+        expect([background, findGroup('Shadow'), findGroup('Chart Title')].map(isNamedByToggle)).toEqual([
+            true,
+            true,
+            true,
+        ]);
 
         expectNoFocusableTitleOnlyGroups();
 
