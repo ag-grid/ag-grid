@@ -21,13 +21,9 @@ import { RichSelectModule } from 'ag-grid-enterprise';
  * `colDef.cellEditorParams` may be a function returning the params. Typing "Ger" narrows the list to "Germany",
  * as it does with the same params supplied as a plain object (control below).
  *
- * Actual: the editor checks `colDef.cellEditorParams?.formatValue`, which is undefined for a function,
- * so it falls back to the `keyCreator` branch (warning 266) and searches on the codes ("IE", "FR", "DE").
- * Typing "Ger" matches nothing.
- *
- * Note: warning 266 ("using `keyCreator` with the Rich Select Editor has been deprecated ... requires the
- * `formatValue` callback") would surface as a thrown error in the behavioural environment when the editor
- * starts. The test suppresses it so that it reaches the typing/search assertion at the end.
+ * Actual (36.x, AG-19194): the editor checks `colDef.cellEditorParams?.formatValue`, which is undefined for a
+ * function, so it falls back to the `keyCreator` branch (warning 266) and searches on the codes ("IE", "FR", "DE").
+ * Typing "Ger" matches nothing. Fixed in v37 by AG-19251, which removed the Rich Select `keyCreator` fallback.
  *
  * Reported on: AG Grid 33.3.2 (Angular).
  *
@@ -35,8 +31,7 @@ import { RichSelectModule } from 'ag-grid-enterprise';
  * One search in September 2026 on Angular 33.3.2: "agRichSelectCellEditor object values formatValue
  * cellEditorParams function empty list falls back to text editor".
  */
-// TODO: disabled due to AG-19194 - re-enable once fixed
-describe.skip('Rich Select with function cellEditorParams', () => {
+describe('Rich Select with function cellEditorParams', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
         modules: [RichSelectModule],
@@ -44,8 +39,7 @@ describe.skip('Rich Select with function cellEditorParams', () => {
 
     beforeEach(() => {
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
-        // Warning 266 is a symptom of the bug; let it log so the test reaches the search assertion.
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [266] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
     });
 
     afterEach(() => gridMgr.reset());
