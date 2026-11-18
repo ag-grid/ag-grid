@@ -44,18 +44,22 @@ export interface IColumnSelectionLabelRendererParams<TData = any, TContext = any
     source: ColumnSelectionPanelSource;
 }
 
-export interface IColumnSelectionLabelRenderer {
+export interface IColumnSelectionLabelRenderer<TData = any, TContext = any> {
     /** Return `true` when the renderer was refreshed, or `false` to recreate it. */
-    refresh?(params: IColumnSelectionLabelRendererParams): boolean;
+    refresh?(params: IColumnSelectionLabelRendererParams<TData, TContext>): boolean;
 }
 
-export interface IColumnSelectionLabelRendererComp
-    extends IComponent<IColumnSelectionLabelRendererParams>, IColumnSelectionLabelRenderer {}
+export interface IColumnSelectionLabelRendererComp<TData = any, TContext = any>
+    extends
+        IComponent<IColumnSelectionLabelRendererParams<TData, TContext>>,
+        IColumnSelectionLabelRenderer<TData, TContext> {}
 
-export type ColumnSelectionLabelRendererFunc = (params: IColumnSelectionLabelRendererParams) => HTMLElement | string;
+export type ColumnSelectionLabelRendererFunc<TData = any, TContext = any> = (
+    params: IColumnSelectionLabelRendererParams<TData, TContext>
+) => HTMLElement | string;
 
-export type ColumnSelectionLabelRendererSelectorFunc = (
-    params: IColumnSelectionLabelRendererParams
+export type ColumnSelectionLabelRendererSelectorFunc<TData = any, TContext = any> = (
+    params: IColumnSelectionLabelRendererParams<TData, TContext>
 ) => ColumnSelectionLabelRendererSelectorResult | undefined;
 
 export interface ColumnSelectionLabelRendererSelectorResult {

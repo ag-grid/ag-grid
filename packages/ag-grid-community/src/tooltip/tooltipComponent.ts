@@ -79,4 +79,6 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     hideTooltipCallback?: () => void;
 }
 
-export interface ITooltipComp extends IComponent<ITooltipParams> {}
+export interface ITooltipComp<TData = any, TValue = any, TContext = any> extends IComponent<
+    ITooltipParams<TData, TValue, TContext>
+> {}

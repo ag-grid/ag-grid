@@ -103,15 +103,15 @@
         },
         "--ag-row-drag-indicator-width": {
             "description": "Width of the indicator line used to show where a row will be inserted when dragging to reorder rows",
-            "type": "CSS color (e.g. `red` or `#fff`)"
+            "type": "CSS length (e.g. `0` or `2px`)"
         },
         "--ag-column-drag-indicator-color": {
-            "description": "Color of the indicator line used to show where a row will be inserted when dragging to reorder columns",
+            "description": "Color of the indicator line used to show where a column will be inserted when dragging to reorder columns",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-column-drag-indicator-width": {
-            "description": "Width of the indicator line used to show where a row will be inserted when dragging to reorder columns",
-            "type": "CSS color (e.g. `red` or `#fff`)"
+            "description": "Width of the indicator line used to show where a column will be inserted when dragging to reorder columns",
+            "type": "CSS length (e.g. `0` or `2px`)"
         },
         "--ag-column-hover-color": {
             "description": "Background color when hovering over columns in the grid",
@@ -123,7 +123,7 @@
         },
         "--ag-range-selection-border-style": {
             "description": "Border style for range selections, e.g. `solid` or `dashed`. Do not set to `none`, if you need to hide the border set the color to transparent",
-            "type": "a CSS border style (e.g. `dotted`, `solid` or `none`)"
+            "type": "a CSS border style (e.g. `dotted`, `solid` or `dashed`)"
         },
         "--ag-range-selection-background-color": {
             "description": "Background colour of selected cell ranges.",
@@ -159,7 +159,7 @@
         },
         "--ag-selected-tab-underline-width": {
             "description": "Thickness of the border drawn under selected tabs",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `1px`)"
         },
         "--ag-selected-tab-underline-transition-speed": {
             "description": "Duration of animation used to show and hide the border drawn under selected tabs",
@@ -223,7 +223,7 @@
         },
         "--ag-row-border-width": {
             "description": "The thickness of the border between grid rows. Set this to a border thickness, e.g. `1px`.",
-            "type": "a CSS border style (e.g. `solid` or `dotted`)"
+            "type": "CSS length (e.g. `0` or `1px`)"
         },
         "--ag-row-border-color": {
             "description": "Colour of the border between grid rows, or `transparent` to display no border",
@@ -286,11 +286,11 @@
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-checkbox-background-color": {
-            "description": "the background of an checkbox",
+            "description": "Background of a checkbox",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-checkbox-border-radius": {
-            "description": "edge rounding a checkboxes",
+            "description": "Edge rounding of checkboxes",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
         },
         "--ag-checkbox-checked-color": {
@@ -307,7 +307,7 @@
         },
         "--ag-toggle-button-border-width": {
             "description": "size of the toggle button outer border",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `1px`)"
         },
         "--ag-toggle-button-on-border-color": {
             "description": "colour of the toggle button outer border in its 'on' state",
@@ -335,11 +335,11 @@
         },
         "--ag-toggle-button-width": {
             "description": "width of the whole toggle button component",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-toggle-button-height": {
             "description": "height of the whole toggle button component",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-input-focus-box-shadow": {
             "description": "box shadow around focussed inputs",
@@ -359,11 +359,11 @@
         },
         "--ag-grid-size": {
             "description": "grid-size is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-icon-size": {
             "description": "The size of square icons and icon-buttons",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-icon-font-weight": {
             "description": "The font weight to apply to icon elements, used for icon fonts that require a specific weight to work",
@@ -371,47 +371,47 @@
         },
         "--ag-widget-container-horizontal-padding": {
             "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-widget-container-vertical-padding": {
             "description": "The vertical padding of containers that contain stacked widgets, such as menus and tool panels",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-widget-horizontal-spacing": {
             "description": "The horizontal spacing between widgets in containers that contain horizontally stacked widgets such as the column groups header component.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-widget-vertical-spacing": {
             "description": "The vertical spacing between widgets in containers that contain vertically stacked widgets",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-cell-horizontal-padding": {
             "description": "Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-cell-widget-spacing": {
             "description": "Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-row-height": {
             "description": "Height of grid rows",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-auto-height-min-body-height": {
             "description": "Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-header-height": {
             "description": "Height of header rows",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-list-item-height": {
             "description": "Height of items in lists (example of lists are dropdown select inputs and column menu set filters)",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-pagination-panel-height": {
             "description": "Height of the pagination panel at the bottom of the grid. Defaults to the header height.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-header-column-separator-display": {
             "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
@@ -423,7 +423,7 @@
         },
         "--ag-header-column-separator-width": {
             "description": "Width of the header column separator",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-header-column-separator-color": {
             "description": "Colour of the header column separator",
@@ -439,7 +439,7 @@
         },
         "--ag-header-column-resize-handle-width": {
             "description": "Width of the header resize handle.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-header-column-resize-handle-color": {
             "description": "Colour of the header resize handle",
@@ -447,47 +447,47 @@
         },
         "--ag-column-select-indent-size": {
             "description": "How much to indent child columns in the column tool panel relative to their parent",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-set-filter-indent-size": {
             "description": "How much to indent child filter items in the Set Filter List relative to their parent",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-advanced-filter-builder-indent-size": {
             "description": "How much to indent child filter items in the Advanced Filter Builder relative to their parent",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-row-group-indent-size": {
             "description": "How much to indent child rows in the grid relative to their parent row",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-filter-tool-panel-group-indent": {
             "description": "How much to indent child columns in the filters tool panel relative to their parent",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-tab-min-width": {
             "description": "Minimum width of the legacy tabbed column menu. Set this to the largest content you expect to be displayed in the tabbed menu to prevent the menu from changing size as you switch between tabs.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-menu-min-width": {
             "description": "Minimum width of the filter menu",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-side-bar-panel-width": {
             "description": "Width of the sidebar that contains the columns and filters tool panels",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-font-family": {
             "description": "Font family used for all text",
-            "type": "CSS font-family value (e.g. `font-family: `'Gill Sans', sans-serif`)"
+            "type": "CSS font-family value (e.g. `'Gill Sans', sans-serif`)"
         },
         "--ag-font-size": {
             "description": "Default font size for text in the grid",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS length (e.g. `0` or `4px`)"
         },
         "--ag-icon-font-family": {
             "description": "The [icon font](./custom-icons/) used by the grid.",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS font-family value (e.g. `'Gill Sans', sans-serif`)"
         },
         "--ag-card-radius": {
             "description": "cards are elements that float above the UI",
@@ -538,7 +538,7 @@
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-pinned-row-border": {
-            "description": "Border style for pinned row containers, e.g. `1px solid black` or `3rem dashed #ggg`.",
+            "description": "Border style for pinned row containers, e.g. `1px solid black` or `3rem dashed #333`.",
             "type": "a CSS border style, size and color (e.g. `1px dotted black`, `3rem solid #fff` or `none`)"
         },
         "--ag-pinned-row-text-color": {

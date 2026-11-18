@@ -19,4 +19,6 @@ export interface ICellEditorRendererParams<TValue = any, TData = any, TContext =
     setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => void;
 }
 
-export interface ICellEditorRendererComp<TValue> extends IComponent<ICellEditorRendererParams<TValue>> {}
+export interface ICellEditorRendererComp<TValue, TData = any, TContext = any> extends IComponent<
+    ICellEditorRendererParams<TValue, TData, TContext>
+> {}
