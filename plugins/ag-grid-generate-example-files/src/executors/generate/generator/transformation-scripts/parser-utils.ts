@@ -619,17 +619,18 @@ export function getFetchedDataType(data: DataCallback, rowDataType: string): str
 
 /**
  * The element type of the fetched rows, for React's `useFetchJson`, which takes the row type and returns an array:
- * the grid's row type, or the element of the array the callback declares (`T[]` or `Array<T>`), else `any`.
+ * the grid's row type, or the element of the array the callback declares (`T[]` or `Array<T>`). `undefined` when
+ * the declared type names neither, e.g. an alias, so the caller can keep it by fetching explicitly.
  */
-export function getFetchedRowType(data: DataCallback, rowDataType: string): string {
+export function getFetchedRowType(data: DataCallback, rowDataType: string): string | undefined {
     const { dataType } = data;
     if (!dataType) {
         return rowDataType;
     }
-    if (dataType.endsWith('[]')) {
-        return dataType.slice(0, -2);
+    if (dataType === 'any' || dataType.endsWith('[]')) {
+        return dataType.replace(/\[\]$/, '');
     }
-    return dataType.match(/^Array<(.+)>$/)?.[1] ?? 'any';
+    return dataType.match(/^Array<(.+)>$/)?.[1];
 }
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {

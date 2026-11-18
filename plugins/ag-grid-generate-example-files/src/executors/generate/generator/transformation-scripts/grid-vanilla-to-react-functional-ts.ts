@@ -197,12 +197,14 @@ export function vanillaToReactFunctionalTs(
                 .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
 
             const cleanedCallback = callback.replaceAll('\n', '').trim();
+            const fetchedRowType = getFetchedRowType(data, rowDataType);
             if (
-                cleanedCallback.match(/^setRowData\(data\)(;?)$/) ||
-                cleanedCallback.match(/^setRowData\(data\.slice\((\d+), (\d+)\)\)(;?)$/)
+                fetchedRowType &&
+                (cleanedCallback.match(/^setRowData\(data\)(;?)$/) ||
+                    cleanedCallback.match(/^setRowData\(data\.slice\((\d+), (\d+)\)\)(;?)$/))
             ) {
                 // get url from data
-                useFetchHook = `    const { data, loading } = useFetchJson<${getFetchedRowType(data, rowDataType)}>(
+                useFetchHook = `    const { data, loading } = useFetchJson<${fetchedRowType}>(
                 ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
             );`;
                 componentProps.push('rowData={data}');

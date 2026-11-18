@@ -73,13 +73,17 @@ async function writeFramework(
             missing.push(relative(WORKSPACE_ROOT, contentsPath));
             continue;
         }
-        const { excluded, files, boilerPlateFiles } = JSON.parse(await readFile(contentsPath, 'utf8'));
+        const { excluded, files, boilerPlateFiles, mainFileName } = JSON.parse(await readFile(contentsPath, 'utf8'));
         if (excluded) {
             continue;
         }
         const exampleDir = join(frameworkRoot, example);
         const allFiles: Record<string, string> = { ...boilerPlateFiles, ...files };
         stripOutExampleGeneratorCode(allFiles);
+        if (!TYPE_CHECKED_FILE.test(mainFileName ?? '') || !allFiles[mainFileName]) {
+            missing.push(`${relative(WORKSPACE_ROOT, contentsPath)} (no TypeScript entry point)`);
+            continue;
+        }
         for (const fileName of Object.keys(allFiles)) {
             if (TYPE_CHECKED_FILE.test(fileName) && !isSpecFile(fileName)) {
                 const filePath = join(exampleDir, fileName);

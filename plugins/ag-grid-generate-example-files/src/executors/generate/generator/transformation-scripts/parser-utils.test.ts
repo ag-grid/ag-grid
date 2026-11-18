@@ -165,8 +165,12 @@ describe('getFetchedRowType', () => {
         expect(getFetchedRowType({ ...data, dataType }, 'IOlympicData')).toBe('IAccount');
     });
 
-    it('uses any when the callback declares a type that is not an array', () => {
-        expect(getFetchedRowType({ ...data, dataType: 'IAccountResponse' }, 'IOlympicData')).toBe('any');
+    it('keeps any when the callback declares any', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'any' }, 'IOlympicData')).toBe('any');
+    });
+
+    it('has no row type when the callback declares a named type, such as an alias, so it is fetched explicitly', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'Rows' }, 'IOlympicData')).toBeUndefined();
     });
 });
 
