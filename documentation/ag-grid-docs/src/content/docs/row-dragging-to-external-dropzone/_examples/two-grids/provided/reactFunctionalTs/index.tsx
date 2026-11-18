@@ -1,7 +1,14 @@
 import React, { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    RowDragEndEvent,
+    RowDropZoneParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -141,7 +148,7 @@ const GridExample = () => {
                 eBin.current!.style.removeProperty('color');
                 eBinIcon.current!.style.transform = 'scale(1)';
             },
-            onDragStop: (params) => {
+            onDragStop: (params: RowDragEndEvent<IColorRow>) => {
                 binDrop(params.node.data);
                 eBin.current!.style.removeProperty('color');
                 eBinIcon.current!.style.transform = 'scale(1)';
@@ -155,7 +162,8 @@ const GridExample = () => {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
         const dropZone: RowDropZoneParams = {
             getContainer: () => (dropSide === 'Right' ? eRightGrid.current! : eLeftGrid.current!),
-            onDragStop: (dragParams) => addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
+            onDragStop: (dragParams: RowDragEndEvent<IColorRow>) =>
+                addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
         };
 
         api.addRowDropZone(dropZone);

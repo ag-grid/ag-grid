@@ -1,6 +1,13 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    RowDragEndEvent,
+    RowDropZoneParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -234,7 +241,7 @@ const VueExample = defineComponent({
                     eBin.style.removeProperty('color');
                     eBinIcon.style.transform = 'scale(1)';
                 },
-                onDragStop: (params) => {
+                onDragStop: (params: RowDragEndEvent<IColorRow>) => {
                     this.binDrop(params.node.data);
                     eBin.style.removeProperty('color');
                     eBinIcon.style.transform = 'scale(1)';
@@ -248,7 +255,8 @@ const VueExample = defineComponent({
             const dropSide = side === 'Left' ? 'Right' : 'Left';
             const dropZone: RowDropZoneParams = {
                 getContainer: () => (dropSide === 'Left' ? this.$refs.eLeftGrid : this.$refs.eRightGrid) as HTMLElement,
-                onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
+                onDragStop: (dragParams: RowDragEndEvent<IColorRow>) =>
+                    this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
             };
 
             api.addRowDropZone(dropZone);
