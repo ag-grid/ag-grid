@@ -97,8 +97,11 @@ describe.skip('React rowData after a Suspense hide and reveal', () => {
             resolveSuspense();
         });
         await waitFor(() => expect(queryByTestId('fallback')).toBeNull());
-        await waitFor(() => expect(apis).toHaveLength(2));
-
-        expect(apis[1].getRenderedNodes().map((node) => node.data!.id)).toEqual(['a', 'b', 'c']);
+        // Whether the reveal keeps the grid or recreates it, the live grid must show the current rows.
+        await waitFor(() => {
+            const api = apis[apis.length - 1];
+            expect(api.isDestroyed()).toBe(false);
+            expect(api.getRenderedNodes().map((node) => node.data!.id)).toEqual(['a', 'b', 'c']);
+        });
     });
 });

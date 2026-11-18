@@ -115,7 +115,10 @@ describe.skip('Excel export inputs that produce a file Excel refuses to open', (
             ],
         });
         const names = attrs(parts.get('/xl/tables/table1.xml'), 'tableColumn').map((a) => attr(a, 'name'));
-        expect(names).not.toContain('');
+        expect(names.length).toBeGreaterThan(0);
+        for (const name of names) {
+            expect(name).toBeTruthy();
+        }
     });
 
     /**
@@ -136,6 +139,8 @@ describe.skip('Excel export inputs that produce a file Excel refuses to open', (
             { exportAsExcelTable: true }
         );
         const names = attrs(parts.get('/xl/tables/table1.xml'), 'tableColumn').map((a) => attr(a, 'name'));
+        expect(names).toHaveLength(2);
+        expect(names).not.toContain(undefined);
         expect(new Set(names).size).toBe(names.length);
     });
 
@@ -156,16 +161,17 @@ describe.skip('Excel export inputs that produce a file Excel refuses to open', (
 
     test('sheetName with a character Excel forbids: the sheet name is sanitised', async () => {
         const parts = await exportParts(oneColumn, { sheetName: 'Sales/2024' });
-        for (const name of sheetNames(parts.get('/xl/workbook.xml'))) {
-            expect(name).not.toMatch(/[[\]:*?/\\]/);
-        }
+        const names = sheetNames(parts.get('/xl/workbook.xml'));
+        expect(names).toHaveLength(1);
+        expect(names[0]).toBeDefined();
+        expect(names[0]).not.toMatch(/[[\]:*?/\\]/);
     });
 
     test('empty sheetName: the sheet name is not empty', async () => {
         const parts = await exportParts(oneColumn, { sheetName: '' });
-        for (const name of sheetNames(parts.get('/xl/workbook.xml'))) {
-            expect(name).not.toBe('');
-        }
+        const names = sheetNames(parts.get('/xl/workbook.xml'));
+        expect(names).toHaveLength(1);
+        expect(names[0]).toBeTruthy();
     });
 
     test('duplicate 31-character sheet names: the deduplicated name stays within 31 characters', async () => {

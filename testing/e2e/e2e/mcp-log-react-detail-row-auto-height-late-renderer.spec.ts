@@ -6,9 +6,10 @@
  * one that returns a loading placeholder is measured through the placeholder, which React then replaces.
  *
  * Setup: `<AgGridReact masterDetail detailRowAutoHeight detailCellRenderer={...} />` where the renderer fetches its
- * data in `useEffect` (a fake 50ms fetch) and then renders a 500px tall element. The first row is expanded. Two
- * common loading patterns are tested: `if (!data) return null;` and `if (!data) return <p>Loading...</p>;`. A
- * control renders the loading text inside the same root element it later fills with content.
+ * data in `useEffect` (a fake fetch the test resolves once the loading state has rendered) and then renders a 500px
+ * tall element. The first row is expanded. Two common loading patterns are tested: `if (!data) return null;` and
+ * `if (!data) return <p>Loading...</p>;`. A control renders the loading text inside the same root element it later
+ * fills with content.
  *
  * Expected: the Master / Detail docs say "set `detailRowAutoHeight: true` in the master-level gridOptions and
  * ensure the content nested inside the detail cell renderer component sets a height value", so once the content has
@@ -64,7 +65,7 @@ async function expectDetailRowSizedToContent(page: Page, pattern: LoadingPattern
             const DetailRenderer = () => {
                 const [data, setData] = React.useState(undefined);
                 React.useEffect(() => {
-                    setTimeout(() => setData('detail content'), 50);
+                    w.releaseDetailData = () => setData('detail content');
                 }, []);
                 if (pattern === 'stableRoot') {
                     return h('div', { className: 'test-detail-root' }, data ? content(data) : 'Loading...');
@@ -94,6 +95,16 @@ async function expectDetailRowSizedToContent(page: Page, pattern: LoadingPattern
 
     await page.waitForFunction(() => (window as any).gridApi?.getDisplayedRowAtIndex(0));
     await page.evaluate(() => (window as any).gridApi.getDisplayedRowAtIndex(0).setExpanded(true));
+
+    // Release the data only once the loading state has mounted and the row's auto height setup has settled on it.
+    await page.waitForFunction(() => typeof (window as any).releaseDetailData === 'function');
+    if (pattern !== 'null') {
+        await expect(
+            page.locator(pattern === 'stableRoot' ? '.test-detail-root' : '.test-detail-loading')
+        ).toBeVisible();
+    }
+    await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+    await page.evaluate(() => (window as any).releaseDetailData());
 
     await expect
         .poll(() => page.evaluate(() => (window as any).gridApi.getDisplayedRowAtIndex(1)?.rowHeight), {
