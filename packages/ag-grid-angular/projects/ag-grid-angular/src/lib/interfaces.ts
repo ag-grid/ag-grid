@@ -99,9 +99,17 @@ export interface ICellEditorRendererAngularComp<TValue = any, TData = any, TCont
 export interface ICellEditorAngularComp<TData = any, TValue = any, TContext = any>
     extends AgFrameworkComponent<ICellEditorParams<TData, TValue, TContext>>, ICellEditor<TValue, TData, TContext> {}
 
-export interface AgRendererComponent extends ICellRendererAngularComp {}
+export interface AgRendererComponent<TData = any, TValue = any, TContext = any> extends ICellRendererAngularComp<
+    TData,
+    TValue,
+    TContext
+> {}
 
-export interface AgEditorComponent extends ICellEditorAngularComp {}
+export interface AgEditorComponent<TData = any, TValue = any, TContext = any> extends ICellEditorAngularComp<
+    TData,
+    TValue,
+    TContext
+> {}
 
 export interface AgFilterComponent extends IFilterAngularComp {}
 
