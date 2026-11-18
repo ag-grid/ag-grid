@@ -9,15 +9,15 @@ import { join } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, test } from 'vitest';
 
-const CLIENT_PATH = join(__dirname, '../../../../../public/example-runner/example-runner.js');
+const CLIENT_PATH = join(__dirname, '../../../../../public/example-runner/example-runner.mjs');
 const clientSource = readFileSync(CLIENT_PATH, 'utf8');
 
 const FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'];
 
-describe('example-runner.js runTranspiled', () => {
+describe('example-runner.mjs runTranspiled', () => {
     test('carries the same enum map the options are named against', () => {
         const match = clientSource.match(/const COMPILER_OPTION_ENUMS = (\{[^}]*\});/);
-        expect(match, 'COMPILER_OPTION_ENUMS not found in example-runner.js').not.toBeNull();
+        expect(match, 'COMPILER_OPTION_ENUMS not found in example-runner.mjs').not.toBeNull();
 
         expect(new Function(`return ${match![1]}`)()).toEqual(COMPILER_OPTION_ENUMS);
     });

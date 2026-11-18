@@ -170,7 +170,7 @@ Give each behaviour its own `test.eachFramework(...)` block with a descriptive n
 
 ### Pitfall 13: "Randomised" Example Data Is Seeded: Assert Explicit Values
 
-An example that generates its rows with `Math.random()` is deterministic under test. The example generator rewrites every `Math.random()` call to `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), which the example runner seeds with a fixed seed before the example's script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.js`), so the same rows appear on every run, in every framework. The one exception is an example with `usesWebWorker` set in its `exampleConfig.json`: the worker cannot reach `window.agRandom()`.
+An example that generates its rows with `Math.random()` is deterministic under test. The example generator rewrites every `Math.random()` call to `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), which the example runner seeds with a fixed seed before the example's script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.mjs`), so the same rows appear on every run, in every framework. The one exception is an example with `usesWebWorker` set in its `exampleConfig.json`: the worker cannot reach `window.agRandom()`.
 
 So never read the current value off the page and assert relative to it: that passes whatever the grid renders, a regression included.
 
