@@ -729,6 +729,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     : null;
             },
         },
+        multiSortIndexStyle: {
+            validate: ({ multiSortIndexStyle }) => {
+                const allowed = ['inline', 'superscript', 'subscript'];
+                return multiSortIndexStyle != null && !allowed.includes(multiSortIndexStyle)
+                    ? _createValidationWarning(320, {
+                          property: 'multiSortIndexStyle',
+                          allowed,
+                          value: multiSortIndexStyle,
+                      })
+                    : null;
+            },
+        },
         renderingMode: {
             validate: (options) => {
                 const renderingMode = options.renderingMode;
