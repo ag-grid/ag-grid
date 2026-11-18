@@ -201,13 +201,13 @@ export interface IToolbarItemParams<TData = any, TContext = any, TParams = any> 
  * Interface that custom toolbar item components may implement to receive lifecycle callbacks from the grid.
  * Implement `refresh` to update in-place when the `toolbar` option changes, avoiding a full destroy/recreate cycle.
  */
-export interface IToolbarItem<TData = any, TContext = any> {
+export interface IToolbarItem<TData = any, TContext = any, TParams = any> {
     /**
      * Called when the `toolbar` grid option updates.
      * Return `true` if the component updates itself with the new params.
      * Return `false` (or omit) to have the grid destroy and recreate the component.
      */
-    refresh?(params: IToolbarItemParams<TData, TContext>): boolean;
+    refresh?(params: IToolbarItemParams<TData, TContext, TParams>): boolean;
 }
 
 /**
@@ -215,8 +215,8 @@ export interface IToolbarItem<TData = any, TContext = any> {
  * with the standard AG Grid component lifecycle (`IComponent`).
  * Custom toolbar components that are class-based should implement this interface.
  */
-export interface IToolbarItemComp<TData = any, TContext = any>
-    extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
+export interface IToolbarItemComp<TData = any, TContext = any, TParams = any>
+    extends IToolbarItem<TData, TContext, TParams>, IComponent<IToolbarItemParams<TData, TContext, TParams>> {}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IToolbarService {
