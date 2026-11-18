@@ -184,7 +184,10 @@ const VueExample = defineComponent({
             gridApi.value.refreshCells();
         };
         const onQuickFilterChanged = () => {
-            gridApi.value.setGridOption('quickFilterText', document.getElementById('filter-text-box').value);
+            gridApi.value.setGridOption(
+                'quickFilterText',
+                (document.getElementById('filter-text-box') as HTMLInputElement).value
+            );
         };
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;

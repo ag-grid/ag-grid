@@ -288,12 +288,24 @@
         "output": "dist/documentation/reference"
       }
     },
+    "build:test": {
+      "executor": "nx:noop",
+      "dependsOn": ["validate-examples"]
+    },
     "validate-examples": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build:types"],
+      "dependsOn": [
+        {
+          "projects": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "@ag-grid-community/locale"],
+          "target": "build:types"
+        },
+        { "projects": ["ag-grid-angular", "ag-grid-vue3"], "target": "build" }
+      ],
       "inputs": [
         "{projectRoot}/tsconfig.examples.json",
-        "{workspaceRoot}/{projectRoot}/src/**/_examples/**/*.ts",
+        "{projectRoot}/src/**/_examples/**/*.{ts,tsx}",
+        "{projectRoot}/src/types/**/*.d.ts",
+        "{projectRoot}/src/example-fake-servers/**/*.ts",
         "tsDeclarations",
         {
           "externalDependencies": ["npm:typescript"]

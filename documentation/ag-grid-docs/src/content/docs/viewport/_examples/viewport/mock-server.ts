@@ -1,5 +1,9 @@
 export function createMockServer() {
     class MockServer {
+        allData: any[];
+        connections: Record<string, any>;
+        nextConnectionId: number;
+
         constructor() {
             this.connections = {};
             this.nextConnectionId = 0;

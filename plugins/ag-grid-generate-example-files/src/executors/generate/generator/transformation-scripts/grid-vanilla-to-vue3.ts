@@ -2,7 +2,6 @@ import type { ExampleConfig, ParsedBindings } from '../types';
 import { getTemplate } from './grid-vanilla-to-vue-common';
 import {
     addBindingImports,
-    addGenericInterfaceImport,
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstPropertyTs,
@@ -187,8 +186,6 @@ function getImports(
     }
 
     imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     imports.push(getEnableAGTestIdLogic());
 

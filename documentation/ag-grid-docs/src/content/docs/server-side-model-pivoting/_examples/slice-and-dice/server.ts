@@ -28,9 +28,7 @@ export function createFakeServer(data) {
 }
 
 class FakeServer {
-    constructor(allData) {
-        this.allData = allData;
-    }
+    constructor(private allData: any[]) {}
 
     getData(request, callback) {
         let {
@@ -304,7 +302,7 @@ class FakeServer {
                     result[field] = Math.random(); // just make up a number
                     break;
                 default:
-                    console.warn('unrecognised aggregation function: ' + valueCol.aggFunc);
+                    console.warn('unrecognised aggregation function: ' + col.aggFunc);
                     break;
             }
         }

@@ -5,7 +5,6 @@ import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
-    addGenericInterfaceImport,
     addLicenseManager,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
@@ -64,8 +63,6 @@ function getModuleImports(
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     imports.push(getEnableAGTestIdLogic());
 

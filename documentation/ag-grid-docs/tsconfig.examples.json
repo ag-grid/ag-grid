@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "allowImportingTsExtensions": true,
+    "useDefineForClassFields": false,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@example-fake-servers/*": ["./src/example-fake-servers/*"]
+    }
+  },
+  "include": [
+    "src/types/index.d.ts",
+    "src/content/docs/**/_examples/**/*.ts",
+    "src/content/docs/**/_examples/**/*.tsx"
+  ],
+  "exclude": ["src/content/docs/**/_examples/**/*.spec.ts", "src/content/docs/**/_examples/**/*.spec.tsx"]
+}

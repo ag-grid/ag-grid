@@ -5,7 +5,6 @@ import {
     DARK_INTEGRATED_END,
     DARK_INTEGRATED_START,
     addBindingImports,
-    addGenericInterfaceImport,
     addLicenseManager,
     convertFunctionToProperty,
     findLocaleImport,
@@ -139,8 +138,6 @@ function getImports(
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
     }
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return removeCreateGridImport(imports);
 }

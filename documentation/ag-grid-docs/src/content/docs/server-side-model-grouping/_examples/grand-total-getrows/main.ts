@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            const fakeServer = new FakeServer(data);
+            const fakeServer = FakeServer(data);
             const datasource = getServerSideDatasource(fakeServer);
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });

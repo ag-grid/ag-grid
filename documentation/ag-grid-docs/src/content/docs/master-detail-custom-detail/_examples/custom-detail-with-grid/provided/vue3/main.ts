@@ -76,6 +76,7 @@ const VueExample = defineComponent({
             detailRowHeight: null,
             detailCellRenderer: null,
             rowData: null,
+            collapsed: false,
         };
     },
     beforeMount() {
@@ -89,10 +90,10 @@ const VueExample = defineComponent({
             }, 0);
         },
         expandCollapseAll() {
-            this.gridApi.forEachNode(function (node) {
-                node.expanded = !!window.collapsed;
+            this.gridApi.forEachNode((node) => {
+                node.expanded = this.collapsed;
             });
-            window.collapsed = !window.collapsed;
+            this.collapsed = !this.collapsed;
             this.gridApi.onGroupExpandedOrCollapsed();
         },
         printDetailGridInfo() {

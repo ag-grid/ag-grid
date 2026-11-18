@@ -364,7 +364,7 @@ function trim(str?: any) {
         return str;
     }
     const len = Math.min(15, str.length);
-    return str.substring?.(0, len) + (str.length > len ? '...' : '') ?? str;
+    return str.substring?.(0, len) + (str.length > len ? '...' : '');
 }
 
 function commitBatchEdit() {

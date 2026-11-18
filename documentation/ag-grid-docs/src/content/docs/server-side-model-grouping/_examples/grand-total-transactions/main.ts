@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Olympic rows aren't unique by athlete/country/year/sport, so a composite natural
             // key collides. Index-based ids guarantee uniqueness.
             const dataWithIds: OlympicRow[] = data.map((row, i) => ({ ...row, id: `row-${i}` }));
-            fakeServer = new FakeServer(dataWithIds);
+            fakeServer = FakeServer(dataWithIds);
             gridApi!.setGridOption('serverSideDatasource', getServerSideDatasource(fakeServer));
         });
 });

@@ -1,7 +1,6 @@
 import type { ParsedBindings } from '../types';
 import {
     addBindingImports,
-    addGenericInterfaceImport,
     findLocaleImport,
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
@@ -39,8 +38,6 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     }
 
     imports.push(getEnableAGTestIdLogic());
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return imports;
 }

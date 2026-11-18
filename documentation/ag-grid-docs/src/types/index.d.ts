@@ -1,8 +1,9 @@
+import type Ajv from 'ajv';
+
 export {};
 
 declare global {
-    //Copy of this interface is present in shared-types/generators so that it can be added as a string to the code files inline
-    // when it is use. Please keep the two in sync if you are adding a property!
+    // Keep these row interfaces in sync with the copies in the example generator's sharedInterfaces.ts.
 
     interface IOlympicData {
         athlete: string;
@@ -55,4 +56,7 @@ declare global {
      * Actual code will be added by the example generator
      */
     export const useFetchJson: <TData = any>(url: string, limit?: number) => { data: TData[]; loading: boolean };
+
+    /** Ajv's browser bundle, loaded by the example page as a script; `ajv7` is the name it exposes. */
+    export const ajv7: typeof Ajv;
 }

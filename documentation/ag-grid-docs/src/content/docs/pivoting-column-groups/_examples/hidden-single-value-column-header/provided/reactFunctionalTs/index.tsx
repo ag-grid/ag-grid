@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef } from 'ag-grid-community';
+import type { AutoGroupColumnDef, ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -56,7 +56,7 @@ const GridExample = () => {
             minWidth: 130,
         };
     }, []);
-    const autoGroupColumnDef = useMemo<ColDef>(() => {
+    const autoGroupColumnDef = useMemo<AutoGroupColumnDef<IOlympicData>>(() => {
         return {
             minWidth: 200,
         };

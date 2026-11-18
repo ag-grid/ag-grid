@@ -114,7 +114,27 @@ function randomBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createTradeRecord(product, portfolio, book) {
+interface Trade {
+    product: string;
+    portfolio: string;
+    book: string;
+    tradeId: number;
+    submitterID: number;
+    submitterDealID: number;
+    dealType: string;
+    bidFlag: string;
+    current: number;
+    previous: number;
+    pl1: number;
+    pl2: number;
+    gainDx: number;
+    sxPx: number;
+    _99Out: number;
+    updateCount?: number;
+    lastUpdated?: Date;
+}
+
+function createTradeRecord(product: string, portfolio: string, book: string): Trade {
     const current = Math.floor(Math.random() * 100000) + 100;
     const previous = current + Math.floor(Math.random() * 10000) - 2000;
     const trade = {
