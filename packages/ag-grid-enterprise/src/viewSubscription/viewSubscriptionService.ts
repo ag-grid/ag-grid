@@ -430,6 +430,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
     private isSubscribable(node: RowNode): boolean {
         // Level -1 is the root row, shown in pivot mode without row groups. It holds totals, like the grand total row.
-        return !(node.level === -1 || node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null);
+        return !(
+            node.level === -1 ||
+            node.stub ||
+            node.failedLoad ||
+            node.detail ||
+            node.footer ||
+            node.rowPinned != null
+        );
     }
 }
