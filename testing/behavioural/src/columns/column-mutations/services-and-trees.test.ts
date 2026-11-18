@@ -843,7 +843,7 @@ describe('Column Mutations', () => {
             });
         });
 
-        test('a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: rowGroup false, nothing enabled, as before', () => {
+        test('a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: rowGroup false, nothing enabled', () => {
             const hierarchy: ColDef = { field: 'date', groupHierarchy: ['year', 'month'] };
             const api = gridsManager.createGrid('ungroup', {
                 columnDefs: [{ ...hierarchy, rowGroup: true }],

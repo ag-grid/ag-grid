@@ -2,13 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { CalculatedColumnChanges, ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    GridStateModule,
-    NumberEditorModule,
-    TextEditorModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
     ColumnMenuModule,
@@ -39,7 +33,6 @@ describe('calculated columns - display ordering', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
-            GridStateModule,
             CalculatedColumnsModule,
             FormulaModule,
             ColumnMenuModule,

@@ -4,6 +4,7 @@ import type { GridApi, IServerSideDatasource, IServerSideGetRowsRequest } from '
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
+import { pivotGroups } from '../pivotGroups';
 
 /**
  * Characterisation (golden-master) tests pinning the CURRENT behaviour of the Server-Side Row Model
@@ -169,14 +170,14 @@ describe('SSRM pivot (characterisation)', () => {
             });
             await waitForNoLoadingRows(api);
 
-            expect(pivotGroups(api)).toEqual({
-                Swim: { open: sportOpen, expandable: false },
-                'Swim > 2000': { open: yearOpen, expandable: false },
-                'Swim > 2004': { open: yearOpen, expandable: false },
-                Run: { open: sportOpen, expandable: false },
-                'Run > 2000': { open: yearOpen, expandable: false },
-                'Run > 2004': { open: yearOpen, expandable: false },
-            });
+            expect(pivotGroups(api)).toEqual([
+                { id: 'Run', path: 'Run', open: sportOpen, expandable: false },
+                { id: 'Run_2000', path: 'Run > 2000', open: yearOpen, expandable: false },
+                { id: 'Run_2004', path: 'Run > 2004', open: yearOpen, expandable: false },
+                { id: 'Swim', path: 'Swim', open: sportOpen, expandable: false },
+                { id: 'Swim_2000', path: 'Swim > 2000', open: yearOpen, expandable: false },
+                { id: 'Swim_2004', path: 'Swim > 2004', open: yearOpen, expandable: false },
+            ]);
         }
     );
 
@@ -223,23 +224,3 @@ describe('SSRM pivot (characterisation)', () => {
         `);
     });
 });
-
-/** Each pivot result column group, keyed by its header path, with whether it is open and whether it can open. */
-function pivotGroups(api: GridApi): Record<string, { open: boolean; expandable: boolean }> {
-    const result: Record<string, { open: boolean; expandable: boolean }> = {};
-    for (const column of api.getPivotResultColumns() ?? []) {
-        const groups = [];
-        for (let group = column.getParent(); group; group = group.getParent()) {
-            if (!group.isPadding()) {
-                groups.unshift(group.getProvidedColumnGroup());
-            }
-        }
-        let path = '';
-        for (const group of groups) {
-            const headerName = group.getColGroupDef()?.headerName ?? '';
-            path = path ? `${path} > ${headerName}` : headerName;
-            result[path] = { open: group.isExpanded(), expandable: group.isExpandable() };
-        }
-    }
-    return result;
-}

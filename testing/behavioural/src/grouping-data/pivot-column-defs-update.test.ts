@@ -1,9 +1,11 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef, Column, GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ColDef, Column, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+
+import { pivotGroups } from './pivotGroups';
 
 describe('pivot column identity across columnDefs updates', () => {
     const gridsManager = new TestGridsManager({
@@ -997,14 +999,14 @@ describe('pivot column identity across columnDefs updates', () => {
         });
         api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
 
-        expect(pivotGroups(api)).toEqual({
-            Gymnastics: { open: true, expandable: true },
-            'Gymnastics > 2008': { open: true, expandable: false },
-            'Gymnastics > 2012': { open: true, expandable: false },
-            Swimming: { open: true, expandable: true },
-            'Swimming > 2008': { open: true, expandable: false },
-            'Swimming > 2012': { open: true, expandable: false },
-        });
+        expect(pivotGroups(api)).toEqual([
+            { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
+        ]);
     });
 
     test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {
@@ -1020,14 +1022,14 @@ describe('pivot column identity across columnDefs updates', () => {
             rowData: olympicLikeRows,
         });
 
-        expect(pivotGroups(api)).toEqual({
-            Gymnastics: { open: true, expandable: true },
-            'Gymnastics > 2008': { open: false, expandable: false },
-            'Gymnastics > 2012': { open: false, expandable: false },
-            Swimming: { open: true, expandable: true },
-            'Swimming > 2008': { open: false, expandable: false },
-            'Swimming > 2012': { open: false, expandable: false },
-        });
+        expect(pivotGroups(api)).toEqual([
+            { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: false, expandable: false },
+        ]);
     });
 
     test('api.getColumn by field in pivot mode resolves primary col via lazy colsByDef map', async () => {
@@ -1233,23 +1235,3 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(shown).toEqual([1, 3]);
     });
 });
-
-/** Each pivot result column group, keyed by its header path, with whether it is open and whether it can open. */
-function pivotGroups(api: GridApi): Record<string, { open: boolean; expandable: boolean }> {
-    const result: Record<string, { open: boolean; expandable: boolean }> = {};
-    for (const column of api.getPivotResultColumns() ?? []) {
-        const groups = [];
-        for (let group = column.getParent(); group; group = group.getParent()) {
-            if (!group.isPadding()) {
-                groups.unshift(group.getProvidedColumnGroup());
-            }
-        }
-        let path = '';
-        for (const group of groups) {
-            const headerName = group.getColGroupDef()?.headerName ?? '';
-            path = path ? `${path} > ${headerName}` : headerName;
-            result[path] = { open: group.isExpanded(), expandable: group.isExpandable() };
-        }
-    }
-    return result;
-}

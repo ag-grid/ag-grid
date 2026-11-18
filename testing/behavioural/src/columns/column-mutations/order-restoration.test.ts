@@ -1296,9 +1296,12 @@ describe('Column Mutations - order restoration', () => {
             `);
             expect({
                 kept: api.getColumn('a') === before,
-                listed: api.getAllGridColumns().filter((col) => col.getColId() === 'a'),
+                listed: api
+                    .getAllGridColumns()
+                    .filter((col) => col.getColId() === 'a')
+                    .map((col) => col === before),
                 headerName: before.getColDef().headerName,
-            }).toEqual({ kept: true, listed: [before], headerName: 'A!' });
+            }).toEqual({ kept: true, listed: [true], headerName: 'A!' });
         });
 
         test('a restored order holds the columns a rebuild recreated, not the destroyed ones', async () => {

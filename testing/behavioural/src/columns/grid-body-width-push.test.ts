@@ -481,7 +481,6 @@ describe('Grid body width push', () => {
         expect(pinnedWidths()).toEqual(['120px', '0px']);
     });
 
-    // Printing lays out no pinned lane (printing docs: "When in print layout, the column is not pinned").
     const pinnedLanes = () => {
         const viewport = query('.ag-grid-viewport');
         const root = query('.ag-root');

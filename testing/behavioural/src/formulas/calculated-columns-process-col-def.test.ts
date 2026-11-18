@@ -1327,21 +1327,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         );
     });
 
-    describe('sourceColumn of a column added from a group hierarchy column or the auto column of one', () => {
+    describe('sourceColumn of a column added from the auto group column of a group hierarchy level', () => {
         const HIERARCHY_YEAR = 'ag-Grid-HierarchyColumn-date-year';
-
-        function hierarchyGrid(id: string, processColDef: ProcessColDef, opts: Partial<GridOptions> = {}): GridApi {
-            return createGrid(id, {
-                rowData: [{ id: 'r1', g: 'x', date: new Date(2020, 0, 1) }],
-                columnDefs: [
-                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
-                    { field: 'g', type: 't' },
-                ],
-                columnTypes: { t: {} },
-                calculatedColumns: { processColDef },
-                ...opts,
-            });
-        }
 
         function autoColumnIds(api: GridApi): string[] {
             return api
@@ -1352,10 +1339,12 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         test('is null once a column rebuild removes the hierarchy level behind the auto group column (multipleColumns)', async () => {
             const processColDef = vi.fn<ProcessColDef>();
-            const api = hierarchyGrid('pcd-source-hierarchy-level-removed', processColDef, {
-                groupDisplayType: 'multipleColumns',
+            const api = createGrid('pcd-source-hierarchy-level-removed', {
+                rowData: [{ id: 'r1', g: 'x', date: new Date(2020, 0, 1) }],
                 columnDefs: [{ field: 'date', enableRowGroup: true, type: 't' }, { field: 'g' }],
                 columnTypes: { t: { groupHierarchy: ['year', 'month'] } },
+                groupDisplayType: 'multipleColumns',
+                calculatedColumns: { processColDef },
             });
             await waitForColumn(api, HIERARCHY_YEAR);
             api.setRowGroupColumns([HIERARCHY_YEAR]);
@@ -1482,39 +1471,25 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         api.setGridOption('columnTypes', { t: { rowGroup: true, width: 90 } });
 
         const calledIds = processColDef.mock.calls.map(([params]) => params.colDef.colId);
-        expect(calledIds.filter((colId) => colId === xId)).toHaveLength(1);
-        expect(calledIds.filter((colId) => colId === yId)).toHaveLength(1);
+        expect([...calledIds].sort()).toEqual([xId, yId].sort());
         expect(api.getColumn(xId)).not.toBeNull();
         expect(api.getColumn(yId)).not.toBeNull();
     });
 
-    describe('sourceColumn and expressionValidation when processColDef groups a calculated column in a rebuild that ungroups a column', () => {
+    describe('sourceColumn and expressionValidation of a calculated column in a rebuild that ungroups the only row group column', () => {
         const GROUPED_BY_TYPE: Partial<GridOptions> = {
             rowData: ROW_DATA,
             columnDefs: [{ field: 'g', type: 't', hide: true }, { field: 'a' }, { field: 'b' }],
             columnTypes: { t: { rowGroup: true } },
         };
 
-        /** A callback grouping the column `groupedId.value` once `enabled.value` is set. */
-        function groupingCallback() {
-            const groupedId = { value: '' };
-            const enabled = { value: false };
-            const processColDef = vi.fn<ProcessColDef>((params) =>
-                enabled.value && params.colDef.colId === groupedId.value
-                    ? { ...params.colDef, rowGroup: true }
-                    : undefined
-            );
-            return { processColDef, groupedId, enabled };
-        }
-
-        test('sourceColumn is null when a rebuild ungroups g and the callback groups nothing', async () => {
-            const { processColDef, groupedId } = groupingCallback();
+        test('sourceColumn of a column added from the auto group column is null once the rebuild ungroups g', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
             const api = createGrid('pcd-source-auto-nothing-grouped', {
                 ...GROUPED_BY_TYPE,
                 calculatedColumns: { processColDef },
             });
             await waitForColumn(api, 'ag-Grid-AutoColumn');
-            groupedId.value = await addViaDialog(api, 'a', '[b] * 2');
             const addedId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
             processColDef.mockClear();
 
@@ -1529,16 +1504,14 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
 
         test('expressionValidation of a reference to the auto group column is an unknown reference once the auto group column is gone', async () => {
-            const { processColDef, groupedId, enabled } = groupingCallback();
-            const api = createGrid(`pcd-valid-auto-ref-false`, {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = createGrid('pcd-valid-auto-ref', {
                 ...GROUPED_BY_TYPE,
                 calculatedColumns: { processColDef },
                 initialState: { userColumns: userColumnsState('z', '[ag-Grid-AutoColumn] + 1') },
             });
             await waitForColumn(api, 'z');
             await waitForColumn(api, 'ag-Grid-AutoColumn');
-            groupedId.value = await addViaDialog(api, 'a', '[b] * 2');
-            enabled.value = false;
             processColDef.mockClear();
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });
@@ -1604,7 +1577,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
     test('expressionValidation is valid on restore and on every column rebuild for a reference to a calculated column declared after it', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
-        const api = gridWithUserColumn('pcd-valid-forward-ref', 'first', '[second] + 1', processColDef, {
+        const api = createGrid('pcd-valid-forward-ref', {
+            rowData: ROW_DATA,
+            calculatedColumns: { processColDef },
             columnDefs: [{ field: 'a', type: 't' }, { field: 'b' }],
             columnTypes: { t: {} },
             initialState: {

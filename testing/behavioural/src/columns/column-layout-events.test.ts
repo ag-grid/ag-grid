@@ -24,13 +24,7 @@ import {
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
-import {
-    AllEnterpriseModule,
-    PivotModule,
-    RowGroupingModule,
-    RowNumbersModule,
-    ShowValuesAsModule,
-} from 'ag-grid-enterprise';
+import { AllEnterpriseModule, PivotModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 /** Each displayed column as `colId@left`, failing where a column does not start where the one before it ends. */
 const contiguousLefts = (api: GridApi): string[] => {
@@ -460,7 +454,7 @@ describe('column layout events', () => {
 
 describe('the rows drawn for the columns', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule],
     });
 
     afterEach(() => {
@@ -851,7 +845,7 @@ describe('a column update made from a layout event', () => {
 
 describe('the layout events of a primary column while pivoting', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule, RowNumbersModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule],
     });
 
     afterEach(() => {
