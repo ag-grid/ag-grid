@@ -82,6 +82,7 @@ describe('chart settings panel mini chart thumbnails', () => {
 
                 const list = group.querySelector<HTMLElement>('.ag-group-container')!;
                 expect(list.getAttribute('role')).toBe('list');
+                expect(list.hasAttribute('aria-labelledby')).toBe(false);
                 const listItems = Array.from(list.children);
                 expect(listItems.length).toBeGreaterThan(0);
                 for (const listItem of listItems) {
