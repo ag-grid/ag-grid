@@ -294,8 +294,14 @@
       }
     },
     "build:test": {
-      "executor": "nx:noop",
-      "dependsOn": ["validate-examples"]
+      "dependsOn": [
+        "validate-examples",
+        {
+          "projects": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "@ag-grid-community/locale"],
+          "target": "build:types"
+        },
+        { "projects": ["ag-grid-angular", "ag-grid-vue3"], "target": "build" }
+      ]
     },
     "validate-examples": {
       "executor": "nx:run-commands",

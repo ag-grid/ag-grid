@@ -10,15 +10,25 @@ declare global {
 }
 
 /**
- * A handle to the `GridApi` of a grid on the page, found by grid ID, CSS selector or element, as
- * `getGridApi` accepts. Call its methods in the page with `handle.evaluate((api) => ...)`.
+ * A handle to the `GridApi` of a grid on the page, found by grid ID or CSS selector, as `getGridApi`
+ * accepts, once that grid exists. Call its methods in the page with `handle.evaluate((api) => ...)`.
  */
 export async function gridApiHandle(page: Page, grid: string = '1'): Promise<JSHandle<GridApi>> {
-    return page.evaluateHandle((grid) => {
-        const api = window.getGridApi(grid);
+    const found = await page.waitForFunction((grid) => {
+        // Archived sites before v34 do not expose `getGridApi`, so read the API off a rendered cell instead.
+        const getApi =
+            window.getGridApi ??
+            ((): GridApi | undefined => {
+                const cell = document.querySelector('#myGrid .ag-cell');
+                const key = cell && Object.keys(cell).find((name) => name.startsWith('__AG'));
+                return key ? Reflect.get(cell, key)?.cellCtrl?.beans?.gridApi : undefined;
+            });
+        return getApi(grid) ?? false;
+    }, grid);
+    return found.evaluateHandle((api) => {
         if (!api) {
-            throw new Error(`getGridApi('${grid}') found no grid`);
+            throw new Error('gridApiHandle: no grid API');
         }
         return api;
-    }, grid);
+    });
 }

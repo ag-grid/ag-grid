@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 const seriesPillPanel = (page: Page): Locator => page.locator('.ag-pill-select').first();
 
@@ -111,7 +111,7 @@ test.agExample(import.meta, () => {
     });
 
     // AG-13924: TC1 — sorting a grid column must not reset the user-defined series order.
-    test.vanilla('TC1 - sort preserves series order', async ({ page, remoteGrid }) => {
+    test.vanilla('TC1 - sort preserves series order', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -124,22 +124,24 @@ test.agExample(import.meta, () => {
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
 
         // Apply a column sort — fires modelUpdated on the grid.
-        const remoteApi = remoteGrid(page);
-        await remoteApi.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] }));
 
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
     });
 
     // AG-13924: TC2 — toggling row group expansion must not reset the user-defined series order.
-    test.vanilla('TC2 - row group expansion toggle preserves series order', async ({ page, remoteGrid }) => {
+    test.vanilla('TC2 - row group expansion toggle preserves series order', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         // Add a row group so we can expand/collapse rows.
-        const remoteApi = remoteGrid(page);
-        await remoteApi.applyColumnState({
-            state: [{ colId: 'country', rowGroup: true, hide: true }],
-        });
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.applyColumnState({
+                state: [{ colId: 'country', rowGroup: true, hide: true }],
+            })
+        );
         await waitForGridContent(page);
 
         await openChartDataPanel(page);
@@ -149,13 +151,13 @@ test.agExample(import.meta, () => {
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
 
         // Collapse all row groups — fires modelUpdated.
-        await remoteApi.collapseAll();
+        await api.evaluate((api) => api.collapseAll());
 
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
     });
 
     // AG-13924: TC3 — filtering a grid column must not reset the user-defined series order.
-    test.vanilla('TC3 - filtering preserves series order', async ({ page, remoteGrid }) => {
+    test.vanilla('TC3 - filtering preserves series order', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -166,8 +168,8 @@ test.agExample(import.meta, () => {
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
 
         // Apply a quick filter — fires modelUpdated on the grid.
-        const remoteApi = remoteGrid(page);
-        await remoteApi.setGridOption('quickFilterText', 'Ireland');
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('quickFilterText', 'Ireland'));
 
         await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
     });
@@ -175,93 +177,78 @@ test.agExample(import.meta, () => {
     // AG-13924 / AG-17690: TC4 — hiding a column must preserve the relative order of the other
     // series. By default (includeHiddenColumnsInCharts: true), a hidden column stays charted, so
     // it must stay in its user-defined position rather than being dropped or moved to the end.
-    test.vanilla(
-        'TC4 - column hide keeps series charted in its user-defined position',
-        async ({ page, remoteGrid }) => {
-            await ensureGridReady(page);
-            await waitForGridContent(page);
+    test.vanilla('TC4 - column hide keeps series charted in its user-defined position', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
-            await openChartDataPanel(page);
+        await openChartDataPanel(page);
 
-            // Reorder to [Fat, Sugar, Weight].
-            await reorderSeriesPillToFront(page, 'Fat');
-            await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
+        // Reorder to [Fat, Sugar, Weight].
+        await reorderSeriesPillToFront(page, 'Fat');
+        await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
 
-            // Hide 'weight' — fires columnVisible on the grid.
-            const remoteApi = remoteGrid(page);
-            await remoteApi.applyColumnState({ state: [{ colId: 'weight', hide: true }] });
+        // Hide 'weight' — fires columnVisible on the grid.
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'weight', hide: true }] }));
 
-            // Weight stays charted (default includeHiddenColumnsInCharts: true) and keeps its
-            // user-defined position; Fat and Sugar are unaffected.
-            await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
-        }
-    );
+        // Weight stays charted (default includeHiddenColumnsInCharts: true) and keeps its
+        // user-defined position; Fat and Sugar are unaffected.
+        await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
+    });
 
     // AG-17690: TC4b — with includeHiddenColumnsInCharts explicitly disabled, hiding a column must
     // remove it from the chart, and the remaining series must keep their relative order (the
     // behaviour TC4 covered before hidden columns were included in charts by default).
-    test.vanilla(
-        'TC4b - column hide removes series when includeHiddenColumnsInCharts is false',
-        async ({ page, remoteGrid }) => {
-            await ensureGridReady(page);
-            await waitForGridContent(page);
+    test.vanilla('TC4b - column hide removes series when includeHiddenColumnsInCharts is false', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
-            const remoteApi = remoteGrid(page);
-            await remoteApi.setGridOption('includeHiddenColumnsInCharts', false);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('includeHiddenColumnsInCharts', false));
 
-            await openChartDataPanel(page);
+        await openChartDataPanel(page);
 
-            // Reorder to [Fat, Sugar, Weight].
-            await reorderSeriesPillToFront(page, 'Fat');
-            await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
+        // Reorder to [Fat, Sugar, Weight].
+        await reorderSeriesPillToFront(page, 'Fat');
+        await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar', 'Weight']);
 
-            // Hide 'weight' — fires columnVisible on the grid.
-            await remoteApi.applyColumnState({ state: [{ colId: 'weight', hide: true }] });
+        // Hide 'weight' — fires columnVisible on the grid.
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'weight', hide: true }] }));
 
-            // Weight is gone; Fat and Sugar must stay in their user-defined order.
-            await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar']);
-        }
-    );
+        // Weight is gone; Fat and Sugar must stay in their user-defined order.
+        await expect(seriesPills(page)).toHaveText(['Fat', 'Sugar']);
+    });
 
     // AG-13924 / AG-17690: TC5 — restoring a saved chart model after hiding a column must preserve
     // the relative series order of all saved columns. By default (includeHiddenColumnsInCharts:
     // true) a hidden column is still charted after restore, so it must remain in the restored
     // series list rather than being dropped.
-    test.vanilla(
-        'TC5 - restore chart keeps a hidden column charted in its saved order',
-        async ({ page, remoteGrid }) => {
-            await ensureGridReady(page);
-            await waitForGridContent(page);
+    test.vanilla('TC5 - restore chart keeps a hidden column charted in its saved order', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
 
-            await openChartDataPanel(page);
+        await openChartDataPanel(page);
 
-            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
-            // Grid column order is [Sugar, Fat, Weight], so the grid order would give
-            // [Fat, Sugar, Weight], but the saved user order should give [Weight, Sugar, Fat].
-            // The two differ, which lets this test catch an ordering regression.
-            await reorderSeriesPillToFront(page, 'Weight');
-            await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
+        // A user order that differs from the grid's column order [Sugar, Fat, Weight], so restore must keep it.
+        await reorderSeriesPillToFront(page, 'Weight');
+        await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
 
-            // Save the chart via the example's Save button, then clear it.
-            await page.getByRole('button', { name: 'Save chart' }).click();
-            await page.getByRole('button', { name: 'Clear chart' }).click();
+        // Save the chart via the example's Save button, then clear it.
+        await page.getByRole('button', { name: 'Save chart' }).click();
+        await page.getByRole('button', { name: 'Clear chart' }).click();
 
-            // Hide 'sugar'. With the default includeHiddenColumnsInCharts: true, it stays charted.
-            const remoteApi = remoteGrid(page);
-            await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
+        // Hide 'sugar'. With the default includeHiddenColumnsInCharts: true, it stays charted.
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'sugar', hide: true }] }));
 
-            // Restore from the saved model (which had weight before sugar before fat).
-            await page.getByRole('button', { name: 'Restore chart' }).click();
+        // Restore from the saved model (which had weight before sugar before fat).
+        await page.getByRole('button', { name: 'Restore chart' }).click();
 
-            await openChartDataPanel(page);
+        await openChartDataPanel(page);
 
-            // Sugar is hidden but still charted (default) — it must remain in the panel, and all
-            // three columns must retain their saved relative order [Weight, Sugar, Fat], not the
-            // grid column order [Sugar, Fat, Weight] that would result if restore ignored the
-            // saved series ordering.
-            await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
-        }
-    );
+        // Hidden but still charted, Sugar stays in the panel, and the saved order wins over the grid's.
+        await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
+    });
 
     // AG-17690: TC5b — with includeHiddenColumnsInCharts explicitly disabled, restoring a saved
     // chart model must drop columns that are hidden at restore time, while the surviving columns
@@ -269,19 +256,16 @@ test.agExample(import.meta, () => {
     // included in charts by default).
     test.vanilla(
         'TC5b - restore chart drops a hidden column when includeHiddenColumnsInCharts is false',
-        async ({ page, remoteGrid }) => {
+        async ({ page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            const remoteApi = remoteGrid(page);
-            await remoteApi.setGridOption('includeHiddenColumnsInCharts', false);
+            const api = await gridApiHandle(page);
+            await api.evaluate((api) => api.setGridOption('includeHiddenColumnsInCharts', false));
 
             await openChartDataPanel(page);
 
-            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
-            // Grid column order is [Sugar, Fat, Weight], so after removing Sugar the grid
-            // order would give [Fat, Weight], but the saved user order should give [Weight, Fat].
-            // The two differ, which lets this test catch an ordering regression.
+            // A user order that differs from the grid's column order [Sugar, Fat, Weight], so restore must keep it.
             await reorderSeriesPillToFront(page, 'Weight');
             await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
 
@@ -290,23 +274,21 @@ test.agExample(import.meta, () => {
             await page.getByRole('button', { name: 'Clear chart' }).click();
 
             // Hide 'sugar' so only Weight and Fat remain visible.
-            await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
+            await api.evaluate((api) => api.applyColumnState({ state: [{ colId: 'sugar', hide: true }] }));
 
             // Restore from the saved model (which had weight before fat).
             await page.getByRole('button', { name: 'Restore chart' }).click();
 
             await openChartDataPanel(page);
 
-            // Sugar is hidden — it must not appear as selected. Weight and Fat must retain
-            // their user-defined relative order [Weight, Fat], not the grid column order
-            // [Fat, Weight] that would result if restore ignored the saved series ordering.
+            // Hidden Sugar is not selected, and Weight and Fat keep the saved order rather than the grid's.
             await expect(seriesPills(page)).toHaveText(['Weight', 'Fat']);
         }
     );
 
     // TC6 — moving a grid column must update the series order to follow the new column order
     // (unlike sort/filter/group/hide, which preserve the user-defined order).
-    test.vanilla('TC6 - grid column move updates series order', async ({ page, remoteGrid }) => {
+    test.vanilla('TC6 - grid column move updates series order', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -315,8 +297,8 @@ test.agExample(import.meta, () => {
         await expect(seriesPills(page)).toHaveText(['Sugar', 'Fat', 'Weight']);
 
         // Move 'weight' before 'sugar' in the grid (grid order: country, sugar, fat, weight).
-        const remoteApi = remoteGrid(page);
-        await remoteApi.moveColumns(['weight'], 1);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.moveColumns(['weight'], 1));
 
         await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
     });

@@ -99,6 +99,7 @@ A fixed wait is acceptable only for a deliberate debounce with no observable sig
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions, no placeholder.
 - `./docs-e2e.sh "docs/<page>/_examples/<example>/" --all-variants` is green: every framework the example has pages for, in chromium.
+- The spec type-checks: `yarn nx run ag-grid-docs:build:test`, which `./checks.sh` also runs.
 - Each behaviour the example's doc prose calls out has its own test block, driven by an interaction where possible (Pitfall 12).
 - No fixed `waitForTimeout` for grid state; starting values asserted explicitly, never read back off the page (Pitfall 13).
 - Style follows the neighbouring `example.spec.ts` files.
@@ -115,7 +116,7 @@ Pass these core conventions to the subagent; pull situational entries from `refe
 import { expect, test } from '@utils/grid/test-utils';
 ```
 
-The same module exports the helpers named in this skill (`ensureGridReady`, `waitForGridContent`, `waitForRowAnimations`, `expectRowIdAtIndex`, `clickHeaderToSort`, `scrollGridRelative`, `gridApiHandle`) and `expectConsistentFrameworkDom(page, options?)`: an opt-in snapshot that the grid DOM is structurally the same in every framework, for examples where a wrapper's DOM drift would be a regression (`includeText: false` for volatile text).
+The same module exports the helpers named in this skill (`ensureGridReady`, `waitForGridContent`, `waitForRowAnimations`, `expectRowIdAtIndex`, `clickHeaderToSort`, `scrollGridRelative`, `gridApiHandle`, `gridEventLog`, `recreateGrid`, `waitForChartModels`) and `expectConsistentFrameworkDom(page, options?)`: an opt-in snapshot that the grid DOM is structurally the same in every framework, for examples where a wrapper's DOM drift would be a regression (`includeText: false` for volatile text).
 
 ### Test Structure
 
@@ -161,11 +162,11 @@ The `agIdFor` object wraps AG Grid test IDs into Playwright locators. Key method
 | Group footer                 | `rowGroupFooter_{groupRowId}`               | `'rowGroupFooter_row-group-country-Netherlands'` |
 | Grand total                  | `rowGroupFooter_ROOT_NODE_ID`               | `'rowGroupFooter_ROOT_NODE_ID'`                  |
 
-### Avoid Remote Grid API
+### Reaching the Grid API
 
-Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwright page interactions instead.
+Prefer `agIdFor` locators and Playwright page interactions: they test what a user sees.
 
-When the behaviour cannot be seen in the DOM (rows off-screen, a callback's arguments, a transaction's contents), use `gridApiHandle(page)`, never `(window as any).getGridApi`. It returns a typed `JSHandle<GridApi>`, so `api.evaluate((api, arg) => ...)` runs in the page with the grid's types. Keep anything the page collects in a handle too, rather than on `window`:
+When the behaviour cannot be seen in the DOM (rows off-screen, a callback's arguments, a transaction's contents), use `gridApiHandle(page)`, never `(window as any).getGridApi`. It waits for the grid and returns a typed `JSHandle<GridApi>`; `api.evaluate((api, arg) => ...)` runs in the page, so pass Node-side values as `arg` and return plain data. Keep anything the page collects in a handle too, rather than on `window`:
 
 ```typescript
 const applied = await page.evaluateHandle(() => [] as number[]);
@@ -178,6 +179,17 @@ await api.evaluate((api, applied) => {
 }, applied);
 await expect.poll(async () => (await applied.jsonValue()).length).toBeGreaterThan(0);
 ```
+
+To assert on grid events, record them with `gridEventLog(page)` and poll its entries:
+
+```typescript
+const log = await gridEventLog(page);
+await log.record('cellValueChanged', ['newValue', 'oldValue']);
+// ...edit a cell...
+await expect.poll(() => log.entries()).toEqual([['cellValueChanged', { newValue: 100, oldValue: 5 }]]);
+```
+
+Asserting that an event did *not* fire needs a short `page.waitForTimeout` with a comment, as grid events reach listeners asynchronously. `recreateGrid(page, gridOptions)` and `waitForChartModels(page)` cover the remaining API needs.
 
 ### Pitfalls & Patterns Index
 

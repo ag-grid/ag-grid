@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Displays paginated data with correct page info', async ({ agIdFor, page }) => {
+    test.eachFramework('Displays paginated data with correct page info', async ({ agIdFor }) => {
         // First row on page 1
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 

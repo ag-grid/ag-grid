@@ -18,7 +18,6 @@ import {
 import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
 import { routeSiteSources, warnOnNetworkAccess } from './test/localSources';
 import { PendingRequests } from './test/pendingRequests';
-import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { whileTheRequestMatters } from './test/routeGuard';
 import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
 import { WAF_BYPASS_HEADER, wafBypassSecret } from './test/wafBypass';
@@ -35,11 +34,6 @@ type LoadPageOptions = {
     agThemeMode?: 'dark-blue' | 'light';
 };
 
-type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & {
-    eventLog: EventLog;
-    waitForEventlog: (timeoutMs: number) => Promise<EventLog>;
-};
-
 export type AgGridFixtures = {
     agFramework: AgFramework;
     agExampleUrl?: AgExampleUrl;
@@ -49,7 +43,6 @@ export type AgGridFixtures = {
     agIdFor: AgIdFor;
     loadPageOptions?: LoadPageOptions;
     agModules?: AgModuleName[];
-    remoteGrid: RemoteGrid;
     cpuThrottle?: number;
 };
 
@@ -311,21 +304,6 @@ export const extended = base.extend<TestFixtures>({
     bypassRequestCache: [false, { option: true }],
     loadPageOptions: [({}, use) => use(undefined), { option: true }],
     agModules: [undefined, { option: true }],
-    remoteGrid: [
-        ({ page }, use) => {
-            const eventLog: any[] = [];
-
-            const fn = (page: Page, gridId: string) => createRemoteGridApiProxy(page, gridId, eventLog);
-            fn.eventLog = eventLog;
-            fn.waitForEventlog = async (timeoutMs: number) => {
-                await page.waitForTimeout(timeoutMs);
-                return eventLog;
-            };
-
-            use(fn as unknown as RemoteGrid);
-        },
-        { option: true },
-    ],
     cpuThrottle: [undefined, { option: true }],
     // A fixture rather than a loadPage call so specs that navigate themselves get them too. Declared before
     // wafBypass, which must register later to run first and pass its header down via fallback.
@@ -392,7 +370,6 @@ const frameworkTest =
                 agExampleUrl,
                 agIdFor,
                 loadPageOptions,
-                remoteGrid,
                 agModules,
                 cpuThrottle,
                 baseURL,
@@ -416,7 +393,6 @@ const frameworkTest =
                 agIdFor,
                 agFramework,
                 loadPageOptions,
-                remoteGrid,
                 baseURL,
                 request,
                 context,
@@ -936,7 +912,9 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
 }
 
 export { gridApiHandle } from './test/gridApiHandle';
-export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
+export { type EventLog, type GridEventLog, gridEventLog } from './test/gridEventLog';
+export { recreateGrid } from './test/recreateGrid';
+export { ensureGridReady, waitForGridContent } from './test/waitForGrid';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';
