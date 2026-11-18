@@ -29,11 +29,6 @@ const extrasMap: Record<string, { scripts?: string[]; styles?: string[] }> = {
     materialdesignicons: {
         styles: ['https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'],
     },
-    // Ajv's draft-07 browser bundle, exposed as the global `ajv7` (typed in `src/types/index.d.ts`).
-    // Used by the AI Toolkit page: `ai-toolkit/_examples/natural-language-grid-state`.
-    ajv: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/ajv/8.17.1/ajv7.min.js'],
-    },
 };
 
 interface Props {

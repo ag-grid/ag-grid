@@ -124,26 +124,22 @@ The `callLLM` function needs to be implemented in accordance with your chosen LL
 
 ### Updating Grid State
 
-Once the LLM has provided a response, it should be validated against your top-level schema. This is particularly important when using an LLM that does not support structured outputs.
+Once the LLM has provided a response, validate it against your top-level schema before updating the grid. This is particularly important when using an LLM that does not support structured outputs. The example above requests structured output from ChatGPT, so it passes the response straight to `setState`.
 
-In this example, we're using `ajv` to validate the LLMs response, before calling `setState` to update the grid:
+For example, using [ajv](https://ajv.js.org/):
 
 ```ts
-// Extract Grid State & Properties to Ignore from LLM Response
-const { newGridState, propertiesToIgnore } = response;
+import Ajv from 'ajv';
 
-// Init ajv Validator with Schema
-const ajv = new ajv7();
-const ajvValidator = ajv.compile(schema);
-
-// Validate LLM response w/ ajv
-if (!ajvValidator(newGridState)) {
-    console.error("Invalid Schema")
+// Validate the LLM response against the top-level schema
+const validate = new Ajv().compile(schema);
+if (!validate(response)) {
+    console.error('Invalid LLM response', validate.errors);
     return;
 }
 
 // Update Grid State with LLM Response
-gridApi.setState(newGridState, propertiesToIgnore);
+gridApi.setState(response.gridState, response.propertiesToIgnore);
 ```
 
 Passing `propertiesToIgnore` (the properties that are unchanged by the LLM) to `setState` ensures that these properties are not overridden after the grid state is updated.

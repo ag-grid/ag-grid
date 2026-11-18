@@ -1,5 +1,3 @@
-import type Ajv from 'ajv';
-
 export {};
 
 declare global {
@@ -56,12 +54,4 @@ declare global {
      * Actual code will be added by the example generator
      */
     export const useFetchJson: <TData = any>(url: string, limit?: number) => { data: TData[]; loading: boolean };
-
-    /**
-     * Ajv JSON Schema validator. `ajv7` is the global exposed by Ajv's draft-07 browser bundle (the `7` is the
-     * JSON Schema draft, not the Ajv version), loaded by the `ajv` extra in `Extras.astro`.
-     * Examples opt in with `"extras": ["ajv"]` in their `exampleConfig.json`; currently only the AI Toolkit page
-     * (`ai-toolkit/_examples/natural-language-grid-state`), which validates the LLM's response before `setState`.
-     */
-    export const ajv7: typeof Ajv;
 }
