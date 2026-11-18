@@ -842,7 +842,31 @@ describe('Set Filter — excelMode', () => {
         expect(labels.filter((l) => l.toLowerCase() === 'michael')).toHaveLength(3);
 
         await filter.toggleSetItem('(Select All Search Results)');
+        await new FilterDom(api, 'excel search results cleared', { colId: 'name' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: "mich"
+            ☐ (Select All Search Results)
+            ☐ Add current selection to filter
+            ☐ MICHAEL
+            ☐ Michael
+            ☐ michael
+            buttons: Apply ⊘ | Cancel
+            model: null
+        `);
+
         await filter.toggleSetItem('(Select All Search Results)');
+        await new FilterDom(api, 'excel search results re-selected', { colId: 'name' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: "mich"
+            ☑ (Select All Search Results)
+            ☐ Add current selection to filter
+            ☑ MICHAEL
+            ☑ Michael
+            ☑ michael
+            buttons: Apply | Cancel
+            model: null
+        `);
+
         document
             .querySelector('.ag-filter-menu .ag-mini-filter input')!
             .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
