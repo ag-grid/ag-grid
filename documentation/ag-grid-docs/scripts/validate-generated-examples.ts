@@ -30,17 +30,16 @@ const FRAMEWORK_OPTIONS: Record<string, Record<string, unknown>> = {
     vue3: {},
 };
 
-// Globals the example page provides at runtime rather than through an import. `ajv7` and `alasql` come from
-// the matching extras in `Extras.astro`; `src/types/index.d.ts` documents the same globals for the docs build.
-const RUNTIME_GLOBALS = `import type Ajv from 'ajv';
-
-declare global {
+// Globals the example page provides at runtime rather than through an import: the seeded `agRandom` the generator
+// swaps in for `Math.random`, and `alasql` from its extra in `Extras.astro`.
+const RUNTIME_GLOBALS = `declare global {
     interface Window {
         agRandom(): number;
     }
-    const ajv7: typeof Ajv;
     const alasql: any;
 }
+
+export {};
 `;
 
 const TYPE_CHECKED_FILE = /\.tsx?$/;
