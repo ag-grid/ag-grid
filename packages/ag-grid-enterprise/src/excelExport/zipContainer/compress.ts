@@ -1,20 +1,20 @@
 const COMPRESSION_CHUNK_SIZE = 65536;
 
 export const deflateLocalFile = async (
-    rawContent: string | Uint8Array
-): Promise<{ size: number; content: Uint8Array }> => {
+    rawContent: string | Uint8Array<ArrayBuffer>
+): Promise<{ size: number; content: Uint8Array<ArrayBuffer> }> => {
     const bytes = typeof rawContent === 'string' ? new TextEncoder().encode(rawContent) : rawContent;
     let offset = 0;
     let chunksSize = 0;
-    const chunks: Uint8Array[] = [];
-    const writeCompressedData: WritableStream<Uint8Array> = new WritableStream({
-        write: (chunk: Uint8Array) => {
+    const chunks: Uint8Array<ArrayBuffer>[] = [];
+    const writeCompressedData: WritableStream<Uint8Array<ArrayBuffer>> = new WritableStream({
+        write: (chunk: Uint8Array<ArrayBuffer>) => {
             chunks.push(chunk);
             chunksSize += chunk.length;
         },
     });
 
-    const readable = new ReadableStream<Uint8Array>({
+    const readable = new ReadableStream<Uint8Array<ArrayBuffer>>({
         pull: (controller) => {
             if (offset === bytes.length) {
                 controller.close();

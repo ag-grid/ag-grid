@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
 
 function getColumnDefs(): ColDef[] {
     return [
-        { field: 'athlete', initialWidth: 100, initialSort: 'asc' },
+        { field: 'athlete', initialWidth: 200 },
         { field: 'age' },
         { field: 'country', initialPinned: 'left' },
         { field: 'sport' },
@@ -25,7 +25,7 @@ function getColumnDefs(): ColDef[] {
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' },
+        { field: 'total', initialSort: 'desc' },
     ];
 }
 

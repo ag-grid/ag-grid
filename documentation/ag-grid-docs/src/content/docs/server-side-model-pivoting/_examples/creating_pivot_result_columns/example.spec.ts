@@ -1,17 +1,12 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 type Page = import('@playwright/test').Page;
 
 // Only the header cells near the viewport are rendered, so read the whole column order from the grid API rather
 // than the DOM. Pivot result col ids are `<year>_<medal>`, so the year groups are their distinct year prefixes.
 const yearGroupOrder = async (page: Page): Promise<string[]> => {
-    const colIds: string[] = await page.evaluate(
-        () =>
-            (window as any)
-                .getGridApi('1')
-                .getPivotResultColumns()
-                ?.map((col: any) => col.getColId()) ?? []
-    );
+    const api = await gridApiHandle(page);
+    const colIds = await api.evaluate((api) => api.getPivotResultColumns()?.map((col) => col.getColId()) ?? []);
     const years = colIds.map((colId) => colId.split('_')[0]).filter((year) => /^\d{4}$/.test(year));
     return years.filter((year, i) => years.indexOf(year) === i);
 };

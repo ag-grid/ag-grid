@@ -1,9 +1,16 @@
 import { createApp, defineComponent } from 'vue';
+import type { PropType } from 'vue';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
 export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
       <div role="gridcell" class="full-width-panel">
         <div class="full-width-details">
@@ -24,8 +31,11 @@ export default defineComponent({
     },
     data: function () {
         return {
-            colDefs: null,
-            rowData: null,
+            colDefs: null as ColDef[] | null,
+            defaultColDef: null as ColDef | null,
+            rowData: null as any[] | null,
+            rowId: undefined as string | undefined,
+            masterGridApi: null as GridApi | null,
         };
     },
     beforeMount() {
@@ -48,17 +58,17 @@ export default defineComponent({
     },
     beforeDestroy() {
         console.log('removing detail grid info with id: ', this.rowId);
-        this.masterGridApi.removeDetailGridInfo(this.rowId);
+        this.masterGridApi!.removeDetailGridInfo(this.rowId!);
     },
     methods: {
         onGridReady(params: GridReadyEvent) {
             let gridInfo = {
-                id: this.rowId,
+                id: this.rowId!,
                 api: params.api,
             };
 
             console.log('adding detail grid info with id: ', this.rowId);
-            this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
+            this.masterGridApi!.addDetailGridInfo(this.rowId!, gridInfo);
         },
     },
 });

@@ -81,12 +81,12 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         undoEnded: UndoEndedEvent<TData, TContext>;
         redoStarted: RedoStartedEvent<TData, TContext>;
         redoEnded: RedoEndedEvent<TData, TContext>;
-        cellClicked: CellClickedEvent<TData, TContext>;
-        cellDoubleClicked: CellDoubleClickedEvent<TData, TContext>;
-        cellMouseDown: CellMouseDownEvent<TData, TContext>;
-        cellContextMenu: CellContextMenuEvent<TData, TContext>;
-        cellValueChanged: CellValueChangedEvent<TData, TContext>;
-        cellEditRequest: CellEditRequestEvent<TData, TContext>;
+        cellClicked: CellClickedEvent<TData, any, TContext>;
+        cellDoubleClicked: CellDoubleClickedEvent<TData, any, TContext>;
+        cellMouseDown: CellMouseDownEvent<TData, any, TContext>;
+        cellContextMenu: CellContextMenuEvent<TData, any, TContext>;
+        cellValueChanged: CellValueChangedEvent<TData, any, TContext>;
+        cellEditRequest: CellEditRequestEvent<TData, any, TContext>;
         rowValueChanged: RowValueChangedEvent<TData, TContext>;
         headerFocused: HeaderFocusedEvent<TData, TContext>;
         cellFocused: CellFocusedEvent<TData, TContext>;
@@ -94,9 +94,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         selectionChanged: SelectionChangedEvent<TData, TContext>;
         tooltipShow: TooltipShowEvent<TData, TContext>;
         tooltipHide: TooltipHideEvent<TData, TContext>;
-        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, TContext>;
-        cellMouseOver: CellMouseOverEvent<TData, TContext>;
-        cellMouseOut: CellMouseOutEvent<TData, TContext>;
+        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, any, TContext>;
+        cellMouseOver: CellMouseOverEvent<TData, any, TContext>;
+        cellMouseOut: CellMouseOutEvent<TData, any, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
         filterUiChanged: FilterUiChangedEvent<TData, TContext>;
@@ -117,8 +117,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
-        cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
-        cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
+        cellEditingStarted: CellEditingStartedEvent<TData, any, TContext>;
+        cellEditingStopped: CellEditingStoppedEvent<TData, any, TContext>;
         bodyScroll: BodyScrollEvent<TData, TContext>;
         bodyScrollEnd: BodyScrollEndEvent<TData, TContext>;
         paginationChanged: PaginationChangedEvent<TData, TContext>;
@@ -189,7 +189,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
-        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, any, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
         batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
@@ -408,7 +408,8 @@ export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGl
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
-export type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';
+export type FilterChangedEventSourceType =
+    'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter' | 'gridInitializing';
 
 export interface FilterChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterChanged',
@@ -421,6 +422,7 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
      * - `quickFilter` - triggered by user filtering from Quick Filter
      * - `columnFilter` - triggered by user filtering from Column Menu
      * - `advancedFilter` - triggered by user filtering from Advanced Filter
+     * - `gridInitializing` - triggered by restoring filter state from `initialState` while the grid is initialising
      */
     source?: FilterChangedEventSourceType;
     /** True if the filter was changed as a result of data changing */
@@ -755,7 +757,7 @@ export interface CalculatedColumnChangedEvent<TData = any, TContext = any> exten
     TData,
     TContext
 > {
-    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    /** Changed definition properties and their previous/new values. Empty when only expression validation changed; values are snapshots. */
     changes: CalculatedColumnChanges;
     /** Validation snapshot of `expression` when this event was dispatched, including saved dialog restrictions and custom errors. */
     expressionValidation: CalculatedColumnExpressionValidation;
@@ -911,8 +913,6 @@ export interface ChartCreatedEvent<TData = any, TContext = any> extends AgGlobal
     /** Id of the created chart. This can later be used to reference the chart via api methods. */
     chartId: string;
 }
-/** @deprecated v32 Use ChartCreatedEvent instead */
-export interface ChartCreated<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> {}
 
 export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartRangeSelectionChanged',
@@ -926,11 +926,6 @@ export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any> ex
     /** New cellRange selected. */
     cellRange: CellRangeParams;
 }
-/** @deprecated v32 Use ChartRangeSelectionChangedEvent instead */
-export interface ChartRangeSelectionChanged<TData = any, TContext = any> extends ChartRangeSelectionChangedEvent<
-    TData,
-    TContext
-> {}
 
 export interface ChartOptionsChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartOptionsChanged',
@@ -946,8 +941,6 @@ export interface ChartOptionsChangedEvent<TData = any, TContext = any> extends A
     /** Chart options.  */
     chartOptions: AgChartThemeOverrides;
 }
-/** @deprecated v32 Use ChartOptionsChangedEvent instead */
-export interface ChartOptionsChanged<TData = any, TContext = any> extends ChartOptionsChangedEvent<TData, TContext> {}
 
 export interface ChartDestroyedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartDestroyed',
@@ -957,9 +950,6 @@ export interface ChartDestroyedEvent<TData = any, TContext = any> extends AgGlob
     /** Id of the effected chart. */
     chartId: string;
 }
-
-/** @deprecated v32 Use ChartDestroyedEvent instead */
-export interface ChartDestroyed<TData = any, TContext = any> extends ChartDestroyedEvent<TData, TContext> {}
 
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'columnGroupOpened',
@@ -1081,13 +1071,6 @@ export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
     fromBelow: boolean;
 }
 
-/**
- * @deprecated v32 Please use `ExpandOrCollapseAllEvent` instead.
- */
-export interface ExpandCollapseAllEvent<TData = any, TContext = any> extends ExpandOrCollapseAllEvent<
-    TData,
-    TContext
-> {}
 export interface ExpandOrCollapseAllEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'expandOrCollapseAll',
     TData,
@@ -1607,11 +1590,6 @@ export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any> exte
      */
     results: (RowNodeTransaction<TData> | ServerSideTransactionResult<TData>)[];
 }
-/** @deprecated v32 Use AsyncTransactionsFlushedEvent */
-export interface AsyncTransactionsFlushed<TData = any, TContext = any> extends AsyncTransactionsFlushedEvent<
-    TData,
-    TContext
-> {}
 
 export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'storeRefreshed',

@@ -1,4 +1,4 @@
-import type { AgBaseComponent, IconValue } from 'ag-stack';
+import type { AgBaseComponent } from 'ag-stack';
 import { BaseRegistry } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
@@ -9,7 +9,6 @@ import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { Module } from '../../interfaces/iModule';
-import type { IconName } from '../../utils/icon';
 import { _errorToThrowForGrid } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
@@ -35,8 +34,6 @@ export class Registry
 
     private selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
 
-    private icons: { [K in IconName]?: IconValue } = {};
-
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
@@ -47,7 +44,7 @@ export class Registry
     }
 
     public registerModule(module: Module): void {
-        const { icons, userComponents, dynamicBeans, selectors } = module;
+        const { userComponents, dynamicBeans, selectors } = module;
 
         if (userComponents) {
             const registerUserComponent = (
@@ -79,12 +76,6 @@ export class Registry
 
         for (const selector of selectors ?? []) {
             this.selectors[selector.selector] = selector;
-        }
-
-        if (icons) {
-            for (const name of Object.keys(icons) as IconName[]) {
-                this.icons[name] = icons[name];
-            }
         }
     }
 
@@ -151,10 +142,6 @@ export class Registry
         name: AgComponentSelectorType
     ): ComponentSelector<TComponent> | undefined {
         return this.selectors[name];
-    }
-
-    public getIcon(name: IconName): IconValue | undefined {
-        return this.icons[name];
     }
 
     protected override createDynamicError(name: DynamicBeanName, init: boolean): Error {

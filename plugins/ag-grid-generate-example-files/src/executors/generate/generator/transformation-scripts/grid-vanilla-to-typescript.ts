@@ -1,11 +1,11 @@
 import type { ParsedBindings } from '../types';
 import {
     addBindingImports,
-    addGenericInterfaceImport,
     findLocaleImport,
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
+    getTypeImports,
     wrapTearDownExample,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
@@ -27,11 +27,7 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     const bImports = [...(bindingImports || [])];
     const propertyInterfaces = getPropertyInterfaces(properties, currFile);
     if (propertyInterfaces.length > 0) {
-        bImports.push({
-            module: `'ag-grid-community'`,
-            isNamespaced: false,
-            imports: [...propertyInterfaces],
-        });
+        bImports.push(...getTypeImports(propertyInterfaces));
     }
 
     if (bImports.length > 0) {
@@ -39,8 +35,6 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     }
 
     imports.push(getEnableAGTestIdLogic());
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return imports;
 }

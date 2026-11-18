@@ -1,4 +1,4 @@
-import type { AgEvent, IAgEventEmitter } from 'ag-stack';
+import type { AgBeanStubEvent, AgEvent, IAgEventEmitter, StringComparator } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
@@ -9,7 +9,6 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
-import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
@@ -22,11 +21,11 @@ import type {
     ProvidedColumnGroup,
 } from '../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
-import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
+import { _isProtoField } from '../utils/value';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
@@ -158,6 +157,8 @@ export class AgColumn<TValue = any>
     /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
      *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
     public fieldPath: string[] | null = null;
+    /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
+    public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
@@ -202,9 +203,10 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
-    private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
-    // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
-    private colEventSvc: LocalEventService<ColumnEventName> | null = null;
+    /** Compares the column's strings for its effective `accentedSort`, `undefined` when it is off. Built lazily by `_getColumnStringComparator`. */
+    public stringComparator: StringComparator | undefined = undefined;
+    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef changes. */
+    public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
@@ -272,6 +274,8 @@ export class AgColumn<TValue = any>
     }
 
     public override destroy() {
+        // before super.destroy(): 'destroyed' is not a column event, so no column listener receives it
+        this.localEventService = null;
         super.destroy();
         this.allColsIndex = -1;
         this.colSpanIndex = -1;
@@ -280,8 +284,6 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.colFlags &= ~(COL_FLAG_LAST_LEFT_PINNED | COL_FLAG_FIRST_RIGHT_PINNED);
         this.beans.rowSpanSvc?.deregister(this);
-        // listeners stay until destroy, so a walk its own listener interrupted tells it nothing more
-        this.colEventSvc = null;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -322,6 +324,7 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
+        this.stringComparatorVersion = -1; // `accentedSort` may have changed
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
@@ -397,7 +400,7 @@ export class AgColumn<TValue = any>
     }
 
     private initDotNotation(): void {
-        const { field, tooltipField } = this.colDef;
+        const { field, tooltipField, valueGetter, valueSetter } = this.colDef;
         this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
         this.colFlags &= ~COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
@@ -407,6 +410,13 @@ export class AgColumn<TValue = any>
             this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
             if (typeof tooltipField === 'string' && tooltipField.includes('.')) {
                 this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
+            }
+        }
+        this.fieldHasProtoKey = false;
+        if (typeof field === 'string' && _isProtoField(field, this.fieldPath)) {
+            this.fieldHasProtoKey = true;
+            if (!valueGetter || !valueSetter) {
+                this.warn(340, { field });
             }
         }
     }
@@ -487,26 +497,22 @@ export class AgColumn<TValue = any>
         this.colFlags = flags;
     }
 
-    private getColEventSvc(): LocalEventService<ColumnEventName> {
-        let svc = this.colEventSvc;
-        if (!svc) {
-            svc = new LocalEventService();
-            this.colEventSvc = svc;
-        }
-        return svc;
-    }
-
     public __addEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.getColEventSvc().addEventListener(eventType, listener);
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
     }
     public __removeEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        this.localEventService?.removeEventListener(eventType, listener);
     }
 
     /**
@@ -516,14 +522,18 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const colEventSvc = this.getColEventSvc();
-        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
-            this.frameworkEventListenerService,
-            colEventSvc
-        );
-        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-
-        colEventSvc.addEventListener(eventType, listener);
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        const listener =
+            this.beans.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener);
     }
 
     /**
@@ -533,8 +543,12 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener) ?? userListener;
+        localEventService.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -1006,10 +1020,10 @@ export class AgColumn<TValue = any>
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners(type)) {
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners(type)) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnEvent>(this.gos, {
                     type,
                     column: this,
@@ -1027,10 +1041,10 @@ export class AgColumn<TValue = any>
         if (dataTypeSvc?.isPendingInference) {
             dataTypeSvc.columnStateUpdated(this, key);
         }
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners('columnStateUpdated')) {
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners('columnStateUpdated')) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnStateUpdatedEvent>(this.gos, {
                     type: 'columnStateUpdated',
                     column: this,
@@ -1042,18 +1056,21 @@ export class AgColumn<TValue = any>
         }
     }
 
-    private raise(colEventSvc: LocalEventService<ColumnEventName>, event: AgEvent<ColumnEventName>): void {
+    private raise(
+        localEventService: LocalEventService<ColumnEventName | AgBeanStubEvent>,
+        event: AgEvent<ColumnEventName>
+    ): void {
         const colModel = this.beans.colModel;
         if (colModel.colUpdateDepth > 0) {
             colModel.queueColEvent(this, event);
         } else {
-            colEventSvc.dispatchEvent(event);
+            localEventService.dispatchEvent(event);
         }
     }
 
     /** A column destroyed since the event was queued has dropped its listeners. */
     public raiseQueuedEvent(event: AgEvent<ColumnEventName>): void {
-        this.colEventSvc?.dispatchEvent(event);
+        this.localEventService?.dispatchEvent(event);
     }
 }
 
@@ -1088,17 +1105,12 @@ const getColDefSortTypes = (column: AgColumn): number => {
     return res;
 };
 
-const getSortingOrderInputs = (
-    gos: GridOptionsService,
-    column: AgColumn,
-    colDefSortTypes: number
-): (SortDirection | SortDef)[] =>
+const getSortingOrderInputs = (column: AgColumn, colDefSortTypes: number): (SortDirection | SortDef)[] =>
     column.colDef.sortingOrder ??
-    gos.get('sortingOrder') ??
     ((colDefSortTypes & COL_FLAG_SORT_ABSOLUTE) !== 0 ? DEFAULT_ABSOLUTE_SORTING_ORDER : DEFAULT_SORTING_ORDER);
 
-export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): SortDef[] => {
-    const inputs = getSortingOrderInputs(gos, column, getColDefSortTypes(column));
+export const getSortingOrder = (column: AgColumn): SortDef[] => {
+    const inputs = getSortingOrderInputs(column, getColDefSortTypes(column));
     const res = new Array<SortDef>(inputs.length);
     for (let i = 0, len = inputs.length; i < len; ++i) {
         res[i] = getSortDefFromInput(inputs[i]);
@@ -1107,15 +1119,14 @@ export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): Sort
 };
 
 /** The `COL_FLAG_SORT_DEFAULT` and `COL_FLAG_SORT_ABSOLUTE` bits of the sort types the column offers. */
-const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): number => {
-    const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
+const getAvailableSortTypes = (column: AgColumn): number => {
     const flags = column.colFlags;
-    if (cacheable && (flags & COL_FLAG_SORT_TYPES_CACHED) !== 0) {
+    if ((flags & COL_FLAG_SORT_TYPES_CACHED) !== 0) {
         return flags & (COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE);
     }
     let types = getColDefSortTypes(column);
     // add each directional order entry's type — mirrors `getSortDefFromInput` without allocating a SortDef per entry
-    const order = getSortingOrderInputs(gos, column, types);
+    const order = getSortingOrderInputs(column, types);
     for (let i = 0, len = order.length; i < len; ++i) {
         const input = order[i];
         if (!_isSortDefValid(input)) {
@@ -1128,16 +1139,13 @@ const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): numbe
             types |= sortTypeFlag(input.type);
         }
     }
-    if (cacheable) {
-        column.colFlags =
-            (flags & ~(COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE)) | types | COL_FLAG_SORT_TYPES_CACHED;
-    }
+    column.colFlags = (flags & ~(COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE)) | types | COL_FLAG_SORT_TYPES_CACHED;
     return types;
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _isSortTypeAvailable = (gos: GridOptionsService, column: AgColumn, type: SortType): boolean =>
-    (getAvailableSortTypes(gos, column) & sortTypeFlag(type)) !== 0;
+export const _isSortTypeAvailable = (column: AgColumn, type: SortType): boolean =>
+    (getAvailableSortTypes(column) & sortTypeFlag(type)) !== 0;
 
 export const isSortDirectionValid = (maybeSortDir: unknown): maybeSortDir is SortDirection =>
     maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
@@ -1207,9 +1215,15 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
     return pinned === 'left' || pinned === true ? 0 : 1;
 };
 
-/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
-export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+/** The column after `col` in a shift resize: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftNext = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
     col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+
+/** The column a shift resize of `col` takes from: the one after it, when resizable. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null => {
+    const next = getShiftNext(visibleCols, col);
+    return next?.isResizable() ? next : null;
+};
 
 /** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
 export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {

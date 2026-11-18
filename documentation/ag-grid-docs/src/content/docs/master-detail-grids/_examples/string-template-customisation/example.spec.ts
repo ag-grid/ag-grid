@@ -1,9 +1,7 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Detail rows use a static string template with a fixed title', async ({ agFramework, page }) => {
-        test.skip(agFramework.includes('react'), 'Example not for React.');
-
+    test.eachFramework('Detail rows use a static string template with a fixed title', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

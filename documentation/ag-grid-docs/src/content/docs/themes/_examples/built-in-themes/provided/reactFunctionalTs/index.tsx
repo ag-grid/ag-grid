@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -17,10 +18,12 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={[AllEnterpriseModule]}>
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <p style={{ flex: 0 }}>
-                    Theme: <PartSelector options={themes} value={theme} setValue={setBaseTheme} />
-                </p>
+            <div className="example-wrapper">
+                <div className="example-controls">
+                    <div className="controls-row">
+                        Theme: <PartSelector options={themes} value={theme} setValue={setBaseTheme} />
+                    </div>
+                </div>
                 <div style={{ flex: 1 }}>
                     <AgGridReact
                         theme={theme.theme}
@@ -38,7 +41,7 @@ const GridExample = () => {
 type PartSelectorProps<T extends { id: string } | null> = {
     options: T[];
     value: T;
-    setValue: (value: T) => void;
+    setValue: Dispatch<SetStateAction<T>>;
 };
 
 const PartSelector = <T extends { id: string; variant?: string } | null>({
@@ -46,11 +49,7 @@ const PartSelector = <T extends { id: string; variant?: string } | null>({
     value,
     setValue,
 }: PartSelectorProps<T>) => (
-    <select
-        onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)}
-        style={{ marginRight: 16 }}
-        value={value?.id}
-    >
+    <select onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)} value={value?.id}>
         {options.map((option, i) => (
             <option key={i} value={option?.id}>
                 {option?.variant || option?.id || '(unchanged)'}

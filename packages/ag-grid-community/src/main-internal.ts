@@ -9,6 +9,7 @@ export type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -138,6 +139,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,
@@ -359,6 +361,7 @@ export type { GroupValueResult, IShowRowGroupColsValueService } from './interfac
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export { _getColumnStringComparator } from './sort/accentedSort';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
 export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
@@ -376,6 +379,7 @@ export {
     _findEnterpriseCoreModule,
     _getGridRegisteredModules,
     _registerModule,
+    _resetModuleRegistry,
     _setUmd,
 } from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
@@ -460,6 +464,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

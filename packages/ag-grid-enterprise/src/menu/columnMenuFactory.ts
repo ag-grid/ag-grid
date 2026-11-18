@@ -139,7 +139,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 column,
                 beans
             );
-            if (_isSortTypeAvailable(gos, column, 'default')) {
+            if (_isSortTypeAvailable(column, 'default')) {
                 if (!(isAscending && isDefaultSort)) {
                     result.push('sortAscending');
                 }
@@ -147,7 +147,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                     result.push('sortDescending');
                 }
             }
-            if (_isSortTypeAvailable(gos, column, 'absolute')) {
+            if (_isSortTypeAvailable(column, 'absolute')) {
                 if (!(isAscending && isAbsoluteSort)) {
                     result.push('sortAbsoluteAscending');
                 }

@@ -22,9 +22,12 @@
         padding-top: var(--ag-spacing);
     }
 
+    /* set the variables rather than the properties: .ag-picker-field-wrapper has equal specificity and its CSS may be injected after this */
     .ag-picker-field-wrapper {
-        background-color: transparent;
-        border: 0;
+        --ag-picker-button-background-color: transparent;
+        --ag-picker-button-focus-background-color: transparent;
+        --ag-picker-button-border: 0;
+        --ag-picker-button-focus-border: 0;
     }
 
     .ag-picker-field-display {

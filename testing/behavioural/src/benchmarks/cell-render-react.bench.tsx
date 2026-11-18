@@ -12,14 +12,14 @@
 // commit layer); keep the two reports separate.
 import React from 'react';
 import { flushSync } from 'react-dom';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, Module } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
 import { ReactBenchGrid } from './bench-react-utils';
-import { benchDefaults, untimedPrepare } from './bench-utils';
+import { bench, untimedPrepare } from './bench-utils';
 
 const modules: Module[] = [AllEnterpriseModule];
 
@@ -81,7 +81,6 @@ const defineReactFillSuite = (suiteName: string, cellRenderer?: unknown): void =
                     }
                 ),
                 {
-                    ...benchDefaults(),
                     setup: async () => {
                         await grid.reset();
                         await grid.mount({

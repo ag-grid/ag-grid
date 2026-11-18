@@ -21,6 +21,10 @@ export const link: Schema = {
         const nodeAttributes = node.transformAttributes(config);
         const hasCodeChild = node.children.some((child: { type: string }) => child.type === 'code');
 
+        // Links authored as './page' follow the visitor's framework; ones that name a framework in
+        // the path keep their destination. Mark the former so `FrameworkLinks` can retarget them.
+        const followsFramework = config.variables?.markFrameworkLinks && nodeAttributes.href?.startsWith('./');
+
         const hrefWithFramework = urlWithPrefix({ url: nodeAttributes.href, framework });
         // Replace markdoc variables, as markdoc does not parse attributes
         const href = hrefWithFramework.replace('{% $agGridVersion %}', agGridVersion);
@@ -29,6 +33,7 @@ export const link: Schema = {
             ...nodeAttributes,
             ...(nodeAttributes.isExternal ? { target: '_blank' } : undefined),
             href,
+            ...(followsFramework ? { 'data-framework-link': 'true' } : undefined),
             ...(hasCodeChild ? { class: 'meta-link' } : undefined),
         };
 

@@ -1,9 +1,13 @@
 export { Direction } from './constants/direction';
 export type { HorizontalDirection, VerticalDirection } from './constants/direction';
 export { _normaliseQwertyAzerty } from './constants/keyCode';
-export { AgBeanStub } from './core/agBeanStub';
-export type { AgBeanStubEvent } from './core/agBeanStub';
-export { AgComponentStub } from './core/agComponentStub';
+export { AgAbstractBean } from './core/agAbstractBean';
+export { createBeanGraph } from './core/agBeanGraph';
+export { createBeanList } from './core/agBeanList';
+export type { AgBeanSource } from './core/agBeanList';
+export type { AgBeanGraph, AgBeansFor, AgBeanView, AgDeclaredDeps, AgGraphBean } from './core/agBeanGraph';
+export type { AgBeanStubEvent } from './core/agAbstractBean';
+export { AgAbstractComponent } from './core/agAbstractComponent';
 export { AgContext } from './core/agContext';
 export type { AgContextParams, AgSingletonBeanClass } from './core/agContext';
 export { BaseAriaAnnouncementService } from './core/baseAriaAnnouncementService';
@@ -32,8 +36,12 @@ export type {
     VisibleChangedEvent,
 } from './interfaces/agComponent';
 export type { AgCoreBean, AgSingletonBean } from './interfaces/agCoreBean';
-export type { AgCoreBeanCollection } from './interfaces/agCoreBeanCollection';
-export type { AgFrameworkOverrides, FrameworkOverridesIncomingSource } from './interfaces/agFrameworkOverrides';
+export type { AgBeanCollection } from './interfaces/agBeanCollection';
+export type {
+    AgFrameworkOverrides,
+    AgListenerWrapper,
+    FrameworkOverridesIncomingSource,
+} from './interfaces/agFrameworkOverrides';
 export type { AgCheckboxChangedEvent, AgStylesChangedEvent, BaseEvents } from './interfaces/baseEvents';
 export type { BaseProperties } from './interfaces/baseProperties';
 export type { AfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
@@ -41,7 +49,7 @@ export type { IAriaAnnouncementService } from './interfaces/iAriaAnnouncementSer
 export type { ClassImp, IContext } from './interfaces/iContext';
 export type { IDragService } from './interfaces/iDrag';
 export type { AgDraggingEvent, AgDragSource, AgDropTarget, IDragAndDropService } from './interfaces/iDragAndDrop';
-export type { AgEventService, WithoutCommon } from './interfaces/iEvent';
+export type { AgEventService, AgRawEvents, ICommonSource, WithoutCommon } from './interfaces/iEvent';
 export type { IAgEventEmitter } from './interfaces/iEventEmitter';
 export type { IconValue } from './interfaces/iIcon';
 export type { IIconService } from './interfaces/iIconService';
@@ -112,6 +120,7 @@ export { BaseTooltipStateManager } from './tooltip/baseTooltipStateManager';
 export type { BaseTooltipParams } from './tooltip/baseTooltipStateManager';
 export {
     _getAriaCheckboxStateName,
+    _getAriaDescribedBy,
     _getAriaLabel,
     _getAriaPosInSet,
     _removeAriaExpanded,
@@ -137,6 +146,7 @@ export {
     _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
+    _setAriaPressed,
     _setAriaReadOnly,
     _setAriaRole,
     _setAriaRowCount,
@@ -180,7 +190,9 @@ export {
 } from './utils/date';
 export {
     _getActiveDomElement,
+    _getDeepActiveElement,
     _getDocument,
+    _getElementRootNode,
     _getPageBody,
     _getRootNode,
     _getWindow,
@@ -221,10 +233,13 @@ export {
     _setFixedWidth,
     _setScrollLeft,
     _setVisible,
+    _throttleToFrame,
+    FORM_FIELD_SELECTOR,
 } from './utils/dom';
 export type { AgElementParams } from './utils/dom';
 export { _downloadFile } from './utils/download';
 export {
+    _addManagedElementListeners,
     _anchorElementToMouseMoveEvent,
     _areEventsNear,
     _getFirstActiveTouch,
@@ -245,9 +260,11 @@ export {
     _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _resetKeyboardMode,
     _scrollHorizontallyToShow,
 } from './utils/focus';
-export { _batchCall, _debounce, _doOnce, _throttle } from './utils/function';
+export { _debounce } from './utils/debounce';
+export { _batchCall, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
     _defaultComparator,
@@ -259,6 +276,7 @@ export {
     _missing,
     _toStringOrNull,
 } from './utils/generic';
+export type { StringComparator } from './utils/generic';
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
 export { _isPromise } from './utils/promise';

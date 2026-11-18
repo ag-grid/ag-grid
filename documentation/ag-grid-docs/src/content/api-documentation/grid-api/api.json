@@ -338,6 +338,12 @@
                 "url": "./formulas/#caching"
             }
         },
+        "refreshCalculatedColumns": {
+            "more": {
+                "name": "Refreshing Calculated Columns",
+                "url": "./calculated-columns-validation/#refreshing-calculated-columns"
+            }
+        },
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",
@@ -827,9 +833,19 @@
         "meta": {
             "displayName": "Scrolling"
         },
-        "ensureIndexVisible": {},
+        "ensureIndexVisible": {
+            "more": {
+                "name": "Scrolling via API",
+                "url": "./scrolling/#scrolling-via-api"
+            }
+        },
         "ensureNodeVisible": {},
-        "ensureColumnVisible": {},
+        "ensureColumnVisible": {
+            "more": {
+                "name": "Scrolling via API",
+                "url": "./scrolling/#scrolling-via-api"
+            }
+        },
         "getHorizontalPixelRange": {},
         "getVerticalPixelRange": {}
     },
@@ -964,6 +980,18 @@
     "accessories": {
         "meta": {
             "displayName": "Accessories"
+        },
+        "openCalculatedColumnDialog": {
+            "more": {
+                "name": "Calculated Column Dialog",
+                "url": "./calculated-columns-dialog/#opening-the-dialog"
+            }
+        },
+        "openAddCalculatedColumnDialog": {
+            "more": {
+                "name": "Calculated Column Dialog",
+                "url": "./calculated-columns-dialog/#opening-the-dialog"
+            }
         },
         "showColumnChooser": {
             "more": {

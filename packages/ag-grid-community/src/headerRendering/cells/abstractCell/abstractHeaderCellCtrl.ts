@@ -1,11 +1,11 @@
 import type { HorizontalDirection } from 'ag-stack';
 import {
     KeyCode,
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _batchCall,
     _exists,
     _getActiveDomElement,
-    _getDocument,
     _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
@@ -76,7 +76,6 @@ export abstract class AbstractHeaderCellCtrl<
     public lastFocusEvent: KeyboardEvent | null = null;
 
     protected dragSource: GridDragSource | null = null;
-    protected reAttemptToFocus: boolean = false;
 
     // what was last written to the comp, so a layout that leaves it costs no write; `-1` or null for a new one
     private drawnWidth = -1;
@@ -122,11 +121,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         // Post SetComp
         // Actions that need to be done after the component is setup and all the features and listeners are wired
-        if (this.reAttemptToFocus) {
-            this.reAttemptToFocus = false;
-            if (this.beans.focusSvc.isDeferredFocusCurrent(this)) {
-                this.focus(this.lastFocusEvent ?? undefined);
-            }
+        if (this.beans.focusSvc.takeOwedHeaderFocus(this)) {
+            this.focus(this.lastFocusEvent ?? undefined);
         }
     }
 
@@ -175,7 +171,7 @@ export abstract class AbstractHeaderCellCtrl<
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
-        compBean.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(compBean, this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
 
@@ -255,8 +251,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = _getDocument(beans);
-                const notYetInDom = !doc?.contains(wrapperElement);
+                const notYetInDom = !wrapperElement.isConnected;
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
@@ -473,7 +468,6 @@ export abstract class AbstractHeaderCellCtrl<
         const { eGui } = this;
 
         if (!eGui) {
-            this.reAttemptToFocus = true;
             this.beans.focusSvc.deferFocus(this);
         } else {
             this.lastFocusEvent = event ?? null;
@@ -632,6 +626,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public override destroy(): void {
+        this.beans.focusSvc.dropOwedHeaderFocus(this);
         destroyCompBean(this);
         super.destroy();
 

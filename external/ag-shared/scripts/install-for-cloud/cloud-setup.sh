@@ -37,6 +37,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${AG_CLOUD_REPO_ROOT:-$(cd "$SCRIPT_DIR/../../../.." && pwd)}"
+. "$SCRIPT_DIR/registry-env.sh"
 
 # NOT under $HOME. This script runs as root, so $HOME is /root, while the session
 # that later reads the cache runs as another user with its own home (/home/user in

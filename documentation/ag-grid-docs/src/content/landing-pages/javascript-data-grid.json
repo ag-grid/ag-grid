@@ -7,6 +7,7 @@
     "packageName": "ag-grid-community",
     "docsPath": "javascript-data-grid",
     "analyticsPrefix": "javascript-data-grid",
+    "technicalReviewer": "james",
 
     "sections": [
         {

@@ -71,6 +71,7 @@ describe('cell edit validation pass caching', () => {
         StatefulValidationEditor.deferNextInit = false;
         StatefulValidationEditor.validationCalls = 0;
         StatefulValidationEditor.validationErrors = () => null;
+        vi.restoreAllMocks();
     });
 
     const createGrid = (
@@ -299,6 +300,7 @@ describe('cell edit validation pass caching', () => {
 
     test('revert-mode full-row popup close populates validation once and reuses that result', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [98] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const rowData = [{ value: 'source', other: 'sibling' }];
         const api = await createGrid(rowData, {
             columnDefs: [
@@ -325,6 +327,7 @@ describe('cell edit validation pass caching', () => {
 
         await user.keyboard('{Enter}');
         expect(rowData[0].value).toBe('updated');
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #98');
     });
 
     test('mid-batch API cancellation invokes no validators and preserves the prior pending value', async () => {

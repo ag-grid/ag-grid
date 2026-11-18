@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 
 // PLACEHOLDER MAIN FILE NOT ACTUALLY USED IN THE EXAMPLE AS VUE3 PROVIDED EXAMPLES ONLY
@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IRow> = {
         { field: 'category' },
         {
             field: 'price',
-            cellRenderer: (params) => `£${params.value.toFixed(2)}`,
+            cellRenderer: (params: ICellRendererParams<IRow>) => `£${params.value.toFixed(2)}`,
         },
     ],
     rowData: [

@@ -1,5 +1,5 @@
 import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IFilterAngularComp } from 'ag-grid-angular';
@@ -30,7 +30,7 @@ export class PersonFilter implements IFilterAngularComp {
     @ViewChild('eFilterText') eFilterText!: ElementRef;
 
     filterParams!: IFilterParams;
-    filterText = '';
+    filterText = signal('');
 
     agInit(params: IFilterParams): void {
         this.filterParams = params;
@@ -41,7 +41,7 @@ export class PersonFilter implements IFilterAngularComp {
         let passed = true;
         const { node } = params;
 
-        this.filterText
+        this.filterText()
             .toLowerCase()
             .split(' ')
             .forEach((filterWord) => {
@@ -56,7 +56,7 @@ export class PersonFilter implements IFilterAngularComp {
     }
 
     isFilterActive(): boolean {
-        return this.filterText != null && this.filterText !== '';
+        return this.filterText() != null && this.filterText() !== '';
     }
 
     getModel() {
@@ -64,11 +64,11 @@ export class PersonFilter implements IFilterAngularComp {
             return null;
         }
 
-        return { value: this.filterText };
+        return { value: this.filterText() };
     }
 
     setModel(model: any) {
-        this.filterText = model == null ? null : model.value;
+        this.filterText.set(model == null ? null : model.value);
     }
 
     onInputChanged() {

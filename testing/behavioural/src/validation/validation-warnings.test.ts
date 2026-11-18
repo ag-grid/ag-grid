@@ -1,7 +1,7 @@
 import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { ColGroupDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -22,6 +22,25 @@ describe('ag-grid validation warnings', () => {
         gridsManager.reset();
         consoleWarnSpy.mockRestore();
     });
+
+    test.each(['hover', 'focus', 'hoverOrFocus', 'hoverAnddFocus'])(
+        'validates tooltipTrigger: %s',
+        (tooltipTrigger) => {
+            const options: GridOptions = { columnDefs: [], rowData: [] };
+            Object.assign(options, { tooltipTrigger });
+            gridsManager.createGrid('tooltip-trigger', options);
+
+            if (tooltipTrigger === 'hoverAnddFocus') {
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining('warning #320'),
+                    expect.stringContaining('tooltipTrigger'),
+                    expect.any(String)
+                );
+            } else {
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+            }
+        }
+    );
 
     test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -86,6 +105,24 @@ describe('ag-grid validation warnings', () => {
             );
         });
 
+        test('warns for unknown column group definition properties', () => {
+            const group: ColGroupDef = Object.assign(
+                { groupId: 'g', children: [{ field: 'a' }] },
+                { notAGroupProp: true }
+            );
+            gridsManager.createGrid('myGrid', {
+                defaultColDef: { cellDataType: false },
+                columnDefs: [group],
+                rowData: [{ a: 1 }],
+            });
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #307'),
+                expect.stringContaining('property `notAGroupProp`'),
+                expect.any(String)
+            );
+        });
+
         test('warns only once per property name across multiple calls', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 defaultColDef: { cellDataType: false },
@@ -131,49 +168,20 @@ describe('ag-grid validation warnings', () => {
         });
     });
 
-    describe('suppressPropertyNamesCheck', () => {
-        test('suppresses invalid property name warnings', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                ['notARealOption' as any]: true,
-            } as GridOptions);
+    test('suppressPropertyNamesCheck no longer silences unknown-property warnings and is itself reported', () => {
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [],
+            suppressPropertyNamesCheck: true,
+            notARealOption: 1,
+        } as GridOptions);
 
-            const invalidPropWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('Invalid `gridOptions` property `notARealOption`')
+        const invalidPropWarnings = (name: string) =>
+            consoleWarnSpy.mock.calls.filter((args) =>
+                args.join(' ').includes(`Invalid \`gridOptions\` property \`${name}\``)
             );
-            expect(invalidPropWarnings).toHaveLength(0);
-        });
-
-        test('suppresses docs URL warning', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                ['notARealOption' as any]: true,
-            } as GridOptions);
-
-            const docsWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('One or more `gridOptions` properties are not recognised.')
-            );
-            expect(docsWarnings).toHaveLength(0);
-        });
-
-        test('does not suppress deprecation warnings', () => {
-            gridsManager.createGrid('myGrid', {
-                columnDefs: [],
-                rowData: [],
-                suppressPropertyNamesCheck: true,
-                suppressLoadingOverlay: true,
-            } as GridOptions);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #306'),
-                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
-                expect.any(String)
-            );
-        });
+        expect(invalidPropWarnings('notARealOption')).toHaveLength(1);
+        expect(invalidPropWarnings('suppressPropertyNamesCheck')).toHaveLength(1);
     });
 
     describe('deprecation warnings', () => {

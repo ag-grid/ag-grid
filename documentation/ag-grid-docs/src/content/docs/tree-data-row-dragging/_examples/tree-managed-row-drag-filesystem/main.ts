@@ -67,7 +67,7 @@ const gridOptions: GridOptions<IFile> = {
         rows = rows.filter((row) => !isReadonlyFolder(row) && !isInsideReadonlyFolder(row));
 
         if (newParent && newParent.data && newParent.data.type !== 'folder') {
-            // Block changing parents on anything that is not of type 'folder'
+            // A file cannot contain other rows: drop next to it instead of inside it
             return { newParent: null, rows };
         }
 

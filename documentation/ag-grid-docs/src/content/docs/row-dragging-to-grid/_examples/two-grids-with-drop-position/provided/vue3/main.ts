@@ -38,7 +38,7 @@ ModuleRegistry.registerModules([
 
 let rowIdSequence = 100;
 
-function createDataItem(color) {
+function createDataItem(color: string) {
     const obj = {
         id: rowIdSequence++,
         color: color,
@@ -49,26 +49,28 @@ function createDataItem(color) {
     return obj;
 }
 
-const createRowBlock = (blocks) =>
+const createRowBlock = (blocks: number) =>
     Array.apply(null, Array(blocks || 1))
         .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
         .reduce((prev, curr) => prev.concat(curr), []);
 
 const VueExample = defineComponent({
     /* html */
-    template: `<div class="example-wrapper">
+    template: `<div class="example-wrapper example-wrapper--row">
 
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eLeftGrid">
                     <ag-grid-vue
@@ -93,16 +95,18 @@ const VueExample = defineComponent({
             </div>
 
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eRightGrid">
                     <ag-grid-vue
@@ -126,10 +130,10 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: [],
-            rightRowData: [],
-            leftApi: null,
-            rightApi: null,
+            leftRowData: [] as any[],
+            rightRowData: [] as any[],
+            leftApi: null as GridApi | null,
+            rightApi: null as GridApi | null,
             rowClassRules: <RowClassRules>{
                 'red-row': 'data.color == "Red"',
                 'green-row': 'data.color == "Green"',
@@ -157,7 +161,7 @@ const VueExample = defineComponent({
             return String(params.data.id);
         },
 
-        onGridReady(params: GridReadyEvent, side: number) {
+        onGridReady(params: GridReadyEvent, side: 'Left' | 'Right') {
             const api = params.api;
             if (side === 'Left') {
                 this.leftApi = api;
@@ -173,13 +177,13 @@ const VueExample = defineComponent({
             }
         },
 
-        addRecordToGrid(side, data) {
+        addRecordToGrid(side: string, data: any) {
             // if data missing or data has no it, do nothing
             if (!data || data.id == null) {
                 return;
             }
 
-            const api = side === 'left' ? this.leftApi : this.rightApi;
+            const api = (side === 'left' ? this.leftApi : this.rightApi)!;
             // do nothing if row is already in the grid, otherwise we would have duplicates
             const rowAlreadyInGrid = !!api.getRowNode(data.id);
             let transaction;
@@ -196,16 +200,16 @@ const VueExample = defineComponent({
             api.applyTransaction(transaction);
         },
 
-        onFactoryButtonClick(e) {
-            var button = e.currentTarget,
-                buttonColor = button.getAttribute('data-color'),
-                side = button.getAttribute('data-side'),
+        onFactoryButtonClick(e: MouseEvent) {
+            var button = e.currentTarget as HTMLElement,
+                buttonColor = button.getAttribute('data-color')!,
+                side = button.getAttribute('data-side')!,
                 data = createDataItem(buttonColor);
 
             this.addRecordToGrid(side, data);
         },
 
-        binDrop(data) {
+        binDrop(data: any) {
             // if data missing or data has no id, do nothing
             if (!data || data.id == null) {
                 return;
@@ -216,38 +220,43 @@ const VueExample = defineComponent({
             };
 
             [this.leftApi, this.rightApi].forEach((api) => {
-                var rowsInGrid = !!api.getRowNode(data.id);
+                var rowsInGrid = !!api!.getRowNode(data.id);
 
                 if (rowsInGrid) {
-                    api.applyTransaction(transaction);
+                    api!.applyTransaction(transaction);
                 }
             });
         },
 
         addBinZone(api: GridApi) {
+            const eBin = this.$refs.eBin as HTMLElement;
+            const eBinIcon = this.$refs.eBinIcon as HTMLElement;
             const dropZone = <RowDropZoneParams>{
-                getContainer: () => this.$refs.eBinIcon,
+                getContainer: () => eBinIcon,
                 onDragEnter: () => {
-                    this.$refs.eBin.style.color = 'blue';
-                    this.$refs.eBinIcon.style.transform = 'scale(1.5)';
+                    eBin.style.color = 'blue';
+                    eBinIcon.style.transform = 'scale(1.5)';
                 },
                 onDragLeave: () => {
-                    this.$refs.eBin.style = '';
-                    this.$refs.eBinIcon.style.transform = 'scale(1)';
+                    eBin.style = '';
+                    eBinIcon.style.transform = 'scale(1)';
                 },
                 onDragStop: (params) => {
                     this.binDrop(params.node.data);
-                    this.$refs.eBin.style = '';
-                    this.$refs.eBinIcon.style.transform = 'scale(1)';
+                    eBin.style = '';
+                    eBinIcon.style.transform = 'scale(1)';
                 },
             };
 
             api.addRowDropZone(dropZone);
         },
 
-        addGridDropZone(side, api) {
-            const dropApi = side === 'Left' ? this.rightApi : this.leftApi;
+        addGridDropZone(side: string, api: GridApi) {
+            const dropApi = (side === 'Left' ? this.rightApi : this.leftApi)!;
             const dropZone = dropApi.getRowDropZoneParams();
+            if (!dropZone) {
+                return;
+            }
 
             api.addRowDropZone(dropZone);
         },

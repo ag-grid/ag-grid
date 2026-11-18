@@ -1,4 +1,10 @@
-import { RefPlaceholder, _getActiveDomElement, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -64,8 +70,8 @@ class ColumnHeaderEditContent extends Component {
             this.eCancel.textContent = translate('columnHeaderEditCancel', 'Cancel');
             this.eApply.type = 'button';
             this.eCancel.type = 'button';
-            this.addManagedElementListeners(this.eApply, { click: () => this.onApply() });
-            this.addManagedElementListeners(this.eCancel, { click: () => this.onCancel() });
+            _addManagedElementListeners(this, this.eApply, { click: () => this.onApply() });
+            _addManagedElementListeners(this, this.eCancel, { click: () => this.onCancel() });
         }
     }
 
@@ -73,6 +79,10 @@ class ColumnHeaderEditContent extends Component {
         const inputEl = this.eEditor.getInputElement();
         inputEl.focus();
         inputEl.select();
+    }
+
+    public isEditorElement(element: EventTarget | null): boolean {
+        return element === this.eEditor.getInputElement();
     }
 
     public getValue(): string {
@@ -137,9 +147,13 @@ export class ColumnHeaderEditPopup extends BeanStub {
         );
         this.dialog = dialog;
 
-        this.addManagedElementListeners(dialog.getGui(), {
+        _addManagedElementListeners(this, dialog.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
+                    // Enter on a button (Close, Apply, Cancel) activates that button rather than committing.
+                    if (!contentComp.isEditorElement(event.target)) {
+                        return;
+                    }
                     event.preventDefault();
                     // Live already applied each change, so Enter just closes keeping it; deferred commits.
                     if (liveApply) {
@@ -200,7 +214,7 @@ export class ColumnHeaderEditPopup extends BeanStub {
             return;
         }
         const activeEl = _getActiveDomElement(this.beans);
-        if (!activeEl || activeEl === activeEl.ownerDocument.body || this.dialog?.getGui().contains(activeEl)) {
+        if (_isNothingFocused(this.beans, activeEl) || this.dialog?.getGui().contains(activeEl)) {
             el.focus();
         }
     }

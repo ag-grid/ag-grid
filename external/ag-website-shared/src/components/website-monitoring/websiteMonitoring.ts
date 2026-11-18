@@ -130,7 +130,6 @@ async function startMonitoring({
         if (state === 'starting') {
             state = 'stopped';
         }
-        // eslint-disable-next-line no-console
         console.warn('Website monitoring failed to start', error);
     }
 }

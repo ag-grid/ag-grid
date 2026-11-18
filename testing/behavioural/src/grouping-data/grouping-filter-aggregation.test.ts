@@ -3,6 +3,7 @@ import {
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
+    asyncSetTimeout,
     cachedJSONObjects,
     setRowDataChecked,
     unindentText,
@@ -17,6 +18,7 @@ import {
     RowSelectionModule,
     TextFilterModule,
 } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping filter aggregation', () => {
@@ -354,5 +356,54 @@ describe('ag-grid grouping filter aggregation', () => {
              -> France,,,1,
             ,Jean Dupont,Tennis,1,false
         `);
+    });
+
+    describe('filtering groups by their aggregates', () => {
+        const createGrid = (options: GridOptions = {}) =>
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'athlete' },
+                    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                groupAggFiltering: true,
+                groupDefaultExpanded: -1,
+                rowData: [
+                    { country: 'Ireland', athlete: 'John Smith', gold: 1 },
+                    { country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+                    { country: 'Italy', athlete: 'Mario Rossi', gold: 3 },
+                    { country: 'France', athlete: 'Jean Dupont', gold: 1 },
+                ],
+                ...options,
+            });
+        const shownGroups = (api: GridApi) => {
+            const groups: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => {
+                if (node.group) {
+                    groups.push(node.key!);
+                }
+            });
+            return groups;
+        };
+
+        test('alwaysPassFilter keeps a group its aggregate filters out', () => {
+            const api = createGrid({ alwaysPassFilter: (node) => node.key === 'France' });
+            api.setFilterModel({ gold: { filterType: 'number', type: 'greaterThan', filter: 2 } });
+            expect(shownGroups(api)).toEqual(['Ireland', 'Italy', 'France']);
+        });
+
+        test('a new aggregation function refilters the groups by the new aggregates, telling filterChanged', async () => {
+            const onFilterChanged = vi.fn();
+            const api = createGrid({ onFilterChanged });
+            api.setFilterModel({ gold: { filterType: 'number', type: 'greaterThan', filter: 2 } });
+            expect(shownGroups(api)).toEqual(['Ireland', 'Italy']);
+            await asyncSetTimeout(0);
+            onFilterChanged.mockClear();
+
+            api.setColumnAggFunc('gold', 'max');
+            expect(shownGroups(api)).toEqual(['Italy']);
+            await asyncSetTimeout(0);
+            expect(onFilterChanged).toHaveBeenCalledTimes(1);
+        });
     });
 });

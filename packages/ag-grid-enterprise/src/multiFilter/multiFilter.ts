@@ -28,6 +28,7 @@ import {
     FilterWrapperComp,
     ProvidedFilter,
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _resolveFilter,
@@ -220,7 +221,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (handler) {
                 return model != null;
             }
-            return filter.isFilterActive();
+            return _isFilterCompActive(this.beans, filter);
         });
     }
 
@@ -245,7 +246,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     })
                 );
             }
-            return !filter.isFilterActive() || filter.doesFilterPass(params);
+            // Runs per row, so it skips the #67 warning `_isFilterCompActive` gives a child without isFilterActive.
+            return !filter.isFilterActive?.() || filter.doesFilterPass(params);
         });
     }
 
@@ -288,7 +290,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 if (handler) {
                     return model;
                 }
-                return filter.isFilterActive() ? filter.getModel() : null;
+                return _isFilterCompActive(this.beans, filter) ? filter.getModel() : null;
             }),
         };
 
@@ -324,7 +326,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 wrapper.model = modelForFilter;
                 promises.push(
                     _refreshHandlerAndUi(
-                        () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
+                        // a child refusing the model has refreshed its ui with the one it stored instead
+                        () =>
+                            AgPromise.resolve(
+                                wrapper.state === newState
+                                    ? { filter: filter as any, filterParams: filterParams as any }
+                                    : undefined
+                            ),
                         handler,
                         handlerParams!,
                         modelForFilter,
@@ -616,18 +624,18 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     private updateActiveListForFilter(index: number, filter?: IFilterComp): void {
-        this.updateActiveList(index, () => filter?.isFilterActive());
+        this.updateActiveList(index, _isFilterCompActive(this.beans, filter));
     }
 
     private updateActiveListForHandler(index: number, model?: any): void {
-        this.updateActiveList(index, () => model != null);
+        this.updateActiveList(index, model != null);
     }
 
-    private updateActiveList(index: number, isActive: () => boolean | undefined): void {
+    private updateActiveList(index: number, isActive: boolean): void {
         const activeFilterIndices = this.activeFilterIndices;
         _removeFromArray(this.activeFilterIndices, index);
 
-        if (isActive()) {
+        if (isActive) {
             activeFilterIndices.push(index);
         }
     }

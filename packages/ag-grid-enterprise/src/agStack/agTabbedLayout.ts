@@ -1,6 +1,6 @@
 import type {
     AfterGuiAttachedParams,
-    AgCoreBeanCollection,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -9,6 +9,7 @@ import type {
 import {
     AgTabGuardComp,
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _createAgElement,
     _findNextFocusableElement,
@@ -16,8 +17,11 @@ import {
     _getActiveDomElement,
     _getDocument,
     _isKeyboardMode,
+    _setAriaControls,
+    _setAriaControlsAndLabel,
     _setAriaLabel,
     _setAriaRole,
+    _setAriaSelected,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
@@ -41,7 +45,7 @@ function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
             {
                 tag: 'div',
                 ref: 'eBody',
-                role: 'presentation',
+                role: 'tabpanel',
                 cls: 'ag-tabs-body' + cssClass ? ` ${cssClass}-body` : '',
             },
         ],
@@ -49,11 +53,11 @@ function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgTabbedLayout<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TContainerType extends string = string,
 > extends AgTabGuardComp<
@@ -84,6 +88,7 @@ export class AgTabbedLayout<
 
     public postConstruct() {
         this.setupHeader();
+        this.eBody.id = `ag-${this.getCompId()}-tabpanel`;
 
         if (this.params.items) {
             for (const item of this.params.items) {
@@ -127,7 +132,7 @@ export class AgTabbedLayout<
         const eIcon = this.beans.iconSvc.createIconNoSpan('close')!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
-        this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
+        _addManagedElementListeners(this, eCloseButton, { click: () => this.params.onCloseClicked?.() });
         const eCloseButtonWrapper = _createAgElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         eCloseButtonWrapper.appendChild(eCloseButton);
@@ -261,7 +266,7 @@ export class AgTabbedLayout<
             tag: 'span',
             cls: 'ag-tab',
             role: 'tab',
-            attrs: { tabindex: '-1' },
+            attrs: { id: `ag-${this.getCompId()}-tab-${this.items.length}`, tabindex: '-1', 'aria-selected': 'false' },
         });
         eHeaderButton.appendChild(item.title);
 
@@ -315,7 +320,7 @@ export class AgTabbedLayout<
 
             if (this.params.keepScrollPosition) {
                 const scrollableContainer = tabbedItem.getScrollableContainer?.() ?? body;
-                [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
+                [this.lastScrollListener] = _addManagedElementListeners(this, scrollableContainer, {
                     scroll: () => {
                         this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
                     },
@@ -331,11 +336,16 @@ export class AgTabbedLayout<
         });
 
         if (this.activeItem) {
-            this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
+            const ePreviousButton = this.activeItem.eHeaderButton;
+            ePreviousButton.classList.remove('ag-tab-selected');
+            _setAriaSelected(ePreviousButton, false);
+            _setAriaControls(ePreviousButton, null);
             this.activeItem.tabbedItem.afterDetachedCallback?.();
         }
 
         eHeaderButton.classList.add('ag-tab-selected');
+        _setAriaSelected(eHeaderButton, true);
+        _setAriaControlsAndLabel(eHeaderButton, this.eBody);
 
         this.activeItem = wrapper;
     }

@@ -6,7 +6,13 @@ import tseslint from 'typescript-eslint';
 import { noRawHistoryWrites } from './eslint.history-rules.mjs';
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            // Without it typescript-eslint infers the root, which fails once an editor loads several configs.
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     // { plugins: { 'import-x': eslintImportX } },
@@ -46,6 +52,17 @@ export default [
         rules: {
             'no-undef': 'off',
         },
+    },
+    {
+        // TypeScript reports undefined names itself, and no-undef cannot see type-only globals such as `NodeJS`.
+        files: ['**/*.{ts,tsx}'],
+        rules: {
+            'no-undef': 'off',
+        },
+    },
+    {
+        files: ['src/components/example-runner/scripts/sw.js'],
+        languageOptions: { globals: { ...globals.serviceworker, ts: 'readonly' } },
     },
     {
         // The helper itself is the one place a raw write belongs.

@@ -3,13 +3,13 @@ title: "Notes"
 enterprise: true
 ---
 
-Notes let users attach comments to individual cells without storing note text in row data. Cells with notes are marked in the grid, note actions are available from the context menu, hovering a noted cell opens the built-in resizable note editor, and `Shift + F2` opens or creates a note for the focused cell when notes are allowed.
+Notes let users attach comments to individual cells without storing note text in row data. Cells with notes are marked in the grid, note actions are available from the context menu, hovering a noted cell opens the built-in resizable note editor, and {% kbd "⇧ Shift" /%}+{% kbd "F2" /%} opens or creates a note for the focused cell when notes are allowed.
 
 ## Enabling Notes
 
 Notes are enabled by providing a `notesDataSource` to the grid. The datasource has two required methods `getNote()` and `setNote()` and is responsible for managing the state of the notes for the grid. To ensure stable row ids [getRowId()](./row-ids/) is required.
 
-To add a new note either right-click a cell to open the context menu or press `Shift + F2`. Hovering a cell with a note will display the note popup. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
+To add a new note either right-click a cell to open the context menu or press {% kbd "⇧ Shift" /%}+{% kbd "F2" /%}. Hovering a cell with a note will display the note popup. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
 
 {% gridExampleRunner title="Notes" name="notes" exampleHeight=350 /%}
 
@@ -129,7 +129,7 @@ const gridOptions = {
 
 ## Read-Only Notes
 
-Set `Note.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover or click based on `noteTrigger`, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
+Set `Note.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover or click based on `noteTrigger`, the context menu, or {% kbd "⇧ Shift" /%}+{% kbd "F2" /%}, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
 
 `Athlete` has an editable note. `Country` and `Sport` have **read-only** notes, so they can be viewed but not edited or removed through the built-in UI.
 
@@ -230,11 +230,11 @@ The built-in `note` item expands based on the current cell state:
 
 ### Keyboard Shortcuts
 
-`Shift + F2` opens an existing note for the focused cell, or creates a new note if the cell allows notes and does not already have one. Plain `F2` keeps the normal cell editing behaviour.
+{% kbd "⇧ Shift" /%}+{% kbd "F2" /%} opens an existing note for the focused cell, or creates a new note if the cell allows notes and does not already have one. Plain {% kbd "F2" /%} keeps the normal cell editing behaviour.
 
 ### Cell Editing
 
-Notes are **not** displayed if the cell is currently being edited. Hovering that cell or pressing `Shift + F2` will have no effect until editing is complete.
+Notes are **not** displayed if the cell is currently being edited. Hovering that cell or pressing {% kbd "⇧ Shift" /%}+{% kbd "F2" /%} will have no effect until editing is complete.
 
 ## API
 

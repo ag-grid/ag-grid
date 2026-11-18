@@ -3,7 +3,6 @@ import {
     _findFocusableElements,
     _findNextFocusableElement,
     _getActiveDomElement,
-    _getDocument,
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
@@ -166,8 +165,8 @@ export class AgPillContainer<TValue> extends Component {
 
         e.preventDefault();
 
-        const eDoc = _getDocument(this.beans);
-        const pillIndex = this.pills.findIndex(({ pill }) => pill.getGui().contains(eDoc.activeElement));
+        const activeEl = _getActiveDomElement(this.beans);
+        const pillIndex = this.pills.findIndex((item) => item.pill.getGui().contains(activeEl));
 
         if (pillIndex === -1) {
             return;
@@ -193,10 +192,9 @@ export class AgPillContainer<TValue> extends Component {
                 params.eWrapper?.focus();
             }
         } else if (restoreFocusToIndex != null) {
-            const { pill } = pills[Math.min(restoreFocusToIndex, pills.length - 1)];
-            if (pill) {
-                pill.getFocusableElement().focus();
-            }
+            // setValue rebuilt the pills: focus one of the new ones
+            const rebuilt = this.pills;
+            rebuilt[Math.min(restoreFocusToIndex, rebuilt.length - 1)]?.pill.getFocusableElement().focus();
         }
     }
 

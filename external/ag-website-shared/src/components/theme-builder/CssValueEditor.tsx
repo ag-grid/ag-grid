@@ -8,7 +8,7 @@ import { type ThemeImpl, cssValueIsValid, getThemeDefaultParams, reinterpretCSSV
 import { Input } from './Input';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unknown>) => {
+export const CssValueEditor = ({ param, value, onChange, label }: ValueEditorProps<unknown>) => {
     const theme = useRenderedTheme();
     const [editorValue, setEditorValue] = useState(() => getEditorValue(theme, param));
     const [valid, setValid] = useState(() => cssValueIsValid(editorValue, param.type));
@@ -27,6 +27,7 @@ export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unkn
     return (
         <Input
             className={valid ? undefined : 'is-error'}
+            ariaLabel={label}
             value={editorValue}
             onChange={(newValue) => {
                 const isValid = cssValueIsValid(newValue, param.type);

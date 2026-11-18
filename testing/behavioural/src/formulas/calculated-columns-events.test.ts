@@ -9,6 +9,7 @@ import {
     clickDialogButton,
     createGrid,
     getExpressionInput,
+    openEditDialogViaMenu,
     removeColumnDef,
     setExpression,
     setupCalculatedColumnsSuite,
@@ -18,6 +19,71 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test('live dialog commits report validity changes after the column change event', async () => {
+        const changed = vi.fn();
+        const validity = vi.fn();
+        const api = createGrid('calculated-live-validity', {
+            columnDefs: [
+                { field: 'sales' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[sales] - [cost]' },
+            ],
+            rowData: [{ id: 'r1', sales: 100, cost: 60 }],
+            onCalculatedColumnChanged: changed,
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Sales] - [Cots]');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(1));
+        expect(validity.mock.lastCall![0]).toMatchObject({
+            column: api.getColumn('profit'),
+            expression: '[sales] - [Cots]',
+            source: 'calculatedColumn',
+            valid: false,
+            reason: 'unknownReference',
+        });
+        expect(changed.mock.invocationCallOrder[0]).toBeLessThan(validity.mock.invocationCallOrder[0]);
+
+        setExpression('[Sales] + [Cots]');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
+        await asyncSetTimeout(0);
+        expect(validity).toHaveBeenCalledTimes(1);
+
+        setExpression('[Sales] + [Cost]');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(2));
+        expect(validity.mock.lastCall![0]).toMatchObject({ valid: true, reason: undefined });
+
+        setExpression('[Sales] - [Cost]');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(4));
+        await asyncSetTimeout(0);
+        expect(validity).toHaveBeenCalledTimes(2);
+    });
+
+    test('deferred dialog correction reports validity only after Apply', async () => {
+        const validity = vi.fn();
+        const api = createGrid('calculated-deferred-validity', {
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'sales' }, { colId: 'profit', calculatedExpression: '[missing]' }],
+            rowData: [{ id: 'r1', sales: 100 }],
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Sales]');
+        await asyncSetTimeout(0);
+        expect(validity).not.toHaveBeenCalled();
+        expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[missing]');
+
+        clickDialogButton('Apply');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(1));
+        expect(validity.mock.lastCall![0]).toMatchObject({
+            column: api.getColumn('profit'),
+            expression: '[sales]',
+            source: 'calculatedColumn',
+            valid: true,
+            reason: undefined,
+        });
+    });
 
     test('pivot mode tracks lifecycle and validity of primary calculated columns', async () => {
         const changed = vi.fn();

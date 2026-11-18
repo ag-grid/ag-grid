@@ -1,7 +1,13 @@
 import { TestGridsManager, assertSelectedRowsByIndex } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, _createInternalFeatureFlagsModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GRAND_TOTAL_ROW_ID,
+    RowSelectionModule,
+    _createInternalFeatureFlagsModule,
+} from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridActions, pressSpaceKey } from '../selection/utils';
 
@@ -20,7 +26,9 @@ describe('Internal feature flags AG Studio enables', () => {
     const columnDefs = [{ field: 'sport' }];
     const rowData = [{ sport: 'football' }, { sport: 'rugby' }, { sport: 'tennis' }, { sport: 'cricket' }];
 
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, RowSelectionModule] });
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowSelectionModule, RowGroupingModule],
+    });
 
     function createStudioGrid(gridOptions: GridOptions, extraModules: Module[] = []): [GridApi, GridActions] {
         const api = gridMgr.createGrid('myGrid', gridOptions, { modules: [StudioStubModule, ...extraModules] });
@@ -58,6 +66,45 @@ describe('Internal feature flags AG Studio enables', () => {
 
         pressSpaceKey(actions.getCellByPosition(2, 'sport')!);
         assertSelectedRowsByIndex([], api);
+    });
+
+    describe('grandTotalRowUnselectable', () => {
+        const grandTotalOptions: GridOptions = {
+            columnDefs: [{ field: 'sport' }, { field: 'medals', aggFunc: 'sum' }],
+            rowData: rowData.map((row, i) => ({ ...row, medals: i })),
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+        };
+
+        test('clicking the grand total row does not select it', () => {
+            const [api, actions] = createStudioGrid(grandTotalOptions);
+
+            actions.clickRowById(GRAND_TOTAL_ROW_ID);
+            expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('Space on the grand total row does not select it', () => {
+            const [api, actions] = createStudioGrid(grandTotalOptions);
+
+            pressSpaceKey(actions.getRowById(GRAND_TOTAL_ROW_ID)!.querySelector<HTMLElement>('[col-id="sport"]')!);
+            expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+            assertSelectedRowsByIndex([], api);
+        });
+
+        test('clicking a data row still selects it', () => {
+            const [api, actions] = createStudioGrid(grandTotalOptions);
+
+            actions.clickRowByIndex(1);
+            assertSelectedRowsByIndex([1], api);
+        });
+
+        test('outside Studio, clicking the grand total row selects it', () => {
+            const api = gridMgr.createGrid('myGrid', grandTotalOptions);
+
+            new GridActions(api, '#myGrid').clickRowById(GRAND_TOTAL_ROW_ID);
+            expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true);
+        });
     });
 
     test('an explicitly disabled flag overrides the Studio default', () => {

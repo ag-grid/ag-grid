@@ -92,8 +92,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rowAutoHeight = beans.rowAutoHeight;
     }
 
-    /** `skipTreeBuild=true` reuses the trees; valid only when liveCols are unchanged (group toggle, width autosize). */
-    public refresh(source: ColumnEventType, skipTreeBuild: boolean): void {
+    /** `skipTreeBuild=true` reuses the trees; valid only when liveCols are unchanged (group toggle, width autosize).
+     *  Returns the columns the flex pass sized, when one ran. */
+    public refresh(source: ColumnEventType, skipTreeBuild: boolean): AgColumn[] | undefined {
         const { colFlex, colModel, colViewport, ctrlsSvc } = this;
         if (!skipTreeBuild) {
             this.buildTrees();
@@ -140,6 +141,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // Run flex sizing when a flex col exists OR cols await a flex-then-reveal pass
         // (a "had flex" → "no flex" transition still needs the reveal).
         const runFlex = this.lastFlexIndex >= 0 || colFlex?.columnsHidden;
+        let flexedCols: AgColumn[] | undefined;
         if (runFlex) {
             // colFlex's cached viewport width only updates on DOM resize, but pinning changes centre
             // width without one — so derive centre width from the just-set section totals.
@@ -149,7 +151,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 const centerWidth = viewportWidth - widths.left - widths.right;
                 flexParams = { viewportWidth: centerWidth > 0 ? centerWidth : 0 };
             }
-            colFlex?.refreshFlexedColumns(flexParams);
+            flexedCols = colFlex?.refreshFlexedColumns(flexParams);
         }
         // a changed displayed set can trade one column's width for another's with no left or total moving
         this.cellsMoved = true;
@@ -161,6 +163,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.colFilter?.refreshRedefinedFilters();
         this.dispatchLayoutEvents(source);
         this.eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
+        return flexedCols;
     }
 
     /** Ends a resize, a fit or a flex pass; `widths` reuses totals already summed, else they are re-summed. */
@@ -259,12 +262,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private setPinnedEdges(leftCols: AgColumn[], rightCols: AgColumn[]): void {
+        const isRtl = this.gos.get('enableRtl');
         const leftLen = leftCols.length;
-        const newLastLeft = leftLen ? leftCols[leftLen - 1] : null;
+        let newLastLeft: AgColumn | null = null;
+        if (leftLen) {
+            newLastLeft = isRtl ? leftCols[0] : leftCols[leftLen - 1];
+        }
         let newFirstRight: AgColumn | null = null;
         const rightLen = rightCols.length;
         if (rightLen) {
-            newFirstRight = this.gos.get('enableRtl') ? rightCols[rightLen - 1] : rightCols[0];
+            newFirstRight = isRtl ? rightCols[rightLen - 1] : rightCols[0];
         }
 
         const prevLastLeft = this.lastLeftPinnedCol;

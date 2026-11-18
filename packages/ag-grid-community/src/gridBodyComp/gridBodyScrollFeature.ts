@@ -1,5 +1,6 @@
 import {
     Direction,
+    _addManagedElementListeners,
     _debounce,
     _getInnerHeight,
     _getInnerWidth,
@@ -126,7 +127,7 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollGapChanged: invalidateHorizontalScroll,
         });
 
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: () => {
                 invalidateVerticalScroll();
                 invalidateHorizontalScroll();
@@ -155,7 +156,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addHorizontalScrollListeners(): void {
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: this.onHScroll.bind(this, VIEWPORT),
         });
 
@@ -172,7 +173,7 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, VIEWPORT);
         const onFakeVScroll = isDebounce ? this.debounceFakeVScroll() : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
-        this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
+        _addManagedElementListeners(this, this.eGridViewport, { scroll: onVScroll });
         this.fakeVScrollComp.onScrollCallback(onFakeVScroll);
     }
 
@@ -557,10 +558,10 @@ export class GridBodyScrollFeature extends BeanStub {
         this.setVerticalScrollPosition(0);
     }
 
-    // Valid values for position are bottom, middle and top
+    // Valid values for position are auto (or null), top, middle and bottom
     public ensureNodeVisible<TData = any>(
         comparator: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
-        position: 'top' | 'bottom' | 'middle' | null = null
+        position: 'auto' | 'top' | 'bottom' | 'middle' | null = null
     ) {
         const { rowModel } = this.beans;
         // look for the node index we want to display
@@ -588,13 +589,13 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    // Valid values for position are bottom, middle and top
+    // Valid values for position are auto (or null), top, middle and bottom
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null, retry = 0) {
+    public ensureIndexVisible(index: number, position?: 'auto' | 'top' | 'bottom' | 'middle' | null, retry = 0) {
         // if for print or auto height, everything is always visible
         if (_isDomLayout(this.gos, 'print')) {
             return;

@@ -18,7 +18,6 @@ import type { ValueService } from '../valueService/valueService';
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private accentedSort: boolean = false;
     private primaryColumnsSortGroups: boolean = false;
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
@@ -35,12 +34,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         };
 
         const updateOptions = () => {
-            const gos = this.gos;
-            this.accentedSort = !!gos.get('accentedSort');
-            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
         };
 
-        this.addManagedPropertyListeners(['accentedSort', 'autoGroupColumnDef', 'treeData'], updateOptions);
+        this.addManagedPropertyListeners(['autoGroupColumnDef', 'treeData'], updateOptions);
 
         this.addManagedEventListeners({
             columnPivotModeChanged: updatePivotModeState,
@@ -63,8 +60,6 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
-        const accentedCompare = this.accentedSort;
-
         // Iterate columns, return the first that doesn't match. Comparators are resolved up front
         // (see _resolveSortOptions): a col comparator applies to every row; a row-group display col falls back
         // to its primary column's comparator for leaf rows only; otherwise the grid's default comparator is used.
@@ -79,14 +74,15 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             let result: number;
             if (comparator) {
                 result = comparator(valueA, valueB, nodeA, nodeB, descending);
-            } else if (sortOption.absolute) {
-                result = _defaultComparator(
-                    absoluteValueTransformer(valueA),
-                    absoluteValueTransformer(valueB),
-                    accentedCompare
-                );
             } else {
-                result = _defaultComparator(valueA, valueB, accentedCompare);
+                const stringComparator = sortOption.stringComparator;
+                result = sortOption.absolute
+                    ? _defaultComparator(
+                          absoluteValueTransformer(valueA),
+                          absoluteValueTransformer(valueB),
+                          stringComparator
+                      )
+                    : _defaultComparator(valueA, valueB, stringComparator);
             }
 
             // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.

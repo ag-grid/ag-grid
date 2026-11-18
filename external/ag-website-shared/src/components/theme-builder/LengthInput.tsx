@@ -8,13 +8,22 @@ export type LengthInputProps = {
     value: string;
     onChange: (newValue: string | null) => void;
     icon?: ReactNode;
+    ariaLabel?: string;
     swipeAdjustmentDivisor?: number;
     /** Optional clamp on the numeric portion of the value. Unset means unclamped. */
     min?: number;
     max?: number;
 };
 
-export const LengthInput = ({ value, onChange, icon, swipeAdjustmentDivisor = 100, min, max }: LengthInputProps) => {
+export const LengthInput = ({
+    value,
+    onChange,
+    ariaLabel,
+    icon,
+    swipeAdjustmentDivisor = 100,
+    min,
+    max,
+}: LengthInputProps) => {
     const units = getUnit(value);
 
     const clampTyped = (n: number): number => {
@@ -35,6 +44,7 @@ export const LengthInput = ({ value, onChange, icon, swipeAdjustmentDivisor = 10
             value={value}
             onChange={onChange}
             onClear={() => onChange(null)}
+            ariaLabel={ariaLabel}
             valueToDisplayString={toDisplayString}
             valueToEditingString={toEditingString}
             validateEditingString={(editingString) => {

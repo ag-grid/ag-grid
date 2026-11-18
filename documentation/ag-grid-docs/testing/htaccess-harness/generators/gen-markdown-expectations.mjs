@@ -9,7 +9,8 @@
 //   browser Accept        -> 200 text/html (served via DirectoryIndex), Vary: Accept, the agent
 //                            Link header, exactly one CSP, the security headers
 // with the Cache-Control of its content class:
-//   live site                         no-cache (HTML and .md: the twin changes with its page)
+//   live site                         max-age=0, s-maxage=86400, ... (HTML and .md: browsers revalidate,
+//                                     CloudFront keeps a day and is invalidated on every docs deploy)
 //   released grid/charts archive      public, max-age=604800, s-maxage=31536000 (HTML and .md)
 //   in-flight grid/charts archive     no-cache (HTML and .md)
 //   studio archive                    no-cache (HTML and .md)
@@ -29,8 +30,9 @@ if (!configFile) {
     process.exit(2);
 }
 const LONG = 'public, max-age=604800, s-maxage=31536000';
+const EDGE = 'max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400';
 const CACHE = {
-    live: { html: 'no-cache', md: 'no-cache' },
+    live: { html: EDGE, md: EDGE },
     released: { html: LONG, md: LONG },
     'in-flight': { html: 'no-cache', md: 'no-cache' },
     'studio-archive': { html: 'no-cache', md: 'no-cache' },
@@ -61,6 +63,9 @@ for (const { base, kind, slug, groups, category } of JSON.parse(readFileSync(con
         }
     }
     const live = kind === 'live';
+    // A live page under an /examples/ directory serves an index.html that the runtime-fetched rule
+    // (example sources: /examples/<...>.<ext>) also matches, emitted later, so its HTML revalidates.
+    const htmlCache = (page) => (live && /\/examples\/$/.test(page) ? 'no-cache' : cache.html);
     for (const page of pages) {
         rows.add('www', page, 200, '', [
             'accept=md',
@@ -82,7 +87,7 @@ for (const { base, kind, slug, groups, category } of JSON.parse(readFileSync(con
             'link+describedby',
             'csp=1',
             'sec+',
-            `cc=${cache.html}`,
+            `cc=${htmlCache(page)}`,
             ...(live ? ['xrt=absent'] : []),
         ]);
     }

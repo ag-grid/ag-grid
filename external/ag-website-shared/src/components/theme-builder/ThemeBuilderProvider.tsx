@@ -5,21 +5,27 @@ import { allParamModels } from '../../theming/ParamModel';
 import { allFeatureModels } from '../../theming/PartModel';
 import { addChangedModelItem } from '../../theming/changed-model-items';
 import { type Preset, applyPreset } from '../../theming/preset';
-import { initialiseStore } from '../../theming/store';
+import { type Store, initialiseStore } from '../../theming/store';
 import { hasStoredModel } from '../../theming/stored-model';
 
-interface Props {
-    initialPreset: Preset;
+interface Props<P extends Preset> {
+    initialPreset: P;
+    /** For a host whose presets carry state beyond the theme params. */
+    applyInitialPreset?: (store: Store, preset: P) => void;
     children: ReactNode;
 }
 
-export const ThemeBuilderProvider = ({ initialPreset, children }: Props) => {
+export const ThemeBuilderProvider = <P extends Preset>({
+    initialPreset,
+    applyInitialPreset = applyPreset,
+    children,
+}: Props<P>) => {
     const store = useMemo(() => initialiseStore(), []);
     const [initialised, setInitialised] = useState(false);
 
     useLayoutEffect(() => {
         if (!hasStoredModel(store)) {
-            applyPreset(store, initialPreset);
+            applyInitialPreset(store, initialPreset);
         }
         const detectChange = (name: string) => {
             addChangedModelItem(store, name);

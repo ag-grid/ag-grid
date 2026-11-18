@@ -16,8 +16,9 @@ export const SITES = {
         // the in-flight patcher is part of the grid source: the harness runs the real one
         extra: ['scripts/uncached-archives.mjs'],
     },
-    charts: { pkg: 'packages/ag-charts-website', extra: [] },
-    studio: { pkg: 'packages/ag-studio-docs', extra: [] },
+    // `slug`: the page name the generators put in a sample path for a rule's wildcard
+    charts: { pkg: 'packages/ag-charts-website', extra: [], slug: 'bar-series' },
+    studio: { pkg: 'packages/ag-studio-docs', extra: [], slug: 'quick-start' },
 };
 
 /** Candidate sibling-repo locations, most specific first. */
@@ -90,6 +91,19 @@ export function materialise(site, repo, ref, work) {
         ':(exclude)external/ag-website-shared/src/content',
     ]);
     execFileSync('tar', ['-xf', tar, '-C', dest]);
+    // The navigation JSON under src/content is code input, not page content: studio's user guide routes
+    // import user-guide-nav/nav.json (AS-235), so the emitter cannot load without it. A pathspec
+    // exclude cannot be undone by a later include, so these come from a second archive.
+    const navTar = join(work, 'src', `${site}-nav.tar`);
+    try {
+        git(repo, ['archive', '-o', navTar, sha, `:(glob)${pkg}/src/content/*-nav/nav.json`], { stdio: 'pipe' });
+        execFileSync('tar', ['-xf', navTar, '-C', dest]);
+    } catch (e) {
+        // A ref with no nav files (grid, charts, older studio) has nothing to add.
+        if (!/did not match any files/.test(e.stderr?.toString() ?? '')) {
+            throw e;
+        }
+    }
     for (const nm of ['node_modules', `${pkg}/node_modules`]) {
         if (existsSync(join(repo, nm)) && !existsSync(join(dest, nm))) {
             symlinkSync(join(repo, nm), join(dest, nm));

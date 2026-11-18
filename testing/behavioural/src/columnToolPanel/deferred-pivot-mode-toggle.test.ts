@@ -190,8 +190,7 @@ describe('deferred column tool panel pivot mode - select all, sorting, and toggl
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
         gridApi.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
 
-        // The removed setState round-trip used to re-apply all of this from the cache; confirm it survives
-        // the pivot toggle on its own.
+        // The pivot toggle alone must keep this state; nothing re-applies it afterwards.
         expect(gridApi.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country', 'sport']);
         expect(gridApi.getValueColumns().map((c) => c.getColId())).toEqual(['silver', 'bronze']);
         expect(gridApi.getColumn('athlete')!.getSort()).toBe('asc');

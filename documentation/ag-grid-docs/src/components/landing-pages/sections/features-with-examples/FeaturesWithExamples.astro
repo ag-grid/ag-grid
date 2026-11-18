@@ -8,15 +8,21 @@ import styles from './FeaturesWithExamples.module.scss';
 interface Props {
     features: FeatureConfig[];
     framework: InternalFramework;
+    syncFramework?: boolean;
 }
 
-const { features, framework } = Astro.props;
+const { features, framework, syncFramework } = Astro.props;
 ---
 
 <div class={styles.container}>
     <!-- Tabs at top -->
     <div class="landing-page-features-tabs">
-        <FeaturesWithExamplesContent client:load features={features} framework={framework} />
+        <FeaturesWithExamplesContent
+            client:load
+            features={features}
+            framework={framework}
+            syncFramework={syncFramework}
+        />
     </div>
 
     <!-- Side by side layout: content left, example right -->

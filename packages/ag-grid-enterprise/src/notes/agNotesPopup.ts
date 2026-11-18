@@ -1,6 +1,7 @@
 import type { Alignment } from 'ag-stack';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _computeAlignedPosition,
     _findBestPlacement,
     _fitsWithinBounds,
@@ -174,7 +175,7 @@ export class AgNotesPopup extends BeanStub {
         eGui.classList.toggle('ag-notes-popup-read-only', !!this.params.readOnly);
         eGui.setAttribute('aria-label', translate('note', 'Note'));
 
-        this.addManagedElementListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.TAB) {
                     event.preventDefault();

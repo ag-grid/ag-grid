@@ -8,7 +8,7 @@ import type { Route } from '@playwright/test';
 const ABANDONED =
     /has been disposed|Target (page, context or browser )?(has been )?closed|Request context disposed|Test ended/;
 
-/** Exported for `page.evaluate`, which rejects the same way once the page is gone. */
+/** Exported for the calls made outside a route handler, `page.evaluate` and `route.fetch`, which reject the same way. */
 export const isAbandoned = (error: unknown): boolean => ABANDONED.test(error instanceof Error ? error.message : '');
 
 /**

@@ -11,7 +11,7 @@ export function getInstance<
         IFilter | FilterDisplay | IToolPanel | ICellEditor | IStatusPanel,
     TCustomComponent extends TGridComponent = TGridComponent,
 >(wrapperComponent: TGridComponent, callback: (customComponent: TCustomComponent | undefined) => void): void {
-    const promise = (wrapperComponent as any)?.getInstance?.() ?? AgPromise.resolve(undefined);
+    const promise = (wrapperComponent as any)?.getInstance?.() ?? AgPromise.resolve();
     promise.then((comp: TCustomComponent | undefined) => callback(comp));
 }
 

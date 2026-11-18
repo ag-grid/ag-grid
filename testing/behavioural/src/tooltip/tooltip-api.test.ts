@@ -21,15 +21,20 @@ import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './le
 function dispatchTouchEvent(
     target: EventTarget,
     type: 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel',
-    touch: Touch
+    touch: Touch,
+    shadowHost?: Element
 ): void {
-    const event = new Event(type, { bubbles: true, cancelable: true }) as TouchEvent;
+    const event = new Event(type, { bubbles: true, cancelable: true, composed: true }) as TouchEvent;
     const isActive = type === 'touchstart' || type === 'touchmove';
     Object.defineProperties(event, {
         touches: { value: isActive ? [touch] : [] },
         targetTouches: { value: isActive ? [touch] : [] },
         changedTouches: { value: [touch] },
     });
+    if (shadowHost) {
+        // Browsers report the shadow host as the target to listeners outside the shadow root; happy-dom does not.
+        Object.defineProperty(event, 'target', { value: shadowHost });
+    }
     target.dispatchEvent(event);
 }
 
@@ -436,5 +441,33 @@ describe('Unified tooltip API', () => {
         header.dispatchEvent(new MouseEvent('mouseenter'));
         await asyncSetTimeout(0);
         expect(getTooltips()).toHaveLength(0);
+    });
+
+    test('a tap on a grid in a shadow root does not also show the hover tooltip', async () => {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const gridDiv = document.createElement('div');
+        shadowRoot.appendChild(gridDiv);
+        const visibleTooltips = () => shadowRoot.querySelectorAll('.ag-tooltip:not(.ag-tooltip-hiding)');
+
+        try {
+            await gridMgr.createGridAndWait(gridDiv, {
+                columnDefs: [{ field: 'athlete', tooltip: true }],
+                rowData: [{ athlete: 'A' }],
+                tooltipShowDelay: 0,
+            });
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete')));
+
+            const touch = { identifier: 1, target: cell, clientX: 5, clientY: 5 } as unknown as Touch;
+            dispatchTouchEvent(cell, 'touchstart', touch, host);
+            dispatchTouchEvent(cell, 'touchend', touch, host);
+            cell.dispatchEvent(new MouseEvent('mouseenter'));
+            await asyncSetTimeout(0);
+
+            expect(visibleTooltips()).toHaveLength(0);
+        } finally {
+            host.remove();
+        }
     });
 });

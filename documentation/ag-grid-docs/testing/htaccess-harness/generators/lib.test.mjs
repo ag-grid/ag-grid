@@ -7,7 +7,9 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { knownFailMarker } from './lib.mjs';
+import { mainExpectations } from './gen-main-expectations.mjs';
+import { subsiteExpectations } from './gen-subsite-expectations.mjs';
+import { expandHosts, knownFailMarker, synthesises } from './lib.mjs';
 
 describe('knownFailMarker', () => {
     it('names only the assertions whose answer differs', () => {
@@ -155,5 +157,122 @@ describe('a single-hop request that an alias rule also generates', () => {
             www.some((line) => line.split('\t').includes('hops=1')),
             www.join('\n')
         );
+    });
+});
+
+describe('expandHosts', () => {
+    it('lists every host of a nested alternation, an optional group included', () => {
+        assert.deepEqual(
+            expandHosts('^(?:ag-grid\\.com|(?:blog|react-grid)\\.ag-grid\\.com|(?:www\\.)?angulargrid\\.com)$'),
+            ['ag-grid.com', 'blog.ag-grid.com', 'react-grid.ag-grid.com', 'angulargrid.com', 'www.angulargrid.com']
+        );
+    });
+
+    it('refuses a pattern it cannot enumerate, rather than returning a short list', () => {
+        assert.throws(() => expandHosts('^(?:.*\\.ag-grid\\.com)$'), /unsupported/);
+        assert.throws(() => expandHosts('ag-grid\\.com'), /anchored/);
+    });
+});
+
+describe('the first hop on an alias host', () => {
+    const ALIAS_COND =
+        '    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|react-grid\\.ag-grid\\.com):[0-9]+)$ [NC]';
+    const main = mainExpectations(
+        [
+            '    RewriteRule "^/?old-page/$" "https://www.ag-grid.com/new-page/" [R=301,L]',
+            ALIAS_COND,
+            'Redirect 301 /legacy /current',
+        ].join('\n')
+    );
+
+    it('lists www, then the alias hosts the root file names', () => {
+        assert.deepEqual(main.hosts, ['www.ag-grid.com', 'ag-grid.com', 'react-grid.ag-grid.com']);
+    });
+
+    it('applies the single-hop rewrites on the apex only', () => {
+        const target = { status: 301, location: 'https://www.ag-grid.com/new-page/' };
+        assert.deepEqual(main.firstHop('ag-grid.com', '/old-page/'), target);
+        assert.deepEqual(main.firstHop('react-grid.ag-grid.com', '/old-page/'), {
+            status: 301,
+            location: 'https://www.ag-grid.com/old-page/',
+        });
+    });
+
+    it('adds the slash with the host swap for a slash-less directory URL, and keeps a file as it is', () => {
+        assert.deepEqual(main.firstHop('react-grid.ag-grid.com', '/legacy'), {
+            status: 301,
+            location: 'https://www.ag-grid.com/legacy/',
+        });
+        assert.deepEqual(main.firstHop('react-grid.ag-grid.com', '/feed.xml'), {
+            status: 301,
+            location: 'https://www.ag-grid.com/feed.xml',
+        });
+    });
+
+    it('answers www with the rules themselves', () => {
+        assert.deepEqual(main.firstHop('www.ag-grid.com', '/legacy/'), { status: 301, location: '/current/' });
+    });
+
+    it('refuses a host the root file does not name', () => {
+        assert.throws(() => main.firstHop('blog.ag-grid.com', '/legacy/'), /not an alias host/);
+    });
+
+    it("gives each rule its www samples, with the rule's own answer", () => {
+        assert.deepEqual(main.rules.find((r) => r.rule.startsWith('Redirect 301 /legacy')).samples, [
+            { path: '/legacy', status: 301, location: '/legacy/' },
+            { path: '/legacy/', status: 301, location: '/current/' },
+        ]);
+    });
+
+    it('sends a subsite redirect to its final page on every host, and swaps the host of anything else', () => {
+        const subsite = subsiteExpectations(
+            [
+                'RewriteRule "^old/?$" "https://www.ag-grid.com/charts/new/" [R=301,L]',
+                '    RewriteCond %{HTTP_HOST} ^(?:ag-grid\\.com|(?:blog|react-grid)\\.ag-grid\\.com)$ [NC]',
+            ].join('\n'),
+            { base: '/charts' }
+        );
+        assert.deepEqual(subsite.hosts, [
+            'www.ag-grid.com',
+            'ag-grid.com',
+            'blog.ag-grid.com',
+            'react-grid.ag-grid.com',
+        ]);
+        for (const host of subsite.hosts) {
+            assert.deepEqual(subsite.firstHop(host, '/charts/old'), {
+                status: 301,
+                location: 'https://www.ag-grid.com/charts/new/',
+            });
+        }
+        assert.deepEqual(subsite.firstHop('react-grid.ag-grid.com', '/charts/page/'), {
+            status: 301,
+            location: 'https://www.ag-grid.com/charts/page/',
+        });
+        assert.equal(subsite.firstHop('www.ag-grid.com', '/charts/page/'), null);
+    });
+});
+
+describe('a made-up sample', () => {
+    it('is one whose pattern needs a wildcard filled in', () => {
+        assert.equal(synthesises('^/old/(.*)$'), true);
+        assert.equal(synthesises('^/v[0-9]+/$'), true);
+        assert.equal(synthesises('^/forum/$'), false);
+        assert.equal(synthesises('^/(?:react|vue)/whats-new/?$'), false);
+    });
+
+    it('is marked synthetic in the model, so no page is expected at the end of its chain', () => {
+        const main = mainExpectations(
+            ['Redirect 301 /renamed/ /current/', 'RedirectMatch 301 "^/legacy/(.*)$" "/current/$1"'].join('\n')
+        );
+        const synthetic = (rule) =>
+            main.rules.find((r) => r.rule.includes(rule)).samples.map((s) => [s.path, Boolean(s.synthetic)]);
+        assert.deepEqual(synthetic('/renamed/'), [
+            ['/renamed/', false],
+            ['/renamed/child/', true],
+        ]);
+        assert.deepEqual(synthetic('legacy'), [
+            ['/legacy/sample', true],
+            ['/legacy/sample/', true],
+        ]);
     });
 });

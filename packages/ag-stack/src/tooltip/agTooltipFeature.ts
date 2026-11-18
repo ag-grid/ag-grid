@@ -1,23 +1,24 @@
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
+import type { ICommonSource } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { ITooltipFeature, TooltipCtrl } from '../interfaces/iTooltip';
 import type { BaseTooltipParams, BaseTooltipStateManager } from './baseTooltipStateManager';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTooltipFeature<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TTooltipCtrlParams,
     TLocation extends string,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements ITooltipFeature
 {
     private tooltip: any;
@@ -113,6 +114,14 @@ export class AgTooltipFeature<
         this.tooltipManager?.hideTooltip();
     }
 
+    public showTooltipOnFocus(): void {
+        this.tooltipManager?.showTooltipOnFocus();
+    }
+
+    protected setTooltipFocused(focused: boolean): void {
+        this.tooltipManager?.setFocused(focused);
+    }
+
     public setTooltipAndRefresh(tooltip: any): void {
         this.tooltip = tooltip;
         this.refreshTooltip();
@@ -124,9 +133,7 @@ export class AgTooltipFeature<
         // a tooltip on screen renders the value, component and params it was shown with; this refresh
         // means any of them may have moved on, and none can be updated in place, so take it down
         const tooltipManager = this.tooltipManager;
-        if (tooltipManager?.isShowing()) {
-            tooltipManager.hideTooltip(true);
-        }
+        tooltipManager?.refreshTooltip();
 
         if (this.browserTooltips) {
             this.updateTooltipText();

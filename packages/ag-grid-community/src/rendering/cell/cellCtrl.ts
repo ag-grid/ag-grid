@@ -6,6 +6,7 @@ import {
     _makeNull,
     _placeCaretAtEnd,
     _setAriaColIndex,
+    _setAriaColSpan,
     _setAriaRowIndex,
 } from 'ag-stack';
 
@@ -111,6 +112,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     /** The vanilla cell comp drawing this; a row has one row comp at a time, so the field is that comp's. */
     public drawnComp: CellComp | undefined = undefined;
     private drawnAriaColIndex = -1;
+    private drawnAriaColSpan = 1;
 
     public eGui: HTMLElement;
 
@@ -158,7 +160,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     /** A start requested before this cell had a component, replayed by the edit service once it attaches. */
     public pendingEditStart: StartEditParams | null = null;
 
-    private focusEventWhileNotReady: CellFocusedEvent | null = null;
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
@@ -279,6 +280,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         this.comp = comp;
         this.eGui = eCell;
         this.drawnAriaColIndex = -1;
+        this.drawnAriaColSpan = 1;
         this.printLayout = printLayout;
         compBean = setupCompBean(this, compBean);
 
@@ -309,6 +311,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
         this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
+        this.refreshAriaColSpan();
 
         _initCellPosition(this.beans, this);
         if (!isClientSideLoadingCell) {
@@ -811,6 +814,20 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
     }
 
+    public refreshAriaColSpan(): void {
+        const { eGui, colsSpanning } = this;
+        if (!eGui) {
+            return;
+        }
+        // hidden columns keep their aria slots, so the span runs from this column's slot to the last covered one's
+        const last = colsSpanning?.[colsSpanning.length - 1];
+        const ariaColSpan = last ? last.ariaColIndex - this.column.ariaColIndex + 1 : 1;
+        if (ariaColSpan !== this.drawnAriaColSpan) {
+            this.drawnAriaColSpan = ariaColSpan;
+            _setAriaColSpan(eGui, ariaColSpan > 1 ? ariaColSpan : undefined);
+        }
+    }
+
     public getRowPosition(): RowPosition {
         const { rowIndex, rowPinned } = this.cellPosition;
         return {
@@ -862,12 +879,24 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             beans: { editSvc, focusSvc },
             comp,
         } = this;
-        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused() || !focusSvc.shouldTakeFocus()) {
+        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused()) {
             return;
         }
+        const owedEvent = focusSvc.takeOwedFocusEvent();
+        if (owedEvent) {
+            this.onCellFocused(owedEvent);
+            return;
+        }
+        const takeFocus = focusSvc.shouldTakeFocus();
 
+        // owed focus is taken only as it lands, so a cell destroyed before then leaves it to the next one drawn
         const focus = () => {
-            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+            if (
+                this.isAlive() &&
+                this.isCellFocused() &&
+                (focusSvc.takeOwedFocus() || takeFocus) &&
+                focusSvc.isFocusFreeForGrid()
+            ) {
                 comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
@@ -931,10 +960,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        // only the focused cell uses the event, so only it pays to check the event is still current
-        this.onCellFocused(
-            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
-        );
+        this.onCellFocused();
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -946,9 +972,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (!this.comp) {
             // scenario: focusing event on cell outside viewport causes cells to force render
             // preserve event for when cell renders.
-            if (event) {
-                this.focusEventWhileNotReady = event;
-                beans.focusSvc.deferFocus(event);
+            if (event && this.isCellFocused()) {
+                beans.focusSvc.oweFocus(event);
             }
             return;
         }
@@ -975,10 +1000,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             const preventScroll = event ? event.preventScrollOnBrowserFocus : true;
             focusEl.focus({ preventScroll });
             _placeCaretAtEnd(beans, focusEl);
-        }
-
-        if (cellFocused && this.focusEventWhileNotReady) {
-            this.focusEventWhileNotReady = null;
         }
 
         // require event to announce so we only announce
@@ -1091,7 +1112,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.oweFocus();
         }
 
         destroyCompBean(this);

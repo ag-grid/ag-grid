@@ -591,17 +591,6 @@
                 },
                 {
                     "type": "group",
-                    "title": "Scheduler Pro",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "See Bryntum Scheduler Pro",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro/"
-                        }
-                    ]
-                },
-                {
-                    "type": "group",
                     "title": "Task Board",
                     "children": [
                         {
@@ -693,7 +682,27 @@
                             "type": "item",
                             "title": "Calculated Columns",
                             "path": "calculated-columns",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Dialog & Customisation",
+                                    "path": "calculated-columns-dialog",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Restrictions & Validation",
+                                    "path": "calculated-columns-validation",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API, Events & State",
+                                    "path": "calculated-columns-api",
+                                    "isEnterprise": true
+                                }
+                            ]
                         }
                     ]
                 },
@@ -1250,6 +1259,11 @@
                             "type": "item",
                             "title": "Keyboard Navigation",
                             "path": "keyboard-navigation"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Scrolling",
+                            "path": "scrolling"
                         },
                         {
                             "type": "item",

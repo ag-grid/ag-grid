@@ -466,6 +466,18 @@ export class SetFilterHandler<TValue = string>
 
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
+        const { colModel } = this.beans;
+        let accentedSortVersion = colModel.accentedSortVersion;
+        this.addManagedPropertyListener('accentedSort', () => {
+            // the column model counts real changes only, so an equal value from a framework re-render keeps the order
+            const version = colModel.accentedSortVersion;
+            const { colDef, column } = this.params;
+            if (version === accentedSortVersion || colDef.accentedSort !== undefined) {
+                return;
+            }
+            accentedSortVersion = version;
+            this.beans.colFilter?.filterParamsChanged(column.getColId());
+        });
 
         const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({
@@ -495,12 +507,19 @@ export class SetFilterHandler<TValue = string>
         });
     }
 
-    /** Reads the params once the values load, as a refresh in the meantime supersedes the model. */
+    /** Refuses a model with no `values` at once; reads any other once the values load, a refresh meanwhile superseding it. */
     private validateModel(
         additionalEventAttributes?: any,
         restrictToAvailableValues?: boolean,
         valuesKnown?: boolean
     ): void {
+        const params = this.params;
+        const model = params.model;
+        if (model != null && !Array.isArray(model.values)) {
+            this.params = { ...params, model: null };
+            params.onModelChange(null, additionalEventAttributes);
+            return;
+        }
         const valueModel = this.valueModel;
         valueModel.allKeys.then(() => {
             if (valueModel.isPreserving()) {

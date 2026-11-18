@@ -1,4 +1,4 @@
-import { _areEqual, _debounce, _jsonEquals } from 'ag-stack';
+import { _areEqual, _jsonEquals } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -152,8 +152,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
-        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow'], () =>
-            this.onStoreUpdated()
+        this.addManagedPropertyListeners(
+            ['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow', 'alwaysShowGrandTotalRow'],
+            () => this.onStoreUpdated()
         );
         this.verifyProps();
 
@@ -628,7 +629,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public getOverlayType(): OverlayType | null {
         // server side does not use the loading overlay as it has its own mechanism
         const rootStore = this.getRootStore();
-        if (rootStore?.getDisplayIndexEnd() === 0) {
+        // the display indexes count an inline grand total row, which is not a data row
+        const grandTotalRowCount = this.rootNode?.sibling?.displayed ? 1 : 0;
+        if (rootStore?.getDisplayIndexEnd() === grandTotalRowCount) {
             return this.filterManager?.isAnyFilterPresent() ? 'noMatchingRows' : 'noRows';
         }
         return null;
@@ -785,13 +788,5 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();
-    }
-
-    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
-    /**
-     * @deprecated v33.1
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 }

@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
 import {
     ModuleRegistry,
     ServerSideRowModelApiModule,
@@ -59,7 +59,7 @@ function resetRowHeights() {
 // setup the grid after the page has finished loading
 gridApi = createGrid(gridDiv, gridOptions);
 
-function createServerSideDatasource(server) {
+function createServerSideDatasource(server: ReturnType<typeof createFakeServer>): IServerSideDatasource {
     return {
         getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
@@ -83,9 +83,9 @@ function createServerSideDatasource(server) {
     };
 }
 
-function createFakeServer(allData) {
+function createFakeServer(allData: IOlympicDataWithId[]) {
     return {
-        getData: (request) => {
+        getData: (request: IServerSideGetRowsRequest) => {
             // take a slice of the total rows for requested block
             const rowsForBlock = allData.slice(request.startRow, request.endRow);
 
@@ -101,7 +101,7 @@ function createFakeServer(allData) {
     };
 }
 
-function getLastRowIndex(request, results) {
+function getLastRowIndex(request: IServerSideGetRowsRequest, results: IOlympicDataWithId[]) {
     if (!results) return undefined;
     const currentLastRow = (request.startRow || 0) + results.length;
 

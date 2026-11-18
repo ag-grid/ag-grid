@@ -1,0 +1,49 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+import BryntumCtaList from './BryntumCtaList.astro';
+import type { BryntumTiersSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTiersSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class:list={[styles.section, styles.sectionBgWhite]}>
+    <div class={styles.sectionInner}>
+        {section.eyebrow && (
+            <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+        )}
+        {section.heading && <h2 class={styles.sectionHeading}>{section.heading}</h2>}
+        {section.body_text && <p class={styles.sectionSubHeading}>{section.body_text}</p>}
+
+        <ol class={styles.tiersGrid}>
+            {section.items.map((tier, idx) => (
+                <li class={styles.tierCard}>
+                    <h3 class={styles.tierName}>{tier.heading}</h3>
+                    <p class={styles.tierLicence}>{tier.licence}</p>
+                    <div class={styles.tierDetails}>
+                        {idx > 0 && (
+                            <p class={styles.tierIncludes}>Everything in {section.items[idx - 1].heading}, plus:</p>
+                        )}
+                        <ul class={styles.tierFeatures}>
+                            {tier.features.map((feature) => (
+                                <li>
+                                    <Icon name="check" />
+                                    {feature}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </li>
+            ))}
+        </ol>
+
+        {section.ctas && (
+            <BryntumCtaList ctas={section.ctas} buttonClass="button-tertiary" wrapperClass={styles.tiersCtas} />
+        )}
+    </div>
+</section>

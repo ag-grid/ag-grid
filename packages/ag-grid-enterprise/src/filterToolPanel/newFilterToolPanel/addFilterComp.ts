@@ -76,6 +76,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
             searchIcon: true,
             allowTyping: true,
             filterList: true,
+            allowNoResultsCopy: true,
             highlightMatch: true,
             valueFormatter: (value) => this.options.get(value)!,
         };

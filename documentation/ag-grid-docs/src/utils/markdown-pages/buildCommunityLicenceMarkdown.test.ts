@@ -25,7 +25,7 @@ describe('buildCommunityLicenceMarkdown', () => {
         expect(output).toContain('\nThe MIT License\n');
         expect(output).toMatch(/\nCopyright \(c\) 2015-\d{4} AG GRID LTD\n/);
         expect(output).toContain(
-            'reproduced below. [AG Grid Enterprise](https://www.ag-grid.com/data-grid/community-vs-enterprise/) is licensed separately under the [AG Grid Commercial End User Licence Agreement](https://www.ag-grid.com/eula/commercial/).'
+            'reproduced below. [AG Grid Enterprise](https://www.ag-grid.com/react-data-grid/community-vs-enterprise/) is licensed separately under the [AG Grid Commercial End User Licence Agreement](https://www.ag-grid.com/eula/commercial/).'
         );
         // The intro comes before the licence text it introduces.
         expect(output.indexOf('reproduced below.')).toBeLessThan(output.indexOf('\nThe MIT License\n'));

@@ -1,4 +1,11 @@
-import { KeyCode, RefPlaceholder, _getActiveDomElement, _getAriaCheckboxStateName, _setAriaLive } from 'ag-stack';
+import {
+    KeyCode,
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _getActiveDomElement,
+    _getAriaCheckboxStateName,
+    _setAriaLive,
+} from 'ag-stack';
 
 import { AgCheckboxSelector } from '../../agWidgets/agCheckbox';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
@@ -65,7 +72,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             },
         });
 
-        this.addManagedElementListeners(params.eGridCell, {
+        _addManagedElementListeners(this, params.eGridCell, {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.SPACE && !eCheckbox.isDisabled()) {
                     if (params.eGridCell === _getActiveDomElement(beans)) {

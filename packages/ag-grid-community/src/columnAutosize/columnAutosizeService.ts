@@ -255,6 +255,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             // keep track of which cols we have resized in here
             const columnsAutoSized = new Set<AgColumn>();
+            // joined after the loop, so a flex col re-flexed before it is rendered is still measured
+            let reflexedCols: AgColumn[] | undefined;
             // initialise with anything except 0 so that while loop executes at least once
             let changesThisTimeAround = -1;
 
@@ -304,7 +306,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 if (setAutoSizedWidths(sizedCols, sizedWidths, source, pinnedLimit)) {
                     // skipTreeBuild=true: autosize only changes widths, leaving liveCols/pins/visibility — and
                     // thus the section/group trees — unchanged.
-                    visibleCols.refresh(source, true);
+                    reflexedCols = visibleCols.refresh(source, true);
+                }
+            }
+            // the last refresh lists every col still flexing; one an earlier refresh listed has since been sized
+            if (reflexedCols) {
+                for (let i = 0, len = reflexedCols.length; i < len; ++i) {
+                    columnsAutoSized.add(reflexedCols[i]);
                 }
             }
 

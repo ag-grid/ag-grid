@@ -47,6 +47,11 @@ export function _getAriaLabel(element: Element): string | null {
     return element.getAttribute('aria-label');
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getAriaDescribedBy(element: Element): string | null {
+    return element.getAttribute('aria-describedby');
+}
+
 // ARIA ATTRIBUTE SETTERS
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaLabel(element: Element, label?: string | null): void {
@@ -182,6 +187,11 @@ export function _removeAriaSort(element: Element): void {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaSelected(element: Element, selected?: boolean): void {
     _toggleAriaAttribute(element, 'selected', selected);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaPressed(element: Element, pressed: boolean): void {
+    _setAriaAttribute(element, 'pressed', pressed);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

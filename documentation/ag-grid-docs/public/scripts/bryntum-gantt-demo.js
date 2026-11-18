@@ -1,5 +1,5 @@
 /* global bryntumDemoInit */
-// Bryntum Gantt "Try it yourself!" demo — UMD port of
+// Bryntum Gantt "Try it yourself!" demo — port of
 // https://bryntum.com/demos/live/gantt/advanced/app.module.js
 // Bootstrap lives in bryntum-demo-bootstrap.js.
 

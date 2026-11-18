@@ -4,7 +4,13 @@ import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/con
 import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
+import {
+    CONSENT_FIELD_IDS,
+    CONTACT_FORM_DATA,
+    PRICING_FORM_FIELD_IDS,
+    RECAPTCHA_URL,
+    STUDIO_FORM_DATA,
+} from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
@@ -13,8 +19,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
-import { RETURN_URLS } from './constants';
+import { CONTACT_EMAIL, RETURN_URLS } from './constants';
 import { useContactFormMonitoring } from './useContactFormMonitoring';
+import { watchRecaptchaLoad } from './watchRecaptchaLoad';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
@@ -34,6 +41,10 @@ const { marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = get
     ? CONSENT_FIELD_IDS.production
     : CONSENT_FIELD_IDS.default;
 
+const { productOfInterestId, applicationAudienceId } = getIsProduction()
+    ? PRICING_FORM_FIELD_IDS.production
+    : PRICING_FORM_FIELD_IDS.default;
+
 const isDev = getIsDev();
 
 const ENQUIRY_TYPE_OPTIONS = [
@@ -43,6 +54,15 @@ const ENQUIRY_TYPE_OPTIONS = [
     'Press/Media',
     'Partnerships',
     'General',
+] as const;
+
+const PRODUCT_OF_INTEREST_OPTIONS = ['AG Grid', 'AG Charts', 'Enterprise Bundle', 'AG Studio'] as const;
+
+const APPLICATION_AUDIENCE_OPTIONS = [
+    'Internal users',
+    'External customers or other external users',
+    'Both',
+    'Not sure',
 ] as const;
 
 /**
@@ -66,14 +86,19 @@ type FormValues = {
     email: string;
 } & Record<string, string>;
 
+export type ContactFormLocation =
+    'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Studio pricing page' | 'Contact page';
+
 interface Props {
-    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Contact page';
+    formLocation: ContactFormLocation;
     hideMessage?: boolean;
     submitLabel?: string;
+    showPricingFields?: boolean;
 }
 
 const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
 const RECAPTCHA_READY_PROMISE = 'agRecaptchaReady';
+const RECAPTCHA_LOAD_TIMEOUT_MILLIS = 10_000;
 
 /**
  * Loads reCAPTCHA once per page, in explicit-render mode.
@@ -114,6 +139,7 @@ export const ContactForm: FunctionComponent<Props> = ({
     formLocation = 'About page',
     hideMessage,
     submitLabel,
+    showPricingFields,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const captchaRef = useRef<HTMLDivElement>(null);
@@ -124,6 +150,7 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
     const [captchaError, setCaptchaError] = useState(false);
+    const [captchaLoadFailed, setCaptchaLoadFailed] = useState(false);
 
     const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
 
@@ -133,7 +160,7 @@ export const ContactForm: FunctionComponent<Props> = ({
         trackCaptchaIncomplete,
         trackSubmit,
         captchaCallbacks,
-        reportCaptchaLoadError,
+        trackCaptchaLoadFailed,
     } = useContactFormMonitoring(formLocation);
 
     const {
@@ -182,13 +209,12 @@ export const ContactForm: FunctionComponent<Props> = ({
             setReturnUrl(urlWithCurrentPath.toString());
         }
 
-        let unmounted = false;
         let captcha: CaptchaTicker | undefined;
 
-        loadRecaptcha()
-            .then(() => {
+        const stopWatchingLoad = watchRecaptchaLoad(loadRecaptcha(), RECAPTCHA_LOAD_TIMEOUT_MILLIS, {
+            onLoad: () => {
                 const container = captchaRef.current;
-                if (unmounted || container == null) {
+                if (container == null) {
                     return;
                 }
                 captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
@@ -199,11 +225,16 @@ export const ContactForm: FunctionComponent<Props> = ({
                     captchaTimestamp.current = ts;
                 });
                 reapplyCaptchaTimestamp.current = captcha.reapply;
-            })
-            .catch(reportCaptchaLoadError);
+                setCaptchaLoadFailed(false);
+            },
+            onFailure: (reason) => {
+                setCaptchaLoadFailed(true);
+                trackCaptchaLoadFailed(reason);
+            },
+        });
 
         return () => {
-            unmounted = true;
+            stopWatchingLoad();
             captcha?.stop();
         };
     }, []);
@@ -343,6 +374,36 @@ export const ContactForm: FunctionComponent<Props> = ({
                     </div>
                 </div>
             )}
+            {showPricingFields && (
+                <>
+                    <div className="input-field">
+                        <label htmlFor={productOfInterestId}>Product of interest</label>
+                        <select id={productOfInterestId} defaultValue="" {...register(productOfInterestId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {PRODUCT_OF_INTEREST_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="input-field">
+                        <label htmlFor={applicationAudienceId}>Application audience</label>
+                        <select id={applicationAudienceId} defaultValue="" {...register(applicationAudienceId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {APPLICATION_AUDIENCE_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </>
+            )}
 
             {!hideMessage && (
                 <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
@@ -391,10 +452,17 @@ export const ContactForm: FunctionComponent<Props> = ({
                 )}
             </div>
 
-            <div className={classnames('input-field', { 'input-error': captchaError })}>
+            <div className={classnames('input-field', { 'input-error': captchaError || captchaLoadFailed })}>
                 <div ref={captchaRef} className="g-recaptcha" />
                 <div className={styles.errorContainer}>
-                    {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
+                    {captchaLoadFailed ? (
+                        <p className="error">
+                            Our reCAPTCHA spam check couldn't load, so this form can't be sent. Please email us at{' '}
+                            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> instead.
+                        </p>
+                    ) : (
+                        captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>
+                    )}
                 </div>
             </div>
             <ProcessingNotice />

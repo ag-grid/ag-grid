@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type {
     GetRowIdParams,
     GridApi,
@@ -14,8 +16,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Olympic rows aren't unique by athlete/country/year/sport, so a composite natural
             // key collides. Index-based ids guarantee uniqueness.
             const dataWithIds: OlympicRow[] = data.map((row, i) => ({ ...row, id: `row-${i}` }));
-            fakeServer = new FakeServer(dataWithIds);
+            fakeServer = FakeServer(dataWithIds);
             gridApi!.setGridOption('serverSideDatasource', getServerSideDatasource(fakeServer));
         });
 });

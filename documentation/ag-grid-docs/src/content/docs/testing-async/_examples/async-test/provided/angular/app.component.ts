@@ -13,7 +13,6 @@ import {
 } from 'ag-grid-community';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -27,9 +26,11 @@ ModuleRegistry.registerModules([RowApiModule, QuickFilterModule, ClientSideRowMo
     imports: [AgGridAngular, FormsModule],
     selector: 'my-app',
     template: `<div class="example-wrapper">
-        <div class="example-header">
-            <input type="text" id="quickFilter" placeholder="Filter..." [(ngModel)]="quickFilterText" />
-            <div id="numberOfRows">Number of rows: {{ displayedRows }}</div>
+        <div class="example-controls">
+            <div class="controls-row">
+                <input type="text" id="quickFilter" placeholder="Filter..." [(ngModel)]="quickFilterText" />
+                <div id="numberOfRows">Number of rows: {{ displayedRows }}</div>
+            </div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"

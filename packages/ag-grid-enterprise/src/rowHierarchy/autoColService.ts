@@ -4,6 +4,7 @@ import type {
     ColumnHeaderNameChangedEvent,
     ColumnState,
     IAutoColService,
+    IRowNode,
     ITooltipParams,
     NamedBean,
     PropertyValueChangedEvent,
@@ -34,6 +35,9 @@ import { isGroupFilterDef } from './rowHierarchyUtils';
 
 const hasTooltipComponent = (colDef: ColDef | undefined): colDef is ColDef =>
     !!colDef && (colDef.tooltipComponent != null || colDef.tooltipComponentSelector != null);
+
+const getGroupedColDef = (node: IRowNode | undefined): ColDef | undefined =>
+    node?.group ? (node.rowGroupColumn as AgColumn | null)?.colDef : undefined;
 
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColSvc' as const;
@@ -155,7 +159,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                 state[i] = this.updateOneAutoCol(cols[i], i, source);
             }
             // one state pass lays the auto cols out once, and tells them together
-            _applyColumnState(beans, { state }, source);
+            _applyColumnState(beans, { state }, source, true);
         } finally {
             colModel.endColUpdate();
         }
@@ -342,14 +346,14 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         params: TooltipCallbackParams,
         autoGroupColumnDef: ColDef | undefined
     ): any {
-        const isGroupRow = !!params.node?.group;
-        const colDef = isGroupRow ? (params.node?.rowGroupColumn as AgColumn | undefined)?.colDef : autoGroupColumnDef;
+        const groupedColDef = getGroupedColDef(params.node);
+        const colDef = groupedColDef ?? autoGroupColumnDef;
         if (!colDef) {
             return undefined;
         }
 
         return _resolveGroupTooltipValue(colDef, params, () => {
-            if (isGroupRow) {
+            if (groupedColDef) {
                 return { resolved: true, value: params.value };
             }
             const { tooltipField } = colDef;
@@ -368,9 +372,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         params: ITooltipParams,
         autoGroupColumnDef: ColDef | undefined
     ): TooltipComponentSelectorResult | undefined {
-        const colDef = params.node?.group
-            ? (params.node.rowGroupColumn as AgColumn | undefined)?.colDef
-            : autoGroupColumnDef;
+        const colDef = getGroupedColDef(params.node) ?? autoGroupColumnDef;
         if (!hasTooltipComponent(colDef)) {
             return undefined;
         }

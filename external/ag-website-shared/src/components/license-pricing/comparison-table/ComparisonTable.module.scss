@@ -95,12 +95,6 @@ $row-hover-wash: color-mix(in srgb, var(--color-text-primary) 4%, transparent);
         }
     }
 
-    @media screen and (max-width: $breakpoint-pricing-medium) {
-        .row .cell:not(:first-child) {
-            width: $spacing-size-16;
-        }
-    }
-
     &:first-child .subGroupHeader .cell {
         padding-top: $spacing-size-4;
     }
@@ -192,4 +186,43 @@ $row-hover-wash: color-mix(in srgb, var(--color-text-primary) 4%, transparent);
 .row:hover {
     background: $row-hover-wash;
     transition: all 0.4s;
+}
+
+// Too narrow for a label column beside the three feature columns: each label takes its own line, with
+// the features in equal columns beneath it.
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .row,
+    .subGroupHeader {
+        flex-wrap: wrap;
+
+        .cell {
+            width: calc(100% / 3);
+            padding-top: $spacing-size-2;
+            padding-bottom: $spacing-size-3;
+
+            &:first-child {
+                width: 100%;
+                padding-top: $spacing-size-3;
+                padding-bottom: $spacing-size-1;
+            }
+
+            &:nth-child(3) {
+                border-right: none;
+                border-left: none;
+            }
+        }
+    }
+
+    .row:first-child .cell:first-child {
+        padding-top: $spacing-size-4;
+    }
+
+    // An open sub-group fades its summary features out; on their own line they would leave a gap.
+    .subGroup.isOpen .subGroupHeader .cell:not(:first-child) {
+        display: none;
+    }
+
+    .cell.hasDetails {
+        min-width: 0;
+    }
 }

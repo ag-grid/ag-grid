@@ -1,12 +1,12 @@
 import { FAST_TEST_TIMINGS } from '../fastTestTimings';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
-import { _debounce } from '../utils/function';
-import { AgBeanStub } from './agBeanStub';
+import { _debounce } from '../utils/debounce';
+import { AgAbstractBean } from './agAbstractBean';
 
 /** Coalesces bursts of announcements into one; no grid option reaches it, so tests would out-wait it. */
 const ANNOUNCE_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 200;
@@ -21,13 +21,13 @@ type PendingAnnouncement = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class BaseAriaAnnouncementService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IAriaAnnouncementService
 {
     beanName = 'ariaAnnounce' as const;
@@ -65,8 +65,14 @@ export class BaseAriaAnnouncementService<
         this.updateAnnouncement();
     }
 
+    /** Drops the key's announcement if not yet delivered, leaving what was last announced untouched. */
+    public cancelAnnouncement(key: string): void {
+        this.announcementGenerations.set(key, (this.announcementGenerations.get(key) ?? 0) + 1);
+        this.pendingAnnouncements.delete(key);
+    }
+
     private updateAnnouncement(): void {
-        if (!this.descriptionContainer) {
+        if (!this.descriptionContainer || !this.pendingAnnouncements.size) {
             return;
         }
 
@@ -81,11 +87,13 @@ export class BaseAriaAnnouncementService<
         setTimeout(() => {
             // A same-key update may arrive after this batch left the debounce queue but before its delayed
             // delivery. Drop only the superseded entry; unrelated announcements in this batch still apply.
-            const value = announcements
-                .filter(({ generation, key }) => this.announcementGenerations.get(key) === generation)
-                .map(({ value }) => value)
-                .join('. ');
-            this.handleAnnouncementUpdate(value);
+            const current = announcements.filter(
+                ({ generation, key }) => this.announcementGenerations.get(key) === generation
+            );
+            if (!current.length) {
+                return;
+            }
+            this.handleAnnouncementUpdate(current.map(({ value }) => value).join('. '));
         }, ANNOUNCE_REPEAT_DELAY);
     }
 

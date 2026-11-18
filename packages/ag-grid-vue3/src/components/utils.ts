@@ -1,6 +1,7 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
+    AccentedSortOptions,
     AlignedGrid,
     AlwaysPassFilter,
     AutoGenerateColumnDefsOptions,
@@ -58,6 +59,7 @@ import type {
     IAggFuncs,
     IDatasource,
     IServerSideDatasource,
+    ITooltipParams,
     IViewportDatasource,
     Icons,
     InitialGroupOrderComparator,
@@ -113,7 +115,6 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
-    SortDirection,
     StatusBar,
     TabToNextCell,
     TabToNextGridContainer,
@@ -309,14 +310,22 @@ export interface Props<TData> {
          */
     enableBrowserTooltips?: boolean,
     /** The trigger that will cause tooltips to show and hide.
-         *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
-         *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+         * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
+         *  - `hover` - The tooltip will show/hide when its element is hovered.
+         *  - `focus` - The tooltip shows immediately on keyboard focus.
+         *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
          * @default 'hover'
          * @initial
          * @agModule `TooltipModule`
          */
-    tooltipTrigger?: 'hover' | 'focus',
-    /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus',
+    /** Provides a plain-text accessible description, available on focus before the visual tooltip appears.
+         * Use this for custom tooltips whose resolved `params.value` is structured data.
+         * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
+         * @agModule `TooltipModule`
+         */
+    getTooltipAriaDescription?: (params: ITooltipParams<TData>) => string | null | undefined,
+    /** The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @default 2000
          * @agModule `TooltipModule`
@@ -329,9 +338,9 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipSwitchShowDelay?: number,
-    /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
-         * @default 10000
+    /** An optional timeout in milliseconds after a tooltip appears. By default there is no timed hide.
+         * A timeout does not close an interactive tooltip while keyboard focus is inside it.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @agModule `TooltipModule`
          */
     tooltipHideDelay?: number,
@@ -348,8 +357,8 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipShowMode?: 'standard' | 'whenTruncated',
-    /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
-         * tooltip itself it being hovered or has focus.
+    /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
+         * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
          * @default false
          * @initial
          * @agModule `TooltipModule`
@@ -491,16 +500,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup',
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-         */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean,
-    /** If `true`, when you drag a column into a row group panel the column is not hidden.
-         * @default false
-         * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-         */
-    suppressRowGroupHidesColumns?: boolean,
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
          */
     colResizeDefault?: 'shift',
@@ -875,16 +874,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressFocusAfterRefresh?: boolean,
-    /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-         * @default false
-         * @initial
-         */
-    suppressBrowserResizeObserver?: boolean,
-    /** @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-         * @default false
-         * @initial
-         */
-    suppressPropertyNamesCheck?: boolean,
     /** Disables change detection.
          * @default false
          */
@@ -1330,6 +1319,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom',
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+         * for example when the row data is empty or all rows are filtered out.
+         * @default false
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+         */
+    alwaysShowGrandTotalRow?: boolean,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
@@ -1354,16 +1349,6 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly',
-    /** Set to `true` to collapse groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-         */
-    groupRemoveSingleChildren?: boolean,
-    /** Set to `true` to collapse lowest level groups that only have one child.
-         * @default false
-         * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-         */
-    groupRemoveLowestSingleChildren?: boolean,
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1581,11 +1566,21 @@ export interface Props<TData> {
          * @agModule `ViewportRowModelModule`
          */
     viewportRowModelBufferSize?: number,
+    /** Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+         * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+         * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+         * Keyboard, API scrolling and scrollbar dragging are unaffected.
+         * @default 'native'
+         * @agModule `ScrollGestureModule`
+         */
+    scrollGestureMode?: 'native' | 'axisLocked',
     /** Set to `true` to always show the horizontal scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowHorizontalScroll?: boolean,
     /** Set to `true` to always show the vertical scrollbar.
+         * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
          * @default false
          */
     alwaysShowVerticalScroll?: boolean,
@@ -1703,20 +1698,15 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
          */
     suppressClearOnFillReduction?: boolean,
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default ['asc', 'desc', null]
-         * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-         */
-    sortingOrder?: SortDirection[],
-    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+    /** Set to `true` to sort strings using locale-specific rules, so accented characters are taken into account. If this feature is turned on the sort will be slower.
+         *
+         * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+         * Only applies when both values are strings. Also orders the values in the Set Filter list.
+         *
+         * Can be overridden per column with `colDef.accentedSort`.
          * @default false
          */
-    accentedSort?: boolean,
-    /** Set to `true` to show the 'no sort' icon.
-         * @default false
-         * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-         */
-    unSortIcon?: boolean,
+    accentedSort?: boolean | AccentedSortOptions,
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
          * @default false
          */
@@ -2233,6 +2223,7 @@ export function getProps() {
         suppressMenuHide: undefined,
         enableBrowserTooltips: undefined,
         tooltipTrigger: undefined,
+        getTooltipAriaDescription: undefined,
         tooltipShowDelay: undefined,
         tooltipSwitchShowDelay: undefined,
         tooltipHideDelay: undefined,
@@ -2271,8 +2262,6 @@ export function getProps() {
         suppressMoveWhenColumnDragging: undefined,
         suppressDragLeaveHidesColumns: undefined,
         suppressGroupChangesColumnVisibility: undefined,
-        suppressMakeColumnVisibleAfterUnGroup: undefined,
-        suppressRowGroupHidesColumns: undefined,
         colResizeDefault: undefined,
         suppressAutoSize: undefined,
         autoSizePadding: undefined,
@@ -2348,8 +2337,6 @@ export function getProps() {
         enableCellExpressions: undefined,
         suppressTouch: undefined,
         suppressFocusAfterRefresh: undefined,
-        suppressBrowserResizeObserver: undefined,
-        suppressPropertyNamesCheck: undefined,
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
@@ -2431,13 +2418,12 @@ export function getProps() {
         groupAggFiltering: undefined,
         groupTotalRow: undefined,
         grandTotalRow: undefined,
+        alwaysShowGrandTotalRow: undefined,
         suppressStickyTotalRow: undefined,
         groupSuppressBlankHeader: undefined,
         groupSelectsFiltered: undefined,
         showOpenedGroup: undefined,
         groupHideParentOfSingleChild: undefined,
-        groupRemoveSingleChildren: undefined,
-        groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
         groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
@@ -2479,6 +2465,7 @@ export function getProps() {
         viewportDatasource: undefined,
         viewportRowModelPageSize: undefined,
         viewportRowModelBufferSize: undefined,
+        scrollGestureMode: undefined,
         alwaysShowHorizontalScroll: undefined,
         alwaysShowVerticalScroll: undefined,
         debounceVerticalScrollbar: undefined,
@@ -2505,9 +2492,7 @@ export function getProps() {
         enableFillHandle: undefined,
         fillHandleDirection: undefined,
         suppressClearOnFillReduction: undefined,
-        sortingOrder: undefined,
         accentedSort: undefined,
-        unSortIcon: undefined,
         suppressMultiSort: undefined,
         alwaysMultiSort: undefined,
         multiSortKey: undefined,

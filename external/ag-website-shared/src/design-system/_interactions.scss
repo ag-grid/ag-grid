@@ -1,16 +1,5 @@
 @use './core' as *;
 
-.collapse:where(:not(.show)) {
-    display: none;
-}
-
-.collapsing {
-    position: relative;
-    height: 0;
-    overflow: hidden;
-    transition: height 0.35s ease;
-}
-
 .no-transitions,
 .no-transitions *,
 .no-transitions *::before,

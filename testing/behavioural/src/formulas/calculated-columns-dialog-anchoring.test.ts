@@ -17,6 +17,106 @@ import {
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
 
+    test.each(
+        (['left', 'right'] as const).flatMap((pinned) =>
+            (['live', 'deferred'] as const).flatMap((applyMode) =>
+                (['menu', 'api'] as const).map((entry) => ({ pinned, applyMode, entry }))
+            )
+        )
+    )('adds after a $pinned-pinned source via $entry in $applyMode mode', async ({ pinned, applyMode, entry }) => {
+        const api = createGrid('calculated-pinned-source', {
+            calculatedColumns: { applyMode },
+            defaultColDef: { width: 100 },
+            columnDefs: [
+                { field: 'before', pinned },
+                { field: 'revenue', pinned },
+                { field: 'after', pinned },
+                { field: 'cost' },
+            ],
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+        });
+        if (entry === 'menu') {
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+        } else {
+            api.openAddCalculatedColumnDialog('revenue');
+        }
+        if (applyMode === 'deferred') {
+            setExpression('[Revenue]');
+            clickDialogButton('Apply');
+        }
+        const getPinnedIds = () =>
+            (pinned === 'left' ? api.getDisplayedLeftColumns() : api.getDisplayedRightColumns()).map((col) =>
+                col.getColId()
+            );
+        expect(api.getColumn('calculated_1')!.getPinned()).toBe(pinned);
+        expect(getPinnedIds()).toEqual(['before', 'revenue', 'calculated_1', 'after']);
+        api.applyColumnState({ state: [{ colId: 'revenue', pinned: null }] });
+        expect(api.getColumn('calculated_1')!.getPinned()).toBe(pinned);
+    });
+
+    test.each(['left', 'right', null] as const)(
+        'inherits current source pinning (%s), not its definition',
+        (pinned) => {
+            const api = createGrid('calculated-current-pinning', {
+                defaultColDef: { pinned: 'left', width: 100 },
+                columnDefs: [{ field: 'revenue' }, { field: 'cost', pinned: null }],
+                rowData: [{ id: 'r1', revenue: 10 }],
+            });
+            api.applyColumnState({ state: [{ colId: 'revenue', pinned }] });
+            api.openAddCalculatedColumnDialog('revenue');
+            expect(api.getColumn('calculated_1')!.getPinned()).toBe(pinned);
+
+            const savedState = api.getState();
+            api.setState(savedState);
+            expect(api.getColumn('calculated_1')!.getPinned()).toBe(pinned);
+
+            api.applyColumnState({ state: [{ colId: 'calculated_1', pinned: null }] });
+            setExpression('[Revenue]');
+            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            expect(api.getColumn('calculated_1')!.getPinned()).toBeNull();
+        }
+    );
+
+    test('Add without a source keeps the default pinning', () => {
+        const api = createGrid('calculated-no-source-pinning', {
+            defaultColDef: { pinned: 'right', width: 100 },
+            columnDefs: [{ field: 'revenue', pinned: null }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        api.openAddCalculatedColumnDialog();
+        expect(api.getColumn('calculated_1')!.getPinned()).toBe('right');
+    });
+
+    test.each(['pinned', 'initialPinned'] as const)('processColDef can override inherited pinning with %s', (key) => {
+        const api = createGrid('calculated-processed-pinning', {
+            calculatedColumns: {
+                processColDef: ({ colDef }) => ({ ...colDef, [key]: 'right' }),
+            },
+            defaultColDef: { width: 100 },
+            columnDefs: [{ field: 'revenue', pinned: 'left' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        api.openAddCalculatedColumnDialog('revenue');
+        expect(api.getColumn('calculated_1')!.getPinned()).toBe('right');
+    });
+
+    test.each(['left', 'right'] as const)('restores inherited %s pinning into a new grid', (pinned) => {
+        const source = createGrid('calculated-pinning-state-source', {
+            defaultColDef: { width: 100 },
+            columnDefs: [{ field: 'revenue', pinned }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        source.openAddCalculatedColumnDialog('revenue');
+        const target = createGrid('calculated-pinning-state-target', {
+            defaultColDef: { width: 100 },
+            columnDefs: [{ field: 'revenue' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+            initialState: source.getState(),
+        });
+        expect(target.getColumn('calculated_1')!.getPinned()).toBe(pinned);
+    });
+
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
         const year2025: ColGroupDef = {
             groupId: 'year_2025',

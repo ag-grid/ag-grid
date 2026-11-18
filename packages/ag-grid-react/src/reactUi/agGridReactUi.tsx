@@ -28,7 +28,6 @@ import {
     BaseComponentWrapper,
     GridCoreCreator,
     VanillaFrameworkOverrides,
-    _PUBLIC_EVENT_HANDLERS_MAP,
     _combineAttributesAndGridOptions,
     _findEnterpriseCoreModule,
     _getGridOption,
@@ -84,7 +83,6 @@ const reactPropsNotGridOptions: ReactCompProps = {
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
-const eventHandlerProps = new Set<string>(Object.values(_PUBLIC_EVENT_HANDLERS_MAP));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const modulesFromContext = useContext(ModulesContext);
@@ -301,9 +299,8 @@ function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, 
             changes[propKey] = propValue;
         }
     }
-    // a dropped event handler prop must stop being called; other dropped props keep their value
     for (const propKey of Object.keys(prevProps)) {
-        if (!(propKey in nextProps) && eventHandlerProps.has(propKey)) {
+        if (!(propKey in nextProps) && !excludeReactCompProps.has(propKey)) {
             changes[propKey] = undefined;
         }
     }

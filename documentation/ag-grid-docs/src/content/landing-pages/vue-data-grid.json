@@ -7,6 +7,7 @@
     "packageName": "ag-grid-vue3",
     "docsPath": "vue-data-grid",
     "analyticsPrefix": "vue-data-grid",
+    "technicalReviewer": "james",
 
     "sections": [
         {

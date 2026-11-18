@@ -38,11 +38,24 @@ api.applyServerSideTransaction({
 The following example demonstrates add / update and remove operations via the Server-Side Transaction API. Note the following:
 
 - When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
-- **Add Above Selected** - adds a row above the selected row using the `addIndex` property as rows are added at the end by default.
+- **Add Above Selected** - adds a row above the selected row using the `addIndex` property.
 - **Update Selected** - updates the 'current' value on the selected row.
 - **Removed Selected** - removes the selected row.
 
 {% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
+
+### Rows That Cannot Be Added
+
+The grid skips a row to add when it cannot work out where the row belongs, or when the row would duplicate one already loaded:
+
+- No `addIndex` is provided while the store's row count is unknown, as in a group that has not been expanded.
+- `addIndex` is past the end of the store.
+- A row with the same ID is already loaded.
+- A later row in `add` has the same ID. Only the last of these rows is added.
+
+Skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`. Updates and removes of rows that are not loaded are ignored, and are not reported.
+
+Applying the same transaction again skips the rows again. If a skipped row exists on the server, it is shown once the block containing it is loaded, for example when its group is expanded or after a [refresh](./server-side-model-updating-refresh/). To show it straight away, check whether a row with that ID is loaded using `api.getRowNode(id)`. If it is, apply the row again with `update`. If not, apply it again with an `addIndex` that is within the loaded rows. Rows skipped because a later row in `add` has the same ID need no action.
 
 ## Row Grouping
 

@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { Column, IFilterComp, IMenuItemParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IMenuItemParams & { column: Column }>,
+            required: true,
+        },
+    },
     template: `
         <div>
             <div
@@ -34,10 +45,10 @@ export default {
         };
     },
     methods: {
-        setActive(active) {
+        setActive(active: boolean) {
             this.active = active;
             if (active) {
-                this.$refs.option.focus();
+                (this.$refs.option as HTMLElement).focus();
             }
         },
         onClick() {
@@ -50,20 +61,20 @@ export default {
         onMouseLeave() {
             this.setActive(false);
         },
-        onOptionKeyDown(e) {
+        onOptionKeyDown(e: KeyboardEvent) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 this.onClick();
             }
         },
-        onFilterWrapperKeyDown(e) {
+        onFilterWrapperKeyDown(e: KeyboardEvent) {
             // stop the menu from handling keyboard navigation inside the filter
             e.stopPropagation();
         },
     },
     mounted() {
         this.params.api.getColumnFilterInstance(this.params.column).then((filter) => {
-            this.$refs.filterWrapper.appendChild(filter.getGui());
+            (this.$refs.filterWrapper as HTMLElement).appendChild((filter as IFilterComp).getGui());
         });
     },
-};
+});

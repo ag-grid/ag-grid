@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     advancedFilterCancel: 'Otkaži',
     advancedFilterClear: 'Očisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Nedostaje kolona',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
     advancedFilterValidationMissingValue: 'Nedostaje vrijednost',
@@ -751,6 +752,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaCalculatedColumn: 'Izračunata kolona',
     ariaColumnShowValuesAs: 'Prikazivanje vrijednosti kao',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih kolona',
+    ariaColumnSelectExpandAll: 'Proširi ili sažmi sve grupe kolona',
     ariaDateFilterInput: 'Unos filtera datuma',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Unos za filtriranje kolona',
@@ -793,8 +795,17 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaVisible: 'vidljivo',
     ariaSearchFilterValues: 'Pretraga vrijednosti filtera',
     ariaPageSizeSelectorLabel: 'Veličina stranice',
+    ariaPageSizeSelectorDescription: 'Promjena veličine stranice ažurira redove prikazane u tabeli',
+    ariaPaginationRowSummary: 'Prikazani zapisi od ${variable} do ${variable} od ukupno ${variable}',
+    ariaPaginationRowSummaryUnknownTotal: 'Prikazani zapisi od ${variable} do ${variable}, ukupan broj nepoznat',
+    ariaPaginationRowSummaryLoading: 'Učitavanje zapisa od ${variable}',
+    ariaPaginationPanelLabel: 'Paginacija tabele',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartSeriesChartType: 'Tip grafikona za ${variable}',
+    ariaChartPalettePrevious: 'Prethodna paleta',
+    ariaChartPaletteNext: 'Sljedeća paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost, ${value}.',
@@ -822,12 +833,24 @@ export const AG_GRID_LOCALE_BS_BA = {
 
     ariaLabelDialog: 'Dijalog',
 
+    ariaLabelClose: 'Zatvori',
+
+    ariaLabelMaximize: 'Maksimiziraj',
+
+    ariaLabelRestore: 'Vrati',
+    ariaLabelColorPickerSpectrum: 'Zasićenost i svjetlina',
+    ariaValueColorPickerSpectrum: 'Zasićenost ${variable}%, svjetlina ${variable}%',
+    ariaLabelColorPickerHue: 'Nijansa',
+    ariaLabelColorPickerAlpha: 'Neprozirnost',
+    ariaLabelColorPickerHex: 'Heksadecimalna boja',
+
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
 
     ariaLabelSelectField: 'Polje za izbor',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Editor ćelije',
     ariaValidationErrorPrefix: 'Validacija editora ćelije',
     ariaFullRowValidationError: 'Validacija cijelog reda: ${variable}',
     ariaFullRowEditValidationFailed: 'Nije moguće završiti uređivanje reda. ${variable}',
@@ -860,6 +883,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Obriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaLabelFilterCardType: 'Vrsta filtera',
     ariaHasNote: 'Ova ćelija ima napomenu.',
 
     // Number Format (Status Bar, Pagination Panel)

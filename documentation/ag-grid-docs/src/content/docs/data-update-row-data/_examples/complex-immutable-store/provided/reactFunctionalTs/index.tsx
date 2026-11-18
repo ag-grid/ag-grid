@@ -407,8 +407,10 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button onClick={updateData}>Update</button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={updateData}>Update</button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

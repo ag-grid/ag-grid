@@ -100,14 +100,6 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return comp;
     }
 
-    private isMoveSuppressed(comp: DropZoneColumnComp): boolean {
-        return !!(
-            this.updateParams?.suppressSyncLayoutWithGrid ||
-            comp.getItem().colDef.suppressMovable ||
-            !comp.isMovable()
-        );
-    }
-
     private getMenuConfig(comp: DropZoneColumnComp) {
         const { horizontal, gos } = this;
         const column = comp.getItem();
@@ -117,8 +109,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             DefaultColumnDropZoneMenuItem,
             { direction: (typeof directions)[number]; isPrevious: boolean }
         >();
-        const suppressMove = this.isMoveSuppressed(comp);
-        for (let index = 0; !suppressMove && index < directions.length; ++index) {
+        const canMove = comp.isMovable();
+        for (let index = 0; canMove && index < directions.length; ++index) {
             const direction = directions[index];
             const isTowardStart = index === 0;
             const isPrevious = isTowardStart !== isRtlHorizontal;
@@ -160,9 +152,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
                     disabled: this.getItemMoveIndex(comp, isPrevious) === null,
                     action: () => {
                         this.hideMoveMenu?.();
-                        if (!this.isMoveSuppressed(comp)) {
-                            this.moveItem(comp, isPrevious);
-                        }
+                        this.moveItem(comp, isPrevious);
                     },
                 };
             }),

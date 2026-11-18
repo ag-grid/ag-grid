@@ -1,6 +1,15 @@
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
 
-export default {
+import type { ICellEditorParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `
       <input
         ref="input"
@@ -17,25 +26,26 @@ export default {
     data() {
         return {
             value: '',
-            validationError: null,
+            validationError: null as string | null,
             pattern: '^\\(\\d{3}\\)\\s\\d{3}-\\d{4}$',
         };
     },
 
     methods: {
-        getValue() {
+        getValue(): string {
             return this.value;
         },
 
         afterGuiAttached() {
             nextTick(() => {
-                this.$refs.input.focus();
-                this.$refs.input.select();
+                const input = this.$refs.input as HTMLInputElement;
+                input.focus();
+                input.select();
 
                 const { cellStartedEdit, eventKey } = this.params;
 
                 if (cellStartedEdit && eventKey?.length === 1) {
-                    this.$refs.input.value = eventKey;
+                    input.value = eventKey;
                 }
             });
         },
@@ -44,12 +54,12 @@ export default {
             return false;
         },
 
-        getValidationErrors() {
+        getValidationErrors(): string[] | null {
             return this.validationError ? [this.validationError] : null;
         },
 
-        getValidationElement() {
-            return this.$refs.input;
+        getValidationElement(): HTMLInputElement {
+            return this.$refs.input as HTMLInputElement;
         },
 
         validatePhone() {
@@ -69,4 +79,4 @@ export default {
     created() {
         this.value = this.params.value || '';
     },
-};
+});

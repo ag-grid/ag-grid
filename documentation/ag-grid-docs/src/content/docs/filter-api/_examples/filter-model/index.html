@@ -1,6 +1,6 @@
 <div class="example-wrapper">
-    <div>
-        <div class="button-group">
+    <div class="example-controls">
+        <div class="controls-row">
             <button onclick="saveFilterModel()">Save Filter Model</button>
             <button onclick="restoreFilterModel()">Restore Saved Filter Model</button>
             <button
@@ -12,9 +12,7 @@
             <button onclick="clearFilters()">Reset Filters</button>
             <button onclick="destroyFilter()">Destroy Filter</button>
         </div>
-    </div>
-    <div>
-        <div class="button-group">Saved Filters: <span id="savedFilters">(none)</span></div>
+        <div class="controls-row">Saved Filters: <span id="savedFilters">(none)</span></div>
     </div>
 
     <div id="myGrid"></div>

@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import { isLocalRun } from './src/utils/grid/test/localRun';
 import { wafBypassSecret } from './src/utils/grid/test/wafBypass';
 
 // The dev server takes its port from `PORT`, but `docs-e2e.sh` runs Playwright directly rather than through Nx,
@@ -27,22 +28,11 @@ const withTrailingSlash = (url: string): string => (url.endsWith('/') ? url : `$
 
 const baseURL = withTrailingSlash(BASE_URL || PREV_URL || PROD_URL || `https://localhost:${LOCAL_PORT}`);
 
-const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
-
 const BROWSER_IGNORED_TESTS = [
     '**/async-test/provided/angular/app.component.spec.ts',
     // page-verification.spec.ts runs in its own dedicated CI job.
     '**/page-verification.spec.ts',
 ];
-
-function isLocalRun(url: string): boolean {
-    try {
-        return LOCAL_HOSTNAMES.includes(new URL(url).hostname);
-    } catch {
-        // A URL that does not parse is not one we can treat as local.
-        return false;
-    }
-}
 
 // A run against the local dev server gets no retry, so a flaky example fails fast rather than being
 // masked by a re-run. A run against a deployed site keeps one, since it can fail on the network alone.

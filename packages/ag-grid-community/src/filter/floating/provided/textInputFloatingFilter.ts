@@ -89,7 +89,7 @@ export abstract class TextInputFloatingFilter<
         if (!readOnly) {
             const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
             const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
-            let debounceTimeout: number | undefined;
+            let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
             inputSvc.setValueChangedListener((e) => {
                 this.pendingEdit = true;
                 debounceTimeout = debouncedSync(e);

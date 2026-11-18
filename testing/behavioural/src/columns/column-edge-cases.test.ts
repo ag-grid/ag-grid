@@ -11,13 +11,20 @@
  */
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, Column, ColumnGroup } from 'ag-grid-community';
+import type { ColDef, Column, ColumnGroup, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Column Edge Cases', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, RowNumbersModule, RowSelectionModule],
+        modules: [
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            RowNumbersModule,
+            RowSelectionModule,
+            TreeDataModule,
+        ],
     });
 
     afterEach(() => {
@@ -1001,6 +1008,37 @@ describe('Column Edge Cases', () => {
                 ├── country width:200 rowGroup
                 └── gold width:200
             `);
+        });
+    });
+
+    describe('tree data with groupDisplayType=multipleColumns', () => {
+        test('warns #182 and shows the single auto group column', async () => {
+            // Asserts warning #182 (tree data cannot show groups in multiple columns).
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [182] });
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ path: ['Ireland'], year: 2000 }],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                    groupDisplayType: 'multipleColumns',
+                });
+
+                const autoColumnIds = api
+                    .getAllGridColumns()
+                    .map((c: Column) => c.getColId())
+                    .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
+                expect(autoColumnIds).toEqual(['ag-Grid-AutoColumn']);
+                expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                    'ag-Grid-AutoColumn',
+                    'year',
+                ]);
+                const warnMsg = warnSpy.mock.calls.map((c) => String(c[0])).join(' ');
+                expect(warnMsg).toContain('#182');
+            } finally {
+                warnSpy.mockRestore();
+            }
         });
     });
 
@@ -2385,6 +2423,81 @@ describe('Column Edge Cases', () => {
             // Same column instance reused
             expect(instance2).toBe(instance1);
         });
+
+        const specialColumnCases: {
+            name: string;
+            colId: string;
+            option: 'autoGroupColumnDef' | 'selectionColumnDef';
+            gridOptions: GridOptions;
+        }[] = [
+            {
+                name: 'autoGroupColumnDef with row grouping',
+                colId: 'ag-Grid-AutoColumn',
+                option: 'autoGroupColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'country', rowGroup: true }, { field: 'year' }],
+                    rowData: [{ country: 'Ireland', year: 2000 }],
+                },
+            },
+            {
+                name: 'autoGroupColumnDef with tree data',
+                colId: 'ag-Grid-AutoColumn',
+                option: 'autoGroupColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ path: ['Ireland'], year: 2000 }],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                },
+            },
+            {
+                name: 'selectionColumnDef',
+                colId: 'ag-Grid-SelectionColumn',
+                option: 'selectionColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ year: 2000 }],
+                    rowSelection: { mode: 'multiRow', headerCheckbox: false },
+                },
+            },
+        ];
+
+        // a fresh getter per definition, as an application recreating the definition would pass
+        const specialColDef = (): ColDef => ({ headerName: 'From headerName', headerValueGetter: () => 'From getter' });
+
+        test.each(specialColumnCases)(
+            'updating $name keeps the header from its headerValueGetter',
+            async ({ colId, option, gridOptions }) => {
+                const api = await gridsManager.createGridAndWait('myGrid', {
+                    ...gridOptions,
+                    [option]: specialColDef(),
+                });
+
+                api.setGridOption(option, specialColDef());
+
+                expect(api.getDisplayNameForColumn(api.getColumn(colId)!, 'header')).toBe('From getter');
+                expect(
+                    document.querySelector(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-text`)?.textContent
+                ).toBe('From getter');
+                expect(api.getColumnState().find((state) => state.colId === colId)?.headerName).toBeNull();
+            }
+        );
+
+        test.each(specialColumnCases)(
+            'updating $name keeps a header name applied through column state',
+            async ({ colId, option, gridOptions }) => {
+                const api = await gridsManager.createGridAndWait('myGrid', {
+                    ...gridOptions,
+                    [option]: specialColDef(),
+                });
+                api.applyColumnState({ state: [{ colId, headerName: 'Renamed' }] });
+
+                api.setGridOption(option, specialColDef());
+
+                expect(api.getDisplayNameForColumn(api.getColumn(colId)!, 'header')).toBe('Renamed');
+                expect(api.getColumnState().find((state) => state.colId === colId)?.headerName).toBe('Renamed');
+            }
+        );
     });
 
     describe('method return type guarantees', () => {

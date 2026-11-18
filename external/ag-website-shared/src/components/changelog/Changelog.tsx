@@ -1,6 +1,8 @@
 import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
+import { formatJiraNotes } from '@ag-website-shared/components/changelog/formatJiraNotes';
+import { linkifyUrls } from '@ag-website-shared/components/changelog/linkifyUrls';
 import { transformVersion } from '@ag-website-shared/components/changelog/transformVersion';
 import { useSearchQuery } from '@ag-website-shared/components/changelog/useSearchQuery';
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
@@ -223,52 +225,24 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
         }
 
         const moreInfo = params.data.moreInformation
-            ? produceHTML('More Information', params.data.moreInformation)
+            ? produceHTML('More Information', formatJiraNotes(params.data.moreInformation))
             : '';
         const deprecationNotes = params.data.deprecationNotes
-            ? produceHTML('Deprecation Notes', params.data.deprecationNotes)
+            ? produceHTML('Deprecation Notes', formatJiraNotes(params.data.deprecationNotes))
             : '';
         const breakingChangesNotes = params.data.breakingChangesNotes
-            ? produceHTML('Breaking Changes', params.data.breakingChangesNotes)
+            ? produceHTML('Breaking Changes', formatJiraNotes(params.data.breakingChangesNotes))
             : '';
         const linkToDocumentation = params.data.documentationUrl
             ? produceHTML('Link to Documentation', params.data.documentationUrl)
             : '';
 
-        function makeLinksFunctional(message) {
-            let msgArr = message.split(' ');
-            const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
-            if (linkStrIdx > 0) {
-                msgArr = msgArr.map((element) => {
-                    if (element.includes('https://')) {
-                        const beginningIndex = element.indexOf('http');
-                        const endIndex = element.indexOf('<', beginningIndex);
-                        const isEndIndex = endIndex >= 0;
-                        let length = 0;
-                        if (isEndIndex) {
-                            length = endIndex - beginningIndex;
-                        }
-
-                        const httpIdx = element.indexOf('http');
-                        const link = length ? element.substring(httpIdx, httpIdx + length) : element.substring(httpIdx);
-                        const htmlLink = isEndIndex
-                            ? `<a class=${styles.link} href="${link}"
-         target="_blank">${link}</a>${element.substring(endIndex)}`
-                            : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                        return element.substring(0, beginningIndex) + htmlLink;
-                    }
-                    return element;
-                });
-                message = msgArr.join(' ');
-            }
-            return message;
-        }
-
-        const message = makeLinksFunctional(
+        const message = linkifyUrls(
             (moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation)
                 .replaceAll('\n\r', '<br>')
                 .replaceAll('\n', '<br>')
-                .replaceAll('\r', '<br>')
+                .replaceAll('\r', '<br>'),
+            styles.link
         );
         return {
             message: message,

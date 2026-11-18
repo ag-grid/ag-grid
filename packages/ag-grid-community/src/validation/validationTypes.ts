@@ -35,9 +35,6 @@ export function _createValidationWarning<TId extends ErrorId>(
     return { errorId, emit: (log) => emitValidation(log, errorId, params, false) };
 }
 
-/**
- * As {@link _createValidationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}).
- */
 export function _createDeprecationWarning<TId extends ErrorId>(
     errorId: TId,
     params: GetErrorParams<TId>

@@ -264,6 +264,60 @@ describe('Status bar panels', () => {
         expect(isStatusItemDisplayed(gridDiv, 'Average')).toBe(false);
     });
 
+    test.each([
+        { name: "cellDataType 'text'", colDef: { cellDataType: 'text' }, values: ['1001', '1002'] },
+        { name: 'cellDataType false', colDef: { cellDataType: false }, values: ['1001', '1002'] },
+        { name: 'custom cell data type', colDef: { cellDataType: 'accountNo' }, values: ['1001', '1002'] },
+        { name: 'padded strings', colDef: {}, values: [' 1001 ', ' 1002 '] },
+        { name: 'exponent strings', colDef: {}, values: ['1e21', '2e21'] },
+        { name: 'strings beyond MAX_SAFE_INTEGER', colDef: {}, values: ['9007199254740993', '9007199254740994'] },
+    ])(
+        'agAggregationComponent counts numeric-looking strings without aggregating them: $name',
+        async ({ colDef, values }) => {
+            const api = await gridMgr.createGridAndWait('status-bar-agg-numeric-strings', {
+                columnDefs: [{ field: 'account', ...colDef }],
+                dataTypeDefinitions: {
+                    accountNo: { baseDataType: 'text', extendsDataType: 'text' },
+                },
+                rowData: values.map((account, i) => ({ id: `r${i}`, account })),
+                getRowId: (params) => params.data?.id,
+                cellSelection: true,
+                statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
+            });
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            await selectCellRange(api, 0, 1, ['account']);
+
+            expect(getStatusBarValue(gridDiv, 'Count')).toBe('2');
+            expect(isStatusItemDisplayed(gridDiv, 'Sum')).toBe(false);
+            expect(isStatusItemDisplayed(gridDiv, 'Min')).toBe(false);
+            expect(isStatusItemDisplayed(gridDiv, 'Max')).toBe(false);
+            expect(isStatusItemDisplayed(gridDiv, 'Average')).toBe(false);
+        }
+    );
+
+    test('agAggregationComponent aggregates only the numbers in a mixed string and number selection', async () => {
+        const api = await gridMgr.createGridAndWait('status-bar-agg-mixed-strings', {
+            columnDefs: [{ field: 'account', cellDataType: 'text' }, { field: 'value' }],
+            rowData: [
+                { id: 'r1', account: '1001', value: 10 },
+                { id: 'r2', account: '1002', value: 20 },
+            ],
+            getRowId: (params) => params.data?.id,
+            cellSelection: true,
+            statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
+        });
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        await selectCellRange(api, 0, 1, ['account', 'value']);
+
+        expect(getStatusBarValue(gridDiv, 'Count')).toBe('4');
+        expect(getStatusBarValue(gridDiv, 'Sum')).toBe('30');
+        expect(getStatusBarValue(gridDiv, 'Min')).toBe('10');
+        expect(getStatusBarValue(gridDiv, 'Max')).toBe('20');
+        expect(getStatusBarValue(gridDiv, 'Average')).toBe('15');
+    });
+
     test('aggregation panel aggFuncs config restricts which aggregations display', async () => {
         const aggFuncs: AggregationStatusPanelAggFunc[] = ['sum', 'count'];
         const api = await gridMgr.createGridAndWait('status-bar-agg-funcs', {

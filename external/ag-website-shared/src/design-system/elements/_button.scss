@@ -13,7 +13,7 @@ input[type='submit']#{$selector-exclude-grid-bryntum},
 .button,
 .button-secondary,
 .button-tertiary {
-    --icon-size: 2em;
+    --icon-size: 1.25em;
     --icon-color: var(--color-button-primary-fg);
 
     appearance: none;
@@ -194,11 +194,15 @@ a.button-tertiary:hover {
 }
 
 .button-as-link {
+    --icon-color: var(--color-link);
+
     color: var(--color-link);
     transition: color $transition-default-timing;
 
     &:hover,
     &.hover {
+        --icon-color: var(--color-link-hover);
+
         color: var(--color-link-hover);
     }
 }

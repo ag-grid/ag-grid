@@ -22,7 +22,7 @@ export default (props: CustomCellRendererProps & { isFilterRenderer?: boolean })
 
     return (
         <div>
-            {flagUrl && <img className="flag" border="0" width="15" height="10" src={flagUrl} />}
+            {flagUrl && <img className="flag" width="15" height="10" src={flagUrl} />}
             {value}
         </div>
     );

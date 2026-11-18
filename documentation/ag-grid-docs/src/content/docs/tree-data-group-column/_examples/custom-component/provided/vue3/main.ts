@@ -4,6 +4,7 @@ import type {
     CellDoubleClickedEvent,
     CellKeyDownEvent,
     ColDef,
+    GridApi,
     GridReadyEvent,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -66,15 +67,15 @@ const VueExample = defineComponent({
                     },
                 },
             ],
-            gridApi: null,
+            gridApi: null as GridApi | null,
             defaultColDef: <ColDef>{
                 flex: 1,
                 minWidth: 120,
             },
-            autoGroupColumnDef: null,
-            groupDefaultExpanded: null,
-            rowData: null,
-            getDataPath: (data) => data.path,
+            autoGroupColumnDef: null as ColDef | null,
+            groupDefaultExpanded: null as number | null,
+            rowData: null as any[] | null,
+            getDataPath: (data: any) => data.path,
         };
     },
     created() {

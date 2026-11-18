@@ -13,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -92,20 +90,22 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="container">
-                <div className="header">
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
-                        Athlete
-                    </label>
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
-                        Age
-                    </label>
-                    <label>
-                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
-                        Country
-                    </label>
+            <div className="example-wrapper">
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
+                            Athlete
+                        </label>
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
+                            Age
+                        </label>
+                        <label>
+                            <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
+                            Country
+                        </label>
+                    </div>
                 </div>
 
                 <div className="grid">
@@ -119,8 +119,6 @@ const GridExample = () => {
                         autoSizeStrategy={autoSizeStrategy}
                     />
                 </div>
-
-                <div className="divider"></div>
 
                 <div className="grid">
                     <AgGridReact

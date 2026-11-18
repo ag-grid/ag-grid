@@ -1,6 +1,6 @@
 ---
 targets: ['*']
-description: 'Integrated Charts: establishing effective AG Charts option values, and testing the format panel'
+description: 'Integrated Charts: establishing effective AG Charts option values, testing the format panel, migrating saved chart models, and escalating suspected AG Charts bugs'
 globs: ['packages/ag-grid-enterprise/src/charts/**/*.ts', 'testing/behavioural/src/charts/**/*.ts']
 ---
 
@@ -25,3 +25,23 @@ Several helpers substitute a plausible value for a missing read, which turns a b
 
 - Widget values are **not queryable through `document`** in the headless behavioural environment. Assert them by instrumenting the `ChartMenuParamsFactory` factory methods and reading `params.value` once the panel has built — panels amend the params object after the factory returns, so the recorded object holds the final value.
 - The `format-panel-options-*.test.ts` suites walk every binding on every chart type and are the gate for this class of drift. They share `formatPanelOptions.ts`, and take a chart family each so the 37 chart builds run in parallel.
+
+## Saved chart models
+
+Every option the format panel writes is persisted: `getChartModels()` and chart state save it in `ChartModel.chartOptions`, and `restoreChart()` replays it. **Changing which AG Charts option the grid writes changes the saved model format, and needs a migration in `chartModelMigration.ts`.** CI does not catch a missing one, because no saved model runs through it.
+
+- **When:** a binding moves to a different option path, a Charts bump deprecates, renames or removes an option the grid writes, or an option's value shape changes.
+- **How:** add the step under the next release's `migrateIfBefore` (look the version up, don't assume it), add a case to `chartModelMigration.test.ts`, regenerate its snapshot, and check every snapshot diff is the intended move. `test/chart-model-examples/*.json` show what saved models contain.
+- **Helpers:** `jsonMove` and `jsonMoveIfMissing` take a full destination path and carry one value, so never use them with a `*` path. Use `jsonMutateProperty` to edit each matching parent, and `jsonRename` only where overwriting an existing sibling is correct.
+
+## Suspected AG Charts bugs
+
+This repo holds only the grid side of Integrated Charts. Rendering, layout, axes, series, legend, tooltips and animation belong to AG Charts, which cannot be fixed from here. Before changing `packages/ag-grid-enterprise/src/charts/`, establish which side owns the defect:
+
+- Capture the options the grid hands AG Charts (`chartRef.chart.getOptions()` on the live chart, or `window.agChartsDebug = 'opts'`) and check they are what the grid intends. If they are wrong, the bug is the grid's: fix it here.
+- If the options are right and the chart still renders wrongly, the bug is AG Charts'. **Do not work around it in the grid** with option overrides, post-processing or reads of chart internals: that hides the defect from the Charts team and breaks when AG Charts changes.
+
+To escalate a Charts bug:
+
+1. Build a standalone AG Charts Plunker from the captured options, with no grid bundle, pinned to the `ag-charts-*` version in `packages/ag-grid-enterprise/package.json`. Follow `/ag-product:plunker` (its `integrated-to-standalone.md` covers the integrated-only options and data shape). Confirm the Plunker shows the same defect; if it does not, the grid is involved after all, so compare what differs before concluding either way.
+2. Hand back to a human instead of opening a PR. In the AI Workflow pipeline, end with `escalate-to-human`. Include the Plunker, the options at fault, and expected versus actual output, so the ticket can be moved to the Charts team or linked to a Charts ticket.

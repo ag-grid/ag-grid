@@ -1,8 +1,9 @@
 import type {
-    AgCoreBeanCollection,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
+    ICommonSource,
     IPropertiesService,
     WithoutCommon,
 } from 'ag-stack';
@@ -24,11 +25,11 @@ type AgMenuListEvent = AgMenuItemComponentEvent;
 const NO_FOCUS_RING_CLASS = 'ag-menu-list-no-focus-ring';
 
 export class AgMenuList<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgTabGuardComp<
@@ -255,8 +256,8 @@ export class AgMenuList<
     }
 
     public focusInto(suppressTooltip = false): boolean {
-        // Chrome reports a programmatic focus taken while the document has no focused element as
-        // :focus-visible, which would draw a keyboard focus ring on a mouse-opened menu.
+        // Chrome reports a programmatic focus taken while nothing is focused as :focus-visible, drawing a keyboard
+        // ring on a mouse-opened menu; focus on what encloses the grid counts as nothing here.
         this.getGui().classList.toggle(NO_FOCUS_RING_CLASS, _isNothingFocused(this.beans));
         const focused = this.withFocusTooltipSuppressed(suppressTooltip, () => _focusInto(this.getGui()));
         // Framework menu items render asynchronously and may be absent now; retry once they land,

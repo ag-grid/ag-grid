@@ -57,6 +57,7 @@ export class CsvCreator
             processRowGroupCallback,
             suppressQuotes,
             columnSeparator,
+            sanitizeFormulas,
             valueFrom,
             transformValues,
         } = params!;
@@ -73,6 +74,7 @@ export class CsvCreator
             processRowGroupCallback: processRowGroupCallback ?? undefined,
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ',',
+            sanitizeFormulas: sanitizeFormulas || false,
             rowGroupColsSvc,
             valueFrom,
             transformValues,

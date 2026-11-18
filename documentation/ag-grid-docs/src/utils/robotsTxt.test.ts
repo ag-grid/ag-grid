@@ -1,7 +1,7 @@
 import { BUILD_USER_AGENT } from '@ag-website-shared/constants';
 import { vi } from 'vitest';
 
-import { AI_CRAWLERS, fetchRobotsDisallow, productionRobotsTxt } from './robotsTxt';
+import { AI_CRAWLERS, BLOCKED_CRAWLERS, fetchRobotsDisallow, productionRobotsTxt } from './robotsTxt';
 import { isAllowedByRobots, parseRobotsTxt } from './robotsTxt.test-utils';
 import { getSitemapAllowPaths, getSitemapIgnorePaths } from './sitemapPages';
 
@@ -166,6 +166,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         ['/campaigns/bryntum-gantt.md', 'allow', 'allow'],
         ['/campaigns/bryntum-gantt.md?utm_source=x', 'allow', 'allow'],
         ['/campaigns/bryntum-scheduler-pro/', 'allow', 'allow'],
+        ['/campaigns/bryntum-scheduler-pro.md', 'allow', 'allow'],
 
         // SE-183: search-result variants are crawl waste, for every group.
         ['/changelog/?searchQuery=filter', 'block', 'block'],
@@ -256,6 +257,19 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         expect(verdict('Meta-ExternalAgent', '/archive/36.2.0/')).toBe('allow');
     });
 
+    // SE-78: the edge WAF blocks these on every path, so robots.txt must not invite them.
+    test('crawlers the edge blocks are disallowed everywhere, and are not in the AI group', () => {
+        expect(BLOCKED_CRAWLERS).toEqual(['Bytespider', 'YisouSpider', 'ShapBot']);
+        for (const agent of BLOCKED_CRAWLERS) {
+            expect(AI_CRAWLERS, agent).not.toContain(agent);
+            // RFC 9309: /robots.txt itself is always allowed.
+            for (const path of MATRIX.map(([path]) => path).filter((path) => path !== '/robots.txt')) {
+                expect(verdict(agent, path), `${agent} ${path}`).toBe('block');
+            }
+        }
+        expect(verdict('bytespider', '/llms.txt')).toBe('block');
+    });
+
     test('opens only the public archives to AI, not paths that merely contain "archive"', () => {
         const guarded = parseRobotsTxt(productionRobotsTxt([], ['/documentation-archive/', '/archive/']));
         expect(isAllowedByRobots(guarded, 'GPTBot', '/archive/36.2.0/')).toBe(true);
@@ -264,14 +278,18 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
 });
 
 describe('productionRobotsTxt — file structure (SE-78)', () => {
-    test('emits exactly two groups: the wildcard, and every AI crawler together', () => {
-        expect(robots.groups.map(({ userAgents }) => userAgents)).toEqual([['*'], AI_CRAWLERS]);
+    test('emits exactly three groups: the wildcard, every AI crawler together, and the blocked crawlers', () => {
+        expect(robots.groups.map(({ userAgents }) => userAgents)).toEqual([['*'], AI_CRAWLERS, BLOCKED_CRAWLERS]);
     });
 
-    test('declares the "allow everything" Content-Signal on every group', () => {
+    test('declares the "allow everything" Content-Signal on every group that allows anything', () => {
         const groups = txt.split(/\n\s*\n/).filter((group) => group.startsWith('User-agent:'));
-        expect(groups).toHaveLength(2);
-        for (const group of groups) {
+        expect(groups).toHaveLength(3);
+        expect(groups[2].split('\n')).toEqual([
+            ...BLOCKED_CRAWLERS.map((agent) => `User-agent: ${agent}`),
+            'Disallow: /',
+        ]);
+        for (const group of groups.slice(0, 2)) {
             expect(group.split('\n')).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=yes');
         }
     });

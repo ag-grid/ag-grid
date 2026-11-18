@@ -2804,6 +2804,87 @@ describe('SSRM grand total row', () => {
         }
     );
 
+    test.each(['top', 'bottom', 'pinnedTop', 'pinnedBottom'] as const)(
+        'with alwaysShowGrandTotalRow a `%s` grand total stays while the server returns no rows',
+        async (grandTotalRow) => {
+            let rows: typeof flatRows = [];
+            let sendGrandTotal = true;
+            const api: GridApi<RowData> = gridManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+                rowModelType: 'serverSide',
+                getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+                grandTotalRow,
+                alwaysShowGrandTotalRow: true,
+                serverSideDatasource: {
+                    getRows(params: IServerSideGetRowsParams) {
+                        const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                        const threshold = filter?.value?.filter;
+                        const filtered = threshold != null ? rows.filter((r) => r.value > threshold) : rows;
+                        const value = filtered.reduce((s, r) => s + r.value, 0);
+                        const grandTotalData = sendGrandTotal ? { id: GRAND_TOTAL_ID, value } : undefined;
+                        setTimeout(() =>
+                            params.success({ rowData: filtered, rowCount: filtered.length, grandTotalData })
+                        );
+                    },
+                },
+            });
+            const pinned = grandTotalRow === 'pinnedTop' || grandTotalRow === 'pinnedBottom';
+            const overlay = () => {
+                const eGrid = getGridElement(api)!;
+                if (eGrid.querySelector('.ag-overlay-no-matching-rows-center')) {
+                    return 'noMatchingRows';
+                }
+                return eGrid.querySelector('.ag-overlay-no-rows-center') ? 'noRows' : null;
+            };
+            const expectGrandTotal = async (
+                rowIds: string[],
+                value: number | undefined,
+                expectedOverlay: 'noRows' | 'noMatchingRows' | null
+            ) => {
+                await waitForNoLoadingRows(api);
+                await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(value));
+                const shown = value === undefined ? 0 : 1;
+                const inlineTotal = pinned || !shown ? [] : [GRAND_TOTAL_ID];
+                const ids: (string | undefined)[] = [];
+                for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+                    ids.push(api.getDisplayedRowAtIndex(i)?.id);
+                }
+                expect(ids).toEqual(
+                    grandTotalRow === 'top' ? [...inlineTotal, ...rowIds] : [...rowIds, ...inlineTotal]
+                );
+                expect(api.getPinnedTopRowCount() + api.getPinnedBottomRowCount()).toBe(pinned ? shown : 0);
+                await waitFor(() => expect(overlay()).toBe(expectedOverlay));
+                const renderedGrandTotal = () =>
+                    getGridElement(api)!.querySelectorAll('.ag-row[row-id$="rowGroupFooter_ROOT_NODE_ID"]').length;
+                await waitFor(() => expect(renderedGrandTotal() > 0).toBe(shown === 1));
+            };
+            await expectGrandTotal([], 0, 'noRows');
+
+            rows = flatRows;
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal(['1', '2', '3'], 60, null);
+
+            api.setFilterModel({ value: { type: 'greaterThan', filter: 100 } });
+            await expectGrandTotal([], 0, 'noMatchingRows');
+
+            api.setGridOption('alwaysShowGrandTotalRow', false);
+            await expectGrandTotal([], undefined, 'noMatchingRows');
+            api.setGridOption('alwaysShowGrandTotalRow', true);
+            await expectGrandTotal([], 0, 'noMatchingRows');
+
+            api.setFilterModel(null);
+            await expectGrandTotal(['1', '2', '3'], 60, null);
+
+            rows = [];
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal([], 0, 'noRows');
+
+            sendGrandTotal = false;
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal([], undefined, 'noRows');
+        }
+    );
+
     test('async grand total via transaction: filter change hides then restores grand total', async () => {
         const computeTotal = (threshold?: number) =>
             flatRows.filter((r) => threshold === undefined || r.value > threshold).reduce((s, r) => s + r.value, 0);

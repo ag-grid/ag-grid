@@ -34,8 +34,7 @@
     white-space: pre-line;
 }
 
-.ag-tooltip:where(:not(.ag-tooltip-interactive)),
-.ag-tooltip-custom:where(:not(.ag-tooltip-interactive)) {
+.ag-tooltip-hiding {
     pointer-events: none;
 }
 

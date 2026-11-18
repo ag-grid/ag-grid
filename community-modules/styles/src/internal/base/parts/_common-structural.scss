@@ -67,6 +67,7 @@
         position: absolute;
         width: 0;
         height: 0;
+        pointer-events: none;
         display: block;
     }
 
@@ -1775,6 +1776,10 @@
                 text-overflow: ellipsis;
             }
         }
+    }
+
+    .ag-rich-select-no-matches {
+        justify-content: center;
     }
 
     .ag-rich-select-row {
