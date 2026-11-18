@@ -44,6 +44,7 @@ All public documentation examples MUST work across all frameworks:
 - Keep event handlers as simple function calls
 - Avoid complex DOM manipulation
 - No external library dependencies
+- Use `Math.random()` for random data. The generator replaces it with the seeded `window.agRandom()` so tests see stable data; don't call `window.agRandom()` yourself
 
 ### Hand-authored `provided/` framework variants
 
