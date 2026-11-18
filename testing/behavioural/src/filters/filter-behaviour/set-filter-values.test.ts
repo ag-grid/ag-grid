@@ -191,6 +191,8 @@ describe('Set Filter — value model & UI (coverage)', () => {
             const typed = filter.setFilterItemLabels();
             expect(typed).toHaveLength(4);
             expect(typed.slice(1).sort()).toEqual([...MICHAELS].sort());
+            expect(filter.getModel()).toBeNull();
+            expect(api.getDisplayedRowCount()).toBe(5);
 
             await filter.miniFilterSearch('');
             await asyncSetTimeout(0);
