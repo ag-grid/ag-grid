@@ -29,9 +29,16 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
 ]);
 
+interface IColorRow {
+    id: number;
+    color: string;
+    value1: number;
+    value2: number;
+}
+
 let rowIdSequence = 100;
 
-function createDataItem(color: string) {
+function createDataItem(color: string): IColorRow {
     const obj = {
         id: rowIdSequence++,
         color: color,
@@ -121,10 +128,10 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: [] as any[],
-            rightRowData: [] as any[],
-            leftApi: null as GridApi | null,
-            rightApi: null as GridApi | null,
+            leftRowData: [] as IColorRow[],
+            rightRowData: [] as IColorRow[],
+            leftApi: null as GridApi<IColorRow> | null,
+            rightApi: null as GridApi<IColorRow> | null,
             rowClassRules: {
                 'red-row': 'data.color == "Red"',
                 'green-row': 'data.color == "Green"',
@@ -147,11 +154,11 @@ const VueExample = defineComponent({
         this.leftRowData = createLeftRowData();
     },
     methods: {
-        getRowId(params: GetRowIdParams) {
+        getRowId(params: GetRowIdParams<IColorRow>) {
             return String(params.data.id);
         },
 
-        onGridReady(params: GridReadyEvent, side: 'Left' | 'Right') {
+        onGridReady(params: GridReadyEvent<IColorRow>, side: 'Left' | 'Right') {
             const api = params.api;
             if (side === 'Left') {
                 this.leftApi = api;
@@ -163,7 +170,7 @@ const VueExample = defineComponent({
             this.addGridDropZone(side, api);
         },
 
-        addRecordToGrid(side: string, data: any) {
+        addRecordToGrid(side: string, data: IColorRow | undefined) {
             // if data missing or data has no it, do nothing
             if (!data || data.id == null) {
                 return;
@@ -171,7 +178,7 @@ const VueExample = defineComponent({
 
             const api = (side === 'left' ? this.leftApi : this.rightApi)!;
             // do nothing if row is already in the grid, otherwise we would have duplicates
-            const rowAlreadyInGrid = !!api.getRowNode(data.id);
+            const rowAlreadyInGrid = !!api.getRowNode(String(data.id));
             let transaction;
 
             if (rowAlreadyInGrid) {
@@ -195,7 +202,7 @@ const VueExample = defineComponent({
             this.addRecordToGrid(side, data);
         },
 
-        binDrop(data: any) {
+        binDrop(data: IColorRow | undefined) {
             // if data missing or data has no id, do nothing
             if (!data || data.id == null) {
                 return;
@@ -206,7 +213,7 @@ const VueExample = defineComponent({
             };
 
             [this.leftApi, this.rightApi].forEach((api) => {
-                var rowsInGrid = !!api!.getRowNode(data.id);
+                var rowsInGrid = !!api!.getRowNode(String(data.id));
 
                 if (rowsInGrid) {
                     api!.applyTransaction(transaction);
@@ -214,7 +221,7 @@ const VueExample = defineComponent({
             });
         },
 
-        addBinZone(api: GridApi) {
+        addBinZone(api: GridApi<IColorRow>) {
             const eBin = this.$refs.eBin as HTMLElement;
             const eBinIcon = this.$refs.eBinIcon as HTMLElement;
             const dropZone = <RowDropZoneParams>{
@@ -237,7 +244,7 @@ const VueExample = defineComponent({
             api.addRowDropZone(dropZone);
         },
 
-        addGridDropZone(side: string, api: GridApi) {
+        addGridDropZone(side: string, api: GridApi<IColorRow>) {
             const dropSide = side === 'Left' ? 'Right' : 'Left';
             const dropZone: RowDropZoneParams = {
                 getContainer: () => (dropSide === 'Left' ? this.$refs.eLeftGrid : this.$refs.eRightGrid) as HTMLElement,

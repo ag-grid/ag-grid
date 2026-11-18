@@ -48,9 +48,16 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
+interface IColorRow {
+    id: number;
+    color: string;
+    value1: number;
+    value2: number;
+}
+
 let rowIdSequence = 100;
 
-const createDataItem = (color: string) => ({
+const createDataItem = (color: string): IColorRow => ({
     id: rowIdSequence++,
     color: color,
     value1: Math.floor(Math.random() * 100),
@@ -60,19 +67,19 @@ const createDataItem = (color: string) => ({
 const initialLeftRowData = ['Red', 'Green', 'Blue'].map((color) => createDataItem(color));
 
 const GridExample = () => {
-    const [leftApi, setLeftApi] = useState<GridApi | null>(null);
-    const [rightApi, setRightApi] = useState<GridApi | null>(null);
-    const [leftRowData] = useState<any[]>(initialLeftRowData);
-    const [rightRowData] = useState<any[]>([]);
+    const [leftApi, setLeftApi] = useState<GridApi<IColorRow> | null>(null);
+    const [rightApi, setRightApi] = useState<GridApi<IColorRow> | null>(null);
+    const [leftRowData] = useState<IColorRow[]>(initialLeftRowData);
+    const [rightRowData] = useState<IColorRow[]>([]);
 
     const eLeftGrid = useRef(null);
     const eRightGrid = useRef(null);
     const eBin = useRef<HTMLElement>(null);
     const eBinIcon = useRef<HTMLElement>(null);
 
-    const getRowId = (params: GetRowIdParams) => String(params.data.id);
+    const getRowId = (params: GetRowIdParams<IColorRow>) => String(params.data.id);
 
-    const addRecordToGrid = (side: string, data: any) => {
+    const addRecordToGrid = (side: string, data: IColorRow | undefined) => {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) {
             return;
@@ -80,7 +87,7 @@ const GridExample = () => {
 
         const api = side === 'left' ? leftApi : rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        const rowAlreadyInGrid = !!api!.getRowNode(data.id);
+        const rowAlreadyInGrid = !!api!.getRowNode(String(data.id));
         let transaction;
 
         if (rowAlreadyInGrid) {
@@ -104,7 +111,7 @@ const GridExample = () => {
         addRecordToGrid(side, data);
     };
 
-    const binDrop = (data: any) => {
+    const binDrop = (data: IColorRow | undefined) => {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) {
             return;
@@ -115,7 +122,7 @@ const GridExample = () => {
         };
 
         [leftApi, rightApi].forEach((api) => {
-            const rowsInGrid = !!api!.getRowNode(data.id);
+            const rowsInGrid = !!api!.getRowNode(String(data.id));
 
             if (rowsInGrid) {
                 api!.applyTransaction(transaction);
@@ -123,7 +130,7 @@ const GridExample = () => {
         });
     };
 
-    const addBinZone = (api: GridApi) => {
+    const addBinZone = (api: GridApi<IColorRow>) => {
         const dropZone: RowDropZoneParams = {
             getContainer: () => eBinIcon.current!,
             onDragEnter: () => {
@@ -144,7 +151,7 @@ const GridExample = () => {
         api.addRowDropZone(dropZone);
     };
 
-    const addGridDropZone = (side: string, api: GridApi) => {
+    const addGridDropZone = (side: string, api: GridApi<IColorRow>) => {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
         const dropZone: RowDropZoneParams = {
             getContainer: () => (dropSide === 'Right' ? eRightGrid.current! : eLeftGrid.current!),
@@ -163,7 +170,7 @@ const GridExample = () => {
         }
     });
 
-    const onGridReady = (side: string, params: GridReadyEvent) => {
+    const onGridReady = (side: string, params: GridReadyEvent<IColorRow>) => {
         if (side === 'Left') {
             setLeftApi(params.api);
         } else {
