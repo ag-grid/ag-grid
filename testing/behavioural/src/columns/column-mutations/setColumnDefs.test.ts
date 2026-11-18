@@ -1420,33 +1420,29 @@ describe('Column Mutations', () => {
             `);
         });
 
-        test('groupId-less group does not match by reference across setGridOption', async () => {
-            // Without groupId, groups can never be reused — every setColumnDefs creates a fresh
-            // AgProvidedColumnGroup. Verifies the existing-lookup correctly skips entries
-            // without `colGroupDef.groupId`.
+        test('a group without groupId keeps its column across a columnDefs update', async () => {
             const api = gridsManager.createGrid('noGroupId', {
                 columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }],
             });
-            await new GridColumns(api, `groupId-less group does not match by reference across setGridOption setup`)
+            await new GridColumns(api, `a group without groupId keeps its column across a columnDefs update setup`)
                 .checkColumns(`
                     CENTER
                     └─┬ "G" GROUP
                       └── a width:200
                 `);
-            await new GridRows(api, `groupId-less group does not match by reference across setGridOption setup`).check(
+            await new GridRows(api, `a group without groupId keeps its column across a columnDefs update setup`).check(
                 `
                     ROOT id:ROOT_NODE_ID
                 `
             );
             await asyncSetTimeout(0);
 
-            // Round-trip with identical structure but no groupId — colId 'a' still reused
-            // (cols reuse independently of groups).
+            // Columns are matched independently of their groups.
             const colABefore = api.getColumn('a');
             api.setGridOption('columnDefs', [{ headerName: 'G', children: [{ colId: 'a' }] }]);
             await new GridColumns(
                 api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
             ).checkColumns(`
                 CENTER
                 └─┬ "G" GROUP
@@ -1454,7 +1450,7 @@ describe('Column Mutations', () => {
             `);
             await new GridRows(
                 api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);

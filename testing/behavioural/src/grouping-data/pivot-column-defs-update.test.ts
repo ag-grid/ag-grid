@@ -5,6 +5,8 @@ import type { ColDef, Column, ICellRendererComp, ICellRendererParams } from 'ag-
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
+import { pivotGroups } from './pivotGroups';
+
 describe('pivot column identity across columnDefs updates', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
@@ -915,7 +917,7 @@ describe('pivot column identity across columnDefs updates', () => {
         }
     });
 
-    test('changing pivotDefaultExpanded reactively rebuilds pivot result col groups with the new depth', async () => {
+    test('setting pivotDefaultExpanded alone leaves the pivot result column groups as they are', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -932,7 +934,7 @@ describe('pivot column identity across columnDefs updates', () => {
         });
         await new GridColumns(
             api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t setup`
+            `setting pivotDefaultExpanded alone leaves the pivot result column groups as they are setup`
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -945,7 +947,7 @@ describe('pivot column identity across columnDefs updates', () => {
         `);
         await new GridRows(
             api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t setup`
+            `setting pivotDefaultExpanded alone leaves the pivot result column groups as they are setup`
         ).check(`
             ROOT id:ROOT_NODE_ID pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
             └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
@@ -955,11 +957,11 @@ describe('pivot column identity across columnDefs updates', () => {
 
         await asyncSetTimeout(0);
 
-        // Property listener path: updating pivotDefaultExpanded re-reads via the listener.
+        // Setting it alone rebuilds nothing: the next pivot build reads the new depth.
         api.setGridOption('pivotDefaultExpanded', 1);
         await new GridColumns(
             api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t after setGridOption pivotDefaultExpanded`
+            `setting pivotDefaultExpanded alone leaves the pivot result column groups as they are after setGridOption pivotDefaultExpanded`
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
@@ -972,7 +974,7 @@ describe('pivot column identity across columnDefs updates', () => {
         `);
         await new GridRows(
             api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t after setGridOption pivotDefaultExpanded`
+            `setting pivotDefaultExpanded alone leaves the pivot result column groups as they are after setGridOption pivotDefaultExpanded`
         ).check(`
             ROOT id:ROOT_NODE_ID pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
             └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
@@ -981,8 +983,53 @@ describe('pivot column identity across columnDefs updates', () => {
         `);
         await asyncSetTimeout(0);
 
-        // After option change pivot result cols still exist (rebuild is the listener's job)
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
+    });
+
+    test('one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group (pivotDefaultExpanded first)', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotDefaultExpanded: 0,
+            rowData: olympicLikeRows,
+        });
+        api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
+
+        expect(pivotGroups(api)).toEqual([
+            { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
+        ]);
+    });
+
+    test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            pivotDefaultExpanded: 1,
+            rowData: olympicLikeRows,
+        });
+
+        expect(pivotGroups(api)).toEqual([
+            { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: false, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: false, expandable: false },
+        ]);
     });
 
     test('api.getColumn by field in pivot mode resolves primary col via lazy colsByDef map', async () => {

@@ -1269,65 +1269,69 @@ describe('Column Mutations - order restoration', () => {
             expect(api.getAllGridColumns()[0].getColId()).toBe('ag-Grid-RowNumbersColumn');
         });
 
-        test('column instances are CURRENT after a colDef rebuild (no stale-instance leak)', async () => {
-            // Latest's restoreColOrder held lastOrder as AgColumn[]; if cols were rebuilt with
-            // new instances under the same colId, the filter retained the OLD AgColumn instances
-            // and Map<AgColumn, idx> lookups missed the new ones — leaking stale instances into
-            // cols.list. Branch stores lastOrder as string[] and resolves through colsById, so
-            // every entry in cols.list is the current instance.
+        test('a column given a new colDef under the same colId keeps its instance, listed once with the new header', async () => {
             const api = gridsManager.createGrid('staleCheck', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
                 maintainColumnOrder: true,
             });
-            await new GridColumns(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) setup`
-            ).checkColumns(`
+            await new GridColumns(api, 'a column given a new colDef under the same colId setup').checkColumns(`
                 CENTER
                 ├── a width:200
                 └── b width:200
             `);
-            await new GridRows(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) setup`
-            ).check(`
+            await new GridRows(api, 'a column given a new colDef under the same colId setup').check(`
                 ROOT id:ROOT_NODE_ID
             `);
-
             const before = api.getColumn('a')!;
 
-            // Replace with a different ColDef object for 'a' — same colId, new colDef ref.
-            // The internal AgColumn may be reused or rebuilt depending on the key strategy.
             api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
-            await new GridColumns(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) after setGridOption columnDefs`
-            ).checkColumns(`
+
+            await new GridColumns(api, 'a column given a new colDef under the same colId').checkColumns(`
                 CENTER
                 ├── a "A!" width:200
                 └── b width:200
             `);
-            await new GridRows(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) after setGridOption columnDefs`
-            ).check(`
+            await new GridRows(api, 'a column given a new colDef under the same colId').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect({
+                kept: api.getColumn('a') === before,
+                listed: api
+                    .getAllGridColumns()
+                    .filter((col) => col.getColId() === 'a')
+                    .map((col) => col === before),
+                headerName: before.getColDef().headerName,
+            }).toEqual({ kept: true, listed: [true], headerName: 'A!' });
+        });
+
+        test('a restored order holds the columns a rebuild recreated, not the destroyed ones', async () => {
+            const api = gridsManager.createGrid('staleCheck', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                maintainColumnOrder: true,
+            });
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated setup').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            api.moveColumns(['b'], 0);
+            const before = api.getColumn('a')!;
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
+            await new GridColumns(api, 'a restored order holds the columns a rebuild recreated').checkColumns(`
+                CENTER
+                ├── b width:200
+                └── a "A!" width:200
+            `);
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated').check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             const after = api.getColumn('a')!;
             const allCols = api.getAllGridColumns();
-
-            // The column 'a' resolves to a live AgColumn (whichever instance the rewrite chose
-            // to keep) and that same instance appears in the displayed cols list.
-            expect(after).toBeTruthy();
-            expect(allCols).toContain(after);
-            // Header reflects the new colDef even on the (possibly-reused) instance.
-            expect(after.getColDef().headerName).toBe('A!');
-            // Sanity: instance reference is reused or rebuilt cleanly; either way it's not the
-            // stale 'before' instance unless it survived the rebuild.
-            if (before !== after) {
-                expect(allCols).not.toContain(before);
-            }
+            expect(after).not.toBe(before);
+            expect(allCols[1]).toBe(after);
+            expect(allCols[0]).toBe(api.getColumn('b'));
+            expect(allCols).not.toContain(before);
         });
     });
 
