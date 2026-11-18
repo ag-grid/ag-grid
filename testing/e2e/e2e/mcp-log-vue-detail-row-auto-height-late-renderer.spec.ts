@@ -26,7 +26,7 @@
  * among others).
  *
  * Runs real Vue (global build from node_modules) against the enterprise bundle and the ag-grid-vue3 UMD build in
- * `packages/ag-grid-vue3/dist`, which `./grid-e2e.sh` does not rebuild.
+ * `packages/ag-grid-vue3/dist`, which `./grid-e2e.sh` builds before the run.
  */
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';

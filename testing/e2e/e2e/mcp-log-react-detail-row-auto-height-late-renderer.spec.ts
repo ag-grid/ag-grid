@@ -26,7 +26,7 @@
  * row height cut off not showing all rows".
  *
  * Runs real React (UMD builds from node_modules) against the enterprise bundle and the ag-grid-react UMD build in
- * `packages/ag-grid-react/dist/umd`, which `./grid-e2e.sh` does not rebuild.
+ * `packages/ag-grid-react/dist/umd`, which `./grid-e2e.sh` builds before the run.
  */
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
