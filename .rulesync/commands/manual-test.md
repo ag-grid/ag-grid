@@ -23,6 +23,8 @@ If there's no clear steer, ask with the question tool (header `Frameworks`, sing
 
 The tool adds its own "Other" free-text option, so the user can type any other set (e.g. "angular only", "react and vue").
 
+If no question tool is available and this is not an interactive session, choose all frameworks.
+
 The answer is the **chosen set**. The following steps act on it.
 
 ## Step 2: Locate the example source
@@ -58,7 +60,7 @@ Titles in plunkers are sometimes stale and misleading, consider both the title a
 ## Step 3: Create the test project
 
 1. Derive a kebab-case project name from the page name and example name, e.g. `row-selection-checkbox`
-2. Verify the directory `testing/manual/{name}/` does not already exist. If it does, ask the user for an alternative name.
+2. If `testing/manual/{name}/` already exists, choose a different name that doesn't.
 3. Copy the template:
     ```bash
     rsync -a --exclude='node_modules' --exclude='dist' testing/manual/template/ testing/manual/{name}/
@@ -69,8 +71,6 @@ Titles in plunkers are sometimes stale and misleading, consider both the title a
 ### Trimming to a subset
 
 Remove every trace of each unchosen framework: its `src/<framework>/` folder, and the parts of `vite.config.ts`, `package.json`, `tsconfig*.json` and `src/env.d.ts` that only it needs.
-
-If Angular is the only framework, remove the `ANGULAR=1` opt-in and the disabled page, so plain `yarn dev` serves it. Keep the opt-in when Angular is included with other frameworks.
 
 Then fix the navigation:
 
@@ -104,4 +104,4 @@ List what you built in the Step 6 report (e.g. "2 buttons that call `api.deselec
 ## Step 6: Verify and report
 
 1. Run `yarn build` in the project directory and fix what it reports. It catches build and import errors only: `vite build` does not type-check, and the Angular plugin sets `disableTypeChecking: true`.
-2. Report the project path, the source page and example, the frameworks included, what was configured (grid options, data, custom UI) and how to run it: `cd testing/manual/{name} && yarn dev` (`ANGULAR=1 yarn dev` if Angular is included with other frameworks; plain `yarn dev` for an Angular-only project).
+2. Report the project path, the source page and example, the frameworks included, what was configured (grid options, data, custom UI) and how to run it: `cd testing/manual/{name} && yarn dev`.
