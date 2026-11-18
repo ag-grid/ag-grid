@@ -73,14 +73,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         pinnedRowModel?.forEachPinnedRow?.('bottom', updateRowHeight);
         rowModel.forEachDisplayedNode?.(updateRowHeight);
 
+        // taken first, as the redraw for the new heights drops the rows kept in view for any other move
         const rowRenderer = this.beans.rowRenderer;
+        const rowsInViewAnchor = rowRenderer.takeRowsInViewForHeights();
         if (anyNodeChanged) {
-            rowRenderer.maintainRowsInViewForHeights(() =>
-                (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.()
-            );
+            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
         }
-        if (this.areRowsMeasured()) {
-            rowRenderer.onRowsMeasured();
+        if (rowsInViewAnchor) {
+            rowRenderer.keepRowsInViewForHeights(rowsInViewAnchor, anyNodeChanged, this.areRowsMeasured());
         }
     }
 

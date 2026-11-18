@@ -29,6 +29,8 @@ export interface RowsInViewAnchor {
     removedHeight?: number;
     /** The index in `rows` of the row whose move the rows in view follow, worked out once as the restore can be repeated. */
     followed?: number | null;
+    /** The `rowTop` of the followed row and the page pixel at the top of the viewport the latest restore used. */
+    restoredAt?: [rowTop: number, viewportTop: number];
     /** The vertical scroll position the latest restore left the viewport at, to tell a scroll elsewhere apart. */
     scrollTop?: number;
 }
@@ -237,6 +239,9 @@ function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
     const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;
+    const { followed, rows } = anchor;
+    const rowTop = followed == null ? null : rows[followed].rowTop;
+    anchor.restoredAt = rowTop == null ? undefined : [rowTop, viewportTop];
     return beans.rowContainerHeight.getScrollPositionForPixel(viewportTop);
 }
 
@@ -244,9 +249,33 @@ function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     // compared even when nothing was added or removed, as a change in height scaling can move the rows on screen
     const scrollFeature = beans.ctrlsSvc.getScrollFeature();
-    const scrollTop = anchor.atBottom
-        ? scrollFeature.getMaxVScrollPosition()
-        : getScrollTopForRowsInView(beans, anchor);
+    return scrollRowsInView(
+        beans,
+        anchor,
+        anchor.atBottom ? scrollFeature.getMaxVScrollPosition() : getScrollTopForRowsInView(beans, anchor)
+    );
+}
+
+/**
+ * Scrolls by how far the followed row moved since the latest restore, as heights worked out since can move it, or
+ * back to the bottom. True if it scrolled.
+ */
+export function _correctRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
+    if (anchor.atBottom) {
+        return scrollRowsInView(beans, anchor, beans.ctrlsSvc.getScrollFeature().getMaxVScrollPosition());
+    }
+    const { followed, rows, restoredAt } = anchor;
+    const rowTop = followed == null ? null : rows[followed].rowTop;
+    if (rowTop == null || !restoredAt || rowTop === restoredAt[0]) {
+        return false;
+    }
+    const viewportTop = restoredAt[1] + rowTop - restoredAt[0];
+    anchor.restoredAt = [rowTop, viewportTop];
+    return scrollRowsInView(beans, anchor, beans.rowContainerHeight.getScrollPositionForPixel(viewportTop));
+}
+
+function scrollRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor, scrollTop: number): boolean {
+    const scrollFeature = beans.ctrlsSvc.getScrollFeature();
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
     if (scrollTop !== previousScrollTop) {
