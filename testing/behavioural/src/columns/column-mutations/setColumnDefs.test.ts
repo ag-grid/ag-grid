@@ -1462,6 +1462,44 @@ describe('Column Mutations', () => {
             expect(api.getColumn('a')).toBe(colABefore);
         });
 
+        test('a group without groupId keeps its column across a columnDefs update', async () => {
+            const api = gridsManager.createGrid('noGroupId', {
+                columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }],
+            });
+            await new GridColumns(api, `a group without groupId keeps its column across a columnDefs update setup`)
+                .checkColumns(`
+                    CENTER
+                    └─┬ "G" GROUP
+                      └── a width:200
+                `);
+            await new GridRows(api, `a group without groupId keeps its column across a columnDefs update setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+            await asyncSetTimeout(0);
+
+            // Columns are matched independently of their groups.
+            const colABefore = api.getColumn('a');
+            api.setGridOption('columnDefs', [{ headerName: 'G', children: [{ colId: 'a' }] }]);
+            await new GridColumns(
+                api,
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └─┬ "G" GROUP
+                  └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')).toBe(colABefore);
+        });
+
         test('groups without groupId keep their open states when every header is renamed and a group with a groupId is added', () => {
             const group = (headerName: string, field: string, groupId?: string) => ({
                 headerName,

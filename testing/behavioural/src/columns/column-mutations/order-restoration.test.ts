@@ -1329,6 +1329,36 @@ describe('Column Mutations - order restoration', () => {
                 expect(allCols).not.toContain(before);
             }
         });
+
+        test('a restored order holds the columns a rebuild recreated, not the destroyed ones', async () => {
+            const api = gridsManager.createGrid('staleCheck', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                maintainColumnOrder: true,
+            });
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated setup').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            api.moveColumns(['b'], 0);
+            const before = api.getColumn('a')!;
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
+            await new GridColumns(api, 'a restored order holds the columns a rebuild recreated').checkColumns(`
+                CENTER
+                ├── b width:200
+                └── a "A!" width:200
+            `);
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const after = api.getColumn('a')!;
+            const allCols = api.getAllGridColumns();
+            expect(after).not.toBe(before);
+            expect(allCols[1]).toBe(after);
+            expect(allCols[0]).toBe(api.getColumn('b'));
+            expect(allCols).not.toContain(before);
+        });
     });
 
     describe('lastOrder per pivot mode (maintainColumnOrder)', () => {

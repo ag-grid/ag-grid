@@ -12,6 +12,7 @@ import {
     RowAutoHeightModule,
     RowSelectionModule,
     enableDevValidations,
+    getGridElement,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -212,6 +213,50 @@ describe('Column Mutations', () => {
             api.setGridOption('columnDefs', defs());
 
             expect(api.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(333);
+        });
+
+        describe('the auto group column of a tree data grid with no columnDefs', () => {
+            const treeGrid = (autoGroupColumnDef: ColDef) =>
+                gridsManager.createGrid('treeAuto', {
+                    columnDefs: [],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                    rowData: [{ path: ['a'] }],
+                    autoGroupColumnDef,
+                });
+
+            test('a new autoGroupColumnDef headerName reaches the column and its header cell', async () => {
+                const api = treeGrid({ headerName: 'A' });
+
+                api.setGridOption('autoGroupColumnDef', { headerName: 'B' });
+
+                expect(api.getColumn('ag-Grid-AutoColumn')!.getColDef().headerName).toBe('B');
+                await vi.waitFor(() =>
+                    expect(
+                        getGridElement(api)!.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"]')?.textContent
+                    ).toContain('B')
+                );
+            });
+        });
+
+        test('column state for a column that does not exist returns false and raises no column events, nor does a reset', async () => {
+            const api = gridsManager.createGrid('noCols', { columnDefs: [] });
+            await asyncSetTimeout(0);
+            const raised: string[] = [];
+            for (const type of [
+                'displayedColumnsChanged',
+                'columnEverythingChanged',
+                'columnResized',
+                'gridColumnsChanged',
+            ] as const) {
+                api.addEventListener(type, () => raised.push(type));
+            }
+
+            const applied = api.applyColumnState({ state: [{ colId: 'x', width: 1 }] });
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+
+            expect({ applied, raised }).toEqual({ applied: false, raised: [] });
         });
 
         test('pivot mode toggle preserves selection col instance', async () => {
@@ -798,6 +843,28 @@ describe('Column Mutations', () => {
             });
         });
 
+        test.each<[string, ColDef, ColDef | undefined, ColDef]>([
+            ['rowGroup false, nothing enabled, as before', {}, undefined, { rowGroup: false }],
+        ])(
+            'a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: %s',
+            (_name, enabled, defaultColDef, patch) => {
+                const hierarchy: ColDef = { field: 'date', groupHierarchy: ['year', 'month'] };
+                const api = gridsManager.createGrid('ungroup', {
+                    columnDefs: [{ ...hierarchy, ...enabled, rowGroup: true }],
+                    defaultColDef,
+                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+                });
+                const before = api.getRowGroupColumns().map((col) => col.getColId());
+
+                api.setGridOption('columnDefs', [{ ...hierarchy, ...enabled, ...patch }]);
+
+                expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                    before: ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month', 'date'],
+                    after: [],
+                });
+            }
+        );
+
         test('column state grouping by a hierarchy source with a null defaultState for the rest groups by the source alone', () => {
             const api = gridsManager.createGrid('defaultNull', {
                 columnDefs: [
@@ -1038,7 +1105,6 @@ describe('Column Mutations', () => {
         );
 
         // A kept part keeps its id over a field, yields to a declared colId or groupId, wherever the other column sits.
-
         test.each(['before', 'after'])(
             'a kept hierarchy part keeps its id and width over a new column with its colId as field, placed %s its source',
             (placement) => {

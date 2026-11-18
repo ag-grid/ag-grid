@@ -1987,24 +1987,6 @@ describe('ag-grid auto group columns cannot be hidden or shown by the user', () 
         events: [],
     });
 
-    test('autoGroupColumnDef hide: true leaves each of the multiple auto columns displayed', async () => {
-        const { api, autoColumnVisibleEvents } = createGrid({
-            groupDisplayType: 'multipleColumns',
-            autoGroupColumnDef: { hide: true },
-        });
-
-        expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
-    });
-
-    test('autoGroupColumnDef hide: true leaves the single auto column displayed', async () => {
-        const { api, autoColumnVisibleEvents } = createGrid({
-            groupDisplayType: 'singleColumn',
-            autoGroupColumnDef: { hide: true },
-        });
-
-        expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
-    });
-
     test('autoGroupColumnDef hide: true leaves the auto columns displayed, multiple columns then a single one', async () => {
         const { api, autoColumnVisibleEvents } = createGrid({
             groupDisplayType: 'multipleColumns',
@@ -2013,6 +1995,15 @@ describe('ag-grid auto group columns cannot be hidden or shown by the user', () 
         expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
 
         api.setGridOption('groupDisplayType', 'singleColumn');
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
+    });
+
+    test('autoGroupColumnDef hide: true leaves the single auto column of a new grid displayed', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({
+            groupDisplayType: 'singleColumn',
+            autoGroupColumnDef: { hide: true },
+        });
+
         expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
     });
 

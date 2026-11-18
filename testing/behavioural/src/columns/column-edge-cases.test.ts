@@ -1011,6 +1011,34 @@ describe('Column Edge Cases', () => {
         });
     });
 
+    describe('tree data with groupDisplayType=multipleColumns', () => {
+        test('warns #182 and shows the single auto group column', async () => {
+            // Asserts warning #182 (tree data cannot show groups in multiple columns).
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [182] });
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ path: ['Ireland'], year: 2000 }],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                    groupDisplayType: 'multipleColumns',
+                });
+
+                const autoColumnIds = api
+                    .getAllGridColumns()
+                    .map((c: Column) => c.getColId())
+                    .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
+                expect(autoColumnIds).toEqual(['ag-Grid-AutoColumn']);
+                expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
+                const warnMsg = warnSpy.mock.calls.map((c) => String(c[0])).join(' ');
+                expect(warnMsg).toContain('#182');
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+    });
+
     describe('pivot mode column filtering', () => {
         test('pivot mode without pivot columns shows only value and auto-group columns', async () => {
             const api = gridsManager.createGrid('myGrid', {

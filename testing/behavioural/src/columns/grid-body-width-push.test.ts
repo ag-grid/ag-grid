@@ -481,6 +481,19 @@ describe('Grid body width push', () => {
         expect(pinnedWidths()).toEqual(['120px', '0px']);
     });
 
+    // Printing lays out no pinned lane (printing docs: "When in print layout, the column is not pinned").
+    const pinnedLanes = () => {
+        const viewport = query('.ag-grid-viewport');
+        const root = query('.ag-root');
+        return {
+            left: viewport.style.getPropertyValue('--ag-internal-pinned-left-width'),
+            right: viewport.style.getPropertyValue('--ag-internal-pinned-right-width'),
+            hasLeftClass: root.classList.contains('ag-has-left-pinned-cols'),
+            hasRightClass: root.classList.contains('ag-has-right-pinned-cols'),
+        };
+    };
+    const NOT_PINNED = { left: '0px', right: '0px', hasLeftClass: false, hasRightClass: false };
+
     test('pushes zero pinned widths for a grid with none, so a grid nested inside another does not inherit its widths', async () => {
         gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }], rowData: [{}] });
         await asyncSetTimeout(0);
@@ -490,5 +503,44 @@ describe('Grid body width push', () => {
             style.getPropertyValue('--ag-internal-pinned-left-width'),
             style.getPropertyValue('--ag-internal-pinned-right-width'),
         ]).toEqual(['0px', '0px']);
+    });
+
+    test('a grid created with no columns has no pinned lane, and gains the left one when a pinned column is added', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: [], rowData: [{}] });
+        await asyncSetTimeout(0);
+        expect({ step: 'no columns', ...pinnedLanes() }).toEqual({ step: 'no columns', ...NOT_PINNED });
+
+        api.setGridOption('columnDefs', [
+            { colId: 'left', width: 120, pinned: 'left' },
+            { colId: 'a', width: 100 },
+        ]);
+        await asyncSetTimeout(0);
+        expect({ step: 'left column added', ...pinnedLanes() }).toEqual({
+            step: 'left column added',
+            left: '120px',
+            right: '0px',
+            hasLeftClass: true,
+            hasRightClass: false,
+        });
+    });
+
+    test('a pinned lane one pixel wide is a lane', async () => {
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 1, minWidth: 1, pinned: 'left' },
+                { colId: 'a', width: 100 },
+                { colId: 'right', width: 1, minWidth: 1, pinned: 'right' },
+            ],
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+
+        expect({ step: 'one pixel lanes', ...pinnedLanes() }).toEqual({
+            step: 'one pixel lanes',
+            left: '1px',
+            right: '1px',
+            hasLeftClass: true,
+            hasRightClass: true,
+        });
     });
 });

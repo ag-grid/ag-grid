@@ -24,7 +24,13 @@ import {
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
-import { AllEnterpriseModule, PivotModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
+import {
+    AllEnterpriseModule,
+    PivotModule,
+    RowGroupingModule,
+    RowNumbersModule,
+    ShowValuesAsModule,
+} from 'ag-grid-enterprise';
 
 /** Each displayed column as `colId@left`, failing where a column does not start where the one before it ends. */
 const contiguousLefts = (api: GridApi): string[] => {
@@ -454,7 +460,7 @@ describe('column layout events', () => {
 
 describe('the rows drawn for the columns', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
     });
 
     afterEach(() => {
@@ -553,6 +559,7 @@ describe('the rows drawn for the columns', () => {
 
         expect(seen).toEqual(['a:100px b:100px c:100px', 'a:100px c:100px']);
     });
+
     test('a column call keeps the cell of every column that stays rendered, and initialises only the cells that arrive', async () => {
         const inits: Record<string, number> = {};
         class CountingRenderer {
@@ -844,7 +851,7 @@ describe('a column update made from a layout event', () => {
 
 describe('the layout events of a primary column while pivoting', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule, RowNumbersModule],
     });
 
     afterEach(() => {
@@ -1147,6 +1154,27 @@ describe('the column events of one call', () => {
         expect(seen).toEqual([150]);
         await asyncSetTimeout(0);
         expect(resized).toEqual(['ag-Grid-AutoColumn-a,ag-Grid-AutoColumn-b']);
+    });
+
+    test('the group columns a new autoGroupColumnDef redefines keep their row-group column names when told', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a', rowGroup: true }, { field: 'b', rowGroup: true }, { field: 'c' }],
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ a: 1, b: 2, c: 3 }],
+        });
+        await asyncSetTimeout(0);
+        const names = () => ['a', 'b'].map((id) => api.getColumn(`ag-Grid-AutoColumn-${id}`)!.getColDef().headerName);
+        const seen: unknown[][] = [];
+        for (const id of ['a', 'b']) {
+            api.getColumn(`ag-Grid-AutoColumn-${id}`)!.addEventListener('colDefChanged', () => seen.push(names()));
+        }
+
+        api.setGridOption('autoGroupColumnDef', { width: 150 });
+
+        expect(seen).toEqual([
+            ['A', 'B'],
+            ['A', 'B'],
+        ]);
     });
 
     test('the selection column redefined by a new selectionColumnDef is told once it holds the new state', () => {
@@ -2051,5 +2079,113 @@ describe('the rows a column update refreshes', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF hidden id:3 country:"France" gold:2
         `);
+    });
+});
+
+describe('the column animations a column call leaves on', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const hasClass = (api: GridApi, cssClass: string) => {
+        const grid = getGridElement(api)!;
+        return grid.classList.contains(cssClass) || grid.querySelector(`.${cssClass}`) !== null;
+    };
+    const resizeAnimating = (api: GridApi) => hasClass(api, 'ag-animate-autosize');
+    const moving = (api: GridApi) => hasClass(api, 'ag-column-moving');
+    const order = (api: GridApi) =>
+        api
+            .getAllDisplayedColumns()
+            .map((column) => column.getColId())
+            .join();
+
+    const createFittingGrid = () =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            defaultColDef: { width: 300 },
+            animateColumnResizing: true,
+            rowData: [{}],
+        });
+
+    test('a fit to the width the columns already fill does not cut short the animation of the width change before it', async () => {
+        const api = createFittingGrid();
+
+        api.applyColumnState({ state: [{ colId: 'a', width: 400 }] });
+        expect(resizeAnimating(api)).toBe(true);
+
+        api.sizeColumnsToFit(700);
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getActualWidth())).toEqual([400, 300]);
+        expect(resizeAnimating(api)).toBe(true);
+        await waitFor(() => expect(resizeAnimating(api)).toBe(false));
+    });
+
+    const createGroupGrid = async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g',
+                    headerName: 'Group',
+                    children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }],
+                },
+                { colId: 'c' },
+                { colId: 'd' },
+            ],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(moving(api)).toBe(false));
+        return api;
+    };
+
+    /** Widens the group's first column, the next column change after the call under test. */
+    const widenFirstGroupColumn = (api: GridApi) => {
+        api.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+        expect(api.getColumn('a')!.getActualWidth()).toBe(150);
+    };
+
+    test('opening a group makes the next column change slide', async () => {
+        const api = await createGroupGrid();
+
+        api.setColumnGroupOpened('g', true);
+        expect(order(api)).toBe('a,b,c,d');
+
+        widenFirstGroupColumn(api);
+        expect(moving(api)).toBe(true);
+    });
+
+    const createLockedGrid = async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'year', lockPosition: 'left' },
+                { colId: 'athlete' },
+                { colId: 'country' },
+                { colId: 'sport' },
+            ],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(moving(api)).toBe(false));
+        return api;
+    };
+
+    /** Widens athlete, the next column change after the call under test. */
+    const widenAthlete = (api: GridApi) => {
+        api.setColumnWidths([{ key: 'athlete', newWidth: 150 }]);
+        expect(api.getColumn('athlete')!.getActualWidth()).toBe(150);
+    };
+
+    test('moving a column that is allowed to move makes the next column change slide', async () => {
+        const api = await createLockedGrid();
+
+        api.moveColumns(['sport'], 1);
+
+        expect(order(api)).toBe('year,sport,athlete,country');
+        widenAthlete(api);
+        expect(moving(api)).toBe(true);
     });
 });
