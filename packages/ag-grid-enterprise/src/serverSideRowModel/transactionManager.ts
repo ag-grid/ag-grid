@@ -56,10 +56,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (!this.asyncTransactions) {
             return;
         }
-        this.rowRenderer.maintainRowsInView(() => this.applyAsyncTransactions());
-    }
-
-    private applyAsyncTransactions(): void {
+        this.rowRenderer.captureRowsInView();
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
 
@@ -131,10 +128,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
-        return this.rowRenderer.maintainRowsInView(() => this.applySyncTransaction(transaction));
-    }
-
-    private applySyncTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
+        this.rowRenderer.captureRowsInView();
         let res: ServerSideTransactionResult | undefined;
 
         const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, (store) => {

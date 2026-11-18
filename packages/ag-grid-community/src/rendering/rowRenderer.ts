@@ -120,14 +120,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private dataFirstRenderedFired = false;
 
-    /** Set while a data update runs inside `maintainRowsInView`, until the redraw it causes restores it. */
-    private rowsInViewAnchor: RowsInViewAnchor | null = null;
+    /**
+     * Captured at the start of a data update, until the redraw it causes restores it: the rows in view, or `null` when
+     * none are kept, and how to move the focused cell and cell ranges with their rows.
+     */
+    private rowsInView: { anchor: RowsInViewAnchor | null; followRows: (() => void)[] } | null = null;
     /** Kept after a data update with auto height active, until the rows it drew are measured. */
     private rowsInViewAnchorForHeights: RowsInViewAnchor | null = null;
     /** Set while a draw scrolls to keep the rows in view. */
     private restoringRowsInView = false;
-    /** Set while a data update runs inside `maintainRowsInView`, to move the focused cell and cell ranges with their rows. */
-    private followRows: (() => void)[] | null = null;
+    /** Set while a change of auto heights restores the anchor kept for it. */
+    private restoringRowsInViewForHeights = false;
 
     public postConstruct(): void {
         this.ctrlsSvc.whenReady(this, (p) => {
@@ -663,13 +666,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
-        // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
-        const followRows = params.keepRowsInView ? this.followRows : null;
-        if (followRows) {
-            for (const followRow of followRows) {
+        // other redraws, such as for pinned rows, can run during the update before the rows have moved
+        const rowsInView = params.keepRowsInView ? this.rowsInView : null;
+        const followRows = rowsInView?.followRows;
+        if (rowsInView) {
+            this.rowsInView = null; // later redraws in the same update start from the restored position
+            // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
+            for (const followRow of followRows!) {
                 followRow();
             }
-            this.followRows = []; // later redraws in the same update start from the moved positions
         }
 
         // a draw that threw is redone whole, so an update of the body alone also draws the pinned rows
@@ -680,12 +685,16 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             this.updateContainerHeights();
             this.scrollToTopIfNewData(params);
-            // other redraws, such as for pinned rows, can run during the update before the rows have moved
-            const rowsInViewAnchor = params.keepRowsInView ? this.rowsInViewAnchor : null;
-            if (rowsInViewAnchor) {
-                this.rowsInViewAnchor = null; // later redraws in the same update start from the restored position
-            } else if (params.keepRowsInView) {
-                this.rowsInViewAnchorForHeights = null; // the rows moved for another reason
+            const rowsInViewAnchor = rowsInView?.anchor ?? null;
+            const rowAutoHeight = this.beans.rowAutoHeight;
+            if (!rowsInViewAnchor) {
+                if (params.keepRowsInView) {
+                    this.rowsInViewAnchorForHeights = null; // the rows moved for another reason
+                }
+            } else if (rowAutoHeight?.active && !this.restoringRowsInViewForHeights) {
+                // kept until the rows drawn are measured, as their heights move the rows in view again
+                this.rowsInViewAnchorForHeights = rowsInViewAnchor;
+                rowAutoHeight.requestCheckAutoHeight(); // so the anchor expires even if no height changes
             }
             let keptRowsInView = !!rowsInViewAnchor && this.restoreRowsInView(rowsInViewAnchor);
 
@@ -770,35 +779,27 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.scrollFeature.scrollToTop();
             this.stickyRowFeature?.resetOffsets();
-            this.rowsInViewAnchor = null;
+            this.rowsInView = null;
             this.rowsInViewAnchorForHeights = null;
         }
     }
 
-    /** Runs a row data update that redraws synchronously, keeping the rows in view, focused cell and cell ranges on their rows. */
-    public maintainRowsInView<T>(update: () => T): T {
-        const { beans, gridBodyCtrl, printLayout, rowsInViewAnchor, followRows } = this;
-        if (rowsInViewAnchor || followRows || !gridBodyCtrl || this.isRowsInViewIdle()) {
-            return update();
+    /**
+     * Called at the start of a data update that moves rows, so the redraw it causes keeps the rows in view, the focused
+     * cell and cell ranges on their rows.
+     */
+    public captureRowsInView(): void {
+        const { beans, gridBodyCtrl, printLayout } = this;
+        if (!gridBodyCtrl || this.isRowsInViewIdle()) {
+            this.rowsInView = null;
+            return;
         }
         // the focused cell and cell ranges follow their rows wherever the viewport is
-        this.followRows = [this.focusSvc.followFocusedRow(), beans.rangeSvc?.followCellRanges()].filter(
+        const followRows = [this.focusSvc.followFocusedRow(), beans.rangeSvc?.followCellRanges()].filter(
             (followRow): followRow is () => void => !!followRow
         );
-        const anchor = printLayout ? null : _captureRowsInView(beans);
-        this.rowsInViewAnchor = anchor;
+        this.rowsInView = { anchor: printLayout ? null : _captureRowsInView(beans), followRows };
         this.rowsInViewAnchorForHeights = null;
-        try {
-            return update();
-        } finally {
-            this.rowsInViewAnchor = null;
-            this.followRows = null;
-            const rowAutoHeight = beans.rowAutoHeight;
-            if (anchor && !anchor.forgotten && rowAutoHeight?.active) {
-                this.rowsInViewAnchorForHeights = anchor;
-                rowAutoHeight.requestCheckAutoHeight(); // so the anchor expires even if no height changes
-            }
-        }
     }
 
     /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */
@@ -823,24 +824,23 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    /** Stops the data update running in `maintainRowsInView` from keeping rows in view, as it left none of them. */
+    /** Stops the data update captured from keeping rows in view, as it left none of them. */
     public forgetRowsInView(): void {
-        const anchor = this.rowsInViewAnchor;
-        if (anchor) {
-            anchor.forgotten = true;
-            this.rowsInViewAnchor = null;
+        if (this.rowsInView) {
+            this.rowsInView.anchor = null;
         }
     }
 
     /** Runs a change of auto heights that redraws synchronously, keeping the rows in view where the data update left them. */
     public maintainRowsInViewForHeights(update: () => void): void {
-        const anchor = this.rowsInViewAnchor ? null : this.rowsInViewAnchorForHeights;
+        const anchor = this.rowsInView ? null : this.rowsInViewAnchorForHeights;
         if (anchor) {
             // read the viewport itself, as a debounced scroll elsewhere may not have been handled yet
             const scrollFeature = this.ctrlsSvc.getScrollFeature();
             scrollFeature.invalidateVerticalScroll();
             if (scrollFeature.getVScrollPosition().top === anchor.scrollTop) {
-                this.rowsInViewAnchor = anchor;
+                this.rowsInView = { anchor, followRows: [] };
+                this.restoringRowsInViewForHeights = true;
             } else {
                 this.rowsInViewAnchorForHeights = null;
             }
@@ -849,7 +849,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             update();
         } finally {
             if (anchor) {
-                this.rowsInViewAnchor = null;
+                this.rowsInView = null;
+                this.restoringRowsInViewForHeights = false;
             }
         }
     }
@@ -861,7 +862,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** Called as each row node is removed, before it loses its position, so a data update kept in view knows the rows it removed. */
     public onRowNodeRemoved(rowNode: RowNode): void {
-        const rowsInViewAnchor = this.rowsInViewAnchor;
+        const rowsInViewAnchor = this.rowsInView?.anchor;
         if (rowsInViewAnchor) {
             _recordRemovedRow(rowsInViewAnchor, rowNode);
         }
@@ -1891,7 +1892,7 @@ interface RefreshViewParams {
     newData?: boolean;
     newPage?: boolean;
     domLayoutChanged?: boolean;
-    /** Set when the rows moved, so a data update run in `maintainRowsInView` restores the rows in view. */
+    /** Set when the rows moved, so a data update captured by `captureRowsInView` restores the rows in view. */
     keepRowsInView?: boolean;
 }
 

@@ -351,33 +351,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 gos.exists('getRowId') &&
                 // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
                 !gos.get('resetRowDataOnUpdate');
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
             if (immutable) {
                 // new row data replaces every row, so only an update has rows to keep in view
-                beans.rowRenderer.maintainRowsInView(() => {
-                    this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-                    params.keepRenderedRows = true;
-                    params.animate = !gos.get('suppressAnimationFrame');
-                    const changedRowNodes = new ChangedRowNodes();
-                    params.changedRowNodes = changedRowNodes;
-                    nodeManager.setImmutableRowData(params, newRowData);
-                    if (changedRowNodes.adds.size === this.rootNode?._leafs?.length) {
-                        // every row is new, so there are no rows to keep in view and the scroll position stays
-                        beans.rowRenderer.forgetRowsInView();
-                    }
-                    this.refreshChangedStage(params, properties);
-                });
-                return;
+                beans.rowRenderer.captureRowsInView();
+                params.keepRenderedRows = true;
+                params.animate = !gos.get('suppressAnimationFrame');
+                const changedRowNodes = new ChangedRowNodes();
+                params.changedRowNodes = changedRowNodes;
+                nodeManager.setImmutableRowData(params, newRowData);
+                if (changedRowNodes.adds.size === this.rootNode?._leafs?.length) {
+                    // every row is new, so there are no rows to keep in view and the scroll position stays
+                    beans.rowRenderer.forgetRowsInView();
+                }
+            } else {
+                params.rowDataUpdated = true;
+                params.newData = true;
+                nodeManager.setNewRowData(newRowData);
+                this.rowNodesCountReady = true;
             }
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            params.rowDataUpdated = true;
-            params.newData = true;
-            nodeManager.setNewRowData(newRowData);
-            this.rowNodesCountReady = true;
         }
-        this.refreshChangedStage(params, properties);
-    }
 
-    private refreshChangedStage(params: RefreshModelParams, properties: (keyof GridOptions)[]): void {
         const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
         if (step) {
             params.step = step;
@@ -1249,18 +1243,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
-        beans.rowRenderer.maintainRowsInView(() => {
-            for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
-                this.rowNodesCountReady = true;
-                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-                const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
-                rowNodeTrans.push(rowNodeTransaction);
-                if (callback) {
-                    callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
-                }
+        beans.rowRenderer.captureRowsInView();
+        for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
+            this.rowNodesCountReady = true;
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+            const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
+            rowNodeTrans.push(rowNodeTransaction);
+            if (callback) {
+                callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
             }
-            this.commitTransactions(changedRowNodes, animate);
-        });
+        }
+        this.commitTransactions(changedRowNodes, animate);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1292,6 +1285,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
+        this.beans.rowRenderer.captureRowsInView();
         this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
         const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
         this.commitTransactions(changedRowNodes, animate);

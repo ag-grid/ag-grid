@@ -31,8 +31,6 @@ export interface RowsInViewAnchor {
     followed?: number | null;
     /** The vertical scroll position the latest restore left the viewport at, to tell a scroll elsewhere apart. */
     scrollTop?: number;
-    /** Set when the update left none of the rows, so nothing is kept in view. */
-    forgotten?: boolean;
 }
 
 /** Records where the viewport is, or `null` at the top of the first page, so rows added at the top come into view. */

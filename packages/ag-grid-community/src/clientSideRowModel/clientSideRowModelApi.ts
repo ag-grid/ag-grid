@@ -53,7 +53,7 @@ export function applyTransaction<TData = any>(
     rowDataTransaction: RowDataTransaction<TData>
 ): RowNodeTransaction<TData> | null | undefined {
     return beans.frameworkOverrides.wrapIncoming(() =>
-        beans.rowRenderer.maintainRowsInView(() => _getClientSideRowModel(beans)?.updateRowData(rowDataTransaction))
+        _getClientSideRowModel(beans)?.updateRowData(rowDataTransaction)
     );
 }
 
