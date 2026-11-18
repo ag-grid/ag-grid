@@ -9,7 +9,7 @@ import {
     convertFunctionToProperty,
     findLocaleImport,
     getEnableAGTestIdLogic,
-    getFetchedRowType,
+    getFetchedDataType,
     getIntegratedDarkModeCode,
     getIntegratedDarkModeInitialChartThemesCode,
     getPropertyInterfaces,
@@ -61,7 +61,7 @@ function getOnGridReadyCode(
             ? callback.replace(new RegExp(ROW_DATA_FROM_RESPONSE, 'g'), 'this.rowData.set(')
             : replaceGridReadyRowData(callback, 'this.rowData');
         additionalLines.push(
-            `this.http.get<${getFetchedRowType(data, rowDataType)}[]>(${url}).subscribe(data => ${setRowDataBlock});`
+            `this.http.get<${getFetchedDataType(data, rowDataType)}>(${url}).subscribe(data => ${setRowDataBlock});`
         );
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';

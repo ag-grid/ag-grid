@@ -7,7 +7,7 @@ import {
     convertFunctionToConstPropertyTs,
     findLocaleImport,
     getEnableAGTestIdLogic,
-    getFetchedRowType,
+    getFetchedDataType,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -47,7 +47,7 @@ function getOnGridReadyCode(bindings: ParsedBindings, rowDataType: string): stri
         const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
 
         additionalLines.push(`
-            const updateData = (data: ${getFetchedRowType(data, rowDataType)}[]) => ${setRowDataBlock};
+            const updateData = (data: ${getFetchedDataType(data, rowDataType)}) => ${setRowDataBlock};
             
             fetch(${url})
                 .then(resp => resp.json())

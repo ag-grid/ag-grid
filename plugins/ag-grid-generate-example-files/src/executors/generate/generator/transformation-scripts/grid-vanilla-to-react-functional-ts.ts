@@ -9,6 +9,7 @@ import {
     convertFunctionToConstPropertyTs,
     findLocaleImport,
     getEnableAGTestIdLogic,
+    getFetchedDataType,
     getFetchedRowType,
     getFunctionName,
     getIntegratedDarkModeInitialChartThemesCode,
@@ -211,7 +212,7 @@ export function vanillaToReactFunctionalTs(
                 additionalInReady.push(`
                     fetch(${data.url})
                     .then(resp => resp.json())
-                    .then((data: ${getFetchedRowType(data, rowDataType)}[]) => ${setRowDataBlock});`);
+                    .then((data: ${getFetchedDataType(data, rowDataType)}) => ${setRowDataBlock});`);
             }
         }
 

@@ -612,12 +612,24 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
     return fileTxt;
 }
 
-/** The type of the fetched rows: the one the example's callback declares, or else the grid's row type. */
+/** The type of the fetched response: the one the example's callback declares, or else an array of the grid's rows. */
+export function getFetchedDataType(data: DataCallback, rowDataType: string): string {
+    return data.dataType ?? `${rowDataType}[]`;
+}
+
+/**
+ * The element type of the fetched rows, for React's `useFetchJson`, which takes the row type and returns an array:
+ * the grid's row type, or the element of the array the callback declares (`T[]` or `Array<T>`), else `any`.
+ */
 export function getFetchedRowType(data: DataCallback, rowDataType: string): string {
-    if (!data.dataType) {
+    const { dataType } = data;
+    if (!dataType) {
         return rowDataType;
     }
-    return data.dataType.endsWith('[]') ? data.dataType.slice(0, -2) : 'any';
+    if (dataType.endsWith('[]')) {
+        return dataType.slice(0, -2);
+    }
+    return dataType.match(/^Array<(.+)>$/)?.[1] ?? 'any';
 }
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
