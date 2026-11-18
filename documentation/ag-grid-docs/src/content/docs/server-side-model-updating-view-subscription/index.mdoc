@@ -39,7 +39,7 @@ const gridOptions = {
 - `subscribeRows` receives `ViewRow` objects, which include the row `data`. `unsubscribeRows` receives `ViewRowRef` objects, without `data`. Rows in flat data have `type: 'leaf'`. Key the subscriptions on your server by row ID.
 - Send the messages to your server in the order the handlers are called.
 - Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured. Setting it back to `true` subscribes the rows in view. Use this to resubscribe after the server loses the subscriptions, for example after a reconnect.
-- Detail rows and total rows are never passed to the handlers.
+- Detail rows and total rows, including the grand total row, are never passed to the handlers. Keep the grand total row updated separately.
 
 ## Loading and Refreshing
 
