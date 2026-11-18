@@ -115,7 +115,7 @@ Pass these core conventions to the subagent; pull situational entries from `refe
 import { expect, test } from '@utils/grid/test-utils';
 ```
 
-The same module exports the helpers named in this skill (`ensureGridReady`, `waitForGridContent`, `waitForRowAnimations`, `expectRowIdAtIndex`, `clickHeaderToSort`, `scrollGridRelative`) and `expectConsistentFrameworkDom(page, options?)`: an opt-in snapshot that the grid DOM is structurally the same in every framework, for examples where a wrapper's DOM drift would be a regression (`includeText: false` for volatile text).
+The same module exports the helpers named in this skill (`ensureGridReady`, `waitForGridContent`, `waitForRowAnimations`, `expectRowIdAtIndex`, `clickHeaderToSort`, `scrollGridRelative`, `gridApiHandle`) and `expectConsistentFrameworkDom(page, options?)`: an opt-in snapshot that the grid DOM is structurally the same in every framework, for examples where a wrapper's DOM drift would be a regression (`includeText: false` for volatile text).
 
 ### Test Structure
 
@@ -164,6 +164,20 @@ The `agIdFor` object wraps AG Grid test IDs into Playwright locators. Key method
 ### Avoid Remote Grid API
 
 Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwright page interactions instead.
+
+When the behaviour cannot be seen in the DOM (rows off-screen, a callback's arguments, a transaction's contents), use `gridApiHandle(page)`, never `(window as any).getGridApi`. It returns a typed `JSHandle<GridApi>`, so `api.evaluate((api, arg) => ...)` runs in the page with the grid's types. Keep anything the page collects in a handle too, rather than on `window`:
+
+```typescript
+const applied = await page.evaluateHandle(() => [] as number[]);
+const api = await gridApiHandle(page);
+await api.evaluate((api, applied) => {
+    api.setGridOption('isApplyServerSideTransaction', ({ transaction }) => {
+        applied.push(transaction.update?.length ?? 0);
+        return true;
+    });
+}, applied);
+await expect.poll(async () => (await applied.jsonValue()).length).toBeGreaterThan(0);
+```
 
 ### Pitfalls & Patterns Index
 
