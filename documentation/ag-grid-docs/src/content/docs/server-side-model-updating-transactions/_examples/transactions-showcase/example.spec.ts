@@ -1,5 +1,7 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
+import type { IsApplyServerSideTransactionParams } from 'ag-grid-community';
+
 test.agExample(import.meta, () => {
     test.eachFramework(
         'async transactions keep grouping and aggregations in sync under a live stream',
@@ -58,28 +60,38 @@ test.agExample(import.meta, () => {
             // Remove product, portfolio and book from the row group panel, leaving a flat list of trades.
             const pills = agIdFor.columnDropArea('panel', 'Row Groups').locator('.ag-column-drop-cell');
             await expect(pills).toHaveCount(3);
-            for (let remaining = 3; remaining > 0; remaining--) {
-                await pills.first().locator('.ag-column-drop-cell-button').click();
-                await expect(pills).toHaveCount(remaining - 1);
+            for (const name of ['Product', 'Portfolio', 'Book']) {
+                // The panel re-renders while the grid reloads, which can swallow a click, so retry it.
+                const pill = pills.filter({ hasText: name });
+                await expect(async () => {
+                    if ((await pill.count()) > 0) {
+                        await pill.locator('.ag-column-drop-cell-button').click({ timeout: 1000 });
+                    }
+                    await expect(pill).toHaveCount(0, { timeout: 1000 });
+                }).toPass();
             }
+            await expect(pills).toHaveCount(0);
             await expect(page.locator('.ag-row-group')).toHaveCount(0);
             await expect(page.locator('.ag-row [col-id="tradeId"]').first()).toContainText(/\d/);
 
             // The rows the fake server updates and removes are random across ~1,300 trades and mostly
-            // off-screen, so record what the example sends to the grid rather than what is rendered.
+            // off-screen, so record the transactions the root store applies rather than what is rendered.
             await page.evaluate(() => {
-                const api = (window as any).getGridApi('1');
                 const counts = { add: 0, update: 0, remove: 0 };
                 (window as any).rootTransactionCounts = counts;
-                const apply = api.applyServerSideTransactionAsync;
-                api.applyServerSideTransactionAsync = (transaction: any, callback?: any) => {
-                    if (!transaction.route?.length) {
-                        counts.add += transaction.add?.length ?? 0;
-                        counts.update += transaction.update?.length ?? 0;
-                        counts.remove += transaction.remove?.length ?? 0;
-                    }
-                    return apply(transaction, callback);
-                };
+                (window as any)
+                    .getGridApi('1')
+                    .setGridOption(
+                        'isApplyServerSideTransaction',
+                        ({ transaction, parentNode }: IsApplyServerSideTransactionParams) => {
+                            if (parentNode.level === -1) {
+                                counts.add += transaction.add?.length ?? 0;
+                                counts.update += transaction.update?.length ?? 0;
+                                counts.remove += transaction.remove?.length ?? 0;
+                            }
+                            return true;
+                        }
+                    );
             });
 
             await page.getByRole('button', { name: 'Start Updates' }).click();
