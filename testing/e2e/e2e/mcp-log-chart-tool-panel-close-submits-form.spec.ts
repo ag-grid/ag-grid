@@ -71,5 +71,6 @@ test.skip('closing the chart tool panel does not submit the host form', async ({
 
     await grid.locator('.ag-chart-tabbed-menu-close-button').click();
 
+    await expect(grid.locator('.ag-chart-tabbed-menu')).toBeHidden();
     await expect.poll(() => page.evaluate(() => (window as any).submitters)).toEqual([]);
 });
