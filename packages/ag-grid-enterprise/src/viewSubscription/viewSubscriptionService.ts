@@ -85,8 +85,8 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
-        // Row IDs are read from the row nodes, so a new callback for the same rows changes nothing.
-        // Only adding a missing `getRowId` or removing it acts, as frameworks can pass a new function on every render.
+        // Adding or removing `getRowId` starts or stops the subscription. Row IDs are read from the row nodes,
+        // so a new callback for the same rows, as frameworks can pass on every render, makes no call.
         this.addManagedPropertyListener('getRowId', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {

@@ -38,8 +38,31 @@ const gridOptions = {
 
 - `subscribeRows` receives `ViewRow` objects, which include the row `data`. `unsubscribeRows` receives `ViewRowRef` objects, without `data`. Rows in flat data have `type: 'leaf'`. Key the subscriptions on your server by row ID.
 - Send the messages to your server in the order the handlers are called.
-- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured. Setting it back to `true` subscribes the rows in view. Use this to resubscribe after the server loses the subscriptions, for example after a reconnect.
-- Detail rows and total rows, including the grand total row, are never passed to the handlers. Keep the grand total row updated separately.
+- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured. Setting it back to `true` subscribes the rows in view. See [Lifecycle](#lifecycle).
+- The grid does not wait for the handlers, and a returned promise is ignored. Queue slow work, such as sending the IDs to the server, and return straight away.
+- When rows change, `unsubscribeRows` is called before `subscribeRows`, and the same ID can be in both, for example when a row moves to another parent.
+
+### Debouncing
+
+The grid calls the handlers once the view has stopped moving for `debounceMs` milliseconds (default `50`), so rows scrolled past quickly are never subscribed. Raise it when each subscription is costly. Set it to `0` to subscribe while scrolling, and keep the handlers fast so scrolling doesn't lag.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewSubscription: {
+        subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
+        unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
+        debounceMs: 150,
+    },
+};
+```
+
+### Pausing When Hidden
+
+While the grid cannot be seen, every row is unsubscribed: while the page is hidden, for example in a background browser tab or a minimised window, and while the grid is scrolled out of the browser viewport or not displayed. Once the grid can be seen again, the rows in view are subscribed.
+
+When the subscription starts while the grid is already scrolled out of the browser viewport, the rows in view are subscribed and then unsubscribed straight away, as the grid only finds out that it cannot be seen once the subscription has started.
+
+Set `pauseWhenHidden` to `false` to keep the rows subscribed while the grid cannot be seen.
 
 ## Loading and Refreshing
 
@@ -50,6 +73,44 @@ A row's values come from its block, which can have loaded before the row came in
 - A [refresh](./server-side-model-updating-refresh/) without a purge keeps the rows whose IDs are unchanged. A kept row stays subscribed, even when its data changes.
 - A refresh with `purge: true` unsubscribes every row, then subscribes them again as they reload.
 - Rows removed by a refresh or a [transaction](./server-side-model-updating-transactions/) are unsubscribed, and added rows in view are subscribed once loaded.
+- A sort or filter that the server applies reloads the rows, so every row is unsubscribed, then the rows in view are subscribed again as they reload. With `serverSideEnableClientSideSort`, a sort moves rows out of and into the view instead, and only those rows are unsubscribed or subscribed.
+
+### Late Updates
+
+Updates sent before a row was unsubscribed can arrive after it, as the server is a round trip away. Apply them as usual while the row is in the grid. When rows can be removed, skip updates for IDs that `params.api.getRowNode` does not find.
+
+## Rows in View
+
+Only loaded rows in view are passed to the handlers, with these differences:
+
+- A [sticky group row](./server-side-model-grouping/) stays subscribed while it is stuck at the top of the grid.
+- Full width rows are passed like other rows.
+- Rows in `pinnedTopRowData` and `pinnedBottomRowData`, [detail rows](./server-side-model-master-detail/) and total rows, including the grand total row, are never passed. The grand total row takes its values from the `grandTotalData` that `getRows` returns, so send new totals in a `getRows` response, for example after a [refresh](./server-side-model-updating-refresh/). See [Grand Total Row](./server-side-model-grouping/#grand-total-row).
+
+No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every loaded row counts as in view, so keep the normal layout for grids with many rows.
+
+## Lifecycle
+
+The subscription starts when the grid is ready, unless `viewSubscriptionActive` is `false`.
+
+- Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured. While it is `false`, nothing is subscribed, even when the page is shown.
+- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
+- The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
+- Without `getRowId`, nothing is subscribed. Providing it later subscribes the rows in view, and removing it unsubscribes every row. A new `getRowId` callback for the same rows makes no call.
+
+Bind `viewSubscriptionActive` to application state, for example to stop the stream while the grid is in an inactive tab of your application:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewSubscription: {
+        subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
+        unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
+    },
+    viewSubscriptionActive: isPricesTabSelected,
+};
+```
+
+If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
 
 ## Row Grouping
 
