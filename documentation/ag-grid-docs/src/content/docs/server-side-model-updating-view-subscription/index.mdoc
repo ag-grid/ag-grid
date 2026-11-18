@@ -85,7 +85,8 @@ Only loaded rows in view are passed to the handlers, with these differences:
 
 - A [sticky group row](./server-side-model-grouping/) stays subscribed while it is stuck at the top of the grid.
 - Full width rows are passed like other rows.
-- Rows in `pinnedTopRowData` and `pinnedBottomRowData`, [detail rows](./server-side-model-master-detail/) and total rows, including the grand total row, are never passed. The grand total row takes its values from the `grandTotalData` that `getRows` returns, so send new totals in a `getRows` response, for example after a [refresh](./server-side-model-updating-refresh/). See [Grand Total Row](./server-side-model-grouping/#grand-total-row).
+- The [grand total row](#grand-total-row) is passed while it is on screen.
+- Rows in `pinnedTopRowData` and `pinnedBottomRowData`, [detail rows](./server-side-model-master-detail/) and group total rows are never passed.
 
 No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every loaded row counts as in view, so keep the normal layout for grids with many rows.
 
@@ -111,6 +112,32 @@ const gridOptions = {
 ```
 
 If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
+
+## Grand Total Row
+
+With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed with `type: 'grandTotal'` and the ID `GRAND_TOTAL_ROW_ID`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
+
+To apply new totals, update the row with a transaction without a `route`. `getRowId` must return `GRAND_TOTAL_ROW_ID` for the totals data:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    grandTotalRow: 'pinnedBottom',
+    getRowId: (params) => params.data.id,
+    viewSubscription: {
+        subscribeRows: (rows, params) => {
+            // rows can include { type: 'grandTotal', id: GRAND_TOTAL_ROW_ID }
+            stream.subscribe(rows.map((row) => row.id));
+        },
+        unsubscribeRows: (rows, params) => {
+            stream.unsubscribe(rows.map((row) => row.id));
+        },
+    },
+};
+
+stream.onTotals((totals) => {
+    api.applyServerSideTransactionAsync({ update: [{ ...totals, id: GRAND_TOTAL_ROW_ID }] });
+});
+```
 
 ## Row Grouping
 

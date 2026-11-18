@@ -2,6 +2,7 @@ import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
 
 import {
     BeanStub,
+    GRAND_TOTAL_ROW_ID,
     _addGridCommonParams,
     _getRowIdCallback,
     _isDomLayout,
@@ -373,7 +374,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         sub.rows.set(id, { ref, node, isGroup });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
         const row = { ...ref, parentKeys: ref.parentKeys.slice(), data: node.data } as ViewRow;
-        if (row.type !== 'leaf' && row.route) {
+        if ((row.type === 'group' || row.type === 'tree') && row.route) {
             row.route = row.route.slice();
         }
         if (row.type === 'tree') {
@@ -403,6 +404,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private getRowType(node: RowNode): ViewRowRef['type'] {
+        if (node.id === GRAND_TOTAL_ROW_ID) {
+            return 'grandTotal';
+        }
         if (this.gos.get('treeData')) {
             return 'tree';
         }
@@ -415,7 +419,10 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             isGroup !== this.isGroup(node) ||
             ref.level !== node.level ||
             !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
-            !_areEqual(ref.type === 'leaf' ? undefined : ref.route, this.getRefRoute(node, ref.type))
+            !_areEqual(
+                ref.type === 'group' || ref.type === 'tree' ? ref.route : undefined,
+                this.getRefRoute(node, ref.type)
+            )
         );
     }
 
@@ -429,7 +436,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private isSubscribable(node: RowNode): boolean {
-        // Level -1 is the root row, shown in pivot mode without row groups. It holds totals, like the grand total row.
+        if (node.id === GRAND_TOTAL_ROW_ID) {
+            // Pinned, the grand total is shown by a pinned copy and found through its `pinnedSibling`.
+            return node.rowPinned == null && !node.destroyed;
+        }
+        // Level -1 is the root row, shown in pivot mode without row groups. It holds totals.
         return !(
             node.level === -1 ||
             node.stub ||

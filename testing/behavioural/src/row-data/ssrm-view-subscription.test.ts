@@ -17,7 +17,7 @@ import type {
     IServerSideGetRowsParams,
     ViewSubscriptionOptions,
 } from 'ag-grid-community';
-import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -35,6 +35,7 @@ describe('SSRM viewSubscription', () => {
             ViewSubscriptionModule,
             ScrollApiModule,
             RowGroupingModule,
+            PinnedRowModule,
         ],
     });
 
@@ -1245,7 +1246,7 @@ describe('SSRM viewSubscription', () => {
             });
         });
 
-        test('group total rows and the grand total row are left out', async () => {
+        test('group total rows are left out', async () => {
             const api = createGroupedGrid({ groupTotalRow: 'bottom', grandTotalRow: 'top' });
             await waitForNoLoadingRows(api);
             api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
@@ -1259,7 +1260,117 @@ describe('SSRM viewSubscription', () => {
             await waitFor(() => expect(recorder.ids()).toContain('Spain/Spain-9'));
             const subscribed = recorder.batches('subscribe').flat();
             expect(subscribed).toContain('Spain');
-            expect(subscribed.filter((id) => id.startsWith('rowGroupFooter_'))).toEqual([]);
+            expect(subscribed.filter((id) => id.startsWith('rowGroupFooter_') && id !== GRAND_TOTAL_ROW_ID)).toEqual(
+                []
+            );
+        });
+    });
+
+    describe('grand total row', () => {
+        async function createGrandTotalGrid(
+            grandTotalRow: GridOptions['grandTotalRow'],
+            options: GridOptions = {}
+        ): Promise<GridApi> {
+            const rows = Array.from({ length: 1000 }, (_, i) => ({ id: String(i), value: i }));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'value' }],
+                rowModelType: 'serverSide',
+                cacheBlockSize: 100,
+                rowBuffer: 5,
+                suppressRowVirtualisation: false,
+                grandTotalRow,
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const { startRow = 0, endRow = 0 } = params.request;
+                        params.success({
+                            rowData: rows.slice(startRow, endRow),
+                            rowCount: rows.length,
+                            grandTotalData: { id: GRAND_TOTAL_ROW_ID, value: -1 },
+                        });
+                    },
+                },
+                ...options,
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            return api;
+        }
+
+        test('a grand total row that does not stick is subscribed only while it is in view', async () => {
+            const api = await createGrandTotalGrid('bottom', { suppressStickyTotalRow: 'grand' });
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false);
+
+            api.ensureIndexVisible(api.getDisplayedRowCount() - 1, 'bottom');
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true));
+            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)).toEqual({
+                type: 'grandTotal',
+                id: GRAND_TOTAL_ROW_ID,
+                parentKeys: [],
+                level: api.getRowNode(GRAND_TOTAL_ROW_ID)!.level,
+                data: { id: GRAND_TOTAL_ROW_ID, value: -1 },
+            });
+
+            api.ensureIndexVisible(0, 'top');
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false));
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a grand total row at the top stays subscribed while it sticks over the rows scrolled under it', async () => {
+            const api = await createGrandTotalGrid('top');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.ensureIndexVisible(500, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('500'));
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a pinned grand total row stays subscribed wherever the grid is scrolled', async () => {
+            const api = await createGrandTotalGrid('pinnedBottom');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)?.type).toBe('grandTotal');
+
+            api.ensureIndexVisible(500, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('500'));
+            await waitForNoLoadingRows(api);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a transaction applies streamed totals to the subscribed grand total row', async () => {
+            const api = await createGrandTotalGrid('pinnedTop');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ROW_ID, value: 999 }] });
+
+            const pinned = api.getPinnedTopRow(0)!;
+            expect(pinned.data).toEqual({ id: GRAND_TOTAL_ROW_ID, value: 999 });
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('removing the grand total row unsubscribes it', async () => {
+            const api = await createGrandTotalGrid('pinnedBottom');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.setGridOption('grandTotalRow', undefined);
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false));
+            expect(recorder.batches('unsubscribe')).toEqual([[GRAND_TOTAL_ROW_ID]]);
+            expect(recorder.violations).toEqual([]);
         });
     });
 });

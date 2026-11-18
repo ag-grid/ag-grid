@@ -34,8 +34,13 @@ export interface ViewLeafRowRef extends ViewportRowRefBase {
     type: 'leaf';
 }
 
+/** The grand total row, shown when `grandTotalRow` is set. Its ID is `GRAND_TOTAL_ROW_ID`. */
+export interface ViewGrandTotalRowRef extends ViewportRowRefBase {
+    type: 'grandTotal';
+}
+
 /** Identifies a row passed to the `viewSubscription` handlers. Captured when the row was subscribed. */
-export type ViewRowRef = ViewGroupRowRef | ViewTreeRowRef | ViewLeafRowRef;
+export type ViewRowRef = ViewGroupRowRef | ViewTreeRowRef | ViewLeafRowRef | ViewGrandTotalRowRef;
 
 export interface ViewGroupRow<TData = any> extends ViewGroupRowRef {
     /** The row's data. */
@@ -54,8 +59,14 @@ export interface ViewLeafRow<TData = any> extends ViewLeafRowRef {
     data: TData;
 }
 
+export interface ViewGrandTotalRow<TData = any> extends ViewGrandTotalRowRef {
+    /** The grand total data. */
+    data: TData | undefined;
+}
+
 /** A row passed to `subscribeRows`. Narrow it with `type`. */
-export type ViewRow<TData = any> = ViewGroupRow<TData> | ViewTreeRow<TData> | ViewLeafRow<TData>;
+export type ViewRow<TData = any> =
+    ViewGroupRow<TData> | ViewTreeRow<TData> | ViewLeafRow<TData> | ViewGrandTotalRow<TData>;
 
 export interface ViewSubscriptionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 

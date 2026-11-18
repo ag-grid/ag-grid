@@ -615,6 +615,8 @@ export type {
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 export type {
+    ViewGrandTotalRow,
+    ViewGrandTotalRowRef,
     ViewGroupRow,
     ViewGroupRowRef,
     ViewLeafRow,
