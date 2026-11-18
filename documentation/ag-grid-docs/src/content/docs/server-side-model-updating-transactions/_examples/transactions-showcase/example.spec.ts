@@ -49,4 +49,50 @@ test.agExample(import.meta, () => {
             await page.getByRole('button', { name: 'Stop Updates' }).click();
         }
     );
+
+    test.eachFramework(
+        'removing every row group streams complete transactions to the flat list',
+        async ({ agIdFor, page }) => {
+            await waitForGridContent(page);
+
+            // Remove product, portfolio and book from the row group panel, leaving a flat list of trades.
+            const pills = agIdFor.columnDropArea('panel', 'Row Groups').locator('.ag-column-drop-cell');
+            await expect(pills).toHaveCount(3);
+            for (let remaining = 3; remaining > 0; remaining--) {
+                await pills.first().locator('.ag-column-drop-cell-button').click();
+                await expect(pills).toHaveCount(remaining - 1);
+            }
+            await expect(page.locator('.ag-row-group')).toHaveCount(0);
+            await expect(page.locator('.ag-row [col-id="tradeId"]').first()).toContainText(/\d/);
+
+            // The rows the fake server updates and removes are random across ~1,300 trades and mostly
+            // off-screen, so record what the example sends to the grid rather than what is rendered.
+            await page.evaluate(() => {
+                const api = (window as any).getGridApi('1');
+                const counts = { add: 0, update: 0, remove: 0 };
+                (window as any).rootTransactionCounts = counts;
+                const apply = api.applyServerSideTransactionAsync;
+                api.applyServerSideTransactionAsync = (transaction: any, callback?: any) => {
+                    if (!transaction.route?.length) {
+                        counts.add += transaction.add?.length ?? 0;
+                        counts.update += transaction.update?.length ?? 0;
+                        counts.remove += transaction.remove?.length ?? 0;
+                    }
+                    return apply(transaction, callback);
+                };
+            });
+
+            await page.getByRole('button', { name: 'Start Updates' }).click();
+
+            // Each tick updates 5 trades, adds 2 and removes 2; all three reach the ungrouped grid.
+            await expect(async () => {
+                const counts = await page.evaluate(() => (window as any).rootTransactionCounts);
+                expect(counts.add).toBeGreaterThan(0);
+                expect(counts.update).toBeGreaterThan(0);
+                expect(counts.remove).toBeGreaterThan(0);
+            }).toPass({ timeout: 15000 });
+
+            await page.getByRole('button', { name: 'Stop Updates' }).click();
+        }
+    );
 });

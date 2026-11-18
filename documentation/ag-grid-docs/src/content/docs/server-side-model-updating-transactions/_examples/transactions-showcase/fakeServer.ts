@@ -432,6 +432,7 @@ const translateRowsToRoutes = ({
         const existingTransaction = mutableTransactionObj[routeId] || {};
 
         mutableTransactionObj[routeId] = {
+            ...existingTransaction,
             route,
             [op]: [...(existingTransaction[op] ?? []), item],
         };
