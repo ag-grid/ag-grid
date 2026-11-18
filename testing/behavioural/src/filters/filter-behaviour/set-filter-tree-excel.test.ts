@@ -11,7 +11,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, ISetFilterParams } from 'ag-grid-community';
+import type { GridApi, ISetFilterParams, SetFilterModel } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -489,7 +489,7 @@ describe('Set Filter — tree list with caseSensitive', () => {
 
         await filter.toggleSetItem('(Select All)');
         await asyncSetTimeout(0);
-        expect((filter.getModel() as any).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
         expect(api.getDisplayedRowCount()).toBe(3);
     });
 });
@@ -848,7 +848,7 @@ describe('Set Filter — excelMode', () => {
             .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
         await asyncSetTimeout(0);
 
-        expect((filter.getModel() as any).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
         expect(api.getDisplayedRowCount()).toBe(3);
     });
 

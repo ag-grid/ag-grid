@@ -15,10 +15,12 @@ import type {
     FilterInputCallbackParams,
     GridApi,
     GridOptions,
+    ISetFilter,
     ISetFilterCellRendererParams,
     ISetFilterParams,
     KeyCreatorParams,
     SetFilterHandler,
+    SetFilterModel,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
     ValueGetterParams,
@@ -196,7 +198,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
 
             await filter.miniFilterSearch('');
             await asyncSetTimeout(0);
-            const instance = (await api.getColumnFilterInstance('name')) as any;
+            const instance = (await api.getColumnFilterInstance<ISetFilter>('name'))!;
             instance.setMiniFilter('mich');
             await asyncSetTimeout(0);
             expect(filter.setFilterItemLabels()).toEqual(typed);
@@ -210,7 +212,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
             await filter.toggleSetItem('(Select All)');
             await asyncSetTimeout(0);
 
-            expect((filter.getModel() as any).values.slice().sort()).toEqual([...MICHAELS].sort());
+            expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual([...MICHAELS].sort());
             await new GridRows(api, 'select all matching casings rows').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 name:"Michael"
@@ -225,7 +227,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
             await filter.miniFilterSearch('mich');
             await asyncSetTimeout(0);
 
-            expect((filter.getModel() as any).values.slice().sort()).toEqual([...MICHAELS].sort());
+            expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual([...MICHAELS].sort());
             await new GridRows(api, 'apply while typing rows').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 name:"Michael"
@@ -247,7 +249,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
 
             await filter.miniFilterSearch('');
             await asyncSetTimeout(0);
-            const instance = (await api.getColumnFilterInstance('name')) as any;
+            const instance = (await api.getColumnFilterInstance<ISetFilter>('name'))!;
             instance.setMiniFilter('MICH');
             await asyncSetTimeout(0);
             expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'MICHAEL']);
