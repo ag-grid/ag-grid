@@ -283,17 +283,10 @@ interface DataObserver {
     groupedFields?: string[];
 }
 
-export const dataObservers: DataObserver[] = [];
-export const registerObserver = ({ transactionFunc, groupedFields }: DataObserver) => {
-    const existingObserver = dataObservers.find(({ transactionFunc: oldFunc }) => oldFunc === transactionFunc);
-    if (existingObserver) {
-        existingObserver.groupedFields = groupedFields;
-        return;
-    }
-    dataObservers.push({
-        transactionFunc,
-        groupedFields,
-    });
+// The showcase has one grid, so a new registration replaces the observer, and with it the grouping it routes by.
+let dataObserver: DataObserver | undefined;
+export const registerObserver = (observer: DataObserver) => {
+    dataObserver = observer;
 };
 
 const uniqueQueries = new Map();
@@ -344,31 +337,33 @@ export function randomTransaction({
         remove.push(d);
     }
 
-    dataObservers.forEach(({ transactionFunc, groupedFields = [] }) => {
-        const routedTransactions: Record<string, ServerSideTransaction> = {};
+    if (!dataObserver) {
+        return;
+    }
+    const { transactionFunc, groupedFields = [] } = dataObserver;
+    const routedTransactions: Record<string, ServerSideTransaction> = {};
 
-        translateRowsToRoutes({
-            rows: update,
-            op: 'update',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-        translateRowsToRoutes({
-            rows: remove,
-            op: 'remove',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-        translateRowsToRoutes({
-            rows: add,
-            op: 'add',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-
-        // may want to filter duplicates here
-        Object.values(routedTransactions).forEach(transactionFunc);
+    translateRowsToRoutes({
+        rows: update,
+        op: 'update',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
     });
+    translateRowsToRoutes({
+        rows: remove,
+        op: 'remove',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
+    });
+    translateRowsToRoutes({
+        rows: add,
+        op: 'add',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
+    });
+
+    // may want to filter duplicates here
+    Object.values(routedTransactions).forEach(transactionFunc);
 }
 
 const translateRowsToRoutes = ({
