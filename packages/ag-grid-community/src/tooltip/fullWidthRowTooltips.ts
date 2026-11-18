@@ -7,7 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { TooltipCallbackParams } from './tooltipComponent';
-import type { TooltipFeature, TooltipSource, TooltipSourceParams } from './tooltipFeature';
+import type { ResolvedTooltip, TooltipFeature, TooltipSource } from './tooltipFeature';
 import { _getCellTooltipComponentDefinition } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveGroupTooltipValue } from './tooltipValueUtils';
 
@@ -95,17 +95,26 @@ export class FullWidthRowTooltips extends BeanStub {
         const colDef = isGroupRow ? this.getGroupColDef(rowNode) : undefined;
         this.setupTooltip(
             eGui,
-            () => value,
-            shouldDisplayTooltip,
             () => ({
-                colDef,
-                column: groupCol,
-                rowIndex: rowNode.rowIndex ?? 0,
-                node: rowNode,
-                data: rowNode.data,
+                value,
+                componentDefinition: colDef,
+                params: {
+                    colDef,
+                    column: groupCol,
+                    rowIndex: rowNode.rowIndex ?? 0,
+                    node: rowNode,
+                    data: rowNode.data,
+                },
+                sourceValues: isGroupRow
+                    ? this.beans.valueSvc.getValueForDisplay({
+                          node: rowNode,
+                          includeValueFormatted: true,
+                          from: 'edit',
+                      })
+                    : undefined,
             }),
-            () => colDef,
-            true
+            true,
+            shouldDisplayTooltip
         );
     }
 
@@ -135,19 +144,16 @@ export class FullWidthRowTooltips extends BeanStub {
 
         const { valueSvc } = this.beans;
 
-        let latestValueFormatted: string | null | undefined;
-        const getDisplay = () => {
-            const display = valueSvc.getValueForDisplay({ node: rowNode, includeValueFormatted: true, from: 'edit' });
-            latestValueFormatted = display.valueFormatted;
-            return display;
-        };
-
         this.setupTooltip(
             eGui,
             () => {
-                const { value, valueFormatted } = getDisplay();
-                const callbackParams = _addGridCommonParams<TooltipCallbackParams>(gos, {
-                    location: 'fullWidthRow' as const,
+                const display = valueSvc.getValueForDisplay({
+                    node: rowNode,
+                    includeValueFormatted: true,
+                    from: 'edit',
+                });
+                const { value, valueFormatted } = display;
+                const params = {
                     colDef,
                     column: groupCol,
                     rowIndex: rowNode.rowIndex ?? 0,
@@ -155,9 +161,14 @@ export class FullWidthRowTooltips extends BeanStub {
                     data: rowNode.data,
                     value,
                     valueFormatted: valueFormatted ?? undefined,
+                };
+                const callbackParams = _addGridCommonParams<TooltipCallbackParams>(gos, {
+                    ...params,
+                    location: 'fullWidthRow',
                 });
+                let tooltipValue = value;
                 if (hasTooltipValue) {
-                    return _resolveGroupTooltipValue(colDef, callbackParams, () => {
+                    tooltipValue = _resolveGroupTooltipValue(colDef, callbackParams, () => {
                         const tooltipField = colDef.tooltipField;
                         if (!tooltipField) {
                             return { resolved: false };
@@ -176,18 +187,13 @@ export class FullWidthRowTooltips extends BeanStub {
                         };
                     });
                 }
-                return value;
+                return {
+                    value: tooltipValue,
+                    params,
+                    sourceValues: display,
+                    componentDefinition: _getCellTooltipComponentDefinition(colDef),
+                };
             },
-            undefined,
-            () => ({
-                colDef,
-                column: groupCol,
-                rowIndex: rowNode.rowIndex ?? 0,
-                node: rowNode,
-                data: rowNode.data,
-                valueFormatted: latestValueFormatted ?? undefined,
-            }),
-            () => _getCellTooltipComponentDefinition(colDef),
             false
         );
     }
@@ -203,11 +209,9 @@ export class FullWidthRowTooltips extends BeanStub {
 
     private setupTooltip(
         eGui: HTMLElement,
-        getTooltipValue: () => any,
-        shouldDisplayTooltip: (() => boolean) | undefined,
-        getAdditionalParams: (() => TooltipSourceParams) | undefined,
-        getTooltipComponentDefinition: () => ColDef | undefined,
-        fromRenderer: boolean
+        getTooltip: () => ResolvedTooltip,
+        fromRenderer: boolean,
+        shouldDisplayTooltip?: () => boolean
     ): void {
         const { tooltipFeatures, rowCtrl, beans } = this;
         if (!rowCtrl.getCurrentRowElement()) {
@@ -216,11 +220,9 @@ export class FullWidthRowTooltips extends BeanStub {
 
         const source: TooltipSource = {
             getGui: () => eGui,
-            getTooltipComponentDefinition,
-            getTooltipValue,
+            getTooltip,
             getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,
-            ...(getAdditionalParams ? { getAdditionalParams } : {}),
         };
         const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);
         if (feature) {

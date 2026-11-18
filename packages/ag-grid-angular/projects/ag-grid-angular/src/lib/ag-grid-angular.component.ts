@@ -146,7 +146,6 @@ import type {
     IAggFuncs,
     IDatasource,
     IServerSideDatasource,
-    ITooltipParams,
     IViewportDatasource,
     Icons,
     InitialGroupOrderComparator,
@@ -243,7 +242,11 @@ import type {
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     Toolbar,
+    TooltipCallbackParams,
+    TooltipContentParams,
     TooltipHideEvent,
+    TooltipPosition,
+    TooltipPositionCallback,
     TooltipShowEvent,
     TreeDataDisplayType,
     UndoEndedEvent,
@@ -482,13 +485,31 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input() public tooltipTrigger: 'hover' | 'focus' | 'hoverOrFocus' | undefined = undefined;
+    /** Preferred tooltip placement. Flips or shifts to stay within the available space.
+     * Return `undefined` from the callback to use the default placement, `top-start`.
+     * Does not apply to browser tooltips.
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipPosition: TooltipPosition | TooltipPositionCallback<TData> | undefined = undefined;
+    /** Anchor for hover tooltips. Focus tooltips always use the target; mouse tracking uses the pointer.
+     * Does not apply to browser tooltips.
+     * @default 'target'
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipAnchor: 'target' | 'pointer' | undefined = undefined;
+    /** Distance in pixels between the tooltip and its anchor, along the placement axis.
+     * Does not apply to browser tooltips.
+     * @default 6
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipOffset: number | undefined = undefined;
     /** Provides a plain-text accessible description, available on focus before the visual tooltip appears.
      * Use this for custom tooltips whose resolved `params.value` is structured data.
      * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
      * @agModule `TooltipModule`
      */
     @Input() public getTooltipAriaDescription:
-        ((params: ITooltipParams<TData>) => string | null | undefined) | undefined = undefined;
+        ((params: TooltipContentParams<TData>) => string | null | undefined) | undefined = undefined;
     /** The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
@@ -523,11 +544,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
     /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
      * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+     * A callback receives the source parameters and decides separately each time a tooltip opens.
+     * Does not apply to browser tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
-    @Input({ transform: booleanAttribute }) public tooltipInteraction: boolean | undefined = undefined;
+    @Input({ transform: (value: unknown) => (typeof value === 'function' ? value : booleanAttribute(value)) })
+    public tooltipInteraction: (boolean | ((params: TooltipCallbackParams<TData>) => boolean)) | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */
     @Input() public popupParent: HTMLElement | null | undefined = undefined;

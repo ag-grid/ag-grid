@@ -9,7 +9,7 @@ import {
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, TooltipModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 describe('menu tooltip triggers', () => {
@@ -22,6 +22,8 @@ describe('menu tooltip triggers', () => {
         gridMgr.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     async function openContextMenu(
@@ -86,6 +88,58 @@ describe('menu tooltip triggers', () => {
     async function expectTooltip(text: string): Promise<void> {
         await waitFor(() => expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual([text]));
     }
+
+    test.each(['focus', 'hoverOrFocus'] as const)(
+        'restores the source tooltip after a context menu closes with trigger %s',
+        async (tooltipTrigger) => {
+            const api = await gridMgr.createGridAndWait('menu-tooltip-restore', {
+                columnDefs: [{ field: 'value', tooltip: 'Cell hint' }],
+                rowData: [{ value: 'Cell' }],
+                tooltipTrigger,
+                tooltipShowDelay: 0,
+                getContextMenuItems: () => [{ name: 'Action' }],
+            });
+            restoreOffsetParent = polyfillOffsetParent();
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+            cell.focus();
+            await expectTooltip('Cell hint');
+
+            await userEvent.pointer({ keys: '[MouseRight]', target: cell });
+            const item = await openMenuOption('Action');
+            expect(getVisibleTooltips()).toHaveLength(0);
+            await userEvent.click(item);
+
+            expect(cell).toHaveFocus();
+            await expectTooltip('Cell hint');
+        }
+    );
+
+    test.each([false, true])('context menus dismiss fading tooltips (source already left: %s)', async (sourceLeft) => {
+        const api = await gridMgr.createGridAndWait('menu-tooltip-no-fade', {
+            columnDefs: [{ field: 'value', tooltip: 'Cell hint' }],
+            rowData: [{ value: 'Cell' }, { value: 'Other cell' }],
+            tooltipShowDelay: 0,
+            getContextMenuItems: () => [{ name: 'Action' }],
+        });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+        cell.dispatchEvent(new MouseEvent('mouseenter'));
+        await expectTooltip('Cell hint');
+        const tooltip = getVisibleTooltips()[0];
+
+        vi.useFakeTimers();
+        let menuSource = cell;
+        if (sourceLeft) {
+            cell.dispatchEvent(new MouseEvent('mouseleave'));
+            await vi.advanceTimersByTimeAsync(100);
+            menuSource = getGridElement(api)!.querySelector<HTMLElement>('.ag-row[row-index="1"] .ag-cell')!;
+        } else {
+            cell.dispatchEvent(new MouseEvent('mousedown', { button: 2, bubbles: true }));
+        }
+        expect(tooltip).toHaveClass('ag-tooltip-hiding');
+        menuSource.dispatchEvent(new MouseEvent('contextmenu', { button: 2, bubbles: true, cancelable: true }));
+        expect(document.querySelector('[role="menu"]')).toBeVisible();
+        expect(tooltip).not.toBeVisible();
+    });
 
     test.each([false, true])(
         'mouse opening suppresses the initial focus tooltip (async items: %s)',

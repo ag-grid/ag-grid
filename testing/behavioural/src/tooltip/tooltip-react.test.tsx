@@ -15,7 +15,7 @@ import {
 import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-community';
 import { FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
-import type { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps, CustomTooltipProps } from 'ag-grid-react';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
@@ -39,6 +39,42 @@ describe('Tooltips (React)', () => {
         return <span>{String(props.value)}</span>;
     };
     const PlainRenderer = (props: CustomCellRendererProps) => <span>{String(props.value)}</span>;
+
+    test('renders a structured tooltip payload for a numeric column', async () => {
+        type RowData = { amount: number };
+        type Context = { prefix: string };
+        type Payload = { label: string };
+        const Tooltip = (props: CustomTooltipProps<RowData, number, Context, Payload>) => {
+            expectTypeOf(props.value).toEqualTypeOf<Payload | null | undefined>();
+            expectTypeOf<CustomTooltipProps<RowData, number, Context>['value']>().toEqualTypeOf<
+                number | null | undefined
+            >();
+            return (
+                <span>
+                    {props.context.prefix}
+                    {props.value?.label}
+                </span>
+            );
+        };
+        const columnDefs: ColDef<RowData, number>[] = [
+            {
+                field: 'amount',
+                tooltip: ({ value }) => ({ label: `$${value}.00` }),
+                tooltipComponent: Tooltip,
+            },
+        ];
+        const rendered = render(
+            <AgGridReact<RowData>
+                columnDefs={columnDefs}
+                rowData={[{ amount: 7 }]}
+                context={{ prefix: 'Amount: ' }}
+                tooltipShowDelay={0}
+            />
+        );
+        const cell = await waitFor(() => getByTestId(rendered.container, agTestIdFor.cell('0', 'amount')));
+        await userEvent.hover(cell);
+        await waitFor(() => expect(hasTooltipText('Amount: $7.00')).toBe(true));
+    });
 
     test('AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer (React)', async () => {
         let api: GridApi | undefined;

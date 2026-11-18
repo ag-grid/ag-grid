@@ -1604,10 +1604,54 @@
 
     .ag-tooltip {
         position: absolute;
+        max-width: min(100%, calc(100vw - 30px), var(--ag-internal-tooltip-max-width, 100%));
         // tooltips must sit above all in-grid layers and popups.
         z-index: 99999;
         // break long words so the tooltip stays within its constrained width.
         overflow-wrap: break-word;
+
+        &[class*='ag-tooltip-position-']::after {
+            content: '';
+            position: absolute;
+            width: calc(var(--ag-tooltip-arrow-size) * 1.4142);
+            height: calc(var(--ag-tooltip-arrow-size) * 1.4142);
+            box-sizing: border-box;
+            background-color: inherit;
+            border: inherit;
+            border-top: 0;
+            border-left: 0;
+            // Clip the inherited border too when the arrow size is zero.
+            clip-path: circle(var(--ag-tooltip-arrow-size));
+            pointer-events: none;
+        }
+
+        &:where(.ag-tooltip-position-top, .ag-tooltip-position-top-start, .ag-tooltip-position-top-end)::after {
+            top: 100%;
+            left: var(--ag-tooltip-arrow-offset);
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        &:where(
+                .ag-tooltip-position-bottom,
+                .ag-tooltip-position-bottom-start,
+                .ag-tooltip-position-bottom-end
+            )::after {
+            bottom: 100%;
+            left: var(--ag-tooltip-arrow-offset);
+            transform: translate(-50%, 50%) rotate(225deg);
+        }
+
+        &:where(.ag-tooltip-position-left, .ag-tooltip-position-left-start, .ag-tooltip-position-left-end)::after {
+            top: var(--ag-tooltip-arrow-offset);
+            left: 100%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        &:where(.ag-tooltip-position-right, .ag-tooltip-position-right-start, .ag-tooltip-position-right-end)::after {
+            top: var(--ag-tooltip-arrow-offset);
+            right: 100%;
+            transform: translate(50%, -50%) rotate(135deg);
+        }
     }
 
     .ag-tooltip-custom {
@@ -1616,8 +1660,7 @@
         z-index: 99999;
     }
 
-    .ag-tooltip:not(.ag-tooltip-interactive),
-    .ag-tooltip-custom:not(.ag-tooltip-interactive) {
+    .ag-tooltip-hiding {
         pointer-events: none;
     }
 

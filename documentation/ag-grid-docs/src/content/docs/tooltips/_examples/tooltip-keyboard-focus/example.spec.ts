@@ -19,6 +19,123 @@ test.agExample(import.meta, () => {
         await expect(tooltip).toContainText('Country');
     });
 
+    test.eachFramework('Position control changes the tooltip side and alignment', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const positionControl = page.getByRole('combobox', { name: 'Position', exact: true });
+        const cell = agIdFor.cell('1', 'country');
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+
+        for (const position of ['bottom-end', 'right-start']) {
+            await positionControl.focus();
+            await expect(tooltip).toHaveCount(0);
+            await positionControl.selectOption(position);
+            await cell.focus();
+            await expect(tooltip).toBeVisible();
+            await expect(tooltip).toContainText('Jamaica');
+            await expect(tooltip).toHaveClass(new RegExp(`\\bag-tooltip-position-${position}\\b`));
+            await expect(async () => {
+                const target = (await cell.boundingBox())!;
+                const popup = (await tooltip.boundingBox())!;
+                if (position === 'bottom-end') {
+                    expect(popup.y).toBeGreaterThan(target.y + target.height);
+                    expect(popup.x + popup.width).toBeCloseTo(target.x + target.width, 0);
+                } else {
+                    expect(popup.x).toBeGreaterThan(target.x + target.width);
+                    expect(popup.y).toBeCloseTo(target.y, 0);
+                }
+            }).toPass();
+        }
+    });
+
+    test.eachFramework('Source default resets an explicit tooltip position', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const positionControl = page.getByRole('combobox', { name: 'Position', exact: true });
+        const cell = agIdFor.cell('1', 'country');
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+        await expect(positionControl).toHaveValue('default');
+
+        await positionControl.selectOption('bottom-end');
+        await cell.focus();
+        await expect(tooltip).toHaveClass(/\bag-tooltip-position-bottom-end\b/);
+
+        await positionControl.focus();
+        await expect(tooltip).toHaveCount(0);
+        await positionControl.selectOption({ label: 'Source default' });
+        await cell.focus();
+        await expect(tooltip).toBeVisible();
+        await expect(tooltip).toContainText('Jamaica');
+        await expect(tooltip).toHaveClass(/\bag-tooltip-position-top-start\b/);
+        await expect(async () => {
+            const target = (await cell.boundingBox())!;
+            const popup = (await tooltip.boundingBox())!;
+            expect(popup.x).toBeCloseTo(target.x, 0);
+            expect(popup.y + popup.height).toBeLessThan(target.y);
+        }).toPass();
+    });
+
+    test.eachFramework('Pointer anchor applies to hover but not keyboard focus', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const anchorControl = page.getByRole('combobox', { name: 'Anchor', exact: true });
+        await expect(anchorControl).toHaveValue('target');
+        await anchorControl.selectOption('pointer');
+
+        const hovered = agIdFor.cell('1', 'country');
+        const target = (await hovered.boundingBox())!;
+        const point = { x: target.x + 80, y: target.y + 20 };
+        await page.mouse.move(point.x, point.y);
+
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+        await expect(tooltip).toBeVisible();
+        await expect(tooltip).toContainText('Jamaica');
+        await expect(tooltip).toHaveClass(/\bag-tooltip-position-top-start\b/);
+        await expect(async () => {
+            const popup = (await tooltip.boundingBox())!;
+            expect(popup.x).toBeCloseTo(point.x, 0);
+            expect(point.y - (popup.y + popup.height)).toBeCloseTo(6, 0);
+        }).toPass();
+
+        const focused = agIdFor.cell('2', 'country');
+        await focused.focus();
+        await expect(focused).toBeFocused();
+        await expect(tooltip).toContainText('United States');
+        await expect(async () => {
+            const target = (await focused.boundingBox())!;
+            const popup = (await tooltip.boundingBox())!;
+            expect(popup.x).toBeCloseTo(target.x, 0);
+            expect(target.y - (popup.y + popup.height)).toBeCloseTo(6, 0);
+        }).toPass();
+    });
+
+    test.eachFramework('Offset control sets the gap to the tooltip border', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const offsetControl = page.getByLabel('Offset', { exact: true });
+        const cell = agIdFor.cell('2', 'country');
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+        await expect(offsetControl).toHaveValue('6');
+
+        for (const offset of [6, 24]) {
+            await offsetControl.fill(String(offset));
+            await offsetControl.press('Tab');
+            await cell.focus();
+            await expect(tooltip).toBeVisible();
+            await expect(tooltip).toContainText('United States');
+            await expect(tooltip).toHaveClass(/\bag-tooltip-position-top-start\b/);
+            await expect(async () => {
+                const target = (await cell.boundingBox())!;
+                const popup = (await tooltip.boundingBox())!;
+                expect(target.y - (popup.y + popup.height)).toBeCloseTo(offset, 0);
+            }).toPass();
+        }
+    });
+
     for (const target of ['cell', 'header'] as const) {
         test.eachFramework(
             `${target} focus describes the tooltip before its visual delay`,

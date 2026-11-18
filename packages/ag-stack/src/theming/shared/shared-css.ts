@@ -333,6 +333,11 @@ export interface SharedThemeParams {
     toggleButtonSwitchInset: LengthValue;
 
     /**
+     * Size of the built-in tooltip arrow. Set to 0 to hide it.
+     */
+    tooltipArrowSize: LengthValue;
+
+    /**
      * Background color for tooltips
      */
     tooltipBackgroundColor: ColorValue;
@@ -463,6 +468,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.3),
     toggleButtonSwitchBackgroundColor: backgroundColor,
     toggleButtonSwitchInset: 2,
+    tooltipArrowSize: 5,
     tooltipBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },

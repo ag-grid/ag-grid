@@ -164,20 +164,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => this.params.colDef,
                 getLocation: () => 'setFilterValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-                getAdditionalParams: () => {
+                getTooltip: () => {
                     const { colDef, column } = this.params;
-                    const additionalParams: TooltipSourceParams = {
+                    const params: TooltipSourceParams & { level?: number } = {
                         colDef,
                         column: column as AgColumn,
+                        value: this.cellRendererParams?.value,
                         valueFormatted: this.formattedValue ?? undefined,
                     };
                     if (this.isTree) {
-                        (additionalParams as any).level = this.depth;
+                        params.level = this.depth;
                     }
-                    return additionalParams;
+                    return { params, componentDefinition: colDef };
                 },
             })
         );

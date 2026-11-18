@@ -11,6 +11,7 @@ import type {
     AgMenuPopupPositionParams,
     AgMousePopupPositionParams,
     AgPopupPositionParams,
+    AgTooltipPopupPositionParams,
     PopupEventParams,
 } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
@@ -29,6 +30,7 @@ import { _getEventPath, _isElementInEventPath } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise, _wrapInterval } from '../utils/promise';
 import { computeAlignedPosition, toRelativeRect } from './popupPositionUtils';
+import { findTooltipPosition } from './tooltipPositionUtils';
 
 interface AgPopup {
     element: HTMLElement;
@@ -84,6 +86,123 @@ export abstract class BasePopupService<
     }
 
     protected abstract getDefaultPopupParent(): HTMLElement;
+
+    public positionPopupForTooltip(params: AgTooltipPopupPositionParams): void {
+        const { ePopup, eventSource, pointer, position, gap } = params;
+        const popupParent = this.getPopupParent();
+        const doc = popupParent.ownerDocument;
+        const win = doc.defaultView!;
+        const origin = this.getParentRect();
+        const offsetParent = ePopup.offsetParent as HTMLElement | null;
+        // Document scrolling is already included in getParentRect(). Other containing blocks scroll their contents.
+        const scrollX = offsetParent !== doc.scrollingElement ? (offsetParent?.scrollLeft ?? 0) : 0;
+        const scrollY = offsetParent !== doc.scrollingElement ? (offsetParent?.scrollTop ?? 0) : 0;
+        const viewport = {
+            top: 0,
+            left: 0,
+            right: doc.documentElement.clientWidth || win.innerWidth,
+            bottom: doc.documentElement.clientHeight || win.innerHeight,
+        };
+        let bounds = viewport;
+        if (popupParent !== doc.body && popupParent !== doc.documentElement) {
+            const rect = popupParent.getBoundingClientRect();
+            bounds = {
+                top: Math.max(0, rect.top + popupParent.clientTop),
+                left: Math.max(0, rect.left + popupParent.clientLeft),
+                right: Math.min(viewport.right, rect.left + popupParent.clientLeft + popupParent.clientWidth),
+                bottom: Math.min(viewport.bottom, rect.top + popupParent.clientTop + popupParent.clientHeight),
+            };
+        }
+        const sourceRect = pointer
+            ? { top: pointer.clientY, bottom: pointer.clientY, left: pointer.clientX, right: pointer.clientX }
+            : this.getTooltipSourceRect(eventSource);
+        if (!pointer) {
+            sourceRect.left = Math.max(sourceRect.left, viewport.left);
+            sourceRect.right = Math.min(sourceRect.right, viewport.right);
+            sourceRect.top = Math.max(sourceRect.top, viewport.top);
+            sourceRect.bottom = Math.min(sourceRect.bottom, viewport.bottom);
+        }
+        const reference = toRelativeRect(sourceRect, bounds);
+        const boundsSize = {
+            width: Math.max(0, bounds.right - bounds.left),
+            height: Math.max(0, bounds.bottom - bounds.top),
+        };
+        const isDefaultTooltip = ePopup.classList.contains('ag-tooltip');
+        if (isDefaultTooltip) {
+            ePopup.style.setProperty('--ag-internal-tooltip-max-width', `${boundsSize.width}px`);
+        }
+        for (const cls of ePopup.classList) {
+            if (cls.startsWith('ag-tooltip-position-')) {
+                ePopup.classList.remove(cls);
+                break;
+            }
+        }
+        ePopup.classList.add(`ag-tooltip-position-${position}`);
+        let arrowPadding = 0;
+        if (isDefaultTooltip) {
+            const style = win.getComputedStyle(ePopup);
+            const arrowStyle = win.getComputedStyle(ePopup, '::after');
+            // Custom components clamp their own arrows; only the built-in arrow has a known shape.
+            arrowPadding =
+                (Number.parseFloat(style.borderRadius) || 0) + (Number.parseFloat(arrowStyle.width) / Math.SQRT2 || 0);
+        }
+        let actualPosition = position;
+
+        this.positionPopup({
+            ePopup,
+            // The tooltip owns resize observation for its full visible lifetime.
+            skipObserver: true,
+            updatePosition: () => {
+                const result = findTooltipPosition(
+                    reference,
+                    { width: ePopup.offsetWidth, height: ePopup.offsetHeight },
+                    boundsSize,
+                    { position, gap, enableRtl: !!this.gos.get('enableRtl'), arrowPadding }
+                );
+                ePopup.classList.remove(`ag-tooltip-position-${actualPosition}`);
+                actualPosition = result.position;
+                ePopup.classList.add(`ag-tooltip-position-${actualPosition}`);
+                const border =
+                    actualPosition.startsWith('top') || actualPosition.startsWith('bottom')
+                        ? ePopup.clientLeft
+                        : ePopup.clientTop;
+                ePopup.style.setProperty('--ag-tooltip-arrow-offset', `${result.arrowOffset - border}px`);
+                return {
+                    x: result.x + bounds.left - origin.left + scrollX,
+                    y: result.y + bounds.top - origin.top + scrollY,
+                };
+            },
+            postProcessCallback: () => {
+                if (!ePopup.classList.contains('ag-tooltip-hiding')) {
+                    params.postProcessCallback(actualPosition);
+                }
+            },
+        });
+    }
+
+    protected getTooltipSourceRect(eventSource: HTMLElement) {
+        let { top, right, bottom, left } = eventSource.getBoundingClientRect();
+        const win = eventSource.ownerDocument.defaultView!;
+        let parent: HTMLElement | null = eventSource.parentElement;
+        while (parent) {
+            const { overflowX, overflowY } = win.getComputedStyle(parent);
+            if (overflowX !== 'visible' || overflowY !== 'visible') {
+                const rect = parent.getBoundingClientRect();
+                const scaleX = parent.offsetWidth ? rect.width / parent.offsetWidth : 1;
+                const scaleY = parent.offsetHeight ? rect.height / parent.offsetHeight : 1;
+                if (overflowX && overflowX !== 'visible') {
+                    left = Math.max(left, rect.left + parent.clientLeft * scaleX);
+                    right = Math.min(right, rect.left + (parent.clientLeft + parent.clientWidth) * scaleX);
+                }
+                if (overflowY && overflowY !== 'visible') {
+                    top = Math.max(top, rect.top + parent.clientTop * scaleY);
+                    bottom = Math.min(bottom, rect.top + (parent.clientTop + parent.clientHeight) * scaleY);
+                }
+            }
+            parent = parent.parentElement ?? ((parent.getRootNode() as ShadowRoot).host as HTMLElement | null);
+        }
+        return { top, right, bottom, left };
+    }
 
     public positionPopupUnderMouseEvent(params: AgMousePopupPositionParams<TPopupPositionParams>): void {
         const { ePopup, nudgeX, nudgeY, skipObserver } = params;
@@ -307,8 +426,9 @@ export abstract class BasePopupService<
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
-            let { x, y } = updatePosition!();
-
+            if (fromResizeObserver && !ePopup.isConnected) {
+                return;
+            }
             if (
                 fromResizeObserver &&
                 ePopup.clientWidth === lastSize.width &&
@@ -317,6 +437,7 @@ export abstract class BasePopupService<
                 return;
             }
 
+            let { x, y } = updatePosition!();
             lastSize.width = ePopup.clientWidth;
             lastSize.height = ePopup.clientHeight;
 

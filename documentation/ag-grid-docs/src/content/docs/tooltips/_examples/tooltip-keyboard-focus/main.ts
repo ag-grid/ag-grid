@@ -1,4 +1,4 @@
-import type { GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -13,6 +13,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }],
@@ -29,9 +31,28 @@ const gridOptions: GridOptions = {
     ],
     tooltipTrigger: 'hoverOrFocus',
     tooltipShowDelay: 500,
+    tooltipAnchor: 'target',
+    tooltipOffset: 6,
 };
+
+function onPositionChanged() {
+    const position = document.querySelector<HTMLSelectElement>('#position')!.value;
+    gridApi.setGridOption(
+        'tooltipPosition',
+        position === 'default' ? undefined : (position as GridOptions['tooltipPosition'])
+    );
+}
+
+function onAnchorChanged() {
+    const anchor = document.querySelector<HTMLSelectElement>('#anchor')!.value as GridOptions['tooltipAnchor'];
+    gridApi.setGridOption('tooltipAnchor', anchor);
+}
+
+function onOffsetChanged() {
+    gridApi.setGridOption('tooltipOffset', Number(document.querySelector<HTMLInputElement>('#offset')!.value));
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

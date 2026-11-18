@@ -42,6 +42,46 @@ describe('ag-grid validation warnings', () => {
         }
     );
 
+    test.each([
+        ['tooltipPosition', 'above', 320],
+        ['tooltipAnchor', 'mouse', 320],
+        ['tooltipOffset', -1, 317],
+        ['tooltipInteraction', 'true', 314],
+    ] as const)('validates %s: %s', (property, value, warning) => {
+        gridsManager.createGrid('tooltip-placement', { columnDefs: [], rowData: [], [property]: value });
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.stringContaining(`warning #${warning}`),
+            expect.stringContaining(property),
+            expect.any(String)
+        );
+    });
+
+    test.each([NaN, Infinity, -Infinity])('rejects a non-finite tooltipOffset: %s', (tooltipOffset) => {
+        gridsManager.createGrid('tooltip-offset', { columnDefs: [], rowData: [], tooltipOffset });
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.stringContaining('tooltipOffset: value should be a finite number'),
+            expect.any(String)
+        );
+    });
+
+    test.each([true, false, () => true, () => false])('accepts tooltipInteraction: %s', (tooltipInteraction) => {
+        gridsManager.createGrid('tooltip-interaction', { columnDefs: [], rowData: [], tooltipInteraction });
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    test('accepts tooltip placement values and callbacks', () => {
+        const api = gridsManager.createGrid('tooltip-placement', {
+            columnDefs: [],
+            rowData: [],
+            tooltipPosition: 'left-end',
+            tooltipAnchor: 'pointer',
+            tooltipOffset: 0,
+        });
+        api.setGridOption('tooltipPosition', () => undefined);
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
     test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],

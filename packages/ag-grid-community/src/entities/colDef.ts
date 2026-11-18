@@ -10,7 +10,13 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { ITooltipParams, TooltipDefinition } from '../tooltip/tooltipComponent';
+import type {
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
+    ITooltipParams,
+    TooltipCallbackParams,
+    TooltipDefinition,
+} from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     BaseColDefOptionalDataParams,
@@ -51,7 +57,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * When the column is grouped with `groupDisplayType: 'multipleColumns'`, the generated group column header inherits this value.
      * @agModule `TooltipModule`
      */
-    headerTooltip?: TooltipDefinition<TData, TValue>;
+    headerTooltip?: HeaderTooltipDefinition<TData, TValue>;
 
     /**
      * Callback that should return the value to use for a tooltip.
@@ -1342,18 +1348,18 @@ export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = a
 export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: HeaderValueGetterParams<TData, TValue, TContext>
 ) => string;
-/** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
+/** @deprecated v36.2 Use `HeaderTooltipDefinition` instead. */
 export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: HeaderTooltipCallbackParams<TData, TValue, TContext>
 ) => string | any;
 
 /** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
 export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: TooltipCallbackParams<TData, TValue, TContext>
 ) => string | any;
 
 export type TooltipComponentSelectorFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: ITooltipParams<TData, TValue, TContext, any>
 ) => TooltipComponentSelectorResult | undefined;
 
 export interface TooltipComponentSelectorResult {
