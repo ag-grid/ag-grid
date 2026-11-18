@@ -47,6 +47,40 @@ test('the default tooltip accepts the pointer across the gap and dismisses on Es
     await expect(page.getByRole('button', { name: 'Outside' })).toBeFocused();
 });
 
+test('focus tooltips describe cells and headers without changing their accessible names', async ({ page }) => {
+    const { cell, headerCell } = await mountGrid(page, {
+        options: () => ({
+            columnDefs: [
+                {
+                    field: 'age',
+                    tooltipValueGetter: () => 'The athlete age',
+                    headerTooltip: 'Tooltip for Age Column Header',
+                },
+            ],
+            rowData: [{ age: 23 }],
+            tooltipTrigger: 'focus',
+            tooltipShowDelay: 500,
+        }),
+    });
+    const source = cell(0, 'age');
+    await source.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('The athlete age');
+    await expect(source).toHaveAccessibleName('23');
+    await expect(source).toHaveAccessibleDescription('The athlete age');
+    await expect(source).not.toHaveAttribute('aria-owns');
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await expect(source).toHaveAccessibleDescription('The athlete age');
+
+    const header = headerCell('age');
+    await header.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('Tooltip for Age Column Header');
+    await expect(header).toHaveAccessibleName('Age');
+    await expect(header).toHaveAccessibleDescription('Tooltip for Age Column Header');
+    await expect(header).not.toHaveAttribute('aria-owns');
+});
+
 test('focus tooltips survive keyboard scrolling into view', async ({ page }) => {
     const { cell, withApi } = await mountGrid(page, {
         width: 400,

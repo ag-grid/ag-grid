@@ -48,6 +48,29 @@ describe('Tooltip lifecycle', () => {
     const leave = (element: HTMLElement) => element.dispatchEvent(new MouseEvent('mouseleave'));
     const visibleText = () => getVisibleTooltips().map((element) => element.textContent);
 
+    test.each(['hover', 'focus', 'hoverOrFocus'] as const)(
+        '%s tooltips describe the source without changing its accessible name',
+        async (tooltipTrigger) => {
+            const { first } = await createGrid({
+                columnDefs: [{ field: 'value', tooltip: () => 'Tooltip for First' }],
+                tooltipTrigger,
+            });
+            if (tooltipTrigger === 'hover') {
+                enter(first);
+            } else {
+                first.focus();
+            }
+            await vi.advanceTimersByTimeAsync(0);
+
+            const tooltip = getVisibleTooltips()[0];
+            expect(tooltip).toHaveAttribute('role', 'tooltip');
+            expect(tooltip).toHaveAccessibleName('Tooltip for First');
+            expect(first).toHaveAccessibleName('First');
+            expect(first).toHaveAccessibleDescription('Tooltip for First');
+            expect(first).not.toHaveAttribute('aria-owns');
+        }
+    );
+
     test('invalid triggers fall back to hover without a focus description', async () => {
         enableDevValidations({ throwOn: [] });
         vi.spyOn(console, 'warn').mockImplementation(() => {});

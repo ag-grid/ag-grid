@@ -415,9 +415,7 @@ export abstract class BaseTooltipStateManager<
         }
         const popup = this.popupSvc?.addPopup({
             eChild: eGui,
-            ...(this.interactionEnabled
-                ? { ariaLabel: this.getLocaleTextFunc()('ariaLabelTooltip', 'Tooltip') }
-                : { ariaOwns: this.tooltipCtrl.getGui() }),
+            ariaLabel: this.interactionEnabled ? this.getLocaleTextFunc()('ariaLabelTooltip', 'Tooltip') : undefined,
         });
         this.tooltipPopupDestroyFunc = popup?.hideFunc;
         this.positionTooltip();
