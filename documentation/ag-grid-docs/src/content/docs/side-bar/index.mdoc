@@ -274,6 +274,17 @@ const gridOptions = {
 
 See [Columns Tool Panel - Configuration](./tool-panel-columns-configuration/#parameters) for the full list of parameters for this Tool Panel.
 
+## Resizing Tool Panels
+
+Users resize the open Tool Panel by dragging its border. Use `width`, `minWidth` and `maxWidth` in the `ToolPanelDef` to set its starting width and limits, as shown in [SideBarDef Configuration](./side-bar/#sidebardef-configuration).
+
+The width can also be changed without dragging:
+
+- **Keyboard**: press {% kbd "⇥ Tab" /%} to focus the border, which sits between the grid and the Tool Panel in the Tab order, then press {% kbd "←" /%} / {% kbd "→" /%} to move it. See [Keyboard Interaction](./keyboard-navigation/#tool-panel-resizing).
+- **Single clicks or taps**: click or tap the border to show its Widen Panel and Narrow Panel buttons, then click or tap them to change the width a step at a time.
+
+Each of these moves the border by 20px, stops at `minWidth` and `maxWidth`, and fires the `toolPanelSizeChanged` event in the same way as dragging. Screen readers announce the border as a separator named after the Tool Panel, with the Tool Panel's width as its value.
+
 ## Animation
 
 By default, sidebar panels open and close instantly. You can enable a smooth slide animation using the [Theming API](./theming-api/) parameter `sideBarPanelAnimationDuration`. Set it to a value in seconds:

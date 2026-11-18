@@ -499,6 +499,7 @@ type RoleType =
     | 'group'
     | 'row'
     | 'rowgroup'
+    | 'separator'
     | 'status'
     | 'tab'
     | 'tablist'

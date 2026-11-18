@@ -850,6 +850,8 @@ export const AG_GRID_LOCALE_KO_KR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '열 목록',
     ariaFilterPanelList: '필터 목록',
+    ariaToolPanelWiden: '패널 넓히기',
+    ariaToolPanelNarrow: '패널 좁히기',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: '필터 필드 추가',

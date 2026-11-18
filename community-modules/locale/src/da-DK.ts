@@ -853,6 +853,8 @@ export const AG_GRID_LOCALE_DA_DK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonner Liste',
     ariaFilterPanelList: 'Filter Liste',
+    ariaToolPanelWiden: 'Gør panelet bredere',
+    ariaToolPanelNarrow: 'Gør panelet smallere',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Tilføj filterfelt',

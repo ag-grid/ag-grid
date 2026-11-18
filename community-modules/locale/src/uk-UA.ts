@@ -853,6 +853,8 @@ export const AG_GRID_LOCALE_UK_UA = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Список колонок',
     ariaFilterPanelList: 'Список фільтрів',
+    ariaToolPanelWiden: 'Розширити панель',
+    ariaToolPanelNarrow: 'Звузити панель',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Додати поле фільтра',

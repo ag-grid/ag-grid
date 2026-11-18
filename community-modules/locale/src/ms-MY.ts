@@ -878,6 +878,8 @@ export const AG_GRID_LOCALE_MS_MY = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Senarai Lajur',
     ariaFilterPanelList: 'Senarai Penapis',
+    ariaToolPanelWiden: 'Lebarkan Panel',
+    ariaToolPanelNarrow: 'Sempitkan Panel',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Tambah Medan Penapis',

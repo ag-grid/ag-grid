@@ -849,6 +849,8 @@ export const AG_GRID_LOCALE_AR_EG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'قائمة الأعمدة',
     ariaFilterPanelList: 'قائمة المرشحات',
+    ariaToolPanelWiden: 'زيادة عرض اللوحة',
+    ariaToolPanelNarrow: 'تقليل عرض اللوحة',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',

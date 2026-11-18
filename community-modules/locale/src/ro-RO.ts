@@ -856,6 +856,8 @@ export const AG_GRID_LOCALE_RO_RO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Listă de coloane',
     ariaFilterPanelList: 'Listă de filtre',
+    ariaToolPanelWiden: 'Lărgește panoul',
+    ariaToolPanelNarrow: 'Îngustează panoul',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',

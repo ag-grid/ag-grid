@@ -874,6 +874,8 @@ export const AG_GRID_LOCALE_SL_SI = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Seznam stolpcev',
     ariaFilterPanelList: 'Seznam filtrov',
+    ariaToolPanelWiden: 'Povečaj širino plošče',
+    ariaToolPanelNarrow: 'Zmanjšaj širino plošče',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj polje filtra',

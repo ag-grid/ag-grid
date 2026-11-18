@@ -851,6 +851,8 @@ export const AG_GRID_LOCALE_SK_SK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Zoznam stĺpcov',
     ariaFilterPanelList: 'Zoznam filtrov',
+    ariaToolPanelWiden: 'Rozšíriť panel',
+    ariaToolPanelNarrow: 'Zúžiť panel',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Pridať pole filtra',

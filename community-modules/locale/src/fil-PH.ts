@@ -884,6 +884,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Listahan ng Column',
     ariaFilterPanelList: 'Listahan ng Filter',
+    ariaToolPanelWiden: 'Palaparin ang Panel',
+    ariaToolPanelNarrow: 'Pakitirin ang Panel',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Magdagdag ng Field ng Filter',
