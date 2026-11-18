@@ -225,7 +225,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     showTooltips?: boolean;
     /**
      * If `true`, enables case-sensitivity of the values in the Filter List, so values that differ only by case
-     * are listed and filtered separately. The Mini Filter search still ignores case unless `miniFilterCaseSensitive` is also `true`.
+     * are listed and filtered separately. With `treeList`, values that differ only by case share one entry in the list.
+     * The Mini Filter search still ignores case unless `miniFilterCaseSensitive` is also `true`.
      * @default false
      */
     caseSensitive?: boolean;
