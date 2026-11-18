@@ -424,10 +424,11 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Records the row of the focused cell before a data update, returning how to keep the focus on that row after it.
-     * The focused cell is the same, so no event is dispatched, and an editor in it keeps editing.
+     * Records the row of the focused cell before a data update, returning how to keep the focus on that row after it,
+     * which returns true if the focused cell moved. The focused cell is the same, so no event is dispatched, and an
+     * editor in it keeps editing.
      */
-    public followFocusedRow(): (() => void) | undefined {
+    public followFocusedRow(): (() => boolean) | undefined {
         const focusedCell = this.focusedCell;
         if (!focusedCell) {
             return undefined;
@@ -436,12 +437,13 @@ export class FocusService extends BeanStub implements NamedBean {
         return () => {
             const rowIndex = getRowIndex();
             if (this.focusedCell !== focusedCell || rowIndex == null || rowIndex === focusedCell.rowIndex) {
-                return; // focus moved during the update, its row was removed (handled as without anchoring), or it did not move
+                return false; // focus moved during the update, its row was removed (handled as without anchoring), or it did not move
             }
             this.focusedCell = { ...focusedCell, rowIndex };
             if (this.previousCellFocusParams) {
                 this.previousCellFocusParams = { ...this.previousCellFocusParams, rowIndex };
             }
+            return true;
         };
     }
 

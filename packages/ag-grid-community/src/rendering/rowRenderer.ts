@@ -124,7 +124,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * Captured at the start of a data update, until the redraw it causes restores it: the rows in view, or `null` when
      * none are kept, and how to move the focused cell and cell ranges with their rows.
      */
-    private rowsInView: { anchor: RowsInViewAnchor | null; followRows: (() => void)[] } | null = null;
+    private rowsInView: {
+        anchor: RowsInViewAnchor | null;
+        followFocus?: () => boolean;
+        followRanges?: () => void;
+    } | null = null;
     /** Kept after a data update with auto height active, until the rows it drew are measured. */
     private rowsInViewAnchorForHeights: RowsInViewAnchor | null = null;
     /** Set while a draw scrolls to keep the rows in view. */
@@ -666,14 +670,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         // other redraws, such as for pinned rows, can run during the update before the rows have moved
         const rowsInView = params.keepRowsInView ? this.rowsInView : null;
-        const followRows = rowsInView?.followRows;
         if (rowsInView) {
             this.rowsInView = null; // later redraws in the same update start from the restored position
-            // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
-            for (const followRow of followRows!) {
-                followRow();
-            }
         }
+        // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
+        const focusMoved = !!rowsInView?.followFocus?.();
+        rowsInView?.followRanges?.();
 
         // a draw that threw is redone whole, so an update of the body alone also draws the pinned rows
         const onlyBody = params.onlyBody && this.drawState !== ROWS_DRAW_INTERRUPTED;
@@ -746,7 +748,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             this.dispatchDisplayedRowsChanged();
 
-            if (followRows?.length) {
+            if (focusMoved) {
                 this.updateCellFocus(); // rows took their new indexes before the focused cell followed its row
             }
 
@@ -786,10 +788,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
         // the focused cell and cell ranges follow their rows wherever the viewport is
-        const followRows = [this.focusSvc.followFocusedRow(), beans.rangeSvc?.followCellRanges()].filter(
-            (followRow): followRow is () => void => !!followRow
-        );
-        this.rowsInView = { anchor: printLayout ? null : _captureRowsInView(beans), followRows };
+        this.rowsInView = {
+            anchor: printLayout ? null : _captureRowsInView(beans),
+            followFocus: this.focusSvc.followFocusedRow(),
+            followRanges: beans.rangeSvc?.followCellRanges(),
+        };
         this.rowsInViewAnchorForHeights = null;
     }
 
