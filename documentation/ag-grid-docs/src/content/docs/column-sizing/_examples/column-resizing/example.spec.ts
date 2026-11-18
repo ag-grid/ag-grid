@@ -144,9 +144,8 @@ test.agExample(import.meta, () => {
         const headers = getHeaders(agIdFor);
         const widths = await getHeaderWidths(headers);
 
-        // when a column measures its width against the (display:none) row container it collapses to
-        // minWidth; every column would then share the same floor width. Sizing against the header
-        // content instead gives the longer "Age of Athlete" label a wider column than "Year".
+        // Measured against the hidden row container, every column would collapse to minWidth; the header
+        // content gives "Age of Athlete" a wider column than "Year".
         expect(widths.age).toBeGreaterThan(widths.year);
         expect(widths.year).toBeGreaterThan(40);
         expect(widths.country).toBeGreaterThan(40);

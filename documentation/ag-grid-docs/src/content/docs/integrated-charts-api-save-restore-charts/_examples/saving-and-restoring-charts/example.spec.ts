@@ -229,10 +229,7 @@ test.agExample(import.meta, () => {
 
         await openChartDataPanel(page);
 
-        // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
-        // Grid column order is [Sugar, Fat, Weight], so the grid order would give
-        // [Fat, Sugar, Weight], but the saved user order should give [Weight, Sugar, Fat].
-        // The two differ, which lets this test catch an ordering regression.
+        // A user order that differs from the grid's column order [Sugar, Fat, Weight], so restore must keep it.
         await reorderSeriesPillToFront(page, 'Weight');
         await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
 
@@ -249,10 +246,7 @@ test.agExample(import.meta, () => {
 
         await openChartDataPanel(page);
 
-        // Sugar is hidden but still charted (default) — it must remain in the panel, and all
-        // three columns must retain their saved relative order [Weight, Sugar, Fat], not the
-        // grid column order [Sugar, Fat, Weight] that would result if restore ignored the
-        // saved series ordering.
+        // Hidden but still charted, Sugar stays in the panel, and the saved order wins over the grid's.
         await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
     });
 
@@ -271,10 +265,7 @@ test.agExample(import.meta, () => {
 
             await openChartDataPanel(page);
 
-            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
-            // Grid column order is [Sugar, Fat, Weight], so after removing Sugar the grid
-            // order would give [Fat, Weight], but the saved user order should give [Weight, Fat].
-            // The two differ, which lets this test catch an ordering regression.
+            // A user order that differs from the grid's column order [Sugar, Fat, Weight], so restore must keep it.
             await reorderSeriesPillToFront(page, 'Weight');
             await expect(seriesPills(page)).toHaveText(['Weight', 'Sugar', 'Fat']);
 
@@ -290,9 +281,7 @@ test.agExample(import.meta, () => {
 
             await openChartDataPanel(page);
 
-            // Sugar is hidden — it must not appear as selected. Weight and Fat must retain
-            // their user-defined relative order [Weight, Fat], not the grid column order
-            // [Fat, Weight] that would result if restore ignored the saved series ordering.
+            // Hidden Sugar is not selected, and Weight and Fat keep the saved order rather than the grid's.
             await expect(seriesPills(page)).toHaveText(['Weight', 'Fat']);
         }
     );

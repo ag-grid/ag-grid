@@ -17,9 +17,7 @@ export const ensureGridReady = async (page: Page, gridId: string = '1') => {
 
 export async function waitForGridContent(page: Page) {
     await page.locator('.ag-overlay-loading-center').first().waitFor({ state: 'hidden' });
-    // Each member is `:visible`-filtered because `.or(...).first()` resolves to the first match in
-    // DOM order across the whole union — so an unfiltered union lets a leftover hidden `.ag-cell`
-    // that precedes the visible content own the wait forever (AG-18416).
+    // `:visible` on each member: `.or(...).first()` takes the first match in DOM order, which could be a hidden leftover cell.
     // Normal cells
     const cellLocator = page.locator('.ag-cell:visible');
     // Grouped cells

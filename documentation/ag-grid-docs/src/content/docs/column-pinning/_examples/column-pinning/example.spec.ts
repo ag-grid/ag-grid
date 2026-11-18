@@ -63,7 +63,7 @@ test.agExample(import.meta, () => {
     });
 
     test.describe('sizeColumnsToFit with pinned columns', () => {
-        test.use({ agModules: ['ColumnAutoSize'] });
+        test.use({ agModules: ['ColumnAutoSizeModule'] });
 
         test.vanilla(
             'sizeColumnsToFit should not unpin left-pinned columns when no center columns exist',

@@ -58,7 +58,7 @@ test.agExample(import.meta, () => {
             expect(await api.evaluate((api) => api.getDisplayedRowCount())).toBe(EXPECTED.athleteContainsFischer);
         }).toPass();
 
-        // Michael Phelps (row-id 0) no longer passes the filter and every visible athlete matches.
+        // Michael Phelps (row-id 0) fails the filter, and every visible athlete matches it.
         await expect(agIdFor.cell('0', 'athlete')).toHaveCount(0);
         await expectVisibleColumnValues(page, 'athlete', (value) => expect(value).toContain('Fischer'));
     });

@@ -20,9 +20,7 @@ test.agExample(import.meta, () => {
             }
         });
 
-        // Extend the charted range by dragging the range handle down a few rows. This is a
-        // real range-selection change in the grid, which fires ChartRangeSelectionChanged; the
-        // example's handler logs it and recomputes the chart subtitle from the new range.
+        // Dragging the range handle fires chartRangeSelectionChanged, whose handler recomputes the chart subtitle.
         const rangeHandle = page.locator('.ag-range-handle');
         await expect(rangeHandle).toBeVisible();
         await dragOverTo(rangeHandle, agIdFor.cell('7', 'Sunshine (hours)'));

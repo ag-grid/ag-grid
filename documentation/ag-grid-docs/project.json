@@ -290,7 +290,7 @@
     },
     "build:test": {
       "executor": "nx:noop",
-      "dependsOn": ["validate-examples"]
+      "dependsOn": ["validate-examples", "validate-example-specs-types"]
     },
     "validate-examples": {
       "executor": "nx:run-commands",
@@ -311,6 +311,26 @@
       "cache": true,
       "options": {
         "commands": ["npx tsc -p {projectRoot}/tsconfig.examples.json"]
+      }
+    },
+    "validate-example-specs-types": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "@ag-grid-community/locale"],
+          "target": "build:types"
+        },
+        { "projects": ["ag-grid-angular", "ag-grid-vue3"], "target": "build" }
+      ],
+      "inputs": [
+        "{projectRoot}/tsconfig.json",
+        "{projectRoot}/tsconfig.specs.json",
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "tsDeclarations"
+      ],
+      "cache": true,
+      "options": {
+        "commands": ["npx tsc -p {projectRoot}/tsconfig.specs.json"]
       }
     },
     "test:validate-example-specs": {
