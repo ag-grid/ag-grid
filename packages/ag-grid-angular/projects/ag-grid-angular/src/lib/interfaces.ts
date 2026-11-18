@@ -61,8 +61,8 @@ export interface IHeaderAngularComp<TData = any, TContext = any>
 export interface IInnerHeaderAngularComp<TData = any, TContext = any>
     extends AgFrameworkComponent<IHeaderParams<TData, TContext>>, IHeader<TData, TContext> {}
 
-export interface IFloatingFilterAngularComp<P = any, TData = any, TContext = any>
-    extends AgFrameworkComponent<IFloatingFilterParams<P, TData, TContext>>, IFloatingFilter<P, TData, TContext> {}
+export interface IFloatingFilterAngularComp<P = any>
+    extends AgFrameworkComponent<IFloatingFilterParams<P>>, IFloatingFilter {}
 
 export interface IFloatingFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
     extends
@@ -75,8 +75,7 @@ export interface IDateAngularComp<TData = any, TContext = any>
 export interface IDragAndDropImageAngularComponent<TData = any, TContext = any>
     extends AgFrameworkComponent<IDragAndDropImageParams<TData, TContext>>, IDragAndDropImage {}
 
-export interface IFilterAngularComp<TData = any, TContext = any>
-    extends AgFrameworkComponent<IFilterParams<TData, TContext>>, IFilter<TData, TContext> {}
+export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
 
 export interface IFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TState = any>
     extends
