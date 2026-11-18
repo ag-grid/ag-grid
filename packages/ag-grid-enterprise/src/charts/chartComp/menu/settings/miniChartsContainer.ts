@@ -220,7 +220,7 @@ export class MiniChartsContainer extends Component {
             _setAriaRole(eGroup, 'group');
             _setAriaLabel(eGroup, label);
             _setAriaRole(groupComponent.eContainer, 'list');
-            _setAriaLabelledBy(groupComponent.eContainer, undefined);
+            _setAriaLabelledBy(groupComponent.eContainer);
 
             for (const menuItem of items) {
                 const { chartType } = menuItem;
