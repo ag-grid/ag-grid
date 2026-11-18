@@ -56,7 +56,10 @@ test.skip('expanding a filter card does not submit the host form', async ({ page
     await wrapGridInForm(page);
 
     await withApi((api) => api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'A' } }));
-    await grid.locator('.ag-filter-card-expand').click();
+    const expand = grid.locator('.ag-filter-card-expand');
+    await expect(expand).toHaveAttribute('aria-expanded', 'false');
+    await expand.click();
+    await expect(expand).toHaveAttribute('aria-expanded', 'true');
 
     const submitters = await page.evaluate(() => (window as any).submitters);
     expect(submitters).toEqual([]);

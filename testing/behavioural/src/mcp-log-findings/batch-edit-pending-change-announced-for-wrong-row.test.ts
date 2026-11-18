@@ -42,7 +42,7 @@ describe.skip('batch edit pending change announcement on pinned rows', () => {
         });
         const gridElement = getGridElement(api)! as HTMLElement;
         const announcement = () =>
-            (gridElement.querySelector('.ag-aria-description-container')?.textContent ?? '').replaceAll('​', '');
+            (gridElement.querySelector('.ag-aria-description-container')?.textContent ?? '').replaceAll('\u{200B}', '');
 
         const user = userEvent.setup({ skipHover: true });
         api.startBatchEdit();
