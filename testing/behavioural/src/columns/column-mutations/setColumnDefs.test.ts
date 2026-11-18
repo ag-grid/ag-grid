@@ -1420,48 +1420,6 @@ describe('Column Mutations', () => {
             `);
         });
 
-        test('groupId-less group does not match by reference across setGridOption', async () => {
-            // Without groupId, groups can never be reused — every setColumnDefs creates a fresh
-            // AgProvidedColumnGroup. Verifies the existing-lookup correctly skips entries
-            // without `colGroupDef.groupId`.
-            const api = gridsManager.createGrid('noGroupId', {
-                columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }],
-            });
-            await new GridColumns(api, `groupId-less group does not match by reference across setGridOption setup`)
-                .checkColumns(`
-                    CENTER
-                    └─┬ "G" GROUP
-                      └── a width:200
-                `);
-            await new GridRows(api, `groupId-less group does not match by reference across setGridOption setup`).check(
-                `
-                    ROOT id:ROOT_NODE_ID
-                `
-            );
-            await asyncSetTimeout(0);
-
-            // Round-trip with identical structure but no groupId — colId 'a' still reused
-            // (cols reuse independently of groups).
-            const colABefore = api.getColumn('a');
-            api.setGridOption('columnDefs', [{ headerName: 'G', children: [{ colId: 'a' }] }]);
-            await new GridColumns(
-                api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
-            ).checkColumns(`
-                CENTER
-                └─┬ "G" GROUP
-                  └── a width:200
-            `);
-            await new GridRows(
-                api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-            `);
-            await asyncSetTimeout(0);
-            expect(api.getColumn('a')).toBe(colABefore);
-        });
-
         test('a group without groupId keeps its column across a columnDefs update', async () => {
             const api = gridsManager.createGrid('noGroupId', {
                 columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }],

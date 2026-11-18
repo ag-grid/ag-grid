@@ -915,76 +915,6 @@ describe('pivot column identity across columnDefs updates', () => {
         }
     });
 
-    test('changing pivotDefaultExpanded reactively rebuilds pivot result col groups with the new depth', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'sport', pivot: true, hide: true },
-                { field: 'year', pivot: true, hide: true },
-                { field: 'gold', aggFunc: 'sum' },
-            ],
-            pivotMode: true,
-            pivotDefaultExpanded: 0,
-            rowData: [
-                { country: 'UK', sport: 'Swim', year: 2000, gold: 1 },
-                { country: 'UK', sport: 'Swim', year: 2004, gold: 2 },
-            ],
-        });
-        await new GridColumns(
-            api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t setup`
-        ).checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            └─┬ "Swim" GROUP closed
-              ├─┬ "2000" GROUP hidden
-              │ └── pivot_sport-year_Swim-2000_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2004" GROUP hidden
-              │ └── pivot_sport-year_Swim-2004_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swim_gold "Gold" width:200 columnGroupShow:closed
-        `);
-        await new GridRows(
-            api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t setup`
-        ).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
-            └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
-            · ├── LEAF hidden id:0 pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:1 pivot_sport-year_Swim_gold:1
-            · └── LEAF hidden id:1 pivot_sport-year_Swim-2000_gold:2 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:2
-        `);
-
-        await asyncSetTimeout(0);
-
-        // Property listener path: updating pivotDefaultExpanded re-reads via the listener.
-        api.setGridOption('pivotDefaultExpanded', 1);
-        await new GridColumns(
-            api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t after setGridOption pivotDefaultExpanded`
-        ).checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            └─┬ "Swim" GROUP closed
-              ├─┬ "2000" GROUP hidden
-              │ └── pivot_sport-year_Swim-2000_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2004" GROUP hidden
-              │ └── pivot_sport-year_Swim-2004_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swim_gold "Gold" width:200 columnGroupShow:closed
-        `);
-        await new GridRows(
-            api,
-            `changing pivotDefaultExpanded reactively rebuilds pivot result col groups with t after setGridOption pivotDefaultExpanded`
-        ).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
-            └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:3
-            · ├── LEAF hidden id:0 pivot_sport-year_Swim-2000_gold:1 pivot_sport-year_Swim-2004_gold:1 pivot_sport-year_Swim_gold:1
-            · └── LEAF hidden id:1 pivot_sport-year_Swim-2000_gold:2 pivot_sport-year_Swim-2004_gold:2 pivot_sport-year_Swim_gold:2
-        `);
-        await asyncSetTimeout(0);
-
-        // After option change pivot result cols still exist (rebuild is the listener's job)
-        expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
-    });
-
     test('setting pivotDefaultExpanded alone leaves the pivot result column groups as they are', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -1074,17 +1004,26 @@ describe('pivot column identity across columnDefs updates', () => {
 
             api.updateGridOptions(row.first === 'pivotMode' ? { ...mode, ...expanded } : { ...expanded, ...mode });
 
-            const groups = new Map<string, boolean>();
+            const firstLevel = new Map<string, boolean>();
+            const secondLevel = new Map<string, boolean>();
             for (const column of api.getPivotResultColumns() ?? []) {
+                const groups = [];
                 for (let group = column.getParent(); group; group = group.getParent()) {
-                    const provided = group.getProvidedColumnGroup();
-                    if (provided.isExpandable()) {
-                        groups.set(provided.getGroupId(), provided.isExpanded());
+                    if (!group.isPadding()) {
+                        groups.unshift(group.getProvidedColumnGroup());
                     }
                 }
+                if (groups[0]) {
+                    firstLevel.set(groups[0].getGroupId(), groups[0].isExpanded());
+                }
+                if (groups[1]) {
+                    secondLevel.set(groups[1].getGroupId(), groups[1].isExpanded());
+                }
             }
-            expect(groups.size).toBeGreaterThan(0);
-            expect(Array.from(groups).filter(([, open]) => !open)).toEqual([]);
+            expect({
+                firstLevel: Array.from(firstLevel.values()),
+                secondLevel: Array.from(secondLevel.values()),
+            }).toEqual({ firstLevel: [true, true], secondLevel: [true, true, true, true] });
         }
     );
 

@@ -1025,11 +1025,17 @@ describe('calculated columns - display ordering', () => {
         await waitFor(() => expect(api.getPivotResultColumns()?.length).toBeGreaterThan(0));
         const pivoted = api.getAllDisplayedColumns().map((col) => col.getColId());
         expect(pivoted).not.toContain(added);
+        const pivotResultColumns = api.getPivotResultColumns()!;
 
         api.setGridOption('columnTypes', { someType: { width: 99 } });
         await nextAnimationFrame();
 
         expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(pivoted);
+        const after = api.getPivotResultColumns()!;
+        expect({ count: after.length, kept: after.filter((col, i) => col === pivotResultColumns[i]).length }).toEqual({
+            count: pivotResultColumns.length,
+            kept: pivotResultColumns.length,
+        });
     });
 
     test('adding from a moved auto-group column preserves the moved auto-group position', async () => {

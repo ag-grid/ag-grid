@@ -2097,6 +2097,8 @@ describe('the column animations a column call leaves on', () => {
     };
     const resizeAnimating = (api: GridApi) => hasClass(api, 'ag-animate-autosize');
     const moving = (api: GridApi) => hasClass(api, 'ag-column-moving');
+    const cellLeft = (api: GridApi, colId: string) =>
+        getGridElement(api)!.querySelector<HTMLElement>(`.ag-cell[col-id="${colId}"]`)!.style.left;
     const order = (api: GridApi) =>
         api
             .getAllDisplayedColumns()
@@ -2153,9 +2155,10 @@ describe('the column animations a column call leaves on', () => {
 
         api.setColumnGroupOpened('g', true);
         expect(order(api)).toBe('a,b,c,d');
+        expect(cellLeft(api, 'c')).toBe('200px');
 
         widenFirstGroupColumn(api);
-        expect(moving(api)).toBe(true);
+        expect({ moving: moving(api), cLeft: cellLeft(api, 'c') }).toEqual({ moving: true, cLeft: '250px' });
     });
 
     const createLockedGrid = async () => {
@@ -2185,7 +2188,11 @@ describe('the column animations a column call leaves on', () => {
         api.moveColumns(['sport'], 1);
 
         expect(order(api)).toBe('year,sport,athlete,country');
+        expect(cellLeft(api, 'country')).toBe('300px');
         widenAthlete(api);
-        expect(moving(api)).toBe(true);
+        expect({ moving: moving(api), countryLeft: cellLeft(api, 'country') }).toEqual({
+            moving: true,
+            countryLeft: '350px',
+        });
     });
 });
