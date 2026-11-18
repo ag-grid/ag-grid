@@ -68,15 +68,16 @@ To get started you'll need:
 
 ### Creating a Schema
 
-The `getStructuredSchema` API returns a structured [JSON Schema](https://json-schema.org/) representation of the [Grid State](./grid-state/) that can then be used to create a LLM compatible schema:
+The `getStructuredSchema` API returns a structured [JSON Schema](https://json-schema.org/) representation of the [Grid State](./grid-state/) that can then be used to create a LLM compatible schema. Its shared definitions, `$defs`, belong at the top level of that schema, where its references point:
 
 ```ts
 // Generated Structured Schema Representation of Grid State
-const gridStateStructuredSchema = gridApi.getStructuredSchema();
+const { $defs, ...gridStateStructuredSchema } = gridApi.getStructuredSchema();
 
 // Create LLM compatible JSON Schema, using Grid State Structured Schema
 const schema = {
     type: 'object',
+    $defs,
     properties: {
         gridState: gridStateStructuredSchema,
         propertiesToIgnore: {

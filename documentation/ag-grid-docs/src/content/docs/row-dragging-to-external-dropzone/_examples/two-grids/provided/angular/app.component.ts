@@ -1,7 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    RowDragEndEvent,
+    RowDropZoneParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -244,7 +251,7 @@ export class AppComponent {
                 this.eBin.nativeElement.style.removeProperty('color');
                 this.eBinIcon.nativeElement.style.transform = 'scale(1)';
             },
-            onDragStop: (params) => {
+            onDragStop: (params: RowDragEndEvent<IColorRow>) => {
                 this.binDrop(params.node.data);
                 this.eBin.nativeElement.style.removeProperty('color');
                 this.eBinIcon.nativeElement.style.transform = 'scale(1)';
@@ -258,7 +265,8 @@ export class AppComponent {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
         const dropZone: RowDropZoneParams = {
             getContainer: () => (dropSide === 'Left' ? this.eLeftGrid.nativeElement : this.eRightGrid.nativeElement),
-            onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
+            onDragStop: (dragParams: RowDragEndEvent<IColorRow>) =>
+                this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data),
         };
 
         api.addRowDropZone(dropZone);

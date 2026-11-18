@@ -4,6 +4,7 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
+    RowDragEndEvent,
     RowDropZoneParams,
 } from 'ag-grid-community';
 import {
@@ -184,7 +185,7 @@ function addBinZone(params: GridReadyEvent) {
                 eBin.style.removeProperty('color');
                 icon.style.transform = 'scale(1)';
             },
-            onDragStop: (dragStopParams) => {
+            onDragStop: (dragStopParams: RowDragEndEvent<IColorRow>) => {
                 binDrop(dragStopParams.node.data);
                 eBin.style.removeProperty('color');
                 icon.style.transform = 'scale(1)';
@@ -200,7 +201,7 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
             getContainer: () => {
                 return grid;
             },
-            onDragStop: (params) => {
+            onDragStop: (params: RowDragEndEvent<IColorRow>) => {
                 addRecordToGrid(side.toLowerCase(), params.node.data);
             },
         };
