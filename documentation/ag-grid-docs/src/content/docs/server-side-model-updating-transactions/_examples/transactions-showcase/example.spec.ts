@@ -1,6 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
-
-import type { IsApplyServerSideTransactionParams } from 'ag-grid-community';
+import { expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -76,32 +74,27 @@ test.agExample(import.meta, () => {
 
             // The rows the fake server updates and removes are random across ~1,300 trades and mostly
             // off-screen, so record the transactions the root store applies rather than what is rendered.
-            await page.evaluate(() => {
-                const counts = { add: 0, update: 0, remove: 0 };
-                (window as any).rootTransactionCounts = counts;
-                (window as any)
-                    .getGridApi('1')
-                    .setGridOption(
-                        'isApplyServerSideTransaction',
-                        ({ transaction, parentNode }: IsApplyServerSideTransactionParams) => {
-                            if (parentNode.level === -1) {
-                                counts.add += transaction.add?.length ?? 0;
-                                counts.update += transaction.update?.length ?? 0;
-                                counts.remove += transaction.remove?.length ?? 0;
-                            }
-                            return true;
-                        }
-                    );
-            });
+            const counts = await page.evaluateHandle(() => ({ add: 0, update: 0, remove: 0 }));
+            const api = await gridApiHandle(page);
+            await api.evaluate((api, counts) => {
+                api.setGridOption('isApplyServerSideTransaction', ({ transaction, parentNode }) => {
+                    if (parentNode.level === -1) {
+                        counts.add += transaction.add?.length ?? 0;
+                        counts.update += transaction.update?.length ?? 0;
+                        counts.remove += transaction.remove?.length ?? 0;
+                    }
+                    return true;
+                });
+            }, counts);
 
             await page.getByRole('button', { name: 'Start Updates' }).click();
 
             // Each tick updates 5 trades, adds 2 and removes 2; all three reach the ungrouped grid.
             await expect(async () => {
-                const counts = await page.evaluate(() => (window as any).rootTransactionCounts);
-                expect(counts.add).toBeGreaterThan(0);
-                expect(counts.update).toBeGreaterThan(0);
-                expect(counts.remove).toBeGreaterThan(0);
+                const { add, update, remove } = await counts.jsonValue();
+                expect(add).toBeGreaterThan(0);
+                expect(update).toBeGreaterThan(0);
+                expect(remove).toBeGreaterThan(0);
             }).toPass({ timeout: 15000 });
 
             await page.getByRole('button', { name: 'Stop Updates' }).click();

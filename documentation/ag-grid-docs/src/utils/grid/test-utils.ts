@@ -935,6 +935,7 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
     return serialised;
 }
 
+export { gridApiHandle } from './test/gridApiHandle';
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';
