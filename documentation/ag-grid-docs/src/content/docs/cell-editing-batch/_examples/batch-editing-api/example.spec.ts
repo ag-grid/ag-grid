@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     if (process.env.PRE_34_VERSION) {
@@ -280,10 +280,9 @@ test.agExample(import.meta, () => {
 
             await page.waitForTimeout(100); // give the grid a moment to update
 
-            const gridApiHandle = await page.evaluateHandle(() => (window as any).getGridApi('1'));
-
-            const editingCellCount = await test.step('remoteGridApi.getEditingCells()', async () =>
-                await page.evaluate((gridApi) => gridApi.getEditingCells().length, gridApiHandle));
+            const api = await gridApiHandle(page);
+            const editingCellCount = await test.step('getEditingCells()', () =>
+                api.evaluate((api) => api.getEditingCells().length));
 
             expect(editingCellCount).toBe(0);
 
@@ -431,7 +430,8 @@ test.agExample(import.meta, () => {
         await cell.dblclick();
         await expect(cell.locator('input')).toBeVisible();
 
-        const editingCellCount = await page.evaluate(() => (window as any).getGridApi('1').getEditingCells().length);
+        const api = await gridApiHandle(page);
+        const editingCellCount = await api.evaluate((api) => api.getEditingCells().length);
         expect(editingCellCount).toBe(1);
 
         await page.locator('button', { hasText: 'Get Editing Cells' }).click();
