@@ -96,10 +96,13 @@ test.describe('resizing the tool panel without dragging', () => {
         });
         await grid.locator('.ag-column-select-header-filter-wrapper input').click();
 
-        for (let i = 0; i < 4 && !(await isBorderFocused(grid)); i++) {
-            await page.keyboard.press('Tab');
-        }
-        expect(await isBorderFocused(grid)).toBe(true);
+        // the column list takes focus asynchronously, so wait for it before tabbing on, or it takes focus back
+        await page.keyboard.press('Tab');
+        await expect
+            .poll(() => page.evaluate(() => document.activeElement?.className ?? ''))
+            .toContain('ag-column-select-virtual-list-item');
+        await page.keyboard.press('Tab');
+        await expect.poll(() => isBorderFocused(grid)).toBe(true);
 
         const before = await panelWidth(grid);
         await page.keyboard.press('ArrowRight');

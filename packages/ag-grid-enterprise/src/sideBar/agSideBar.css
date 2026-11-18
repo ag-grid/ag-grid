@@ -70,7 +70,7 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 2;
+    z-index: 4;
 }
 
 .ag-tool-panel-resize-button {
@@ -120,8 +120,15 @@
     left: -12px;
 }
 
+/* raised while highlighted, as the grid header and its resize handles cover the half over the grid */
+.ag-tool-panel-horizontal-resize:where(:hover, :focus-visible),
+:where(.ag-tool-panel-resizer-active, .ag-tool-panel-resizer-dragging) .ag-tool-panel-horizontal-resize {
+    z-index: 3;
+}
+
 .ag-tool-panel-horizontal-resize:focus {
     outline: var(--ag-internal-accessible-no-outline, revert);
+    box-shadow: none;
 }
 
 .ag-tool-panel-horizontal-resize::after {

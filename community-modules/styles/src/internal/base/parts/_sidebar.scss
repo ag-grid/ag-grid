@@ -50,6 +50,7 @@
     .ag-tool-panel-horizontal-resize {
         &:focus {
             outline: none;
+            box-shadow: none;
         }
 
         &::after {
@@ -57,6 +58,13 @@
             position: absolute;
             inset: 0 1px;
         }
+    }
+
+    .ag-tool-panel-horizontal-resize:hover,
+    .ag-tool-panel-horizontal-resize:focus-visible,
+    .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize,
+    .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize {
+        z-index: 3;
     }
 
     // the whole border highlights while it is hovered, focused or in use. Mixing in the foreground colour keeps
@@ -80,7 +88,7 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        z-index: 2;
+        z-index: 4;
     }
 
     // centred on the border
