@@ -16,6 +16,7 @@ import {
     _removeFromParent,
     _setAriaControls,
     _setAriaExpanded,
+    _setAriaLabelledBy,
     _setAriaRole,
     _setDisplayed,
 } from 'ag-stack';
@@ -327,6 +328,7 @@ export class AgGroupComponent<
 
     public setTitle(title: string): this {
         this.eTitleBar?.setTitle(title);
+        this.refreshContainerAria();
         return this;
     }
 
@@ -409,6 +411,21 @@ export class AgGroupComponent<
     private setupTitleBar(): void {
         const titleBar = this.useToggle ? this.createToggleTitleBar() : this.createDefaultTitleBar();
         this.eToolbar.insertAdjacentElement('beforebegin', titleBar.getGui());
+        this.refreshContainerAria();
+    }
+
+    private refreshContainerAria(): void {
+        const { eContainer, eToggle, eTitleBar } = this;
+        let labelId: string | undefined;
+
+        if (eToggle) {
+            labelId = this.params.title ? eToggle.getLabelId() : undefined;
+        } else if (eTitleBar?.hasTitle()) {
+            labelId = eTitleBar.getTitleId();
+        }
+
+        _setAriaRole(eContainer, labelId ? 'group' : undefined);
+        _setAriaLabelledBy(eContainer, labelId);
     }
 
     private createDefaultTitleBar(): DefaultTitleBar<
@@ -482,12 +499,12 @@ function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType exte
 ): AgElementParams<TComponentSelectorType> {
     const { cssIdentifier, suppressOpenCloseIcons } = params;
     const normalisedCssIdentifier = cssIdentifier ?? 'default';
-    const interactiveRole = suppressOpenCloseIcons ? 'group' : 'button';
+    const collapsible = !suppressOpenCloseIcons && !params.suppressKeyboardNavigation;
 
     return {
         tag: 'div',
         cls: `ag-group-title-bar ag-${normalisedCssIdentifier}-group-title-bar ag-unselectable`,
-        role: params.suppressKeyboardNavigation ? 'presentation' : interactiveRole,
+        role: collapsible ? 'button' : 'presentation',
         children: [
             {
                 tag: 'span',
@@ -551,6 +568,7 @@ class DefaultTitleBar<
     }
 
     public postConstruct() {
+        this.eTitle.id = `ag-${this.getCompId()}-group-title`;
         this.setTitle(this.title);
 
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
@@ -598,21 +616,13 @@ class DefaultTitleBar<
 
     private refreshAriaState(): void {
         const eGui = this.getGui();
-        const interactive = this.title != null && !this.suppressKeyboardNavigation && !this.disabled;
-        // suppressed open/close icons means the group cannot collapse, so no disclosure button semantics
-        const collapsible = interactive && !this.suppressOpenCloseIcons;
+        // suppressed open/close icons means the group cannot collapse, so the bar is static text
+        const collapsible =
+            this.title != null && !this.suppressKeyboardNavigation && !this.disabled && !this.suppressOpenCloseIcons;
 
-        let role = 'presentation';
+        _setAriaRole(eGui, collapsible ? 'button' : 'presentation');
 
         if (collapsible) {
-            role = 'button';
-        } else if (interactive) {
-            role = 'group';
-        }
-
-        _setAriaRole(eGui, role);
-
-        if (interactive) {
             this.activateTabIndex([eGui]);
         } else {
             eGui.removeAttribute('tabindex');
@@ -631,6 +641,14 @@ class DefaultTitleBar<
 
         _setDisplayed(this.eGroupOpenedIcon, showIcon && expanded);
         _setDisplayed(this.eGroupClosedIcon, showIcon && !expanded);
+    }
+
+    public hasTitle(): boolean {
+        return this.title != null;
+    }
+
+    public getTitleId(): string {
+        return this.eTitle.id;
     }
 
     public isSuppressCollapse(): boolean {

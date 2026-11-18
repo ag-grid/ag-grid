@@ -962,18 +962,40 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             });
             await ColumnFilterHarness.open(api, 'name');
             const group = multiFilterIn(api, '.ag-filter-menu').querySelector<HTMLElement>('.ag-multi-filter-group')!;
-            const isExpanded = () =>
-                !group.querySelector('.ag-multi-filter-group-container')!.classList.contains('ag-hidden');
+            const container = group.querySelector('.ag-multi-filter-group-container')!;
+            const isExpanded = () => !container.classList.contains('ag-hidden');
             expect({
                 title: group.querySelector('.ag-multi-filter-group-title')!.textContent,
                 expanded: isExpanded(),
-            }).toEqual({ title: 'Pick names', expanded: false });
+                role: container.getAttribute('role'),
+                name: document.getElementById(container.getAttribute('aria-labelledby')!)?.textContent,
+            }).toEqual({ title: 'Pick names', expanded: false, role: 'group', name: 'Pick names' });
 
             group.querySelector<HTMLElement>('.ag-multi-filter-group-title-bar')!.click();
             expect(isExpanded()).toBe(true);
             expect(
                 Array.from(group.querySelectorAll('.ag-set-filter-item .ag-checkbox-label')).map((e) => e.textContent)
             ).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
+        });
+
+        test('an accordion child with an empty title has an unnamed, role-less container', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: { filters: [{ filter: 'agSetColumnFilter', display: 'accordion', title: '' }] },
+                    },
+                ],
+                rowData: ROWS,
+            });
+            await ColumnFilterHarness.open(api, 'name');
+            const container = multiFilterIn(api, '.ag-filter-menu').querySelector('.ag-multi-filter-group-container')!;
+            expect({
+                role: container.getAttribute('role'),
+                labelledBy: container.getAttribute('aria-labelledby'),
+            }).toEqual({ role: null, labelledBy: null });
         });
 
         test('in the filters tool panel, a sub-menu child shows as an accordion', async () => {

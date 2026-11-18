@@ -23,7 +23,23 @@ describe('chart format panel title bar roles', () => {
     afterAll(() => canvasPolyfill.reset());
     afterEach(() => gridsManager.reset());
 
-    test('expandable groups are disclosure buttons; non-collapsible groups are plain groups', async () => {
+    const groupName = (container: Element | null | undefined): string | undefined => {
+        const labelId = container?.getAttribute('aria-labelledby');
+        return labelId ? document.getElementById(labelId)?.textContent?.trim() : undefined;
+    };
+
+    const findGroup = (name: string): HTMLElement | undefined =>
+        Array.from(document.querySelectorAll<HTMLElement>('.ag-group-container[role="group"]')).find(
+            (container) => groupName(container) === name
+        );
+
+    const expectNoFocusableTitleOnlyGroups = () => {
+        expect(document.querySelectorAll('.ag-group-title-bar[role="group"]')).toHaveLength(0);
+        expect(document.querySelectorAll('[role="group"][tabindex]')).toHaveLength(0);
+        expect(document.querySelectorAll('.ag-group-title-bar:not([aria-expanded])[tabindex]')).toHaveLength(0);
+    };
+
+    test('section contents are groups named by their titles; collapsible title bars are disclosure buttons', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 { field: 'country', chartDataType: 'category' },
@@ -47,30 +63,57 @@ describe('chart format panel title bar roles', () => {
 
         // The format panel builds its groups on the controller's next chartUpdated event, so poll
         // for the panel DOM rather than assuming it is present once the chart has settled.
-        const topLevel = await waitFor(() => {
-            const titleBar = document.querySelector('.ag-charts-format-top-level-group-title-bar');
-            expect(titleBar).not.toBeNull();
-            return titleBar!;
+        const chartStyleBar = await waitFor(() => {
+            const bar = Array.from(document.querySelectorAll('.ag-charts-format-top-level-group-title-bar')).find(
+                (el) => el.querySelector('.ag-group-title')?.textContent?.trim() === 'Chart Style'
+            );
+            expect(bar).toBeDefined();
+            return bar!;
         });
 
-        // Top-level accordion groups (Chart, Legend, ...) expand and collapse: disclosure buttons,
-        // announcing their state and wired via aria-controls to the container they show/hide.
-        expect(topLevel?.getAttribute('role')).toBe('button');
-        expect(topLevel?.getAttribute('tabindex')).toBe('0');
-        expect(topLevel?.hasAttribute('aria-expanded')).toBe(true);
-        const controlled = document.getElementById(topLevel?.getAttribute('aria-controls') ?? '');
-        expect(controlled?.classList.contains('ag-group-container')).toBe(true);
+        expect(chartStyleBar.getAttribute('role')).toBe('button');
+        expect(chartStyleBar.getAttribute('tabindex')).toBe('0');
+        expect(chartStyleBar.hasAttribute('aria-expanded')).toBe(true);
+        const chartStyle = document.getElementById(chartStyleBar.getAttribute('aria-controls') ?? '');
+        expect(chartStyle?.classList.contains('ag-group-container')).toBe(true);
+        expect(chartStyle?.getAttribute('role')).toBe('group');
+        expect(groupName(chartStyle)).toBe('Chart Style');
+        expect(chartStyleBar.contains(chartStyle!)).toBe(false);
 
-        // The Padding sub-group cannot collapse (open/close icons suppressed), so it is a labelled
-        // group with no disclosure state — but still focusable for keyboard navigation.
-        const subLevelBars = Array.from(document.querySelectorAll('.ag-charts-format-sub-level-group-title-bar'));
-        const padding = subLevelBars.find(
+        const controls = chartStyle!.querySelectorAll('input, [role="slider"], [role="switch"], [role="combobox"]');
+        expect(controls.length).toBeGreaterThan(0);
+        for (const control of Array.from(controls)) {
+            expect(chartStyle!.contains(control)).toBe(true);
+            expect(control.closest('[role="group"]')).not.toBeNull();
+        }
+
+        // Padding cannot collapse: its title bar is static text, and its content is the named group.
+        const paddingBar = Array.from(document.querySelectorAll('.ag-charts-format-sub-level-group-title-bar')).find(
             (bar) => bar.querySelector('.ag-group-title')?.textContent?.trim() === 'Padding'
         );
+        expect(paddingBar).toBeDefined();
+        expect(paddingBar?.getAttribute('role')).toBe('presentation');
+        expect(paddingBar?.hasAttribute('tabindex')).toBe(false);
+        expect(paddingBar?.hasAttribute('aria-expanded')).toBe(false);
+        expect(paddingBar?.hasAttribute('aria-controls')).toBe(false);
+
+        const padding = findGroup('Padding');
         expect(padding).toBeDefined();
-        expect(padding?.getAttribute('role')).toBe('group');
-        expect(padding?.getAttribute('tabindex')).toBe('0');
-        expect(padding?.hasAttribute('aria-expanded')).toBe(false);
-        expect(padding?.hasAttribute('aria-controls')).toBe(false);
+        expect(chartStyle!.contains(padding!)).toBe(true);
+        expect(padding!.parentElement?.closest('[role="group"]')).toBe(chartStyle);
+        expect(padding!.querySelectorAll('input').length).toBeGreaterThan(0);
+
+        const background = findGroup('Background');
+        expect(background).toBeDefined();
+        expect(chartStyle!.contains(background!)).toBe(true);
+
+        expect(findGroup('Shadow')).toBeDefined();
+        expect(findGroup('Chart Title')).toBeDefined();
+
+        expectNoFocusableTitleOnlyGroups();
+
+        api.openChartToolPanel({ chartId: chartRef.chartId, panel: 'data' });
+        await waitFor(() => expect(findGroup('Categories')).toBeDefined());
+        expectNoFocusableTitleOnlyGroups();
     });
 });
