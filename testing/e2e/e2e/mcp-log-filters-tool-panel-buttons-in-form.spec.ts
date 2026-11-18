@@ -44,7 +44,8 @@ async function wrapGridInForm(page: Page) {
         (window as any).submitters = [];
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            (window as any).submitters.push((e.submitter as HTMLElement | null)?.className ?? null);
+            const submitter = e.submitter as HTMLElement | null;
+            (window as any).submitters.push(submitter ? submitter.id || submitter.className : null);
         });
     });
 }
@@ -70,5 +71,5 @@ test.skip('Enter in an app text field submits the host form rather than opening 
 
     await page.locator('#app-field').press('Enter');
 
-    await expect.poll(() => page.evaluate(() => (window as any).submitters.length)).toBe(1);
+    await expect.poll(() => page.evaluate(() => (window as any).submitters)).toEqual(['app-submit']);
 });

@@ -3,7 +3,8 @@
  * when the cell text is not truncated.
  *
  * Setup: two columns with `tooltipField` and a wide width, so the text fits and shows no ellipsis. One column renders
- * plain text, the other uses a custom `cellRenderer`. `tooltipShowMode = 'whenTruncated'`, with a short show delay.
+ * plain text, the other uses a custom `cellRenderer`. `tooltipShowMode = 'whenTruncated'`, with zero show delays. A
+ * third, narrow column with a long value is hovered first to confirm that a truncated cell does show its tooltip.
  *
  * Expected: tooltips only appear when the hovered cell value is truncated (ellipsis), so neither cell shows a tooltip
  * here. Source: the `tooltipShowMode` API documentation ("The tooltip will only be displayed when the items hovered
@@ -30,7 +31,9 @@ test.skip('whenTruncated shows no tooltip for a non-truncated cell with a custom
         options: () => ({
             tooltipShowMode: 'whenTruncated',
             tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
             columnDefs: [
+                { field: 'truncated', width: 60, tooltipField: 'truncated' },
                 { field: 'plain', width: 250, tooltipField: 'plain' },
                 {
                     field: 'custom',
@@ -39,12 +42,18 @@ test.skip('whenTruncated shows no tooltip for a non-truncated cell with a custom
                     cellRenderer: (params: { value: string }) => params.value,
                 },
             ],
-            rowData: [{ plain: 'short', custom: 'short' }],
+            rowData: [{ truncated: 'a value too long to fit', plain: 'short', custom: 'short' }],
         }),
     });
     const tooltip = page.locator('.ag-tooltip');
     const nextFrames = () =>
         page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+
+    // Positive control: proves tooltips render in this setup, so the absence checks below are meaningful.
+    await cell(0, 'truncated').hover();
+    await expect(tooltip, 'truncated cell').toHaveCount(1);
+    await page.mouse.move(0, 0);
+    await expect(tooltip).toHaveCount(0);
 
     await cell(0, 'plain').hover();
     await nextFrames();

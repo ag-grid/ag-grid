@@ -55,5 +55,6 @@ describe.skip('undo of a pinned row edit', () => {
 
         // The behavioural test setup turns grid warnings into thrown errors, so a logged warning shows up here.
         expect(() => api.undoCellEditing()).not.toThrow();
+        await waitFor(() => expect(api.getPinnedTopRow(1)!.data.a).toBe('p1'));
     });
 });
