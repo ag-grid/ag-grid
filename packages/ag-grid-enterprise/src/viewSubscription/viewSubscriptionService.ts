@@ -374,7 +374,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         sub.rows.set(id, { ref, node, isGroup });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
         const row = { ...ref, parentKeys: ref.parentKeys.slice(), data: node.data } as ViewRow;
-        if ((row.type === 'group' || row.type === 'tree') && row.route) {
+        if (row.type !== 'leaf' && row.route) {
             row.route = row.route.slice();
         }
         if (row.type === 'tree') {
@@ -398,14 +398,15 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Server-side tree data keeps the key of a row that loses its children, so only expandable tree rows get a route. */
     private getRefRoute(node: RowNode, type: ViewRowRef['type']): string[] | undefined {
         if (type === 'group') {
-            return node.getRoute() ?? [];
+            return node.id === GRAND_TOTAL_ROW_ID ? [] : (node.getRoute() ?? []);
         }
         return type === 'tree' && this.isGroup(node) ? node.getRoute() : undefined;
     }
 
     private getRowType(node: RowNode): ViewRowRef['type'] {
+        // The grand total row is a group row with an empty route: the totals of the whole grid.
         if (node.id === GRAND_TOTAL_ROW_ID) {
-            return 'grandTotal';
+            return 'group';
         }
         if (this.gos.get('treeData')) {
             return 'tree';
@@ -419,10 +420,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             isGroup !== this.isGroup(node) ||
             ref.level !== node.level ||
             !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
-            !_areEqual(
-                ref.type === 'group' || ref.type === 'tree' ? ref.route : undefined,
-                this.getRefRoute(node, ref.type)
-            )
+            !_areEqual(ref.type === 'leaf' ? undefined : ref.route, this.getRefRoute(node, ref.type))
         );
     }
 

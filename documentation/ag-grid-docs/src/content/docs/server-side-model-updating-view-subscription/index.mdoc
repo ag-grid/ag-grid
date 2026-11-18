@@ -115,7 +115,7 @@ If the server loses the subscriptions, for example after a reconnect, set `viewS
 
 ## Grand Total Row
 
-With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed with `type: 'grandTotal'` and the ID `GRAND_TOTAL_ROW_ID`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
+With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
 
 To apply new totals, update the row with a transaction without a `route`. `getRowId` must return `GRAND_TOTAL_ROW_ID` for the totals data:
 
@@ -125,7 +125,7 @@ const gridOptions = {
     getRowId: (params) => params.data.id,
     viewSubscription: {
         subscribeRows: (rows, params) => {
-            // rows can include { type: 'grandTotal', id: GRAND_TOTAL_ROW_ID }
+            // rows can include { type: 'group', id: GRAND_TOTAL_ROW_ID, route: [] }
             stream.subscribe(rows.map((row) => row.id));
         },
         unsubscribeRows: (rows, params) => {

@@ -1307,9 +1307,10 @@ describe('SSRM viewSubscription', () => {
 
             await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true));
             expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)).toEqual({
-                type: 'grandTotal',
+                type: 'group',
                 id: GRAND_TOTAL_ROW_ID,
                 parentKeys: [],
+                route: [],
                 level: api.getRowNode(GRAND_TOTAL_ROW_ID)!.level,
                 data: { id: GRAND_TOTAL_ROW_ID, value: -1 },
             });
@@ -1337,7 +1338,7 @@ describe('SSRM viewSubscription', () => {
             const api = await createGrandTotalGrid('pinnedBottom');
             const recorder = createRecorder();
             subscribe(api, recorder);
-            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)?.type).toBe('grandTotal');
+            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)?.type).toBe('group');
 
             api.ensureIndexVisible(500, 'top');
 

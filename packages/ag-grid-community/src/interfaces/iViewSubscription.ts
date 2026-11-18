@@ -12,10 +12,13 @@ interface ViewportRowRefBase {
     level: number;
 }
 
-/** A group row, loaded as a group by the Server-Side Row Model with row grouping or pivoting. */
+/**
+ * A group row, loaded as a group by the Server-Side Row Model with row grouping or pivoting,
+ * or the grand total row, which has the ID `GRAND_TOTAL_ROW_ID` and an empty `route`.
+ */
 export interface ViewGroupRowRef extends ViewportRowRefBase {
     type: 'group';
-    /** The keys from the top level down to and including this row. */
+    /** The keys from the top level down to and including this row. Empty for the grand total row. */
     route: string[];
 }
 
@@ -34,13 +37,8 @@ export interface ViewLeafRowRef extends ViewportRowRefBase {
     type: 'leaf';
 }
 
-/** The grand total row, shown when `grandTotalRow` is set. Its ID is `GRAND_TOTAL_ROW_ID`. */
-export interface ViewGrandTotalRowRef extends ViewportRowRefBase {
-    type: 'grandTotal';
-}
-
 /** Identifies a row passed to the `viewSubscription` handlers. Captured when the row was subscribed. */
-export type ViewRowRef = ViewGroupRowRef | ViewTreeRowRef | ViewLeafRowRef | ViewGrandTotalRowRef;
+export type ViewRowRef = ViewGroupRowRef | ViewTreeRowRef | ViewLeafRowRef;
 
 export interface ViewGroupRow<TData = any> extends ViewGroupRowRef {
     /** The row's data. */
@@ -59,14 +57,8 @@ export interface ViewLeafRow<TData = any> extends ViewLeafRowRef {
     data: TData;
 }
 
-export interface ViewGrandTotalRow<TData = any> extends ViewGrandTotalRowRef {
-    /** The grand total data. */
-    data: TData | undefined;
-}
-
 /** A row passed to `subscribeRows`. Narrow it with `type`. */
-export type ViewRow<TData = any> =
-    ViewGroupRow<TData> | ViewTreeRow<TData> | ViewLeafRow<TData> | ViewGrandTotalRow<TData>;
+export type ViewRow<TData = any> = ViewGroupRow<TData> | ViewTreeRow<TData> | ViewLeafRow<TData>;
 
 export interface ViewSubscriptionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
