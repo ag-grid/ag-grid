@@ -122,7 +122,8 @@ function typeCheck(
     framework: string
 ): Promise<{ framework: string; output: string; failed: boolean }> {
     return new Promise((resolve) => {
-        const child = spawn(TSC, ['-p', join(outputRoot, framework, 'tsconfig.json'), '--pretty', 'false']);
+        // Run from the scratch directory so diagnostics name files as `<framework>/docs/<page>/...`.
+        const child = spawn(TSC, ['-p', join(framework, 'tsconfig.json'), '--pretty', 'false'], { cwd: outputRoot });
         let output = '';
         child.stdout.on('data', (chunk) => (output += chunk));
         child.stderr.on('data', (chunk) => (output += chunk));
@@ -161,13 +162,19 @@ async function main() {
             return;
         }
 
+        if (frameworks.length === 0) {
+            console.error('\nEvery selected example excludes all of these frameworks, so there is nothing to check.');
+            process.exitCode = 1;
+            return;
+        }
+
         const results = await Promise.all(frameworks.map((framework) => typeCheck(outputRoot, framework)));
         let errorCount = 0;
         for (const { framework, output, failed } of results) {
             const errors = output.split('\n').filter((line) => line.includes('error TS'));
             errorCount += errors.length;
             console.log(`\n${framework}: ${failed ? `${errors.length} errors` : 'OK'}`);
-            errors.forEach((line) => console.log(`  ${relative(outputRoot, line)}`));
+            errors.forEach((line) => console.log(`  ${line}`));
             if (failed && errors.length === 0) {
                 console.log(output);
             }
