@@ -29,7 +29,7 @@ import { AgGridReact } from 'ag-grid-react';
  *
  * Source: found by an area review of React grid lifecycle events for AG-18665.
  */
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19183 - re-enable once fixed
 describe.skip('React rowData after a Suspense hide and reveal', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, RowApiModule]);

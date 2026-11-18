@@ -22,8 +22,10 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
-test.skip('column chooser opened with popupParent document.body on a long page is within the viewport', async ({ page }) => {
+// TODO: disabled due to AG-19224 - re-enable once fixed
+test.skip('column chooser opened with popupParent document.body on a long page is within the viewport', async ({
+    page,
+}) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     const { withApi } = await mountGrid(page, {
         enterprise: true,

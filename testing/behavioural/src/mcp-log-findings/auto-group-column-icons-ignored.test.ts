@@ -26,7 +26,7 @@ import { TestGridsManager } from 'ag-test-utils';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19188 - re-enable once fixed
 describe.skip('autoGroupColumnDef icons', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],

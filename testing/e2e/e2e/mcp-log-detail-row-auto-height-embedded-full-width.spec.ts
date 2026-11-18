@@ -40,7 +40,7 @@ async function expectDetailRowSizedToDetailGrid({ withApi }: MountedGrid) {
         .toBeGreaterThanOrEqual(100);
 }
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19207 - re-enable once fixed
 test.skip('control: detail row grows to fit its detail grid', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,
@@ -59,7 +59,7 @@ test.skip('control: detail row grows to fit its detail grid', async ({ page }) =
     await expectDetailRowSizedToDetailGrid(mounted);
 });
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19207 - re-enable once fixed
 test.skip('detail row grows to fit its detail grid with embedFullWidthRows', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,
@@ -79,7 +79,7 @@ test.skip('detail row grows to fit its detail grid with embedFullWidthRows', asy
     await expectDetailRowSizedToDetailGrid(mounted);
 });
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19207 - re-enable once fixed
 test.skip('detail row grows to fit its detail grid in print layout', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,

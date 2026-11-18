@@ -19,6 +19,9 @@
  * Actual: the group's `isSelected()` is undefined (indeterminate) and the selection state still contains
  * `{ nodeId: 'r-1', selectAllChildren: false }` under the group.
  *
+ * The second test covers nested groups (country > sport) with the `getRowId` from the SSRM Configuration docs,
+ * "Supplying Unique Group IDs": the nested group and its parent stay indeterminate in the same way.
+ *
  * Reported on: not reported; found by an area review of SSRM selection with getRowId for AG-18665.
  *
  * Source: found by an area review of SSRM selection with getRowId for AG-18665.
@@ -31,7 +34,7 @@ import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19189 - re-enable once fixed
 describe.skip('SSRM groupSelects descendants and transaction removal', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowGroupingModule, RowSelectionModule],
@@ -79,5 +82,55 @@ describe.skip('SSRM groupSelects descendants and transaction removal', () => {
             selectAllChildren: false,
             toggledNodes: [{ nodeId: 'g-United States', selectAllChildren: true }],
         });
+    });
+
+    test('removing a deselected child of a nested group leaves the nested group fully selected', async () => {
+        // getRowId follows the SSRM Configuration docs, "Supplying Unique Group IDs"
+        const rows = [
+            { id: 1, country: 'United States', sport: 'Swimming' },
+            { id: 2, country: 'United States', sport: 'Swimming' },
+        ];
+        const api = gridsManager.createGrid('ssrmNestedGroupSelectsTransaction', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+            ],
+            rowModelType: 'serverSide',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            isServerSideGroupOpenByDefault: () => true,
+            getRowId: (p) => {
+                const parentKeysJoined = (p.parentKeys || []).join('-');
+                if (p.data.id != null) {
+                    return parentKeysJoined + p.data.id;
+                }
+                const thisGroupCol = p.api.getRowGroupColumns()[p.level];
+                return parentKeysJoined + p.data[thisGroupCol.getColDef().field!];
+            },
+            serverSideDatasource: {
+                getRows: (params: IServerSideGetRowsParams) => {
+                    const keys = params.request.groupKeys;
+                    if (keys.length === 0) {
+                        params.success({ rowData: [{ country: 'United States' }], rowCount: 1 });
+                    } else if (keys.length === 1) {
+                        params.success({ rowData: [{ sport: 'Swimming' }], rowCount: 1 });
+                    } else {
+                        params.success({ rowData: rows, rowCount: rows.length });
+                    }
+                },
+            },
+        });
+        await waitFor(() => expect(api.getRowNode('United States-Swimming1')).toBeTruthy());
+        await waitForNoLoadingRows(api);
+
+        const group = api.getRowNode('United StatesSwimming')!;
+        group.setSelected(true);
+        await waitFor(() => expect(api.getRowNode('United States-Swimming2')!.isSelected()).toBe(true));
+        api.getRowNode('United States-Swimming1')!.setSelected(false);
+
+        api.applyServerSideTransaction({ route: ['United States', 'Swimming'], remove: [rows[0]] });
+        await waitFor(() => expect(api.getRowNode('United States-Swimming1')).toBeUndefined());
+
+        expect(group.isSelected()).toBe(true);
+        expect(api.getRowNode('United States')!.isSelected()).toBe(true);
     });
 });

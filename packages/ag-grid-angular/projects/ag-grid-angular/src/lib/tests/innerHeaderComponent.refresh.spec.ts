@@ -109,7 +109,7 @@ async function waitFor(fixture: ComponentFixture<unknown>, condition: () => bool
     }
 }
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19211 - re-enable once fixed
 xdescribe('innerHeaderComponent refresh', () => {
     let fixture: ComponentFixture<TestHostComponent>;
     const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent;

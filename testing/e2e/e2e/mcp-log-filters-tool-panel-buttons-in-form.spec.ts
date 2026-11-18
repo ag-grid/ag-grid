@@ -49,7 +49,7 @@ async function wrapGridInForm(page: Page) {
     });
 }
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19218 - re-enable once fixed
 test.skip('expanding a filter card does not submit the host form', async ({ page }) => {
     const { grid, withApi } = await mountGrid(page, { enterprise: true, height: 300, options });
     await wrapGridInForm(page);
@@ -61,8 +61,10 @@ test.skip('expanding a filter card does not submit the host form', async ({ page
     expect(submitters).toEqual([]);
 });
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
-test.skip('Enter in an app text field submits the host form rather than opening the Add Filter picker', async ({ page }) => {
+// TODO: disabled due to AG-19218 - re-enable once fixed
+test.skip('Enter in an app text field submits the host form rather than opening the Add Filter picker', async ({
+    page,
+}) => {
     await mountGrid(page, { enterprise: true, height: 300, options });
     await wrapGridInForm(page);
 

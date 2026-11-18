@@ -26,7 +26,7 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19201 - re-enable once fixed
 describe.skip('resetRowHeights with manually pinned rows', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, PinnedRowModule] });
 

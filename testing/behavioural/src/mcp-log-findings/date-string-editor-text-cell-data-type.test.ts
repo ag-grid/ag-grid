@@ -32,7 +32,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19182 - re-enable once fixed
 describe.skip('agDateStringCellEditor with a text cellDataType', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,

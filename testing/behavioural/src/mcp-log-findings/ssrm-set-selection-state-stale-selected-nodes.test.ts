@@ -29,7 +29,7 @@ import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19192 - re-enable once fixed
 describe.skip('SSRM setServerSideSelectionState and getSelectedNodes', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowSelectionModule],

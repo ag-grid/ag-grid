@@ -23,7 +23,7 @@ import { ClientSideRowModelModule, ValueCacheModule } from 'ag-grid-community';
  * Source: AG Grid docs MCP search log analysis (AG-18665). One search, from a React 32.0.2 client in October 2026:
  * "Value Cache value getters executed many times sorting filtering".
  */
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19205 - re-enable once fixed
 describe.skip('Value cache with a valueGetter returning undefined', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ValueCacheModule] });
 

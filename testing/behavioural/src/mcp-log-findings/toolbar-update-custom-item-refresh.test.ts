@@ -13,7 +13,7 @@
  *
  * Actual: refresh is never called; the component is destroyed and a new instance is created.
  *
- * This is a companion to toolbar-update-keeps-open-menu.test.ts. It uses a custom component to show
+ * This is a companion to toolbar-update-open-menu-loses-button-state.test.ts. It uses a custom component to show
  * that the fault is in the toolbar never calling refresh, not in the built-in agMenuToolbarItem.
  *
  * Source: AG Grid docs MCP search log analysis (AG-18665). A coding agent on React 36.0.0
@@ -25,7 +25,7 @@ import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19223 - re-enable once fixed
 describe.skip('Toolbar update with a custom item that implements refresh', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, ToolbarModule],

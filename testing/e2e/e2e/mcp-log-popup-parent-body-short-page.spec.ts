@@ -39,7 +39,7 @@ async function mountSmallGridWithBodyPopupParent(page: Parameters<typeof mountGr
     });
 }
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19224 - re-enable once fixed
 test.skip('context menu opens at the pointer when popupParent is body on a short page', async ({ page }) => {
     const { cell } = await mountSmallGridWithBodyPopupParent(page);
 
@@ -60,7 +60,7 @@ test.skip('context menu opens at the pointer when popupParent is body on a short
     );
 });
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19224 - re-enable once fixed
 test.skip('column menu opens under its button when popupParent is body on a short page', async ({ page }) => {
     const { headerCell } = await mountSmallGridWithBodyPopupParent(page);
 

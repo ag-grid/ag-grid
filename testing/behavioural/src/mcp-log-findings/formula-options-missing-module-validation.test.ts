@@ -23,7 +23,7 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19213 - re-enable once fixed
 describe.skip('formula grid options without FormulaModule', () => {
     // The suite's dev validations throw missing-module errors synchronously, so createGrid throws.
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });

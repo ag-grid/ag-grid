@@ -31,7 +31,7 @@ import { AgGridReact } from 'ag-grid-react';
  * Source: found by an area review of "Cell and row styling refresh: React vs vanilla" for AG-18665.
  * It is the row-level twin of the cellStyle finding.
  */
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19212 - re-enable once fixed
 describe.skip('getRowStyle refresh keeps previously applied styles (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, RowStyleModule, RowApiModule]);
@@ -50,9 +50,7 @@ describe.skip('getRowStyle refresh keeps previously applied styles (React)', () 
                     columnDefs={[{ field: 'score' }]}
                     rowData={[{ id: 'r1', score: 90 }]}
                     getRowId={(p) => p.data.id}
-                    getRowStyle={(p): RowStyle =>
-                        p.data!.score > 80 ? { fontWeight: 'bold' } : {}
-                    }
+                    getRowStyle={(p): RowStyle => (p.data!.score > 80 ? { fontWeight: 'bold' } : {})}
                     onGridReady={(e) => {
                         api = e.api;
                     }}

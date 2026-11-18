@@ -47,7 +47,7 @@ class TestInnerHeader implements IInnerHeaderComponent {
     }
 }
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19211 - re-enable once fixed
 describe.skip('innerHeaderComponent refresh on a column definition update', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 

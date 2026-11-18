@@ -24,7 +24,7 @@ import { ClientSideRowModelModule, PaginationModule, ValidationModule, enableDev
  * searched for "paginationPageSize paginationPageSizeSelector validation warning custom pagination controls
  * suppressPaginationPanel".
  */
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19220 - re-enable once fixed
 describe.skip('suppressPaginationPanel does not trigger page size selector warnings', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, PaginationModule, ValidationModule],

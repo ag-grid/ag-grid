@@ -60,7 +60,7 @@ const attrs = (xml: string, tag: string): string[] =>
 const attr = (tagAttrs: string, name: string): string | undefined =>
     new RegExp(`\\b${name}="([^"]*)"`).exec(tagAttrs)?.[1];
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19198 - re-enable once fixed
 describe.skip('Excel export inputs that produce a file Excel refuses to open', () => {
     const gridsManager = new TestGridsManager({
         modules: [CellStyleModule, ClientSideRowModelModule, ExcelExportModule],

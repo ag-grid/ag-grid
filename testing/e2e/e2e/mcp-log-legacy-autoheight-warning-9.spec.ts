@@ -32,7 +32,7 @@ const legacyCss = ['ag-grid.css', 'ag-theme-quartz.css']
     .map((file) => fs.readFileSync(path.join(STYLES, file), 'utf8'))
     .join('\n');
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19221 - re-enable once fixed
 test.skip('legacy theme with autoHeight does not warn that styles are missing', async ({ page }) => {
     const warnings: string[] = [];
     page.on('console', (msg) => {

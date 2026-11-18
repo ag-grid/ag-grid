@@ -31,7 +31,7 @@ import {
     themeBalham,
 } from 'ag-grid-community';
 
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19222 - re-enable once fixed
 describe.skip('global grid options deep merge with per-grid theme', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule]);

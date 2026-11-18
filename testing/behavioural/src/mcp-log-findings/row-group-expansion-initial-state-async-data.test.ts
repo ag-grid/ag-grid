@@ -26,7 +26,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
  * in August 2026:
  *   "grid state initialState async data loading row group expansion not restored"
  */
-// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+// TODO: disabled due to AG-19196 - re-enable once fixed
 describe.skip('Row group expansion initialState with async rowData', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule, GridStateModule],
