@@ -137,24 +137,30 @@ function getRemovedHeight(anchor: RowsInViewAnchor, isKept: boolean[]): number {
     return removedHeight;
 }
 
+/** For each of the `values` in turn, the length of the longest increasing subsequence ending with it, by patience sorting. */
+function getLongestEndingAt(values: number[]): number[] {
+    const tails: number[] = [];
+    return values.map((value) => {
+        let low = 0;
+        let high = tails.length;
+        while (low < high) {
+            const mid = (low + high) >> 1;
+            if (tails[mid] < value) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        tails[low] = value;
+        return low + 1;
+    });
+}
+
 /** The indexes of the `values` in every longest increasing subsequence of them: those that kept their order. */
 function getKeptInOrder(values: number[]): number[] {
-    const longestEndingAt = values.map(() => 1);
-    const longestStartingAt = values.map(() => 1);
-    for (let i = 0; i < values.length; ++i) {
-        for (let j = 0; j < i; ++j) {
-            if (values[j] < values[i]) {
-                longestEndingAt[i] = Math.max(longestEndingAt[i], longestEndingAt[j] + 1);
-            }
-        }
-    }
-    for (let i = values.length - 1; i >= 0; --i) {
-        for (let j = i + 1; j < values.length; ++j) {
-            if (values[i] < values[j]) {
-                longestStartingAt[i] = Math.max(longestStartingAt[i], longestStartingAt[j] + 1);
-            }
-        }
-    }
+    const longestEndingAt = getLongestEndingAt(values);
+    // the longest starting at each value is the longest ending at it, read backwards with the order reversed
+    const longestStartingAt = getLongestEndingAt(values.map((value) => -value).reverse()).reverse();
     const longest = Math.max(0, ...longestEndingAt);
     const inLongest = values.flatMap((_, i) => (longestEndingAt[i] + longestStartingAt[i] - 1 === longest ? [i] : []));
     // a value is in every longest sequence when no other value can take its place in one
