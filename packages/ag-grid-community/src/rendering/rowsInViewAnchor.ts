@@ -23,11 +23,12 @@ export interface RowsInViewAnchor {
     firstInView: number;
     /** The index in `rows` after the last row the user could see. */
     afterView: number;
-    /** The pixel ranges of the rows the update removed from above the first visible pixel, which can overlap. */
+    /**
+     * The pixel ranges of the server-side groups the update removed from above the first visible pixel, with the rows
+     * their stores covered, which can overlap.
+     */
     removed: [top: number, bottom: number][];
-    /** The height `removed` covers, worked out once as the restore can be repeated. */
-    removedHeight?: number;
-    /** The index in `rows` of the row whose move the rows in view follow, worked out once as the restore can be repeated. */
+    /** The index in `rows` of the row whose move the rows in view follow, once restored. */
     followed?: number | null;
     /** The `rowTop` of the followed row and the page pixel at the top of the viewport the latest restore used. */
     restoredAt?: [rowTop: number, viewportTop: number];
@@ -100,19 +101,16 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     };
 }
 
-/** Records a row the update removed, before it loses its position, for when the update removes every row in view. */
+/**
+ * Records a server-side group the update removed, before its store goes, for when the update removes every row in
+ * view, as its store covers its rows that are not loaded, which have no row nodes.
+ */
 export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): void {
-    const { rowTop, rowHeight } = rowNode;
     const { firstVisiblePixel, removed } = anchor;
-    // pinned rows are positioned in their own containers
-    if (rowNode.rowPinned) {
-        return;
-    }
+    const { rowTop, rowHeight, childStore } = rowNode;
     if (rowTop != null && rowHeight != null && rowTop <= firstVisiblePixel) {
         removed.push([rowTop, rowTop + rowHeight]);
     }
-    // a server-side group's store covers its rows that are not loaded, which have no row nodes
-    const childStore = rowNode.childStore;
     if (childStore?.getDisplayIndexStart() != null) {
         const { topPx, heightPx } = childStore.getStoreBounds();
         if (topPx < firstVisiblePixel) {
@@ -122,17 +120,21 @@ export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): v
 }
 
 /** The height of the rows the update removed from above the first visible pixel, counting overlapping ranges once. */
-function getRemovedHeight(anchor: RowsInViewAnchor): number {
-    if (anchor.removedHeight == null) {
-        let removedHeight = 0;
-        let removedBottom = -Infinity;
-        for (const [top, bottom] of anchor.removed.sort((a, b) => a[0] - b[0])) {
-            removedHeight += Math.max(0, bottom - Math.max(top, removedBottom));
-            removedBottom = Math.max(removedBottom, bottom);
+function getRemovedHeight(anchor: RowsInViewAnchor, isKept: boolean[]): number {
+    const { rows, rowTops, rowHeights, firstVisiblePixel } = anchor;
+    const removed = [...anchor.removed];
+    for (let i = 0; i < rows.length && rowTops[i] <= firstVisiblePixel; ++i) {
+        if (!isKept[i]) {
+            removed.push([rowTops[i], rowTops[i] + rowHeights[i]]);
         }
-        anchor.removedHeight = removedHeight;
     }
-    return anchor.removedHeight;
+    let removedHeight = 0;
+    let removedBottom = -Infinity;
+    for (const [top, bottom] of removed.sort((a, b) => a[0] - b[0])) {
+        removedHeight += Math.max(0, bottom - Math.max(top, removedBottom));
+        removedBottom = Math.max(removedBottom, bottom);
+    }
+    return removedHeight;
 }
 
 /** The indexes of the `values` in every longest increasing subsequence of them: those that kept their order. */
@@ -181,16 +183,10 @@ function getFollowedRow(anchor: RowsInViewAnchor, isKept: boolean[]): number | n
 }
 
 /** How far the rows in view moved, or `null` when the update kept none of the rows captured. */
-function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
+function getRowsInViewMoved(anchor: RowsInViewAnchor, isKept: boolean[]): number | null {
     const { rows, rowTops, rowHeights, firstVisiblePixel } = anchor;
-    const { rowModel } = beans;
-    // a loading row counts as kept, as it is still there
-    const isKept = rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
-    // OPTIMIZATION: quadratic, and only heights change between restores of the same anchor
-    if (anchor.followed === undefined) {
-        anchor.followed = getFollowedRow(anchor, isKept);
-    }
-    const followed = anchor.followed;
+    const followed = getFollowedRow(anchor, isKept);
+    anchor.followed = followed;
     if (followed == null) {
         return null;
     }
@@ -235,7 +231,10 @@ export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPo
 
 /** The vertical scroll position that keeps the rows the user could see where they were. */
 function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): number {
-    const rowsInViewMoved = getRowsInViewMoved(beans, anchor) ?? -getRemovedHeight(anchor);
+    const { rowModel } = beans;
+    // a loading row counts as kept, as it is still there
+    const isKept = anchor.rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
+    const rowsInViewMoved = getRowsInViewMoved(anchor, isKept) ?? -getRemovedHeight(anchor, isKept);
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
     const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;

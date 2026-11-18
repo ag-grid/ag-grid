@@ -855,7 +855,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    /** Called as each row node is removed, before it loses its position, so a data update kept in view knows the rows it removed. */
+    /** Called as a server-side group is removed, before its store goes, so a data update kept in view knows the rows it removed. */
     public onRowNodeRemoved(rowNode: RowNode): void {
         const rowsInViewAnchor = this.rowsInView?.anchor;
         if (rowsInViewAnchor) {
