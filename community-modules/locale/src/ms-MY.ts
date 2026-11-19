@@ -786,6 +786,8 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaRowSelect: 'Tekan SPACE untuk memilih baris ini',
     ariaRowSelectionDisabled: 'Pemilihan Baris dilumpuhkan untuk baris ini',
     ariaSearch: 'Cari',
+    ariaFindActiveMatch: 'Padanan ${variable} daripada ${variable}, ${variable}, baris ${variable}',
+    ariaFindActiveMatchRow: 'Padanan ${variable} daripada ${variable}, baris ${variable}',
     ariaSortPriority: 'Keutamaan pengisihan ${priority} daripada ${count}',
     ariaSortableColumn: 'Tekan ENTER untuk isih',
     ariaSortableColumnWithCellSelection: 'Tekan ALT ENTER untuk isih',

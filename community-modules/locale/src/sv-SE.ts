@@ -770,6 +770,8 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',
     ariaRowSelectionDisabled: 'Radmarkering är inaktiverad för denna rad',
     ariaSearch: 'Sök',
+    ariaFindActiveMatch: 'Träff ${variable} av ${variable}, ${variable}, rad ${variable}',
+    ariaFindActiveMatchRow: 'Träff ${variable} av ${variable}, rad ${variable}',
     ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Tryck ENTER för att sortera',
     ariaSortableColumnWithCellSelection: 'Tryck ALT ENTER för att sortera',

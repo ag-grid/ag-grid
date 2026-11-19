@@ -774,6 +774,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
     ariaRowSelectionDisabled: 'Zeilenauswahl ist für diese Zeile deaktiviert',
     ariaSearch: 'Suche',
+    ariaFindActiveMatch: 'Treffer ${variable} von ${variable}, ${variable}, Zeile ${variable}',
+    ariaFindActiveMatchRow: 'Treffer ${variable} von ${variable}, Zeile ${variable}',
     ariaSortPriority: 'Sortierpriorität ${priority} von ${count}',
     ariaSortableColumn: 'Drücken Sie EINGABETASTE, um zu sortieren',
     ariaSortableColumnWithCellSelection: 'Drücken Sie ALT EINGABETASTE, um zu sortieren',

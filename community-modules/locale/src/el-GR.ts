@@ -772,6 +772,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaRowSelect: 'Πατήστε SPACE για επιλογή αυτής της γραμμής',
     ariaRowSelectionDisabled: 'Η επιλογή γραμμής έχει απενεργοποιηθεί για αυτή τη γραμμή',
     ariaSearch: 'Αναζήτηση',
+    ariaFindActiveMatch: 'Αντιστοιχία ${variable} από ${variable}, ${variable}, γραμμή ${variable}',
+    ariaFindActiveMatchRow: 'Αντιστοιχία ${variable} από ${variable}, γραμμή ${variable}',
     ariaSortPriority: 'Προτεραιότητα ταξινόμησης ${priority} από ${count}',
     ariaSortableColumn: 'Πατήστε ENTER για ταξινόμηση',
     ariaSortableColumnWithCellSelection: 'Πατήστε ALT ENTER για ταξινόμηση',

@@ -785,6 +785,8 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaRowSelect: 'Tekan SPASI untuk memilih baris ini',
     ariaRowSelectionDisabled: 'Pemilihan Baris dinonaktifkan untuk baris ini',
     ariaSearch: 'Cari',
+    ariaFindActiveMatch: 'Kecocokan ${variable} dari ${variable}, ${variable}, baris ${variable}',
+    ariaFindActiveMatchRow: 'Kecocokan ${variable} dari ${variable}, baris ${variable}',
     ariaSortPriority: 'Prioritas pengurutan ${priority} dari ${count}',
     ariaSortableColumn: 'Tekan ENTER untuk mengurutkan',
     ariaSortableColumnWithCellSelection: 'Tekan ALT ENTER untuk mengurutkan',

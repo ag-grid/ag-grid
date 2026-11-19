@@ -784,6 +784,8 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaRowSelect: 'इस रो को चुनने के लिए SPACE दबाएं',
     ariaRowSelectionDisabled: 'इस रो के लिए रो चयन अक्षम है',
     ariaSearch: 'खोजें',
+    ariaFindActiveMatch: 'मिलान ${variable} / ${variable}, ${variable}, पंक्ति ${variable}',
+    ariaFindActiveMatchRow: 'मिलान ${variable} / ${variable}, पंक्ति ${variable}',
     ariaSortPriority: 'क्रमबद्ध करने की प्राथमिकता ${count} में से ${priority}',
     ariaSortableColumn: 'क्रमबद्ध करने के लिए ENTER दबाएं',
     ariaSortableColumnWithCellSelection: 'क्रमबद्ध करने के लिए ALT ENTER दबाएं',

@@ -771,6 +771,8 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',
     ariaRowSelectionDisabled: 'Bu satır için Satır Seçimi devre dışı bırakılmıştır',
     ariaSearch: 'Ara',
+    ariaFindActiveMatch: 'Eşleşme ${variable}/${variable}, ${variable}, satır ${variable}',
+    ariaFindActiveMatchRow: 'Eşleşme ${variable}/${variable}, satır ${variable}',
     ariaSortPriority: 'Sıralama önceliği: ${priority}, toplam ${count}',
     ariaSortableColumn: 'Sıralamak için ENTER tuşuna basın',
     ariaSortableColumnWithCellSelection: 'Sıralamak için ALT ENTER tuşuna basın',

@@ -767,6 +767,8 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',
     ariaRowSelectionDisabled: 'Radvalg er deaktivert for denne raden',
     ariaSearch: 'Søk',
+    ariaFindActiveMatch: 'Treff ${variable} av ${variable}, ${variable}, rad ${variable}',
+    ariaFindActiveMatchRow: 'Treff ${variable} av ${variable}, rad ${variable}',
     ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Trykk ENTER for å sortere',
     ariaSortableColumnWithCellSelection: 'Trykk ALT ENTER for å sortere',

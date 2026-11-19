@@ -766,6 +766,8 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaRowSelect: '이 행을 선택하려면 SPACE를 누르세요',
     ariaRowSelectionDisabled: '이 행의 행 선택이 비활성화되었습니다',
     ariaSearch: '검색',
+    ariaFindActiveMatch: '일치 항목 ${variable}/${variable}, ${variable}, ${variable}행',
+    ariaFindActiveMatchRow: '일치 항목 ${variable}/${variable}, ${variable}행',
     ariaSortPriority: '정렬 우선순위 ${count}개 중 ${priority}번째',
     ariaSortableColumn: '정렬하려면 ENTER를 누르세요',
     ariaSortableColumnWithCellSelection: '정렬하려면 ALT ENTER를 누르세요',

@@ -768,6 +768,8 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',
     ariaRowSelectionDisabled: 'انتخاب سطر برای این سطر غیرفعال است',
     ariaSearch: 'جستجو',
+    ariaFindActiveMatch: 'مورد ${variable} از ${variable}، ${variable}، ردیف ${variable}',
+    ariaFindActiveMatchRow: 'مورد ${variable} از ${variable}، ردیف ${variable}',
     ariaSortPriority: 'اولویت مرتب‌سازی ${priority} از ${count}',
     ariaSortableColumn: 'ENTER را فشار دهید تا مرتب شود',
     ariaSortableColumnWithCellSelection: 'برای مرتب‌سازی ALT ENTER را فشار دهید',

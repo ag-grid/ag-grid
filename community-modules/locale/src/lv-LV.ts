@@ -784,6 +784,8 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaRowSelect: 'Nospiediet ATSTARPI, lai atlasītu šo rindu',
     ariaRowSelectionDisabled: 'Šai rindai rindu atlase ir atspējota',
     ariaSearch: 'Meklēt',
+    ariaFindActiveMatch: 'Atbilstība ${variable} no ${variable}, ${variable}, rinda ${variable}',
+    ariaFindActiveMatchRow: 'Atbilstība ${variable} no ${variable}, rinda ${variable}',
     ariaSortPriority: 'Kārtošanas prioritāte ${priority} no ${count}',
     ariaSortableColumn: 'Nospiediet ENTER, lai kārtotu',
     ariaSortableColumnWithCellSelection: 'Nospiediet ALT ENTER, lai kārtotu',
