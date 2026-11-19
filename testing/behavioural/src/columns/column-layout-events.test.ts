@@ -2397,27 +2397,42 @@ describe('the column animations a column call leaves on', () => {
     });
 
     test('a call made while a column move is still sliding does not cut the slide short when it changes nothing', async () => {
-        const api = await createLockedGrid();
+        // How long a move slides under a fake clock, with a no-op call landing at `callAtMs` or none.
+        const slide = async (callAtMs: number | null) => {
+            const api = await createLockedGrid();
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            try {
+                api.moveColumns(['sport'], 1);
+                let movingAtCall: boolean | null = null;
+                let elapsedMs = 0;
+                while (moving(api) && elapsedMs < 1000) {
+                    if (elapsedMs === callAtMs) {
+                        movingAtCall = moving(api);
+                        api.applyColumnState({ state: api.getColumnState() });
+                    }
+                    await vi.advanceTimersByTimeAsync(1);
+                    ++elapsedMs;
+                }
+                return { order: order(api), movingAtCall, elapsedMs };
+            } finally {
+                vi.useRealTimers();
+                gridsManager.reset();
+            }
+        };
 
-        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-        onTestFinished(() => {
-            vi.useRealTimers();
+        const uninterrupted = await slide(null);
+        const callAtMs = Math.floor(uninterrupted.elapsedMs / 2);
+        const withCall = await slide(callAtMs);
+
+        expect({ uninterrupted, withCall }).toEqual({
+            uninterrupted: {
+                order: 'year,sport,athlete,country',
+                movingAtCall: null,
+                elapsedMs: uninterrupted.elapsedMs,
+            },
+            withCall: { order: 'year,sport,athlete,country', movingAtCall: true, elapsedMs: uninterrupted.elapsedMs },
         });
-        api.moveColumns(['sport'], 1);
-        // A move slides for 200 ms; the no-op lands halfway, after the move's next-turn work.
-        await vi.advanceTimersByTimeAsync(100);
-        expect(moving(api)).toBe(true);
-
-        api.applyColumnState({ state: api.getColumnState() });
-        await vi.advanceTimersByTimeAsync(99);
-        const justBeforeEnd = moving(api);
-        await vi.advanceTimersByTimeAsync(1);
-
-        expect({ order: order(api), justBeforeEnd, atEnd: moving(api) }).toEqual({
-            order: 'year,sport,athlete,country',
-            justBeforeEnd: true,
-            atEnd: false,
-        });
+        expect(callAtMs).toBeGreaterThan(0);
     });
 
     const createAnimatedGrid = async (columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }]) => {

@@ -155,11 +155,13 @@ describe('Horizontal scrollbar while columns slide', () => {
         vi.useRealTimers();
     });
 
-    // A slide ends at 200ms and the backup scrollbar refresh runs at 500ms: 150ms is mid-slide, 300ms between them.
-    const MID_SLIDE_MS = 150;
-    const AFTER_SLIDE_MS = 300;
-    // Long enough for the scrollbar to show (100ms) on the initial overflowing layout.
-    const SETTLED_MS = 400;
+    // The suite's fast timings: a slide ends at 50ms, the backup scrollbar refresh runs at 125ms and a frame is 16ms,
+    // so 30ms is mid-slide, after the next frame, and 90ms falls between the slide's end and the backup refresh.
+    const NEXT_FRAME_MS = 16;
+    const MID_SLIDE_MS = 30;
+    const AFTER_SLIDE_MS = 90;
+    // Long enough for the scrollbar to show (25ms) on the initial overflowing layout.
+    const SETTLED_MS = 200;
 
     const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
 
@@ -176,14 +178,14 @@ describe('Horizontal scrollbar while columns slide', () => {
             suppressColumnMoveAnimation,
         });
 
-    test('goes at once when columns leave an overflowing layout without a slide', async () => {
+    test('goes on the next frame when columns leave an overflowing layout without a slide', async () => {
         vi.useFakeTimers();
         const api = createOverflowingGrid(true);
         await vi.advanceTimersByTimeAsync(SETTLED_MS);
         expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
 
         api.setColumnsVisible(['a', 'b'], false);
-        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
+        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
 
         expect({
             displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
