@@ -80,6 +80,14 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     };
 }
 
+/**
+ * The row at the index, read without creating it: the server-side row model creates the rows it reads that are not
+ * loaded, and queues them to load.
+ */
+function getLoadedRow({ gos, rowModel }: BeanCollection, index: number): RowNode | undefined {
+    return _isClientSideRowModel(gos) ? rowModel.getRow(index) : rowModel.getRowIfLoaded?.(index);
+}
+
 const isPositioned = (rowNode: RowNode): boolean =>
     !rowNode.rowPinned && rowNode.rowTop != null && rowNode.rowHeight != null && rowNode.rowIndex != null;
 
@@ -102,10 +110,9 @@ function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewpor
             return rows;
         }
     }
-    // a viewport height either side, so rows outside the view are followed too; the server-side row model creates the
-    // rows it reads that are not loaded, so it reads only those in view, which the redraw creates anyway
-    const { gos, pageBounds, rowModel } = beans;
-    const margin = _isClientSideRowModel(gos) ? viewportBottom - firstVisiblePixel : 0;
+    // a viewport height either side, so rows outside the view are followed too
+    const { pageBounds, rowModel } = beans;
+    const margin = viewportBottom - firstVisiblePixel;
     const rows: RowNode[] = [];
     const lastRow = Math.min(rowModel.getRowIndexAtPixel(viewportBottom + margin), pageBounds.getLastRow());
     for (
@@ -116,7 +123,7 @@ function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewpor
         i <= lastRow;
         ++i
     ) {
-        const rowNode = rowModel.getRow(i);
+        const rowNode = getLoadedRow(beans, i);
         if (rowNode && isPositioned(rowNode)) {
             rows.push(rowNode);
         }
@@ -245,9 +252,7 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode | undefined): rowNo
     if (!rowNode || rowNode.destroyed || rowNode.rowIndex == null) {
         return false;
     }
-    const { gos, rowModel } = beans;
-    // reading a server-side row by index creates it when it is not loaded, so it is looked up by its id
-    return _isClientSideRowModel(gos) ? rowModel.getRow(rowNode.rowIndex) === rowNode : rowModel.isRowPresent(rowNode);
+    return getLoadedRow(beans, rowNode.rowIndex) === rowNode;
 }
 
 /**
@@ -256,14 +261,10 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode | undefined): rowNo
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number | undefined {
-    const { rowModel } = beans;
     if (rowPinned) {
         return () => rowIndex;
     }
-    // only a rendered server-side row is followed, as reading one by index creates it when it is not loaded
-    const rowNode = _isClientSideRowModel(beans.gos)
-        ? rowModel.getRow(rowIndex)
-        : beans.rowRenderer.getRenderedRow(rowIndex);
+    const rowNode = getLoadedRow(beans, rowIndex);
     return () => (isDisplayed(beans, rowNode) ? rowNode.rowIndex : undefined);
 }
 

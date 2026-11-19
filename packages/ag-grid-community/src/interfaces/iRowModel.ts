@@ -27,6 +27,8 @@ export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
+    /** The row at the index if the row model has it loaded, read without creating it or loading it. */
+    getRowIfLoaded?(index: number): RowNode | undefined;
 
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | undefined;

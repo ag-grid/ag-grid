@@ -504,11 +504,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param displayRowIndex the displayed index within the grid to search for
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
-    getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
+    getRowUsingDisplayIndex(displayRowIndex: number, ifLoaded?: boolean): IRowNode<any> | undefined {
         if (displayRowIndex === this.parentRowNode.sibling?.rowIndex) {
             return this.parentRowNode.sibling;
         }
-        return this.cache.getRowByDisplayIndex(displayRowIndex);
+        return this.cache.getRowByDisplayIndex(displayRowIndex, ifLoaded);
     }
 
     /**

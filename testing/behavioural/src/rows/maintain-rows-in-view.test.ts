@@ -836,6 +836,15 @@ describe('maintaining rows in view', () => {
             expect(offsetInView(api, 'r20')).toBe(0);
         });
 
+        test('moves the focused cell with its row when the row is loaded but not rendered', async () => {
+            const api = await createGrid();
+            api.setFocusedCell(55, 'value');
+
+            api.applyServerSideTransaction({ add: createRows('new', 3), addIndex: 0 });
+
+            expect(api.getFocusedCell()?.rowIndex).toBe(58);
+        });
+
         test('keeps rows in view when a transaction removes rows above them', async () => {
             const api = await createGrid();
             scrollTo(api, SCROLL_TOP);
