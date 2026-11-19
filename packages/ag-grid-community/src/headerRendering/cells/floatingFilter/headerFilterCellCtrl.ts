@@ -14,6 +14,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getFilterModel } from '../../../filter/columnFilterUtils';
+import { translateColumnFilterLabel } from '../../../filter/filterAriaLabels';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
@@ -76,7 +77,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupPosition();
         this.setupHover(compBean);
         this.setupFocus(compBean);
-        this.setupAria();
+        this.setupAria(compBean);
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter(compBean);
@@ -162,9 +163,19 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         );
     }
 
-    private setupAria(): void {
-        const localeTextFunc = this.getLocaleTextFunc();
-        _setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+    private setupAria(compBean: BeanStub): void {
+        const refreshButtonLabel = () => {
+            const { beans, column } = this;
+            _setAriaLabel(
+                this.eButtonShowMainFilter,
+                translateColumnFilterLabel(beans, column, this.getLocaleTextFunc(), 'filterMenuOpen')
+            );
+        };
+        refreshButtonLabel();
+        compBean.addManagedListeners(this.column, {
+            headerNameChanged: refreshButtonLabel,
+            colDefChanged: refreshButtonLabel,
+        });
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
