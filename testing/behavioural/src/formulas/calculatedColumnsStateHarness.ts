@@ -115,6 +115,16 @@ export function clickDialogButton(label: string): void {
     button!.click();
 }
 
+/** The expression as the grid stores it: each reference by column id, not by header name. */
+export function storedExpression(api: GridApi, expression: string): string {
+    return expression.replace(/\[([^\]]+)\]/g, (reference, name: string) => {
+        const column = api
+            .getColumns()
+            ?.find((col) => col.getColId() === name || api.getDisplayNameForColumn(col, 'header') === name);
+        return column ? `[${column.getColId()}]` : reference;
+    });
+}
+
 /** Adds a calc col through the header menu of {@link anchorColId} (the documented "anchor").
  *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
 export async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
@@ -131,7 +141,7 @@ export async function addViaDialog(api: GridApi, anchorColId: string, expression
     const added = await waitFor(() => {
         const result = order(api).filter((id) => !before.has(id));
         expect(result).toHaveLength(1);
-        expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBeTruthy();
+        expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBe(storedExpression(api, expression));
         return result;
     });
     return added[0];

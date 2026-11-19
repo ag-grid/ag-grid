@@ -1360,6 +1360,34 @@ describe('Column Flex with animateColumnResizing', () => {
         }
     });
 
+    test('a viewport resize that unpins the pinned columns it has no room for applies at once, ending a running width animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 600, pinned: 'left' }, { colId: 'b', width: 100 }, { colId: 'c' }],
+                animateColumnResizing: true,
+            });
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+
+            api.applyColumnState({ state: [{ colId: 'b', width: 300 }] });
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 500;
+            triggerResizeObservers();
+            await nextAnimationFrame();
+
+            expect(api.getColumn('a')!.getPinned()).toBeNull();
+            expect(isAnimating(api)).toBe(false);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
+    });
     test('a reorder drops the width animation even when a layout listener begins a change of its own', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],

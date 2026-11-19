@@ -401,7 +401,10 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         await waitFor(() => expect(raised).toContain('columnPivotModeChanged'), { timeout: 500 });
         await asyncSetTimeout(0);
 
-        expect(raised).toEqual(['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged']);
+        expect({ raised, pivotMode: gridApi.isPivotMode() }).toEqual({
+            raised: ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'],
+            pivotMode: false,
+        });
     });
 
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {

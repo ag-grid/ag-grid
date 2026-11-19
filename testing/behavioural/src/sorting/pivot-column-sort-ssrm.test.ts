@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { ColDef, GridApi, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -68,6 +68,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         expect(document.querySelector('.ag-column-moving')).not.toBeNull();
 
         await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
         expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
         expect(getRowsCount()).toBe(countBeforeSort);
     });
@@ -89,6 +92,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         await waitFor(() => expect(pivotsOf(api)).toEqual([...ascending].reverse()));
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
         expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
         expect(getRowsCount()).toBe(countBeforeSort);
     });
@@ -126,6 +132,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
             expect(pivots()).toEqual(ascending);
         });
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
 
         expect(getRowsCount()).toBe(countBeforeSort);
         expect(api.getDisplayedRowCount()).toBe(rowCountBefore);

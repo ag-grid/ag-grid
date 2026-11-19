@@ -1666,6 +1666,17 @@ describe('Column Mutations - order restoration', () => {
             expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
         });
 
+        test('a defaults change resets the user order to the definitions order', () => {
+            const api = createMovedGrid('defaultsReset');
+
+            api.setGridOption('defaultColDef', { width: 120 });
+
+            expect({
+                order: displayedIds(api),
+                widths: displayedIds(api).map((id) => api.getColumn(id)!.getActualWidth()),
+            }).toEqual({ order: ['a', 'b', 'c', 'd'], widths: [120, 120, 120, 120] });
+        });
+
         test('a defaults change resets a strict pivot column order the user changed', () => {
             const api = gridsManager.createGrid('strictPivot', {
                 columnDefs: [
@@ -1690,7 +1701,10 @@ describe('Column Mutations - order restoration', () => {
 
             api.setGridOption('defaultColDef', { width: 120 });
 
-            expect(pivotIds()).toEqual(['pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c']);
+            expect({ order: pivotIds(), width: api.getColumn('c')!.getActualWidth() }).toEqual({
+                order: ['pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'],
+                width: 120,
+            });
         });
     });
 });

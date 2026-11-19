@@ -13,6 +13,8 @@ import {
     RowNumbersModule,
 } from 'ag-grid-enterprise';
 
+import { storedExpression } from './calculatedColumnsStateHarness';
+
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
 // behaviour of this branch's column model. Rules 3 and 4 intentionally diverge from the stale
 // `index.mdoc` wording ("falls back to the end"); the canonical docs rewrite will reconcile them.
@@ -173,7 +175,7 @@ describe('calculated columns - display ordering', () => {
         const added = await waitFor(() => {
             const result = order(api).filter((id) => !before.has(id));
             expect(result).toHaveLength(1);
-            expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toMatch(/\S/);
+            expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBe(storedExpression(api, expression));
             return result;
         });
         return added[0];
