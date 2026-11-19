@@ -302,9 +302,11 @@ export class ValueService extends BeanStub implements NamedBean {
             result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
         }
 
-        const aggValueGetter = column.aggValueGetter;
-        if (aggValueGetter && !ignoreAggData && !skipAggValueGetter) {
-            return this.applyAggValueGetter(aggValueGetter, column, rowNode, result);
+        if (!ignoreAggData && !skipAggValueGetter) {
+            const aggValueGetter = column.aggValueGetter;
+            if (aggValueGetter && this.isAggValueGetterRow(column, rowNode)) {
+                return this.applyAggValueGetter(aggValueGetter, column, rowNode, result);
+            }
         }
         return result;
     }
@@ -582,7 +584,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // Get old value from stored data, ignoring any pending edit state
         let oldValue;
         let aggGetterEdit: 'setter' | 'reject' | undefined;
-        if (column.aggValueGetter && this.appliesAggValueGetter(column, rowNode)) {
+        if (column.aggValueGetter && this.isAggValueGetterRow(column, rowNode)) {
             // The cell shows the getter's result. On a group row with a group row setter, only a function
             // `groupRowValueSetter` writes it, never into the group's own field.
             const editSvc = this.rowGroupingEditValueSvc;
@@ -917,13 +919,13 @@ export class ValueService extends BeanStub implements NamedBean {
      * and group columns.
      */
     public appliesAggValueGetter(column: AgColumn, rowNode: IRowNode): boolean {
+        return !!column.aggValueGetter && this.isAggValueGetterRow(column, rowNode);
+    }
+
+    /** `appliesAggValueGetter` without the `aggValueGetter` check, for callers that have already made it. */
+    private isAggValueGetterRow(column: AgColumn, rowNode: IRowNode): boolean {
         // `footer` admits the SSRM grand total row, which is not a group row.
-        return (
-            !!column.aggValueGetter &&
-            !!(rowNode.group || rowNode.footer) &&
-            column.aggregationActive &&
-            !column.showRowGroup
-        );
+        return !!(rowNode.group || rowNode.footer) && column.aggregationActive && !column.showRowGroup;
     }
 
     private applyAggValueGetter(
@@ -932,9 +934,6 @@ export class ValueService extends BeanStub implements NamedBean {
         rowNode: IRowNode,
         value: any
     ): any {
-        if (!this.appliesAggValueGetter(column, rowNode)) {
-            return value;
-        }
         const aggData = rowNode.aggData;
         const params: AggValueGetterParams = {
             api: this.gridApi,
