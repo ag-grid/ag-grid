@@ -127,6 +127,13 @@ The following deprecated APIs have now been removed.
 - `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 - `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
 
+### Row Nodes
+
+- `IRowNode.firstChild` - removed, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+- `IRowNode.lastChild` - removed, use `rowNode.parent?.childrenAfterSort?.at(-1) === rowNode` instead.
+- `IRowNode.childIndex` - removed, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
+- `firstChildChanged`, `lastChildChanged` and `childIndexChanged` row node events, and their `FirstChildChangedEvent`, `LastChildChangedEvent` and `ChildIndexChangedEvent` types - removed, use the `modelUpdated` grid event instead.
+
 ### Modules
 
 - `GridChartsModule` - removed, please use `IntegratedChartsModule` instead.

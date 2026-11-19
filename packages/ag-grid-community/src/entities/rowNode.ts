@@ -118,10 +118,6 @@ export class RowNode<TData = any>
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     public leafGroup: boolean | undefined;
 
-    public firstChild: boolean;
-    public lastChild: boolean;
-    public childIndex: number;
-
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
 

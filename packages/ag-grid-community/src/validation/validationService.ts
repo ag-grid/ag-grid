@@ -150,7 +150,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     public checkRowEvents(eventType: RowNodeEventType): void {
-        if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
+        if (REMOVED_ROW_NODE_EVENTS.has(eventType)) {
             this.warn(10, { eventType });
         }
     }
@@ -327,11 +327,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 }
 
-const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
-    'firstChildChanged',
-    'lastChildChanged',
-    'childIndexChanged',
-]);
+const REMOVED_ROW_NODE_EVENTS: Set<string> = new Set(['firstChildChanged', 'lastChildChanged', 'childIndexChanged']);
 
 function suggestIconNames(iconName: string): string[] {
     const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);

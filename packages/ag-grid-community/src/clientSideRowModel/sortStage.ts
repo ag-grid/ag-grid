@@ -17,26 +17,6 @@ export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     if (sibling) {
         sibling.childrenAfterSort = childrenAfterSort;
     }
-    if (!childrenAfterSort) {
-        return;
-    }
-    for (let i = 0, lastIdx = childrenAfterSort.length - 1; i <= lastIdx; i++) {
-        const child = childrenAfterSort[i];
-        const first = i === 0;
-        const last = i === lastIdx;
-        if (child.firstChild !== first) {
-            child.firstChild = first;
-            child.dispatchRowEvent('firstChildChanged');
-        }
-        if (child.lastChild !== last) {
-            child.lastChild = last;
-            child.dispatchRowEvent('lastChildChanged');
-        }
-        if (child.childIndex !== i) {
-            child.childIndex = i;
-            child.dispatchRowEvent('childIndexChanged');
-        }
-    }
 };
 
 export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage {

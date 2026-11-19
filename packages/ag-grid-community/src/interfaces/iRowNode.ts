@@ -33,9 +33,6 @@ export type RowNodeEventType =
     | 'topChanged'
     | 'groupChanged'
     | 'allChildrenCountChanged'
-    | 'firstChildChanged'
-    | 'lastChildChanged'
-    | 'childIndexChanged'
     | 'rowIndexChanged'
     | 'expandedChanged'
     | 'hasChildrenChanged'
@@ -59,9 +56,6 @@ type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
         topChanged: TopChangedEvent<TData>;
         groupChanged: GroupChangedEvent<TData>;
         allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
-        firstChildChanged: FirstChildChangedEvent<TData>;
-        lastChildChanged: LastChildChangedEvent<TData>;
-        childIndexChanged: ChildIndexChangedEvent<TData>;
         rowIndexChanged: RowIndexChangedEvent<TData>;
         expandedChanged: ExpandedChangedEvent<TData>;
         hasChildrenChanged: HasChildrenChangedEvent<TData>;
@@ -89,12 +83,6 @@ export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightCha
 export interface RowIndexChangedEvent<TData = any> extends RowNodeEvent<'rowIndexChanged', TData> {}
 export interface TopChangedEvent<TData = any> extends RowNodeEvent<'topChanged', TData> {}
 export interface ExpandedChangedEvent<TData = any> extends RowNodeEvent<'expandedChanged', TData> {}
-/** @deprecated v33 Use the `modelUpdated` event instead and calculate whether the first child has changed. */
-export interface FirstChildChangedEvent<TData = any> extends RowNodeEvent<'firstChildChanged', TData> {}
-/** @deprecated v33 Use the `modelUpdated` event instead and calculate whether the last child has changed. */
-export interface LastChildChangedEvent<TData = any> extends RowNodeEvent<'lastChildChanged', TData> {}
-/** @deprecated v33 Use the `modelUpdated` event instead and calculate whether the child index has changed. */
-export interface ChildIndexChangedEvent<TData = any> extends RowNodeEvent<'childIndexChanged', TData> {}
 export interface AllChildrenCountChangedEvent<TData = any> extends RowNodeEvent<'allChildrenCountChanged', TData> {}
 export interface UiLevelChangedEvent<TData = any> extends RowNodeEvent<'uiLevelChanged', TData> {}
 export interface DataChangedEvent<TData = any> extends RowNodeEvent<'dataChanged', TData> {
@@ -158,13 +146,6 @@ interface BaseRowNode<TData = any> {
      * - In case of treeData, this is `true` for any kind of node that have children. Filler nodes or user provided nodes with children.
      */
     group: boolean | undefined;
-
-    /** @deprecated v33 Use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead. */
-    firstChild: boolean;
-    /** @deprecated v33 Use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead. */
-    lastChild: boolean;
-    /** @deprecated v33 Use `rowNode.parent?.childrenAfterSort?.findIndex(r => r === rowNode)` instead. */
-    childIndex: number;
 
     /** How many levels this node is from the top when grouping. */
     level: number;
