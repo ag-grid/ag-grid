@@ -2551,7 +2551,19 @@ describe('the column events of an updateGridOptions call changing column options
     test('one update changing rowData before autoGroupColumnDef refreshes the rows before columnEverythingChanged', async () => {
         const api = createGroupedGrid();
         await settle();
-        const heard = hear(api, ['columnEverythingChanged', 'modelUpdated']);
+        // Each event with the top-level group keys displayed when it arrives.
+        const heard: string[] = [];
+        const topGroupKeys = () => {
+            const keys: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => {
+                if (node.group && node.level === 0) {
+                    keys.push(String(node.key));
+                }
+            });
+            return keys.join(',');
+        };
+        api.addEventListener('modelUpdated', () => heard.push(`modelUpdated:${topGroupKeys()}`));
+        api.addEventListener('columnEverythingChanged', () => heard.push('columnEverythingChanged'));
 
         api.updateGridOptions({
             rowData: [
@@ -2563,11 +2575,10 @@ describe('the column events of an updateGridOptions call changing column options
         await settle();
 
         expect(autoGroupColumns(api).map((column) => api.getDisplayNameForColumn(column, 'header'))).toEqual(['F']);
-        const modelUpdated = heard.indexOf('modelUpdated');
         const everythingChanged = heard.indexOf('columnEverythingChanged');
-        expect(modelUpdated).toBeGreaterThanOrEqual(0);
-        expect(everythingChanged).toBeGreaterThanOrEqual(0);
-        expect(modelUpdated).toBeLessThan(everythingChanged);
+        expect(everythingChanged).toBeGreaterThan(0);
+        // The refresh before columnEverythingChanged already holds the replacement groups.
+        expect(heard[everythingChanged - 1]).toBe('modelUpdated:z,w');
     });
 
     test('rowSelection turning its checkboxes on, off and on in three calls shows, removes and shows the selection column', async () => {
@@ -2577,6 +2588,7 @@ describe('the column events of an updateGridOptions call changing column options
             rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
         });
         await settle();
+        expect(displayedIds(api)).toEqual(['a', 'b']);
 
         api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: true } });
         await settle();
@@ -2629,10 +2641,16 @@ describe('the column events of an updateGridOptions call changing column options
             },
         });
         await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c']);
+        // Row 0 has c = 1, so its double is 2.
+        const firstDouble = () => {
+            const rowNode = api.getRowNode('0');
+            return rowNode && api.getCellValue({ rowNode, colKey: 'double' });
+        };
 
         api.setGridOption('calculatedColumns', true);
         await settle();
-        expect(displayedIds(api)).toEqual(['a', 'c', 'double']);
+        expect({ ids: displayedIds(api), double: firstDouble() }).toEqual({ ids: ['a', 'c', 'double'], double: 2 });
 
         api.setGridOption('calculatedColumns', false);
         await settle();
@@ -2640,39 +2658,55 @@ describe('the column events of an updateGridOptions call changing column options
 
         api.setGridOption('calculatedColumns', true);
         await settle();
-        expect(displayedIds(api)).toEqual(['a', 'c', 'double']);
+        expect({ ids: displayedIds(api), double: firstDouble() }).toEqual({ ids: ['a', 'c', 'double'], double: 2 });
     });
 
     // d is neither grouped nor aggregated, so pivot mode hides it.
-    test.each<{ option: keyof GridOptions; update: GridOptions; ids: string[]; autoHeader: string | undefined }>([
+    test.each<{
+        option: keyof GridOptions;
+        update: GridOptions;
+        ids: string[];
+        autoHeader: string | undefined;
+        changesDisplayedColumns: boolean;
+    }>([
         {
             option: 'groupDisplayType',
             update: { groupDisplayType: 'multipleColumns' },
             ids: ['ag-Grid-AutoColumn-a', 'ag-Grid-AutoColumn-b', 'c', 'd'],
             autoHeader: undefined,
+            changesDisplayedColumns: true,
         },
         {
             option: 'autoGroupColumnDef',
             update: { autoGroupColumnDef: { headerName: 'G' } },
             ids: ['ag-Grid-AutoColumn', 'c', 'd'],
             autoHeader: 'G',
+            changesDisplayedColumns: false,
         },
         {
             option: 'rowNumbers',
             update: { rowNumbers: true },
             ids: ['ag-Grid-RowNumbersColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
             autoHeader: 'Group',
+            changesDisplayedColumns: true,
         },
         {
             option: 'rowSelection',
             update: { rowSelection: { mode: 'multiRow' } },
             ids: ['ag-Grid-SelectionColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
             autoHeader: 'Group',
+            changesDisplayedColumns: true,
         },
-        { option: 'pivotMode', update: { pivotMode: true }, ids: ['ag-Grid-AutoColumn', 'c'], autoHeader: 'Group' },
+        {
+            option: 'pivotMode',
+            update: { pivotMode: true },
+            ids: ['ag-Grid-AutoColumn', 'c'],
+            autoHeader: 'Group',
+            changesDisplayedColumns: true,
+        },
     ])(
-        'one update changing only $option raises at most one displayed columns change',
-        async ({ option, update, ids, autoHeader }) => {
+        'one update changing only $option raises at most one displayed columns change, and one when the displayed columns change',
+        async ({ option, update, ids, autoHeader, changesDisplayedColumns }) => {
             const api = createGroupedGrid({
                 columnDefs: [
                     { field: 'a', rowGroup: true, hide: true },
@@ -2694,7 +2728,11 @@ describe('the column events of an updateGridOptions call changing column options
                 ids: displayedIds(api),
                 autoHeader: auto ? api.getDisplayNameForColumn(auto, 'header') : undefined,
             }).toEqual({ option: update[option], ids, autoHeader });
-            expect(heard.length).toBeLessThanOrEqual(1);
+            if (changesDisplayedColumns) {
+                expect(heard).toEqual(['displayedColumnsChanged']);
+            } else {
+                expect(heard.length).toBeLessThanOrEqual(1);
+            }
         }
     );
 });

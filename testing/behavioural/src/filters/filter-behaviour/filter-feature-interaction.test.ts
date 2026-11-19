@@ -407,15 +407,22 @@ describe('Filter + feature interaction', () => {
             });
             api.setFilterModel({ n: { filterType: 'text', type: 'equals', filter: 'a' } });
             await asyncSetTimeout(0);
-            expect(api.getDisplayedRowCount()).toBe(0);
+            expect({ displayed: api.getDisplayedRowCount(), filterChanged: counts.filterChanged }).toEqual({
+                displayed: 0,
+                filterChanged: 1,
+            });
 
             counts.modelUpdated = 0;
             counts.filterChanged = 0;
             api.setGridOption('columnDefs', [{ field: 'n', ...textFilter(false) }]);
             await asyncSetTimeout(0);
 
+            const displayed: (string | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                displayed.push(api.getDisplayedRowAtIndex(i)?.id);
+            }
             expect(api.getFilterModel()).toEqual({ n: { filterType: 'text', type: 'equals', filter: 'a' } });
-            expect(api.getDisplayedRowCount()).toBe(2);
+            expect(displayed).toEqual(['A', 'B']);
             expect(counts).toEqual({ modelUpdated: 1, filterChanged: 0 });
         }
     );
@@ -447,7 +454,7 @@ describe('Filter + feature interaction', () => {
             api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id));
             return ids;
         };
-        expect(order()).toEqual(['A', 'B', 'D']);
+        expect({ order: order(), sortChanged: counts.sortChanged }).toEqual({ order: ['A', 'B', 'D'], sortChanged: 1 });
 
         counts.modelUpdated = 0;
         counts.sortChanged = 0;
@@ -456,6 +463,43 @@ describe('Filter + feature interaction', () => {
 
         expect(order()).toEqual(['D', 'A', 'B']);
         expect(counts).toEqual({ modelUpdated: 1, sortChanged: 0 });
+    });
+
+    describe('row groups sorted by the auto group column', () => {
+        const reversed = (valueA: string, valueB: string) => {
+            if (valueA === valueB) {
+                return 0;
+            }
+            return valueA < valueB ? 1 : -1;
+        };
+        const createGroupedGrid = (autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }],
+                autoGroupColumnDef,
+                rowData: [{ country: 'B' }, { country: 'A' }, { country: 'C' }],
+            });
+        const groups = (api: GridApi) => {
+            const keys: (string | null | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                keys.push(api.getDisplayedRowAtIndex(i)?.key);
+            }
+            return keys;
+        };
+
+        test('a comparator on autoGroupColumnDef sorts the groups, and the auto column keeps its sort while the comparator is removed and set again', async () => {
+            const api: GridApi = await createGroupedGrid({ comparator: reversed });
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            expect(groups(api)).toEqual(['C', 'B', 'A']);
+
+            api.setGridOption('autoGroupColumnDef', {});
+            await asyncSetTimeout(0);
+            expect(api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
+
+            api.setGridOption('autoGroupColumnDef', { comparator: reversed });
+            await asyncSetTimeout(0);
+            expect(groups(api)).toEqual(['C', 'B', 'A']);
+        });
     });
 
     test('an autoGroupColumnDef equal to the current one, passed as a new object, refreshes nothing', async () => {

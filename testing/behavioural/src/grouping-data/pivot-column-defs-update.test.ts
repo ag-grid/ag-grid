@@ -986,46 +986,33 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
-    test.each<{ keys: string; first: 'pivotMode' | 'pivotDefaultExpanded' }>([
-        { keys: 'pivotDefaultExpanded first', first: 'pivotDefaultExpanded' },
-    ])(
-        'one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group ($keys)',
-        (row) => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { field: 'country', rowGroup: true, hide: true },
-                    { field: 'sport', pivot: true, hide: true },
-                    { field: 'year', pivot: true, hide: true },
-                    { field: 'gold', aggFunc: 'sum' },
-                ],
-                pivotDefaultExpanded: 0,
-                rowData: olympicLikeRows,
-            });
-            const mode = { pivotMode: true };
-            const expanded = { pivotDefaultExpanded: -1 };
+    test('one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group (pivotDefaultExpanded first)', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotDefaultExpanded: 0,
+            rowData: olympicLikeRows,
+        });
+        const allOpen = [
+            { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+            { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
+            { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
+        ];
 
-            api.updateGridOptions(row.first === 'pivotMode' ? { ...mode, ...expanded } : { ...expanded, ...mode });
+        api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
 
-            expect(pivotGroups(api)).toEqual([
-                { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
-                {
-                    id: 'pivotGroup_sport-year_Gymnastics-2008',
-                    path: 'Gymnastics > 2008',
-                    open: true,
-                    expandable: false,
-                },
-                {
-                    id: 'pivotGroup_sport-year_Gymnastics-2012',
-                    path: 'Gymnastics > 2012',
-                    open: true,
-                    expandable: false,
-                },
-                { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
-                { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
-                { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
-            ]);
-        }
-    );
+        expect(api.isPivotMode()).toBe(true);
+        expect(pivotGroups(api)).toEqual(allOpen);
+        await asyncSetTimeout(0);
+        expect(pivotGroups(api)).toEqual(allOpen);
+    });
 
     test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {
         const api = gridsManager.createGrid('myGrid', {

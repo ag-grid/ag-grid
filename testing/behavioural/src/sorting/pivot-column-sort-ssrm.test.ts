@@ -140,11 +140,21 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const rowCountBefore = api.getDisplayedRowCount();
         const countBeforeSort = getRowsCount();
         const firstRow = api.getDisplayedRowAtIndex(0);
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        const expectNoReload = async () => {
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            expect({ requests: getRowsCount(), firstRowKept: api.getDisplayedRowAtIndex(0) === firstRow }).toEqual({
+                requests: countBeforeSort,
+                firstRowKept: true,
+            });
+        };
 
         clickYearPill();
         await waitFor(() =>
             expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'desc', pivots: descending })
         );
+        await expectNoReload();
 
         // null is an explicit "no sort": pivot result columns keep the order the server returned them in.
         clickYearPill();
@@ -154,18 +164,14 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
                 pivots: ['2004_gold', '2000_gold', '2008_gold'],
             })
         );
+        await expectNoReload();
 
         clickYearPill();
         await waitFor(() =>
             expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'asc', pivots: ascending })
         );
-        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
-        await asyncSetTimeout(0);
-        await asyncSetTimeout(0);
-
-        expect(getRowsCount()).toBe(countBeforeSort);
+        await expectNoReload();
         expect(api.getDisplayedRowCount()).toBe(rowCountBefore);
-        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
     });
 
     test('pivotComparator defines the ascending order and pivotSort desc reverses it', async () => {

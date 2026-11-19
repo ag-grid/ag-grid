@@ -22,7 +22,7 @@
  * and "IInnerHeaderAngularComp refresh method when not called".
  */
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, IHeaderParams, IInnerHeaderComponent } from 'ag-grid-community';
 import { AgPromise, ClientSideRowModelModule } from 'ag-grid-community';
@@ -130,11 +130,10 @@ describe.skip('innerHeaderComponent refresh on a column definition update', () =
     });
 });
 
-describe('innerHeaderComponent refresh on a column definition update', () => {
+describe('inner header component across column definition updates', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 
     beforeEach(() => {
-        refreshedWith = [];
         pendingInits = [];
     });
     afterEach(() => gridMgr.reset());
@@ -201,5 +200,8 @@ describe('innerHeaderComponent refresh on a column definition update', () => {
             resolveAll();
             expect(innerHeaderTexts(api)).toEqual(['Renamed']);
         });
+        await asyncSetTimeout(0);
+        resolveAll();
+        expect(innerHeaderTexts(api)).toEqual(['Renamed']);
     });
 });

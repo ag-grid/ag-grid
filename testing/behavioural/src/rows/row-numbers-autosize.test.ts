@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, mockGridLayout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
+import { onTestFinished } from 'vitest';
 
 import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -9,7 +10,7 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     getGridElement,
 } from 'ag-grid-community';
-import { RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
     id: string;
@@ -24,7 +25,13 @@ const makeRows = (count: number, start = 0): RowData[] =>
 
 describe('Row numbers column autosize', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ExternalFilterModule, RowGroupingModule, RowNumbersModule],
+        modules: [
+            ClientSideRowModelModule,
+            ExternalFilterModule,
+            RowGroupingModule,
+            RowNumbersModule,
+            CellSelectionModule,
+        ],
     });
     let measure: MockInstance<(form: HTMLFormElement) => number>;
 
@@ -426,5 +433,52 @@ describe('Row numbers column autosize', () => {
 
         await pastDebounce();
         expect(rowNumberWidth(api)).toBe(freshWidth);
+    });
+
+    test('turning rowNumbers on with cellSelection and a defaultColDef width in one update sizes and places the column as creating the grid with those options does', async () => {
+        const finalOptions: GridOptions<RowData> = {
+            columnDefs: [
+                { field: 'id', colId: 'pinnedA', pinned: 'left', width: 150 },
+                { field: 'id', colId: 'pinnedB', pinned: 'left', width: 150 },
+                { field: 'id', colId: 'body' },
+            ],
+            rowData: makeRows(100),
+            getRowId: (params) => params.data.id,
+            rowNumbers: true,
+            cellSelection: true,
+            defaultColDef: { width: 120 },
+        };
+        const layout = (api: GridApi) => {
+            const col = api.getColumn(ROW_NUMBERS_COLUMN_ID)!;
+            return { width: col.getActualWidth(), left: col.getLeft(), pinned: col.getPinned() };
+        };
+        const create = async (id: string, options: GridOptions<RowData>) => {
+            const api = gridMgr.createGrid(id, options);
+            await waitForEvent('firstDataRendered', api);
+            await pastDebounce();
+            return api;
+        };
+
+        const originalGridWidth = mockGridLayout.gridWidth;
+        onTestFinished(() => {
+            mockGridLayout.gridWidth = originalGridWidth;
+        });
+        mockGridLayout.gridWidth = 400;
+        const oneUpdate = await create('oneUpdate', {
+            ...finalOptions,
+            rowNumbers: false,
+            cellSelection: false,
+            defaultColDef: {},
+        });
+        oneUpdate.updateGridOptions({ rowNumbers: true, cellSelection: true, defaultColDef: { width: 120 } });
+        await pastDebounce();
+        const updated = layout(oneUpdate);
+
+        gridMgr.reset();
+        const alone = await create('alone', finalOptions);
+        const reference = layout(alone);
+
+        expect(reference).toEqual({ width: widthFor('101'), left: 0, pinned: 'left' });
+        expect(updated).toEqual(reference);
     });
 });

@@ -155,15 +155,16 @@ describe('Horizontal scrollbar while columns slide', () => {
         vi.useRealTimers();
     });
 
-    // A scrollbar applies after 100ms and a slide ends at 200ms: 150ms is between them.
-    const SCROLLBAR_APPLIED_MS = 150;
-    const SLIDE_ENDED_MS = 400;
+    // A slide ends at 200ms and the backup scrollbar refresh runs at 500ms: 150ms is mid-slide, 300ms between them.
+    const MID_SLIDE_MS = 150;
+    const AFTER_SLIDE_MS = 300;
+    // Long enough for the scrollbar to show (100ms) on the initial overflowing layout.
+    const SETTLED_MS = 400;
 
     const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
 
-    test('stays while columns slide out of an overflowing layout, and goes once the slide ends', async () => {
-        vi.useFakeTimers();
-        const api = gridsManager.createGrid('myGrid', {
+    const createOverflowingGrid = (suppressColumnMoveAnimation: boolean) =>
+        gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'a', width: 200 },
                 { field: 'b', width: 200 },
@@ -172,12 +173,32 @@ describe('Horizontal scrollbar while columns slide', () => {
             ],
             rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
             scrollbarWidth,
+            suppressColumnMoveAnimation,
         });
-        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+
+    test('goes at once when columns leave an overflowing layout without a slide', async () => {
+        vi.useFakeTimers();
+        const api = createOverflowingGrid(true);
+        await vi.advanceTimersByTimeAsync(SETTLED_MS);
         expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
 
         api.setColumnsVisible(['a', 'b'], false);
-        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
+
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            height: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], height: '0px' });
+    });
+
+    test('stays while columns slide out of an overflowing layout, and goes once the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = createOverflowingGrid(false);
+        await vi.advanceTimersByTimeAsync(SETTLED_MS);
+        expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
+
+        api.setColumnsVisible(['a', 'b'], false);
+        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
 
         // The two columns left (400px) fit the 600px viewport: the scrollbar is kept for the slide.
         expect({
@@ -185,7 +206,7 @@ describe('Horizontal scrollbar while columns slide', () => {
             height: horizontalScrollbarHeight(),
         }).toEqual({ displayed: ['c', 'd'], height: `${scrollbarWidth}px` });
 
-        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        await vi.advanceTimersByTimeAsync(AFTER_SLIDE_MS - MID_SLIDE_MS);
         expect(horizontalScrollbarHeight()).toBe('0px');
     });
 });
