@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Locator } from '@playwright/test';
 
-import type { ICellRendererParams } from 'ag-grid-community';
+import type { AgPromise, ICellRendererParams, ITooltipParams } from 'ag-grid-community';
 
 import { mountGrid } from '../src/mountGrid';
 
@@ -78,7 +78,10 @@ test.describe('tooltip positioning', () => {
             const grid = document.querySelector('#myGrid')!;
             grid.before(outer);
             outer.appendChild(grid);
-            outer.scrollTop = 150;
+            return new Promise<void>((resolve) => {
+                outer.addEventListener('scroll', () => resolve(), { once: true });
+                outer.scrollTop = 150;
+            });
         });
         await page.mouse.move(70, 110);
         const tooltip = page.getByRole('tooltip');
@@ -143,6 +146,73 @@ test.describe('tooltip positioning', () => {
             });
             await expect(page.getByRole('tooltip')).toHaveCount(0);
             expect((await source.boundingBox())!.y).toBeCloseTo(before.y - 40, 0);
+            await expect(source).toBeFocused();
+        });
+    }
+
+    for (const scrollTop of [10, 150]) {
+        test(`rechecks an async tooltip source after scrolling by ${scrollTop}`, async ({ page }) => {
+            const { cell, withApi } = await mountGrid(page, {
+                height: 600,
+                options: () => ({
+                    columnDefs: [
+                        {
+                            field: 'value',
+                            tooltip: true,
+                            tooltipComponent: class {
+                                private readonly gui = document.createElement('div');
+                                private params: ITooltipParams;
+                                public init(params: ITooltipParams): AgPromise<void> {
+                                    this.params = params;
+                                    this.gui.style.cssText = 'position:absolute;width:120px;height:40px';
+                                    this.gui.textContent = 'Tooltip';
+                                    return new window.agGrid.AgPromise<void>((resolve) => {
+                                        params.context.finishInit = resolve;
+                                    });
+                                }
+                                public getGui(): HTMLElement {
+                                    return this.gui;
+                                }
+                                public destroy(): void {
+                                    this.params.context.destroyed = true;
+                                }
+                            },
+                        },
+                    ],
+                    rowData: [{ value: 'Value' }],
+                    context: {},
+                    tooltipTrigger: 'focus',
+                    popupParent: document.body,
+                }),
+            });
+            await page.evaluate(() => {
+                const grid = document.querySelector('#myGrid')!;
+                const outer = document.createElement('div');
+                outer.id = 'scroll-parent';
+                outer.style.cssText = 'margin:100px 40px;width:900px;height:180px;overflow:auto';
+                grid.before(outer);
+                outer.appendChild(grid);
+            });
+            const source = cell(0, 'value');
+            await source.focus();
+            await expect.poll(() => withApi((api) => !!api.getGridOption('context').finishInit)).toBe(true);
+            await page.locator('#scroll-parent').evaluate(
+                (element, scrollTop) =>
+                    new Promise<void>((resolve) => {
+                        element.addEventListener('scroll', () => resolve(), { once: true });
+                        element.scrollTop = scrollTop;
+                    }),
+                scrollTop
+            );
+            await withApi((api) => api.getGridOption('context').finishInit());
+            const tooltip = page.getByRole('tooltip');
+            if (scrollTop === 150) {
+                await expect.poll(() => withApi((api) => !!api.getGridOption('context').destroyed)).toBe(true);
+                await expect(tooltip).toHaveCount(0);
+            } else {
+                await expect(tooltip).toHaveText('Tooltip');
+                await expectGap(source, tooltip, 'top', 6);
+            }
             await expect(source).toBeFocused();
         });
     }
@@ -292,6 +362,70 @@ test.describe('tooltip positioning', () => {
                         expect(popup.x).toBeCloseTo(x, 0);
                         const gap = row === 0 ? popup.y - y : y - popup.y - popup.height;
                         expect(gap).toBeCloseTo(6 * scale, 0);
+                    }).toPass();
+                    await page.keyboard.press('Escape');
+                    await expect(tooltip).toHaveCount(0);
+                }
+            });
+        }
+    }
+
+    for (const { zoom, useNativeZoom } of [
+        { zoom: 0.5, useNativeZoom: true },
+        { zoom: 2, useNativeZoom: true },
+        { zoom: 0.5, useNativeZoom: false },
+    ]) {
+        for (const anchor of ['target', 'pointer'] as const) {
+            test(`positions and flips a ${anchor} tooltip with CSS zoom ${zoom} below its containing block (native zoom: ${useNativeZoom})`, async ({
+                page,
+            }) => {
+                await page.setViewportSize({ width: 1400, height: 1000 });
+                const { cell, grid } = await mountGrid(page, {
+                    width: 500,
+                    height: 300,
+                    css: `body { position: relative; margin: 40px; border: 5px solid; } #myGrid { zoom: ${zoom}; border: 8px solid; } .ag-tooltip { height: 40px; }`,
+                    options: () => ({
+                        columnDefs: [
+                            { field: 'a', width: 200 },
+                            { field: 'b', width: 200, tooltip: true },
+                        ],
+                        rowData: Array.from({ length: 7 }, () => ({ a: 'A', b: 'Tooltip' })),
+                        headerHeight: 0,
+                        rowHeight: 40,
+                        tooltipPosition: 'bottom-start',
+                        tooltipShowDelay: 0,
+                        tooltipSwitchShowDelay: 0,
+                        popupParent: document.querySelector<HTMLElement>('#myGrid'),
+                    }),
+                });
+                if (!useNativeZoom) {
+                    await page.evaluate(() => {
+                        Object.defineProperty(Element.prototype, 'currentCSSZoom', { value: undefined });
+                    });
+                }
+                await page.evaluate((anchor) => window.gridApi.setGridOption('tooltipAnchor', anchor), anchor);
+                for (const row of [0, 6]) {
+                    const source = cell(row, 'b');
+                    const target = (await source.boundingBox())!;
+                    const pointer = {
+                        x: Math.round(target.x + target.width / 2),
+                        y: Math.round(target.y + target.height / 2),
+                    };
+                    await page.mouse.move(pointer.x, pointer.y);
+                    const tooltip = page.getByRole('tooltip');
+                    const side = row === 0 ? 'bottom' : 'top';
+                    await expect(tooltip).toHaveClass(new RegExp(`ag-tooltip-position-${side}-start`));
+                    await expect(async () => {
+                        const popup = (await tooltip.boundingBox())!;
+                        const bounds = (await grid.boundingBox())!;
+                        const x = anchor === 'pointer' ? pointer.x : target.x;
+                        const edge = row === 0 ? target.y + target.height : target.y;
+                        const y = anchor === 'pointer' ? pointer.y : edge;
+                        const gap = row === 0 ? popup.y - y : y - popup.y - popup.height;
+                        expect(popup.x).toBeCloseTo(x, 0);
+                        expect(gap).toBeCloseTo(6 * zoom, 0);
+                        expect(popup.y).toBeGreaterThanOrEqual(bounds.y + 8 * zoom);
+                        expect(popup.y + popup.height).toBeLessThanOrEqual(bounds.y + bounds.height - 8 * zoom);
                     }).toPass();
                     await page.keyboard.press('Escape');
                     await expect(tooltip).toHaveCount(0);

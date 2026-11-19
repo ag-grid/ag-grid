@@ -122,16 +122,33 @@ function getTooltipCoordinateSpace(ePopup: HTMLElement) {
     const rect = parent.getBoundingClientRect();
     const scaleX = parent.offsetWidth ? rect.width / parent.offsetWidth : 1;
     const scaleY = parent.offsetHeight ? rect.height / parent.offsetHeight : 1;
+    // CSS zoom can change below the containing block without establishing a new one.
+    const zoom = getRelativeZoom(ePopup, parent);
     const documentScroll = parent === parent.ownerDocument.scrollingElement;
     // Document scrolling is already reflected in its bounding rect.
     const scrollX = documentScroll ? 0 : parent.scrollLeft;
     const scrollY = documentScroll ? 0 : parent.scrollTop;
     return {
-        scaleX,
-        scaleY,
+        scaleX: scaleX * zoom,
+        scaleY: scaleY * zoom,
         left: rect.left + (parent.clientLeft - scrollX) * scaleX,
         top: rect.top + (parent.clientTop - scrollY) * scaleY,
     };
+}
+
+function getRelativeZoom(element: HTMLElement, ancestor: HTMLElement): number {
+    const effectiveZoom = element.currentCSSZoom;
+    if (effectiveZoom != null) {
+        return effectiveZoom / ancestor.currentCSSZoom;
+    }
+    const win = element.ownerDocument.defaultView!;
+    let zoom = 1;
+    let current: Element | null = element;
+    while (current && current !== ancestor) {
+        zoom *= Number.parseFloat(win.getComputedStyle(current).zoom) || 1;
+        current = current.parentElement ?? (current.getRootNode() as ShadowRoot).host ?? null;
+    }
+    return zoom;
 }
 
 function getTooltipGeometry(popupParent: HTMLElement, { ePopup, pointer, getSourceRect }: TooltipPopupPositionParams) {
@@ -146,12 +163,12 @@ function getTooltipGeometry(popupParent: HTMLElement, { ePopup, pointer, getSour
     };
     let bounds = viewport;
     if (popupParent !== doc.body && popupParent !== doc.documentElement) {
-        const rect = popupParent.getBoundingClientRect();
+        const rect = getClientRect(popupParent);
         bounds = {
-            top: Math.max(0, rect.top + popupParent.clientTop * scaleY),
-            left: Math.max(0, rect.left + popupParent.clientLeft * scaleX),
-            right: Math.min(viewport.right, rect.left + (popupParent.clientLeft + popupParent.clientWidth) * scaleX),
-            bottom: Math.min(viewport.bottom, rect.top + (popupParent.clientTop + popupParent.clientHeight) * scaleY),
+            top: Math.max(0, rect.top),
+            left: Math.max(0, rect.left),
+            right: Math.min(viewport.right, rect.right),
+            bottom: Math.min(viewport.bottom, rect.bottom),
         };
     }
     bounds = getClippedRect(popupParent, bounds);
@@ -224,6 +241,15 @@ function setTooltipStyle(ePopup: HTMLElement, property: string, value: string): 
     }
 }
 
+function getClientRect(element: HTMLElement): Rect {
+    const rect = element.getBoundingClientRect();
+    const scaleX = element.offsetWidth ? rect.width / element.offsetWidth : 1;
+    const scaleY = element.offsetHeight ? rect.height / element.offsetHeight : 1;
+    const left = rect.left + element.clientLeft * scaleX;
+    const top = rect.top + element.clientTop * scaleY;
+    return { left, top, right: left + element.clientWidth * scaleX, bottom: top + element.clientHeight * scaleY };
+}
+
 function getClippedRect(element: HTMLElement, rect: Rect): Rect {
     let { top, right, bottom, left } = rect;
     const doc = element.ownerDocument;
@@ -233,16 +259,14 @@ function getClippedRect(element: HTMLElement, rect: Rect): Rect {
     while (parent && parent !== doc.scrollingElement) {
         const { overflowX, overflowY } = win.getComputedStyle(parent);
         if (overflowX !== 'visible' || overflowY !== 'visible') {
-            const rect = parent.getBoundingClientRect();
-            const scaleX = parent.offsetWidth ? rect.width / parent.offsetWidth : 1;
-            const scaleY = parent.offsetHeight ? rect.height / parent.offsetHeight : 1;
+            const rect = getClientRect(parent);
             if (overflowX && overflowX !== 'visible') {
-                left = Math.max(left, rect.left + parent.clientLeft * scaleX);
-                right = Math.min(right, rect.left + (parent.clientLeft + parent.clientWidth) * scaleX);
+                left = Math.max(left, rect.left);
+                right = Math.min(right, rect.right);
             }
             if (overflowY && overflowY !== 'visible') {
-                top = Math.max(top, rect.top + parent.clientTop * scaleY);
-                bottom = Math.min(bottom, rect.top + (parent.clientTop + parent.clientHeight) * scaleY);
+                top = Math.max(top, rect.top);
+                bottom = Math.min(bottom, rect.bottom);
             }
         }
         parent = parent.parentElement ?? ((parent.getRootNode() as ShadowRoot).host as HTMLElement | null);

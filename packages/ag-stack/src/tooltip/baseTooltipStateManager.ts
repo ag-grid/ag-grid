@@ -384,6 +384,11 @@ export abstract class BaseTooltipStateManager<
                 this.destroyBean(comp);
                 return;
             }
+            if (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui())) {
+                this.hideTooltip(true);
+                this.destroyBean(comp);
+                return;
+            }
             this.showComponent(comp, params);
         });
     }
