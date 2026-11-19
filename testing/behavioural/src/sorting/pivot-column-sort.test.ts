@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager, applyTransactionChecked, runToIdle } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
@@ -498,8 +498,7 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             let pivotChanged = 0;
             api.addEventListener('columnPivotChanged', () => ++pivotChanged);
 
-            apply(api);
-            await asyncSetTimeout(0);
+            await runToIdle(() => apply(api));
             return { pivotChanged, order: pivotIds(api) };
         };
 

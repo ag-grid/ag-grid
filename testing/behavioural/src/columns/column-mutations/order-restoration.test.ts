@@ -1341,6 +1341,8 @@ describe('Column Mutations - order restoration', () => {
             await new GridRows(api, 'column instances are current after a colDef rebuild setup').check(`
                 ROOT id:ROOT_NODE_ID
             `);
+            const aBefore = api.getColumn('a')!;
+            const bBefore = api.getColumn('b')!;
 
             api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'c' }]);
 
@@ -1352,17 +1354,26 @@ describe('Column Mutations - order restoration', () => {
             await new GridRows(api, 'column instances are current after a colDef rebuild').check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            const columns = api.getAllGridColumns();
+            const c = api.getColumn('c');
+            const instance = (col: Column) => {
+                if (col === aBefore) {
+                    return 'a kept';
+                }
+                if (col === bBefore) {
+                    return 'b destroyed';
+                }
+                return col === c ? 'c new' : `${col.getColId()} other`;
+            };
             expect({
-                ids: columns.map((col) => col.getColId()),
-                current: columns.map((col) => col === api.getColumn(col.getColId())),
-                displayedCurrent: api.getAllDisplayedColumns().map((col) => col === api.getColumn(col.getColId())),
+                grid: api.getAllGridColumns().map(instance),
+                displayed: api.getAllDisplayedColumns().map(instance),
+                byId: [api.getColumn('a'), c].map((col) => col && instance(col)),
                 removed: api.getColumn('b'),
-                headerName: api.getColumn('a')!.getColDef().headerName,
+                headerName: aBefore.getColDef().headerName,
             }).toEqual({
-                ids: ['a', 'c'],
-                current: [true, true],
-                displayedCurrent: [true, true],
+                grid: ['a kept', 'c new'],
+                displayed: ['a kept', 'c new'],
+                byId: ['a kept', 'c new'],
                 removed: null,
                 headerName: 'A!',
             });

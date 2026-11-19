@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout, runToIdle } from 'ag-test-utils';
 
 import type {
     AgColumn,
@@ -1997,12 +1997,13 @@ describe('the rows a column update refreshes', () => {
         await asyncSetTimeout(0);
         const refreshes = countRefreshes(api);
 
-        api.setGridOption('columnDefs', [
-            { field: 'country', rowGroup: true, hide: true },
-            { field: 'sport' },
-            { field: 'gold', sort: 'desc' },
-        ]);
-        await asyncSetTimeout(0);
+        await runToIdle(() =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport' },
+                { field: 'gold', sort: 'desc' },
+            ])
+        );
 
         expect(refreshes()).toBe(1);
         await new GridRows(api, 'grouped and sorted').check(`
@@ -2061,11 +2062,12 @@ describe('the rows a column update refreshes', () => {
         let filterChanges = 0;
         api.addEventListener('filterChanged', () => ++filterChanges);
 
-        api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }]);
         // releasing the removed column's filter does not refresh the rows a second time
-        await waitFor(() => expect(filterChanges).toBe(1));
+        await runToIdle(() =>
+            api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }])
+        );
 
-        expect(refreshes()).toBe(1);
+        expect({ filterChanges, refreshes: refreshes() }).toEqual({ filterChanges: 1, refreshes: 1 });
         await new GridRows(api, 'filter released and grouped').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -2112,9 +2114,7 @@ describe('the rows a column update refreshes', () => {
             moved = pivotYears(event.columns).sort();
         });
 
-        update(api);
-        await waitFor(() => expect(order).toContain('modelUpdated'));
-        await asyncSetTimeout(0);
+        await runToIdle(() => update(api));
 
         return { order, moved, displayed: displayedPivotYears(api) };
     }
@@ -2179,9 +2179,7 @@ describe('the rows a column update refreshes', () => {
             api.addEventListener(type, () => heard.push(type));
         }
 
-        api.resetColumnState();
-        await waitFor(() => expect(heard).toContain('columnsReset'));
-        await asyncSetTimeout(0);
+        await runToIdle(() => api.resetColumnState());
 
         expect(displayedPivotYears(api)).toEqual(['2000', '2004', '2008', '2012']);
         expect(heard.filter((type) => type === 'columnMoved' || type === 'columnsReset')).toEqual([
@@ -2223,9 +2221,7 @@ describe('the rows a column update refreshes', () => {
         const refreshes: (boolean | undefined)[] = [];
         api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
 
-        api.addPivotColumns(['sport']);
-        await waitFor(() => expect(refreshes.length).toBeGreaterThan(0));
-        await asyncSetTimeout(0);
+        await runToIdle(() => api.addPivotColumns(['sport']));
 
         expect({
             refreshes,
@@ -2266,9 +2262,7 @@ describe('the rows a column update refreshes', () => {
         api.addEventListener('sortChanged', () => ++sortChanges);
 
         data[0].gold = 9;
-        api.onSortChanged();
-        await waitFor(() => expect({ sortChanges, refreshes: refreshes() }).toEqual({ sortChanges: 1, refreshes: 1 }));
-        await asyncSetTimeout(0);
+        await runToIdle(() => api.onSortChanged());
 
         expect({ sortChanges, refreshes: refreshes(), displayed: displayedIds() }).toEqual({
             sortChanges: 1,
@@ -2709,8 +2703,7 @@ describe('the column events of an updateGridOptions call changing column options
             let displayedColumnsChanged = 0;
             api.addEventListener('displayedColumnsChanged', () => ++displayedColumnsChanged);
 
-            api.updateGridOptions(update);
-            await settle();
+            await runToIdle(() => api.updateGridOptions(update));
 
             const auto = api.getColumn('ag-Grid-AutoColumn');
             expect({

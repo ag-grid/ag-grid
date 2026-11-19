@@ -26,6 +26,8 @@ const settle = async (): Promise<void> => {
 
 const ONE_FRAME_MS = 16;
 
+// No header rebuild count: a duplicate rebuild is idempotent (same DOM, no callback), so only internals see it.
+
 /** A count's two phases: the action and its next frame, then the timers it left, run out. */
 interface PhaseCounts {
     firstFrame: number;

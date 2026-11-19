@@ -479,7 +479,7 @@ describe('column header drag reorder', () => {
             return { before, after: colOrder(api), dragStarted };
         };
 
-        test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot', async () => {
+        test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot, though only a fresh one refuses the drag', async () => {
             const { kept, fresh } = await onKeptAndFresh(
                 {},
                 [group(leaf('c'), leaf('d')), leaf('a'), leaf('z')],
@@ -499,7 +499,8 @@ describe('column header drag reorder', () => {
             expect(kept.before).toEqual(['e', 'c', 'a', 'z']);
             expect(fresh.before).toEqual(['e', 'c', 'a', 'z']);
             expect({ kept: kept.after, fresh: fresh.after }).toEqual({ kept: kept.before, fresh: fresh.before });
-            expect(fresh.dragStarted).toBe(false);
+            // a kept header starting the drag only the drop refuses is a known defect: its fix flips kept to false
+            expect({ kept: kept.dragStarted, fresh: fresh.dragStarted }).toEqual({ kept: true, fresh: false });
         });
     });
 });
