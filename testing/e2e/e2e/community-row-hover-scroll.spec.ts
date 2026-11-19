@@ -17,7 +17,7 @@ const hoverState = (page: Page, x: number, y: number) =>
         ({ x, y }) => ({
             rowUnderPointer: document.elementFromPoint(x, y)?.closest('.ag-row')?.getAttribute('row-index') ?? null,
             hoveredRows: Array.from(document.querySelectorAll('.ag-row-hover'), (row) => row.getAttribute('row-index')),
-            tooltips: document.querySelectorAll('.ag-tooltip').length,
+            tooltips: Array.from(document.querySelectorAll('.ag-tooltip'), (tooltip) => tooltip.textContent?.trim()),
         }),
         { x, y }
     );
@@ -63,7 +63,9 @@ for (const ensureDomOrder of [true, false]) {
         await expect(async () => {
             const { rowUnderPointer, hoveredRows, tooltips } = await hoverState(page, x, y);
             expect(hoveredRows).toEqual([rowUnderPointer]);
-            expect(tooltips).toBeLessThanOrEqual(1);
+            // a tooltip may still be showing, but only the one for the cell under the pointer
+            expect(tooltips.length).toBeLessThanOrEqual(1);
+            expect(tooltips.filter((text) => text !== `Project ${rowUnderPointer}`)).toEqual([]);
         }).toPass({ timeout: 5000 });
     });
 }

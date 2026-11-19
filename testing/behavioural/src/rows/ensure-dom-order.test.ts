@@ -136,8 +136,12 @@ describe('ensureDomOrder', () => {
 
                     const rowsAfter = getRowsById(root);
                     const keptIds = Array.from(rowsBefore.keys()).filter((id) => rowsAfter.has(id));
-                    expect(keptIds.length).toBeGreaterThan(0);
+                    const keptBodyRows = keptIds.filter((id) => id.startsWith('r')).map((id) => rowsBefore.get(id)!);
+                    expect(keptBodyRows.length).toBeGreaterThan(0);
                     expect(keptIds.length).toBeLessThan(rowsBefore.size);
+                    if (rowKind === 'full width rows') {
+                        expect(keptBodyRows.some((row) => row.classList.contains('ag-full-width-row'))).toBe(true);
+                    }
                     const movedOrRecreated = keptIds.filter(
                         (id) => rowsAfter.get(id) !== rowsBefore.get(id) || removedRows.has(rowsBefore.get(id)!)
                     );
