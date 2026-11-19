@@ -2643,23 +2643,57 @@ describe('the column events of an updateGridOptions call changing column options
         expect(displayedIds(api)).toEqual(['a', 'c', 'double']);
     });
 
-    test.each([
-        { option: 'groupDisplayType', update: { groupDisplayType: 'multipleColumns' } },
-        { option: 'autoGroupColumnDef', update: { autoGroupColumnDef: { headerName: 'G' } } },
-        { option: 'rowNumbers', update: { rowNumbers: true } },
-        { option: 'rowSelection', update: { rowSelection: { mode: 'multiRow' } } },
-        { option: 'pivotMode', update: { pivotMode: true } },
-    ] as { option: keyof GridOptions; update: GridOptions }[])(
+    // d is neither grouped nor aggregated, so pivot mode hides it.
+    test.each<{ option: keyof GridOptions; update: GridOptions; ids: string[]; autoHeader: string | undefined }>([
+        {
+            option: 'groupDisplayType',
+            update: { groupDisplayType: 'multipleColumns' },
+            ids: ['ag-Grid-AutoColumn-a', 'ag-Grid-AutoColumn-b', 'c', 'd'],
+            autoHeader: undefined,
+        },
+        {
+            option: 'autoGroupColumnDef',
+            update: { autoGroupColumnDef: { headerName: 'G' } },
+            ids: ['ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'G',
+        },
+        {
+            option: 'rowNumbers',
+            update: { rowNumbers: true },
+            ids: ['ag-Grid-RowNumbersColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'Group',
+        },
+        {
+            option: 'rowSelection',
+            update: { rowSelection: { mode: 'multiRow' } },
+            ids: ['ag-Grid-SelectionColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'Group',
+        },
+        { option: 'pivotMode', update: { pivotMode: true }, ids: ['ag-Grid-AutoColumn', 'c'], autoHeader: 'Group' },
+    ])(
         'one update changing only $option raises at most one displayed columns change',
-        async ({ option, update }) => {
-            const api = createGroupedGrid();
+        async ({ option, update, ids, autoHeader }) => {
+            const api = createGroupedGrid({
+                columnDefs: [
+                    { field: 'a', rowGroup: true, hide: true },
+                    { field: 'b', rowGroup: true, hide: true },
+                    { field: 'c', aggFunc: 'sum' },
+                    { field: 'd' },
+                ],
+            });
             await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-AutoColumn', 'c', 'd']);
             const heard = hear(api, ['displayedColumnsChanged']);
 
             api.updateGridOptions(update);
             await settle();
 
-            expect(api.getGridOption(option)).toEqual(update[option]);
+            const auto = api.getColumn('ag-Grid-AutoColumn');
+            expect({
+                option: api.getGridOption(option),
+                ids: displayedIds(api),
+                autoHeader: auto ? api.getDisplayNameForColumn(auto, 'header') : undefined,
+            }).toEqual({ option: update[option], ids, autoHeader });
             expect(heard.length).toBeLessThanOrEqual(1);
         }
     );

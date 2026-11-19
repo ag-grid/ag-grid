@@ -986,7 +986,9 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
-    test.each([{ keys: 'pivotDefaultExpanded first', first: 'pivotDefaultExpanded' as const }])(
+    test.each<{ keys: string; first: 'pivotMode' | 'pivotDefaultExpanded' }>([
+        { keys: 'pivotDefaultExpanded first', first: 'pivotDefaultExpanded' },
+    ])(
         'one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group ($keys)',
         (row) => {
             const api = gridsManager.createGrid('myGrid', {
