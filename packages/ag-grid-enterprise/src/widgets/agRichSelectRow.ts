@@ -33,6 +33,7 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
     }
 
     private value: TValue;
+    private valueFormatted: string | undefined;
     private parsedValue: string | null;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
@@ -51,8 +52,8 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
                 {
                     getGui: () => this.getGui(),
                     getAriaElement: () => this.getGui().parentElement!,
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'richSelectListItem',
+                    getTooltip: () => ({ sourceValues: { value: this.value, valueFormatted: this.valueFormatted } }),
                     shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
                 },
                 this
@@ -62,6 +63,8 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
 
     public setState(value: TValue): void {
         const formattedValue = this.valueFormatter(value);
+        this.value = value;
+        this.valueFormatted = formattedValue;
         const rendererClaim = this.rendererGuard.claim();
         this.cellRenderer = this.destroyBean(this.cellRenderer);
         this.shouldDisplayTooltip = undefined;
@@ -72,8 +75,6 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, formattedValue);
         }
-
-        this.value = value;
     }
 
     public highlightString(matchString: string): void {

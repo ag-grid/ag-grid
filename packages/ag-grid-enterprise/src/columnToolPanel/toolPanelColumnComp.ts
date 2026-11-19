@@ -14,8 +14,8 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     LongTapEvent,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -122,27 +122,29 @@ export class ToolPanelColumnComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(column.colDef),
                 getLocation: () => 'columnToolPanelColumn',
-                getTooltipValue: () => {
+                getTooltip: () => {
+                    const colDef = column.colDef;
                     const displayName = this.displayName;
-                    return _resolveHeaderTooltipValue(
-                        column.colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
-                            location: 'columnToolPanelColumn',
-                            colDef: column.colDef,
-                            column,
-                            value: displayName,
-                            valueFormatted: displayName,
-                        })
-                    );
+                    const params = {
+                        colDef,
+                        column,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return {
+                        value: _resolveHeaderTooltipValue(
+                            colDef,
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                                location: 'columnToolPanelColumn',
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
+                    };
                 },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
-                getAdditionalParams: () => ({
-                    colDef: column.colDef,
-                    column,
-                    valueFormatted: this.displayName,
-                }),
             })
         );
 

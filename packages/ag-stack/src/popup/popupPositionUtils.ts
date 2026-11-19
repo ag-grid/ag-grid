@@ -7,6 +7,8 @@ interface FindBestPlacementOptions {
     gap?: number;
     enableRtl?: boolean;
     mirrorPlacementsInRtl?: boolean;
+    /** Keep the requested side when possible, otherwise minimise overflow along that side. */
+    fallback?: 'first' | 'leastOverflow';
 }
 
 const MIRRORED_ANCHORS: Partial<Record<Anchor, Anchor>> = {
@@ -18,7 +20,7 @@ const MIRRORED_ANCHORS: Partial<Record<Anchor, Anchor>> = {
     br: 'bl',
 } as const;
 
-interface Rect {
+export interface Rect {
     top: number;
     left: number;
     right: number;
@@ -95,9 +97,10 @@ export function computeAlignedPosition(
  *
  * Try a list of alignments in order, returning the position of the first one
  * that doesn't overlap the reference rect after bounds clamping.
+ * With `leastOverflow`, prefer a side that fits without clamping along the placement axis.
  *
  * @param referenceRect  Bounding rect of the reference element (relative to parent)
- * @param targetSize     Width and height of the target element
+ * @param targetSize     Width and height of the target element, or a measurement for each alignment
  * @param parentSize     Width and height of the bounding parent
  * @param placements     Alignments to try in preference order
  * @param gap            Pixel gap applied directionally away from the reference
@@ -105,21 +108,44 @@ export function computeAlignedPosition(
  */
 export function findBestPlacement(
     referenceRect: Rect,
-    targetSize: Size,
+    targetSize: Size | ((alignment: Alignment) => Size),
     parentSize: Size,
     placements: Alignment[],
     gapOrOptions: number | FindBestPlacementOptions = 0
-): { x: number; y: number } {
-    const { gap, enableRtl, mirrorPlacementsInRtl } = normaliseFindBestPlacementOptions(gapOrOptions);
+): { x: number; y: number; alignment: Alignment } {
+    const { gap, enableRtl, mirrorPlacementsInRtl, fallback } = normaliseFindBestPlacementOptions(gapOrOptions);
     const effectivePlacements = getEffectivePlacements(placements, enableRtl, mirrorPlacementsInRtl);
-    const { width, height } = targetSize;
-    const maxX = Math.max(parentSize.width - width, 0);
-    const maxY = Math.max(parentSize.height - height, 0);
+    let best: { x: number; y: number; alignment: Alignment } | undefined;
+    let leastOverflow = Infinity;
 
     for (const alignment of effectivePlacements) {
-        const pos = computeAlignedPosition(referenceRect, targetSize, alignment, gap);
+        const size = typeof targetSize === 'function' ? targetSize(alignment) : targetSize;
+        const { width, height } = size;
+        const maxX = Math.max(parentSize.width - width, 0);
+        const maxY = Math.max(parentSize.height - height, 0);
+        const pos = computeAlignedPosition(referenceRect, size, alignment, gap);
         const clampedX = Math.min(Math.max(pos.x, 0), maxX);
         const clampedY = Math.min(Math.max(pos.y, 0), maxY);
+
+        if (fallback === 'leastOverflow') {
+            const [targetAnchor, refAnchor] = alignment.split('-') as [Anchor, Anchor];
+            const { dx, dy } = getGapDirection(targetAnchor, refAnchor);
+            const overflow = Math.max(
+                0,
+                dx < 0 ? -pos.x : 0,
+                dx > 0 ? pos.x + width - parentSize.width : 0,
+                dy < 0 ? -pos.y : 0,
+                dy > 0 ? pos.y + height - parentSize.height : 0
+            );
+            if (overflow < leastOverflow) {
+                best = { x: clampedX, y: clampedY, alignment };
+                leastOverflow = overflow;
+            }
+            if (overflow === 0) {
+                return best!;
+            }
+            continue;
+        }
 
         const noOverlap =
             clampedX + width <= referenceRect.left ||
@@ -128,15 +154,20 @@ export function findBestPlacement(
             clampedY >= referenceRect.bottom;
 
         if (noOverlap) {
-            return { x: clampedX, y: clampedY };
+            return { x: clampedX, y: clampedY, alignment };
         }
     }
 
-    // Fallback to first placement, clamped to parent bounds
-    const fallback = computeAlignedPosition(referenceRect, targetSize, effectivePlacements[0], gap);
+    if (best) {
+        return best;
+    }
+    // Fallback to first placement, clamped to parent bounds.
+    const size = typeof targetSize === 'function' ? targetSize(effectivePlacements[0]) : targetSize;
+    const first = computeAlignedPosition(referenceRect, size, effectivePlacements[0], gap);
     return {
-        x: Math.min(Math.max(fallback.x, 0), maxX),
-        y: Math.min(Math.max(fallback.y, 0), maxY),
+        x: Math.min(Math.max(first.x, 0), Math.max(parentSize.width - size.width, 0)),
+        y: Math.min(Math.max(first.y, 0), Math.max(parentSize.height - size.height, 0)),
+        alignment: effectivePlacements[0],
     };
 }
 
@@ -210,6 +241,7 @@ function normaliseFindBestPlacementOptions(
             gap: gapOrOptions,
             enableRtl: false,
             mirrorPlacementsInRtl: true,
+            fallback: 'first',
         };
     }
 
@@ -217,6 +249,7 @@ function normaliseFindBestPlacementOptions(
         gap: gapOrOptions.gap ?? 0,
         enableRtl: gapOrOptions.enableRtl ?? false,
         mirrorPlacementsInRtl: gapOrOptions.mirrorPlacementsInRtl ?? true,
+        fallback: gapOrOptions.fallback ?? 'first',
     };
 }
 

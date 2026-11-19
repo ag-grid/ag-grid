@@ -307,8 +307,9 @@ export abstract class BasePopupService<
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
-            let { x, y } = updatePosition!();
-
+            if (fromResizeObserver && !ePopup.isConnected) {
+                return;
+            }
             if (
                 fromResizeObserver &&
                 ePopup.clientWidth === lastSize.width &&
@@ -317,8 +318,11 @@ export abstract class BasePopupService<
                 return;
             }
 
-            lastSize.width = ePopup.clientWidth;
-            lastSize.height = ePopup.clientHeight;
+            let { x, y } = updatePosition!();
+            if (!skipObserver) {
+                lastSize.width = ePopup.clientWidth;
+                lastSize.height = ePopup.clientHeight;
+            }
 
             if (nudgeX) {
                 x += nudgeX;

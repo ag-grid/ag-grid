@@ -422,6 +422,7 @@ export {
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
+    type ResolvedTooltip,
 } from './tooltip/tooltipFeature';
 export {
     _getLegacyTooltipFieldValue,

@@ -47,6 +47,40 @@ test('the default tooltip accepts the pointer across the gap and dismisses on Es
     await expect(page.getByRole('button', { name: 'Outside' })).toBeFocused();
 });
 
+test('focus tooltips describe cells and headers without changing their accessible names', async ({ page }) => {
+    const { cell, headerCell } = await mountGrid(page, {
+        options: () => ({
+            columnDefs: [
+                {
+                    field: 'age',
+                    tooltipValueGetter: () => 'The athlete age',
+                    headerTooltip: 'Tooltip for Age Column Header',
+                },
+            ],
+            rowData: [{ age: 23 }],
+            tooltipTrigger: 'focus',
+            tooltipShowDelay: 500,
+        }),
+    });
+    const source = cell(0, 'age');
+    await source.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('The athlete age');
+    await expect(source).toHaveAccessibleName('23');
+    await expect(source).toHaveAccessibleDescription('The athlete age');
+    await expect(source).not.toHaveAttribute('aria-owns');
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await expect(source).toHaveAccessibleDescription('The athlete age');
+
+    const header = headerCell('age');
+    await header.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('Tooltip for Age Column Header');
+    await expect(header).toHaveAccessibleName('Age');
+    await expect(header).toHaveAccessibleDescription('Tooltip for Age Column Header');
+    await expect(header).not.toHaveAttribute('aria-owns');
+});
+
 test('focus tooltips survive keyboard scrolling into view', async ({ page }) => {
     const { cell, withApi } = await mountGrid(page, {
         width: 400,
@@ -127,7 +161,9 @@ test('a shadow-root grid opens its cell menu once and suppresses the later nativ
     expect(await dispatchTouch(source, 'touchend')).toBe(true);
 });
 
-test('interactive tooltips support native Tab navigation and restore source focus on Escape', async ({ page }) => {
+test('selectively interactive tooltips support native Tab navigation and restore source focus on Escape', async ({
+    page,
+}) => {
     const { cell } = await mountGrid(page, {
         options: () => {
             class Tooltip {
@@ -140,16 +176,24 @@ test('interactive tooltips support native Tab navigation and restore source focu
                 }
             }
             return {
-                columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: Tooltip }],
-                rowData: [{ value: 'First tooltip' }],
+                columnDefs: [
+                    { field: 'plain', tooltip: true },
+                    { field: 'value', tooltip: true, tooltipComponent: Tooltip },
+                ],
+                rowData: [{ plain: 'Text tooltip', value: 'First tooltip' }],
                 tooltipTrigger: 'hoverOrFocus',
-                tooltipInteraction: true,
+                tooltipInteraction: ({ location, column, api }) =>
+                    location === 'cell' && column === api.getColumn('value'),
                 tooltipShowDelay: 0,
             };
         },
     });
     const source = cell(0, 'value');
-    await source.focus();
+    await cell(0, 'plain').focus();
+    await expect(page.getByRole('tooltip')).toHaveText('Text tooltip');
+    await expect(page.getByRole('dialog', { name: 'Tooltip' })).toHaveCount(0);
+    await page.keyboard.press('Tab');
+    await expect(source).toBeFocused();
     await expect(page.getByRole('dialog', { name: 'Tooltip' })).toBeVisible();
     await expect(source).toHaveAccessibleDescription('First tooltip');
     await page.keyboard.press('Tab');

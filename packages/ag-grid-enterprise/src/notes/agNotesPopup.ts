@@ -282,10 +282,17 @@ export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: n
         }
     }
 
-    return _findBestPlacement(referenceRect, popupSize, parentSize, [...basePlacements.slice(1), basePlacements[0]], {
-        gap: 0,
-        enableRtl,
-    });
+    const { x, y } = _findBestPlacement(
+        referenceRect,
+        popupSize,
+        parentSize,
+        [...basePlacements.slice(1), basePlacements[0]],
+        {
+            gap: 0,
+            enableRtl,
+        }
+    );
+    return { x, y };
 }
 
 /** @knipIgnore Used in tests */

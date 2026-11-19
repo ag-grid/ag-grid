@@ -128,6 +128,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private selectedValueRenderer?: ICellRendererComp;
     private readonly selectedValueRendererGuard = new ComponentInstanceGuard();
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
+    private valueFormatted: string | undefined;
 
     constructor(config?: RichSelectParams<TValue>) {
         const valueFormatter = resolveRichSelectValueFormatter<TValue>(config?.valueFormatter);
@@ -178,8 +179,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'richSelectValue',
+                getTooltip: () => ({ sourceValues: { value: this.value, valueFormatted: this.valueFormatted } }),
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
             })
         );
@@ -291,6 +292,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } = config;
 
         const valueFormatted = this.valueFormatter(value);
+        this.valueFormatted = valueFormatted;
         const isTypingMultiSelect = !!(allowTyping && multiSelect);
         const rendererClaim = this.selectedValueRendererGuard.claim();
         this.destroySelectedValueRenderer();

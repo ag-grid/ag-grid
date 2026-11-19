@@ -12,7 +12,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import type { GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
+import type { GridOptions, ITooltipComp, ITooltipParams, Module, TooltipCallbackParams } from 'ag-grid-community';
 import { ContextMenuModule } from 'ag-grid-enterprise';
 
 vi.mock(import('ag-stack'), async (importOriginal) => {
@@ -33,6 +33,21 @@ describe('Tooltip interaction', () => {
 
     const getTooltips = () => Array.from(document.querySelectorAll<HTMLElement>('.ag-tooltip, .ag-tooltip-custom'));
     const visibleTooltip = () => getTooltips().find((t) => !t.classList.contains('ag-tooltip-hiding'));
+
+    class InteractiveTooltip implements ITooltipComp {
+        private readonly eGui = document.createElement('div');
+
+        public init(params: ITooltipParams): void {
+            const input = document.createElement('input');
+            const button = document.createElement('button');
+            button.textContent = String(params.value);
+            this.eGui.append(input, button);
+        }
+
+        public getGui(): HTMLElement {
+            return this.eGui;
+        }
+    }
 
     test('AG-17885 re-hovering a cell whose tooltip is fading re-opens it with tooltipInteraction', async () => {
         const gridOptions: GridOptions = {
@@ -143,55 +158,194 @@ describe('Tooltip interaction', () => {
         expect(elapsed).toBeLessThan(SHOW_DELAY + INTERACTIVE_HIDE_DELAY / 2);
     });
 
-    test('connects an interactive tooltip to its source and supports keyboard entry and dismissal', async () => {
-        class InteractiveTooltip implements ITooltipComp {
-            private readonly eGui = document.createElement('div');
+    test.each([true, () => true])(
+        'supports keyboard entry and dismissal with tooltipInteraction: %s',
+        async (interaction) => {
+            const api = await gridMgr.createGridAndWait('tooltip-interaction-keyboard', {
+                columnDefs: [{ field: 'age', tooltip: true, tooltipComponent: InteractiveTooltip }],
+                rowData: [{ age: 19 }],
+                tooltipInteraction: interaction,
+                tooltipTrigger: 'focus',
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
 
-            public init(params: ITooltipParams): void {
-                const input = document.createElement('input');
-                const button = document.createElement('button');
-                button.textContent = String(params.value);
-                this.eGui.append(input, button);
-            }
+            ageCell.focus();
+            const tooltip = await waitFor(() => {
+                const current = visibleTooltip();
+                expect(current).toBeDefined();
+                return current!;
+            });
+            const input = tooltip.querySelector('input')!;
+            const button = tooltip.querySelector('button')!;
+            expect(tooltip).toHaveAttribute('role', 'dialog');
+            expect(ageCell).toHaveAccessibleDescription('19');
 
-            public getGui(): HTMLElement {
-                return this.eGui;
+            await userEvent.keyboard('{Tab}');
+            expect(input).toHaveFocus();
+
+            await userEvent.keyboard('{Tab}');
+            expect(button).toHaveFocus();
+            expect(visibleTooltip()).toBe(tooltip);
+
+            await userEvent.keyboard('{Escape}');
+            await waitFor(() => expect(visibleTooltip()).toBeUndefined());
+            expect(ageCell).toHaveFocus();
+            expect(ageCell).toHaveAccessibleDescription('19');
+            ageCell.blur();
+            expect(ageCell).not.toHaveAttribute('aria-describedby');
+        }
+    );
+
+    test.each([
+        { enabled: true, callback: false },
+        { enabled: false, callback: false },
+        { enabled: true, callback: true },
+        { enabled: false, callback: true },
+    ])(
+        'respects interaction=$enabled (callback: $callback) when clicking before the hover delay expires',
+        async ({ enabled, callback }) => {
+            const tooltip = vi.fn(() => 'Age tooltip');
+            const api = await gridMgr.createGridAndWait('tooltip-interaction-pending', {
+                columnDefs: [{ field: 'age', tooltip }],
+                rowData: [{ age: 19 }],
+                tooltipShowDelay: 20,
+                tooltipInteraction: callback ? () => enabled : enabled,
+            });
+            const grid = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(grid, agTestIdFor.cell('0', 'age')));
+
+            vi.useFakeTimers();
+            try {
+                cell.dispatchEvent(new MouseEvent('mouseenter'));
+                cell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                expect(tooltip).toHaveBeenCalledTimes(callback ? 1 : 0);
+                await vi.advanceTimersByTimeAsync(20);
+                expect(!!visibleTooltip()).toBe(enabled);
+            } finally {
+                gridMgr.reset();
+                vi.useRealTimers();
             }
         }
+    );
 
-        const api = await gridMgr.createGridAndWait('tooltip-interaction-keyboard', {
-            columnDefs: [{ field: 'age', tooltip: true, tooltipComponent: InteractiveTooltip }],
+    test.each([undefined, null, ''])('does not resolve interaction for empty tooltip content: %s', async (value) => {
+        const interaction = vi.fn(() => true);
+        const api = await gridMgr.createGridAndWait('tooltip-interaction-empty', {
+            columnDefs: [{ field: 'age', tooltip: () => value }],
             rowData: [{ age: 19 }],
-            tooltipInteraction: true,
+            tooltipShowDelay: 20,
+            tooltipInteraction: interaction,
+        });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+
+        vi.useFakeTimers();
+        try {
+            cell.dispatchEvent(new MouseEvent('mouseenter'));
+            cell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            await vi.advanceTimersByTimeAsync(20);
+            expect(interaction).not.toHaveBeenCalled();
+            expect(visibleTooltip()).toBeUndefined();
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
+    });
+
+    test('does not show a source tooltip when its getter opens a context menu', async () => {
+        const onTooltipShow = vi.fn();
+        const api = await gridMgr.createGridAndWait(
+            'tooltip-content-opens-menu',
+            {
+                columnDefs: [
+                    {
+                        field: 'age',
+                        tooltip: ({ api }) => {
+                            api.showContextMenu();
+                            return 'Age tooltip';
+                        },
+                    },
+                ],
+                rowData: [{ age: 19 }],
+                tooltipShowDelay: 20,
+                getContextMenuItems: () => [{ name: 'Action', tooltip: 'Menu hint' }],
+                onTooltipShow,
+            },
+            { modules: [ContextMenuModule] }
+        );
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+
+        vi.useFakeTimers();
+        try {
+            cell.dispatchEvent(new MouseEvent('mouseenter'));
+            await vi.advanceTimersByTimeAsync(20);
+            const menuItem = document.querySelector<HTMLElement>('[role="menuitem"]')!;
+            expect(menuItem).toHaveTextContent('Action');
+            expect(visibleTooltip()).toBeUndefined();
+            expect(onTooltipShow).not.toHaveBeenCalled();
+
+            menuItem.dispatchEvent(new MouseEvent('mouseenter'));
+            await vi.advanceTimersByTimeAsync(20);
+            expect(visibleTooltip()).toHaveTextContent('Menu hint');
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
+    });
+
+    test('resolves interaction per source and uses current values when a tooltip reopens', async () => {
+        const interaction = vi.fn(
+            (params: TooltipCallbackParams) =>
+                params.location === 'cell' && params.column === params.api.getColumn('age') && params.value >= 18
+        );
+        const data = { age: 19, plain: 7 };
+        const context = { test: 'interaction' };
+        const api = await gridMgr.createGridAndWait('tooltip-interaction-callback', {
+            columnDefs: [{ field: 'plain' }, { field: 'age', headerName: 'Age', headerTooltip: 'Age explanation' }],
+            defaultColDef: {
+                cellDataType: false,
+                tooltip: ({ value }) => `Details: ${value}`,
+                valueFormatter: ({ value }) => `Formatted: ${value}`,
+                tooltipComponent: InteractiveTooltip,
+            },
+            rowData: [data],
+            context,
             tooltipTrigger: 'focus',
+            tooltipInteraction: interaction,
         });
-        const gridDiv = getGridElement(api)! as HTMLElement;
-        const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
+        const grid = getGridElement(api)! as HTMLElement;
+        const plainCell = await waitFor(() => getByTestId(grid, agTestIdFor.cell('0', 'plain')));
+        const ageCell = await waitFor(() => getByTestId(grid, agTestIdFor.cell('0', 'age')));
+        const header = grid.querySelector<HTMLElement>('.ag-header-cell[col-id="age"]')!;
 
+        for (const [source, role, value] of [
+            [plainCell, 'tooltip', 7],
+            [ageCell, 'dialog', 19],
+            [header, 'tooltip', 'Age'],
+        ] as const) {
+            interaction.mockClear();
+            source.focus();
+            await waitFor(() => expect(visibleTooltip()).toHaveAttribute('role', role));
+            expect(interaction).toHaveBeenCalledTimes(1);
+            expect(interaction).toHaveBeenCalledWith(expect.objectContaining({ api, context, value }));
+            if (source === ageCell) {
+                expect(interaction).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        data,
+                        node: api.getDisplayedRowAtIndex(0),
+                        valueFormatted: 'Formatted: 19',
+                    })
+                );
+            }
+            await userEvent.keyboard('{Escape}');
+            await waitFor(() => expect(visibleTooltip()).toBeUndefined());
+            source.blur();
+        }
+
+        api.getDisplayedRowAtIndex(0)!.setDataValue('age', 17);
         ageCell.focus();
-        const tooltip = await waitFor(() => {
-            const current = visibleTooltip();
-            expect(current).toBeDefined();
-            return current!;
-        });
-        const input = tooltip.querySelector('input')!;
-        const button = tooltip.querySelector('button')!;
-        expect(tooltip).toHaveAttribute('role', 'dialog');
-        expect(ageCell).toHaveAccessibleDescription('19');
-
-        await userEvent.keyboard('{Tab}');
-        expect(input).toHaveFocus();
-
-        await userEvent.keyboard('{Tab}');
-        expect(button).toHaveFocus();
-        expect(visibleTooltip()).toBe(tooltip);
-
-        await userEvent.keyboard('{Escape}');
-        await waitFor(() => expect(visibleTooltip()).toBeUndefined());
-        expect(ageCell).toHaveFocus();
-        expect(ageCell).toHaveAccessibleDescription('19');
-        ageCell.blur();
-        expect(ageCell).not.toHaveAttribute('aria-describedby');
+        await waitFor(() => expect(visibleTooltip()).toHaveAttribute('role', 'tooltip'));
+        expect(interaction).toHaveBeenLastCalledWith(expect.objectContaining({ value: 17 }));
     });
 });
 

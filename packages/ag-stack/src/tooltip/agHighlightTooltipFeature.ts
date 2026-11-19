@@ -5,7 +5,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { ICommonSource } from '../interfaces/iEvent';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { TooltipCtrl } from '../interfaces/iTooltip';
+import type { TooltipCtrl, TooltipDetails } from '../interfaces/iTooltip';
 import { AgTooltipFeature } from './agTooltipFeature';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
 
@@ -24,7 +24,7 @@ export class AgHighlightTooltipFeature<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
-    TTooltipCtrlParams,
+    TTooltipCtrlParams extends TooltipDetails<TLocation>,
     TLocation extends string,
 > extends AgTooltipFeature<
     TBeanCollection,

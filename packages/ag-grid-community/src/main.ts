@@ -1050,10 +1050,16 @@ export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from 
 
 // Tooltips
 export type {
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
     ITooltipComp,
     ITooltipParams,
+    TooltipPosition,
+    TooltipPositionParams,
+    TooltipPositionCallback,
     TooltipCallbackFunc,
     TooltipCallbackParams,
+    TooltipContentParams,
     TooltipDefinition,
     TooltipLocation,
 } from './tooltip/tooltipComponent';

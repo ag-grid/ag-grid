@@ -11,6 +11,8 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMenuHide: true,
     enableBrowserTooltips: false,
     tooltipTrigger: 'hover',
+    tooltipAnchor: 'target',
+    tooltipOffset: 6,
     tooltipShowDelay: 2000,
     tooltipSwitchShowDelay: 200,
     noteTrigger: 'hover',

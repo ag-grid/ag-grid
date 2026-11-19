@@ -680,13 +680,12 @@ export class AgMenuItemComponent<
             false,
             {
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => undefined,
-                getTooltipValue: () => this.tooltip,
+                getTooltip: () => ({ value: this.tooltip }),
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,
                 shouldDisplayTooltipOnFocus: () =>
                     !this.isMouseActivation && this.shouldDisplayTooltipOnFocus?.() !== false,
-            } as TooltipCtrl<string, any>
+            } satisfies TooltipCtrl<'menu', { value: string | undefined }>
         );
 
         if (tooltipFeature) {

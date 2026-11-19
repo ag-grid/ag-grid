@@ -2296,6 +2296,24 @@
                 "url": "./tooltips/#show-and-hide-delay"
             }
         },
+        "tooltipPosition": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipAnchor": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipOffset": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
         "tooltipMouseTrack": {
             "more": {
                 "name": "Mouse Tracking",
