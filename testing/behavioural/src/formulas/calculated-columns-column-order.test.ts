@@ -11,6 +11,7 @@ import {
     setupCalculatedColumnsSuite,
     showColumnMenu,
 } from './calculatedColumnsHarness';
+import { addViaDialog } from './calculatedColumnsStateHarness';
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
@@ -240,6 +241,31 @@ describe('ag-grid calculated columns', () => {
             ├── LEAF id:r1 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" country:"USA" amount:10 doubled:20
             └── LEAF id:r2 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" amount:20 doubled:40
         `);
+    });
+
+    test('adding a calculated column from the column menu keeps a hierarchy level the user grouped alone under an ungrouped source', async () => {
+        const year = 'ag-Grid-HierarchyColumn-date-year';
+        const api = createGrid('calc-hierarchy-level-kept', {
+            rowData: [
+                { id: 'r1', a: 10, b: 3, date: new Date(2020, 5, 15) },
+                { id: 'r2', a: 5, b: 2, date: new Date(2020, 5, 15) },
+            ],
+            columnDefs: [
+                { field: 'date', rowGroup: false, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                { field: 'a' },
+                { field: 'b' },
+            ],
+        });
+        api.setRowGroupColumns([year]);
+        const before = api.getRowGroupColumns().map((col) => col.getColId());
+
+        await addViaDialog(api, 'a', '[a] * 2');
+        await asyncSetTimeout(0);
+
+        expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+            before: [year],
+            after: [year],
+        });
     });
 
     // Bracket references in calculated expressions can name a column by its `field` even when the

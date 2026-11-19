@@ -487,12 +487,12 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         });
     });
 
-    test('applying the column state getColumnState returned makes its default pivot sort explicit, turning strict pivot order on', async () => {
+    test('applying the column state getColumnState returned makes its default pivot sort explicit, re-sorting pivot result columns the user moved', async () => {
         const pivotIds = (api: GridApi) => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
         const run = async (id: string, apply: (api: GridApi) => void) => {
             const api = createPivotGrid(undefined, undefined, id);
             await waitFor(() => expect(pivotIds(api)).toHaveLength(3));
-            // the user's own column order is kept unless strict pivot column order re-sorts the result columns
+            // the user's own column order is kept unless an explicit pivotSort re-sorts the result columns
             api.moveColumns(['pivot_year_2022_sales'], 1);
             await waitFor(() => expect(pivotIds(api)[0]).toBe('pivot_year_2022_sales'));
             let pivotChanged = 0;

@@ -2102,7 +2102,7 @@ describe('the rows a column update refreshes', () => {
             rowData: pivotRowData,
             pivotMode: true,
         });
-        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4), { timeout: 300 });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
         expect(displayedPivotYears(api)).toEqual(['2000', '2004', '2008', '2012']);
         const order: string[] = [];
         let moved: string[] = [];
@@ -2113,7 +2113,7 @@ describe('the rows a column update refreshes', () => {
         });
 
         update(api);
-        await waitFor(() => expect(order).toContain('modelUpdated'), { timeout: 300 });
+        await waitFor(() => expect(order).toContain('modelUpdated'));
         await asyncSetTimeout(0);
 
         return { order, moved, displayed: displayedPivotYears(api) };
@@ -2169,11 +2169,9 @@ describe('the rows a column update refreshes', () => {
             rowData: pivotRowData,
             pivotMode: true,
         });
-        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4), { timeout: 300 });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        await waitFor(() => expect(displayedPivotYears(api)).toEqual(['2012', '2008', '2004', '2000']), {
-            timeout: 300,
-        });
+        await waitFor(() => expect(displayedPivotYears(api)).toEqual(['2012', '2008', '2004', '2000']));
         await asyncSetTimeout(0);
         const refreshes = countRefreshes(api);
         const heard: string[] = [];
@@ -2182,7 +2180,7 @@ describe('the rows a column update refreshes', () => {
         }
 
         api.resetColumnState();
-        await waitFor(() => expect(heard).toContain('columnsReset'), { timeout: 300 });
+        await waitFor(() => expect(heard).toContain('columnsReset'));
         await asyncSetTimeout(0);
 
         expect(displayedPivotYears(api)).toEqual(['2000', '2004', '2008', '2012']);
@@ -2205,11 +2203,11 @@ describe('the rows a column update refreshes', () => {
             rowData: pivotRowData.map((row) => ({ ...row, sport: 'Rowing' })),
             pivotMode: true,
         });
-        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4), { timeout: 300 });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
         let removedRows = 0;
         api.addEventListener('virtualRowRemoved', () => ++removedRows);
         api.setFilterModel({ country: { filterType: 'text', type: 'contains', filter: 'Ire' } });
-        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { timeout: 300 });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
         expect(Object.keys(api.getFilterModel())).toEqual(['country']);
         await asyncSetTimeout(0);
         // The filter removing France's row shows the listener hears a removed row.
@@ -2226,7 +2224,7 @@ describe('the rows a column update refreshes', () => {
         api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
 
         api.addPivotColumns(['sport']);
-        await waitFor(() => expect(refreshes.length).toBeGreaterThan(0), { timeout: 300 });
+        await waitFor(() => expect(refreshes.length).toBeGreaterThan(0));
         await asyncSetTimeout(0);
 
         expect({
@@ -2269,9 +2267,7 @@ describe('the rows a column update refreshes', () => {
 
         data[0].gold = 9;
         api.onSortChanged();
-        await waitFor(() => expect({ sortChanges, refreshes: refreshes() }).toEqual({ sortChanges: 1, refreshes: 1 }), {
-            timeout: 300,
-        });
+        await waitFor(() => expect({ sortChanges, refreshes: refreshes() }).toEqual({ sortChanges: 1, refreshes: 1 }));
         await asyncSetTimeout(0);
 
         expect({ sortChanges, refreshes: refreshes(), displayed: displayedIds() }).toEqual({
@@ -2590,49 +2586,33 @@ describe('the column events of an updateGridOptions call changing column options
         }).toEqual({ header: ['F'], topGroupKeys: ['z', 'w'], newDataRefreshFirst: true });
     });
 
-    test('rowSelection turning its checkboxes on, off and on in three calls shows, removes and shows the selection column', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData,
-            rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
-        });
-        await settle();
-        expect(displayedIds(api)).toEqual(['a', 'b']);
+    test.each([
+        { mode: 'multiRow' as const, off: { mode: 'multiRow' as const, checkboxes: false, headerCheckbox: false } },
+        { mode: 'singleRow' as const, off: { mode: 'singleRow' as const, checkboxes: false } },
+    ])(
+        'rowSelection in $mode mode turning its checkboxes on, off and on in three calls shows, removes and shows the selection column',
+        async ({ mode, off }) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData,
+                rowSelection: off,
+            });
+            await settle();
+            expect(displayedIds(api)).toEqual(['a', 'b']);
 
-        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: true } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+            api.updateGridOptions({ rowSelection: { mode, checkboxes: true } });
+            await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
 
-        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['a', 'b']);
+            api.updateGridOptions({ rowSelection: off });
+            await settle();
+            expect(displayedIds(api)).toEqual(['a', 'b']);
 
-        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: true } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
-    });
-
-    test('rowSelection turning its checkboxes on, off and on in single row mode shows, removes and shows the selection column', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData,
-            rowSelection: { mode: 'singleRow', checkboxes: false },
-        });
-        await settle();
-        expect(displayedIds(api)).toEqual(['a', 'b']);
-
-        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: true } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
-
-        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: false } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['a', 'b']);
-
-        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: true } });
-        await settle();
-        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
-    });
+            api.updateGridOptions({ rowSelection: { mode, checkboxes: true } });
+            await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+        }
+    );
 
     test('calculatedColumns enabled, disabled and enabled in three calls shows, removes and shows the calculated column', async () => {
         const api = gridsManager.createGrid('myGrid', {

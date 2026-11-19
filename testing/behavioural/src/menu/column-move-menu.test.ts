@@ -17,7 +17,7 @@ import {
     mockGridLayout,
     polyfillOffsetParent,
 } from 'ag-test-utils';
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IColumnToolPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, LocaleModule, ScrollApiModule, getGridElement } from 'ag-grid-community';
@@ -308,12 +308,22 @@ describe('column movement menu actions', () => {
         const header = grid.querySelector('.ag-header-cell[col-id="a"]');
         const revealedBefore = getRevealedElements().length;
 
-        await userEvent.click(getByText(grid, 'Reset Columns'));
+        // sampled inside the slide, which a loaded machine's real clock can outlast
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'] });
+        await userEvent.click(getByText(grid, 'Reset Columns'), { delay: null });
         expect(order(api)[0]).toBe('a');
-        await waitFor(() => expect(document.activeElement).toBe(header));
+        while (document.activeElement !== header && vi.getTimerCount() > 0) {
+            await vi.advanceTimersToNextTimerAsync();
+        }
+        expect(document.activeElement).toBe(header);
         expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
         expect(getRevealedElements().slice(revealedBefore)).not.toContain(header);
-        await waitFor(() => expect(getRevealedElements().at(-1)).toBe(header));
+        await vi.runAllTimersAsync();
+        expect(grid.querySelector('.ag-column-moving')).toBeNull();
+        expect(getRevealedElements().at(-1)).toBe(header);
         expect(api.getHorizontalPixelRange().left).toBe(0);
     });
 

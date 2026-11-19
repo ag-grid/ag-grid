@@ -36,7 +36,6 @@ import {
 export {
     clickDialogButton,
     getCalculatedColumnDialog,
-    getDialogButton,
     getExpressionInput,
     newestCalculatedColumnDialog,
     selectDataType,
