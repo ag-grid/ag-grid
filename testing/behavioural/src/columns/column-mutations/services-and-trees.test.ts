@@ -922,8 +922,13 @@ describe('Column Mutations', () => {
             );
         };
         const ids = (cols: Column[]) => cols.map((col) => col.getColId());
+        const headerTexts = (api: GridApi) =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell'), (el) => [
+                el.getAttribute('col-id'),
+                el.querySelector('.ag-header-cell-text')?.textContent,
+            ]);
 
-        test('a rebuild keeps a level the user grouped alone under a source that is not grouped', () => {
+        test('a rebuild keeps a level the user grouped alone under a source that is not grouped', async () => {
             const api = gridsManager.createGrid('levelGrouped', {
                 columnDefs: [
                     { field: 'date', rowGroup: false, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
@@ -937,19 +942,23 @@ describe('Column Mutations', () => {
             const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
+            // setState finishes applying state in a timeout
+            await asyncSetTimeout(0);
 
             expect({
                 before,
                 after: ids(api.getRowGroupColumns()),
                 rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
             }).toEqual({
                 before: [year],
                 after: [year],
                 rebuilt: true,
+                headers: [],
             });
         });
 
-        test('a rebuild keeps a level the user pivoted alone under a source that is not pivoted', () => {
+        test('a rebuild keeps a level the user pivoted alone under a source that is not pivoted', async () => {
             const api = gridsManager.createGrid('levelPivoted', {
                 columnDefs: [
                     { field: 'date', pivot: false, enablePivot: true, groupHierarchy: ['year', 'month'] },
@@ -964,15 +973,19 @@ describe('Column Mutations', () => {
             const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
+            // setState finishes applying state in a timeout
+            await asyncSetTimeout(0);
 
             expect({
                 before,
                 after: ids(api.getPivotColumns()),
                 rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
             }).toEqual({
                 before: [year],
                 after: [year],
                 rebuilt: true,
+                headers: [],
             });
         });
     });

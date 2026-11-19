@@ -819,7 +819,7 @@ describe('Column API', () => {
             expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
         });
 
-        describe('moveColumns with repeated, unknown and out-of-range keys', () => {
+        describe('moveColumns toIndex bound: the columns left after removal', () => {
             const createAbcd = (gridId: string) =>
                 gridsManager.createGrid(gridId, {
                     columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
@@ -836,6 +836,19 @@ describe('Column API', () => {
 
                     expect(warnSpy.mock.calls.map((call) => call[0])).toEqual(['AG Grid: warning #30']);
                     expect(allColIds(api)).toEqual(['a', 'b', 'c', 'd']);
+                } finally {
+                    warnSpy.mockRestore();
+                }
+            });
+
+            test('toIndex equal to the columns left after removal moves them to the end without warning', () => {
+                const api = createAbcd('last-slot');
+                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    api.moveColumns(['b', 'c'], 2);
+
+                    expect(warnSpy.mock.calls).toEqual([]);
+                    expect(allColIds(api)).toEqual(['a', 'd', 'b', 'c']);
                 } finally {
                     warnSpy.mockRestore();
                 }

@@ -1018,6 +1018,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             const before = api.getRowGroupColumns().map((col) => col.getColId());
 
             await addViaDialog(api, 'a', '[a] * 2');
+            await asyncSetTimeout(0);
 
             expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
                 before: [year],

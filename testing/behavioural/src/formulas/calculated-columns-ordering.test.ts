@@ -348,6 +348,9 @@ describe('calculated columns - display ordering', () => {
         expect(api.getColumn('calculated_1')!.getColDef().headerName).toBe('Double Age');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe(46);
         await waitFor(() => expect(events).toHaveLength(2));
+        // a duplicate from a later live-apply frame would land within this window
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
         expect(events).toEqual([
             { type: 'calculatedColumnCreated', expression: '' },
             {
@@ -880,7 +883,7 @@ describe('calculated columns - display ordering', () => {
     });
 
     test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
-        const api = createGrid('dialog-autogroup-moved-last-column-types', {
+        const api = createGrid('dialog-autogroup-moved-middle-column-types', {
             rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
             columnTypes: { someType: {} },
             columnDefs: [
@@ -891,9 +894,9 @@ describe('calculated columns - display ordering', () => {
         });
         await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
         const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-        api.moveColumns([x1], order(api).length - 1);
-        expect(order(api).at(-1)).toBe(x1);
-        const moved = order(api);
+        api.moveColumns([x1], 3);
+        const moved = ['ag-Grid-AutoColumn', 'region', 'revenue', x1, 'cost'];
+        expect(order(api)).toEqual(moved);
 
         api.setGridOption('columnTypes', { someType: { width: 99 } });
         await nextAnimationFrame();
@@ -907,7 +910,7 @@ describe('calculated columns - display ordering', () => {
     test('a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it, with or without maintainColumnOrder', async () => {
         for (const maintainColumnOrder of [false, true]) {
             gridsManager.reset();
-            const api = createGrid(`dialog-autogroup-moved-last-ungrouped-types-${maintainColumnOrder}`, {
+            const api = createGrid(`dialog-autogroup-moved-middle-ungrouped-types-${maintainColumnOrder}`, {
                 maintainColumnOrder,
                 rowData: [{ id: 'r1', g: 'EMEA', revenue: 10, cost: 3, z: 1 }],
                 columnTypes: { t: { rowGroup: true } },
@@ -920,9 +923,9 @@ describe('calculated columns - display ordering', () => {
             });
             await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
             const added = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-            api.moveColumns([added], order(api).length - 1);
-            expect({ maintainColumnOrder, last: order(api).at(-1) }).toEqual({ maintainColumnOrder, last: added });
-            const moved = order(api);
+            api.moveColumns([added], 3);
+            const moved = ['ag-Grid-AutoColumn', 'g', 'revenue', added, 'cost', 'z'];
+            expect({ maintainColumnOrder, moved: order(api) }).toEqual({ maintainColumnOrder, moved });
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });
             await waitFor(() => expect(order(api)).not.toContain('ag-Grid-AutoColumn'));

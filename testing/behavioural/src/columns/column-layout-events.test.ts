@@ -2145,6 +2145,10 @@ describe('the rows a column update refreshes', () => {
         'columnMoved',
         'columnsReset',
         'columnPivotChanged',
+        'pivotMaxColumnsExceeded',
+        'columnGroupOpened',
+        'columnHeaderNameChanged',
+        'sortChanged',
         'columnVisible',
         'columnPinned',
         'columnResized',
@@ -2201,17 +2205,24 @@ describe('the rows a column update refreshes', () => {
             pivotMode: true,
         });
         await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4), { timeout: 300 });
+        let removedRows = 0;
+        api.addEventListener('virtualRowRemoved', () => ++removedRows);
         api.setFilterModel({ country: { filterType: 'text', type: 'contains', filter: 'Ire' } });
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { timeout: 300 });
         expect(Object.keys(api.getFilterModel())).toEqual(['country']);
         await asyncSetTimeout(0);
+        // The filter removing France's row shows the listener hears a removed row.
+        expect(removedRows).toBe(1);
+        removedRows = 0;
+        const rowElements = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-id="row-group-country-Ireland"]'));
+        const irelandRows = rowElements();
+        expect(irelandRows.length).toBeGreaterThan(0);
         const pivotKeys = () => api.getPivotResultColumns()!.map((column) => column.getColDef().pivotKeys!);
         // The Ireland rows' years: the France-only 2012 leaves with the filter.
         expect(pivotKeys()).toEqual([['2000'], ['2004'], ['2008']]);
         const refreshes: (boolean | undefined)[] = [];
-        let removedRows = 0;
         api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
-        api.addEventListener('virtualRowRemoved', () => ++removedRows);
 
         api.addPivotColumns(['sport']);
         await waitFor(() => expect(refreshes.length).toBeGreaterThan(0), { timeout: 300 });
@@ -2220,12 +2231,14 @@ describe('the rows a column update refreshes', () => {
         expect({
             refreshes,
             removedRows,
+            keptRowElements: rowElements().map((element, i) => element === irelandRows[i]),
             displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
             pivots: api.getPivotColumns().map((column) => column.getColId()),
             pivotKeys: pivotKeys(),
         }).toEqual({
             refreshes: [true],
             removedRows: 0,
+            keptRowElements: irelandRows.map(() => true),
             displayed: ['Ireland', 1],
             pivots: ['year', 'sport'],
             // Pivot groups are expandable by default with several pivot columns: each has its collapsed column.
@@ -2386,9 +2399,12 @@ describe('the column animations a column call leaves on', () => {
         const api = await createLockedGrid();
 
         api.moveColumns(['sport'], 1);
+        // Past the move's queued next-turn work, so the slide is under way before the no-op.
+        await asyncSetTimeout(0);
         expect(moving(api)).toBe(true);
 
         api.applyColumnState({ state: api.getColumnState() });
+        await asyncSetTimeout(0);
 
         expect(order(api)).toBe('year,sport,athlete,country');
         expect(moving(api)).toBe(true);

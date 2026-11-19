@@ -92,7 +92,7 @@ export function entryOf(state: GridState, colId: string): NonNullable<GridState[
 }
 
 // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-/** The expression as the grid stores it: each reference by column id, not by header name. */
+/** The expression as the grid stores it, references by column id: plain `[Header]` references only. */
 export function storedExpression(api: GridApi, expression: string): string {
     return expression.replace(/\[([^\]]+)\]/g, (reference, name: string) => {
         const column = api

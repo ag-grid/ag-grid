@@ -393,10 +393,10 @@ describe('Row numbers column autosize', () => {
             id: string;
             country: string;
         }
-        const countries = ['Ireland', 'Spain', 'Italy'];
+        // 12 group rows fit above the 60px minimum, and below the 120 leaf rows' fit
         const options: GridOptions<CountryRow> = {
             columnDefs: [{ field: 'country', rowGroup: true }, { field: 'id' }],
-            rowData: Array.from({ length: 1000 }, (_, i) => ({ id: String(i), country: countries[i % 3] })),
+            rowData: Array.from({ length: 120 }, (_, i) => ({ id: String(i), country: `country ${i % 12}` })),
             rowNumbers: true,
             groupDefaultExpanded: 0,
             getRowId: (params) => params.data.id,
@@ -409,22 +409,22 @@ describe('Row numbers column autosize', () => {
         };
 
         const fresh = await create('fresh');
-        expect(fresh.getDisplayedRowCount()).toBe(3);
+        expect(fresh.getDisplayedRowCount()).toBe(12);
         const freshWidth = rowNumberWidth(fresh);
-        // Three group rows measure below the column's 60px minimum, 1000 leaf rows above it.
-        expect(freshWidth).toBe(60);
+        expect(freshWidth).toBe(widthFor('13'));
 
         const api = await create('reset');
-        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(api.getDisplayedRowCount()).toBe(12);
         expect(rowNumberWidth(api)).toBe(freshWidth);
 
         api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] });
-        await expectWidth(api, '1000');
-        expect(api.getDisplayedRowCount()).toBe(1000);
+        await expectWidth(api, '121');
+        expect(api.getDisplayedRowCount()).toBe(120);
 
         api.resetColumnState();
-        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(api.getDisplayedRowCount()).toBe(12);
 
-        await waitFor(() => expect(rowNumberWidth(api)).toBe(freshWidth));
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(freshWidth);
     });
 });

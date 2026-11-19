@@ -1692,18 +1692,19 @@ describe('Column Mutations - order restoration', () => {
                 pivotMode: true,
                 enableStrictPivotColumnOrder: true,
             });
-            const pivotIds = () => displayedIds(api).filter((id) => id.startsWith('pivot_'));
+            const auto = 'ag-Grid-AutoColumn';
 
-            expect(pivotIds()).toEqual(['pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c']);
+            expect(displayedIds(api)).toEqual([auto, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c']);
 
             api.moveColumns(['pivot_b_1_c'], 2);
-            expect(pivotIds()).toEqual(['pivot_b_2_c', 'pivot_b_1_c', 'pivot_b_3_c']);
+            expect(displayedIds(api)).toEqual([auto, 'pivot_b_2_c', 'pivot_b_1_c', 'pivot_b_3_c']);
 
             api.setGridOption('defaultColDef', { width: 120 });
 
-            expect({ order: pivotIds(), width: api.getColumn('c')!.getActualWidth() }).toEqual({
-                order: ['pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'],
-                width: 120,
+            // Pivot result widths left out: a defaults change does not reach existing pivot result columns.
+            expect({ order: displayedIds(api), c: api.getColumn('c')!.getActualWidth() }).toEqual({
+                order: [auto, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'],
+                c: 120,
             });
         });
     });

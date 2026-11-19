@@ -37,7 +37,7 @@ describe('column header drag reorder', () => {
         fromClientX: number,
         toClientX: number
     ): Promise<void> {
-        return dragSelector(api, `.ag-header-cell[col-id="${sourceColId}"]`, fromClientX, toClientX);
+        await dragSelector(api, `.ag-header-cell[col-id="${sourceColId}"]`, fromClientX, toClientX);
     }
 
     async function dragSelector(
@@ -45,7 +45,7 @@ describe('column header drag reorder', () => {
         sourceSelector: string,
         fromClientX: number,
         toClientX: number
-    ): Promise<void> {
+    ): Promise<{ dragStarted: boolean }> {
         const source = el(api, sourceSelector);
         const viewport = el(api, '.ag-grid-viewport');
         const dispatcher = new DragEventDispatcher('mouse', null, false);
@@ -54,7 +54,9 @@ describe('column header drag reorder', () => {
             await dispatcher.startDrag(source, fromClientX, y);
             await dispatcher.movePointer(viewport, fromClientX, y);
             await dispatcher.movePointer(viewport, toClientX, y);
+            const dragStarted = source.ownerDocument.querySelector('.ag-dnd-ghost') != null;
             await dispatcher.finishDrag(viewport);
+            return { dragStarted };
         } finally {
             dispatcher.reset();
         }
@@ -424,13 +426,13 @@ describe('column header drag reorder', () => {
         const centreGroup = await dragOutOfGrid(
             api,
             '.ag-header .ag-grid-scrolling-cells .ag-header-group-cell-with-group',
-            ['c', 'd']
+            ['a', 'c', 'd']
         );
 
         expect(centreGroup).toEqual({
             ghostIcon: { hideIcon: true, notAllowed: false },
-            whileOut: { c: true, d: false },
-            released: { c: true, d: false },
+            whileOut: { a: true, c: true, d: false },
+            released: { a: true, c: true, d: false },
         });
     });
 
@@ -471,11 +473,11 @@ describe('column header drag reorder', () => {
 
         const dragGroup = (fromClientX: number, toClientX: number) => async (api: GridApi) => {
             const before = colOrder(api);
-            await dragSelector(api, groupHeader, fromClientX, toClientX);
+            const dragStarted = (await dragSelector(api, groupHeader, fromClientX, toClientX)).dragStarted;
             // A drop that must move nothing has no signal to poll for: hold open the window a move would land in.
             // eslint-disable-next-line no-restricted-syntax -- waits out the post-drop settle window in which an (incorrect) column move would be applied
             await asyncSetTimeout(50);
-            return { before, after: colOrder(api) };
+            return { before, after: colOrder(api), dragStarted };
         };
 
         test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot', async () => {
@@ -490,12 +492,15 @@ describe('column header drag reorder', () => {
                 columnDefs: [group(leaf('c'), leaf('e')), leaf('a'), leaf('z')],
                 rowData,
             });
-            const unlockedBefore = colOrder(unlockedApi);
-            await dragSelector(unlockedApi, groupHeader, 100, 350);
+            const unlocked = await dragGroup(100, 350)(unlockedApi);
 
-            await waitFor(() => expect(colOrder(unlockedApi)).not.toEqual(unlockedBefore));
-            expect(kept).toEqual(fresh);
-            expect(fresh.after).toEqual(fresh.before);
+            // Dropped at x=350 dragging right: the 200px group fits after a and z.
+            expect(unlocked).toEqual({ before: ['c', 'e', 'a', 'z'], after: ['a', 'z', 'c', 'e'], dragStarted: true });
+            // lockPosition places e first.
+            expect(kept.before).toEqual(['e', 'c', 'a', 'z']);
+            expect(fresh.before).toEqual(['e', 'c', 'a', 'z']);
+            expect({ kept: kept.after, fresh: fresh.after }).toEqual({ kept: kept.before, fresh: fresh.before });
+            expect(fresh.dragStarted).toBe(false);
         });
     });
 });

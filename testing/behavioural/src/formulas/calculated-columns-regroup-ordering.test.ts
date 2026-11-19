@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
@@ -67,11 +67,19 @@ describe('calculated columns - placement after row grouping is cleared and set a
         { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
     ];
 
+    // A reaction to the auto group columns changing may land on a frame or a later task.
+    async function settle(): Promise<void> {
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
+    }
+
     async function regroup(api: GridApi): Promise<void> {
         api.setRowGroupColumns([]);
         await waitFor(() => expect(order(api).some((id) => id.startsWith('ag-Grid-AutoColumn'))).toBe(false));
+        await settle();
         api.setRowGroupColumns(['region', 'country']);
         await waitFor(() => expect(order(api)).toEqual(expect.arrayContaining([regionAuto, countryAuto])));
+        await settle();
     }
 
     test('columns added from an auto group column that a column state moved together to the end stay there when row grouping is cleared and set again', async () => {
@@ -185,6 +193,11 @@ describe('calculated columns - placement after row grouping is cleared and set a
 
             // x1 already follows y1: move it away and back so the place is one the user gave it.
             api.moveColumns([x1], order(api).length - 1);
+            expect({ maintainColumnOrder, step: 'x1 moved last', order: order(api) }).toEqual({
+                maintainColumnOrder,
+                step: 'x1 moved last',
+                order: [regionAuto, y1, 'region', 'country', 'revenue', 'cost', x1],
+            });
             api.moveColumns([x1], 2);
             const placed = [regionAuto, y1, x1, 'region', 'country', 'revenue', 'cost'];
             expect({ maintainColumnOrder, step: 'x1 placed after y1', order: order(api) }).toEqual({
@@ -195,8 +208,10 @@ describe('calculated columns - placement after row grouping is cleared and set a
 
             api.setRowGroupColumns([]);
             await waitFor(() => expect(order(api)).not.toContain(regionAuto));
+            await settle();
             api.setRowGroupColumns(['region']);
             await waitFor(() => expect(order(api)).toContain(regionAuto));
+            await settle();
             expect({ maintainColumnOrder, step: 'regrouped', order: order(api) }).toEqual({
                 maintainColumnOrder,
                 step: 'regrouped',
@@ -223,10 +238,12 @@ describe('calculated columns - placement after row grouping is cleared and set a
                 order: [regionAuto, x1, countryAuto, 'region', 'country', 'revenue', 'cost'],
             });
 
+            // x1 follows the region leaf, a place an unmoved column does not reach after regrouping.
             if (arm === 'move') {
-                api.moveColumns([x1], 0);
+                api.moveColumns(['region'], 0);
+                api.moveColumns([x1], 1);
             } else {
-                const state = [x1, regionAuto, countryAuto, 'region', 'country', 'revenue', 'cost'];
+                const state = ['region', x1, regionAuto, countryAuto, 'country', 'revenue', 'cost'];
                 api.applyColumnState({ state: state.map((colId) => ({ colId })), applyOrder: true });
             }
             const afterCall = order(api);
@@ -238,10 +255,9 @@ describe('calculated columns - placement after row grouping is cleared and set a
         for (const maintainColumnOrder of [false, true]) {
             const move = await run('move', maintainColumnOrder);
             const state = await run('state', maintainColumnOrder);
-            const leaves = ['region', 'country', 'revenue', 'cost'];
             const placed = (x1: string) => ({
-                afterCall: [x1, regionAuto, countryAuto, ...leaves],
-                regrouped: [regionAuto, countryAuto, x1, ...leaves],
+                afterCall: ['region', x1, regionAuto, countryAuto, 'country', 'revenue', 'cost'],
+                regrouped: [regionAuto, countryAuto, 'region', x1, 'country', 'revenue', 'cost'],
             });
             expect({
                 maintainColumnOrder,

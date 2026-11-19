@@ -391,6 +391,7 @@ describe('Filter + feature interaction', () => {
             filterParams: { caseSensitive: true },
             comparator,
         });
+        const filterModel = { filterType: 'text', type: 'notEqual', filter: 'C' };
         // Each update on its own grid, so a refresh the equal one queues cannot be credited to the control.
         const refreshesAfterUpdate = async (update: GridOptions['autoGroupColumnDef']) => {
             let modelUpdated = 0;
@@ -402,20 +403,36 @@ describe('Filter + feature interaction', () => {
                 rowData: [
                     { id: 'A', n: 'A' },
                     { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'C', n: 'C' },
                     { id: 'D', n: 'D' },
                 ],
                 getRowId: (params) => params.data.id,
                 treeDataParentIdField: 'parentId',
                 onModelUpdated: () => ++modelUpdated,
             });
+            await api.setColumnFilterModel('ag-Grid-AutoColumn', filterModel);
+            api.onFilterChanged();
             await asyncSetTimeout(0);
+            const column = api.getColumn('ag-Grid-AutoColumn');
+            const filter = await api.getColumnFilterInstance('ag-Grid-AutoColumn');
             modelUpdated = 0;
             api.setGridOption('autoGroupColumnDef', update);
             await asyncSetTimeout(0);
-            return { api, refreshes: modelUpdated };
+            return {
+                api,
+                refreshes: modelUpdated,
+                columnKept: api.getColumn('ag-Grid-AutoColumn') === column,
+                filterKept: (await api.getColumnFilterInstance('ag-Grid-AutoColumn')) === filter,
+            };
         };
 
-        const afterEqual = (await refreshesAfterUpdate(autoGroupColumnDef())).refreshes;
+        const equal = await refreshesAfterUpdate(autoGroupColumnDef());
+        const afterEqual = {
+            refreshes: equal.refreshes,
+            columnKept: equal.columnKept,
+            filterKept: equal.filterKept,
+            filterModel: equal.api.getColumnFilterModel('ag-Grid-AutoColumn'),
+        };
         gridsManager.reset();
         // The positive control: a changed definition that re-sorts the rows is counted in the same window.
         const changed = await refreshesAfterUpdate({ ...autoGroupColumnDef(), headerName: 'Tree', sort: 'desc' });
@@ -428,7 +445,12 @@ describe('Filter + feature interaction', () => {
             afterChanged: changed.refreshes > 0,
             rowOrder,
             header: api.getDisplayNameForColumn(api.getColumn('ag-Grid-AutoColumn')!, 'header'),
-        }).toEqual({ afterEqual: 0, afterChanged: true, rowOrder: ['D', 'A', 'B'], header: 'Tree' });
+        }).toEqual({
+            afterEqual: { refreshes: 0, columnKept: true, filterKept: true, filterModel },
+            afterChanged: true,
+            rowOrder: ['D', 'A', 'B'],
+            header: 'Tree',
+        });
     });
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
