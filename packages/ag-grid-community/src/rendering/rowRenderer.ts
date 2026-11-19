@@ -688,10 +688,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const rowsInViewAnchor = rowsInView?.anchor ?? null;
             let keptRowsInView = !!rowsInViewAnchor && this.restoreRowsInView(rowsInViewAnchor);
             if (params.keepRowsInView) {
-                // kept until the rows drawn are measured, as their auto heights move the rows in view again, but only
-                // after an update that moved them
-                this.rowsInViewAnchorForHeights =
-                    keptRowsInView && this.beans.rowAutoHeight?.active ? rowsInViewAnchor : null;
+                // kept until the rows drawn are measured, as their auto heights can move the rows in view even when the
+                // update itself did not
+                this.rowsInViewAnchorForHeights = this.beans.rowAutoHeight?.active ? rowsInViewAnchor : null;
             }
 
             // never recycle rows on layout change as rows could change from normal DOM layout
