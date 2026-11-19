@@ -92,25 +92,12 @@ const isPositioned = (rowNode: RowNode): boolean =>
     !rowNode.rowPinned && rowNode.rowTop != null && rowNode.rowHeight != null && rowNode.rowIndex != null;
 
 /**
- * In display order, the rendered rows, which cover the view and its buffer, so the rows outside the view are followed
- * when the update removes or reorders every row in view. Without row virtualisation every row is rendered, and when an
- * update follows a scroll before its redraw the rendered rows are still those of the previous position: in both cases
- * the rows around the view are read from the row model.
+ * In display order, the loaded rows in view and within a viewport height of it, so the rows outside the view are
+ * followed when the update removes or reorders every row in view. They are read from the row model, as the rendered
+ * rows can be those of a scroll position not yet redrawn, or every row when row virtualisation is suppressed, and the
+ * row buffer can be empty.
  */
 function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewportBottom: number): RowNode[] {
-    if (!beans.gos.get('suppressRowVirtualisation')) {
-        const rows = beans.rowRenderer
-            .getAllRowCtrls()
-            .map(({ rowNode }) => rowNode)
-            .filter(isPositioned)
-            .sort((a, b) => a.rowTop! - b.rowTop!);
-        const first = rows[0];
-        const last = rows[rows.length - 1];
-        if (first && first.rowTop! <= firstVisiblePixel && last.rowTop! + last.rowHeight! >= viewportBottom) {
-            return rows;
-        }
-    }
-    // a viewport height either side, so rows outside the view are followed too
     const { pageBounds, rowModel } = beans;
     const margin = viewportBottom - firstVisiblePixel;
     const rows: RowNode[] = [];
