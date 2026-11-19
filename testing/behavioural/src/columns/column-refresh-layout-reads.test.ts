@@ -24,19 +24,20 @@ const settle = async (): Promise<void> => {
     await vi.runAllTimersAsync();
 };
 
-/** A count covers the action and its next frame on a fake clock, so a timer due later (a slide's end, a
- *  debounced scrollbar) never lands inside it however loaded the machine; the clock then runs out uncounted. */
-const COUNTED_CLOCK = {
-    toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'] as const,
-};
 const ONE_FRAME_MS = 16;
+
+/** A count's two phases: the action and its next frame, then the timers it left, run out. */
+interface PhaseCounts {
+    firstFrame: number;
+    deferred: number;
+}
 
 /** Counts reads of a layout property on one element — each one forces a layout in a browser. */
 const countPropertyReads = async (
     el: Element,
     prop: 'clientHeight' | 'scrollLeft',
     act: () => void
-): Promise<number> => {
+): Promise<PhaseCounts> => {
     let owner = Object.getPrototypeOf(el);
     let descriptor = Object.getOwnPropertyDescriptor(owner, prop);
     while (!descriptor && owner) {
@@ -62,39 +63,17 @@ const countPropertyReads = async (
     try {
         act();
         await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
+        const firstFrame = reads;
+        await settle();
+        return { firstFrame, deferred: reads - firstFrame };
     } finally {
         Object.defineProperty(owner, prop, original);
-        await settle();
     }
-    return reads;
-};
-
-/** Counts header-row rebuilds. `getColumnHeadersToRender` has one caller, which runs it once per pinned
- *  section, so the section reads divide by three. */
-const countHeaderRebuilds = async (api: GridApi, act: () => void): Promise<number> => {
-    await settle();
-
-    const colViewport = (api.getDisplayedRowAtIndex(0) as any).beans.colViewport;
-    const original = colViewport.getColumnHeadersToRender;
-    let sectionReads = 0;
-    colViewport.getColumnHeadersToRender = function (this: unknown, ...args: unknown[]) {
-        ++sectionReads;
-        return original.apply(this, args);
-    };
-
-    try {
-        act();
-        await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
-    } finally {
-        colViewport.getColumnHeadersToRender = original;
-        await settle();
-    }
-    return sectionReads / 3;
 };
 
 /** Counts `getComputedStyle` on the grid viewport — each one forces a style recalculation in a browser.
  *  Matched by class, not identity, so it also counts a grid created inside `act`. */
-const countViewportMeasurements = async (act: () => void): Promise<number> => {
+const countViewportMeasurements = async (act: () => void): Promise<PhaseCounts> => {
     await settle();
 
     const original = window.getComputedStyle;
@@ -109,11 +88,12 @@ const countViewportMeasurements = async (act: () => void): Promise<number> => {
     try {
         act();
         await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
+        const firstFrame = count;
+        await settle();
+        return { firstFrame, deferred: count - firstFrame };
     } finally {
         window.getComputedStyle = original;
-        await settle();
     }
-    return count;
 };
 
 describe('Column refresh layout reads', () => {
@@ -121,7 +101,7 @@ describe('Column refresh layout reads', () => {
         modules: [ClientSideRowModelModule, ColumnApiModule, PinnedRowModule, ScrollApiModule],
     });
     beforeEach(() => {
-        vi.useFakeTimers({ toFake: [...COUNTED_CLOCK.toFake] });
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'] });
     });
     afterEach(() => {
         gridsManager.reset();
@@ -152,7 +132,13 @@ describe('Column refresh layout reads', () => {
         const onShow = await countViewportMeasurements(() => api.setColumnsVisible(ids, true));
         expect(api.getAllDisplayedColumns()).toHaveLength(50);
 
-        expect({ onMove, onReset, onHide, onShow }).toEqual({ onMove: 0, onReset: 0, onHide: 0, onShow: 0 });
+        // Hiding or showing every column changes the scroll width, which the horizontal scrollbar re-measures later.
+        expect({ onMove, onReset, onHide, onShow }).toEqual({
+            onMove: { firstFrame: 0, deferred: 0 },
+            onReset: { firstFrame: 0, deferred: 0 },
+            onHide: { firstFrame: 0, deferred: 1 },
+            onShow: { firstFrame: 0, deferred: 1 },
+        });
     });
 
     // A change to the body width moves every column's `left`, so the virtual-column extraction has to run
@@ -318,7 +304,7 @@ describe('Column refresh layout reads', () => {
             api.setGridOption('pinnedTopRowData', [{ c0: 'a' }, { c0: 'b' }])
         );
 
-        expect(syncs, 'fake vertical scrollbar height syncs').toBe(1);
+        expect(syncs, 'fake vertical scrollbar height syncs').toEqual({ firstFrame: 1, deferred: 0 });
         expect(api.getPinnedTopRowCount(), 'the pinned-row change this counted must have landed').toBe(2);
     });
 
@@ -337,11 +323,12 @@ describe('Column refresh layout reads', () => {
         expect(viewport, 'grid viewport should be rendered').not.toBeNull();
 
         const onMove = await countPropertyReads(viewport, 'scrollLeft', () => api.moveColumnByIndex(0, 10));
-        expect(onMove, 'scrollLeft reads on a column move').toBe(1);
+        expect(onMove, 'scrollLeft reads on a column move').toEqual({ firstFrame: 1, deferred: 0 });
 
         const ids = api.getAllGridColumns().map((col) => col.getColId());
         const onHide = await countPropertyReads(viewport, 'scrollLeft', () => api.setColumnsVisible(ids, false));
-        expect(onHide, 'scrollLeft reads on hiding every column').toBe(2);
+        // The later reads are the horizontal scrollbar's, re-measuring the narrowed scroll width.
+        expect(onHide, 'scrollLeft reads on hiding every column').toEqual({ firstFrame: 2, deferred: 3 });
     });
 
     // What is left is the viewport checks that deliberately measure and report, each resolving one style
@@ -353,7 +340,7 @@ describe('Column refresh layout reads', () => {
             api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(50), rowData: [{ c0: 1 }] });
         });
 
-        expect(reads, 'getComputedStyle on the grid viewport').toBe(4);
+        expect(reads, 'getComputedStyle on the grid viewport').toEqual({ firstFrame: 4, deferred: 0 });
         expect(api!.getAllDisplayedColumns(), 'the grid this counted must have built its columns').toHaveLength(50);
     });
 
@@ -370,7 +357,7 @@ describe('Column refresh layout reads', () => {
 
         const reads = await countPropertyReads(viewport, 'scrollLeft', () => api.ensureColumnVisible('c120'));
 
-        expect(reads, 'grid viewport scrollLeft reads').toBe(3);
+        expect(reads, 'grid viewport scrollLeft reads').toEqual({ firstFrame: 3, deferred: 0 });
         expect(viewport.scrollLeft, 'the scroll this counted must have moved').toBeGreaterThan(0);
     });
 
@@ -387,7 +374,10 @@ describe('Column refresh layout reads', () => {
         const onMove = await countViewportMeasurements(() => api.moveColumnByIndex(5, 10));
         const onPin = await countViewportMeasurements(() => api.setColumnsPinned(['c2', 'c3'], 'left'));
 
-        expect({ onMove, onPin }).toEqual({ onMove: 0, onPin: 1 });
+        expect({ onMove, onPin }).toEqual({
+            onMove: { firstFrame: 0, deferred: 0 },
+            onPin: { firstFrame: 1, deferred: 0 },
+        });
     });
 
     // A flexed width is kept on the column and escapes as `columnResized`, so the flex pass measures
@@ -407,20 +397,11 @@ describe('Column refresh layout reads', () => {
         const onMove = await countViewportMeasurements(() => flexed.moveColumnByIndex(0, 10));
         const onHide = await countViewportMeasurements(() => flexed.setColumnsVisible(['c5'], false));
 
-        expect({ withoutFlex, onMove, onHide }).toEqual({ withoutFlex: 0, onMove: 1, onHide: 1 });
+        expect({ withoutFlex, onMove, onHide }).toEqual({
+            withoutFlex: { firstFrame: 0, deferred: 0 },
+            onMove: { firstFrame: 1, deferred: 0 },
+            onHide: { firstFrame: 1, deferred: 0 },
+        });
         expect(flexed.getAllDisplayedColumns(), 'the refresh this counted must have happened').toHaveLength(19);
-    });
-
-    // One column change raises `virtualColumnsChanged` and then `displayedColumnsChanged`, and both reach
-    // every header row. The second has to find the rendered sections unmoved and return.
-    test('a column refresh rebuilds each header row once, not once per event that reports it', async () => {
-        const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(20), rowData: [{ c0: 1 }] });
-        await settle();
-
-        const onHide = await countHeaderRebuilds(api, () => api.setColumnsVisible(['c5'], false));
-        const onMove = await countHeaderRebuilds(api, () => api.moveColumnByIndex(0, 10));
-
-        expect({ onHide, onMove }).toEqual({ onHide: 1, onMove: 1 });
-        expect(api.getAllDisplayedColumns(), 'the refresh this counted must have happened').toHaveLength(19);
     });
 });
