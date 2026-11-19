@@ -36,9 +36,13 @@ export class TooltipStateManager extends BaseTooltipStateManager<
         return _isTooltipPosition(position) ? position : super.getTooltipPosition(tooltip, trigger);
     }
 
-    protected override getTooltipInteraction(tooltip: ResolvedTooltip): boolean {
+    protected override getTooltipInteraction(tooltip?: ResolvedTooltip): boolean {
         const configured = this.gos.get('tooltipInteraction');
-        return typeof configured === 'function' ? configured(this.getCallbackParams(tooltip)) : !!configured;
+        if (typeof configured !== 'function') {
+            return !!configured;
+        }
+        tooltip ??= this.getTooltipDetails();
+        return !!tooltip && configured(this.getCallbackParams(tooltip));
     }
 
     private getCallbackParams(tooltip: ResolvedTooltip): TooltipCallbackParams {

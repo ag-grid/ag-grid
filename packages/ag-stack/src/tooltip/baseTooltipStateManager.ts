@@ -113,7 +113,7 @@ export abstract class BaseTooltipStateManager<
         return 'top-start';
     }
 
-    protected getTooltipInteraction(_tooltip: TTooltipCtrlParams): boolean {
+    protected getTooltipInteraction(_tooltip?: TTooltipCtrlParams): boolean {
         return this.gos.get('tooltipInteraction') === true;
     }
 
@@ -189,7 +189,7 @@ export abstract class BaseTooltipStateManager<
                 }
                 const interactionEnabled =
                     this.state === TooltipStates.WAITING_TO_SHOW
-                        ? this.getTooltipInteraction(this.getTooltip())
+                        ? this.getTooltipInteraction()
                         : this.interactionEnabled;
                 if (!interactionEnabled) {
                     this.hideTooltip();
@@ -341,7 +341,7 @@ export abstract class BaseTooltipStateManager<
         return false;
     }
 
-    private getTooltipDetails(): TTooltipCtrlParams | undefined {
+    protected getTooltipDetails(): TTooltipCtrlParams | undefined {
         const tooltip = this.getTooltip();
         const value = tooltip.value;
         if (value == null || value === '' || this.tooltipCtrl.shouldDisplayTooltip?.(tooltip) === false) {
@@ -364,13 +364,16 @@ export abstract class BaseTooltipStateManager<
             this.hideTooltip(true);
             return;
         }
+        const instance = ++this.tooltipInstanceCount;
         const tooltip = this.getTooltipDetails();
+        if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
+            return;
+        }
         if (!tooltip || (this.sourceFocused && this.isSourceClipped())) {
             this.hideTooltip(true);
             return;
         }
         this.state = TooltipStates.SHOWING;
-        const instance = ++this.tooltipInstanceCount;
         this.tooltipPosition = this.getTooltipPosition(tooltip, this.lastMouseEvent ? 'hover' : 'focus');
         if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
             return;

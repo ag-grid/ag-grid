@@ -13,6 +13,58 @@ async function expectGap(source: Locator, tooltip: Locator, side: 'top' | 'botto
 }
 
 test.describe('tooltip positioning', () => {
+    for (const scale of [0.5, 2]) {
+        for (const anchor of ['target', 'pointer'] as const) {
+            test(`positions and flips a ${anchor} tooltip inside a scaled popup parent (${scale})`, async ({
+                page,
+            }) => {
+                await page.setViewportSize({ width: 1400, height: 1000 });
+                const { cell } = await mountGrid(page, {
+                    width: 500,
+                    height: 300,
+                    css: `#myGrid { position: relative; margin: 40px; border: 8px solid black; transform: scale(${scale}); transform-origin: top left; }`,
+                    options: () => ({
+                        columnDefs: [
+                            { field: 'a', width: 200 },
+                            { field: 'b', width: 200, tooltip: true },
+                        ],
+                        rowData: Array.from({ length: 6 }, () => ({ a: 'A', b: 'Tooltip' })),
+                        headerHeight: 0,
+                        popupParent: document.querySelector<HTMLElement>('#myGrid'),
+                        tooltipShowDelay: 0,
+                        tooltipSwitchShowDelay: 0,
+                    }),
+                });
+                await page.evaluate((anchor) => window.gridApi.setGridOption('tooltipAnchor', anchor), anchor);
+
+                for (const row of [4, 0]) {
+                    const source = cell(row, 'b');
+                    const target = (await source.boundingBox())!;
+                    const pointer = {
+                        x: Math.round(target.x + target.width / 2),
+                        y: Math.round(target.y + target.height / 2),
+                    };
+                    await page.mouse.move(pointer.x, pointer.y);
+                    const tooltip = page.getByRole('tooltip');
+                    await expect(tooltip).toHaveText('Tooltip');
+                    const side = row === 0 ? 'bottom' : 'top';
+                    await expect(tooltip).toHaveClass(new RegExp(`ag-tooltip-position-${side}-start`));
+                    await expect(async () => {
+                        const popup = (await tooltip.boundingBox())!;
+                        const x = anchor === 'pointer' ? pointer.x : target.x;
+                        const targetY = row === 0 ? target.y + target.height : target.y;
+                        const y = anchor === 'pointer' ? pointer.y : targetY;
+                        expect(popup.x).toBeCloseTo(x, 0);
+                        const gap = row === 0 ? popup.y - y : y - popup.y - popup.height;
+                        expect(gap).toBeCloseTo(6 * scale, 0);
+                    }).toPass();
+                    await page.keyboard.press('Escape');
+                    await expect(tooltip).toHaveCount(0);
+                }
+            });
+        }
+    }
+
     test('keeps a top tooltip clear of its source after delayed content growth', async ({ page }) => {
         const { cell } = await mountGrid(page, {
             options: () => ({
@@ -473,36 +525,44 @@ test.describe('tooltip positioning', () => {
         });
     }
 
-    test('positions within a bordered, scrolled popup parent', async ({ page }) => {
-        const { cell } = await mountGrid(page, {
-            width: 350,
-            height: 400,
-            options: () => {
-                const popupParent = document.createElement('div');
-                popupParent.style.cssText =
-                    'position:relative;margin:40px;width:400px;height:240px;overflow:auto;border:8px solid black';
-                document.body.appendChild(popupParent);
-                popupParent.appendChild(document.querySelector('#myGrid')!);
-                popupParent.scrollTop = 80;
-                return {
-                    columnDefs: [{ field: 'value', tooltip: true }],
-                    rowData: Array.from({ length: 8 }, (_, i) => ({ value: `Row ${i}` })),
-                    popupParent,
-                    tooltipShowDelay: 0,
-                };
-            },
+    for (const scale of [1, 0.5, 2]) {
+        test(`positions within a bordered, scrolled popup parent (${scale})`, async ({ page }) => {
+            await page.setViewportSize({ width: 1000, height: 800 });
+            const { cell } = await mountGrid(page, {
+                width: 350,
+                height: 400,
+                options: () => {
+                    const popupParent = document.createElement('div');
+                    popupParent.style.cssText =
+                        'position:relative;margin:40px;width:400px;height:240px;overflow:auto;border:8px solid black';
+                    document.body.appendChild(popupParent);
+                    popupParent.appendChild(document.querySelector('#myGrid')!);
+                    popupParent.scrollTop = 80;
+                    return {
+                        columnDefs: [{ field: 'value', tooltip: true }],
+                        rowData: Array.from({ length: 8 }, (_, i) => ({ value: `Row ${i}` })),
+                        popupParent,
+                        tooltipShowDelay: 0,
+                    };
+                },
+            });
+            await page.evaluate((scale) => {
+                const parent = window.gridApi.getGridOption('popupParent')!;
+                parent.style.transform = `scale(${scale})`;
+                parent.style.transformOrigin = 'top left';
+            }, scale);
+            const source = cell(4, 'value');
+            await source.hover();
+            const tooltip = page.getByRole('tooltip');
+            await expect(tooltip).toHaveText('Row 4');
+            await expect(async () => {
+                const target = (await source.boundingBox())!;
+                const popup = (await tooltip.boundingBox())!;
+                expect(popup.x).toBeCloseTo(target.x, 0);
+            }).toPass();
+            await expectGap(source, tooltip, 'top', 6 * scale);
         });
-        const source = cell(4, 'value');
-        await source.hover();
-        const tooltip = page.getByRole('tooltip');
-        await expect(tooltip).toHaveText('Row 4');
-        await expect(async () => {
-            const target = (await source.boundingBox())!;
-            const popup = (await tooltip.boundingBox())!;
-            expect(popup.x).toBeCloseTo(target.x, 0);
-        }).toPass();
-        await expectGap(source, tooltip, 'top', 6);
-    });
+    }
 
     test('the default non-interactive tooltip accepts the pointer across the target gap', async ({ page }) => {
         const { cell, withApi } = await mountGrid(page, {

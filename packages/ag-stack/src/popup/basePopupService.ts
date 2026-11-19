@@ -94,6 +94,13 @@ export abstract class BasePopupService<
         const win = doc.defaultView!;
         const origin = this.getParentRect();
         const offsetParent = ePopup.offsetParent as HTMLElement | null;
+        const parentRect = offsetParent?.getBoundingClientRect();
+        const scaleX = offsetParent?.offsetWidth ? parentRect!.width / offsetParent.offsetWidth : 1;
+        const scaleY = offsetParent?.offsetHeight ? parentRect!.height / offsetParent.offsetHeight : 1;
+        if (offsetParent && (scaleX !== 1 || scaleY !== 1)) {
+            origin.left = parentRect!.left + offsetParent.clientLeft * scaleX;
+            origin.top = parentRect!.top + offsetParent.clientTop * scaleY;
+        }
         // Document scrolling is already included in getParentRect(). Other containing blocks scroll their contents.
         const scrollX = offsetParent !== doc.scrollingElement ? (offsetParent?.scrollLeft ?? 0) : 0;
         const scrollY = offsetParent !== doc.scrollingElement ? (offsetParent?.scrollTop ?? 0) : 0;
@@ -107,10 +114,16 @@ export abstract class BasePopupService<
         if (popupParent !== doc.body && popupParent !== doc.documentElement) {
             const rect = popupParent.getBoundingClientRect();
             bounds = {
-                top: Math.max(0, rect.top + popupParent.clientTop),
-                left: Math.max(0, rect.left + popupParent.clientLeft),
-                right: Math.min(viewport.right, rect.left + popupParent.clientLeft + popupParent.clientWidth),
-                bottom: Math.min(viewport.bottom, rect.top + popupParent.clientTop + popupParent.clientHeight),
+                top: Math.max(0, rect.top + popupParent.clientTop * scaleY),
+                left: Math.max(0, rect.left + popupParent.clientLeft * scaleX),
+                right: Math.min(
+                    viewport.right,
+                    rect.left + (popupParent.clientLeft + popupParent.clientWidth) * scaleX
+                ),
+                bottom: Math.min(
+                    viewport.bottom,
+                    rect.top + (popupParent.clientTop + popupParent.clientHeight) * scaleY
+                ),
             };
         }
         const sourceRect = pointer
@@ -123,9 +136,14 @@ export abstract class BasePopupService<
             sourceRect.bottom = Math.min(sourceRect.bottom, viewport.bottom);
         }
         const reference = toRelativeRect(sourceRect, bounds);
+        // The placement solver uses local CSS pixels, including the popup size, gap and arrow padding.
+        reference.left /= scaleX;
+        reference.right /= scaleX;
+        reference.top /= scaleY;
+        reference.bottom /= scaleY;
         const boundsSize = {
-            width: Math.max(0, bounds.right - bounds.left),
-            height: Math.max(0, bounds.bottom - bounds.top),
+            width: Math.max(0, bounds.right - bounds.left) / scaleX,
+            height: Math.max(0, bounds.bottom - bounds.top) / scaleY,
         };
         const isDefaultTooltip = ePopup.classList.contains('ag-tooltip');
         if (isDefaultTooltip) {
@@ -168,8 +186,8 @@ export abstract class BasePopupService<
                         : ePopup.clientTop;
                 ePopup.style.setProperty('--ag-tooltip-arrow-offset', `${result.arrowOffset - border}px`);
                 return {
-                    x: result.x + bounds.left - origin.left + scrollX,
-                    y: result.y + bounds.top - origin.top + scrollY,
+                    x: result.x + (bounds.left - origin.left) / scaleX + scrollX,
+                    y: result.y + (bounds.top - origin.top) / scaleY + scrollY,
                 };
             },
             postProcessCallback: () => {

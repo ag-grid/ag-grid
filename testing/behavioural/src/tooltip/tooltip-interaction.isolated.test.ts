@@ -197,14 +197,20 @@ describe('Tooltip interaction', () => {
         }
     );
 
-    test.each([true, false])(
-        'respects interaction=%s when clicking before the hover delay expires',
-        async (enabled) => {
+    test.each([
+        { enabled: true, callback: false },
+        { enabled: false, callback: false },
+        { enabled: true, callback: true },
+        { enabled: false, callback: true },
+    ])(
+        'respects interaction=$enabled (callback: $callback) when clicking before the hover delay expires',
+        async ({ enabled, callback }) => {
+            const tooltip = vi.fn(() => 'Age tooltip');
             const api = await gridMgr.createGridAndWait('tooltip-interaction-pending', {
-                columnDefs: [{ field: 'age', tooltip: true }],
+                columnDefs: [{ field: 'age', tooltip }],
                 rowData: [{ age: 19 }],
                 tooltipShowDelay: 20,
-                tooltipInteraction: () => enabled,
+                tooltipInteraction: callback ? () => enabled : enabled,
             });
             const grid = getGridElement(api)! as HTMLElement;
             const cell = await waitFor(() => getByTestId(grid, agTestIdFor.cell('0', 'age')));
@@ -213,6 +219,7 @@ describe('Tooltip interaction', () => {
             try {
                 cell.dispatchEvent(new MouseEvent('mouseenter'));
                 cell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                expect(tooltip).toHaveBeenCalledTimes(callback ? 1 : 0);
                 await vi.advanceTimersByTimeAsync(20);
                 expect(!!visibleTooltip()).toBe(enabled);
             } finally {
@@ -221,6 +228,70 @@ describe('Tooltip interaction', () => {
             }
         }
     );
+
+    test.each([undefined, null, ''])('does not resolve interaction for empty tooltip content: %s', async (value) => {
+        const interaction = vi.fn(() => true);
+        const api = await gridMgr.createGridAndWait('tooltip-interaction-empty', {
+            columnDefs: [{ field: 'age', tooltip: () => value }],
+            rowData: [{ age: 19 }],
+            tooltipShowDelay: 20,
+            tooltipInteraction: interaction,
+        });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+
+        vi.useFakeTimers();
+        try {
+            cell.dispatchEvent(new MouseEvent('mouseenter'));
+            cell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            await vi.advanceTimersByTimeAsync(20);
+            expect(interaction).not.toHaveBeenCalled();
+            expect(visibleTooltip()).toBeUndefined();
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
+    });
+
+    test('does not show a source tooltip when its getter opens a context menu', async () => {
+        const onTooltipShow = vi.fn();
+        const api = await gridMgr.createGridAndWait(
+            'tooltip-content-opens-menu',
+            {
+                columnDefs: [
+                    {
+                        field: 'age',
+                        tooltip: ({ api }) => {
+                            api.showContextMenu();
+                            return 'Age tooltip';
+                        },
+                    },
+                ],
+                rowData: [{ age: 19 }],
+                tooltipShowDelay: 20,
+                getContextMenuItems: () => [{ name: 'Action', tooltip: 'Menu hint' }],
+                onTooltipShow,
+            },
+            { modules: [ContextMenuModule] }
+        );
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+
+        vi.useFakeTimers();
+        try {
+            cell.dispatchEvent(new MouseEvent('mouseenter'));
+            await vi.advanceTimersByTimeAsync(20);
+            const menuItem = document.querySelector<HTMLElement>('[role="menuitem"]')!;
+            expect(menuItem).toHaveTextContent('Action');
+            expect(visibleTooltip()).toBeUndefined();
+            expect(onTooltipShow).not.toHaveBeenCalled();
+
+            menuItem.dispatchEvent(new MouseEvent('mouseenter'));
+            await vi.advanceTimersByTimeAsync(20);
+            expect(visibleTooltip()).toHaveTextContent('Menu hint');
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
+    });
 
     test('resolves interaction per source and uses current values when a tooltip reopens', async () => {
         const interaction = vi.fn(
