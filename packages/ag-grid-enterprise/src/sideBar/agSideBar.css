@@ -96,9 +96,25 @@
     cursor: pointer;
 }
 
+/* the disabled background can be semi-transparent, so it goes over the opaque one: nothing under the button shows
+   through. The icon colours itself from --ag-icon-color, so an inherited color alone would not reach the arrow */
 .ag-tool-panel-resize-button:where([aria-disabled='true']) {
+    --ag-icon-color: var(--ag-button-disabled-text-color);
+
     cursor: default;
-    opacity: 0.5;
+    color: var(--ag-button-disabled-text-color);
+    background-image: linear-gradient(
+        var(--ag-button-disabled-background-color),
+        var(--ag-button-disabled-background-color)
+    );
+
+    /* forced colours replace the disabled colours, so it would look enabled */
+    @media (forced-colors: active) {
+        --ag-icon-color: GrayText;
+
+        color: GrayText;
+        border-color: GrayText;
+    }
 }
 
 .ag-tool-panel-resize-button:focus-visible {
