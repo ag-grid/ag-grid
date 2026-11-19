@@ -53,11 +53,31 @@
             box-shadow: none;
         }
 
+        // the line: 2px, over the 1px border, which is the middle pixel of the 5px area, and the panel's first pixel
         &::after {
             content: '';
             position: absolute;
-            inset: 0 1px;
+            top: 0;
+            bottom: 0;
         }
+    }
+
+    .ag-side-bar-left .ag-tool-panel-horizontal-resize::after {
+        @include ag.unthemed-rtl(
+            (
+                left: 1px,
+                right: 2px,
+            )
+        );
+    }
+
+    .ag-side-bar-right .ag-tool-panel-horizontal-resize::after {
+        @include ag.unthemed-rtl(
+            (
+                left: 2px,
+                right: 1px,
+            )
+        );
     }
 
     .ag-tool-panel-horizontal-resize:hover,
@@ -67,13 +87,12 @@
         z-index: 3;
     }
 
-    // the whole border highlights while it is hovered, focused or in use. Mixing in the foreground colour keeps
-    // the accent's hue but holds 3:1 contrast against the backgrounds either side, in dark themes too
+    // the whole border highlights while it is hovered, focused or in use
     .ag-tool-panel-horizontal-resize:hover::after,
     .ag-tool-panel-horizontal-resize:focus-visible::after,
     .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize::after,
     .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize::after {
-        background-color: color-mix(in srgb, var(--ag-range-selection-border-color) 60%, var(--ag-foreground-color));
+        background-color: var(--ag-side-bar-resize-line-color);
 
         @media (forced-colors: active) {
             forced-color-adjust: none;
@@ -81,6 +100,7 @@
         }
     }
 
+    // shown only after a click or tap on the border; keyboard users resize with the arrow keys instead
     .ag-tool-panel-resize-buttons {
         display: flex;
         flex-direction: column;
@@ -88,22 +108,19 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
+        visibility: hidden;
         z-index: 4;
-        // hidden, but still in the Tab order, until the border is focused or clicked
-        opacity: 0;
-        pointer-events: none;
     }
 
     .ag-tool-panel-resizer-active .ag-tool-panel-resize-buttons {
-        opacity: 1;
-        pointer-events: auto;
+        visibility: visible;
     }
 
     // centred on the border
     .ag-side-bar-left .ag-tool-panel-resize-buttons {
         @include ag.unthemed-rtl(
             (
-                right: -12px,
+                right: calc(var(--ag-side-bar-resize-button-size) / -2),
             )
         );
     }
@@ -111,7 +128,7 @@
     .ag-side-bar-right .ag-tool-panel-resize-buttons {
         @include ag.unthemed-rtl(
             (
-                left: -12px,
+                left: calc(var(--ag-side-bar-resize-button-size) / -2),
             )
         );
     }
@@ -122,8 +139,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 24px;
-        height: 24px;
+        width: var(--ag-side-bar-resize-button-size);
+        height: var(--ag-side-bar-resize-button-size);
         padding: 0;
         margin: 0;
         color: var(--ag-foreground-color);

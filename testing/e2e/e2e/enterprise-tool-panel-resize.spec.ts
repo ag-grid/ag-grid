@@ -10,12 +10,14 @@ const panelWidth = (grid: Locator) =>
 const isBorderFocused = (grid: Locator) =>
     grid.page().evaluate(() => document.activeElement?.matches('.ag-tool-panel-horizontal-resize') ?? false);
 
-/** Checks whether the Widen and Narrow buttons are shown: while hidden they stay in the Tab order, but transparent. */
+/** Checks whether the Widen and Narrow buttons are shown, which they are only after a click or tap on the border. */
 const expectButtonsShown = (grid: Locator, shown: boolean) =>
-    expect(grid.locator('.ag-tool-panel-resize-buttons')).toHaveCSS('opacity', shown ? '1' : '0');
+    expect(grid.locator('.ag-tool-panel-resize-buttons')).toHaveCSS('visibility', shown ? 'visible' : 'hidden');
 
 test.describe('resizing the tool panel without dragging', () => {
-    test('Tab from the grid focuses the border, a separator named after the panel', async ({ page }) => {
+    test('Tab from the grid focuses the border, a separator named after the panel, without showing the buttons', async ({
+        page,
+    }) => {
         const { grid, cell } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
@@ -34,7 +36,7 @@ test.describe('resizing the tool panel without dragging', () => {
         await expect(border).toHaveAttribute('role', 'separator');
         await expect(border).toHaveAttribute('aria-label', 'Columns');
         await expect(border).toHaveAttribute('aria-valuenow', String(await panelWidth(grid)));
-        await expectButtonsShown(grid, true);
+        await expectButtonsShown(grid, false);
     });
 
     test('arrow keys resize the panel within its limits', async ({ page }) => {
@@ -140,6 +142,14 @@ test.describe('resizing the tool panel without dragging', () => {
         await narrow.click();
         expect(await panelWidth(grid)).toBe(before - 10);
         await expectButtonsShown(grid, true);
+        expect(await isBorderFocused(grid)).toBe(true);
+
+        // they are not Tab stops: Tab moves on into the panel and hides them
+        await page.keyboard.press('Tab');
+        await expect
+            .poll(() => page.evaluate(() => !!document.activeElement?.closest('.ag-tool-panel-content')))
+            .toBe(true);
+        await expectButtonsShown(grid, false);
     });
 
     test('dragging the border still resizes the panel and updates its value', async ({ page }) => {

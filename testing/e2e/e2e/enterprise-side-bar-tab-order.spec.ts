@@ -42,19 +42,19 @@ const cases: { name: string; position: 'left' | 'right'; enableRtl: boolean; sto
         name: 'side bar on the right',
         position: 'right',
         enableRtl: false,
-        stops: ['border', 'Widen Panel', 'Narrow Panel', 'Search', 'column list', 'Columns button'],
+        stops: ['border', 'Search', 'column list', 'Columns button'],
     },
     {
         name: 'side bar on the left',
         position: 'left',
         enableRtl: false,
-        stops: ['Columns button', 'Search', 'column list', 'border', 'Widen Panel', 'Narrow Panel'],
+        stops: ['Columns button', 'Search', 'column list', 'border'],
     },
     {
         name: 'enableRtl, which draws the side bar on the left',
         position: 'right',
         enableRtl: true,
-        stops: ['border', 'Widen Panel', 'Narrow Panel', 'Search', 'column list', 'Columns button'],
+        stops: ['border', 'Search', 'column list', 'Columns button'],
     },
 ];
 

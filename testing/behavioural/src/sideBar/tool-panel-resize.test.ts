@@ -77,12 +77,10 @@ describe('tool panel resizing without dragging', () => {
         expect(splitter.getAttribute('aria-valuenow')).toBe(String(DEFAULT_WIDTH));
     });
 
-    test('the border and its buttons are Tab stops with the grid tabIndex', async () => {
-        const { splitter, widen, narrow } = await createGrid({ tabIndex: 3 });
+    test('the border is a Tab stop with the grid tabIndex', async () => {
+        const { splitter } = await createGrid({ tabIndex: 3 });
 
-        for (const el of [splitter, widen, narrow]) {
-            expect(el.getAttribute('tabindex')).toBe('3');
-        }
+        expect(splitter.getAttribute('tabindex')).toBe('3');
     });
 
     test('the separator has the default minimum and no maximum when the panel sets neither', async () => {
@@ -245,30 +243,30 @@ describe('tool panel resizing without dragging', () => {
             expect(splitter.ownerDocument.activeElement).toBe(splitter);
         });
 
-        test('are shown when the border gets keyboard focus, but not when a pointer press focuses it', async () => {
+        test('are not shown when the border gets keyboard focus', async () => {
             const { splitter, resizer } = await createGrid();
 
-            splitter.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, isPrimary: true, button: 0 }));
             splitter.focus();
-            expect(areButtonsShown(resizer)).toBe(false);
 
-            splitter.blur();
-            splitter.click();
-            splitter.blur();
             expect(areButtonsShown(resizer)).toBe(false);
-
-            splitter.focus();
-            expect(areButtonsShown(resizer)).toBe(true);
         });
 
-        test('stay in the Tab order while hidden, and show when one is focused, as by Shift+Tab from the panel', async () => {
-            const { narrow, resizer } = await createGrid();
-            expect(narrow.closest('.ag-hidden')).toBeNull();
-            expect(narrow.getAttribute('tabindex')).toBe('0');
+        test('are native buttons out of the Tab order', async () => {
+            const { widen, narrow } = await createGrid({ tabIndex: 3 });
 
-            narrow.focus();
+            for (const button of [widen, narrow]) {
+                expect(button.tagName).toBe('BUTTON');
+                expect(button.getAttribute('tabindex')).toBe('-1');
+            }
+        });
 
-            expect(areButtonsShown(resizer)).toBe(true);
+        test('hide as Tab moves on from the border, so Tab skips them', async () => {
+            const { splitter, resizer } = await createGrid();
+            splitter.click();
+
+            press(splitter, 'Tab');
+
+            expect(areButtonsShown(resizer)).toBe(false);
         });
 
         test('widen and narrow the panel by one step within its limits', async () => {
@@ -316,7 +314,7 @@ describe('tool panel resizing without dragging', () => {
 
         test('Escape hides them and keeps focus on the border', async () => {
             const { splitter, widen, resizer } = await createGrid();
-            splitter.focus();
+            splitter.click();
             widen.focus();
 
             press(widen, 'Escape');
@@ -327,7 +325,7 @@ describe('tool panel resizing without dragging', () => {
 
         test('hide when focus leaves the border and its buttons', async () => {
             const { splitter, widen, resizer, gridEl } = await createGrid();
-            splitter.focus();
+            splitter.click();
             widen.focus();
             expect(areButtonsShown(resizer)).toBe(true);
 
@@ -338,7 +336,8 @@ describe('tool panel resizing without dragging', () => {
 
         test('hide when the panel closes', async () => {
             const { api, splitter, resizer } = await createGrid();
-            splitter.focus();
+            splitter.click();
+            expect(areButtonsShown(resizer)).toBe(true);
 
             api.closeToolPanel();
 

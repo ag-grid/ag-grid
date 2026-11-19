@@ -30,18 +30,19 @@ const AgHorizontalResizeElement: ElementParams = {
             tag: 'div',
             ref: 'eButtons',
             cls: 'ag-tool-panel-resize-buttons',
+            // not Tab stops: keyboard users resize with the arrow keys on the border
             children: [
                 {
                     tag: 'button',
                     ref: 'eWidenButton',
                     cls: 'ag-button ag-tool-panel-resize-button',
-                    attrs: { type: 'button' },
+                    attrs: { type: 'button', tabindex: '-1' },
                 },
                 {
                     tag: 'button',
                     ref: 'eNarrowButton',
                     cls: 'ag-button ag-tool-panel-resize-button',
-                    attrs: { type: 'button' },
+                    attrs: { type: 'button', tabindex: '-1' },
                 },
             ],
         },
@@ -50,7 +51,8 @@ const AgHorizontalResizeElement: ElementParams = {
 
 /**
  * The tool panel's resize border: dragged, moved with Left / Right Arrow, or, after a click or tap,
- * moved with the Widen and Narrow buttons it reveals.
+ * moved with the Widen and Narrow buttons it reveals. The buttons are for pointer users only, so they
+ * are not Tab stops and keyboard focus does not reveal them.
  */
 export class AgHorizontalResize extends Component {
     private readonly eResizeBar: HTMLElement = RefPlaceholder;
@@ -63,8 +65,6 @@ export class AgHorizontalResize extends Component {
     private inverted: boolean;
     private minWidth: number = 100;
     private maxWidth: number | null = null;
-    /** Set between a press on the border and its click, so a pointer focus does not reveal the buttons. */
-    private pointerPressed = false;
     /** Set once a press on the border turns into a drag, so the click that ends it does not reveal the buttons. */
     private dragged = false;
 
@@ -87,7 +87,7 @@ export class AgHorizontalResize extends Component {
         this.addDestroyFunc(_observeResize(this.beans, elementToResize, () => this.refreshValue()));
         this.setInverted(this.gos.get('enableRtl'));
 
-        this.activateTabIndex([eResizeBar, eWidenButton, eNarrowButton]);
+        this.activateTabIndex([eResizeBar]);
         _setAriaControls(eResizeBar, elementToResize.id);
         const translate = this.getLocaleTextFunc();
         _setAriaLabel(eWidenButton, translate('ariaToolPanelWiden', 'Widen Panel'));
@@ -97,16 +97,10 @@ export class AgHorizontalResize extends Component {
 
         _addManagedElementListeners(this, eResizeBar, {
             pointerdown: () => {
-                this.pointerPressed = true;
                 this.dragged = false;
             },
             click: this.onResizeBarClick.bind(this),
-            focus: () => {
-                this.refreshValue();
-                if (!this.pointerPressed) {
-                    this.setButtonsDisplayed(true);
-                }
-            },
+            focus: () => this.refreshValue(),
             keydown: this.onResizeBarKeyDown.bind(this),
         });
 
@@ -114,21 +108,24 @@ export class AgHorizontalResize extends Component {
             [eWidenButton, RESIZE_STEP],
             [eNarrowButton, -RESIZE_STEP],
         ] as const) {
-            _addManagedElementListeners(this, eButton, {
-                // keep focus where it is, as Safari would otherwise drop it and the buttons would hide
-                mousedown: (e: MouseEvent) => e.preventDefault(),
-                // the buttons stay in the Tab order while hidden, so Shift+Tab from the panel reaches them
-                focus: () => this.setButtonsDisplayed(true),
-                click: () => this.resizeBy(widthChange),
-            });
+            _addManagedElementListeners(this, eButton, { click: () => this.resizeBy(widthChange) });
         }
+        // keep focus on the border when a button, or the gap between them, is pressed: Safari would otherwise drop it,
+        // and the gap would take it, and the buttons would hide
+        _addManagedElementListeners(this, this.eButtons, { mousedown: (e: MouseEvent) => e.preventDefault() });
 
         const eGui = this.getGui();
         _addManagedElementListeners(this, eGui, {
             keydown: (e: KeyboardEvent) => {
-                if (e.key === KeyCode.ESCAPE && this.isButtonsDisplayed()) {
+                if (!this.isButtonsDisplayed()) {
+                    return;
+                }
+                if (e.key === KeyCode.ESCAPE) {
                     e.preventDefault();
                     e.stopPropagation();
+                    this.hideButtons();
+                } else if (e.key === KeyCode.TAB) {
+                    // hide them before Tab moves on, so it skips them as it does while they are hidden
                     this.hideButtons();
                 }
             },
@@ -219,7 +216,6 @@ export class AgHorizontalResize extends Component {
     }
 
     private onResizeBarClick(): void {
-        this.pointerPressed = false;
         if (this.dragged) {
             return;
         }
@@ -283,7 +279,6 @@ export class AgHorizontalResize extends Component {
     }
 
     private onResizeEnd(delta: number): void {
-        this.pointerPressed = false;
         this.toggleCss('ag-tool-panel-resizer-dragging', false);
         return this.onResizing(delta, true);
     }

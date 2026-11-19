@@ -274,6 +274,8 @@ const makeStyleMaterialTreeShakeable = () => {
         colorPickerColorBorderRadius: 2,
         rowDragIndicatorColor: { ref: 'primaryColor' },
         columnDragIndicatorColor: { ref: 'primaryColor' },
+        // a focused input's border is the primary color here, not the accent
+        sideBarResizeLineColor: { ref: 'primaryColor' },
     };
 
     const lightParams = {

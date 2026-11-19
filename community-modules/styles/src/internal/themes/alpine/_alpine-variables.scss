@@ -11,6 +11,8 @@
     --ag-row-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
     --ag-column-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
     --ag-input-focus-border-color: #{color.change(#2196f3, $alpha: 0.4)};
+    // the focused input border's blue, without its transparency
+    --ag-side-bar-resize-line-color: var(--ag-alpine-active-color);
     --ag-range-selection-background-color: #{color.change(#2196f3, $alpha: 0.2)};
     --ag-range-selection-background-color-2: #{color.change(#2196f3, $alpha: 0.36)};
     --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
