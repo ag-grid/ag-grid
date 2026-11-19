@@ -57,6 +57,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         processChildren(rootNode, rowData);
         allLeafs.length = writeIdx;
+        this.beans.selectionSvc?.syncInCreatedNodes?.();
     }
 
     private destroyAllNodes(): void {
@@ -137,6 +138,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         };
 
         processChildren(rootNode, rowData, 0);
+        if (adds.size) {
+            this.beans.selectionSvc?.syncInCreatedNodes?.();
+        }
 
         const changed =
             this.deleteUnusedNodes(processedNodes, changedRowNodes, !!params.animate) || reorder || adds.size > 0;
@@ -295,6 +299,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             addedNodes[i] = node; // Write new nodes
             addIndex++;
         }
+        this.beans.selectionSvc?.syncInCreatedNodes?.();
         return addedNodes;
     }
 
@@ -310,7 +315,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (sourceRowIndex != null) {
             node.sourceRowIndex = sourceRowIndex;
         }
-        node.setDataAndId(data, String(this.nextId++));
+        node._setInitialDataAndId(data, String(this.nextId++));
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
         if (allNodesMap[id]) {

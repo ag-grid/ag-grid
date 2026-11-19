@@ -459,6 +459,22 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
+    public syncInCreatedNodes(): void {
+        const csrm = this.csrm;
+        if (!csrm) {
+            return;
+        }
+        // OPTIMIZATION: walk the selection, not the rows; per-row Map lookups hash every row id
+        const selectedNodes = this.selectedNodes;
+        for (const [id, node] of selectedNodes) {
+            const liveNode = csrm.getRowNode(id);
+            if (liveNode && liveNode !== node) {
+                liveNode.__selected = true;
+                selectedNodes.set(id, liveNode);
+            }
+        }
+    }
+
     public createDaemonNode(rowNode: RowNode): RowNode | undefined {
         if (!rowNode.id) {
             return undefined;

@@ -462,6 +462,15 @@ export class RowNode<TData = any>
         }
     }
 
+    /**
+     * Sets data and id on a node that has never held either, so there is no selection, detail node or
+     * listener to sync. The caller re-syncs selection once for the whole batch.
+     */
+    public _setInitialDataAndId(data: TData, id: string): void {
+        this.data = data;
+        this.setId(id);
+    }
+
     private setId(id?: string): void {
         const beans = this.beans;
         const getRowIdFunc = _getRowIdCallback(beans);
