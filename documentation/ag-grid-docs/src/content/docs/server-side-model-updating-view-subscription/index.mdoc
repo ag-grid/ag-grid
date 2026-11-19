@@ -66,7 +66,7 @@ Set `pauseWhenHidden` to `false` to keep the rows subscribed while the grid cann
 
 ## Loading and Refreshing
 
-A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers. When the grid is ready, `subscribeRows` is called with an empty array, as no block has loaded yet.
+A row is subscribed once it is in view and its block has loaded. Loading rows and rows whose block failed to load are never passed to the handlers. The handlers are never called with an empty array.
 
 A row's values come from its block, which can have loaded before the row came into view. When a row is subscribed, have the server send its current values first, then stream its changes.
 
