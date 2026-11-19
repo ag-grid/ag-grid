@@ -112,6 +112,8 @@ for (const action of ['Escape', 'leave', 'remove', 'focus'] as const) {
             });
         }
         await page.mouse.wheel(0, 10);
+        // The wheel suspends the visible tooltip; apply the cancellation while the scroll retry is still pending.
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
         if (action === 'Escape') {
             await page.keyboard.press('Escape');
         } else if (action === 'leave') {
