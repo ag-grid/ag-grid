@@ -109,6 +109,8 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (atLeastOneTransactionApplied) {
             this.valueCache?.onDataChanged();
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
+        } else {
+            this.rowRenderer.discardRowsInView();
         }
 
         if (resultsForEvent.length > 0) {
@@ -136,6 +138,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         });
 
         if (!hasStarted) {
+            this.rowRenderer.discardRowsInView();
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
             this.valueCache?.onDataChanged();
@@ -147,6 +150,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
             return res;
         } else {
+            this.rowRenderer.discardRowsInView();
             return { status: ServerSideTransactionResultStatus.StoreNotFound };
         }
     }

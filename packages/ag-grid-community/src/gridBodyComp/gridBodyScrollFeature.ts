@@ -497,11 +497,6 @@ export class GridBodyScrollFeature extends BeanStub {
         return Math.max(scrollHeight - clientHeight, 0);
     }
 
-    /** Whether the vertical scroll position last read was the top, without reading the viewport. */
-    public isCachedVScrollAtTop(): boolean {
-        return this.lastScrollTop === 0;
-    }
-
     public getVScrollPosition(): VerticalScrollPosition {
         if (!this.isVerticalPositionInvalidated) {
             const { lastOffsetHeight, lastScrollTop } = this;

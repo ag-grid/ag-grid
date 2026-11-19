@@ -800,13 +800,18 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */
     private isRowsInViewIdle(): boolean {
-        const { beans, focusSvc } = this;
-        return (
-            !focusSvc.getFocusedCell() &&
-            (beans.rangeSvc?.isEmpty() ?? true) &&
-            beans.pageBounds.getPixelOffset() === 0 &&
-            this.gridBodyCtrl.scrollFeature.isCachedVScrollAtTop()
-        );
+        const { beans, focusSvc, gridBodyCtrl } = this;
+        if (
+            focusSvc.getFocusedCell() ||
+            !(beans.rangeSvc?.isEmpty() ?? true) ||
+            beans.pageBounds.getPixelOffset() !== 0
+        ) {
+            return false;
+        }
+        // the viewport can scroll before its scroll event updates the cached position
+        const { scrollFeature } = gridBodyCtrl;
+        scrollFeature.invalidateVerticalScroll();
+        return scrollFeature.getVScrollPosition().top === 0;
     }
 
     /** Scrolls to keep the rows in view during a draw. True if it scrolled. */
@@ -818,6 +823,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         } finally {
             this.restoringRowsInView = false;
         }
+    }
+
+    /** Drops the capture of a data update that turned out not to redraw, so a later redraw does not restore it. */
+    public discardRowsInView(): void {
+        this.rowsInView = null;
     }
 
     /** Stops the data update captured from keeping rows in view, as it left none of them. */

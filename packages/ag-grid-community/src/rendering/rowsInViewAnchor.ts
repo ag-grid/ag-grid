@@ -90,10 +90,17 @@ const isPositioned = (rowNode: RowNode): boolean =>
  * position, so the rows in view are read from the row model.
  */
 function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewportBottom: number): RowNode[] {
+    // without row virtualisation every row is rendered, so keep those within a viewport height of the view
+    const margin = beans.gos.get('suppressRowVirtualisation') ? viewportBottom - firstVisiblePixel : Infinity;
     const rows = beans.rowRenderer
         .getAllRowCtrls()
         .map(({ rowNode }) => rowNode)
-        .filter(isPositioned)
+        .filter(
+            (row) =>
+                isPositioned(row) &&
+                row.rowTop! + row.rowHeight! >= firstVisiblePixel - margin &&
+                row.rowTop! <= viewportBottom + margin
+        )
         .sort((a, b) => a.rowTop! - b.rowTop!);
     const first = rows[0];
     const last = rows[rows.length - 1];
@@ -177,7 +184,7 @@ function getKeptInOrder(values: number[]): number[] {
     const longestEndingAt = getLongestEndingAt(values);
     // the longest starting at each value is the longest ending at it, read backwards with the order reversed
     const longestStartingAt = getLongestEndingAt(values.map((value) => -value).reverse()).reverse();
-    const longest = Math.max(0, ...longestEndingAt);
+    const longest = longestEndingAt.reduce((max, value) => Math.max(max, value), 0);
     const inLongest = values.flatMap((_, i) => (longestEndingAt[i] + longestStartingAt[i] - 1 === longest ? [i] : []));
     // a value is in every longest sequence when no other value can take its place in one
     const countAtPlace = new Map<number, number>();

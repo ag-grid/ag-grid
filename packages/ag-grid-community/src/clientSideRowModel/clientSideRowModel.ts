@@ -687,6 +687,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
+            if (suppressUpdateTransaction) {
+                // no redraw follows, so a later unrelated one must not restore the rows in view captured for this update
+                this.beans.rowRenderer.discardRowsInView();
+            }
             const selectionSvc = this.beans.selectionSvc;
             if (rowDataUpdated && started && !this.refreshingModel && selectionSvc) {
                 if (suppressUpdateTransaction) {

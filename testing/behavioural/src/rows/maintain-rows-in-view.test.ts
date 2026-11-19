@@ -77,6 +77,17 @@ describe('maintaining rows in view', () => {
                 ...options,
             });
 
+        test('a suppressed update transaction does not restore its rows in view in a later redraw', () => {
+            const api = createGrid({ suppressModelUpdateAfterUpdateTransaction: true });
+            scrollTo(api, SCROLL_TOP);
+            api.applyTransaction({ update: [{ id: 'r0', value: -1 }] });
+
+            scrollTo(api, SCROLL_TOP * 2);
+            api.refreshClientSideRowModel('sort');
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP * 2);
+        });
+
         test('keeps rows in view when a transaction adds rows above them', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP + 10);
