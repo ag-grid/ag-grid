@@ -5,7 +5,13 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    HighlightChangesModule,
+    ModuleRegistry,
+    RowApiModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
 import { recordSubscribed, recordUnsubscribed, recordUpdates } from './counters';
@@ -19,6 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     HighlightChangesModule,
+    RowApiModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     ViewSubscriptionModule,

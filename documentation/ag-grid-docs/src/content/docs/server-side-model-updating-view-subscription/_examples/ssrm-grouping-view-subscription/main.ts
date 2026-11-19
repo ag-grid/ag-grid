@@ -5,7 +5,13 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    HighlightChangesModule,
+    ModuleRegistry,
+    RowApiModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -24,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     HighlightChangesModule,
+    RowApiModule,
     RowGroupingModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
