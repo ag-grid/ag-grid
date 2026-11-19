@@ -9,14 +9,18 @@ declare global {
     }
 }
 
-const rowUnderPoint = (page: Page, x: number, y: number) =>
+const scrollTop = (page: Page) => page.evaluate(() => document.querySelector('.ag-grid-viewport')!.scrollTop);
+
+/** Sampled in one evaluation, so the row under the pointer and the hovered rows describe the same frame. */
+const hoverState = (page: Page, x: number, y: number) =>
     page.evaluate(
-        ({ x, y }) => document.elementFromPoint(x, y)?.closest('.ag-row')?.getAttribute('row-index') ?? null,
+        ({ x, y }) => ({
+            rowUnderPointer: document.elementFromPoint(x, y)?.closest('.ag-row')?.getAttribute('row-index') ?? null,
+            hoveredRows: Array.from(document.querySelectorAll('.ag-row-hover'), (row) => row.getAttribute('row-index')),
+            tooltips: document.querySelectorAll('.ag-tooltip').length,
+        }),
         { x, y }
     );
-
-const hoveredRowIndexes = (page: Page) =>
-    page.evaluate(() => Array.from(document.querySelectorAll('.ag-row-hover'), (row) => row.getAttribute('row-index')));
 
 // Chromium re-hit-tests after a wheel scroll and hides a stuck hover; Firefox and WebKit show it.
 for (const ensureDomOrder of [true, false]) {
@@ -45,15 +49,21 @@ for (const ensureDomOrder of [true, false]) {
         for (let i = 0; i < 20; ++i) {
             await page.mouse.wheel(0, 40);
         }
+        // queued wheel scrolling can still be running: wait until two reads in a row agree
+        let previousTop = -1;
         await expect
-            .poll(() => page.evaluate(() => document.querySelector('.ag-grid-viewport')!.scrollTop))
-            .toBeGreaterThan(400);
-        await page.evaluate(
-            () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
-        );
+            .poll(async () => {
+                const top = await scrollTop(page);
+                const settled = top === previousTop && top > 400;
+                previousTop = top;
+                return settled;
+            })
+            .toBe(true);
 
-        const rowIndex = await rowUnderPoint(page, x, y);
-        await expect.poll(() => hoveredRowIndexes(page)).toEqual([rowIndex]);
-        expect(await page.locator('.ag-tooltip').count()).toBeLessThanOrEqual(1);
+        await expect(async () => {
+            const { rowUnderPointer, hoveredRows, tooltips } = await hoverState(page, x, y);
+            expect(hoveredRows).toEqual([rowUnderPointer]);
+            expect(tooltips).toBeLessThanOrEqual(1);
+        }).toPass({ timeout: 5000 });
     });
 }
