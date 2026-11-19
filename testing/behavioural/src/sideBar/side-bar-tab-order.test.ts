@@ -62,6 +62,12 @@ describe('side bar Tab order', () => {
             expect(isAfter(columnsPanelEl, sideButtons)).toBe(true);
         });
 
+        test('before the tool panels with enableRtl, which draws the side bar on the left', async () => {
+            const { sideButtons, columnsPanelEl } = await createGrid({ enableRtl: true });
+
+            expect(isAfter(columnsPanelEl, sideButtons)).toBe(true);
+        });
+
         test('and move to the other side when the side bar moves', async () => {
             const { api, sideButtons, columnsPanelEl } = await createGrid();
 
@@ -70,6 +76,15 @@ describe('side bar Tab order', () => {
 
             api.setSideBarPosition('right');
             expect(isAfter(sideButtons, columnsPanelEl)).toBe(true);
+        });
+
+        test('and stay put, keeping focus, when the position is set to the one it has', async () => {
+            const { api, columnsButton } = await createGrid();
+            columnsButton.focus();
+
+            api.setSideBarPosition('right');
+
+            expect(columnsButton.ownerDocument.activeElement).toBe(columnsButton);
         });
 
         test('after a tool panel that comes back from an external parent', async () => {

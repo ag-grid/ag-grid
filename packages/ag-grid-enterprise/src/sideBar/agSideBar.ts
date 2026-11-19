@@ -100,7 +100,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const target = e.target as HTMLElement;
         const backwards = e.shiftKey;
         // Tab follows the drawn order: the buttons come before the open panel on the left, and after it on the right
-        const buttonsAfterPanel = this.position !== 'left';
+        const buttonsAfterPanel = !this.isDrawnOnLeft();
 
         if (sideBarGui.contains(activeElement)) {
             if (openPanel && backwards === buttonsAfterPanel) {
@@ -260,8 +260,14 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
 
         this.toggleCss('ag-side-bar-left', isLeft);
         this.toggleCss('ag-side-bar-right', !isLeft);
-        // in the Tab order the buttons sit where they are drawn: before the tool panels on the left, after on the right
-        this.getGui().insertAdjacentElement(isLeft ? 'afterbegin' : 'beforeend', this.sideBarButtons.getGui());
+        // in the Tab order the buttons sit where they are drawn: before the tool panels on the left, after on the right.
+        // Moving a focused element blurs it, so only move them when they are on the wrong side
+        const eGui = this.getGui();
+        const eButtons = this.sideBarButtons.getGui();
+        const drawnOnLeft = this.isDrawnOnLeft();
+        if ((drawnOnLeft ? eGui.firstElementChild : eGui.lastElementChild) !== eButtons) {
+            eGui.insertAdjacentElement(drawnOnLeft ? 'afterbegin' : 'beforeend', eButtons);
+        }
 
         for (const wrapper of this.toolPanelWrappers) {
             wrapper.setResizerSizerSide(resizerSide);
@@ -270,6 +276,10 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         this.dispatchSideBarUpdated();
 
         return this;
+    }
+
+    public isDrawnOnLeft(): boolean {
+        return (this.position === 'left') !== this.gos.get('enableRtl');
     }
 
     public override setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean }): void {
@@ -379,7 +389,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         if (wrapperGui.parentElement === correctParent) {
             return;
         }
-        if (correctParent === eGui && this.position !== 'left') {
+        if (correctParent === eGui && !this.isDrawnOnLeft()) {
             // on the right the buttons stay after the tool panels, where they are drawn
             this.sideBarButtons.getGui().before(wrapperGui);
         } else {

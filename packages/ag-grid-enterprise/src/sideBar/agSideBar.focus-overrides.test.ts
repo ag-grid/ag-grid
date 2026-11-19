@@ -43,6 +43,7 @@ describe('AgSideBar focus overrides', () => {
                         getGui: () => sideBarGui,
                     },
                     getGui: () => sideBarGui,
+                    isDrawnOnLeft: () => false,
                     addManagedListeners: (
                         element: HTMLElement,
                         listeners: { keydown?: (e: KeyboardEvent) => void }

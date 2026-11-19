@@ -280,10 +280,10 @@ Users resize the open Tool Panel by dragging its border. Use `width`, `minWidth`
 
 The width can also be changed without dragging:
 
-- **Keyboard**: press {% kbd "⇥ Tab" /%} to focus the border, which sits between the grid and the Tool Panel in the Tab order, then press {% kbd "←" /%} / {% kbd "→" /%} to move it. See [Keyboard Interaction](./keyboard-navigation/#tool-panel-resizing).
-- **Single clicks or taps**: click or tap the border to show its Widen Panel and Narrow Panel buttons, then click or tap them to change the width a step at a time.
+- **Keyboard**: press {% kbd "⇥ Tab" /%} to focus the border, which sits between the Tool Panel and the grid in the Tab order, then press {% kbd "←" /%} / {% kbd "→" /%} to move it. See [Keyboard Interaction](./keyboard-navigation/#tool-panel-resizing).
+- **Single clicks or taps**: click or tap the border, or anywhere up to 22px either side of it, to show its Widen Panel and Narrow Panel buttons, then click or tap them to change the width a step at a time.
 
-Each of these moves the border by 10px, stops at `minWidth` and `maxWidth`, and fires the `toolPanelSizeChanged` event in the same way as dragging. Screen readers announce the border as a separator named after the Tool Panel, with the Tool Panel's width as its value.
+Each of these moves the border by 10px, stops at `minWidth` and `maxWidth`, and fires the `toolPanelSizeChanged` event in the same way as dragging. Screen readers announce the border as a separator named after the Tool Panel.
 
 ## Animation
 

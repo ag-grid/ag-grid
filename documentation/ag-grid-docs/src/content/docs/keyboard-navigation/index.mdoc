@@ -41,18 +41,16 @@ Matching ignores case and accents. Typing only moves the highlight: press {% kbd
 
 ## Side Bar
 
-Focus moves through the [Side Bar](./side-bar/) in reading order. With the default `position: 'right'`, its buttons come after the open Tool Panel, and with `position: 'left'` before it. The buttons are a single Tab stop: the open Tool Panel's button, or the first button when no Tool Panel is open.
+Focus moves through the [Side Bar](./side-bar/) in the order it is drawn, from left to right. A Side Bar drawn on the right of the grid comes after the grid, with its buttons after the open Tool Panel. One drawn on the left comes before the grid, with its buttons before the open Tool Panel. With `enableRtl` the sides swap, so the default `position: 'right'` is drawn on the left. The buttons are a single Tab stop: the open Tool Panel's button, or the first button when no Tool Panel is open.
 
 - Press {% kbd "↑" /%} / {% kbd "↓" /%} to move between the buttons.
 - Press {% kbd "↵ Enter" /%} or {% kbd "␣ Space" /%} to open or close the focused button's Tool Panel.
 
 ## Tool Panel Resizing
 
-While a [Side Bar](./side-bar/#resizing-tool-panels) Tool Panel is open, its resize border is in the Tab order between the grid and the Tool Panel. When the border is focused:
+While a [Side Bar](./side-bar/#resizing-tool-panels) Tool Panel is open, its resize border is in the Tab order between the Tool Panel and the grid. When the border is focused, press {% kbd "←" /%} / {% kbd "→" /%} to move it one step in the direction of the arrow, making the Tool Panel wider or narrower.
 
-- Press {% kbd "←" /%} / {% kbd "→" /%} to move the border one step in the direction of the arrow, making the Tool Panel wider or narrower.
-- Press {% kbd "⇥ Tab" /%} to move to the Widen Panel and Narrow Panel buttons shown on the border, and {% kbd "↵ Enter" /%} or {% kbd "␣ Space" /%} to press them.
-- Press {% kbd "⎋ Esc" /%} to hide those buttons.
+The Widen Panel and Narrow Panel buttons that a click on the border shows are for pointer users, and are not in the Tab order.
 
 ## Suppress Focus
 

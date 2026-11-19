@@ -141,8 +141,12 @@ export class ToolPanelWrapper extends Component {
 
         const { resizeBar, eContent } = this;
         resizeBar.setInverted(inverted);
-        // in the Tab order the border sits between the grid and the content, where it is drawn
-        eContent.insertAdjacentElement(isLeft ? 'beforebegin' : 'afterend', resizeBar.getGui());
+        // in the Tab order the border sits where it is drawn: after the content when on its right edge, before it when
+        // on its left. Moving a focused element blurs it, so only move it when it is on the wrong side
+        const eResizer = resizeBar.getGui();
+        if ((inverted ? eContent.nextElementSibling : eContent.previousElementSibling) !== eResizer) {
+            eContent.insertAdjacentElement(inverted ? 'afterend' : 'beforebegin', eResizer);
+        }
     }
 
     public refresh(): void {

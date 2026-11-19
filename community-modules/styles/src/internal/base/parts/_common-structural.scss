@@ -1958,20 +1958,21 @@
         display: flex;
     }
 
+    // the click and tap area: 45px wide, so 22px either side of the 1px border line it is centred on, and above the
+    // grid and panel content it overlaps so a press anywhere in it reaches the border
     .ag-tool-panel-horizontal-resize {
         cursor: ew-resize;
         height: 100%;
         position: absolute;
         top: 0;
-        width: 5px;
-        // keep sidebar resize affordance above panel content.
-        z-index: 1;
+        width: 45px;
+        z-index: 3;
     }
 
     .ag-side-bar-left .ag-tool-panel-horizontal-resize {
         @include ag.unthemed-rtl(
             (
-                right: -3px,
+                right: -23px,
             )
         );
     }
@@ -1979,7 +1980,7 @@
     .ag-side-bar-right .ag-tool-panel-horizontal-resize {
         @include ag.unthemed-rtl(
             (
-                left: -3px,
+                left: -23px,
             )
         );
     }
@@ -2043,6 +2044,11 @@
     // */
     .ag-side-bar {
         display: flex;
+    }
+
+    // in a right-to-left grid, the DOM runs in the order the side bar is drawn, from left to right, as does the Tab order
+    .ag-rtl .ag-side-bar {
+        flex-direction: row-reverse;
     }
 
     .ag-side-bar-left {

@@ -53,18 +53,12 @@
             box-shadow: none;
         }
 
+        // the highlight: a 7px band centred on the border line
         &::after {
             content: '';
             position: absolute;
-            inset: 0 1px;
+            inset: 0 19px;
         }
-    }
-
-    .ag-tool-panel-horizontal-resize:hover,
-    .ag-tool-panel-horizontal-resize:focus-visible,
-    .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize,
-    .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize {
-        z-index: 3;
     }
 
     // the whole border highlights while it is hovered, focused or in use. Mixing in the foreground colour keeps
@@ -81,6 +75,7 @@
         }
     }
 
+    // shown only after a click or tap on the border; keyboard users resize with the arrow keys instead
     .ag-tool-panel-resize-buttons {
         display: flex;
         flex-direction: column;
@@ -88,22 +83,19 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
+        visibility: hidden;
         z-index: 4;
-        // hidden, but still in the Tab order, until the border is focused or clicked
-        opacity: 0;
-        pointer-events: none;
     }
 
     .ag-tool-panel-resizer-active .ag-tool-panel-resize-buttons {
-        opacity: 1;
-        pointer-events: auto;
+        visibility: visible;
     }
 
-    // centred on the border
+    // next to the click area, over the grid, so they never cover the border or its highlight
     .ag-side-bar-left .ag-tool-panel-resize-buttons {
         @include ag.unthemed-rtl(
             (
-                right: -12px,
+                right: calc(-23px - var(--ag-grid-size) - 44px),
             )
         );
     }
@@ -111,7 +103,7 @@
     .ag-side-bar-right .ag-tool-panel-resize-buttons {
         @include ag.unthemed-rtl(
             (
-                left: -12px,
+                left: calc(-23px - var(--ag-grid-size) - 44px),
             )
         );
     }
@@ -122,8 +114,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 24px;
-        height: 24px;
+        width: 44px;
+        height: 44px;
         padding: 0;
         margin: 0;
         color: var(--ag-foreground-color);
