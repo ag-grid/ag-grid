@@ -789,12 +789,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
         // the focused cell and cell ranges follow their rows wherever the viewport is
-        this.rowsInView = {
+        const rowsInView = {
             anchor: printLayout ? null : _captureRowsInView(beans),
             followFocus: this.focusSvc.followFocusedRow(),
             followRanges: beans.rangeSvc?.followCellRanges(),
         };
+        this.rowsInView = rowsInView;
         this.rowsInViewAnchorForHeights = null;
+        // the update redraws in the same task, so a capture left after it is from an update that threw before its
+        // redraw, and a later redraw must not restore it
+        void Promise.resolve().then(() => {
+            if (this.rowsInView === rowsInView) {
+                this.rowsInView = null;
+            }
+        });
     }
 
     /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */
@@ -836,29 +844,32 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    /** Takes the rows kept in view for auto heights, before a change of auto heights redraws the rows. */
+    /**
+     * Takes the rows kept in view for auto heights, before a change of auto heights redraws the rows, unless the
+     * viewport scrolled since.
+     */
     public takeRowsInViewForHeights(): RowsInViewAnchor | null {
         const anchor = this.rowsInViewAnchorForHeights;
         this.rowsInViewAnchorForHeights = null;
-        return anchor;
+        if (!anchor) {
+            return null;
+        }
+        // checked before the redraw for the new heights, as the viewport clamps to a shorter grid in it, which would read
+        // as a scroll; the viewport itself is read, as a debounced scroll elsewhere may not have been handled yet
+        const scrollFeature = this.ctrlsSvc.getScrollFeature();
+        scrollFeature.invalidateVerticalScroll();
+        return scrollFeature.getVScrollPosition().top === anchor.scrollTop ? anchor : null;
     }
 
     /**
      * Called after a pass of auto heights, which redrew the rows if `heightsChanged`, to keep the rows the last data
-     * update kept in view where it left them, unless the viewport scrolled since. The anchor expires once the rows
-     * are measured.
+     * update kept in view where it left them. The anchor expires once the rows are measured.
      */
     public keepRowsInViewForHeights(anchor: RowsInViewAnchor, heightsChanged: boolean, measured: boolean): void {
         if (!heightsChanged) {
             if (!measured) {
                 this.rowsInViewAnchorForHeights = anchor;
             }
-            return;
-        }
-        // read the viewport itself, as a debounced scroll elsewhere may not have been handled yet
-        const scrollFeature = this.ctrlsSvc.getScrollFeature();
-        scrollFeature.invalidateVerticalScroll();
-        if (scrollFeature.getVScrollPosition().top !== anchor.scrollTop) {
             return;
         }
         if (_correctRowsInView(this.beans, anchor) && _isAnimateRows(this.gos)) {

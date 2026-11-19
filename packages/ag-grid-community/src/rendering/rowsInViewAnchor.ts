@@ -81,11 +81,28 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
 }
 
 /**
- * The row at the index, read without creating it: the server-side row model creates the rows it reads that are not
- * loaded, and queues them to load.
+ * In display order, the loaded rows from the first index to the last. The client-side row model reads them by index.
+ * The server-side row model creates the rows it reads by index that are not loaded, and finds one by index by scanning
+ * its loaded rows, so its loaded rows are walked once instead.
  */
-function getLoadedRow({ gos, rowModel }: BeanCollection, index: number): RowNode | undefined {
-    return _isClientSideRowModel(gos) ? rowModel.getRow(index) : rowModel.getRowIfLoaded?.(index);
+function getLoadedRows({ gos, rowModel }: BeanCollection, first: number, last: number): RowNode[] {
+    const rows: RowNode[] = [];
+    if (_isClientSideRowModel(gos)) {
+        for (let i = first; i <= last; ++i) {
+            const rowNode = rowModel.getRow(i);
+            if (rowNode) {
+                rows.push(rowNode);
+            }
+        }
+        return rows;
+    }
+    rowModel.forEachDisplayedNode?.((rowNode) => {
+        const { rowIndex } = rowNode;
+        if (rowIndex != null && rowIndex >= first && rowIndex <= last) {
+            rows.push(rowNode);
+        }
+    });
+    return rows.sort((a, b) => a.rowIndex! - b.rowIndex!);
 }
 
 const isPositioned = (rowNode: RowNode): boolean =>
@@ -100,22 +117,12 @@ const isPositioned = (rowNode: RowNode): boolean =>
 function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewportBottom: number): RowNode[] {
     const { pageBounds, rowModel } = beans;
     const margin = viewportBottom - firstVisiblePixel;
-    const rows: RowNode[] = [];
-    const lastRow = Math.min(rowModel.getRowIndexAtPixel(viewportBottom + margin), pageBounds.getLastRow());
-    for (
-        let i = Math.max(
-            rowModel.getRowIndexAtPixel(Math.max(0, firstVisiblePixel - margin)),
-            pageBounds.getFirstRow()
-        );
-        i <= lastRow;
-        ++i
-    ) {
-        const rowNode = getLoadedRow(beans, i);
-        if (rowNode && isPositioned(rowNode)) {
-            rows.push(rowNode);
-        }
-    }
-    return rows;
+    const first = Math.max(
+        rowModel.getRowIndexAtPixel(Math.max(0, firstVisiblePixel - margin)),
+        pageBounds.getFirstRow()
+    );
+    const last = Math.min(rowModel.getRowIndexAtPixel(viewportBottom + margin), pageBounds.getLastRow());
+    return getLoadedRows(beans, first, last).filter(isPositioned);
 }
 
 function getGroupsAbove(rowNode: RowNode | undefined): [group: RowNode, rowTop: number][] {
@@ -239,7 +246,8 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode | undefined): rowNo
     if (!rowNode || rowNode.destroyed || rowNode.rowIndex == null) {
         return false;
     }
-    return getLoadedRow(beans, rowNode.rowIndex) === rowNode;
+    // a server-side row removed is destroyed, and one hidden under a collapsed group has no index
+    return !_isClientSideRowModel(beans.gos) || beans.rowModel.getRow(rowNode.rowIndex) === rowNode;
 }
 
 /**
@@ -251,7 +259,7 @@ export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPo
     if (rowPinned) {
         return () => rowIndex;
     }
-    const rowNode = getLoadedRow(beans, rowIndex);
+    const [rowNode] = getLoadedRows(beans, rowIndex, rowIndex);
     return () => (isDisplayed(beans, rowNode) ? rowNode.rowIndex : undefined);
 }
 

@@ -540,10 +540,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         return rootStore.getRowUsingDisplayIndex(index) as RowNode;
     }
 
-    public getRowIfLoaded(index: number): RowNode | undefined {
-        return this.getRootStore()?.getRowUsingDisplayIndex(index, true) as RowNode | undefined;
-    }
-
     public refreshAfterFilter(
         newFilterModel: FilterModel | AdvancedFilterModel | null,
         params: StoreRefreshAfterParams

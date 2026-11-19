@@ -162,10 +162,9 @@ export class LazyCache extends BeanStub {
     /**
      * Get the row node for a specific display index from this store
      * @param displayIndex the display index of the node to find
-     * @param ifLoaded only return a node already in the store, without creating a stub or queueing a load
      * @returns undefined if the node is not in the store bounds, otherwise will always return a node
      */
-    public getRowByDisplayIndex(displayIndex: number, ifLoaded?: boolean): IRowNode | undefined {
+    public getRowByDisplayIndex(displayIndex: number): IRowNode | undefined {
         // if index isn't in store, nothing to return
         if (!this.store.isDisplayIndexInStore(displayIndex)) {
             return undefined;
@@ -175,7 +174,7 @@ export class LazyCache extends BeanStub {
         const node = this.nodeDisplayIndexMap.get(displayIndex);
         if (node) {
             // if we have the node, check if it needs refreshed when rendered
-            if (!ifLoaded && (node.stub || node.__needsRefreshWhenVisible)) {
+            if (node.stub || node.__needsRefreshWhenVisible) {
                 this.lazyBlockLoadingSvc.queueLoadCheck();
             }
             return node;
@@ -190,10 +189,7 @@ export class LazyCache extends BeanStub {
             );
             // if belongs to child store, search that first
             if (nextParent) {
-                return (nextParent.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(
-                    displayIndex,
-                    ifLoaded
-                );
+                return (nextParent.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
             }
         }
 
@@ -201,7 +197,7 @@ export class LazyCache extends BeanStub {
         // this is a performance optimisation, as it is the most common scenario
         // and enables the node - 1 check to kick in more often.
         if (displayIndex === this.store.getDisplayIndexStart()) {
-            return ifLoaded ? undefined : this.createStubNode(0, displayIndex);
+            return this.createStubNode(0, displayIndex);
         }
 
         // check if the row immediately prior is available in the store
@@ -218,14 +214,13 @@ export class LazyCache extends BeanStub {
                 (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
             ) {
                 return (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(
-                    displayIndex,
-                    ifLoaded
+                    displayIndex
                 );
             }
 
             // otherwise, row must be a stub node
             const lazyCacheNode = this.nodeMap.getBy('node', contiguouslyPreviousNode)!;
-            return ifLoaded ? undefined : this.createStubNode(lazyCacheNode.index + 1, displayIndex);
+            return this.createStubNode(lazyCacheNode.index + 1, displayIndex);
         }
 
         const adjacentNodes = this.getSurroundingNodesByDisplayIndex(displayIndex);
@@ -233,7 +228,7 @@ export class LazyCache extends BeanStub {
         // if no bounds skipped includes this, calculate from end index
         if (adjacentNodes == null) {
             const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex);
-            return ifLoaded ? undefined : this.createStubNode(storeIndexFromEndIndex, displayIndex);
+            return this.createStubNode(storeIndexFromEndIndex, displayIndex);
         }
 
         const { previousNode, nextNode } = adjacentNodes;
@@ -243,10 +238,7 @@ export class LazyCache extends BeanStub {
             previousNode?.node.expanded &&
             (previousNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
         ) {
-            return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(
-                displayIndex,
-                ifLoaded
-            );
+            return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
         }
 
         // if we have the node after this node, we can calculate the store index of this node by the difference
@@ -254,12 +246,12 @@ export class LazyCache extends BeanStub {
         if (nextNode) {
             const displayIndexDiff = nextNode.node.rowIndex! - displayIndex;
             const newStoreIndex = nextNode.index - displayIndexDiff;
-            return ifLoaded ? undefined : this.createStubNode(newStoreIndex, displayIndex);
+            return this.createStubNode(newStoreIndex, displayIndex);
         }
 
         // if no next node, calculate from end index of this store
         const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex);
-        return ifLoaded ? undefined : this.createStubNode(storeIndexFromEndIndex, displayIndex);
+        return this.createStubNode(storeIndexFromEndIndex, displayIndex);
     }
 
     /**
