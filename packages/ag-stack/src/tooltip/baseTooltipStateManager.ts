@@ -90,6 +90,7 @@ export abstract class BaseTooltipStateManager<
         }
     );
     private tooltipParams: TTooltipParams | undefined;
+    private tooltipSize: { width: number; height: number } | undefined;
     private tooltipPopupDestroyFunc: (() => void) | undefined;
     private tooltipInstanceCount = 0;
     private showEventDispatched = false;
@@ -421,16 +422,16 @@ export abstract class BaseTooltipStateManager<
             return;
         }
 
-        let width = eGui.offsetWidth;
-        let height = eGui.offsetHeight;
+        this.addScrollListeners(eGui);
         this.popupListeners.push(
             _observeResize(this.beans, eGui, () => {
-                const { offsetWidth, offsetHeight } = eGui;
-                if (this.tooltipComp !== comp || (width === offsetWidth && height === offsetHeight)) {
+                const size = this.tooltipSize;
+                if (
+                    this.tooltipComp !== comp ||
+                    (size?.width === eGui.offsetWidth && size?.height === eGui.offsetHeight)
+                ) {
                     return;
                 }
-                width = offsetWidth;
-                height = offsetHeight;
                 this.positionTooltip();
             }),
             ..._addManagedElementListeners(this, eGui, {
@@ -463,6 +464,20 @@ export abstract class BaseTooltipStateManager<
         this.showEventDispatched = true;
         this.eventSvc.dispatchEvent({ type: 'tooltipShow', tooltipGui: eGui, parentGui: this.tooltipCtrl.getGui() });
         this.startHideTimeout();
+    }
+
+    private addScrollListeners(eGui: HTMLElement): void {
+        const ancestors = new Set<Node>();
+        const hide = () => this.hideTooltip(true);
+        for (const element of [this.tooltipCtrl.getGui(), eGui]) {
+            let parent = element.parentNode;
+            // Scroll does not bubble or cross shadow roots.
+            while (parent && !ancestors.has(parent)) {
+                ancestors.add(parent);
+                this.popupListeners.push(...this.addManagedListeners(parent, { scroll: hide }));
+                parent = parent.parentNode ?? (parent as ShadowRoot).host;
+            }
+        }
     }
 
     public isTooltipFocused(): boolean {
@@ -624,7 +639,7 @@ export abstract class BaseTooltipStateManager<
         const offset = gos.get('tooltipOffset');
         const ePopup = this.tooltipComp!.getGui();
         const params = this.tooltipParams!;
-        positionPopupForTooltip(popupSvc, {
+        this.tooltipSize = positionPopupForTooltip(popupSvc, {
             ePopup,
             pointer:
                 lastMouseEvent && (tracking || gos.get('tooltipAnchor') === 'pointer') ? lastMouseEvent : undefined,
@@ -659,6 +674,7 @@ export abstract class BaseTooltipStateManager<
         }, delay);
         this.tooltipComp = undefined;
         this.tooltipParams = undefined;
+        this.tooltipSize = undefined;
         this.tooltipPopupDestroyFunc = undefined;
     }
 

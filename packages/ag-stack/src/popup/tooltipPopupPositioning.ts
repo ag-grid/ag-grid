@@ -14,7 +14,10 @@ export interface TooltipPopupPositionParams {
     postProcessCallback: (position: TooltipPosition) => void;
 }
 
-export function positionPopupForTooltip<T>(popupSvc: IPopupService<T>, params: TooltipPopupPositionParams): void {
+export function positionPopupForTooltip<T>(
+    popupSvc: IPopupService<T>,
+    params: TooltipPopupPositionParams
+): { width: number; height: number } {
     const { ePopup, position, gap, enableRtl } = params;
     const { reference, boundsSize, offset } = getTooltipGeometry(popupSvc.getPopupParent(), params);
     const metrics = measureTooltip(ePopup, position, boundsSize.width);
@@ -56,6 +59,9 @@ export function positionPopupForTooltip<T>(popupSvc: IPopupService<T>, params: T
             }
         },
     });
+
+    // The size the solver placed, before postProcessPopup could mutate the popup.
+    return { width: resolvedMetrics.width, height: resolvedMetrics.height };
 }
 
 export function getTooltipSourceRect(eventSource: HTMLElement): Rect {

@@ -91,6 +91,86 @@ test.describe('tooltip positioning', () => {
         }).toPass();
     });
 
+    for (const layout of ['separate popup parent', 'shared static popup parent', 'shadow host', 'inside shadow root']) {
+        test(`dismisses focused tooltips on ancestor scrolling (${layout})`, async ({ page }) => {
+            const { cell } = await mountGrid(page, {
+                width: 550,
+                height: 600,
+                shadowDom: layout === 'shadow host' || layout === 'inside shadow root',
+                options: () => ({
+                    columnDefs: [
+                        {
+                            field: 'value',
+                            tooltip: true,
+                            tooltipComponent: class {
+                                private readonly gui = document.createElement('div');
+                                public init(): void {
+                                    this.gui.style.cssText =
+                                        'position:absolute;width:160px;height:40px;background:white';
+                                    this.gui.textContent = 'Tooltip';
+                                }
+                                public getGui(): HTMLElement {
+                                    return this.gui;
+                                }
+                            },
+                        },
+                    ],
+                    rowData: [{ value: 'Value' }],
+                    tooltipTrigger: 'focus',
+                    popupParent: document.body,
+                }),
+            });
+            await page.evaluate((layout) => {
+                const host = document.querySelector('#shadow-host');
+                const grid = (host?.shadowRoot ?? document).querySelector('#myGrid')!;
+                const content = layout === 'shadow host' ? host! : grid;
+                const outer = document.createElement('div');
+                outer.id = 'scroll-parent';
+                outer.style.cssText = 'margin:80px 40px;width:600px;height:300px;overflow:auto';
+                content.before(outer);
+                outer.appendChild(content);
+                if (layout === 'shared static popup parent') {
+                    window.gridApi.setGridOption('popupParent', outer);
+                }
+            }, layout);
+            const source = cell(0, 'value');
+            await source.focus();
+            await expect(page.getByRole('tooltip')).toHaveText('Tooltip');
+            const before = (await source.boundingBox())!;
+
+            await page.locator('#scroll-parent').evaluate((element) => {
+                element.scrollTop = 40;
+            });
+            await expect(page.getByRole('tooltip')).toHaveCount(0);
+            expect((await source.boundingBox())!.y).toBeCloseTo(before.y - 40, 0);
+            await expect(source).toBeFocused();
+        });
+    }
+
+    test('preserves the gap after postProcessPopup resizes the tooltip', async ({ page }) => {
+        const { cell } = await mountGrid(page, {
+            css: '#myGrid { margin-top: 180px; }',
+            options: () => ({
+                columnDefs: [{ field: 'value', tooltip: true }],
+                rowData: [{ value: 'Tooltip' }],
+                tooltipTrigger: 'focus',
+                tooltipPosition: 'top',
+                popupParent: document.body,
+                postProcessPopup: ({ type, ePopup }) => {
+                    if (type === 'tooltip') {
+                        ePopup.style.height = '100px';
+                    }
+                },
+            }),
+        });
+        const source = cell(0, 'value');
+        await source.focus();
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toHaveText('Tooltip');
+        expect((await tooltip.boundingBox())!.height).toBe(100);
+        await expectGap(source, tooltip, 'top', 6);
+    });
+
     for (const sourceKind of ['header', 'pinned row', 'pinned column', 'full-width row']) {
         test(`anchors partially covered sources at their visible top edge (${sourceKind})`, async ({ page }) => {
             const { grid, cell, withApi } = await mountGrid(page, {

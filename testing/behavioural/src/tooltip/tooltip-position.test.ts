@@ -689,6 +689,51 @@ describe('Tooltip positioning callbacks', () => {
         expect(tooltip.style.getPropertyValue('--ag-tooltip-arrow-offset')).toBe('19px');
     });
 
+    test('repositions a tooltip resized by its initial postProcessPopup callback', async () => {
+        uninstallResizeObserver = installMockResizeObserver();
+        const postProcessPopup = vi.fn(({ ePopup }) => {
+            Object.defineProperty(ePopup, 'offsetHeight', { value: 100, configurable: true });
+            Object.defineProperty(ePopup, 'clientHeight', { value: 100, configurable: true });
+        });
+        const api = await gridMgr.createGridAndWait('tooltip-position-initial-resize', {
+            columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
+            rowData: [{ value: 7 }],
+            tooltipTrigger: 'focus',
+            postProcessPopup,
+        });
+        vi.useFakeTimers();
+        getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!.focus();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(getVisibleTooltips()).toHaveLength(1);
+        expect(postProcessPopup).toHaveBeenCalledTimes(1);
+
+        const tooltip = getVisibleTooltips()[0];
+        triggerResizeObservers(tooltip);
+        expect(postProcessPopup).toHaveBeenCalledTimes(2);
+        triggerResizeObservers(tooltip);
+        expect(postProcessPopup).toHaveBeenCalledTimes(2);
+    });
+
+    test('ignores tooltip and unrelated scrolling but dismisses on document scrolling', async () => {
+        const api = await gridMgr.createGridAndWait('tooltip-scroll', {
+            columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
+            rowData: [{ value: 7 }],
+            tooltipTrigger: 'focus',
+        });
+        const source = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+        source.focus();
+        await waitForTooltips(1);
+        const tooltip = getVisibleTooltips()[0];
+        tooltip.dispatchEvent(new Event('scroll'));
+        getGridElement(api)!.querySelector('.ag-header')!.dispatchEvent(new Event('scroll'));
+        expect(getVisibleTooltips()).toEqual([tooltip]);
+
+        document.dispatchEvent(new Event('scroll'));
+        await waitForTooltips(0);
+        expect(source).toHaveFocus();
+        expect(source).toHaveAccessibleDescription('7');
+    });
+
     test.each(['hide', 'destroy'] as const)(
         'repositions late content changes and stops observing on %s',
         async (close) => {
