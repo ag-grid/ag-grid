@@ -479,7 +479,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The trigger that will cause tooltips to show and hide.
      * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
      *  - `hover` - The tooltip will show/hide when its element is hovered.
-     *  - `focus` - The tooltip shows immediately on keyboard focus.
+     *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
      *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
      * @default 'hover'
      * @initial
@@ -511,7 +511,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public getTooltipAriaDescription:
         ((params: TooltipContentParams<TData>) => string | null | undefined) | undefined = undefined;
-    /** The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
+    /** The delay in milliseconds before a tooltip shows on hover or focus.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`

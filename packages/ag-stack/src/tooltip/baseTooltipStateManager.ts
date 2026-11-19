@@ -301,17 +301,9 @@ export abstract class BaseTooltipStateManager<
         owner?.hideTooltip(true);
         this.sharedState.owner = this;
 
-        let delay = showDelayOverride;
-        if (delay == null) {
-            if (mouseEvent) {
-                const lastHide = this.sharedState.lastHideTime;
-                delay = this.getTooltipDelay(
-                    lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF ? 'SwitchShow' : 'Show'
-                );
-            } else {
-                delay = this.tooltipTrigger === 'hoverOrFocus' ? this.getTooltipDelay('Show') : 0;
-            }
-        }
+        const lastHide = this.sharedState.lastHideTime;
+        const switching = mouseEvent && lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF;
+        const delay = showDelayOverride ?? this.getTooltipDelay(switching ? 'SwitchShow' : 'Show');
         this.lastMouseEvent = mouseEvent ?? null;
         this.state = TooltipStates.WAITING_TO_SHOW;
         this.showTimeout = window.setTimeout(() => this.showTooltip(), Math.max(0, delay ?? 0));

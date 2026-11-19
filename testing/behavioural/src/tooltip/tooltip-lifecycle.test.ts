@@ -259,22 +259,32 @@ describe('Tooltip lifecycle', () => {
         }
     );
 
-    test('exposes the description immediately but waits for settled keyboard focus before rendering', async () => {
-        const { first, second } = await createGrid({ tooltipTrigger: 'hoverOrFocus', tooltipShowDelay: 200 });
-        first.setAttribute('aria-describedby', 'customer-description');
-        first.focus();
-        const ids = first.getAttribute('aria-describedby')!.split(/\s+/);
-        expect(ids).toContain('customer-description');
-        expect(ids.map((id) => document.getElementById(id)?.textContent)).toContain('First');
-        expect(visibleText()).toEqual([]);
-        await vi.advanceTimersByTimeAsync(100);
-        second.focus();
-        await vi.advanceTimersByTimeAsync(100);
-        expect(visibleText()).toEqual([]);
-        await vi.advanceTimersByTimeAsync(100);
-        expect(visibleText()).toEqual(['Second']);
-        expect(first).toHaveAttribute('aria-describedby', 'customer-description');
-    });
+    test.each(['focus', 'hoverOrFocus'] as const)(
+        'exposes the description immediately but delays rendering in %s mode',
+        async (tooltipTrigger) => {
+            const { first, second } = await createGrid({ tooltipTrigger, tooltipShowDelay: 200 });
+            first.setAttribute('aria-describedby', 'customer-description');
+            first.focus();
+            const ids = first.getAttribute('aria-describedby')!.split(/\s+/);
+            expect(ids).toContain('customer-description');
+            expect(ids.map((id) => document.getElementById(id)?.textContent)).toContain('First');
+            expect(visibleText()).toEqual([]);
+            await vi.advanceTimersByTimeAsync(100);
+            expect(visibleText()).toEqual([]);
+            second.focus();
+            await vi.advanceTimersByTimeAsync(199);
+            expect(visibleText()).toEqual([]);
+            await vi.advanceTimersByTimeAsync(1);
+            expect(visibleText()).toEqual(['Second']);
+            expect(first).toHaveAttribute('aria-describedby', 'customer-description');
+
+            first.focus();
+            await vi.advanceTimersByTimeAsync(199);
+            expect(visibleText()).toEqual([]);
+            await vi.advanceTimersByTimeAsync(1);
+            expect(visibleText()).toEqual(['First']);
+        }
+    );
 
     test('Escape on a focused source does not immediately reopen the tooltip', async () => {
         const { first } = await createGrid({ tooltipTrigger: 'hoverOrFocus' });
@@ -558,7 +568,7 @@ describe('Tooltip lifecycle', () => {
         }
     });
 
-    test.each(['hover', 'focus'] as const)('preserves the existing %s-only trigger', async (tooltipTrigger) => {
+    test.each(['hover', 'focus'] as const)('only responds to the %s trigger', async (tooltipTrigger) => {
         const { first } = await createGrid({ tooltipTrigger, tooltipShowDelay: 200 });
         if (tooltipTrigger === 'hover') {
             first.focus();
@@ -566,14 +576,15 @@ describe('Tooltip lifecycle', () => {
             expect(visibleText()).toEqual([]);
             expect(first).not.toHaveAttribute('aria-describedby');
             enter(first);
-            await vi.advanceTimersByTimeAsync(200);
         } else {
             enter(first);
             await vi.advanceTimersByTimeAsync(300);
             expect(visibleText()).toEqual([]);
             first.focus();
-            await vi.advanceTimersByTimeAsync(0);
         }
+        await vi.advanceTimersByTimeAsync(199);
+        expect(visibleText()).toEqual([]);
+        await vi.advanceTimersByTimeAsync(1);
         expect(visibleText()).toEqual(['First']);
     });
 });

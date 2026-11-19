@@ -195,7 +195,9 @@ describe('calculated column validation tooltips', () => {
         input.focus();
         vi.useFakeTimers();
         change(input, '');
-        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(999);
+        expect(tooltipText()).toEqual([]);
+        await vi.advanceTimersByTimeAsync(1);
         expect(tooltipText()).toEqual(tooltipTrigger === 'focus' ? ['Enter an expression'] : []);
         if (tooltipTrigger === 'hover') {
             await vi.advanceTimersByTimeAsync(1000);

@@ -699,6 +699,7 @@ describe('Tooltip positioning callbacks', () => {
             columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
             rowData: [{ value: 7 }],
             tooltipTrigger: 'focus',
+            tooltipShowDelay: 0,
             postProcessPopup,
         });
         vi.useFakeTimers();
@@ -719,6 +720,7 @@ describe('Tooltip positioning callbacks', () => {
             columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
             rowData: [{ value: 7 }],
             tooltipTrigger: 'focus',
+            tooltipShowDelay: 0,
         });
         const source = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
         source.focus();
@@ -743,6 +745,7 @@ describe('Tooltip positioning callbacks', () => {
                 columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
                 rowData: [{ value: 7 }],
                 tooltipTrigger: 'focus',
+                tooltipShowDelay: 0,
                 postProcessPopup,
             });
             const source = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
