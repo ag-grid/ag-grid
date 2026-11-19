@@ -60,12 +60,12 @@ test.describe('resizing the tool panel without dragging', () => {
         });
         await grid.locator('.ag-tool-panel-horizontal-resize').focus();
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             await page.keyboard.press('ArrowLeft');
         }
         expect(await panelWidth(grid)).toBe(350);
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             await page.keyboard.press('ArrowRight');
         }
         expect(await panelWidth(grid)).toBe(200);
@@ -94,7 +94,7 @@ test.describe('resizing the tool panel without dragging', () => {
 
         const before = await panelWidth(grid);
         await page.keyboard.press('ArrowRight');
-        expect(await panelWidth(grid)).toBe(before + 20);
+        expect(await panelWidth(grid)).toBe(before + 10);
     });
 
     test('with enableRtl, Tab from the grid reaches the border and Right Arrow widens', async ({ page }) => {
@@ -113,7 +113,7 @@ test.describe('resizing the tool panel without dragging', () => {
 
         const before = await panelWidth(grid);
         await page.keyboard.press('ArrowRight');
-        expect(await panelWidth(grid)).toBe(before + 20);
+        expect(await panelWidth(grid)).toBe(before + 10);
     });
 
     test('clicking the border shows 24px Widen and Narrow buttons that resize the panel', async ({ page }) => {
@@ -135,10 +135,10 @@ test.describe('resizing the tool panel without dragging', () => {
         }
         const before = await panelWidth(grid);
         await widen.click();
-        expect(await panelWidth(grid)).toBe(before + 20);
+        expect(await panelWidth(grid)).toBe(before + 10);
         await narrow.click();
         await narrow.click();
-        expect(await panelWidth(grid)).toBe(before - 20);
+        expect(await panelWidth(grid)).toBe(before - 10);
         await expectButtonsShown(grid, true);
     });
 

@@ -13,7 +13,7 @@ import type { ElementParams, IconName } from 'ag-grid-community';
 import { Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
 
 /** Pixels the border moves for one arrow key press or one Widen / Narrow click. */
-const RESIZE_STEP = 20;
+const RESIZE_STEP = 10;
 
 const AgHorizontalResizeElement: ElementParams = {
     tag: 'div',

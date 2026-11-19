@@ -161,12 +161,12 @@ describe('tool panel resizing without dragging', () => {
             const { panel, splitter } = await createGrid();
 
             press(splitter, 'ArrowLeft');
-            expect(width(panel)).toBe(270);
-            expect(splitter.getAttribute('aria-valuenow')).toBe('270');
+            expect(width(panel)).toBe(260);
+            expect(splitter.getAttribute('aria-valuenow')).toBe('260');
 
             press(splitter, 'ArrowRight', 2);
-            expect(width(panel)).toBe(230);
-            expect(splitter.getAttribute('aria-valuenow')).toBe('230');
+            expect(width(panel)).toBe(240);
+            expect(splitter.getAttribute('aria-valuenow')).toBe('240');
         });
 
         test('with the side bar on the left, Right Arrow widens the panel', async () => {
@@ -175,7 +175,7 @@ describe('tool panel resizing without dragging', () => {
             });
 
             press(splitter, 'ArrowRight');
-            expect(width(panel)).toBe(270);
+            expect(width(panel)).toBe(260);
 
             press(splitter, 'ArrowLeft');
             expect(width(panel)).toBe(250);
@@ -185,7 +185,7 @@ describe('tool panel resizing without dragging', () => {
             const { panel, splitter } = await createGrid({ enableRtl: true });
 
             press(splitter, 'ArrowRight');
-            expect(width(panel)).toBe(270);
+            expect(width(panel)).toBe(260);
 
             press(splitter, 'ArrowLeft');
             expect(width(panel)).toBe(250);
@@ -194,17 +194,27 @@ describe('tool panel resizing without dragging', () => {
         test('the width stays within minWidth and maxWidth', async () => {
             const { panel, splitter } = await createGrid({}, { minWidth: 200, maxWidth: 350 });
 
-            press(splitter, 'ArrowLeft', 10);
+            press(splitter, 'ArrowLeft', 20);
             expect(width(panel)).toBe(350);
             expect(splitter.getAttribute('aria-valuenow')).toBe('350');
 
-            press(splitter, 'ArrowRight', 10);
+            press(splitter, 'ArrowRight', 20);
             expect(width(panel)).toBe(200);
             expect(splitter.getAttribute('aria-valuenow')).toBe('200');
         });
 
+        test('a step stops exactly at a limit that is less than a step away', async () => {
+            const { panel, splitter } = await createGrid({}, { minWidth: 243, maxWidth: 255 });
+
+            press(splitter, 'ArrowLeft');
+            expect(width(panel)).toBe(255);
+
+            press(splitter, 'ArrowRight', 2);
+            expect(width(panel)).toBe(243);
+        });
+
         test('each step fires toolPanelSizeChanged as a drag does, and none at a limit', async () => {
-            const { api, splitter } = await createGrid({}, { maxWidth: 270 });
+            const { api, splitter } = await createGrid({}, { maxWidth: 260 });
             const events = recordSizeEvents(api);
 
             press(splitter, 'ArrowLeft');
@@ -217,8 +227,8 @@ describe('tool panel resizing without dragging', () => {
 
             expect(events).toEqual([
                 { width: 250, started: true, ended: false },
-                { width: 270, started: false, ended: true },
-                { width: 270, started: true, ended: false },
+                { width: 260, started: false, ended: true },
+                { width: 260, started: true, ended: false },
                 { width: 250, started: false, ended: true },
             ]);
         });
@@ -262,21 +272,21 @@ describe('tool panel resizing without dragging', () => {
         });
 
         test('widen and narrow the panel by one step within its limits', async () => {
-            const { panel, splitter, widen, narrow } = await createGrid({}, { minWidth: 230, maxWidth: 270 });
+            const { panel, splitter, widen, narrow } = await createGrid({}, { minWidth: 240, maxWidth: 260 });
             splitter.click();
 
             widen.click();
-            expect(width(panel)).toBe(270);
-            expect(splitter.getAttribute('aria-valuenow')).toBe('270');
+            expect(width(panel)).toBe(260);
+            expect(splitter.getAttribute('aria-valuenow')).toBe('260');
             expect(widen.getAttribute('aria-disabled')).toBe('true');
 
             widen.click();
-            expect(width(panel)).toBe(270);
+            expect(width(panel)).toBe(260);
 
             narrow.click();
             narrow.click();
             narrow.click();
-            expect(width(panel)).toBe(230);
+            expect(width(panel)).toBe(240);
             expect(narrow.getAttribute('aria-disabled')).toBe('true');
             expect(widen.getAttribute('aria-disabled')).toBe('false');
         });
