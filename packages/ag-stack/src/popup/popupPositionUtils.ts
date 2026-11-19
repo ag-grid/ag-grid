@@ -20,7 +20,7 @@ const MIRRORED_ANCHORS: Partial<Record<Anchor, Anchor>> = {
     br: 'bl',
 } as const;
 
-interface Rect {
+export interface Rect {
     top: number;
     left: number;
     right: number;
@@ -100,7 +100,7 @@ export function computeAlignedPosition(
  * With `leastOverflow`, prefer a side that fits without clamping along the placement axis.
  *
  * @param referenceRect  Bounding rect of the reference element (relative to parent)
- * @param targetSize     Width and height of the target element
+ * @param targetSize     Width and height of the target element, or a measurement for each alignment
  * @param parentSize     Width and height of the bounding parent
  * @param placements     Alignments to try in preference order
  * @param gap            Pixel gap applied directionally away from the reference
@@ -108,21 +108,22 @@ export function computeAlignedPosition(
  */
 export function findBestPlacement(
     referenceRect: Rect,
-    targetSize: Size,
+    targetSize: Size | ((alignment: Alignment) => Size),
     parentSize: Size,
     placements: Alignment[],
     gapOrOptions: number | FindBestPlacementOptions = 0
 ): { x: number; y: number; alignment: Alignment } {
     const { gap, enableRtl, mirrorPlacementsInRtl, fallback } = normaliseFindBestPlacementOptions(gapOrOptions);
     const effectivePlacements = getEffectivePlacements(placements, enableRtl, mirrorPlacementsInRtl);
-    const { width, height } = targetSize;
-    const maxX = Math.max(parentSize.width - width, 0);
-    const maxY = Math.max(parentSize.height - height, 0);
     let best: { x: number; y: number; alignment: Alignment } | undefined;
     let leastOverflow = Infinity;
 
     for (const alignment of effectivePlacements) {
-        const pos = computeAlignedPosition(referenceRect, targetSize, alignment, gap);
+        const size = typeof targetSize === 'function' ? targetSize(alignment) : targetSize;
+        const { width, height } = size;
+        const maxX = Math.max(parentSize.width - width, 0);
+        const maxY = Math.max(parentSize.height - height, 0);
+        const pos = computeAlignedPosition(referenceRect, size, alignment, gap);
         const clampedX = Math.min(Math.max(pos.x, 0), maxX);
         const clampedY = Math.min(Math.max(pos.y, 0), maxY);
 
@@ -161,10 +162,11 @@ export function findBestPlacement(
         return best;
     }
     // Fallback to first placement, clamped to parent bounds.
-    const first = computeAlignedPosition(referenceRect, targetSize, effectivePlacements[0], gap);
+    const size = typeof targetSize === 'function' ? targetSize(effectivePlacements[0]) : targetSize;
+    const first = computeAlignedPosition(referenceRect, size, effectivePlacements[0], gap);
     return {
-        x: Math.min(Math.max(first.x, 0), maxX),
-        y: Math.min(Math.max(first.y, 0), maxY),
+        x: Math.min(Math.max(first.x, 0), Math.max(parentSize.width - size.width, 0)),
+        y: Math.min(Math.max(first.y, 0), Math.max(parentSize.height - size.height, 0)),
         alignment: effectivePlacements[0],
     };
 }

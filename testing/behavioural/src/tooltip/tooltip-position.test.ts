@@ -16,6 +16,7 @@ import {
 import { AllCommunityModule, getGridElement } from 'ag-grid-community';
 import type {
     ColDef,
+    ICellRendererParams,
     IRichCellEditorRendererParams,
     ISetFilterCellRendererParams,
     ITooltipComp,
@@ -756,6 +757,72 @@ describe('Tooltip positioning callbacks', () => {
             })
         );
     });
+
+    test('native renderer tooltips do not format unused group metadata', async () => {
+        let rendererParams: ICellRendererParams;
+        const formatter = vi.fn(({ value }) => `Formatted ${value}`);
+        const api = await gridMgr.createGridAndWait('native-group-tooltip', {
+            columnDefs: [{ field: 'country', rowGroup: true, valueFormatter: formatter }, { field: 'value' }],
+            rowData: [{ country: 'Ireland', value: 1 }],
+            groupDisplayType: 'groupRows',
+            groupRowRenderer: (params: ICellRendererParams) => {
+                rendererParams = params;
+                return document.createElement('span');
+            },
+            enableBrowserTooltips: true,
+        });
+        formatter.mockClear();
+        rendererParams!.setTooltip('Custom native text');
+        expect(getGridElement(api)!.querySelector('.ag-full-width-row')).toHaveAttribute('title', 'Custom native text');
+        expect(formatter).not.toHaveBeenCalled();
+    });
+
+    test.each(['hide', 'destroy', 'replacement'] as const)(
+        'batches tracked pointer updates and ignores a queued update after %s',
+        async (close) => {
+            const postProcessPopup = vi.fn();
+            const api = await gridMgr.createGridAndWait('tracked-tooltip-frame', {
+                columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
+                rowData: [{ value: 7 }],
+                tooltipMouseTrack: true,
+                tooltipShowDelay: 0,
+                postProcessPopup,
+            });
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+            cell.dispatchEvent(new MouseEvent('mouseenter', { clientX: 10, clientY: 10 }));
+            await waitForTooltips(1);
+            postProcessPopup.mockClear();
+            const frames: FrameRequestCallback[] = [];
+            vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+                frames.push(callback);
+                return 0;
+            });
+            for (let i = 0; i < 100; i++) {
+                cell.dispatchEvent(new MouseEvent('mousemove', { clientX: 100 + i, clientY: 20 }));
+            }
+            expect(postProcessPopup).not.toHaveBeenCalled();
+            expect(frames).toHaveLength(1);
+            frames.shift()!(0);
+            expect(postProcessPopup).toHaveBeenCalledTimes(1);
+            expect(postProcessPopup).toHaveBeenLastCalledWith(
+                expect.objectContaining({ mouseEvent: expect.objectContaining({ clientX: 199 }) })
+            );
+            postProcessPopup.mockClear();
+            cell.dispatchEvent(new MouseEvent('mousemove', { clientX: 210, clientY: 20 }));
+            if (close === 'destroy') {
+                api.destroy();
+            } else {
+                componentParams!.hideTooltipCallback!();
+                if (close === 'replacement') {
+                    cell.dispatchEvent(new MouseEvent('mouseenter', { clientX: 220, clientY: 20 }));
+                    await waitForTooltips(1);
+                    postProcessPopup.mockClear();
+                }
+            }
+            frames.shift()!(0);
+            expect(postProcessPopup).not.toHaveBeenCalled();
+        }
+    );
 
     test('native browser tooltips bypass positioning callbacks and popup post-processing', async () => {
         const position = vi.fn(() => 'bottom-end' as const);

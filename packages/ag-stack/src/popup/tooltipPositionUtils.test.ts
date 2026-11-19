@@ -72,6 +72,25 @@ describe('tooltip placement', () => {
         ).toBe('bottom-start');
     });
 
+    test.each([20, 90])("uses each placement's dimensions when the opposite height is %s", (height) => {
+        const measure = vi.fn((position: TooltipPosition) => ({
+            width: position === 'top-end' ? 80 : 120,
+            height: position === 'top-end' ? 40 : height,
+        }));
+        const result = findTooltipPosition(
+            { top: 30, bottom: 40, left: 100, right: 150 },
+            measure,
+            { width: 200, height: 100 },
+            { ...options, position: 'top-end' }
+        );
+        expect(result).toMatchObject(
+            height === 20
+                ? { position: 'bottom-end', x: 30, y: 46, arrowOffset: 108 }
+                : { position: 'top-end', x: 70, y: 0, arrowOffset: 68 }
+        );
+        expect(measure).toHaveBeenCalledTimes(2);
+    });
+
     test('preserves the gap rather than squeezing it to keep the preferred side', () => {
         const rect = { top: 60, bottom: 80, left: 50, right: 100 };
         expect(

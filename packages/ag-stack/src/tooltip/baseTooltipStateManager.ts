@@ -7,10 +7,11 @@ import type { ICommonSource, WithoutCommon } from '../interfaces/iEvent';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl, TooltipDetails } from '../interfaces/iTooltip';
+import { getTooltipSourceRect, isSourceClipped, positionPopupForTooltip } from '../popup/tooltipPopupPositioning';
 import type { TooltipPosition } from '../popup/tooltipPositionUtils';
 import { _getAriaDescribedBy, _setAriaDescribedBy, _setAriaHidden, _setAriaRole } from '../utils/aria';
-import { _getActiveDomElement, _getDocument, _getWindow } from '../utils/document';
-import { _observeResize } from '../utils/dom';
+import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _observeResize, _throttleToFrame } from '../utils/dom';
 import { _addManagedElementListeners } from '../utils/event';
 import { _findFocusableElements } from '../utils/focus';
 
@@ -76,6 +77,18 @@ export abstract class BaseTooltipStateManager<
     private hideTimeout: number | undefined;
     private leaveTimeout: number | undefined;
     private tooltipComp: IComponent<TTooltipParams> | undefined;
+    private tooltipToPosition: IComponent<TTooltipParams> | undefined;
+    private readonly queuePositionTooltip = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => {
+            const comp = this.tooltipToPosition;
+            this.tooltipToPosition = undefined;
+            if (comp && comp === this.tooltipComp) {
+                this.positionTooltip();
+            }
+        }
+    );
     private tooltipParams: TTooltipParams | undefined;
     private tooltipPopupDestroyFunc: (() => void) | undefined;
     private tooltipInstanceCount = 0;
@@ -160,7 +173,8 @@ export abstract class BaseTooltipStateManager<
                     if (this.lastMouseEvent) {
                         this.lastMouseEvent = event;
                         if (this.gos.get('tooltipMouseTrack') && this.tooltipComp) {
-                            this.positionTooltip();
+                            this.tooltipToPosition = this.tooltipComp;
+                            this.queuePositionTooltip();
                         }
                     }
                 },
@@ -322,25 +336,6 @@ export abstract class BaseTooltipStateManager<
         return this.isTooltipAllowed() && this.getTooltipDetails() != null;
     }
 
-    private isSourceClipped(): boolean {
-        const source = this.tooltipCtrl.getGui();
-        const rect = source.getBoundingClientRect();
-        const win = _getWindow(this.beans);
-        let parent: Element | null = source.parentElement;
-        while (parent) {
-            const { overflowX, overflowY } = win.getComputedStyle(parent);
-            const bounds = parent.getBoundingClientRect();
-            if (
-                (overflowX && overflowX !== 'visible' && (rect.right <= bounds.left || rect.left >= bounds.right)) ||
-                (overflowY && overflowY !== 'visible' && (rect.bottom <= bounds.top || rect.top >= bounds.bottom))
-            ) {
-                return true;
-            }
-            parent = parent.parentElement ?? (parent.getRootNode() as ShadowRoot).host ?? null;
-        }
-        return false;
-    }
-
     protected getTooltipDetails(): TTooltipCtrlParams | undefined {
         const tooltip = this.getTooltip();
         const value = tooltip.value;
@@ -369,7 +364,7 @@ export abstract class BaseTooltipStateManager<
         if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
             return;
         }
-        if (!tooltip || (this.sourceFocused && this.isSourceClipped())) {
+        if (!tooltip || (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))) {
             this.hideTooltip(true);
             return;
         }
@@ -504,6 +499,7 @@ export abstract class BaseTooltipStateManager<
             return;
         }
         this.tooltipInstanceCount++;
+        this.tooltipToPosition = undefined;
         if (this.tooltipComp) {
             this.destroyTooltipComp(immediate);
             this.sharedState.lastHideTime = Date.now();
@@ -609,20 +605,33 @@ export abstract class BaseTooltipStateManager<
         this.description = this.describedById = this.describedBySource = undefined;
     }
 
+    protected getTooltipSourceRect(eventSource: HTMLElement): {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    } {
+        return getTooltipSourceRect(eventSource);
+    }
+
     private positionTooltip(): void {
         const { gos, popupSvc, lastMouseEvent } = this;
+        if (!popupSvc) {
+            return;
+        }
         const eventSource = this.tooltipCtrl.getGui();
         const tracking = !!gos.get('tooltipMouseTrack');
         const offset = gos.get('tooltipOffset');
         const ePopup = this.tooltipComp!.getGui();
         const params = this.tooltipParams!;
-        popupSvc?.positionPopupForTooltip({
+        positionPopupForTooltip(popupSvc, {
             ePopup,
-            eventSource,
             pointer:
                 lastMouseEvent && (tracking || gos.get('tooltipAnchor') === 'pointer') ? lastMouseEvent : undefined,
             position: this.tooltipPosition,
             gap: typeof offset === 'number' && Number.isFinite(offset) && offset >= 0 ? offset : 6,
+            enableRtl: !!gos.get('enableRtl'),
+            getSourceRect: () => this.getTooltipSourceRect(eventSource),
             postProcessCallback: (position) =>
                 popupSvc.callPostProcessPopup(
                     this.getPopupPositionParams(position, params),

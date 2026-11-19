@@ -244,6 +244,8 @@ When a group row displays an aggregated value in a data column, hovering that ce
 
 Set `tooltipMouseTrack: true` to anchor hover tooltips to the pointer and follow it as it moves, regardless of `tooltipAnchor`. Focus tooltips remain anchored to their target.
 
+Pointer tracking updates, including `postProcessPopup` calls, are batched once per animation frame using the latest pointer position.
+
 {% gridExampleRunner title="Tooltip Mouse Tracking" name="tooltip-mouse-tracking" /%}
 
 ## Browser Tooltip

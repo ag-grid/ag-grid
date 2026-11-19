@@ -1,4 +1,3 @@
-import type { TooltipPosition } from '../popup/tooltipPositionUtils';
 import type { AfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -87,13 +86,4 @@ export interface AgMousePopupPositionParams<TParams> extends AgPopupPositionPara
 export interface AgMenuPopupPositionParams<TParams> extends BasePopupPositionParams<TParams> {
     eventSource: HTMLElement;
     event?: MouseEvent | KeyboardEvent | Touch;
-}
-
-export interface AgTooltipPopupPositionParams {
-    ePopup: HTMLElement;
-    eventSource: HTMLElement;
-    pointer?: MouseEvent | Touch;
-    position: TooltipPosition;
-    gap: number;
-    postProcessCallback: (position: TooltipPosition) => void;
 }

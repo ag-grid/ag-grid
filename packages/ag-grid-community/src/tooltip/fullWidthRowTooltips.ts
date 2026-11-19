@@ -105,13 +105,14 @@ export class FullWidthRowTooltips extends BeanStub {
                     node: rowNode,
                     data: rowNode.data,
                 },
-                sourceValues: isGroupRow
-                    ? this.beans.valueSvc.getValueForDisplay({
-                          node: rowNode,
-                          includeValueFormatted: true,
-                          from: 'edit',
-                      })
-                    : undefined,
+                sourceValues:
+                    isGroupRow && !this.gos.get('enableBrowserTooltips')
+                        ? this.beans.valueSvc.getValueForDisplay({
+                              node: rowNode,
+                              includeValueFormatted: true,
+                              from: 'edit',
+                          })
+                        : undefined,
             }),
             true,
             shouldDisplayTooltip

@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import type { Locator } from '@playwright/test';
 
+import type { ICellRendererParams } from 'ag-grid-community';
+
 import { mountGrid } from '../src/mountGrid';
 
 async function expectGap(source: Locator, tooltip: Locator, side: 'top' | 'bottom', gap: number): Promise<void> {
@@ -13,6 +15,156 @@ async function expectGap(source: Locator, tooltip: Locator, side: 'top' | 'botto
 }
 
 test.describe('tooltip positioning', () => {
+    test('settles when custom tooltip dimensions depend on placement', async ({ page }) => {
+        const { cell } = await mountGrid(page, {
+            width: 500,
+            height: 110,
+            css: '.sized-tooltip { width: 100px; height: 40px; background: white; } .sized-tooltip.ag-tooltip-position-bottom-start { height: 20px; }',
+            options: () => ({
+                columnDefs: [
+                    {
+                        field: 'value',
+                        width: 400,
+                        tooltip: true,
+                        tooltipComponent: class {
+                            private readonly gui = document.createElement('div');
+                            public init(): void {
+                                this.gui.className = 'sized-tooltip';
+                                this.gui.textContent = 'Tooltip';
+                            }
+                            public getGui(): HTMLElement {
+                                return this.gui;
+                            }
+                        },
+                    },
+                ],
+                rowData: [{ value: 'Value' }],
+                headerHeight: 30,
+                rowHeight: 20,
+                tooltipShowDelay: 0,
+                tooltipMouseTrack: true,
+            }),
+        });
+        await cell(0, 'value').hover({ position: { x: 100, y: 3 } });
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toHaveText('Tooltip');
+        await cell(0, 'value').hover({ position: { x: 110, y: 3 } });
+        // Observe several resize deliveries, not just the first correct placement.
+        const placements = await tooltip.evaluate(async (element) => {
+            const classes: string[] = [];
+            for (let i = 0; i < 8; i++) {
+                await new Promise(requestAnimationFrame);
+                classes.push(element.className);
+            }
+            return classes;
+        });
+        expect(placements.every((value) => value.includes('ag-tooltip-position-bottom-start'))).toBe(true);
+    });
+
+    test('keeps tooltips inside an outer scrolling container', async ({ page }) => {
+        await mountGrid(page, {
+            width: 550,
+            height: 600,
+            options: () => ({
+                columnDefs: [{ field: 'value', width: 350, tooltip: true }],
+                rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
+                tooltipShowDelay: 0,
+            }),
+        });
+        await page.evaluate(() => {
+            const outer = document.createElement('div');
+            outer.id = 'outer';
+            outer.style.cssText = 'margin:100px 40px;width:600px;height:300px;overflow:auto';
+            const grid = document.querySelector('#myGrid')!;
+            grid.before(outer);
+            outer.appendChild(grid);
+            outer.scrollTop = 150;
+        });
+        await page.mouse.move(70, 110);
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toHaveText('Row 2');
+        await expect(async () => {
+            const clip = (await page.locator('#outer').boundingBox())!;
+            const popup = (await tooltip.boundingBox())!;
+            expect(popup.y).toBeGreaterThanOrEqual(clip.y);
+            expect(popup.y + popup.height).toBeLessThanOrEqual(clip.y + clip.height);
+        }).toPass();
+    });
+
+    for (const sourceKind of ['header', 'pinned row', 'pinned column', 'full-width row']) {
+        test(`anchors partially covered sources at their visible top edge (${sourceKind})`, async ({ page }) => {
+            const { grid, cell, withApi } = await mountGrid(page, {
+                height: 300,
+                options: () => ({
+                    columnDefs: [{ field: 'value', tooltip: true }],
+                    rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
+                    headerHeight: 80,
+                    tooltipShowDelay: 0,
+                    isFullWidthRow: ({ rowNode }) => !!rowNode.data.fullWidth,
+                    fullWidthCellRenderer: (params: ICellRendererParams) => {
+                        params.setTooltip(params.data.value);
+                        return document.createElement('span');
+                    },
+                }),
+            });
+            if (sourceKind === 'pinned row') {
+                await withApi((api) => api.setGridOption('pinnedTopRowData', [{ value: 'Pinned' }]));
+            } else if (sourceKind === 'pinned column') {
+                await withApi((api) => api.applyColumnState({ state: [{ colId: 'value', pinned: 'left' }] }));
+            } else if (sourceKind === 'full-width row') {
+                await withApi((api) =>
+                    api.setGridOption(
+                        'rowData',
+                        Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}`, fullWidth: true }))
+                    )
+                );
+            }
+            await grid.locator('.ag-grid-viewport').evaluate((element) => {
+                element.scrollTop = 20;
+            });
+            const source =
+                sourceKind === 'full-width row' ? grid.locator('.ag-full-width-row[row-index="0"]') : cell(0, 'value');
+            await source.hover({ position: { x: 100, y: 35 } });
+            const tooltip = page.getByRole('tooltip');
+            await expect(tooltip).toHaveText('Row 0');
+            await expect(async () => {
+                const topRows = (await grid.locator('.ag-grid-pinned-top-rows').boundingBox())!;
+                const popup = (await tooltip.boundingBox())!;
+                expect(popup.y + popup.height + 6).toBeCloseTo(topRows.y + topRows.height, 0);
+            }).toPass();
+        });
+    }
+
+    test('anchors above the pinned bottom overlay without clipping pinned sources', async ({ page }) => {
+        const { grid, cell } = await mountGrid(page, {
+            height: 300,
+            options: () => ({
+                columnDefs: [{ field: 'value', tooltip: true }],
+                rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
+                pinnedBottomRowData: [{ value: 'Pinned' }],
+                headerHeight: 40,
+                rowHeight: 40,
+                tooltipShowDelay: 0,
+                tooltipPosition: 'bottom-start',
+                popupParent: document.body,
+            }),
+        });
+        await cell(5, 'value').hover({ position: { x: 100, y: 8 } });
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toHaveText('Row 5');
+        await expect(async () => {
+            const bottom = (await grid.locator('.ag-grid-pinned-bottom-rows').boundingBox())!;
+            const popup = (await tooltip.boundingBox())!;
+            expect(popup.y).toBeCloseTo(bottom.y + 6, 0);
+        }).toPass();
+        await page.keyboard.press('Escape');
+        await expect(tooltip).toHaveCount(0);
+        const pinned = grid.locator('.ag-grid-pinned-bottom-rows .ag-cell');
+        await pinned.hover();
+        await expect(tooltip).toHaveText('Pinned');
+        await expectGap(pinned, tooltip, 'bottom', 6);
+    });
+
     for (const { name, css, scale } of [
         { name: 'scaled down', css: 'position: relative; transform: scale(0.5)', scale: 0.5 },
         { name: 'scaled up', css: 'position: relative; transform: scale(2)', scale: 2 },
@@ -92,6 +244,38 @@ test.describe('tooltip positioning', () => {
                 expect(popup.x).toBeCloseTo(target.x, 0);
             }).toPass();
             await expectGap(source, tooltip, 'top', 6);
+        });
+    }
+
+    for (const anchor of ['target', 'pointer'] as const) {
+        test(`positions ${anchor}-anchored tooltips after scrolling the document root`, async ({ page }) => {
+            await page.setViewportSize({ width: 1000, height: 800 });
+            const { cell } = await mountGrid(page, {
+                width: 500,
+                height: 180,
+                css: 'html { overflow-y: auto; } body { padding-top: 900px; min-height: 1800px; }',
+                options: () => ({
+                    columnDefs: [{ field: 'value', tooltip: true }],
+                    rowData: [{ value: 'Tooltip' }],
+                    headerHeight: 40,
+                    rowHeight: 40,
+                    popupParent: document.body,
+                    tooltipPosition: 'top',
+                    tooltipShowDelay: 0,
+                }),
+            });
+            await page.evaluate((anchor) => window.gridApi.setGridOption('tooltipAnchor', anchor), anchor);
+            await page.evaluate(() => window.scrollTo(0, 300));
+            const target = (await cell(0, 'value').boundingBox())!;
+            const pointer = { x: target.x + 50, y: target.y + 20 };
+            await page.mouse.move(pointer.x, pointer.y);
+            const tooltip = page.getByRole('tooltip');
+            await expect(tooltip).toHaveText('Tooltip');
+            await expect(async () => {
+                const popup = (await tooltip.boundingBox())!;
+                const y = anchor === 'pointer' ? pointer.y : target.y;
+                expect(y - popup.y - popup.height).toBeCloseTo(6, 0);
+            }).toPass();
         });
     }
 

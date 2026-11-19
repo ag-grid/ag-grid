@@ -7,8 +7,12 @@ import { isColumn } from '../entities/agColumn';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _getDomData } from '../gridOptionsUtils';
+import type { AbstractHeaderCellCtrl } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import { DOM_DATA_KEY_HEADER_CTRL } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
+import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../rendering/renderUtils';
 import type { ITooltipParams, TooltipCallbackParams, TooltipLocation, TooltipPosition } from './tooltipComponent';
 import type { ResolvedTooltip } from './tooltipFeature';
 
@@ -115,4 +119,46 @@ export class TooltipStateManager extends BaseTooltipStateManager<
             tooltipPosition: position,
         };
     }
+
+    protected override getTooltipSourceRect(eventSource: HTMLElement) {
+        return clipToGridViewport(this.beans, eventSource, super.getTooltipSourceRect(eventSource));
+    }
+}
+
+function clipToGridViewport(
+    beans: BeanCollection,
+    eventSource: HTMLElement,
+    rect: { top: number; right: number; bottom: number; left: number }
+) {
+    const { gos } = beans;
+    const headerCtrl = _getDomData(gos, eventSource, DOM_DATA_KEY_HEADER_CTRL) as AbstractHeaderCellCtrl | undefined;
+    const column = headerCtrl?.column ?? _getCellCtrlForEventTarget(gos, eventSource)?.column;
+    const rowNode = _getRowCtrlForEventTarget(gos, eventSource)?.rowNode;
+    const scrollingRow = rowNode && !rowNode.rowPinned && !rowNode.sticky;
+    if ((column && !column.pinned) || scrollingRow) {
+        const bodyCtrl = beans.ctrlsSvc.getGridBodyCtrl();
+        const viewport = bodyCtrl.eGridViewport;
+        const bounds = viewport.getBoundingClientRect();
+        // Sticky rows and columns occlude scrolling sources without clipping their DOM ancestors.
+        if (column && !column.pinned) {
+            const scale = viewport.offsetWidth ? bounds.width / viewport.offsetWidth : 1;
+            const left = bounds.left + viewport.clientLeft * scale;
+            rect.left = Math.max(rect.left, left + beans.visibleCols.getLeftStickyColumnContainerWidth() * scale);
+            rect.right = Math.min(
+                rect.right,
+                left + (viewport.clientWidth - beans.visibleCols.getRightStickyColumnContainerWidth()) * scale
+            );
+        }
+        if (scrollingRow) {
+            const scale = viewport.offsetHeight ? bounds.height / viewport.offsetHeight : 1;
+            const top = bounds.top + viewport.clientTop * scale;
+            rect.top = Math.max(rect.top, top + (bodyCtrl.getTopPinnedRowsOffset() + bodyCtrl.stickyTopHeight) * scale);
+            rect.bottom = Math.min(
+                rect.bottom,
+                top +
+                    (viewport.clientHeight - bodyCtrl.getBottomPinnedRowsOffset() - bodyCtrl.stickyBottomHeight) * scale
+            );
+        }
+    }
+    return rect;
 }

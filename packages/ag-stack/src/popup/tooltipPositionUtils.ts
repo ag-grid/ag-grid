@@ -32,7 +32,7 @@ export function isTooltipPosition(value: unknown): value is TooltipPosition {
 
 export function findTooltipPosition(
     reference: { top: number; left: number; right: number; bottom: number },
-    size: { width: number; height: number },
+    size: { width: number; height: number } | ((position: TooltipPosition) => { width: number; height: number }),
     bounds: { width: number; height: number },
     options: { position: TooltipPosition; gap: number; enableRtl: boolean; arrowPadding: number }
 ): { x: number; y: number; position: TooltipPosition; arrowOffset: number } {
@@ -41,7 +41,23 @@ export function findTooltipPosition(
     const vertical = side === 'top' || side === 'bottom';
     const opposite = (align ? `${OPPOSITE[side]}-${align}` : OPPOSITE[side]) as TooltipPosition;
     const placements = getEffectivePlacements([ALIGNMENTS[position], ALIGNMENTS[opposite]], enableRtl && vertical);
-    const result = findBestPlacement(reference, size, bounds, placements, { gap, fallback: 'leastOverflow' });
+    const preferredSize = typeof size === 'function' ? size(position) : size;
+    let oppositeSize = preferredSize;
+    const result = findBestPlacement(
+        reference,
+        (alignment) => {
+            if (alignment === placements[0]) {
+                return preferredSize;
+            }
+            oppositeSize = typeof size === 'function' ? size(opposite) : size;
+            return oppositeSize;
+        },
+        bounds,
+        placements,
+        { gap, fallback: 'leastOverflow' }
+    );
+    const preferred = result.alignment === placements[0];
+    const resolvedSize = preferred ? preferredSize : oppositeSize;
     const start = vertical ? reference.left : reference.top;
     const end = vertical ? reference.right : reference.bottom;
     let point = (start + end) / 2;
@@ -50,12 +66,12 @@ export function findTooltipPosition(
         const fromEnd = (align === 'end') !== (vertical && enableRtl);
         point = fromEnd ? end - inset : start + inset;
     }
-    const length = vertical ? size.width : size.height;
+    const length = vertical ? resolvedSize.width : resolvedSize.height;
     const padding = Math.min(arrowPadding, length / 2);
     return {
         x: result.x,
         y: result.y,
-        position: result.alignment === placements[0] ? position : opposite,
+        position: preferred ? position : opposite,
         arrowOffset: Math.max(padding, Math.min(point - (vertical ? result.x : result.y), length - padding)),
     };
 }
