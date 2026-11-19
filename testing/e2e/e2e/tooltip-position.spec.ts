@@ -13,16 +13,19 @@ async function expectGap(source: Locator, tooltip: Locator, side: 'top' | 'botto
 }
 
 test.describe('tooltip positioning', () => {
-    for (const scale of [0.5, 2]) {
+    for (const { name, css, scale } of [
+        { name: 'scaled down', css: 'position: relative; transform: scale(0.5)', scale: 0.5 },
+        { name: 'scaled up', css: 'position: relative; transform: scale(2)', scale: 2 },
+        { name: 'transformed static', css: 'transform: translateZ(0)', scale: 1 },
+        { name: 'contained static', css: 'contain: layout', scale: 1 },
+    ]) {
         for (const anchor of ['target', 'pointer'] as const) {
-            test(`positions and flips a ${anchor} tooltip inside a scaled popup parent (${scale})`, async ({
-                page,
-            }) => {
+            test(`positions and flips a ${anchor} tooltip inside a ${name} popup parent`, async ({ page }) => {
                 await page.setViewportSize({ width: 1400, height: 1000 });
                 const { cell } = await mountGrid(page, {
                     width: 500,
                     height: 300,
-                    css: `#myGrid { position: relative; margin: 40px; border: 8px solid black; transform: scale(${scale}); transform-origin: top left; }`,
+                    css: `#myGrid { margin: 40px; border: 8px solid black; transform-origin: top left; ${css} }`,
                     options: () => ({
                         columnDefs: [
                             { field: 'a', width: 200 },
@@ -63,6 +66,33 @@ test.describe('tooltip positioning', () => {
                 }
             });
         }
+    }
+
+    for (const bodyStyle of ['', 'position: relative', 'transform: translateZ(0)', 'contain: layout']) {
+        test(`positions body-hosted tooltips after document scrolling (${bodyStyle || 'static'})`, async ({ page }) => {
+            const { cell } = await mountGrid(page, {
+                width: 500,
+                height: 300,
+                css: `body { margin: 30px; border: 5px solid black; padding: 150px 70px; min-height: 1500px; ${bodyStyle} }`,
+                options: () => ({
+                    columnDefs: [{ field: 'value', tooltip: true }],
+                    rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
+                    popupParent: document.body,
+                    tooltipShowDelay: 0,
+                }),
+            });
+            await page.evaluate(() => window.scrollTo(0, 120));
+            const source = cell(2, 'value');
+            await source.hover();
+            const tooltip = page.getByRole('tooltip');
+            await expect(tooltip).toHaveText('Row 2');
+            await expect(async () => {
+                const target = (await source.boundingBox())!;
+                const popup = (await tooltip.boundingBox())!;
+                expect(popup.x).toBeCloseTo(target.x, 0);
+            }).toPass();
+            await expectGap(source, tooltip, 'top', 6);
+        });
     }
 
     test('keeps a top tooltip clear of its source after delayed content growth', async ({ page }) => {
@@ -354,6 +384,35 @@ test.describe('tooltip positioning', () => {
             expect(popup.x).toBeCloseTo(target.x, 0);
         }).toPass();
         await expectGap(focused, tooltip, 'top', 6);
+    });
+
+    test('mouse tracking flips back to the preferred side when space becomes available', async ({ page }) => {
+        const { cell } = await mountGrid(page, {
+            width: 700,
+            height: 250,
+            options: () => ({
+                columnDefs: [{ field: 'value', width: 650, tooltip: true }],
+                rowData: [{ value: 'Tracking tooltip' }],
+                tooltipMouseTrack: true,
+                tooltipPosition: 'right-start',
+                tooltipShowDelay: 0,
+            }),
+        });
+        const source = cell(0, 'value');
+        const target = (await source.boundingBox())!;
+        for (const x of [30, 620, 30]) {
+            const pointerX = target.x + x;
+            await page.mouse.move(pointerX, target.y + 20);
+            const tooltip = page.getByRole('tooltip');
+            await expect(tooltip).toHaveText('Tracking tooltip');
+            const side = x === 620 ? 'left' : 'right';
+            await expect(tooltip).toHaveClass(new RegExp(`ag-tooltip-position-${side}-start`));
+            await expect(async () => {
+                const popup = (await tooltip.boundingBox())!;
+                const gap = side === 'left' ? pointerX - popup.x - popup.width : popup.x - pointerX;
+                expect(gap).toBeCloseTo(6, 0);
+            }).toPass();
+        }
     });
 
     test('shifts within popupParent and the viewport while honouring the configured gap', async ({ page }) => {
