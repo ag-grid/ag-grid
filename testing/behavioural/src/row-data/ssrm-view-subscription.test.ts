@@ -655,14 +655,15 @@ describe('SSRM viewSubscription', () => {
                 api.updateGridOptions({ getRowId } as GridOptions);
             }
 
-            test('providing getRowId after the grid is created subscribes the rows in view', async () => {
+            test('providing getRowId after the grid is created subscribes nothing, as the loaded rows keep generated IDs', async () => {
                 const recorder = createRecorder();
                 const api = await createFlatGrid({ viewSubscription: recorder.handlers, getRowId: undefined });
                 expect(recorder.calls).toEqual([]);
 
                 setGetRowId(api, (params) => params.data.id);
+                await nextAnimationFrame();
 
-                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+                expect(recorder.calls).toEqual([]);
             });
 
             test('a new getRowId callback makes no call', async () => {

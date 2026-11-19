@@ -56,8 +56,14 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** The page visibility listener and the viewport observer exist only while a subscription is wanted. */
     private removeVisibilityListener: (() => null) | undefined;
     private stopObserving: (() => void) | undefined;
+    /**
+     * Row IDs come from `getRowId` only when it was provided at grid creation, as it is an initial property.
+     * Rows loaded before a later `getRowId` keep the IDs the grid generated, which do not match the server's.
+     */
+    private hasInitialRowIds = false;
 
     public postConstruct(): void {
+        this.hasInitialRowIds = !!_getRowIdCallback(this.beans);
         const markDirty = () => this.schedule();
         const markViewMoved = () => this.schedule(true);
         const markScrolled = () => this.onScroll();
@@ -86,7 +92,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
-        // Adding or removing `getRowId` starts or stops the subscription. Row IDs are read from the row nodes,
+        // Removing `getRowId` stops the subscription. Row IDs are read from the row nodes,
         // so a new callback for the same rows, as frameworks can pass on every render, makes no call.
         this.addManagedPropertyListener('getRowId', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
@@ -147,7 +153,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         if (!_isServerSideRowModel(this.gos)) {
             return false;
         }
-        if (!_getRowIdCallback(this.beans)) {
+        if (!this.hasInitialRowIds || !_getRowIdCallback(this.beans)) {
             this.warn(188, { feature: '`viewSubscription`' });
             return false;
         }
