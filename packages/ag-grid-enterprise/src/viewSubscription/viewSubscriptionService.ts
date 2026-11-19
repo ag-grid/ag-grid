@@ -338,7 +338,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         }
         const [first, last] = this.getRange();
         const { rowModel, pinnedRowModel, rowRenderer } = this.beans;
-        const addIfSubscribable = (node: RowNode | undefined) => {
+        const addIfSubscribable = (row: RowNode | undefined) => {
+            // A group total row shows its group's values, so it keeps its group subscribed.
+            const node = row?.footer && row.id !== GRAND_TOTAL_ROW_ID ? row.sibling : row;
             const id = node?.id;
             if (node && id != null && !inView.has(id) && this.isSubscribable(node)) {
                 inView.set(id, node);

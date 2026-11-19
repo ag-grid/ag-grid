@@ -86,7 +86,8 @@ Only loaded rows in view are passed to the handlers, with these differences:
 - A [sticky group row](./server-side-model-grouping/) stays subscribed while it is stuck at the top of the grid.
 - Full width rows are passed like other rows.
 - The [grand total row](#grand-total-row) is passed while it is on screen.
-- Rows in `pinnedTopRowData` and `pinnedBottomRowData`, [detail rows](./server-side-model-master-detail/) and group total rows are never passed.
+- A group total row keeps its group row subscribed, so the totals stay up to date after the group row scrolls out of view. The group total row itself is never passed.
+- Rows in `pinnedTopRowData` and `pinnedBottomRowData` and [detail rows](./server-side-model-master-detail/) are never passed.
 
 No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every loaded row counts as in view, so keep the normal layout for grids with many rows.
 
@@ -99,7 +100,7 @@ The subscription starts when the grid is ready, unless `viewSubscriptionActive` 
 - The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
 - Without `getRowId`, nothing is subscribed. Providing it later subscribes the rows in view, and removing it unsubscribes every row. A new `getRowId` callback for the same rows makes no call.
 
-Bind `viewSubscriptionActive` to application state, for example to stop the stream while the grid is in an inactive tab of your application:
+Bind `viewSubscriptionActive` to application state, for example to let the user freeze the prices with a Live Updates toggle while they read them:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -107,7 +108,7 @@ const gridOptions = {
         subscribeRows: (rows) => stream.subscribe(rows.map((row) => row.id)),
         unsubscribeRows: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
     },
-    viewSubscriptionActive: isPricesTabSelected,
+    viewSubscriptionActive: isLiveUpdatesOn,
 };
 ```
 

@@ -1246,7 +1246,7 @@ describe('SSRM viewSubscription', () => {
             });
         });
 
-        test('group total rows are left out', async () => {
+        test('group total rows are not passed to the handlers', async () => {
             const api = createGroupedGrid({ groupTotalRow: 'bottom', grandTotalRow: 'top' });
             await waitForNoLoadingRows(api);
             api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
