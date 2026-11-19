@@ -1,11 +1,13 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
-export function FakeServer(allData) {
+import type { ColumnVO, IServerSideGetRowsRequest } from 'ag-grid-community';
+
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function (request: IServerSideGetRowsRequest) {
             const results = executeQuery(request);
 
             return {
@@ -16,7 +18,7 @@ export function FakeServer(allData) {
         },
     };
 
-    function executeQuery(request) {
+    function executeQuery(request: IServerSideGetRowsRequest) {
         const sql = buildSql(request);
 
         console.log('[FakeServer] - about to execute query:', sql);
@@ -24,7 +26,7 @@ export function FakeServer(allData) {
         return alasql(sql, [allData]);
     }
 
-    function buildSql(request) {
+    function buildSql(request: IServerSideGetRowsRequest) {
         return (
             selectSql(request) +
             ' FROM ?' +
@@ -35,7 +37,7 @@ export function FakeServer(allData) {
         );
     }
 
-    function selectSql(request) {
+    function selectSql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const valueCols = request.valueCols;
         const groupKeys = request.groupKeys;
@@ -54,10 +56,10 @@ export function FakeServer(allData) {
         return 'SELECT *';
     }
 
-    function whereSql(request) {
+    function whereSql(request: IServerSideGetRowsRequest) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
-        const whereParts = [];
+        const whereParts: string[] = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
@@ -74,7 +76,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function groupBySql(request) {
+    function groupBySql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const groupKeys = request.groupKeys;
 
@@ -87,7 +89,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function orderBySql(request) {
+    function orderBySql(request: IServerSideGetRowsRequest) {
         const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
@@ -104,7 +106,7 @@ export function FakeServer(allData) {
         return ' ORDER BY ' + sorts.join(', ');
     }
 
-    function limitSql(request) {
+    function limitSql(request: IServerSideGetRowsRequest) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
@@ -114,7 +116,7 @@ export function FakeServer(allData) {
     }
 
     // the aggregate of a grouped column is returned under `<aggFunc>_<field>`, as its field holds the group key
-    function aggregateName(request, colId) {
+    function aggregateName(request: IServerSideGetRowsRequest, colId: string) {
         const valueCol = request.valueCols.find(function (col) {
             return col.id === colId;
         });
@@ -124,12 +126,12 @@ export function FakeServer(allData) {
         return valueCol && isGrouped ? valueCol.aggFunc + '_' + valueCol.field : colId;
     }
 
-    function isDoingGrouping(rowGroupCols, groupKeys) {
+    function isDoingGrouping(rowGroupCols: ColumnVO[], groupKeys: string[]) {
         // we are not doing grouping if at the lowest level
         return rowGroupCols.length > groupKeys.length;
     }
 
-    function getLastRowIndex(request) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }
