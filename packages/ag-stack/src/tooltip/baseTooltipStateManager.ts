@@ -74,6 +74,8 @@ export abstract class BaseTooltipStateManager<
     private lastMouseEvent: MouseEvent | Touch | null = null;
     private hoverGraceTimeout: number | undefined;
     private showTimeout: number | undefined;
+    private showDelay = 0;
+    private revalidatePointerOnShow = false;
     private hideTimeout: number | undefined;
     private leaveTimeout: number | undefined;
     private tooltipComp: IComponent<TTooltipParams> | undefined;
@@ -305,15 +307,27 @@ export abstract class BaseTooltipStateManager<
         const switching = mouseEvent && lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF;
         const delay = showDelayOverride ?? this.getTooltipDelay(switching ? 'SwitchShow' : 'Show');
         this.lastMouseEvent = mouseEvent ?? null;
+        this.revalidatePointerOnShow = false;
         this.state = TooltipStates.WAITING_TO_SHOW;
-        this.showTimeout = window.setTimeout(() => this.showTooltip(), Math.max(0, delay ?? 0));
+        this.showDelay = Math.max(0, delay ?? 0);
+        this.showTimeout = window.setTimeout(() => this.showTooltip(), this.showDelay);
 
         const hide = () => this.hideTooltip(true);
         [this.onBodyScrollEventCallback] = this.addManagedEventListeners({
             bodyScroll: () => {
-                // Focusing an off-screen cell scrolls it into view before its tooltip appears.
-                if (!this.sourceFocused || this.state !== TooltipStates.WAITING_TO_SHOW) {
+                if (this.state !== TooltipStates.WAITING_TO_SHOW) {
                     hide();
+                    return;
+                }
+                // Focusing an off-screen cell scrolls it into view before its tooltip appears.
+                if (!this.sourceFocused) {
+                    // A hover attempt waits out the scroll, then shows only if the pointer still lands on the source.
+                    this.revalidatePointerOnShow = true;
+                    window.clearTimeout(this.showTimeout);
+                    this.showTimeout = window.setTimeout(
+                        () => this.showTooltip(),
+                        Math.max(this.showDelay, TOOLTIP_LEAVE_DELAY)
+                    );
                 }
             },
         });
@@ -327,6 +341,18 @@ export abstract class BaseTooltipStateManager<
 
     protected canShowTooltip(): boolean {
         return this.isTooltipAllowed() && this.getTooltipDetails() != null;
+    }
+
+    /** Scrolling moves the source under a stationary pointer, so a scroll-deferred attempt re-checks the landing. */
+    private isPointerOverSource(): boolean {
+        const { lastMouseEvent } = this;
+        if (!this.revalidatePointerOnShow || !lastMouseEvent) {
+            return true;
+        }
+        this.revalidatePointerOnShow = false;
+        const { clientX, clientY } = lastMouseEvent;
+        const rect = this.getTooltipSourceRect(this.tooltipCtrl.getGui());
+        return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
     }
 
     protected getTooltipDetails(): TTooltipCtrlParams | undefined {
@@ -357,7 +383,11 @@ export abstract class BaseTooltipStateManager<
         if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
             return;
         }
-        if (!tooltip || (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))) {
+        if (
+            !tooltip ||
+            !this.isPointerOverSource() ||
+            (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))
+        ) {
             this.hideTooltip(true);
             return;
         }
