@@ -2155,6 +2155,7 @@ describe('the rows a column update refreshes', () => {
             timeout: 300,
         });
         await asyncSetTimeout(0);
+        const refreshes = countRefreshes(api);
         const heard: string[] = [];
         for (const type of columnEvents) {
             api.addEventListener(type, () => heard.push(type));
@@ -2170,6 +2171,7 @@ describe('the rows a column update refreshes', () => {
             'columnsReset',
         ]);
         expect(heard[heard.length - 1]).toBe('columnsReset');
+        expect(refreshes()).toBe(1);
     });
 
     test('a pivot column added while a filter is present refreshes the rows once, keeping the rendered rows', async () => {
@@ -2184,8 +2186,8 @@ describe('the rows a column update refreshes', () => {
             pivotMode: true,
         });
         await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4), { timeout: 300 });
-        api.setFilterModel({ country: { filterType: 'text', type: 'contains', filter: 'a' } });
-        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2), { timeout: 300 });
+        api.setFilterModel({ country: { filterType: 'text', type: 'contains', filter: 'Ire' } });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { timeout: 300 });
         expect(Object.keys(api.getFilterModel())).toEqual(['country']);
         await asyncSetTimeout(0);
         const refreshes: (boolean | undefined)[] = [];
@@ -2197,7 +2199,11 @@ describe('the rows a column update refreshes', () => {
         await waitFor(() => expect(refreshes.length).toBeGreaterThan(0), { timeout: 300 });
         await asyncSetTimeout(0);
 
-        expect({ refreshes, removedRows }).toEqual({ refreshes: [true], removedRows: 0 });
+        expect({
+            refreshes,
+            removedRows,
+            displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
+        }).toEqual({ refreshes: [true], removedRows: 0, displayed: ['Ireland', 1] });
     });
 
     test('onSortChanged after the row data was changed out of band sorts the displayed rows by the current sort, refreshing them once', async () => {

@@ -71,10 +71,12 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
     });
 
     test('a columnDefs update reversing pivotSort reverses the SSRM pivot result columns', async () => {
-        const api = await createPivotGrid(countingDatasource().datasource);
+        const { datasource, getRowsCount } = countingDatasource();
+        const api = await createPivotGrid(datasource);
 
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         await waitFor(() => expect(pivotsOf(api)).toEqual(ascending));
+        const countBeforeSort = getRowsCount();
 
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: true, hide: true },
@@ -84,6 +86,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         await waitFor(() => expect(pivotsOf(api)).toEqual([...ascending].reverse()));
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(getRowsCount()).toBe(countBeforeSort);
     });
 
     test('clicking the pivot pill cycles order client side, leaving loaded rows in place', async () => {

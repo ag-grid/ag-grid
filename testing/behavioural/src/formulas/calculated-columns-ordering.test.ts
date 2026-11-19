@@ -126,9 +126,10 @@ describe('calculated columns - display ordering', () => {
     }
 
     function getDialog(): HTMLElement {
-        const dialog = document.querySelector<HTMLElement>('.ag-calculated-column-form');
-        expect(dialog).toBeTruthy();
-        return dialog!;
+        // Live-apply dialogs stay open after Apply, so target the most recently opened one.
+        const dialogs = document.querySelectorAll<HTMLElement>('.ag-calculated-column-form');
+        expect(dialogs.length).toBeGreaterThan(0);
+        return dialogs[dialogs.length - 1];
     }
 
     function setExpression(expression: string): void {
@@ -168,12 +169,13 @@ describe('calculated columns - display ordering', () => {
         await waitFor(() => getDialog());
         setExpression(expression);
         clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no expression flush is in flight when the
-        // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
-        await nextAnimationFrame();
-        await nextAnimationFrame();
-        const added = order(api).filter((id) => !before.has(id));
-        expect(added).toHaveLength(1);
+        // The column exists before the live-apply flush commits the typed expression: poll for the expression.
+        const added = await waitFor(() => {
+            const result = order(api).filter((id) => !before.has(id));
+            expect(result).toHaveLength(1);
+            expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toMatch(/\S/);
+            return result;
+        });
         return added[0];
     }
 

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, nextAnimationFrame } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
@@ -18,6 +18,8 @@ import {
     RowGroupingModule,
     RowNumbersModule,
 } from 'ag-grid-enterprise';
+
+import { addViaDialog, order } from './calculatedColumnsStateHarness';
 
 // Where calculated columns added from an auto group column sit when row grouping is cleared and set again.
 
@@ -39,16 +41,12 @@ describe('calculated columns - placement after row grouping is cleared and set a
         ] as Module[],
     });
 
-    let restoreOffsetParent: (() => void) | undefined;
-
     beforeEach(() => {
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
@@ -57,81 +55,6 @@ describe('calculated columns - placement after row grouping is cleared and set a
             calculatedColumns: true,
             ...opts,
         });
-    }
-
-    function order(api: GridApi): string[] {
-        return api.getAllGridColumns()!.map((col) => col.getColId());
-    }
-
-    function enableOffsetParentPolyfill(): void {
-        if (restoreOffsetParent) {
-            return;
-        }
-        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get(this: HTMLElement) {
-                return this.parentElement;
-            },
-        });
-        restoreOffsetParent = () => {
-            if (original) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-            } else {
-                delete (HTMLElement.prototype as any).offsetParent;
-            }
-        };
-    }
-
-    async function clickColumnMenuItem(name: string): Promise<void> {
-        const menuItem = await waitFor(() => {
-            const text = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
-                (element) => element.textContent?.trim() === name
-            );
-            const element = text?.closest<HTMLElement>('.ag-menu-option');
-            expect(element).toBeTruthy();
-            return element!;
-        });
-        menuItem.click();
-    }
-
-    function getDialog(): HTMLElement {
-        const dialog = document.querySelector<HTMLElement>('.ag-calculated-column-form');
-        expect(dialog).toBeTruthy();
-        return dialog!;
-    }
-
-    function setExpression(expression: string): void {
-        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea')!;
-        input.value = expression;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    function clickDialogButton(label: string): void {
-        const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(button).toBeTruthy();
-        button!.click();
-    }
-
-    /** Adds a calc col through the header menu of {@link anchorColId} (the documented "anchor").
-     *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
-    async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
-        const before = new Set(order(api));
-        enableOffsetParentPolyfill();
-        api.showColumnMenu(anchorColId);
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
-        setExpression(expression);
-        clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no expression flush is in flight when the
-        // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
-        await nextAnimationFrame();
-        await nextAnimationFrame();
-        const added = order(api).filter((id) => !before.has(id));
-        expect(added).toHaveLength(1);
-        return added[0];
     }
 
     const regionAuto = 'ag-Grid-AutoColumn-region';
