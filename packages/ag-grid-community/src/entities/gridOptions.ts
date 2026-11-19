@@ -203,6 +203,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { AccentedSortOptions } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
+import type { ViewSubscriptionOptions } from '../interfaces/iViewSubscription';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type {
     DefaultColumnDropZoneMenuItem,
@@ -1784,6 +1785,24 @@ export interface GridOptions<TData = any> {
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     rowModelType?: RowModelType;
+    /**
+     * Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
+     * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
+     * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
+     * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
+     * Requires `getRowId`. Supported by the Server-Side Row Model.
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscription?: ViewSubscriptionOptions<TData>;
+    /**
+     * Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
+     * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
+     * @default true
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscriptionActive?: boolean;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -2954,6 +2973,7 @@ export interface GridOptions<TData = any> {
     onModelUpdated?(event: ModelUpdatedEvent<TData>): void;
     /**
      * A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewSubscription`.
      */
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
     /**

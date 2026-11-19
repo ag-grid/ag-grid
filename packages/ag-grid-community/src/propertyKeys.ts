@@ -120,6 +120,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'findOptions',
     'filterHandlers',
     'groupHierarchyConfig',
+    'viewSubscription',
 ];
 
 // only used internally
@@ -326,6 +327,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'columnHoverHighlight',
     'readOnlyEdit',
     'suppressRowVirtualisation',
+    'viewSubscriptionActive',
     'enableCellEditingOnBackspace',
     'resetRowDataOnUpdate',
     'removePivotHeaderRowWhenSingleValueColumn',

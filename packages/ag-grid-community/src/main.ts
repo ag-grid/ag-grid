@@ -615,6 +615,18 @@ export type {
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 export type {
+    ViewGroupRow,
+    ViewGroupRowRef,
+    ViewLeafRow,
+    ViewLeafRowRef,
+    ViewRow,
+    ViewRowRef,
+    ViewSubscriptionOptions,
+    ViewSubscriptionParams,
+    ViewTreeRow,
+    ViewTreeRowRef,
+} from './interfaces/iViewSubscription';
+export type {
     IServerSideStore,
     ServerSideGroupLevelState,
     StoreRefreshAfterParams,
