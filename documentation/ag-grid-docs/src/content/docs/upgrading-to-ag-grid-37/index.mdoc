@@ -60,7 +60,7 @@ This does not reproduce the exact previous appearance. Focus tooltips always anc
 
 ### Tooltips
 
-- `tooltipTrigger: 'focus'` now respects `tooltipShowDelay`, like the other trigger modes. Set `tooltipShowDelay: 0` to retain immediate display. Screen-reader descriptions remain available immediately on focus.
+- `tooltipTrigger: 'focus'` now uses the same show-delay rules as hover. Set `tooltipShowDelay: 0` for immediate display, except for filter Apply-button validation and Advanced Filter validation tooltips, which use a fixed 1-second delay. Screen-reader descriptions remain available immediately on focus.
 - Tooltips no longer hide after 10 seconds by default. Set `tooltipHideDelay: 10000` to restore the timeout.
 - All tooltips now accept the pointer and remain open while hovered. `tooltipInteraction` is only needed for focusable custom content; use `true` or a callback to select individual sources.
 - `Escape` dismisses an open tooltip without also cancelling editing or closing its source menu.

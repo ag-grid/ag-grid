@@ -318,6 +318,7 @@ export interface Props<TData> {
          *  - `hover` - The tooltip will show/hide when its element is hovered.
          *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
          *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+         * Source-specific show delays take precedence in all modes.
          * @default 'hover'
          * @initial
          * @agModule `TooltipModule`
@@ -348,6 +349,7 @@ export interface Props<TData> {
          */
     getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined,
     /** The delay in milliseconds before a tooltip shows on hover or focus.
+         * Filter Apply-button validation and Advanced Filter validation tooltips use a fixed 1000ms delay instead.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @default 2000
          * @agModule `TooltipModule`

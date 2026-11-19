@@ -92,6 +92,8 @@ Set `tooltipTrigger: 'hoverOrFocus'` to show tooltips on both hover and keyboard
 - `'focus'`: show on keyboard focus only, after `tooltipShowDelay`.
 - `'hoverOrFocus'`: show on hover or keyboard focus after `tooltipShowDelay`.
 
+Source-specific delays take precedence in all modes: filter Apply-button validation and Advanced Filter validation tooltips use a fixed 1-second delay, even with `tooltipShowDelay: 0`.
+
 In combined mode, the most recently hovered or focused element owns the tooltip. Moving away does not restore an earlier element's tooltip.
 
 Tooltip text is available to screen readers immediately on focus, before the visual delay.
