@@ -1,5 +1,5 @@
-import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
-import { afterEach, describe, expect, test } from 'vitest';
+import { TestGridsManager } from 'ag-test-utils';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import {
@@ -18,13 +18,18 @@ const buildCols = (count: number): ColDef[] => {
     return cols;
 };
 
-/** These counts are exact, so work queued either side of the window has to be finished before it opens
- *  and before it closes. happy-dom schedules `requestAnimationFrame` on `setImmediate`, which a
- *  `setTimeout(0)` does not reliably drain — under load the frame lands inside the count instead. */
+/** These counts are exact, so the file runs on a fake clock: every timer queued before a count is run out
+ *  before it opens, however loaded the machine. */
 const settle = async (): Promise<void> => {
-    await nextAnimationFrame();
-    await asyncSetTimeout(0);
+    await vi.runAllTimersAsync();
 };
+
+/** A count covers the action and its next frame on a fake clock, so a timer due later (a slide's end, a
+ *  debounced scrollbar) never lands inside it however loaded the machine; the clock then runs out uncounted. */
+const COUNTED_CLOCK = {
+    toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'] as const,
+};
+const ONE_FRAME_MS = 16;
 
 /** Counts reads of a layout property on one element — each one forces a layout in a browser. */
 const countPropertyReads = async (
@@ -56,9 +61,10 @@ const countPropertyReads = async (
 
     try {
         act();
-        await settle();
+        await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
     } finally {
         Object.defineProperty(owner, prop, original);
+        await settle();
     }
     return reads;
 };
@@ -78,9 +84,10 @@ const countHeaderRebuilds = async (api: GridApi, act: () => void): Promise<numbe
 
     try {
         act();
-        await settle();
+        await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
     } finally {
         colViewport.getColumnHeadersToRender = original;
+        await settle();
     }
     return sectionReads / 3;
 };
@@ -101,9 +108,10 @@ const countViewportMeasurements = async (act: () => void): Promise<number> => {
 
     try {
         act();
-        await settle();
+        await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
     } finally {
         window.getComputedStyle = original;
+        await settle();
     }
     return count;
 };
@@ -112,7 +120,13 @@ describe('Column refresh layout reads', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnApiModule, PinnedRowModule, ScrollApiModule],
     });
-    afterEach(() => gridsManager.reset());
+    beforeEach(() => {
+        vi.useFakeTimers({ toFake: [...COUNTED_CLOCK.toFake] });
+    });
+    afterEach(() => {
+        gridsManager.reset();
+        vi.useRealTimers();
+    });
 
     // A refresh changes the columns, not the viewport, and everything it sizes is re-pushed when the
     // reported width changes — so no caller has to measure.
@@ -121,7 +135,7 @@ describe('Column refresh layout reads', () => {
             columnDefs: buildCols(50),
             rowData: [{ c0: 1 }],
         });
-        await asyncSetTimeout(0);
+        await settle();
 
         // Each count is only good news if the call it wrapped actually did something, and a column count
         // cannot show that: hiding then showing returns to 50 either way, and a move never changes it.
@@ -151,7 +165,7 @@ describe('Column refresh layout reads', () => {
             rowData: [{ c0: 1 }],
             suppressColumnVirtualisation: false,
         });
-        await asyncSetTimeout(0);
+        await settle();
 
         // Far outside the viewport, so the renderer never asks where it is and the extraction is the
         // only thing that does.
@@ -169,7 +183,7 @@ describe('Column refresh layout reads', () => {
         try {
             // Narrows the body, unlike a move, which reorders the same total width and so arms nothing.
             api.setColumnsVisible(['c1'], false);
-            await asyncSetTimeout(0);
+            await settle();
 
             // Two extractions, one per reported change, at one pass each: the rendered and header sets are
             // built together. Each row container asks as well, and is answered from the layout version the
@@ -186,13 +200,13 @@ describe('Column refresh layout reads', () => {
             rowData: [{ c0: 1 }],
             suppressColumnVirtualisation: false,
         });
-        await asyncSetTimeout(0);
+        await settle();
         const rendered = () => api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
         const scrollTo = async (left: number) => {
             const viewport = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
             viewport.scrollLeft = left;
             viewport.dispatchEvent(new Event('scroll'));
-            await asyncSetTimeout(0);
+            await settle();
         };
 
         // 1000px of viewport and 200px columns: c6 starts on the right edge, 1200px
@@ -211,13 +225,13 @@ describe('Column refresh layout reads', () => {
             { columnDefs: buildCols(30), rowData: [{ c0: 1 }], suppressColumnVirtualisation: false },
             { modules: [RowAutoHeightModule] }
         );
-        await asyncSetTimeout(0);
+        await settle();
         expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c25');
 
         const columnDefs = buildCols(30);
         columnDefs[25] = { colId: 'c25', field: 'c25', autoHeight: true };
         api.setGridOption('columnDefs', columnDefs);
-        await asyncSetTimeout(0);
+        await settle();
 
         expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).toContain('c25');
     });
@@ -236,7 +250,7 @@ describe('Column refresh layout reads', () => {
             rowData: [{ c0: 1 }],
             suppressColumnVirtualisation: false,
         });
-        await asyncSetTimeout(0);
+        await settle();
         const root = TestGridsManager.getHTMLElement(api)!;
         const groupHeaders = () =>
             Array.from(root.querySelectorAll('.ag-header-group-cell'), (el) => el.textContent?.trim()).filter(
@@ -250,12 +264,12 @@ describe('Column refresh layout reads', () => {
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
         viewport.scrollLeft = 10;
         viewport.dispatchEvent(new Event('scroll'));
-        await asyncSetTimeout(0);
+        await settle();
         expect(groupHeaders()).toEqual(['g25', 'g28']);
 
         // the last one hidden leaves the others as they were
         api.setColumnsVisible(['c28'], false);
-        await asyncSetTimeout(0);
+        await settle();
         expect(groupHeaders()).toEqual(['g25']);
     });
 
@@ -267,7 +281,7 @@ describe('Column refresh layout reads', () => {
             { columnDefs, rowData: [{ c0: 1 }], suppressColumnVirtualisation: false },
             { modules: [RowAutoHeightModule] }
         );
-        await asyncSetTimeout(0);
+        await settle();
 
         const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
         expect(rendered).toContain('c25');
@@ -278,7 +292,7 @@ describe('Column refresh layout reads', () => {
         spanned[0] = { colId: 'c0', field: 'c0', colSpan: () => 1 };
         spanned[25] = { colId: 'c25', field: 'c25', autoHeight: true };
         api.setGridOption('columnDefs', spanned);
-        await asyncSetTimeout(0);
+        await settle();
         const root = TestGridsManager.getHTMLElement(api)!;
         expect(root.querySelector('.ag-row .ag-cell[col-id="c25"]')).not.toBeNull();
         expect(root.querySelector('.ag-row .ag-cell[col-id="c24"]')).toBeNull();
@@ -293,7 +307,7 @@ describe('Column refresh layout reads', () => {
             rowData: [{ c0: 1 }],
             pinnedTopRowData: [{ c0: 'top' }],
         });
-        await asyncSetTimeout(0);
+        await settle();
 
         // The fake scrollbar's own viewport, which only `syncContainerHeight` reads, so this counts syncs
         // rather than every height read the change provokes.
@@ -317,7 +331,7 @@ describe('Column refresh layout reads', () => {
             columnDefs: buildCols(50),
             rowData: [{ c0: 1 }],
         });
-        await asyncSetTimeout(0);
+        await settle();
 
         const viewport = document.querySelector('.ag-grid-viewport') as HTMLElement;
         expect(viewport, 'grid viewport should be rendered').not.toBeNull();
@@ -347,9 +361,9 @@ describe('Column refresh layout reads', () => {
     // should be handed it rather than reading it back out of the DOM.
     test('a horizontal scroll reads the scroll position exactly three times', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(200), rowData: [{ c0: 1 }] });
-        await asyncSetTimeout(0);
+        await settle();
         api.ensureColumnVisible('c60');
-        await asyncSetTimeout(0);
+        await settle();
 
         const viewport = document.querySelector('.ag-grid-viewport') as HTMLElement;
         expect(viewport, 'grid viewport should be rendered').not.toBeNull();
@@ -368,7 +382,7 @@ describe('Column refresh layout reads', () => {
         columnDefs[1].pinned = 'right';
 
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{ c0: 1 }] });
-        await asyncSetTimeout(0);
+        await settle();
 
         const onMove = await countViewportMeasurements(() => api.moveColumnByIndex(5, 10));
         const onPin = await countViewportMeasurements(() => api.setColumnsPinned(['c2', 'c3'], 'left'));
@@ -384,12 +398,12 @@ describe('Column refresh layout reads', () => {
         flexCols[0].flex = 1;
 
         const plain = gridsManager.createGrid('plain', { columnDefs: buildCols(20), rowData: [{ c0: 1 }] });
-        await asyncSetTimeout(0);
+        await settle();
         const withoutFlex = await countViewportMeasurements(() => plain.moveColumnByIndex(0, 10));
         gridsManager.reset();
 
         const flexed = gridsManager.createGrid('flexed', { columnDefs: flexCols, rowData: [{ c0: 1 }] });
-        await asyncSetTimeout(0);
+        await settle();
         const onMove = await countViewportMeasurements(() => flexed.moveColumnByIndex(0, 10));
         const onHide = await countViewportMeasurements(() => flexed.setColumnsVisible(['c5'], false));
 
@@ -401,7 +415,7 @@ describe('Column refresh layout reads', () => {
     // every header row. The second has to find the rendered sections unmoved and return.
     test('a column refresh rebuilds each header row once, not once per event that reports it', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(20), rowData: [{ c0: 1 }] });
-        await asyncSetTimeout(0);
+        await settle();
 
         const onHide = await countHeaderRebuilds(api, () => api.setColumnsVisible(['c5'], false));
         const onMove = await countHeaderRebuilds(api, () => api.moveColumnByIndex(0, 10));

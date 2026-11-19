@@ -155,12 +155,8 @@ describe('Horizontal scrollbar while columns slide', () => {
         vi.useRealTimers();
     });
 
-    // The suite's fast timings: a slide ends at 50ms, the backup scrollbar refresh runs at 125ms and a frame is 16ms,
-    // so 30ms is mid-slide, after the next frame, and 90ms falls between the slide's end and the backup refresh.
+    // The suite's fast timings: a frame is 16ms and the scrollbar shows 25ms after the layout overflows.
     const NEXT_FRAME_MS = 16;
-    const MID_SLIDE_MS = 30;
-    const AFTER_SLIDE_MS = 90;
-    // Long enough for the scrollbar to show (25ms) on the initial overflowing layout.
     const SETTLED_MS = 200;
 
     const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
@@ -198,17 +194,25 @@ describe('Horizontal scrollbar while columns slide', () => {
         const api = createOverflowingGrid(false);
         await vi.advanceTimersByTimeAsync(SETTLED_MS);
         expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
+        const sliding = () => document.querySelector('.ag-column-moving') !== null;
 
         api.setColumnsVisible(['a', 'b'], false);
-        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
+        // Read at every timer while the slide runs, the last one just before the timer that ends it.
+        const heightsWhileSliding: string[] = [];
+        for (let timers = 0; sliding() && timers < 10; ++timers) {
+            heightsWhileSliding.push(horizontalScrollbarHeight());
+            await vi.advanceTimersToNextTimerAsync();
+        }
+        const slideEnded = !sliding();
+        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
 
         // The two columns left (400px) fit the 600px viewport: the scrollbar is kept for the slide.
         expect({
             displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
-            height: horizontalScrollbarHeight(),
-        }).toEqual({ displayed: ['c', 'd'], height: `${scrollbarWidth}px` });
-
-        await vi.advanceTimersByTimeAsync(AFTER_SLIDE_MS - MID_SLIDE_MS);
-        expect(horizontalScrollbarHeight()).toBe('0px');
+            slideEnded,
+            whileSliding:
+                heightsWhileSliding.length > 0 && heightsWhileSliding.every((h) => h === `${scrollbarWidth}px`),
+            afterSlide: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], slideEnded: true, whileSliding: true, afterSlide: '0px' });
     });
 });

@@ -2397,23 +2397,23 @@ describe('the column animations a column call leaves on', () => {
     });
 
     test('a call made while a column move is still sliding does not cut the slide short when it changes nothing', async () => {
-        // How long a move slides under a fake clock, with a no-op call landing at `callAtMs` or none.
+        // How long a move slides on a fake clock, timer to timer, with a no-op call landing at `callAtMs` or none.
         const slide = async (callAtMs: number | null) => {
             const api = await createLockedGrid();
-            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
             try {
+                const start = Date.now();
                 api.moveColumns(['sport'], 1);
                 let movingAtCall: boolean | null = null;
-                let elapsedMs = 0;
-                while (moving(api) && elapsedMs < 1000) {
-                    if (elapsedMs === callAtMs) {
-                        movingAtCall = moving(api);
-                        api.applyColumnState({ state: api.getColumnState() });
-                    }
-                    await vi.advanceTimersByTimeAsync(1);
-                    ++elapsedMs;
+                if (callAtMs !== null) {
+                    await vi.advanceTimersByTimeAsync(callAtMs);
+                    movingAtCall = moving(api);
+                    api.applyColumnState({ state: api.getColumnState() });
                 }
-                return { order: order(api), movingAtCall, elapsedMs };
+                for (let timers = 0; moving(api) && timers < 10; ++timers) {
+                    await vi.advanceTimersToNextTimerAsync();
+                }
+                return { order: order(api), movingAtCall, slideEnded: !moving(api), elapsedMs: Date.now() - start };
             } finally {
                 vi.useRealTimers();
                 gridsManager.reset();
@@ -2428,9 +2428,15 @@ describe('the column animations a column call leaves on', () => {
             uninterrupted: {
                 order: 'year,sport,athlete,country',
                 movingAtCall: null,
+                slideEnded: true,
                 elapsedMs: uninterrupted.elapsedMs,
             },
-            withCall: { order: 'year,sport,athlete,country', movingAtCall: true, elapsedMs: uninterrupted.elapsedMs },
+            withCall: {
+                order: 'year,sport,athlete,country',
+                movingAtCall: true,
+                slideEnded: true,
+                elapsedMs: uninterrupted.elapsedMs,
+            },
         });
         expect(callAtMs).toBeGreaterThan(0);
     });
