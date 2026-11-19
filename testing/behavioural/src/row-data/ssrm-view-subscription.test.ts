@@ -1,6 +1,5 @@
 import { waitFor } from '@testing-library/dom';
 import {
-    ALL_SEVERITIES,
     TestGridsManager,
     installMockResizeObserver,
     mockGridLayout,
@@ -17,7 +16,7 @@ import type {
     IServerSideGetRowsParams,
     ViewSubscriptionOptions,
 } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -624,6 +623,64 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
+    test('a subscribeRows handler that keeps throwing is retried once', async () => {
+        const api = await createFlatGrid();
+        let calls = 0;
+        vi.useFakeTimers();
+        try {
+            // Turning the option on calls the handler synchronously, which throws and schedules the one retry.
+            expect(() =>
+                api.setGridOption('viewSubscription', {
+                    subscribeRows: () => {
+                        calls++;
+                        throw new Error('subscribe failed');
+                    },
+                    unsubscribeRows: () => {},
+                    debounceMs: 10,
+                })
+            ).toThrow('subscribe failed');
+            expect(calls).toBe(1);
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+            expect(calls).toBe(2);
+
+            await vi.advanceTimersByTimeAsync(100);
+            expect(calls).toBe(2);
+        } finally {
+            vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
+    test('rows a throwing subscribeRows handler removed from its array are retried', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    rows.splice(0);
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('debounceMs still calls the handlers while data updates keep arriving', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
@@ -669,70 +726,17 @@ describe('SSRM viewSubscription', () => {
     });
 
     describe('lifecycle', () => {
-        describe('getRowId', () => {
-            // getRowId is an initial property (warning 22), and the grid warns while it is missing (warning 188).
-            beforeEach(() => {
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [22, 188] });
-            });
+        test('removing viewSubscription with another option in one update unsubscribes every row', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
 
-            afterEach(() => {
-                enableDevValidations({ throwOn: ALL_SEVERITIES });
-            });
+            // viewSubscriptionActive's listener runs before viewSubscription's, and finds the option already removed.
+            api.updateGridOptions({ viewSubscriptionActive: false, viewSubscription: undefined });
 
-            /** Updates `getRowId` the way a framework wrapper does, as it is not a managed grid option. */
-            function setGetRowId(api: GridApi, getRowId: GridOptions['getRowId']) {
-                api.updateGridOptions({ getRowId } as GridOptions);
-            }
-
-            test('providing getRowId after the grid is created subscribes nothing, as the loaded rows keep generated IDs', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid({ viewSubscription: recorder.handlers, getRowId: undefined });
-                expect(recorder.calls).toEqual([]);
-
-                setGetRowId(api, (params) => params.data.id);
-                await nextAnimationFrame();
-
-                expect(recorder.calls).toEqual([]);
-            });
-
-            test('a new getRowId callback makes no call', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid();
-                subscribe(api, recorder);
-
-                setGetRowId(api, (params) => params.data.id);
-                await nextAnimationFrame();
-
-                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
-            });
-
-            test('removing viewSubscription with another option in one update unsubscribes every row', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid();
-                subscribe(api, recorder);
-
-                // getRowId's listener runs before viewSubscription's, and finds the option already removed.
-                api.updateGridOptions({
-                    getRowId: (params) => params.data.id,
-                    viewSubscription: undefined,
-                } as GridOptions);
-
-                expect(recorder.subscribed.size).toBe(0);
-                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
-                expect(recorder.violations).toEqual([]);
-            });
-
-            test('removing getRowId unsubscribes every row', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid();
-                subscribe(api, recorder);
-
-                setGetRowId(api, undefined);
-
-                expect(recorder.subscribed.size).toBe(0);
-                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
-                expect(recorder.violations).toEqual([]);
-            });
+            expect(recorder.subscribed.size).toBe(0);
+            expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
+            expect(recorder.violations).toEqual([]);
         });
 
         describe('pauseWhenHidden', () => {

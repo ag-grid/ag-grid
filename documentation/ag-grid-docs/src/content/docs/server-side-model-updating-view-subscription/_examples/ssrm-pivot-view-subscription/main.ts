@@ -48,9 +48,9 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi<ResultRow>;
-// the subscribed stock rows and group rows, by id, with the parent keys that route a transaction to the row
-const subscribed = new Map<string, string[]>();
-const subscribedGroups = new Map<string, { parentKeys: string[]; route: string[] }>();
+// the subscribed stock rows by id, and the subscribed group rows by id with their route, which the server query needs
+const subscribed = new Set<string>();
+const subscribedGroups = new Map<string, { route: string[] }>();
 // the server streams only the data a row displays, so streams pause while no column shows it
 let stocksStreamed = true;
 let groupsStreamed = true;
@@ -93,10 +93,10 @@ const gridOptions: GridOptions<ResultRow> = {
             for (const row of rows) {
                 if (row.type === 'group') {
                     // the server streams every aggregate of the group row, including those scrolled out of view
-                    subscribedGroups.set(row.id, { parentKeys: row.parentKeys, route: row.route });
+                    subscribedGroups.set(row.id, { route: row.route });
                     groups.push(getGroupQuery(row.id, row.route, params.api));
                 } else {
-                    subscribed.set(row.id, row.parentKeys);
+                    subscribed.add(row.id);
                     ids.push(row.id);
                 }
             }
@@ -192,7 +192,7 @@ function updateStreams(api: GridApi<ResultRow>) {
     const nextStocksStreamed = hasDisplayedStreamedColumns(api);
     if (nextStocksStreamed !== stocksStreamed) {
         stocksStreamed = nextStocksStreamed;
-        const ids = [...subscribed.keys()];
+        const ids = [...subscribed];
         socket.send(stocksStreamed ? { type: 'subscribe', ids } : { type: 'unsubscribe', ids });
     }
     const nextGroupsStreamed = hasDisplayedValueColumns(api);
@@ -233,18 +233,19 @@ function onServerMessage(api: GridApi<ResultRow>, message: ServerMessage) {
     }
 
     let updates = 0;
-    // ignore updates that were already on their way when their rows were unsubscribed or reloaded
+    // an update can arrive after its row was unsubscribed, so apply it while the row is still in the grid
     for (const stock of message.stocks) {
-        const route = subscribed.get(stock.id);
-        if (stocksStreamed && route && api.getRowNode(stock.id)) {
-            api.applyServerSideTransactionAsync({ route, update: [stock] });
+        const node = api.getRowNode(stock.id);
+        if (stocksStreamed && node) {
+            // the route to the store that holds the row is its parent's route
+            api.applyServerSideTransactionAsync({ route: node.parent?.getRoute() ?? [], update: [stock] });
             updates++;
         }
     }
     for (const { id, row } of message.groups) {
-        const group = subscribedGroups.get(id);
-        if (groupsStreamed && group && api.getRowNode(id)) {
-            api.applyServerSideTransactionAsync({ route: group.parentKeys, update: [row] });
+        const node = api.getRowNode(id);
+        if (groupsStreamed && node) {
+            api.applyServerSideTransactionAsync({ route: node.parent?.getRoute() ?? [], update: [row] });
             updates++;
         }
     }

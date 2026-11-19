@@ -31,8 +31,8 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi<Row>;
-// the subscribed stock rows, by id, with the parent keys that route a transaction to the row
-const subscribedStocks = new Map<string, string[]>();
+// the subscribed stock rows, by id
+const subscribedStocks = new Set<string>();
 // the subscribed sector group rows, by sector
 const subscribedSectors = new Set<string>();
 // getRows requests waiting for their reply, by request id
@@ -64,7 +64,7 @@ const gridOptions: GridOptions<Row> = {
                     subscribedSectors.add(row.route[0]);
                     sectors.push(row.route[0]);
                 } else {
-                    subscribedStocks.set(row.id, row.parentKeys);
+                    subscribedStocks.add(row.id);
                     ids.push(row.id);
                 }
             }
@@ -129,15 +129,16 @@ function onServerMessage(api: GridApi<Row>, message: ServerMessage) {
     }
 
     let updates = 0;
-    // ignore updates that were already on their way when their rows were unsubscribed
+    // an update can arrive after its row was unsubscribed, so apply it while the row is still in the grid
     for (const stock of message.stocks) {
-        const route = subscribedStocks.get(stock.id);
-        if (route) {
-            api.applyServerSideTransactionAsync({ route, update: [stock] });
+        const node = api.getRowNode(stock.id);
+        if (node) {
+            // the route to the store that holds the row is its parent's route
+            api.applyServerSideTransactionAsync({ route: node.parent?.getRoute() ?? [], update: [stock] });
             updates++;
         }
     }
-    const sectors = message.sectors.filter((row) => subscribedSectors.has(row.sector));
+    const sectors = message.sectors.filter((row) => api.getRowNode(`sector/${row.sector}`));
     if (sectors.length) {
         // the sector rows are at the top level, so the route is empty
         api.applyServerSideTransactionAsync({ route: [], update: sectors });

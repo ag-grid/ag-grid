@@ -33,6 +33,8 @@ interface ActiveSubscription {
     timer: ReturnType<typeof setTimeout> | undefined;
     /** The view at the last flush or scroll. */
     view: ViewEnds;
+    /** Set once a failed `subscribeRows` call has scheduled a retry, so a handler that keeps throwing is retried once. */
+    retried: boolean;
 }
 
 interface ViewEnds {
@@ -57,18 +59,12 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     private removeVisibilityListener: (() => null) | undefined;
     private stopObserving: (() => void) | undefined;
     /**
-     * Row IDs come from `getRowId` only when it was provided at grid creation, as it is an initial property.
-     * Rows loaded before a later `getRowId` keep the IDs the grid generated, which do not match the server's.
-     */
-    private hasInitialRowIds = false;
-    /**
      * The last handlers set. One `updateGridOptions` call can remove `viewSubscription` and change another option,
      * whose listener may run first and find the option gone, so the rows are unsubscribed through these.
      */
     private lastOptions: ViewSubscriptionOptions | undefined;
 
     public postConstruct(): void {
-        this.hasInitialRowIds = !!_getRowIdCallback(this.beans);
         const markDirty = () => this.schedule();
         const markViewMoved = () => this.schedule(true);
         const markScrolled = () => this.onScroll();
@@ -97,9 +93,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
-        // Removing `getRowId` stops the subscription. Row IDs are read from the row nodes,
-        // so a new callback for the same rows, as frameworks can pass on every render, makes no call.
-        this.addManagedPropertyListener('getRowId', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
             this.eViewport = gridBodyCtrl.eGridViewport;
@@ -160,7 +153,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         if (!_isServerSideRowModel(this.gos)) {
             return false;
         }
-        if (!this.hasInitialRowIds || !_getRowIdCallback(this.beans)) {
+        if (!_getRowIdCallback(this.beans)) {
             this.warn(188, { feature: '`viewSubscription`' });
             return false;
         }
@@ -168,7 +161,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private start(options: ViewSubscriptionOptions): void {
-        const sub: ActiveSubscription = { rows: new Map(), stopped: false, timer: undefined, view: this.getViewEnds() };
+        const sub: ActiveSubscription = {
+            rows: new Map(),
+            stopped: false,
+            timer: undefined,
+            view: this.getViewEnds(),
+            retried: false,
+        };
         this.sub = sub;
 
         const rows: ViewRow[] = [];
@@ -306,39 +305,56 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         rows: ViewRow[],
         options: ViewSubscriptionOptions | undefined
     ): void {
+        // Read before the call, as the handler owns the array and can change it.
+        const ids = rows.map((row) => row.id);
         try {
             options?.subscribeRows(rows, this.createParams());
+            sub.retried = false;
         } catch (e) {
-            for (const row of rows) {
-                sub.rows.delete(row.id);
+            for (const id of ids) {
+                sub.rows.delete(id);
             }
-            // Try the rows in view again, as no other change may come to subscribe them.
-            this.schedule();
+            if (!sub.retried) {
+                // Try the rows in view once more, as no other change may come to subscribe them.
+                sub.retried = true;
+                this.schedule();
+            }
             throw e;
         }
     }
 
     private getRange(): [number, number] {
-        const { rowRenderer, rowModel } = this.beans;
-        let first = rowRenderer.firstRenderedRow;
-        let last = rowRenderer.lastRenderedRow;
-        const top = rowRenderer.firstVisibleVPixel;
-        const bottom = rowRenderer.lastVisibleVPixel;
+        const { rowRenderer, rowModel, ctrlsSvc } = this.beans;
+        const first = rowRenderer.firstRenderedRow;
+        const last = rowRenderer.lastRenderedRow;
+        let top = rowRenderer.firstVisibleVPixel;
+        let bottom = rowRenderer.lastVisibleVPixel;
         if (top == null || bottom == null) {
             return [first, last];
         }
-        if (bottom <= top) {
-            return [0, -1];
+        // Sticky rows cover the rows behind them, and are added on their own.
+        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
+        top += gridBodyCtrl?.stickyTopHeight ?? 0;
+        bottom -= gridBodyCtrl?.stickyBottomHeight ?? 0;
+        // Only rendered rows can be in view, so they are scanned instead of looking up the pixels in the whole cache.
+        let firstInView = -1;
+        let lastInView = -1;
+        for (let i = first; i <= last; ++i) {
+            const row = rowModel.getRow(i);
+            const rowTop = row?.rowTop;
+            if (rowTop == null || rowTop + (row!.rowHeight ?? 0) <= top) {
+                continue;
+            }
+            // Scroll positions and row heights can be fractional, so a row starting at the bottom edge is not in view.
+            if (rowTop >= bottom) {
+                break;
+            }
+            if (firstInView < 0) {
+                firstInView = i;
+            }
+            lastInView = i;
         }
-        first = Math.max(first, rowModel.getRowIndexAtPixel(top));
-        // Scroll positions and row heights can be fractional, so check where the row at the bottom edge starts.
-        let lastInView = rowModel.getRowIndexAtPixel(bottom);
-        const rowTop = rowModel.getRow(lastInView)?.rowTop;
-        if (lastInView > first && rowTop != null && rowTop >= bottom) {
-            lastInView--;
-        }
-        last = Math.min(last, lastInView);
-        return [first, last];
+        return firstInView < 0 ? [0, -1] : [firstInView, lastInView];
     }
 
     /**
