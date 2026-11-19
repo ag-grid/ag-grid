@@ -345,7 +345,17 @@ export abstract class BaseTooltipStateManager<
         const keydown = this.onDocumentKeyDown.bind(this);
         // Dismiss before the same Escape can cancel editing or close the source menu.
         doc.addEventListener('keydown', keydown, true);
-        this.popupListeners.push(() => doc.removeEventListener('keydown', keydown, true));
+        this.popupListeners.push(
+            () => doc.removeEventListener('keydown', keydown, true),
+            ..._addManagedElementListeners(this, doc, {
+                touchstart: (event) => {
+                    const eGui = this.tooltipComp?.getGui();
+                    if (event && (!eGui || !event.composedPath().includes(eGui))) {
+                        hide();
+                    }
+                },
+            })
+        );
     }
 
     protected canShowTooltip(): boolean {
@@ -510,13 +520,6 @@ export abstract class BaseTooltipStateManager<
                         this.leaveTimeout = window.setTimeout(() => this.hideWhenInactive(), TOOLTIP_LEAVE_DELAY);
                     }
                     this.startHideTimeout();
-                },
-            }),
-            ..._addManagedElementListeners(this, _getDocument(this.beans), {
-                touchstart: (event) => {
-                    if (event && !event.composedPath().includes(eGui)) {
-                        this.hideTooltip(true);
-                    }
                 },
             })
         );
@@ -726,6 +729,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     private destroyTooltipComp(immediate = false): void {
+        this.tooltipHovered = false;
         for (const removeListener of this.compListeners.splice(0)) {
             removeListener();
         }

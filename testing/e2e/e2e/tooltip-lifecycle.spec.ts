@@ -86,7 +86,37 @@ test('resumes hover tooltips after wheel scrolling virtualised rows', async ({ p
     await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
-for (const action of ['Escape', 'leave', 'remove', 'focus'] as const) {
+test('a tooltip recreated after scrolling closes when the pointer leaves its source', async ({ page }) => {
+    const { cell, withApi } = await mountGrid(page, {
+        width: 400,
+        height: 400,
+        options: () => ({
+            columnDefs: [{ field: 'value', tooltip: true, width: 200 }],
+            rowData: Array.from({ length: 100 }, (_, i) => ({ value: `Row ${i}` })),
+            tooltipPosition: 'right',
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 500,
+        }),
+    });
+    await withApi((api) => api.setGridOption('popupParent', document.querySelector<HTMLElement>('.ag-grid-viewport')));
+    const source = cell(3, 'value');
+    const tooltip = page.getByRole('tooltip');
+    await source.hover();
+    await expect(tooltip).toHaveText('Row 3');
+    await tooltip.hover();
+
+    // Hosting the popup in the viewport lets wheel input over it scroll the grid.
+    await page.mouse.wheel(0, 5);
+    await expect.poll(() => withApi((api) => api.getVerticalPixelRange().top)).toBeGreaterThan(0);
+    await expect(tooltip).toHaveCount(0);
+    await source.hover();
+    await expect(tooltip).toHaveText('Row 3');
+
+    await page.mouse.move(500, 350);
+    await expect(tooltip).toHaveCount(0);
+});
+
+for (const action of ['Escape', 'leave', 'remove', 'focus', 'tap away'] as const) {
     test(`cancels the cached scroll hover on ${action}`, async ({ page }) => {
         const { cell, withApi } = await mountGrid(page, {
             height: 240,
@@ -120,6 +150,9 @@ for (const action of ['Escape', 'leave', 'remove', 'focus'] as const) {
             await page.mouse.move(790, 590);
         } else if (action === 'focus') {
             await cell(2, 'value').focus();
+        } else if (action === 'tap away') {
+            await dispatchTouch(page.locator('body'), 'touchstart');
+            await dispatchTouch(page.locator('body'), 'touchend');
         }
         await expect.poll(() => withApi((api) => api.getGridOption('context').scrollEnds)).toBeGreaterThan(0);
         // Wait beyond the show delay to catch an unwanted retry from the cached hover.
