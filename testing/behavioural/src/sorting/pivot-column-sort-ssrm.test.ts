@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IRowNode, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -18,6 +18,8 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         { athlete: 'a', country: 'USA', year: 2000, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
         { athlete: 'b', country: 'USA', year: 2004, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
         { athlete: 'c', country: 'USA', year: 2008, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
+        { athlete: 'd', country: 'France', year: 2000, sport: 'Rowing', gold: 1, silver: 0, bronze: 0, total: 1 },
+        { athlete: 'e', country: 'Italy', year: 2008, sport: 'Rowing', gold: 1, silver: 0, bronze: 0, total: 1 },
     ];
 
     /** Wraps the fake datasource so tests can assert how many blocks were requested from the server. */
@@ -73,6 +75,23 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         return api;
     }
 
+    /** The displayed row nodes, in order. */
+    const displayedRows = (api: GridApi): IRowNode[] => {
+        const rows: IRowNode[] = [];
+        for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+            rows.push(api.getDisplayedRowAtIndex(i)!);
+        }
+        return rows;
+    };
+
+    /** Each row displayed before, still displayed in its place as the same node. */
+    const rowsKept = (api: GridApi, before: IRowNode[]) => {
+        const now = displayedRows(api);
+        return { count: now.length, kept: before.map((row, i) => now[i] === row) };
+    };
+
+    const allKept = (before: IRowNode[]) => ({ count: before.length, kept: before.map(() => true) });
+
     test('pivotSort desc reverses SSRM pivot result columns without refetching from the server', async () => {
         const { datasource, getRowsCount } = countingDatasource();
         const api = await createPivotGrid(datasource);
@@ -80,7 +99,8 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const pivots = () => pivotsOf(api);
         await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']));
         const countBeforeSort = getRowsCount();
-        const firstRow = api.getDisplayedRowAtIndex(0);
+        const rowsBefore = displayedRows(api);
+        expect(rowsBefore).toHaveLength(3);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         // The reorder is a pure column rebuild, so it animates synchronously.
@@ -90,8 +110,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
-        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
-        expect(getRowsCount()).toBe(countBeforeSort);
+        expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+            requests: countBeforeSort,
+            rows: allKept(rowsBefore),
+        });
     });
 
     test('a columnDefs update reversing pivotSort reverses the SSRM pivot result columns without refetching or replacing loaded rows', async () => {
@@ -101,7 +123,8 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         await waitFor(() => expect(pivotsOf(api)).toEqual(ascending));
         const countBeforeSort = getRowsCount();
-        const firstRow = api.getDisplayedRowAtIndex(0);
+        const rowsBefore = displayedRows(api);
+        expect(rowsBefore).toHaveLength(3);
 
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: true, hide: true },
@@ -114,8 +137,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
-        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
-        expect(getRowsCount()).toBe(countBeforeSort);
+        expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+            requests: countBeforeSort,
+            rows: allKept(rowsBefore),
+        });
     });
 
     test('clicking the pivot pill cycles order client side, leaving loaded rows in place', async () => {
@@ -139,14 +164,15 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await waitFor(() => expect(pivots()).toEqual(ascending));
         const rowCountBefore = api.getDisplayedRowCount();
         const countBeforeSort = getRowsCount();
-        const firstRow = api.getDisplayedRowAtIndex(0);
+        const rowsBefore = displayedRows(api);
+        expect(rowsBefore).toHaveLength(3);
         // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
         const expectNoReload = async () => {
             await asyncSetTimeout(0);
             await asyncSetTimeout(0);
-            expect({ requests: getRowsCount(), firstRowKept: api.getDisplayedRowAtIndex(0) === firstRow }).toEqual({
+            expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
                 requests: countBeforeSort,
-                firstRowKept: true,
+                rows: allKept(rowsBefore),
             });
         };
 

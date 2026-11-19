@@ -1,12 +1,31 @@
 // The calculated-column dialog as a user drives it; no grid manager, so each harness can share it.
-import { getByRole } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import { clickSelectOption, openPicker } from 'ag-test-utils';
+
+/** The most recently opened dialog, or null: a live-apply dialog stays open after Apply. */
+export function newestCalculatedColumnDialog(): HTMLElement | null {
+    const dialogs = document.querySelectorAll<HTMLElement>('.ag-calculated-column-form');
+    return dialogs.length > 0 ? dialogs[dialogs.length - 1] : null;
+}
 
 /** The most recently opened dialog: a live-apply dialog stays open after Apply. */
 export function getCalculatedColumnDialog(): HTMLElement {
-    const dialogs = document.querySelectorAll<HTMLElement>('.ag-calculated-column-form');
-    expect(dialogs.length).toBeGreaterThan(0);
-    return dialogs[dialogs.length - 1];
+    const dialog = newestCalculatedColumnDialog();
+    if (!dialog) {
+        throw new Error('no calculated-column dialog is open');
+    }
+    return dialog;
+}
+
+/** Waits for the dialog an Add opened, newer than `previous` (the newest before it): Add always opens its own. */
+export function waitForNewCalculatedColumnDialog(previous: HTMLElement | null): Promise<HTMLElement> {
+    return waitFor(() => {
+        const dialog = newestCalculatedColumnDialog();
+        if (!dialog || dialog === previous) {
+            throw new Error('the Add has not opened its calculated-column dialog yet');
+        }
+        return dialog;
+    });
 }
 
 export function getExpressionInput(): HTMLTextAreaElement {

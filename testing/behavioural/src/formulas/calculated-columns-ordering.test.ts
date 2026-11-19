@@ -25,10 +25,12 @@ import {
     clickDialogButton,
     getCalculatedColumnDialog,
     getExpressionInput,
+    newestCalculatedColumnDialog,
     order,
     removeViaMenu,
     setExpression,
     setTitle,
+    waitForNewCalculatedColumnDialog,
 } from './calculatedColumnsStateHarness';
 
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
@@ -316,9 +318,10 @@ describe('calculated columns - display ordering', () => {
         });
         const before = new Set(order(api));
 
+        const previousDialog = newestCalculatedColumnDialog();
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getCalculatedColumnDialog());
+        await waitForNewCalculatedColumnDialog(previousDialog);
 
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toEqual(['calculated_1']);
@@ -364,9 +367,10 @@ describe('calculated columns - display ordering', () => {
             columnDefs: [{ field: 'age' }],
         });
 
+        const previousDialog = newestCalculatedColumnDialog();
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getCalculatedColumnDialog());
+        await waitForNewCalculatedColumnDialog(previousDialog);
 
         setExpression('[Age] +');
         await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
@@ -418,9 +422,10 @@ describe('calculated columns - display ordering', () => {
             └── age "Age" width:200
         `);
 
+        const previousDialog = newestCalculatedColumnDialog();
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getCalculatedColumnDialog());
+        await waitForNewCalculatedColumnDialog(previousDialog);
 
         setExpression('[Age] * 2');
         clickDialogButton('Apply');

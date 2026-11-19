@@ -497,7 +497,8 @@ describe('Filter + feature interaction', () => {
                 comparator: api.getColumn('ag-Grid-AutoColumn')?.getColDef().comparator,
             });
 
-            // The groups keep the comparator's order once it is removed, so the removal is read from the column.
+            // Removing the comparator should re-sort the groups to A, B, C, but the grid leaves them C, B, A:
+            // the group order is deliberately not pinned here, only the removal, read from the column.
             api.setGridOption('autoGroupColumnDef', {});
             await asyncSetTimeout(0);
             expect(autoColumn()).toEqual({ sort: 'asc', comparator: undefined });
