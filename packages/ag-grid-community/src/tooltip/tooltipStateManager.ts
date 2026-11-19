@@ -78,6 +78,13 @@ export class TooltipStateManager extends BaseTooltipStateManager<
         super.onMouseEnter(event);
     }
 
+    protected override onAncestorScroll(event: Event): void {
+        // The grid viewport's own scrolling suspends and resumes through bodyScroll / bodyScrollEnd instead.
+        if (event.target !== this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport) {
+            super.onAncestorScroll(event);
+        }
+    }
+
     protected override getAriaDescription(params: ITooltipParams): string | undefined {
         const description = this.gos.get('getTooltipAriaDescription')?.(params);
         return description === undefined ? super.getAriaDescription(params) : (description ?? undefined);

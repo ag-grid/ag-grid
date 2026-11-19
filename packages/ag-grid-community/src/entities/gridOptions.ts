@@ -295,8 +295,9 @@ export interface GridOptions<TData = any> {
      * The trigger that will cause tooltips to show and hide.
      * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
      *  - `hover` - The tooltip will show/hide when its element is hovered.
-     *  - `focus` - The tooltip shows immediately on keyboard focus.
+     *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
      *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+     * Source-specific show delays take precedence in all modes.
      * @default 'hover'
      * @initial
      * @agModule `TooltipModule`
@@ -331,7 +332,9 @@ export interface GridOptions<TData = any> {
      */
     getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined;
     /**
-     * The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
+     * The delay in milliseconds before a tooltip shows on hover or focus.
+     * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+     * Pointer switching uses `tooltipSwitchShowDelay` instead.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`
