@@ -965,10 +965,11 @@ describe('calculated columns - display ordering', () => {
     test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
         const api = createGrid('dialog-autogroup-moved-last-column-types', {
             rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnTypes: { someType: {} },
             columnDefs: [
                 { field: 'region', rowGroup: true, hide: true },
                 { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
-                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum', type: 'someType' },
             ],
         });
         await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
@@ -980,7 +981,10 @@ describe('calculated columns - display ordering', () => {
         api.setGridOption('columnTypes', { someType: { width: 99 } });
         await nextAnimationFrame();
 
-        expect(order(api)).toEqual(moved);
+        expect({ order: order(api), costWidth: api.getColumn('cost')!.getActualWidth() }).toEqual({
+            order: moved,
+            costWidth: 99,
+        });
     });
 
     test('a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it, with or without maintainColumnOrder', async () => {
@@ -1051,6 +1055,7 @@ describe('calculated columns - display ordering', () => {
     test('a column added from the auto group column leaves the pivot result columns as they are after a columnTypes change', async () => {
         const api = createGrid('dialog-autogroup-anchor-pivot-column-types', {
             enableStrictPivotColumnOrder: true,
+            columnTypes: { someType: {} },
             rowData: [
                 { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
                 { id: 'r2', country: 'UK', year: 2020, revenue: 20, cost: 5 },
@@ -1060,7 +1065,7 @@ describe('calculated columns - display ordering', () => {
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', pivot: true },
                 { field: 'revenue', aggFunc: 'sum' },
-                { field: 'cost', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum', type: 'someType' },
             ],
         });
         await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
@@ -1077,10 +1082,10 @@ describe('calculated columns - display ordering', () => {
 
         expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(pivoted);
         const after = api.getPivotResultColumns()!;
-        expect({ count: after.length, kept: after.filter((col, i) => col === pivotResultColumns[i]).length }).toEqual({
-            count: pivotResultColumns.length,
-            kept: pivotResultColumns.length,
-        });
+        expect({
+            costWidth: api.getColumn('cost')!.getActualWidth(),
+            kept: after.map((col, i) => col === pivotResultColumns[i]),
+        }).toEqual({ costWidth: 99, kept: pivotResultColumns.map(() => true) });
     });
 
     test('adding from a moved auto-group column preserves the moved auto-group position', async () => {

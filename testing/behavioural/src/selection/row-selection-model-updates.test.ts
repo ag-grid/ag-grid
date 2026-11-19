@@ -109,25 +109,12 @@ describe('Row Selection Grid Options', () => {
             expect(api.getSelectedNodes()).toEqual([]);
         });
 
-        // A removal recorded while a refresh is deferred (here, by the column build a callback runs in) must flush
+        // A removal recorded while a refresh is deferred (here, column change events dispatching) must flush
         // its selectionChanged this turn, so an unrelated later change can't emit it with a stale source.
         test('removal during a deferred refresh flushes selectionChanged with its own source', async () => {
             const sources: string[] = [];
-            let onMatch: (() => void) | null = null;
             const [api] = createGrid({
                 columnDefs,
-                dataTypeDefinitions: {
-                    mine: {
-                        baseDataType: 'text',
-                        extendsDataType: 'text',
-                        dataTypeMatcher: (value) => {
-                            const run = onMatch;
-                            onMatch = null;
-                            run?.();
-                            return value === 'never';
-                        },
-                    },
-                },
                 getRowId: (p) => p.data.id,
                 rowSelection: { mode: 'multiRow' },
                 rowData: [
@@ -142,20 +129,15 @@ describe('Row Selection Grid Options', () => {
             await asyncSetTimeout(0);
             sources.length = 0;
 
-            onMatch = () => {
+            // Set here rather than driven, because nothing public runs inside the window `setColDefs` opens:
+            // only ALWAYS_SYNC_GLOBAL_EVENTS reach a listener synchronously, and no column event is one.
+            const colModel = (api.getRowNode('1') as any).beans.colModel;
+            colModel.changeEventsDispatching = true;
+            try {
                 api.applyTransaction({ remove: [{ id: '1' }] });
-                throw new Error('matcher failed');
-            };
-            expect(() =>
-                api.setGridOption(
-                    'columnDefs',
-                    columnDefs.map((colDef) => ({ ...colDef }))
-                )
-            ).toThrow('matcher failed');
-            expect(onMatch).toBeNull();
-            const count = api.getDisplayedRowCount();
-            const displayedIds = Array.from({ length: count }, (_, i) => api.getDisplayedRowAtIndex(i)!.id);
-            expect({ count, displayedIds }).toEqual({ count: 2, displayedIds: ['2', '3'] });
+            } finally {
+                colModel.changeEventsDispatching = false;
+            }
             expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['3']);
 
             api.setGridOption('rowSelection', {

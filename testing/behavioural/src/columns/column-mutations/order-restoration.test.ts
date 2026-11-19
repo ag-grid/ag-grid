@@ -1342,19 +1342,23 @@ describe('Column Mutations - order restoration', () => {
                 ROOT id:ROOT_NODE_ID
             `);
 
-            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'c' }]);
 
             await new GridColumns(api, 'column instances are current after a colDef rebuild').checkColumns(`
                 CENTER
                 ├── a "A!" width:200
-                └── b width:200
+                └── c width:200
             `);
             await new GridRows(api, 'column instances are current after a colDef rebuild').check(`
                 ROOT id:ROOT_NODE_ID
             `);
-            const current = api.getColumn('a')!;
-            expect(api.getAllGridColumns().map((col) => col === current)).toEqual([true, false]);
-            expect(current.getColDef().headerName).toBe('A!');
+            const columns = api.getAllGridColumns();
+            expect({
+                ids: columns.map((col) => col.getColId()),
+                current: columns.map((col) => col === api.getColumn(col.getColId())),
+                removed: api.getColumn('b'),
+                headerName: api.getColumn('a')!.getColDef().headerName,
+            }).toEqual({ ids: ['a', 'c'], current: [true, true], removed: null, headerName: 'A!' });
         });
     });
 
