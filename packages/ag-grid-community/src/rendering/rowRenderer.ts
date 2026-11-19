@@ -1046,6 +1046,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     /** O(1) lookup of a RowCtrl by its RowNode (O(k) for sticky rows, where k is the sticky row count). */
+    /** The row rendered at the index, read without the row model creating it. */
+    public getRenderedRow(rowIndex: number): RowNode | undefined {
+        return this.rowCtrlsByRowIndex[rowIndex]?.rowNode;
+    }
+
     public getRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
         const indexed = this.getIndexedRowCtrlByNode(node);
         // A pinned row is never sticky, so the scan below cannot match one.

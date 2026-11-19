@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import type { IRowModel } from '../interfaces/iRowModel';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { RowPosition } from '../interfaces/iRowPosition';
 
 /** Where the viewport was before a data update, and the rows the user could see, to keep them in view. */
@@ -85,42 +85,43 @@ const isPositioned = (rowNode: RowNode): boolean =>
 
 /**
  * In display order, the rendered rows, which cover the view and its buffer, so the rows outside the view are followed
- * when the update removes or reorders every row in view. Reading them never creates server-side rows that are not
- * loaded. When an update follows a scroll before its redraw, the rendered rows are still those of the previous
- * position, so the rows in view are read from the row model.
+ * when the update removes or reorders every row in view. Without row virtualisation every row is rendered, and when an
+ * update follows a scroll before its redraw the rendered rows are still those of the previous position: in both cases
+ * the rows around the view are read from the row model.
  */
 function getRowsAround(beans: BeanCollection, firstVisiblePixel: number, viewportBottom: number): RowNode[] {
-    // without row virtualisation every row is rendered, so keep those within a viewport height of the view
-    const margin = beans.gos.get('suppressRowVirtualisation') ? viewportBottom - firstVisiblePixel : Infinity;
-    const rows = beans.rowRenderer
-        .getAllRowCtrls()
-        .map(({ rowNode }) => rowNode)
-        .filter(
-            (row) =>
-                isPositioned(row) &&
-                row.rowTop! + row.rowHeight! >= firstVisiblePixel - margin &&
-                row.rowTop! <= viewportBottom + margin
-        )
-        .sort((a, b) => a.rowTop! - b.rowTop!);
-    const first = rows[0];
-    const last = rows[rows.length - 1];
-    if (first && first.rowTop! <= firstVisiblePixel && last.rowTop! + last.rowHeight! >= viewportBottom) {
-        return rows;
+    if (!beans.gos.get('suppressRowVirtualisation')) {
+        const rows = beans.rowRenderer
+            .getAllRowCtrls()
+            .map(({ rowNode }) => rowNode)
+            .filter(isPositioned)
+            .sort((a, b) => a.rowTop! - b.rowTop!);
+        const first = rows[0];
+        const last = rows[rows.length - 1];
+        if (first && first.rowTop! <= firstVisiblePixel && last.rowTop! + last.rowHeight! >= viewportBottom) {
+            return rows;
+        }
     }
-    const { pageBounds, rowModel } = beans;
-    const inView: RowNode[] = [];
-    const lastRow = Math.min(rowModel.getRowIndexAtPixel(viewportBottom), pageBounds.getLastRow());
+    // a viewport height either side, so rows outside the view are followed too; the server-side row model creates the
+    // rows it reads that are not loaded, so it reads only those in view, which the redraw creates anyway
+    const { gos, pageBounds, rowModel } = beans;
+    const margin = _isClientSideRowModel(gos) ? viewportBottom - firstVisiblePixel : 0;
+    const rows: RowNode[] = [];
+    const lastRow = Math.min(rowModel.getRowIndexAtPixel(viewportBottom + margin), pageBounds.getLastRow());
     for (
-        let i = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), pageBounds.getFirstRow());
+        let i = Math.max(
+            rowModel.getRowIndexAtPixel(Math.max(0, firstVisiblePixel - margin)),
+            pageBounds.getFirstRow()
+        );
         i <= lastRow;
         ++i
     ) {
         const rowNode = rowModel.getRow(i);
         if (rowNode && isPositioned(rowNode)) {
-            inView.push(rowNode);
+            rows.push(rowNode);
         }
     }
-    return inView;
+    return rows;
 }
 
 function getGroupsAbove(rowNode: RowNode | undefined): [group: RowNode, rowTop: number][] {
@@ -132,10 +133,10 @@ function getGroupsAbove(rowNode: RowNode | undefined): [group: RowNode, rowTop: 
 }
 
 /** The height from the outermost group removed above the first row in view to the first visible pixel. */
-function getRemovedGroupHeight(rowModel: IRowModel, anchor: RowsInViewAnchor): number {
+function getRemovedGroupHeight(beans: BeanCollection, anchor: RowsInViewAnchor): number {
     let removedTop: number | null = null;
     for (const [group, rowTop] of anchor.groups) {
-        if (!isDisplayed(rowModel, group)) {
+        if (!isDisplayed(beans, group)) {
             removedTop = rowTop;
         }
     }
@@ -240,8 +241,13 @@ function getRowsInViewMoved(anchor: RowsInViewAnchor, isKept: boolean[]): number
 }
 
 /** Whether a row recorded before a data update is still displayed after it. */
-function isDisplayed(rowModel: IRowModel, rowNode: RowNode | undefined): rowNode is RowNode & { rowIndex: number } {
-    return !!rowNode && !rowNode.destroyed && rowNode.rowIndex != null && rowModel.getRow(rowNode.rowIndex) === rowNode;
+function isDisplayed(beans: BeanCollection, rowNode: RowNode | undefined): rowNode is RowNode & { rowIndex: number } {
+    if (!rowNode || rowNode.destroyed || rowNode.rowIndex == null) {
+        return false;
+    }
+    const { gos, rowModel } = beans;
+    // reading a server-side row by index creates it when it is not loaded, so it is looked up by its id
+    return _isClientSideRowModel(gos) ? rowModel.getRow(rowNode.rowIndex) === rowNode : rowModel.isRowPresent(rowNode);
 }
 
 /**
@@ -254,18 +260,20 @@ export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPo
     if (rowPinned) {
         return () => rowIndex;
     }
-    const rowNode = rowModel.getRow(rowIndex);
-    return () => (isDisplayed(rowModel, rowNode) ? rowNode.rowIndex : undefined);
+    // only a rendered server-side row is followed, as reading one by index creates it when it is not loaded
+    const rowNode = _isClientSideRowModel(beans.gos)
+        ? rowModel.getRow(rowIndex)
+        : beans.rowRenderer.getRenderedRow(rowIndex);
+    return () => (isDisplayed(beans, rowNode) ? rowNode.rowIndex : undefined);
 }
 
 /** The vertical scroll position that keeps the rows the user could see where they were. */
 function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): number {
-    const { rowModel } = beans;
     // a loading row counts as kept, as it is still there
-    const isKept = anchor.rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
+    const isKept = anchor.rows.map((rowNode) => isDisplayed(beans, rowNode) && rowNode.rowTop != null);
     const rowsInViewMoved =
         getRowsInViewMoved(anchor, isKept) ??
-        -Math.max(getRemovedHeight(anchor, isKept), getRemovedGroupHeight(rowModel, anchor));
+        -Math.max(getRemovedHeight(anchor, isKept), getRemovedGroupHeight(beans, anchor));
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
     const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;
