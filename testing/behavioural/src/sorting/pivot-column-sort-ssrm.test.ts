@@ -146,8 +146,13 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             ])
         );
 
-        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
-        expect({ pivots: pivotsOf(api), requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+        expect({
+            sort: yearPivotSort(api),
+            pivots: pivotsOf(api),
+            requests: getRowsCount(),
+            rows: rowsKept(api, rowsBefore),
+        }).toEqual({
+            sort: 'desc',
             pivots: [...ascending].reverse(),
             requests: countBeforeSort,
             rows: allKept(rowsBefore),
@@ -163,7 +168,6 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         const descending = ['2008_gold', '2004_gold', '2000_gold'];
         await waitFor(() => expect(pivots()).toEqual(ascending));
-        const rowCountBefore = api.getDisplayedRowCount();
         const countBeforeSort = getRowsCount();
         const rowsBefore = displayedRows(api);
         expect(rowsBefore).toHaveLength(3);
@@ -177,17 +181,16 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
                 rows: rowsKept(api, rowsBefore),
             };
         };
-        const unloaded = { requests: countBeforeSort, rows: allKept(rowsBefore) };
+        const noReload = { requests: countBeforeSort, rows: allKept(rowsBefore) };
 
-        expect(await clickAndRead()).toEqual({ sort: 'desc', pivots: descending, ...unloaded });
+        expect(await clickAndRead()).toEqual({ sort: 'desc', pivots: descending, ...noReload });
         // null is an explicit "no sort": pivot result columns keep the order the server returned them in.
         expect(await clickAndRead()).toEqual({
             sort: null,
             pivots: ['2004_gold', '2000_gold', '2008_gold'],
-            ...unloaded,
+            ...noReload,
         });
-        expect(await clickAndRead()).toEqual({ sort: 'asc', pivots: ascending, ...unloaded });
-        expect(api.getDisplayedRowCount()).toBe(rowCountBefore);
+        expect(await clickAndRead()).toEqual({ sort: 'asc', pivots: ascending, ...noReload });
     });
 
     test('pivotComparator defines the ascending order and pivotSort desc reverses it', async () => {
