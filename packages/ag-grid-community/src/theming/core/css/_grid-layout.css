@@ -539,6 +539,7 @@
 .ag-skeleton-container {
     width: 100%;
     height: 100%;
+
     /* a wrapped cell value (enableCellTextSelection, autoHeight) has no definite height for
        height: 100% to resolve against, so fill the line as text does */
     min-height: var(--ag-internal-content-line-height);
