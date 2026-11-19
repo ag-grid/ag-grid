@@ -77,7 +77,9 @@ export class GridLinePanel extends Component {
 
     private getGridLineDashSliderParams(labelKey: ChartTranslationKey): AgSliderParams {
         const initialStyles = this.chartOptions.getValue<AgAxisGridLineOptions['style']>('gridLine.style');
-        const initialValue = initialStyles?.[0]?.lineDash?.[0];
+        const lineDash = initialStyles?.[0]?.lineDash;
+        // `lineDash` may be a named stock pattern (e.g. 'dash'), which the slider cannot represent.
+        const initialValue = Array.isArray(lineDash) ? lineDash[0] : undefined;
         const params = this.chartMenuUtils.getDefaultSliderParamsWithoutValueParams(initialValue ?? 0, labelKey, 30);
         params.onValueChange = (value: number): void => {
             const stroke = this.chartOptions.getValue('gridLine.style.0.stroke');
