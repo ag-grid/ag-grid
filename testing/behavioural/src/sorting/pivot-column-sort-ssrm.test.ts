@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+import { TestGridsManager, runToIdle, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, IRowNode, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -103,13 +103,6 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     };
 
-    /** Waits out the column slide, then the two timer turns a load queued at its end would take. */
-    const settleAfterSlide = async (api: GridApi) => {
-        await waitFor(() => expect(getGridElement(api)!.querySelector('.ag-column-moving')).toBeNull());
-        await asyncSetTimeout(0);
-        await asyncSetTimeout(0);
-    };
-
     const yearPivotSort = (api: GridApi) => api.getColumnState().find((state) => state.colId === 'year')?.pivotSort;
 
     test('pivotSort desc reverses SSRM pivot result columns without refetching from the server', async () => {
@@ -122,13 +115,14 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const rowsBefore = displayedRows(api);
         expect(rowsBefore).toHaveLength(3);
 
-        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-        // The reorder is a pure column rebuild, so it animates synchronously.
-        expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+        await runToIdle(() => {
+            api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+            // The reorder is a pure column rebuild, so it animates synchronously.
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+        });
 
-        await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
-        await settleAfterSlide(api);
-        expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+        expect({ pivots: pivots(), requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+            pivots: ['2008_gold', '2004_gold', '2000_gold'],
             requests: countBeforeSort,
             rows: allKept(rowsBefore),
         });
@@ -144,16 +138,17 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const rowsBefore = displayedRows(api);
         expect(rowsBefore).toHaveLength(3);
 
-        api.setGridOption('columnDefs', [
-            { field: 'country', rowGroup: true, hide: true },
-            { field: 'year', pivot: true, hide: true, pivotSort: 'desc' },
-            { field: 'gold', aggFunc: 'sum', hide: true },
-        ]);
+        await runToIdle(() =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true, pivotSort: 'desc' },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+            ])
+        );
 
-        await waitFor(() => expect(pivotsOf(api)).toEqual([...ascending].reverse()));
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
-        await settleAfterSlide(api);
-        expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+        expect({ pivots: pivotsOf(api), requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
+            pivots: [...ascending].reverse(),
             requests: countBeforeSort,
             rows: allKept(rowsBefore),
         });
@@ -172,35 +167,26 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const countBeforeSort = getRowsCount();
         const rowsBefore = displayedRows(api);
         expect(rowsBefore).toHaveLength(3);
-        const expectNoReload = async () => {
-            await settleAfterSlide(api);
-            expect({ requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
-                requests: countBeforeSort,
-                rows: allKept(rowsBefore),
-            });
+        /** Clicks the pill, runs out every timer and frame the click queued, then reads the sort, order and loads. */
+        const clickAndRead = async () => {
+            await runToIdle(() => clickYearPill(api));
+            return {
+                sort: yearPivotSort(api),
+                pivots: pivots(),
+                requests: getRowsCount(),
+                rows: rowsKept(api, rowsBefore),
+            };
         };
+        const unloaded = { requests: countBeforeSort, rows: allKept(rowsBefore) };
 
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({ sort: 'desc', pivots: descending })
-        );
-        await expectNoReload();
-
+        expect(await clickAndRead()).toEqual({ sort: 'desc', pivots: descending, ...unloaded });
         // null is an explicit "no sort": pivot result columns keep the order the server returned them in.
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({
-                sort: null,
-                pivots: ['2004_gold', '2000_gold', '2008_gold'],
-            })
-        );
-        await expectNoReload();
-
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({ sort: 'asc', pivots: ascending })
-        );
-        await expectNoReload();
+        expect(await clickAndRead()).toEqual({
+            sort: null,
+            pivots: ['2004_gold', '2000_gold', '2008_gold'],
+            ...unloaded,
+        });
+        expect(await clickAndRead()).toEqual({ sort: 'asc', pivots: ascending, ...unloaded });
         expect(api.getDisplayedRowCount()).toBe(rowCountBefore);
     });
 
@@ -565,9 +551,8 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const api = await createPivotGrid(datasource);
         const countBeforeChange = getRowsCount();
 
-        api.applyColumnState({ state: [{ colId: 'year', pivot: false }] });
-        // the wait the "no refetch" tests use, so their window is long enough to see one
-        await settleAfterSlide(api);
+        // the clock the "no refetch" tests run out, so their window is long enough to see one
+        await runToIdle(() => api.applyColumnState({ state: [{ colId: 'year', pivot: false }] }));
         expect(getRowsCount()).toBe(countBeforeChange + 1);
     });
 });

@@ -26,7 +26,8 @@ const settle = async (): Promise<void> => {
 
 const ONE_FRAME_MS = 16;
 
-// No header rebuild count: a duplicate rebuild is idempotent (same DOM, no callback), so only internals see it.
+// HeaderRowCtrl's headerRowsVersion guard only skips work: a second setHeaderCtrls with the same cells changes no DOM
+// (vanilla, and React dedups them) and calls no callback, so no public count can pin it and none is kept here.
 
 /** A count's two phases: the action and its next frame, then the timers it left, run out. */
 interface PhaseCounts {
