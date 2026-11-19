@@ -1,4 +1,6 @@
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import {
@@ -61,6 +63,60 @@ describe('ensureDomOrder', () => {
 
         expect(getDisplayedRowIds(api)).toEqual(['r3', 'r1', 'r2']);
         expect(getScrollableRowIds(api)).toEqual(['r1', 'r2', 'r3']);
+    });
+
+    // A row moved in the DOM loses the pointer's hover without a pointerleave, so kept rows must not move.
+    describe('with row virtualisation', () => {
+        beforeAll(() => {
+            // the viewport reports no height otherwise, so only the row buffer is rendered
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        test.each(['down', 'up'] as const)(
+            'scrolling %s leaves the rows it keeps in place in the DOM',
+            async (direction) => {
+                const api = createGrid(gridsManager, true, {
+                    columnDefs: [{ field: 'value' }],
+                    rowData: Array.from({ length: 200 }, (_, i) => ({ id: `r${i}`, value: i })),
+                    suppressRowVirtualisation: false,
+                    rowBuffer: 0,
+                });
+                await asyncSetTimeout(0);
+                if (direction === 'up') {
+                    api.ensureIndexVisible(150, 'top');
+                    await waitFor(() => expect(getScrollableRowIds(api)).toContain('r150'));
+                }
+
+                const rowsBefore = getScrollableRows(api);
+                const removedRows = new Set<Node>();
+                const collectRemoved = (records: MutationRecord[]) => {
+                    for (const record of records) {
+                        for (const node of record.removedNodes) {
+                            removedRows.add(node);
+                        }
+                    }
+                };
+                const observer = new MutationObserver(collectRemoved);
+                observer.observe(rowsBefore[0].parentElement!, { childList: true });
+
+                const firstRowBefore = rowsBefore[0].getAttribute('row-id');
+                api.ensureIndexVisible(direction === 'down' ? 5 : 145, 'top');
+                await waitFor(() => expect(getScrollableRowIds(api)[0]).not.toBe(firstRowBefore));
+                collectRemoved(observer.takeRecords());
+                observer.disconnect();
+
+                const keptRows = rowsBefore.filter((row) => row.isConnected);
+                expect(keptRows.length).toBeGreaterThan(0);
+                expect(keptRows.length).toBeLessThan(rowsBefore.length);
+                expect(keptRows.filter((row) => removedRows.has(row))).toEqual([]);
+                const rowIds = getScrollableRowIds(api);
+                expect(rowIds).toEqual([...rowIds].sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))));
+            }
+        );
     });
 
     test('keeps cell DOM order aligned with displayed order when enabled', async () => {
@@ -353,15 +409,17 @@ function getDisplayedRowIds(api: GridApi<OrderRow>): string[] {
     return ids;
 }
 
-function getScrollableRowIds(api: GridApi<OrderRow>): string[] {
+function getScrollableRows(api: GridApi<OrderRow>): HTMLElement[] {
     const root = TestGridsManager.getHTMLElement(api);
     if (!root) {
         return [];
     }
 
-    return Array.from(root.querySelectorAll<HTMLElement>('.ag-grid-scrolling-container > .ag-row[row-id]')).map(
-        (row) => row.getAttribute('row-id') ?? ''
-    );
+    return Array.from(root.querySelectorAll<HTMLElement>('.ag-grid-scrolling-container > .ag-row[row-id]'));
+}
+
+function getScrollableRowIds(api: GridApi<OrderRow>): string[] {
+    return getScrollableRows(api).map((row) => row.getAttribute('row-id') ?? '');
 }
 
 function getCellOrder(api: GridApi<OrderRow>, rowId: string): { left: string[]; center: string[]; right: string[] } {
