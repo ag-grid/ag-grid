@@ -58,6 +58,17 @@ function ctaHrefs(content: BryntumCampaignContent): string[] {
         .map(({ href }) => href);
 }
 
+/** Accessible names of the CTAs that `TextMediaSection` and `TextMiniDemoSection` label with their heading. */
+function sectionCtaNames(content: BryntumCampaignContent): string[] {
+    return content.sections.flatMap((section) =>
+        ['text-media', 'white-section', 'text-mini-demo'].includes(section.type) && 'ctas' in section && section.ctas
+            ? section.ctas.map(({ text }) =>
+                  'heading' in section && section.heading ? `${text}: ${section.heading}` : text
+              )
+            : []
+    );
+}
+
 describe('Bryntum campaign content', () => {
     it('covers every product page', () => {
         expect(campaigns.map(({ content }) => content.slug).sort()).toEqual([
@@ -101,6 +112,11 @@ describe('Bryntum campaign content', () => {
         it('links to the tier details on bryntum.com', () => {
             const expected = COMPARISON_PRODUCTS.includes(slug) ? `/products/${slug}/features` : '/tiers-faq/';
             expect(ctaHrefs(content)).toContain(expected);
+        });
+
+        it('gives each section CTA a distinct accessible name', () => {
+            const names = sectionCtaNames(content);
+            expect(names.filter((name, idx) => names.indexOf(name) !== idx)).toEqual([]);
         });
 
         it('names all three tiers in its tiers section', () => {
