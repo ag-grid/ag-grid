@@ -112,7 +112,7 @@ describe('ensureDomOrder', () => {
                     }
 
                     const root = TestGridsManager.getHTMLElement(api)!;
-                    const rowsBefore = Array.from(root.querySelectorAll<HTMLElement>('.ag-row[row-id]'));
+                    const rowsBefore = getRowsById(root);
                     const removedRows = new Set<Node>();
                     const collectRemoved = (records: MutationRecord[]) => {
                         for (const record of records) {
@@ -134,14 +134,16 @@ describe('ensureDomOrder', () => {
                     collectRemoved(observer.takeRecords());
                     observer.disconnect();
 
-                    const keptRows = rowsBefore.filter((row) => row.isConnected);
-                    expect(keptRows.length).toBeGreaterThan(0);
-                    expect(keptRows.length).toBeLessThan(rowsBefore.length);
-                    expect(keptRows.filter((row) => removedRows.has(row))).toEqual([]);
+                    const rowsAfter = getRowsById(root);
+                    const keptIds = Array.from(rowsBefore.keys()).filter((id) => rowsAfter.has(id));
+                    expect(keptIds.length).toBeGreaterThan(0);
+                    expect(keptIds.length).toBeLessThan(rowsBefore.size);
+                    const movedOrRecreated = keptIds.filter(
+                        (id) => rowsAfter.get(id) !== rowsBefore.get(id) || removedRows.has(rowsBefore.get(id)!)
+                    );
+                    expect(movedOrRecreated).toEqual([]);
                     if (rowKind === 'pinned rows') {
-                        expect(keptRows.map((row) => row.getAttribute('row-id'))).toEqual(
-                            expect.arrayContaining(['top', 'bottom'])
-                        );
+                        expect(keptIds).toEqual(expect.arrayContaining(['top', 'bottom']));
                     }
                     if (ensureDomOrder) {
                         const rowIds = getScrollableRowIds(api);
@@ -449,6 +451,12 @@ function getScrollableRows(api: GridApi<OrderRow>): HTMLElement[] {
     }
 
     return Array.from(root.querySelectorAll<HTMLElement>('.ag-grid-scrolling-container > .ag-row[row-id]'));
+}
+
+function getRowsById(root: HTMLElement): Map<string, HTMLElement> {
+    return new Map(
+        Array.from(root.querySelectorAll<HTMLElement>('.ag-row[row-id]'), (row) => [row.getAttribute('row-id')!, row])
+    );
 }
 
 function getScrollableRowIds(api: GridApi<OrderRow>): string[] {
