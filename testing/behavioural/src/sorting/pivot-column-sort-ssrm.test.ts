@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import type { ColDef, GridApi, IServerSideDatasource } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -39,7 +39,11 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
     const pivotsOf = (api: GridApi, pattern: RegExp = /_gold$/) =>
         getColumnOrder(api, 'all').filter((id) => pattern.test(id));
 
-    async function createPivotGrid(datasource: IServerSideDatasource, yearColDef?: Partial<ColDef>): Promise<GridApi> {
+    async function createPivotGrid(
+        datasource: IServerSideDatasource,
+        yearColDef?: Partial<ColDef>,
+        gridOptions?: Partial<GridOptions>
+    ): Promise<GridApi> {
         const api = await gridsManager.createGridAndWait('ssrm', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -49,6 +53,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             pivotMode: true,
             rowModelType: 'serverSide',
             serverSideDatasource: datasource,
+            ...gridOptions,
         });
         await waitForNoLoadingRows(api);
         return api;
@@ -101,37 +106,41 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('clicking the pivot pill cycles order client side, leaving loaded rows in place', async () => {
         const { datasource, getRowsCount } = countingDatasource();
-        const api = await createPivotGrid(datasource);
+        const api = await createPivotGrid(datasource, undefined, { pivotPanelShow: 'always' });
 
         const pivots = () => pivotsOf(api);
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         const descending = ['2008_gold', '2004_gold', '2000_gold'];
+        const clickYearPill = () => {
+            const pill = getGridElement(api)!.querySelector<HTMLElement>(
+                '.ag-column-drop-horizontal-pivot .ag-column-drop-cell'
+            );
+            if (!pill) {
+                throw new Error('year pill not found in the pivot panel');
+            }
+            pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        };
+        const yearPivotSort = () => api.getColumnState().find((state) => state.colId === 'year')?.pivotSort;
         await waitFor(() => expect(pivots()).toEqual(ascending));
         const rowCountBefore = api.getDisplayedRowCount();
         const countBeforeSort = getRowsCount();
         const firstRow = api.getDisplayedRowAtIndex(0);
 
-        const yearCol = api.getColumn('year') as any;
-        const strategy = yearCol.beans.columnStateUpdateStrategy;
-
-        strategy.progressPivotSortFromEvent(false, yearCol);
-        await waitFor(() => {
-            expect(strategy.getPivotSort(false, yearCol)).toBe('desc');
-            expect(pivots()).toEqual(descending);
-        });
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'desc', pivots: descending })
+        );
 
         // null is an explicit "no sort": pivot result columns keep the order the server returned them in.
-        strategy.progressPivotSortFromEvent(false, yearCol);
-        await waitFor(() => {
-            expect(strategy.getPivotSort(false, yearCol)).toBeNull();
-            expect(pivots()).toEqual(ascending);
-        });
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: null, pivots: ascending })
+        );
 
-        strategy.progressPivotSortFromEvent(false, yearCol);
-        await waitFor(() => {
-            expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
-            expect(pivots()).toEqual(ascending);
-        });
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'asc', pivots: ascending })
+        );
         // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);

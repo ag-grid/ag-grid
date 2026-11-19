@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, IRowNode } from 'ag-grid-community';
+import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -391,37 +391,41 @@ describe('Filter + feature interaction', () => {
             filterParams: { caseSensitive: true },
             comparator,
         });
-        let modelUpdated = 0;
-        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [{ field: 'n' }],
-            autoGroupColumnDef: autoGroupColumnDef(),
-            treeData: true,
-            groupDefaultExpanded: -1,
-            rowData: [
-                { id: 'A', n: 'A' },
-                { id: 'B', parentId: 'A', n: 'B' },
-                { id: 'D', n: 'D' },
-            ],
-            getRowId: (params) => params.data.id,
-            treeDataParentIdField: 'parentId',
-            onModelUpdated: () => ++modelUpdated,
-        });
-        await asyncSetTimeout(0);
+        // Each update on its own grid, so a refresh the equal one queues cannot be credited to the control.
+        const refreshesAfterUpdate = async (update: GridOptions['autoGroupColumnDef']) => {
+            let modelUpdated = 0;
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'n' }],
+                autoGroupColumnDef: autoGroupColumnDef(),
+                treeData: true,
+                groupDefaultExpanded: -1,
+                rowData: [
+                    { id: 'A', n: 'A' },
+                    { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'D', n: 'D' },
+                ],
+                getRowId: (params) => params.data.id,
+                treeDataParentIdField: 'parentId',
+                onModelUpdated: () => ++modelUpdated,
+            });
+            await asyncSetTimeout(0);
+            modelUpdated = 0;
+            api.setGridOption('autoGroupColumnDef', update);
+            await asyncSetTimeout(0);
+            return { api, refreshes: modelUpdated };
+        };
 
-        modelUpdated = 0;
-        api.setGridOption('autoGroupColumnDef', autoGroupColumnDef());
-        await asyncSetTimeout(0);
-        const afterEqual = modelUpdated;
-
+        const afterEqual = (await refreshesAfterUpdate(autoGroupColumnDef())).refreshes;
+        gridsManager.reset();
         // The positive control: a changed definition that re-sorts the rows is counted in the same window.
-        api.setGridOption('autoGroupColumnDef', { ...autoGroupColumnDef(), headerName: 'Tree', sort: 'desc' });
-        await asyncSetTimeout(0);
+        const changed = await refreshesAfterUpdate({ ...autoGroupColumnDef(), headerName: 'Tree', sort: 'desc' });
+        const api = changed.api;
         const rowOrder: string[] = [];
         api.forEachNodeAfterFilterAndSort((node) => rowOrder.push(node.id!));
 
         expect({
             afterEqual,
-            afterChanged: modelUpdated > 0,
+            afterChanged: changed.refreshes > 0,
             rowOrder,
             header: api.getDisplayNameForColumn(api.getColumn('ag-Grid-AutoColumn')!, 'header'),
         }).toEqual({ afterEqual: 0, afterChanged: true, rowOrder: ['D', 'A', 'B'], header: 'Tree' });
