@@ -93,7 +93,7 @@ export function entryOf(state: GridState, colId: string): NonNullable<GridState[
 
 // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
 /** The expression as the grid stores it, references by column id: plain `[Header]` references only. */
-export function storedExpression(api: GridApi, expression: string): string {
+function storedExpression(api: GridApi, expression: string): string {
     return expression.replace(/\[([^\]]+)\]/g, (reference, name: string) => {
         const column = api
             .getColumns()
@@ -102,14 +102,9 @@ export function storedExpression(api: GridApi, expression: string): string {
     });
 }
 
-/** Adds a calc col from {@link anchorColId}'s header menu and returns its new colId; `stored` is the expression as
- *  the grid keeps it, for one `storedExpression` cannot derive (a bracket inside a string). */
-export async function addViaDialog(
-    api: GridApi,
-    anchorColId: string,
-    expression: string,
-    stored: string = storedExpression(api, expression)
-): Promise<string> {
+/** Adds a calc col from {@link anchorColId}'s header menu and returns its new colId. */
+export async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
+    const stored = storedExpression(api, expression);
     const before = new Set(order(api));
     api.showColumnMenu(anchorColId);
     await clickMenuOption('Add Calculated Column');

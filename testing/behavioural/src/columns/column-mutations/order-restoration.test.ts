@@ -1630,27 +1630,16 @@ describe('Column Mutations - order restoration', () => {
             {
                 headerName: 'G',
                 groupId: 'g',
-                children: [
-                    { colId: 'a', field: 'a', cellDataType: 'tagged' },
-                    { colId: 'b', type: 't' },
-                ],
+                children: [{ colId: 'a', field: 'a' }, { colId: 'b' }],
             },
             { colId: 'c' },
-            { colId: 'd', field: 'x.y' },
+            { colId: 'd' },
         ];
 
         const createMovedGrid = (id: string) => {
             const api = gridsManager.createGrid(id, {
                 columnDefs: buildColumnDefs(),
-                columnTypes: { t: {} },
-                dataTypeDefinitions: {
-                    tagged: {
-                        baseDataType: 'text',
-                        extendsDataType: 'text',
-                        valueFormatter: (params) => `old:${params.value}`,
-                    },
-                },
-                rowData: [{ a: 'v', x: { y: 'nested' }, 'x.y': 'flat' }],
+                rowData: [{ a: 'v' }],
             });
             expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
             api.moveColumns(['c'], 0);

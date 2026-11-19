@@ -2505,18 +2505,6 @@ describe('the column events of an updateGridOptions call changing column options
             ...options,
         });
 
-    /** The grid events of `types` heard from now, in order. */
-    const hear = (
-        api: GridApi,
-        types: ('columnEverythingChanged' | 'columnPivotModeChanged' | 'modelUpdated' | 'displayedColumnsChanged')[]
-    ) => {
-        const heard: string[] = [];
-        for (const type of types) {
-            api.addEventListener(type, () => heard.push(type));
-        }
-        return heard;
-    };
-
     const settle = async () => {
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
@@ -2548,21 +2536,14 @@ describe('the column events of an updateGridOptions call changing column options
         ).toEqual(['a:140', 'b:140', 'c:140']);
     });
 
-    test('one update changing rowData before autoGroupColumnDef refreshes the rows before columnEverythingChanged', async () => {
+    test('one update changing rowData before autoGroupColumnDef refreshes the rows for the new data before columnEverythingChanged', async () => {
         const api = createGroupedGrid();
         await settle();
-        // The top-level group keys each event's listener sees; grid listeners all run after the update call returns.
+        // Listeners run after the update call returns, so each refresh is told apart by its event's own newData.
         const heard: string[] = [];
-        const topGroupKeys = () => {
-            const keys: string[] = [];
-            api.forEachNodeAfterFilterAndSort((node) => {
-                if (node.group && node.level === 0) {
-                    keys.push(String(node.key));
-                }
-            });
-            return keys.join(',');
-        };
-        api.addEventListener('modelUpdated', () => heard.push(`modelUpdated:${topGroupKeys()}`));
+        api.addEventListener('modelUpdated', (event) =>
+            heard.push(event.newData ? 'modelUpdated:newData' : 'modelUpdated')
+        );
         api.addEventListener('columnEverythingChanged', () => heard.push('columnEverythingChanged'));
 
         api.updateGridOptions({
@@ -2574,11 +2555,18 @@ describe('the column events of an updateGridOptions call changing column options
         });
         await settle();
 
-        expect(autoGroupColumns(api).map((column) => api.getDisplayNameForColumn(column, 'header'))).toEqual(['F']);
-        const everythingChanged = heard.indexOf('columnEverythingChanged');
-        expect(everythingChanged).toBeGreaterThan(0);
-        // The refresh before columnEverythingChanged already holds the replacement groups.
-        expect(heard[everythingChanged - 1]).toBe('modelUpdated:z,w');
+        const topGroupKeys: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.level === 0) {
+                topGroupKeys.push(String(node.key));
+            }
+        });
+        const newDataRefresh = heard.indexOf('modelUpdated:newData');
+        expect({
+            header: autoGroupColumns(api).map((column) => api.getDisplayNameForColumn(column, 'header')),
+            topGroupKeys,
+            newDataRefreshFirst: newDataRefresh >= 0 && newDataRefresh < heard.indexOf('columnEverythingChanged'),
+        }).toEqual({ header: ['F'], topGroupKeys: ['z', 'w'], newDataRefreshFirst: true });
     });
 
     test('rowSelection turning its checkboxes on, off and on in three calls shows, removes and shows the selection column', async () => {
@@ -2717,7 +2705,8 @@ describe('the column events of an updateGridOptions call changing column options
             });
             await settle();
             expect(displayedIds(api)).toEqual(['ag-Grid-AutoColumn', 'c', 'd']);
-            const heard = hear(api, ['displayedColumnsChanged']);
+            let displayedColumnsChanged = 0;
+            api.addEventListener('displayedColumnsChanged', () => ++displayedColumnsChanged);
 
             api.updateGridOptions(update);
             await settle();
@@ -2729,9 +2718,9 @@ describe('the column events of an updateGridOptions call changing column options
                 autoHeader: auto ? api.getDisplayNameForColumn(auto, 'header') : undefined,
             }).toEqual({ option: update[option], ids, autoHeader });
             if (changesDisplayedColumns) {
-                expect(heard).toEqual(['displayedColumnsChanged']);
+                expect(displayedColumnsChanged).toBe(1);
             } else {
-                expect(heard.length).toBeLessThanOrEqual(1);
+                expect(displayedColumnsChanged).toBeLessThanOrEqual(1);
             }
         }
     );

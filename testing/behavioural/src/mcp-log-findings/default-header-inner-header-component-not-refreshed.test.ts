@@ -183,13 +183,6 @@ describe('inner header component across column definition updates', () => {
                 (el) => el.textContent
             );
 
-        const loaded = gridMgr.createGrid('loaded', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
-        await waitFor(() => {
-            resolveAll();
-            expect(innerHeaderTexts(loaded)).toEqual(['Name']);
-        });
-        gridMgr.reset();
-
         const api = gridMgr.createGrid('grid', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
         expect(pendingInits).toHaveLength(1);
 

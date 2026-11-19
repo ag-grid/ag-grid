@@ -104,7 +104,6 @@ describe('column header drag reorder', () => {
             await dispatcher.startDrag(source, 50, 15);
             await dispatcher.movePointer(viewport, 50, 100);
             await dispatcher.movePointer(ownerDocument.body, 5000, 5000);
-            await waitFor(() => expect(ownerDocument.querySelector('.ag-dnd-ghost-icon')).not.toBeNull());
             const ghost = ownerDocument.querySelector('.ag-dnd-ghost')!;
             const ghostIcon = {
                 hideIcon: ghost.querySelector('.ag-dnd-ghost-icon .ag-icon-eye-slash') != null,

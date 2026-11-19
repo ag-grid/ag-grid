@@ -24,6 +24,7 @@ import {
     addViaDialog,
     clickDialogButton,
     getCalculatedColumnDialog,
+    getExpressionInput,
     order,
     removeViaMenu,
     setExpression,
@@ -98,12 +99,6 @@ describe('calculated columns - display ordering', () => {
             }
         }
         return nextColumnDefs;
-    }
-
-    function getExpressionInput(): HTMLTextAreaElement {
-        const input = getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea');
-        expect(input).toBeTruthy();
-        return input!;
     }
 
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
@@ -882,7 +877,7 @@ describe('calculated columns - display ordering', () => {
         expect(order(api).at(-1)).toBe(x1);
     });
 
-    test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
+    test('a columnTypes change without maintainColumnOrder leaves a calculated column the user moved last at the end', async () => {
         const api = createGrid('dialog-autogroup-moved-last-column-types', {
             rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
             columnTypes: { someType: {} },
@@ -907,9 +902,10 @@ describe('calculated columns - display ordering', () => {
         });
     });
 
-    test('a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it, with or without maintainColumnOrder', async () => {
-        for (const maintainColumnOrder of [false, true]) {
-            gridsManager.reset();
+    test.each([{ maintainColumnOrder: false }, { maintainColumnOrder: true }])(
+        'a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it (maintainColumnOrder $maintainColumnOrder)',
+        async (row) => {
+            const maintainColumnOrder = row.maintainColumnOrder;
             const api = createGrid(`dialog-autogroup-moved-middle-ungrouped-types-${maintainColumnOrder}`, {
                 maintainColumnOrder,
                 rowData: [{ id: 'r1', g: 'EMEA', revenue: 10, cost: 3, z: 1 }],
@@ -937,7 +933,7 @@ describe('calculated columns - display ordering', () => {
 
             expect({ maintainColumnOrder, regrouped: order(api) }).toEqual({ maintainColumnOrder, regrouped: moved });
         }
-    });
+    );
 
     test('a column the user moved to the end stays last through pivot mode on and off, and when row grouping is then cleared and set again', async () => {
         const api = createGrid('dialog-autogroup-moved-last-pivot-mode', {

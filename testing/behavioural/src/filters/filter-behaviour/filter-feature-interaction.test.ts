@@ -492,14 +492,23 @@ describe('Filter + feature interaction', () => {
             await asyncSetTimeout(0);
             expect(groups(api)).toEqual(['C', 'B', 'A']);
 
-            // Latest keeps the groups in the comparator's order once it is removed: only the kept sort is pinned.
+            const autoColumn = () => ({
+                sort: api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort,
+                comparator: api.getColumn('ag-Grid-AutoColumn')?.getColDef().comparator,
+            });
+
+            // The groups keep the comparator's order once it is removed, so the removal is read from the column.
             api.setGridOption('autoGroupColumnDef', {});
             await asyncSetTimeout(0);
-            expect(api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
+            expect(autoColumn()).toEqual({ sort: 'asc', comparator: undefined });
 
             api.setGridOption('autoGroupColumnDef', { comparator: reversed });
             await asyncSetTimeout(0);
-            expect(groups(api)).toEqual(['C', 'B', 'A']);
+            expect({ groups: groups(api), ...autoColumn() }).toEqual({
+                groups: ['C', 'B', 'A'],
+                sort: 'asc',
+                comparator: reversed,
+            });
         });
     });
 

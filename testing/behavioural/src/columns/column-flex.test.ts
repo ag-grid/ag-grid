@@ -1388,6 +1388,7 @@ describe('Column Flex with animateColumnResizing', () => {
             restoreOffsetParent?.();
         }
     });
+
     test('a reorder drops the width animation even when a layout listener begins a change of its own', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
