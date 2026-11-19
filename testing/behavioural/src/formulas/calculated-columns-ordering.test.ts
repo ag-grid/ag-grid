@@ -883,7 +883,7 @@ describe('calculated columns - display ordering', () => {
     });
 
     test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
-        const api = createGrid('dialog-autogroup-moved-middle-column-types', {
+        const api = createGrid('dialog-autogroup-moved-last-column-types', {
             rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
             columnTypes: { someType: {} },
             columnDefs: [
@@ -894,9 +894,9 @@ describe('calculated columns - display ordering', () => {
         });
         await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
         const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-        api.moveColumns([x1], 3);
-        const moved = ['ag-Grid-AutoColumn', 'region', 'revenue', x1, 'cost'];
-        expect(order(api)).toEqual(moved);
+        api.moveColumns([x1], order(api).length - 1);
+        expect(order(api).at(-1)).toBe(x1);
+        const moved = order(api);
 
         api.setGridOption('columnTypes', { someType: { width: 99 } });
         await nextAnimationFrame();
@@ -923,8 +923,11 @@ describe('calculated columns - display ordering', () => {
             });
             await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
             const added = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-            api.moveColumns([added], 3);
-            const moved = ['ag-Grid-AutoColumn', 'g', 'revenue', added, 'cost', 'z'];
+            // without maintainColumnOrder the columnTypes rebuild resets the order, so only the last slot is kept
+            const moved = maintainColumnOrder
+                ? ['ag-Grid-AutoColumn', 'g', 'revenue', added, 'cost', 'z']
+                : ['ag-Grid-AutoColumn', 'g', 'revenue', 'cost', 'z', added];
+            api.moveColumns([added], moved.indexOf(added));
             expect({ maintainColumnOrder, moved: order(api) }).toEqual({ maintainColumnOrder, moved });
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });

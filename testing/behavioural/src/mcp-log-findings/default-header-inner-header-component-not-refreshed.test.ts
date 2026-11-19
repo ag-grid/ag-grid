@@ -24,8 +24,8 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, IHeaderParams, IInnerHeaderComponent } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, IHeaderParams, IInnerHeaderComponent } from 'ag-grid-community';
+import { AgPromise, ClientSideRowModelModule } from 'ag-grid-community';
 
 let refreshedWith: string[] = [];
 
@@ -42,6 +42,65 @@ class TestInnerHeader implements IInnerHeaderComponent {
 
     public refresh(params: IHeaderParams): boolean {
         refreshedWith.push(params.displayName);
+        this.eGui.textContent = params.displayName;
+        return true;
+    }
+}
+
+class FirstInnerHeader implements IInnerHeaderComponent {
+    private readonly eGui = document.createElement('span');
+
+    public init(params: IHeaderParams): void {
+        this.eGui.className = 'test-inner-first';
+        this.eGui.textContent = `first ${params.displayName}`;
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refresh(params: IHeaderParams): boolean {
+        this.eGui.textContent = `first ${params.displayName}`;
+        return true;
+    }
+}
+
+class SecondInnerHeader implements IInnerHeaderComponent {
+    private readonly eGui = document.createElement('span');
+
+    public init(params: IHeaderParams): void {
+        this.eGui.className = 'test-inner-second';
+        this.eGui.textContent = `second ${params.displayName}`;
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refresh(params: IHeaderParams): boolean {
+        this.eGui.textContent = `second ${params.displayName}`;
+        return true;
+    }
+}
+
+let pendingInits: (() => void)[] = [];
+
+class SlowInnerHeader implements IInnerHeaderComponent {
+    private readonly eGui = document.createElement('span');
+
+    public init(params: IHeaderParams): AgPromise<void> {
+        this.eGui.className = 'test-inner-slow';
+        this.eGui.textContent = params.displayName;
+        return new AgPromise<void>((resolve) => {
+            pendingInits.push(() => resolve());
+        });
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refresh(params: IHeaderParams): boolean {
         this.eGui.textContent = params.displayName;
         return true;
     }
@@ -68,5 +127,79 @@ describe.skip('innerHeaderComponent refresh on a column definition update', () =
 
         await waitFor(() => expect(TestGridsManager.getHTMLElement(api)!.textContent).toContain('Renamed'));
         expect(refreshedWith).toEqual(['Renamed']);
+    });
+});
+
+describe('innerHeaderComponent refresh on a column definition update', () => {
+    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+
+    beforeEach(() => {
+        refreshedWith = [];
+        pendingInits = [];
+    });
+    afterEach(() => gridMgr.reset());
+
+    test('a column definition update adds, swaps and removes the inner header component', async () => {
+        const colDef = (innerHeaderComponent?: new () => IInnerHeaderComponent): ColDef => ({
+            field: 'a',
+            headerName: 'Name',
+            headerComponentParams: { innerHeaderComponent },
+        });
+        const api = await gridMgr.createGridAndWait('grid', { columnDefs: [colDef()], rowData: [{ a: 1 }] });
+        const header = () => TestGridsManager.getHTMLElement(api)!.querySelector('.ag-header-cell[col-id="a"]')!;
+        const state = () => ({
+            first: header().querySelectorAll('.test-inner-first').length,
+            second: header().querySelectorAll('.test-inner-second').length,
+            text: header().querySelector('.ag-header-cell-text')?.textContent ?? header().textContent,
+        });
+
+        expect(state()).toEqual({ first: 0, second: 0, text: 'Name' });
+
+        api.setGridOption('columnDefs', [colDef(FirstInnerHeader)]);
+        await waitFor(() => expect(state()).toEqual({ first: 1, second: 0, text: 'first Name' }));
+
+        api.setGridOption('columnDefs', [colDef(SecondInnerHeader)]);
+        await waitFor(() => expect(state()).toEqual({ first: 0, second: 1, text: 'second Name' }));
+
+        api.setGridOption('columnDefs', [colDef()]);
+        await waitFor(() => expect(state()).toEqual({ first: 0, second: 0, text: 'Name' }));
+    });
+
+    test('a rename while the inner header component is still loading ends with the new name shown', async () => {
+        const colDef = (headerName: string): ColDef => ({
+            field: 'a',
+            headerName,
+            headerComponentParams: { innerHeaderComponent: SlowInnerHeader },
+        });
+        const resolveAll = () => {
+            const pending = pendingInits;
+            pendingInits = [];
+            for (let i = 0, len = pending.length; i < len; ++i) {
+                pending[i]();
+            }
+        };
+        const innerHeaderTexts = (api: GridApi) =>
+            Array.from(
+                TestGridsManager.getHTMLElement(api)!.querySelectorAll('.ag-header-cell[col-id="a"] .test-inner-slow'),
+                (el) => el.textContent
+            );
+
+        const loaded = gridMgr.createGrid('loaded', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
+        await waitFor(() => {
+            resolveAll();
+            expect(innerHeaderTexts(loaded)).toEqual(['Name']);
+        });
+        gridMgr.reset();
+
+        const api = gridMgr.createGrid('grid', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
+        expect(pendingInits).toHaveLength(1);
+
+        api.setGridOption('columnDefs', [colDef('Renamed')]);
+        resolveAll();
+
+        await waitFor(() => {
+            resolveAll();
+            expect(innerHeaderTexts(api)).toEqual(['Renamed']);
+        });
     });
 });

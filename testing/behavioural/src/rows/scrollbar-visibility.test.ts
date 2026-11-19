@@ -3,6 +3,7 @@ import { TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 const scrollbarWidth = 15;
 const initialRowCount = 11;
@@ -127,5 +128,64 @@ describe('Scrollbar visibility', () => {
                 ])
             );
         });
+    });
+});
+
+describe('Horizontal scrollbar while columns slide', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    let originalGridWidth: number;
+    let originalNativeScrollbarWidth: number;
+
+    beforeAll(() => {
+        originalGridWidth = mockGridLayout.gridWidth;
+        originalNativeScrollbarWidth = mockGridLayout.nativeScrollbarWidth;
+        mockGridLayout.gridWidth = 600;
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.nativeScrollbarWidth = scrollbarWidth;
+    });
+
+    afterAll(() => {
+        mockGridLayout.gridWidth = originalGridWidth;
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.nativeScrollbarWidth = originalNativeScrollbarWidth;
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.useRealTimers();
+    });
+
+    // A scrollbar applies after 100ms and a slide ends at 200ms: 150ms is between them.
+    const SCROLLBAR_APPLIED_MS = 150;
+    const SLIDE_ENDED_MS = 400;
+
+    const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
+
+    test('stays while columns slide out of an overflowing layout, and goes once the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 200 },
+                { field: 'b', width: 200 },
+                { field: 'c', width: 200 },
+                { field: 'd', width: 200 },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            scrollbarWidth,
+        });
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
+
+        api.setColumnsVisible(['a', 'b'], false);
+        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        // The two columns left (400px) fit the 600px viewport: the scrollbar is kept for the slide.
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            height: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], height: `${scrollbarWidth}px` });
+
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        expect(horizontalScrollbarHeight()).toBe('0px');
     });
 });

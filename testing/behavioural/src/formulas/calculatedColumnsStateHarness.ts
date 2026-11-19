@@ -102,9 +102,14 @@ export function storedExpression(api: GridApi, expression: string): string {
     });
 }
 
-/** Adds a calc col through the header menu of {@link anchorColId} (the documented "anchor").
- *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
-export async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
+/** Adds a calc col from {@link anchorColId}'s header menu and returns its new colId; `stored` is the expression as
+ *  the grid keeps it, for one `storedExpression` cannot derive (a bracket inside a string). */
+export async function addViaDialog(
+    api: GridApi,
+    anchorColId: string,
+    expression: string,
+    stored: string = storedExpression(api, expression)
+): Promise<string> {
     const before = new Set(order(api));
     api.showColumnMenu(anchorColId);
     await clickMenuOption('Add Calculated Column');
@@ -118,7 +123,7 @@ export async function addViaDialog(api: GridApi, anchorColId: string, expression
     const added = await waitFor(() => {
         const result = order(api).filter((id) => !before.has(id));
         expect(result).toHaveLength(1);
-        expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBe(storedExpression(api, expression));
+        expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBe(stored);
         return result;
     });
     return added[0];

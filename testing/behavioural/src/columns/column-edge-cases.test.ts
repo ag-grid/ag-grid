@@ -209,6 +209,61 @@ describe('Column Edge Cases', () => {
             expect(ids).toContain('b');
         });
 
+        test('grid constructed without columnDefs + rowSelection change — the column refresh short-circuits while not ready', async () => {
+            // A checkboxes, headerCheckbox or checkboxLocation change refreshes the columns; with no columnDefs yet
+            // the grid is not ready, and the refresh returns early without throwing.
+            const api = gridsManager.createGrid('uninitSel', {
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                // intentionally no columnDefs
+            });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            // a checkboxes change asks for the column refresh
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(api.getAllGridColumns()).toEqual([]);
+
+            // Provide columnDefs → grid transitions to ready and rebuilds normally.
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            await asyncSetTimeout(0);
+            const ids = api.getAllGridColumns().map((c) => c.getColId());
+            expect(ids).toContain('a');
+            expect(ids).toContain('b');
+        });
+
         test('grid constructed without columnDefs property — api methods safe on !ready grid; later setGridOption activates cols', async () => {
             // syncService routes `columnDefs === undefined` into `waitingForColumns = true` and
             // never calls `colModel.setColumnDefs`. The grid is constructed and `gridReady` fires,

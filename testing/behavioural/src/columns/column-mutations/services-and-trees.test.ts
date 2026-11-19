@@ -923,10 +923,7 @@ describe('Column Mutations', () => {
         };
         const ids = (cols: Column[]) => cols.map((col) => col.getColId());
         const headerTexts = (api: GridApi) =>
-            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell'), (el) => [
-                el.getAttribute('col-id'),
-                el.querySelector('.ag-header-cell-text')?.textContent,
-            ]);
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell-text'), (el) => el.textContent);
 
         test('a rebuild keeps a level the user grouped alone under a source that is not grouped', async () => {
             const api = gridsManager.createGrid('levelGrouped', {
@@ -942,7 +939,7 @@ describe('Column Mutations', () => {
             const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
-            // setState finishes applying state in a timeout
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
             await asyncSetTimeout(0);
 
             expect({
@@ -954,7 +951,7 @@ describe('Column Mutations', () => {
                 before: [year],
                 after: [year],
                 rebuilt: true,
-                headers: [],
+                headers: ['Group', 'Date', 'Sport', 'N'],
             });
         });
 
@@ -973,7 +970,7 @@ describe('Column Mutations', () => {
             const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
-            // setState finishes applying state in a timeout
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
             await asyncSetTimeout(0);
 
             expect({
@@ -985,7 +982,7 @@ describe('Column Mutations', () => {
                 before: [year],
                 after: [year],
                 rebuilt: true,
-                headers: [],
+                headers: ['Group', 'sum(N)'],
             });
         });
     });

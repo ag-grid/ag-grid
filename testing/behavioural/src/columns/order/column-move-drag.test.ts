@@ -502,5 +502,17 @@ describe('column header drag reorder', () => {
             expect({ kept: kept.after, fresh: fresh.after }).toEqual({ kept: kept.before, fresh: fresh.before });
             expect(fresh.dragStarted).toBe(false);
         });
+
+        // Disabled: a kept header still starts a drag that the drop then rejects (board ticket ag:T354).
+        test.skip('the header starts no drag once a leaf it now has is position-locked, as a fresh one starts none', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                {},
+                [group(leaf('c'), leaf('d')), leaf('a'), leaf('z')],
+                [group(leaf('c'), leaf('e', { lockPosition: true })), leaf('a'), leaf('z')],
+                dragGroup(100, 350)
+            );
+
+            expect({ kept: kept.dragStarted, fresh: fresh.dragStarted }).toEqual({ kept: false, fresh: false });
+        });
     });
 });

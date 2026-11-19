@@ -10,6 +10,7 @@ import type {
     ColumnGroup,
     ColumnStateUpdatedEvent,
     GridApi,
+    GridOptions,
     ICellRendererParams,
     IColumnStateUpdateStrategy,
     IHeaderComp,
@@ -2398,17 +2399,25 @@ describe('the column animations a column call leaves on', () => {
     test('a call made while a column move is still sliding does not cut the slide short when it changes nothing', async () => {
         const api = await createLockedGrid();
 
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
         api.moveColumns(['sport'], 1);
-        // Past the move's queued next-turn work, so the slide is under way before the no-op.
-        await asyncSetTimeout(0);
+        // A move slides for 200 ms; the no-op lands halfway, after the move's next-turn work.
+        await vi.advanceTimersByTimeAsync(100);
         expect(moving(api)).toBe(true);
 
         api.applyColumnState({ state: api.getColumnState() });
-        await asyncSetTimeout(0);
+        await vi.advanceTimersByTimeAsync(99);
+        const justBeforeEnd = moving(api);
+        await vi.advanceTimersByTimeAsync(1);
 
-        expect(order(api)).toBe('year,sport,athlete,country');
-        expect(moving(api)).toBe(true);
-        await waitFor(() => expect(moving(api)).toBe(false));
+        expect({ order: order(api), justBeforeEnd, atEnd: moving(api) }).toEqual({
+            order: 'year,sport,athlete,country',
+            justBeforeEnd: true,
+            atEnd: false,
+        });
     });
 
     const createAnimatedGrid = async (columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }]) => {
@@ -2470,4 +2479,188 @@ describe('the column animations a column call leaves on', () => {
         });
         await waitFor(() => expect(resizeAnimating(api)).toBe(false));
     });
+});
+
+describe('the column events of an updateGridOptions call changing column options', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [
+        { a: 'x', b: 'p', c: 1 },
+        { a: 'x', b: 'q', c: 2 },
+        { a: 'y', b: 'p', c: 3 },
+    ];
+
+    const createGroupedGrid = (options: GridOptions = {}) =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true, hide: true },
+                { field: 'b', rowGroup: true, hide: true },
+                { field: 'c', aggFunc: 'sum' },
+            ],
+            rowData,
+            ...options,
+        });
+
+    /** The grid events of `types` heard from now, in order. */
+    const hear = (
+        api: GridApi,
+        types: ('columnEverythingChanged' | 'columnPivotModeChanged' | 'modelUpdated' | 'displayedColumnsChanged')[]
+    ) => {
+        const heard: string[] = [];
+        for (const type of types) {
+            api.addEventListener(type, () => heard.push(type));
+        }
+        return heard;
+    };
+
+    const settle = async () => {
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+    };
+
+    const displayedIds = (api: GridApi) => api.getAllDisplayedColumns().map((column) => column.getColId());
+
+    const autoGroupColumns = (api: GridApi) =>
+        api.getAllGridColumns().filter((column) => column.getColId().startsWith('ag-Grid-AutoColumn'));
+
+    test('one update changing defaultColDef and autoGroupColumnDef gives the auto group column its own header and width and every other column the default width', async () => {
+        const api = createGroupedGrid();
+        await settle();
+
+        api.updateGridOptions({
+            defaultColDef: { width: 140 },
+            autoGroupColumnDef: { headerName: 'E', width: 222 },
+        });
+        await settle();
+
+        const autoGroups = autoGroupColumns(api);
+        expect(autoGroups.map((column) => api.getDisplayNameForColumn(column, 'header'))).toEqual(['E']);
+        expect(autoGroups.map((column) => column.getActualWidth())).toEqual([222]);
+        expect(
+            api
+                .getAllGridColumns()
+                .filter((column) => !autoGroups.includes(column))
+                .map((column) => `${column.getColId()}:${column.getActualWidth()}`)
+        ).toEqual(['a:140', 'b:140', 'c:140']);
+    });
+
+    test('one update changing rowData before autoGroupColumnDef refreshes the rows before columnEverythingChanged', async () => {
+        const api = createGroupedGrid();
+        await settle();
+        const heard = hear(api, ['columnEverythingChanged', 'modelUpdated']);
+
+        api.updateGridOptions({
+            rowData: [
+                { a: 'z', b: 'r', c: 5 },
+                { a: 'w', b: 's', c: 6 },
+            ],
+            autoGroupColumnDef: { headerName: 'F' },
+        });
+        await settle();
+
+        expect(autoGroupColumns(api).map((column) => api.getDisplayNameForColumn(column, 'header'))).toEqual(['F']);
+        const modelUpdated = heard.indexOf('modelUpdated');
+        const everythingChanged = heard.indexOf('columnEverythingChanged');
+        expect(modelUpdated).toBeGreaterThanOrEqual(0);
+        expect(everythingChanged).toBeGreaterThanOrEqual(0);
+        expect(modelUpdated).toBeLessThan(everythingChanged);
+    });
+
+    test('rowSelection turning its checkboxes on, off and on in three calls shows, removes and shows the selection column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData,
+            rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+        });
+        await settle();
+
+        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: true } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+
+        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'b']);
+
+        api.updateGridOptions({ rowSelection: { mode: 'multiRow', checkboxes: true } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+    });
+
+    test('rowSelection turning its checkboxes on, off and on in single row mode shows, removes and shows the selection column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData,
+            rowSelection: { mode: 'singleRow', checkboxes: false },
+        });
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'b']);
+
+        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: true } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+
+        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: false } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'b']);
+
+        api.updateGridOptions({ rowSelection: { mode: 'singleRow', checkboxes: true } });
+        await settle();
+        expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+    });
+
+    test('calculatedColumns enabled, disabled and enabled in three calls shows, removes and shows the calculated column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'c' }],
+            rowData,
+            calculatedColumns: false,
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'double',
+                        created: true,
+                        properties: [{ property: 'calculatedExpression', value: '[c] * 2' }],
+                    },
+                ],
+            },
+        });
+        await settle();
+
+        api.setGridOption('calculatedColumns', true);
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c', 'double']);
+
+        api.setGridOption('calculatedColumns', false);
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c']);
+
+        api.setGridOption('calculatedColumns', true);
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c', 'double']);
+    });
+
+    test.each([
+        { option: 'groupDisplayType', update: { groupDisplayType: 'multipleColumns' } },
+        { option: 'autoGroupColumnDef', update: { autoGroupColumnDef: { headerName: 'G' } } },
+        { option: 'rowNumbers', update: { rowNumbers: true } },
+        { option: 'rowSelection', update: { rowSelection: { mode: 'multiRow' } } },
+        { option: 'pivotMode', update: { pivotMode: true } },
+    ] as { option: keyof GridOptions; update: GridOptions }[])(
+        'one update changing only $option raises at most one displayed columns change',
+        async ({ option, update }) => {
+            const api = createGroupedGrid();
+            await settle();
+            const heard = hear(api, ['displayedColumnsChanged']);
+
+            api.updateGridOptions(update);
+            await settle();
+
+            expect(api.getGridOption(option)).toEqual(update[option]);
+            expect(heard.length).toBeLessThanOrEqual(1);
+        }
+    );
 });
