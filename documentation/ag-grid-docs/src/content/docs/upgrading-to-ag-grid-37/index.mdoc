@@ -53,6 +53,7 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### Filtering
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
+- With `caseSensitive: true`, the Set Filter Mini Filter search now ignores case. Values that differ only by case are still filtered separately, and listed separately except in a Tree List. Set `miniFilterCaseSensitive: true` to restore the case-sensitive search. See [Enabling Case-Sensitive Searches](./filter-set-mini-filter/#enabling-case-sensitive-searches).
 
 ### Validation
 
