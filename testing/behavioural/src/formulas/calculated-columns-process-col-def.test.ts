@@ -996,6 +996,35 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         }
     });
 
+    describe('with a level the user grouped alone under a hierarchy source that is not grouped', () => {
+        const year = 'ag-Grid-HierarchyColumn-date-year';
+        const hierarchyGrid = (id: string, opts: Partial<GridOptions> = {}) => {
+            const api = createGrid(id, {
+                rowData: ROW_DATA.map((row) => ({ ...row, date: new Date(2020, 5, 15) })),
+                columnDefs: [
+                    { field: 'date', rowGroup: false, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'a' },
+                    { field: 'b' },
+                ],
+                ...opts,
+            });
+            api.setRowGroupColumns([year]);
+            return api;
+        };
+
+        test('adding a calculated column from the column menu keeps the level grouped', async () => {
+            const api = hierarchyGrid('pcd-hierarchy-level-kept');
+            const before = api.getRowGroupColumns().map((col) => col.getColId());
+
+            await addViaDialog(api, 'a', '[a] * 2');
+
+            expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                before: [year],
+                after: [year],
+            });
+        });
+    });
+
     test('sourceColumn is null once a column rebuild removes the grouping behind the auto group column', async () => {
         const processColDef = vi.fn<ProcessColDef>();
         const api = createGrid('pcd-source-auto-group-removed', {

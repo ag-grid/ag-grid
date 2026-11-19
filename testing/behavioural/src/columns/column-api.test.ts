@@ -1,8 +1,14 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, ColumnState } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    TextFilterModule,
+    TooltipModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Column API', () => {
@@ -811,6 +817,29 @@ describe('Column API', () => {
             await asyncSetTimeout(0);
 
             expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
+        });
+
+        describe('moveColumns with repeated, unknown and out-of-range keys', () => {
+            const createAbcd = (gridId: string) =>
+                gridsManager.createGrid(gridId, {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                });
+            const allColIds = (api: ReturnType<typeof createAbcd>) =>
+                api.getAllGridColumns().map((c: Column) => c.getColId());
+
+            test('toIndex past the columns left after removal warns #30 and moves nothing', () => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [30] });
+                const api = createAbcd('invalid-index');
+                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    api.moveColumns(['b', 'missing'], 4);
+
+                    expect(warnSpy.mock.calls.map((call) => call[0])).toEqual(['AG Grid: warning #30']);
+                    expect(allColIds(api)).toEqual(['a', 'b', 'c', 'd']);
+                } finally {
+                    warnSpy.mockRestore();
+                }
+            });
         });
     });
 

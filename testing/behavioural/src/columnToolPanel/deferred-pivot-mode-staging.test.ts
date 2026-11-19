@@ -385,6 +385,25 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         expect(gridApi.isPivotMode()).toBe(false);
     });
 
+    test('commit raises the pivot change and its column moves before the pivot mode change', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+
+        const raised: string[] = [];
+        for (const type of ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'] as const) {
+            gridApi.addEventListener(type, () => {
+                raised.push(type);
+            });
+        }
+        commitChanges(toolPanel);
+
+        await waitFor(() => expect(raised).toContain('columnPivotModeChanged'), { timeout: 500 });
+        await asyncSetTimeout(0);
+
+        expect(raised).toEqual(['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged']);
+    });
+
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 

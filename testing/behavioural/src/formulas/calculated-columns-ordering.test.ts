@@ -960,6 +960,56 @@ describe('calculated columns - display ordering', () => {
         expect(order(api).at(-1)).toBe(x1);
     });
 
+    test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
+        const api = createGrid('dialog-autogroup-moved-last-column-types', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        api.moveColumns([x1], order(api).length - 1);
+        expect(order(api).at(-1)).toBe(x1);
+        const moved = order(api);
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect(order(api)).toEqual(moved);
+    });
+
+    test('a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it, with or without maintainColumnOrder', async () => {
+        for (const maintainColumnOrder of [false, true]) {
+            gridsManager.reset();
+            const api = createGrid(`dialog-autogroup-moved-last-ungrouped-types-${maintainColumnOrder}`, {
+                maintainColumnOrder,
+                rowData: [{ id: 'r1', g: 'EMEA', revenue: 10, cost: 3, z: 1 }],
+                columnTypes: { t: { rowGroup: true } },
+                columnDefs: [
+                    { field: 'g', type: 't', hide: true },
+                    { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                    { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+                    { field: 'z' },
+                ],
+            });
+            await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+            const added = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+            api.moveColumns([added], order(api).length - 1);
+            expect({ maintainColumnOrder, last: order(api).at(-1) }).toEqual({ maintainColumnOrder, last: added });
+            const moved = order(api);
+
+            api.setGridOption('columnTypes', { t: { rowGroup: false } });
+            await waitFor(() => expect(order(api)).not.toContain('ag-Grid-AutoColumn'));
+            api.setRowGroupColumns(['g']);
+            await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+
+            expect({ maintainColumnOrder, regrouped: order(api) }).toEqual({ maintainColumnOrder, regrouped: moved });
+        }
+    });
+
     test('a column the user moved to the end stays last through pivot mode on and off, and when row grouping is then cleared and set again', async () => {
         const api = createGrid('dialog-autogroup-moved-last-pivot-mode', {
             rowData: [{ id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 }],
