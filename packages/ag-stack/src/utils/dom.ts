@@ -359,10 +359,16 @@ function _isVerticalScrollShowing(element: HTMLElement): boolean {
     if (content.width === 0 && content.height === 0) {
         return false;
     }
+    // Overflow is clipped at the padding edge, so inset the border box by the borders. Computed lengths are in the
+    // element's own CSS pixels, which CSS zoom scales relative to the rects.
     const box = element.getBoundingClientRect();
+    const scale = element.offsetHeight ? box.height / element.offsetHeight : 1;
+    const style = window.getComputedStyle(element);
+    const clipTop = box.top + pf(style.borderTopWidth) * scale;
+    const clipBottom = box.bottom - pf(style.borderBottomWidth) * scale;
     return (
-        content.top < box.top - SUB_PIXEL_OVERFLOW_TOLERANCE ||
-        content.bottom > box.bottom + SUB_PIXEL_OVERFLOW_TOLERANCE
+        content.top < clipTop - SUB_PIXEL_OVERFLOW_TOLERANCE ||
+        content.bottom > clipBottom + SUB_PIXEL_OVERFLOW_TOLERANCE
     );
 }
 

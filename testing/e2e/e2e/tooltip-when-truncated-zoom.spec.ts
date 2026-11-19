@@ -3,24 +3,32 @@ import type { Locator, Page } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
+const NOTES_TEXT = 'A long note that wraps onto several lines and is clipped by the height of the row';
+const WRAPPED_TEXT = 'Another long note that wraps onto several lines and is clipped by the height of the row';
+// The second line ends inside the cell's border box but below its padding box, so it is clipped by the border.
+const BORDERED_TEXT = 'First line\nSecond line';
+
 // Browser zoom cannot be set headlessly, so CSS zoom on the root element stands in for it: below 100% Chromium
 // snaps the cells' 1px borders to a whole device pixel there too, which is what shrinks the cell's content box.
 const mountZoomedGrid = (page: Page, zoom: number) =>
     mountGrid(page, {
-        css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }`,
+        css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }
+            .ag-cell.bordered-cell { white-space: pre-line; line-height: 20px; border-bottom: 12px solid red; }`,
         options: () => ({
             columnDefs: [
                 { field: 'athlete', tooltipField: 'athlete', width: 180 },
                 { field: 'country', tooltipField: 'country', width: 100 },
                 { field: 'notes', tooltipField: 'notes', width: 200, cellClass: 'multiline-cell' },
                 { field: 'wrapped', tooltipField: 'wrapped', width: 200, wrapText: true },
+                { field: 'bordered', tooltipField: 'bordered', width: 200, cellClass: 'bordered-cell' },
             ],
             rowData: [
                 {
                     athlete: 'Michael Phelps',
                     country: 'United States',
-                    notes: 'A long note that wraps onto several lines and is clipped by the height of the row',
-                    wrapped: 'Another long note that wraps onto several lines and is clipped by the height of the row',
+                    notes: NOTES_TEXT,
+                    wrapped: WRAPPED_TEXT,
+                    bordered: BORDERED_TEXT,
                 },
             ],
             tooltipShowDelay: 0,
@@ -51,8 +59,13 @@ test.describe('tooltipShowMode whenTruncated at fractional zoom', () => {
 
         test(`shows a tooltip for wrapped text clipped by the row height at ${zoom * 100}% zoom`, async ({ page }) => {
             const { cell } = await mountZoomedGrid(page, zoom);
-            await expect(await tooltipAfterHover(page, cell(0, 'notes'))).toHaveCount(1);
-            await expect(await tooltipAfterHover(page, cell(0, 'wrapped'))).toHaveCount(1);
+            await expect(await tooltipAfterHover(page, cell(0, 'notes'))).toHaveText(NOTES_TEXT);
+            await expect(await tooltipAfterHover(page, cell(0, 'wrapped'))).toHaveText(WRAPPED_TEXT);
+        });
+
+        test(`shows a tooltip for text clipped inside the bottom border at ${zoom * 100}% zoom`, async ({ page }) => {
+            const { cell } = await mountZoomedGrid(page, zoom);
+            await expect(await tooltipAfterHover(page, cell(0, 'bordered'))).toHaveText(BORDERED_TEXT);
         });
     }
 });
