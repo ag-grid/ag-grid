@@ -362,7 +362,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     params.changedRowNodes = changedRowNodes;
                     nodeManager.setImmutableRowData(params, newRowData);
                     if (changedRowNodes.adds.size === this.rootNode?._leafs?.length) {
-                        // every row is new, so there are no rows to keep in view and the scroll position stays
+                        // every row is new, so there are no rows to keep in view and the scroll position stays, unless at the bottom
                         beans.rowRenderer.forgetRowsInView();
                     }
                 } else {

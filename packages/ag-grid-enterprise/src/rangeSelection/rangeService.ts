@@ -381,18 +381,22 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             if (this.newestRangeStartCell === newestRangeStartCell) {
                 this.newestRangeStartCell = followStartCell();
             }
+            // read again after each event, as its listeners can remove ranges
+            let liveRanges: Set<CellRange> | null = null;
             for (const [cellRange, getStartRow, getEndRow] of followed) {
                 const startRow = getStartRow();
                 const endRow = getEndRow();
-                if (
-                    !this.cellRanges.includes(cellRange) ||
-                    (startRow === cellRange.startRow && endRow === cellRange.endRow)
-                ) {
+                if (startRow === cellRange.startRow && endRow === cellRange.endRow) {
+                    continue;
+                }
+                liveRanges ??= new Set(this.cellRanges);
+                if (!liveRanges.has(cellRange)) {
                     continue;
                 }
                 cellRange.startRow = startRow;
                 cellRange.endRow = endRow;
                 this.dispatchChangedEvent(false, true, cellRange.id);
+                liveRanges = null;
             }
         };
     }

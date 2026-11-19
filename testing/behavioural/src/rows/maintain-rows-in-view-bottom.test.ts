@@ -74,6 +74,15 @@ describe('maintaining rows in view at the bottom of the rows', () => {
                 ...options,
             });
 
+        test('stays at the bottom when updated row data with row IDs replaces every row with more rows', () => {
+            const api = createGrid();
+            scrollToBottom(api);
+
+            api.setGridOption('rowData', createRows('other', 300));
+
+            expect(getViewport(api).scrollTop).toBe(getMaxScrollTop(api));
+        });
+
         test('stays at the bottom when rows are added at the end, so they come into view', () => {
             const api = createGrid();
             const bottom = scrollToBottom(api);

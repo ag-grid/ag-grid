@@ -842,10 +842,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowsInView = null;
     }
 
-    /** Stops the data update captured from keeping rows in view, as it left none of them. */
+    /**
+     * Stops the data update captured from keeping rows in view, as it left none of them. A grid scrolled to the bottom
+     * stays at the bottom, as that needs no rows.
+     */
     public forgetRowsInView(): void {
-        if (this.rowsInView) {
-            this.rowsInView.anchor = null;
+        const rowsInView = this.rowsInView;
+        if (rowsInView && !rowsInView.anchor?.atBottom) {
+            rowsInView.anchor = null;
         }
     }
 
