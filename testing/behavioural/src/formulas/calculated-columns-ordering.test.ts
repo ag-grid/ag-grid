@@ -1,5 +1,12 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clickMenuOption,
+    nextAnimationFrame,
+} from 'ag-test-utils';
 
 import type { CalculatedColumnChanges, ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
@@ -13,7 +20,15 @@ import {
     RowNumbersModule,
 } from 'ag-grid-enterprise';
 
-import { storedExpression } from './calculatedColumnsStateHarness';
+import {
+    addViaDialog,
+    clickDialogButton,
+    getDialog,
+    order,
+    removeViaMenu,
+    setExpression,
+    setTitle,
+} from './calculatedColumnsStateHarness';
 
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
 // behaviour of this branch's column model. Rules 3 and 4 intentionally diverge from the stale
@@ -48,16 +63,12 @@ describe('calculated columns - display ordering', () => {
         ] as Module[],
     });
 
-    let restoreOffsetParent: (() => void) | undefined;
-
     beforeEach(() => {
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
@@ -89,104 +100,10 @@ describe('calculated columns - display ordering', () => {
         return nextColumnDefs;
     }
 
-    function order(api: GridApi): string[] {
-        return api.getAllGridColumns()!.map((col) => col.getColId());
-    }
-
-    // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-
-    function enableOffsetParentPolyfill(): void {
-        if (restoreOffsetParent) {
-            return;
-        }
-        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get(this: HTMLElement) {
-                return this.parentElement;
-            },
-        });
-        restoreOffsetParent = () => {
-            if (original) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-            } else {
-                delete (HTMLElement.prototype as any).offsetParent;
-            }
-        };
-    }
-
-    async function clickColumnMenuItem(name: string): Promise<void> {
-        const menuItem = await waitFor(() => {
-            const text = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
-                (element) => element.textContent?.trim() === name
-            );
-            const element = text?.closest<HTMLElement>('.ag-menu-option');
-            expect(element).toBeTruthy();
-            return element!;
-        });
-        menuItem.click();
-    }
-
-    function getDialog(): HTMLElement {
-        // Live-apply dialogs stay open after Apply, so target the most recently opened one.
-        const dialogs = document.querySelectorAll<HTMLElement>('.ag-calculated-column-form');
-        expect(dialogs.length).toBeGreaterThan(0);
-        return dialogs[dialogs.length - 1];
-    }
-
-    function setExpression(expression: string): void {
-        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea')!;
-        input.value = expression;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
     function getExpressionInput(): HTMLTextAreaElement {
         const input = getDialog().querySelector<HTMLTextAreaElement>('textarea');
         expect(input).toBeTruthy();
         return input!;
-    }
-
-    function setTitle(title: string): void {
-        const input = getDialog().querySelector<HTMLInputElement>('input');
-        expect(input).toBeTruthy();
-        input!.value = title;
-        input!.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    function clickDialogButton(label: string): void {
-        const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(button).toBeTruthy();
-        button!.click();
-    }
-
-    /** Adds a calc col through the header menu of {@link anchorColId} (the documented "anchor").
-     *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
-    async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
-        const before = new Set(order(api));
-        enableOffsetParentPolyfill();
-        api.showColumnMenu(anchorColId);
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
-        setExpression(expression);
-        clickDialogButton('Apply');
-        // The column exists before the live-apply flush commits the typed expression: poll for the expression.
-        const added = await waitFor(() => {
-            const result = order(api).filter((id) => !before.has(id));
-            expect(result).toHaveLength(1);
-            expect(api.getColumn(result[0])!.getColDef().calculatedExpression).toBe(storedExpression(api, expression));
-            return result;
-        });
-        return added[0];
-    }
-
-    /** Removes a dynamic (dialog-added) calc col through its header menu — dynamic calc cols are not in
-     *  `columnDefs`, so they can only be removed via the menu's "Remove Calculated Column" action. */
-    async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
-        enableOffsetParentPolyfill();
-        api.showColumnMenu(colId);
-        await clickColumnMenuItem('Remove Calculated Column');
     }
 
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
@@ -404,9 +321,8 @@ describe('calculated columns - display ordering', () => {
         });
         const before = new Set(order(api));
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
+        await clickMenuOption('Add Calculated Column');
         await waitFor(() => getDialog());
 
         const added = order(api).filter((id) => !before.has(id));
@@ -450,9 +366,8 @@ describe('calculated columns - display ordering', () => {
             columnDefs: [{ field: 'age' }],
         });
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
+        await clickMenuOption('Add Calculated Column');
         await waitFor(() => getDialog());
 
         setExpression('[Age] +');
@@ -506,7 +421,7 @@ describe('calculated columns - display ordering', () => {
         `);
 
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
+        await clickMenuOption('Add Calculated Column');
         await waitFor(() => getDialog());
 
         setExpression('[Age] * 2');

@@ -2152,6 +2152,10 @@ describe('the rows a column update refreshes', () => {
         'columnValueChanged',
         'columnPivotModeChanged',
         'columnEverythingChanged',
+        'newColumnsLoaded',
+        'gridColumnsChanged',
+        'displayedColumnsChanged',
+        'virtualColumnsChanged',
     ] as const;
 
     test('resetting the column state reorders the pivot result columns back to ascending, raising columnMoved then columnsReset, the last column event of the reset', async () => {
@@ -2201,6 +2205,8 @@ describe('the rows a column update refreshes', () => {
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { timeout: 300 });
         expect(Object.keys(api.getFilterModel())).toEqual(['country']);
         await asyncSetTimeout(0);
+        const pivotKeys = () => api.getPivotResultColumns()!.map((column) => column.getColDef().pivotKeys!);
+        const yearsBefore = pivotKeys().map(([year]) => year);
         const refreshes: (boolean | undefined)[] = [];
         let removedRows = 0;
         api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
@@ -2215,21 +2221,16 @@ describe('the rows a column update refreshes', () => {
             removedRows,
             displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
             pivots: api.getPivotColumns().map((column) => column.getColId()),
-            pivotKeySports: [
-                ...new Set(
-                    api
-                        .getPivotResultColumns()!
-                        .map((column) => column.getColDef().pivotKeys!)
-                        .filter((keys) => keys.length === 2)
-                        .map((keys) => keys[1])
-                ),
-            ],
+            hasYears: yearsBefore.length > 0,
+            pivotKeys: pivotKeys(),
         }).toEqual({
             refreshes: [true],
             removedRows: 0,
             displayed: ['Ireland', 1],
             pivots: ['year', 'sport'],
-            pivotKeySports: ['Rowing'],
+            hasYears: true,
+            // Pivot groups are expandable by default with several pivot columns: each has its collapsed column.
+            pivotKeys: yearsBefore.flatMap((year) => [[year, 'Rowing'], [year]]),
         });
     });
 
