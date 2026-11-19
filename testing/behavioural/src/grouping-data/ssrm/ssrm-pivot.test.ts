@@ -244,7 +244,7 @@ describe('SSRM pivot header height', () => {
     const headerHeight = (api: GridApi) =>
         parseFloat(TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-header')!.style.height);
 
-    test('header resizes when applying a pivot state swaps [column, floating filter] for [group, column]', async () => {
+    test('header resizes when pivot mode swaps [column, floating filter] for [group, column] and back', async () => {
         const years = [2020, 2024];
         const countries = ['Ireland', 'France'];
         const datasource: IServerSideDatasource = {
@@ -308,5 +308,11 @@ describe('SSRM pivot header height', () => {
         await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']));
         await waitForNoLoadingRows(api);
         await waitFor(() => expect(headerHeight(api)).toBe(20 + 30 + border));
+
+        api.setGridOption('pivotMode', false);
+
+        await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']));
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(headerHeight(api)).toBe(30 + 40 + border));
     });
 });
