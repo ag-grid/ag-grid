@@ -192,7 +192,6 @@ describe('SSRM viewSubscription integration', () => {
             createTreeGrid({ isServerSideGroupOpenByDefault: () => true, viewSubscription: recorder.handlers });
 
             await waitFor(() => expect(recorder.ids()).toEqual(['A', 'A1', 'A1x', 'A2', 'B', 'C']));
-            expect(recorder.calls[0]).toEqual({ type: 'subscribe', ids: [] });
             expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toEqual([]);
             expect(recorder.subscribed.get('A1x')).toMatchObject({ parentKeys: ['A', 'A1'], level: 2 });
             expect(recorder.violations).toEqual([]);
@@ -414,10 +413,7 @@ describe('SSRM viewSubscription integration', () => {
 
             await waitForIds(recorder, ['Russia', 'USA']);
 
-            expect(recorder.calls).toEqual([
-                { type: 'subscribe', ids: [] },
-                { type: 'subscribe', ids: ['Russia', 'USA'] },
-            ]);
+            expect(recorder.calls).toEqual([{ type: 'subscribe', ids: ['Russia', 'USA'] }]);
             expect(recorder.subscribed.get('USA')).toEqual({
                 type: 'group',
                 id: 'USA',
@@ -449,7 +445,7 @@ describe('SSRM viewSubscription integration', () => {
             api.setRowNodeExpanded(api.getRowNode('USA')!, false);
             await waitForIds(recorder, ['Russia', 'USA']);
 
-            expect(recorder.calls.slice(2)).toEqual([
+            expect(recorder.calls.slice(1)).toEqual([
                 { type: 'subscribe', ids: ['USA/2000', 'USA/2004'] },
                 { type: 'unsubscribe', ids: ['USA/2000', 'USA/2004'] },
             ]);
@@ -509,7 +505,7 @@ describe('SSRM viewSubscription integration', () => {
             await waitFor(() => expect(recorder.subscribed.get('USA')?.data).toHaveProperty('1_gold', 2));
             await nextAnimationFrame();
             await nextAnimationFrame();
-            expect(recorder.calls.slice(2)).toEqual([
+            expect(recorder.calls.slice(1)).toEqual([
                 { type: 'unsubscribe', ids: ['Russia', 'USA'] },
                 { type: 'subscribe', ids: ['Russia', 'USA'] },
             ]);
@@ -519,7 +515,7 @@ describe('SSRM viewSubscription integration', () => {
             await waitFor(() => expect(recorder.subscribed.get('USA')?.data).not.toHaveProperty('1_gold'));
             await nextAnimationFrame();
             await nextAnimationFrame();
-            expect(recorder.calls.slice(4)).toEqual([
+            expect(recorder.calls.slice(3)).toEqual([
                 { type: 'unsubscribe', ids: ['Russia', 'USA'] },
                 { type: 'subscribe', ids: ['Russia', 'USA'] },
             ]);
@@ -672,13 +668,13 @@ describe('SSRM viewSubscription integration', () => {
             // Failed rows stay stubs, so waitForNoLoadingRows would never return.
             await nextAnimationFrame();
             await nextAnimationFrame();
-            expect(recorder.calls).toEqual([{ type: 'subscribe', ids: [] }]);
+            expect(recorder.calls).toEqual([]);
 
             fail = false;
             api.retryServerSideLoads();
 
             await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
-            expect(recorder.calls.slice(1)).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
             expect(recorder.violations).toEqual([]);
         });
     });
