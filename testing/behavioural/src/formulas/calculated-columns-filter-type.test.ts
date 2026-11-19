@@ -7,7 +7,7 @@ import {
     addViaDialog,
     clickDialogButton,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     selectDataType,
     setupCalculatedColumnsStateSuite,
 } from './calculatedColumnsStateHarness';
@@ -40,7 +40,7 @@ describe('calculated columns - filter follows cellDataType', () => {
 
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         await selectDataType('Number');
         clickDialogButton('Apply');
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().cellDataType).toBe('number'));

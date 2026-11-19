@@ -2206,7 +2206,8 @@ describe('the rows a column update refreshes', () => {
         expect(Object.keys(api.getFilterModel())).toEqual(['country']);
         await asyncSetTimeout(0);
         const pivotKeys = () => api.getPivotResultColumns()!.map((column) => column.getColDef().pivotKeys!);
-        const yearsBefore = pivotKeys().map(([year]) => year);
+        // The Ireland rows' years: the France-only 2012 leaves with the filter.
+        expect(pivotKeys()).toEqual([['2000'], ['2004'], ['2008']]);
         const refreshes: (boolean | undefined)[] = [];
         let removedRows = 0;
         api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
@@ -2221,16 +2222,14 @@ describe('the rows a column update refreshes', () => {
             removedRows,
             displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
             pivots: api.getPivotColumns().map((column) => column.getColId()),
-            hasYears: yearsBefore.length > 0,
             pivotKeys: pivotKeys(),
         }).toEqual({
             refreshes: [true],
             removedRows: 0,
             displayed: ['Ireland', 1],
             pivots: ['year', 'sport'],
-            hasYears: true,
             // Pivot groups are expandable by default with several pivot columns: each has its collapsed column.
-            pivotKeys: yearsBefore.flatMap((year) => [[year, 'Rowing'], [year]]),
+            pivotKeys: [['2000', 'Rowing'], ['2000'], ['2004', 'Rowing'], ['2004'], ['2008', 'Rowing'], ['2008']],
         });
     });
 

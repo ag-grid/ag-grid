@@ -45,7 +45,7 @@ import {
     cellValue,
     clickDialogButton,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     propertiesOf,
     selectDataType,
     setExpression,
@@ -178,7 +178,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         const lastState = () => processColDef.mock.calls.at(-1)![0].expressionValidation;
 
         setExpression('[a] +');
@@ -234,7 +234,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
             api.showColumnMenu(calcId);
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
+            await waitFor(() => getCalculatedColumnDialog());
             setExpression('[a] * 2');
             await waitFor(() => expect(cellValue(api, calcId)).toBe(20));
             expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true });
@@ -374,9 +374,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         // The dialog shows references by header name.
-        expect(getDialog().querySelector('textarea')!.value).toBe('[A] * 2');
+        expect(getCalculatedColumnDialog().querySelector('textarea')!.value).toBe('[A] * 2');
     });
 
     test('callback changes to headerName, cellDataType, calculatedExpression and columnGroupShow apply', async () => {
@@ -484,8 +484,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         for (const multiplier of [3, 4, 5]) {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
-            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
+            await waitFor(() => getCalculatedColumnDialog());
+            expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
             setExpression(`[a] * ${multiplier}`);
             clickDialogButton('Apply');
             await waitFor(() => expect(cellValue(api, 'calc')).toBe(10 * multiplier));
@@ -508,9 +508,10 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         const openEditDialog = async () => {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
+            await waitFor(() => getCalculatedColumnDialog());
         };
-        const shownDataType = () => getDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
+        const shownDataType = () =>
+            getCalculatedColumnDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
 
         await openEditDialog();
         expect(shownDataType()).toBe('Number');
@@ -687,8 +688,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
-        const dialog = within(getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
+        const dialog = within(getCalculatedColumnDialog());
         expect(dialog.getByRole<HTMLButtonElement>('button', { name: 'Apply' }).disabled).toBe(false);
         expect(dialog.queryByRole('button', { name: /^(Columns|Functions|Operators)$/ })).toBeNull();
     });
@@ -783,7 +784,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         // A no-op deferred Apply.
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         clickDialogButton('Apply');
         await asyncSetTimeout(0);
 
@@ -810,7 +811,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[a] * 3');
         clickDialogButton('Apply');
         await waitFor(() =>
@@ -842,7 +843,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Margin');
         clickDialogButton('Apply');
 
@@ -970,7 +971,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Doubled');
         clickDialogButton('Apply');
 
@@ -1641,8 +1642,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
-        expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
+        expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
     });
 });

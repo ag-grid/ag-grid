@@ -411,6 +411,8 @@ describe('Row numbers column autosize', () => {
         const fresh = await create('fresh');
         expect(fresh.getDisplayedRowCount()).toBe(3);
         const freshWidth = rowNumberWidth(fresh);
+        // Three group rows measure below the column's 60px minimum, 1000 leaf rows above it.
+        expect(freshWidth).toBe(60);
 
         const api = await create('reset');
         expect(api.getDisplayedRowCount()).toBe(3);

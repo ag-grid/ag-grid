@@ -23,7 +23,7 @@ import {
 import {
     addViaDialog,
     clickDialogButton,
-    getDialog,
+    getCalculatedColumnDialog,
     order,
     removeViaMenu,
     setExpression,
@@ -101,7 +101,7 @@ describe('calculated columns - display ordering', () => {
     }
 
     function getExpressionInput(): HTMLTextAreaElement {
-        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea');
+        const input = getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea');
         expect(input).toBeTruthy();
         return input!;
     }
@@ -323,11 +323,11 @@ describe('calculated columns - display ordering', () => {
 
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toEqual(['calculated_1']);
-        const visibleButtonLabels = Array.from(getDialog().querySelectorAll('button'))
+        const visibleButtonLabels = Array.from(getCalculatedColumnDialog().querySelectorAll('button'))
             .filter(
                 (button) =>
                     button.closest<HTMLElement>('.ag-calculated-column-actions')?.classList.contains('ag-hidden') !==
@@ -368,7 +368,7 @@ describe('calculated columns - display ordering', () => {
 
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
         setExpression('[Age] +');
         await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
@@ -422,7 +422,7 @@ describe('calculated columns - display ordering', () => {
 
         api.showColumnMenu('age');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
         setExpression('[Age] * 2');
         clickDialogButton('Apply');

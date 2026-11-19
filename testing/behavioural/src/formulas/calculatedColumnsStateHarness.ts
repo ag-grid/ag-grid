@@ -2,15 +2,7 @@
 // and the grid manager. Siblings rather than one file because vitest parallelises across files but not within
 // one, and these tests build two grids each to round-trip state.
 import { waitFor } from '@testing-library/dom';
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clickMenuOption,
-    clickSelectOption,
-    openPicker,
-} from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, GridState, Module, UserColumnProperty } from 'ag-grid-community';
 import {
@@ -30,6 +22,24 @@ import {
     RowGroupingModule,
     RowNumbersModule,
 } from 'ag-grid-enterprise';
+
+import {
+    clickDialogButton,
+    getCalculatedColumnDialog,
+    selectDataType,
+    setExpression,
+    setTitle,
+} from './calculatedColumnDialog';
+
+export {
+    clickDialogButton,
+    getCalculatedColumnDialog,
+    getDialogButton,
+    getExpressionInput,
+    selectDataType,
+    setExpression,
+    setTitle,
+} from './calculatedColumnDialog';
 
 // Behavioural spec for PERSISTING runtime-added (dynamic) calculated columns in grid state.
 // A dynamic calc col is added via the header-menu dialog, so it is not present in `columnDefs`.
@@ -82,39 +92,6 @@ export function entryOf(state: GridState, colId: string): NonNullable<GridState[
 }
 
 // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-export function getDialog(): HTMLElement {
-    // Live-apply dialogs stay open after Apply, so target the most recently opened one.
-    const dialogs = document.querySelectorAll<HTMLElement>('.ag-calculated-column-form');
-    expect(dialogs.length).toBeGreaterThan(0);
-    return dialogs[dialogs.length - 1];
-}
-
-export function setExpression(expression: string): void {
-    const input = getDialog().querySelector<HTMLTextAreaElement>('textarea')!;
-    input.value = expression;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-export function setTitle(title: string): void {
-    const input = getDialog().querySelector<HTMLInputElement>('input');
-    expect(input).toBeTruthy();
-    input!.value = title;
-    input!.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-export async function selectDataType(label: string): Promise<void> {
-    await openPicker(getDialog().querySelector('.ag-select')!);
-    await clickSelectOption(label);
-}
-
-export function clickDialogButton(label: string): void {
-    const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
-        (element) => element.textContent?.trim() === label
-    );
-    expect(button).toBeTruthy();
-    button!.click();
-}
-
 /** The expression as the grid stores it: each reference by column id, not by header name. */
 export function storedExpression(api: GridApi, expression: string): string {
     return expression.replace(/\[([^\]]+)\]/g, (reference, name: string) => {
@@ -131,7 +108,7 @@ export async function addViaDialog(api: GridApi, anchorColId: string, expression
     const before = new Set(order(api));
     api.showColumnMenu(anchorColId);
     await clickMenuOption('Add Calculated Column');
-    await waitFor(() => getDialog());
+    await waitFor(() => getCalculatedColumnDialog());
     setExpression(expression);
     clickDialogButton('Apply');
     // Under the default 'live' mode, "Add" creates the column up front (with an empty expression)
@@ -155,7 +132,7 @@ export async function editViaDialog(
 ): Promise<void> {
     api.showColumnMenu(colId);
     await clickMenuOption('Edit Calculated Column');
-    await waitFor(() => getDialog());
+    await waitFor(() => getCalculatedColumnDialog());
     // Only an actual edit schedules a live-apply flush (a no-op Apply, as used to merely open the
     // dialog, never fires the draft-change listener), so only then is there a flush to wait for.
     const willChange = edits.title !== undefined || edits.expression !== undefined;
