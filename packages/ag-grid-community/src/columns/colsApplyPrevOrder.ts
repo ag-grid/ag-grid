@@ -6,15 +6,15 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 export const applyPrevColumnsOrder = (
     colsList: AgColumn[],
     colsById: Record<string, AgColumn>,
-    prevOrder: string[]
+    prevOrder: AgColumn[]
 ): AgColumn[] => {
     const colsListLen = colsList.length;
     const prevOrderLen = prevOrder.length;
-    // Fast path: same length and colId at every index -> already ordered (width/sort/hide-only refresh).
+    // Fast path: same length and column at every index -> already ordered (width/sort/hide-only refresh).
     if (colsListLen === prevOrderLen) {
         let inOrder = true;
         for (let i = 0; i < prevOrderLen; ++i) {
-            if (colsList[i].colId !== prevOrder[i]) {
+            if (colsList[i] !== prevOrder[i]) {
                 inOrder = false;
                 break;
             }
@@ -23,15 +23,15 @@ export const applyPrevColumnsOrder = (
             return colsList;
         }
     }
-    // Phase 1: resolve prevOrder colIds to live cols. In-order walk keeps positions monotonic, so
-    // `groupHighestLeaf` ends holding each group's highest leaf (the O(1) answer findPreviousSibling needs).
+    // Phase 1, in order: `groupHighestLeaf` ends holding each group's highest leaf (findPreviousSibling's O(1) answer).
     const preservedOrder: AgColumn[] = [];
     const colPositionMap = new Map<AgColumn, number>();
     const groupHighestLeaf = new Map<AgProvidedColumnGroup, AgColumn>();
     let hasPreservedAutoGroup = false;
     for (let i = 0; i < prevOrderLen; ++i) {
-        const current = colsById[prevOrder[i]];
-        if (current != null) {
+        const prev = prevOrder[i];
+        const current = colsById[prev.colId];
+        if (current != null && isSameCol(prev, current)) {
             colPositionMap.set(current, preservedOrder.length);
             preservedOrder.push(current);
             hasPreservedAutoGroup ||= current.colKind === 'auto-group';
@@ -146,6 +146,23 @@ export const applyPrevColumnsOrder = (
         result[pos++] = endCalc[i];
     }
     return result;
+};
+
+/** The object, or one recreated under its colId or field (a column without a user def: its id), for the same source. */
+const isSameCol = (prev: AgColumn, current: AgColumn): boolean => {
+    if (current === prev) {
+        return true;
+    }
+    if (prev.derivedFromCol !== current.derivedFromCol || prev.pivotValueColumn !== current.pivotValueColumn) {
+        return false;
+    }
+    const prevDef = prev.userProvidedColDef;
+    const currentDef = current.userProvidedColDef;
+    if (prevDef == null || currentDef == null) {
+        return prevDef === currentDef;
+    }
+    const key = prevDef.colId ?? prevDef.field;
+    return key != null && key === (currentDef.colId ?? currentDef.field);
 };
 
 /** Re-seat preserved auto-group cols into `colsList` (hierarchy) order without moving their slots: each

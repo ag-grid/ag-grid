@@ -499,7 +499,7 @@ describe('Column destruction', () => {
         expect(seen.filter((g) => g.isAlive()).length).toBe(1);
     });
 
-    test('hierarchy columns are destroyed when rebuilt or removed', async () => {
+    test('a removed hierarchy column is destroyed and a kept one stays alive', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
             rowData: [{ country: 'USA', date: new Date(2020, 0, 1) }],
@@ -513,7 +513,7 @@ describe('Column destruction', () => {
         expect((yearBefore as any).isAlive()).toBe(true);
         expect((monthBefore as any).isAlive()).toBe(true);
 
-        // (1) rebuildColumns: dropping 'month' changes the plan length → all hierarchy cols rebuilt.
+        // (1) Dropping 'month': year is kept, month destroyed.
         api.setGridOption('columnDefs', [
             { field: 'country' },
             { field: 'date', rowGroup: true, groupHierarchy: ['year'] },
@@ -522,8 +522,7 @@ describe('Column destruction', () => {
 
         const yearAfter = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-month')).toBeNull();
-        expect(yearAfter).not.toBe(yearBefore);
-        expect((yearBefore as any).isAlive()).toBe(false);
+        expect(yearAfter).toBe(yearBefore);
         expect((monthBefore as any).isAlive()).toBe(false);
         expect((yearAfter as any).isAlive()).toBe(true);
 
