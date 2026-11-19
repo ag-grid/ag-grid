@@ -47,6 +47,31 @@ describe('csv exports for grouped aggregations', () => {
         gridsManager.reset();
     });
 
+    test('skips a group whose only child is another group when groupHideParentOfSingleChild is set', async () => {
+        const api = await gridsManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'city', rowGroup: true, hide: true },
+                { field: 'player' },
+            ],
+            groupHideParentOfSingleChild: true,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { country: 'Ireland', city: 'Dublin', player: 'Niall' },
+                { country: 'Ireland', city: 'Dublin', player: 'John' },
+            ],
+        });
+
+        const csv = api.getDataAsCsv({ suppressQuotes: true })!;
+
+        expect(unindentText(csv)).toEqual(unindentText`
+            Group,Player
+             -> Ireland -> Dublin,
+            ,Niall
+            ,John
+        `);
+    });
+
     test('includes totals before and after transactions', async () => {
         const rowData = getRowData();
         const api = await gridsManager.createGridAndWait(null, {
