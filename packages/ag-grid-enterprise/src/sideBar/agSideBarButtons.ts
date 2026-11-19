@@ -1,7 +1,7 @@
-import { _addManagedElementListeners, _clearElement } from 'ag-stack';
+import { _clearElement } from 'ag-stack';
 
 import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
-import { Component, KeyCode, _focusNextGridCoreContainer, _stopPropagationForAgGrid } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
@@ -19,33 +19,20 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
         super(SideBarElement);
     }
 
-    public postConstruct(): void {
-        _addManagedElementListeners(this, this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
-    }
-
-    private handleKeyDown(e: KeyboardEvent): void {
-        if (e.key !== KeyCode.TAB || !e.shiftKey) {
-            return;
-        }
-
-        if (_focusNextGridCoreContainer(this.beans, true)) {
-            e.preventDefault();
-            return;
-        }
-
-        // Prevent the tab to go in an loop without exit inside the sidebar
-        _stopPropagationForAgGrid(e);
-    }
-
     public setActiveButton(id: string | undefined): void {
-        for (const comp of this.buttonComps) {
-            comp.setSelected(id === comp.getToolPanelId());
+        const { buttonComps } = this;
+        // one Tab stop, the selected button or the first while no panel is open: arrow keys move between them
+        const tabStop = buttonComps.find((comp) => comp.getToolPanelId() === id) ?? buttonComps[0];
+        for (const comp of buttonComps) {
+            comp.setSelected(comp.getToolPanelId() === id);
+            comp.setTabStop(comp === tabStop);
         }
     }
 
     public addButtonComp(def: ToolPanelDef): SideBarButtonComp {
         const buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
+        buttonComp.setTabStop(this.buttonComps.length === 1);
         this.appendChild(buttonComp);
 
         buttonComp.addEventListener('toggleButtonClicked', () => {

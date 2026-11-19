@@ -71,6 +71,15 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 4;
+
+    /* hidden, but still in the Tab order, until the border is focused or clicked */
+    opacity: 0;
+    pointer-events: none;
+}
+
+:where(.ag-tool-panel-resizer-active) .ag-tool-panel-resize-buttons {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .ag-tool-panel-resize-button {
@@ -99,7 +108,6 @@
 .ag-side-bar {
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
     background-color: var(--ag-side-bar-background-color);
 }
 
@@ -151,7 +159,6 @@
 
 .ag-side-bar-left {
     order: -1;
-    flex-direction: row;
 }
 
 .ag-side-buttons {

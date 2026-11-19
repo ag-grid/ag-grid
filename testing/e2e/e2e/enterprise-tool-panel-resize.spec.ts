@@ -10,43 +10,31 @@ const panelWidth = (grid: Locator) =>
 const isBorderFocused = (grid: Locator) =>
     grid.page().evaluate(() => document.activeElement?.matches('.ag-tool-panel-horizontal-resize') ?? false);
 
+/** Checks whether the Widen and Narrow buttons are shown: while hidden they stay in the Tab order, but transparent. */
+const expectButtonsShown = (grid: Locator, shown: boolean) =>
+    expect(grid.locator('.ag-tool-panel-resize-buttons')).toHaveCSS('opacity', shown ? '1' : '0');
+
 test.describe('resizing the tool panel without dragging', () => {
-    test('Shift+Tab from the Search box focuses the border, a separator named after the panel', async ({ page }) => {
-        const { grid } = await mountGrid(page, {
+    test('Tab from the grid focuses the border, a separator named after the panel', async ({ page }) => {
+        const { grid, cell } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
                 columnDefs: [{ field: 'athlete' }, { field: 'country' }],
-                // only the Search box and the column list, so the Search box is the panel's first stop
-                sideBar: {
-                    toolPanels: [
-                        {
-                            id: 'columns',
-                            labelDefault: 'Columns',
-                            labelKey: 'columns',
-                            iconKey: 'columns',
-                            toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: {
-                                suppressPivotMode: true,
-                                suppressRowGroups: true,
-                                suppressValues: true,
-                                suppressColumnSelectAll: true,
-                            },
-                        },
-                    ],
-                    defaultToolPanel: 'columns',
-                },
+                rowData: [{ athlete: 'Michael Phelps', country: 'United States' }],
+                sideBar: 'columns',
             }),
         });
         const border = grid.locator('.ag-tool-panel-horizontal-resize');
+        await expectButtonsShown(grid, false);
 
-        await grid.locator('.ag-column-select-header-filter-wrapper input').click();
-        await page.keyboard.press('Shift+Tab');
+        await cell(0, 'country').click();
+        await page.keyboard.press('Tab');
 
         expect(await isBorderFocused(grid)).toBe(true);
         await expect(border).toHaveAttribute('role', 'separator');
         await expect(border).toHaveAttribute('aria-label', 'Columns');
         await expect(border).toHaveAttribute('aria-valuenow', String(await panelWidth(grid)));
-        await expect(grid.locator('.ag-tool-panel-resize-buttons')).toBeVisible();
+        await expectButtonsShown(grid, true);
     });
 
     test('arrow keys resize the panel within its limits', async ({ page }) => {
@@ -109,36 +97,18 @@ test.describe('resizing the tool panel without dragging', () => {
         expect(await panelWidth(grid)).toBe(before + 20);
     });
 
-    test('with enableRtl, Shift+Tab from the Search box reaches the border and Right Arrow widens', async ({
-        page,
-    }) => {
-        const { grid } = await mountGrid(page, {
+    test('with enableRtl, Tab from the grid reaches the border and Right Arrow widens', async ({ page }) => {
+        const { grid, cell } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
                 columnDefs: [{ field: 'athlete' }],
+                rowData: [{ athlete: 'Michael Phelps' }],
                 enableRtl: true,
-                sideBar: {
-                    toolPanels: [
-                        {
-                            id: 'columns',
-                            labelDefault: 'Columns',
-                            labelKey: 'columns',
-                            iconKey: 'columns',
-                            toolPanel: 'agColumnsToolPanel',
-                            toolPanelParams: {
-                                suppressPivotMode: true,
-                                suppressRowGroups: true,
-                                suppressValues: true,
-                                suppressColumnSelectAll: true,
-                            },
-                        },
-                    ],
-                    defaultToolPanel: 'columns',
-                },
+                sideBar: 'columns',
             }),
         });
-        await grid.locator('.ag-column-select-header-filter-wrapper input').click();
-        await page.keyboard.press('Shift+Tab');
+        await cell(0, 'athlete').click();
+        await page.keyboard.press('Tab');
         expect(await isBorderFocused(grid)).toBe(true);
 
         const before = await panelWidth(grid);
@@ -153,9 +123,10 @@ test.describe('resizing the tool panel without dragging', () => {
         });
         const widen = grid.getByRole('button', { name: 'Widen Panel' });
         const narrow = grid.getByRole('button', { name: 'Narrow Panel' });
-        await expect(widen).toBeHidden();
+        await expectButtonsShown(grid, false);
 
         await grid.locator('.ag-tool-panel-horizontal-resize').click();
+        await expectButtonsShown(grid, true);
 
         for (const button of [widen, narrow]) {
             const box = (await button.boundingBox())!;
@@ -168,7 +139,7 @@ test.describe('resizing the tool panel without dragging', () => {
         await narrow.click();
         await narrow.click();
         expect(await panelWidth(grid)).toBe(before - 20);
-        await expect(widen).toBeVisible();
+        await expectButtonsShown(grid, true);
     });
 
     test('dragging the border still resizes the panel and updates its value', async ({ page }) => {
@@ -188,6 +159,6 @@ test.describe('resizing the tool panel without dragging', () => {
         const after = await panelWidth(grid);
         expect(after).toBeGreaterThan(before);
         await expect(border).toHaveAttribute('aria-valuenow', String(after));
-        await expect(grid.locator('.ag-tool-panel-resize-buttons')).toBeHidden();
+        await expectButtonsShown(grid, false);
     });
 });

@@ -7,7 +7,6 @@ import {
     _setAriaControls,
     _setAriaDisabled,
     _setAriaLabel,
-    _setDisplayed,
 } from 'ag-stack';
 
 import type { ElementParams, IconName } from 'ag-grid-community';
@@ -25,7 +24,7 @@ const AgHorizontalResizeElement: ElementParams = {
             ref: 'eResizeBar',
             cls: 'ag-tool-panel-horizontal-resize',
             role: 'separator',
-            attrs: { tabindex: '0', 'aria-orientation': 'vertical' },
+            attrs: { 'aria-orientation': 'vertical' },
         },
         {
             tag: 'div',
@@ -88,6 +87,7 @@ export class AgHorizontalResize extends Component {
         this.addDestroyFunc(_observeResize(this.beans, elementToResize, () => this.refreshValue()));
         this.setInverted(this.gos.get('enableRtl'));
 
+        this.activateTabIndex([eResizeBar, eWidenButton, eNarrowButton]);
         _setAriaControls(eResizeBar, elementToResize.id);
         const translate = this.getLocaleTextFunc();
         _setAriaLabel(eWidenButton, translate('ariaToolPanelWiden', 'Widen Panel'));
@@ -117,6 +117,8 @@ export class AgHorizontalResize extends Component {
             _addManagedElementListeners(this, eButton, {
                 // keep focus where it is, as Safari would otherwise drop it and the buttons would hide
                 mousedown: (e: MouseEvent) => e.preventDefault(),
+                // the buttons stay in the Tab order while hidden, so Shift+Tab from the panel reaches them
+                focus: () => this.setButtonsDisplayed(true),
                 click: () => this.resizeBy(widthChange),
             });
         }
@@ -205,7 +207,6 @@ export class AgHorizontalResize extends Component {
     }
 
     private setButtonsDisplayed(displayed: boolean): void {
-        _setDisplayed(this.eButtons, displayed);
         this.toggleCss('ag-tool-panel-resizer-active', displayed);
     }
 

@@ -70,4 +70,8 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
         this.toggleCss('ag-selected', selected);
         _setAriaExpanded(this.eToggleButton, selected);
     }
+
+    public setTabStop(isTabStop: boolean): void {
+        this.activateTabIndex([this.eToggleButton], isTabStop ? undefined : -1);
+    }
 }

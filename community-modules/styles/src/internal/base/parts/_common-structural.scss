@@ -2043,12 +2043,10 @@
     // */
     .ag-side-bar {
         display: flex;
-        flex-direction: row-reverse;
     }
 
     .ag-side-bar-left {
         order: -1;
-        flex-direction: row;
     }
 
     .ag-side-button-button {

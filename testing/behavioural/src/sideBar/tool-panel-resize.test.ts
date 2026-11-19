@@ -41,13 +41,13 @@ describe('tool panel resizing without dragging', () => {
         });
         const splitter = gridEl.querySelector<HTMLElement>('.ag-tool-panel-horizontal-resize')!;
         const [widen, narrow] = Array.from(gridEl.querySelectorAll<HTMLButtonElement>('.ag-tool-panel-resize-button'));
-        const buttons = gridEl.querySelector<HTMLElement>('.ag-tool-panel-resize-buttons')!;
+        const resizer = gridEl.querySelector<HTMLElement>('.ag-tool-panel-resizer')!;
         const content = gridEl.querySelector<HTMLElement>('.ag-tool-panel-content')!;
-        return { api, gridEl, panel, splitter, widen, narrow, buttons, content };
+        return { api, gridEl, panel, splitter, widen, narrow, resizer, content };
     }
 
     const width = (panel: HTMLElement) => panel.offsetWidth;
-    const isShown = (el: HTMLElement) => !el.classList.contains('ag-hidden');
+    const areButtonsShown = (resizer: HTMLElement) => resizer.classList.contains('ag-tool-panel-resizer-active');
     const press = (el: HTMLElement, key: string, times = 1) => {
         for (let i = 0; i < times; i++) {
             el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
@@ -75,6 +75,14 @@ describe('tool panel resizing without dragging', () => {
 
         splitter.focus();
         expect(splitter.getAttribute('aria-valuenow')).toBe(String(DEFAULT_WIDTH));
+    });
+
+    test('the border and its buttons are Tab stops with the grid tabIndex', async () => {
+        const { splitter, widen, narrow } = await createGrid({ tabIndex: 3 });
+
+        for (const el of [splitter, widen, narrow]) {
+            expect(el.getAttribute('tabindex')).toBe('3');
+        }
     });
 
     test('the separator has the default minimum and no maximum when the panel sets neither', async () => {
@@ -218,29 +226,39 @@ describe('tool panel resizing without dragging', () => {
 
     describe('Widen and Narrow buttons', () => {
         test('are hidden until the border is clicked', async () => {
-            const { splitter, buttons } = await createGrid();
-            expect(isShown(buttons)).toBe(false);
+            const { splitter, resizer } = await createGrid();
+            expect(areButtonsShown(resizer)).toBe(false);
 
             splitter.click();
 
-            expect(isShown(buttons)).toBe(true);
+            expect(areButtonsShown(resizer)).toBe(true);
             expect(splitter.ownerDocument.activeElement).toBe(splitter);
         });
 
         test('are shown when the border gets keyboard focus, but not when a pointer press focuses it', async () => {
-            const { splitter, buttons } = await createGrid();
+            const { splitter, resizer } = await createGrid();
 
             splitter.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, isPrimary: true, button: 0 }));
             splitter.focus();
-            expect(isShown(buttons)).toBe(false);
+            expect(areButtonsShown(resizer)).toBe(false);
 
             splitter.blur();
             splitter.click();
             splitter.blur();
-            expect(isShown(buttons)).toBe(false);
+            expect(areButtonsShown(resizer)).toBe(false);
 
             splitter.focus();
-            expect(isShown(buttons)).toBe(true);
+            expect(areButtonsShown(resizer)).toBe(true);
+        });
+
+        test('stay in the Tab order while hidden, and show when one is focused, as by Shift+Tab from the panel', async () => {
+            const { narrow, resizer } = await createGrid();
+            expect(narrow.closest('.ag-hidden')).toBeNull();
+            expect(narrow.getAttribute('tabindex')).toBe('0');
+
+            narrow.focus();
+
+            expect(areButtonsShown(resizer)).toBe(true);
         });
 
         test('widen and narrow the panel by one step within its limits', async () => {
@@ -287,34 +305,34 @@ describe('tool panel resizing without dragging', () => {
         });
 
         test('Escape hides them and keeps focus on the border', async () => {
-            const { splitter, widen, buttons } = await createGrid();
+            const { splitter, widen, resizer } = await createGrid();
             splitter.focus();
             widen.focus();
 
             press(widen, 'Escape');
 
-            expect(isShown(buttons)).toBe(false);
+            expect(areButtonsShown(resizer)).toBe(false);
             expect(splitter.ownerDocument.activeElement).toBe(splitter);
         });
 
         test('hide when focus leaves the border and its buttons', async () => {
-            const { splitter, widen, buttons, gridEl } = await createGrid();
+            const { splitter, widen, resizer, gridEl } = await createGrid();
             splitter.focus();
             widen.focus();
-            expect(isShown(buttons)).toBe(true);
+            expect(areButtonsShown(resizer)).toBe(true);
 
             gridEl.querySelector<HTMLElement>('.ag-side-button-button')!.focus();
 
-            expect(isShown(buttons)).toBe(false);
+            expect(areButtonsShown(resizer)).toBe(false);
         });
 
         test('hide when the panel closes', async () => {
-            const { api, splitter, buttons } = await createGrid();
+            const { api, splitter, resizer } = await createGrid();
             splitter.focus();
 
             api.closeToolPanel();
 
-            expect(isShown(buttons)).toBe(false);
+            expect(areButtonsShown(resizer)).toBe(false);
         });
     });
 });

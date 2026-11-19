@@ -89,6 +89,14 @@
         top: 50%;
         transform: translateY(-50%);
         z-index: 4;
+        // hidden, but still in the Tab order, until the border is focused or clicked
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .ag-tool-panel-resizer-active .ag-tool-panel-resize-buttons {
+        opacity: 1;
+        pointer-events: auto;
     }
 
     // centred on the border
