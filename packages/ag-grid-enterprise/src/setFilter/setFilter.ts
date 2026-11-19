@@ -1076,8 +1076,11 @@ export class SetFilter<V = string>
         }
     }
 
-    public getModelAsString(model: SetFilterModel | null): string {
-        return this.handler.getModelAsString(model);
+    public getModelAsString(
+        model: SetFilterModel | null,
+        source?: 'floating' | 'floatingTooltip' | 'filterToolPanel'
+    ): string {
+        return this.handler.getModelAsString(model, source);
     }
 
     protected override getPositionableElement(): HTMLElement {

@@ -8,6 +8,7 @@ import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
+import { _addFloatingFilterValueTooltip } from '../../floating/provided/floatingFilterValueTooltip';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
@@ -36,6 +37,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
     private dateComp: DateCompWrapper;
+    private refreshValueTooltip?: () => void;
+    private editable = false;
     protected readonly filterType = 'date';
     protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
 
@@ -57,6 +60,12 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         this.createDateComponent();
         const translate = this.getLocaleTextFunc();
         this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
+        this.refreshValueTooltip = _addFloatingFilterValueTooltip(
+            this,
+            this.beans,
+            () => this.params.column,
+            () => (this.editable ? this.eDateWrapper.querySelector('input') : this.eReadOnlyText.getInputElement())
+        );
     }
 
     protected override updateParams(params: IFloatingFilterParams<DateFilter, any, any>): void {
@@ -80,6 +89,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
             this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
             this.dateComp.setDate(null);
         }
+        this.refreshValueTooltip?.();
     }
 
     protected refreshAriaLabel(): void {
@@ -87,6 +97,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     }
 
     protected setEditable(editable: boolean): void {
+        this.editable = editable;
         _setDisplayed(this.eDateWrapper, editable);
         _setDisplayed(this.eReadOnlyText.getGui(), !editable);
     }
@@ -97,6 +108,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     }
 
     private onDateChanged(): void {
+        this.refreshValueTooltip?.();
         const filterValueDate = this.dateComp.getDate();
 
         if (this.reactive) {
@@ -157,6 +169,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
             eDateWrapper,
             (dateComp) => {
                 dateComp.setInputAriaLabel(this.getAriaLabel(column as AgColumn));
+                this.refreshValueTooltip?.();
             }
         );
 

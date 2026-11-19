@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_UK_UA = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Перейти до сторінки',
+    tooltipFilter: 'Фільтр',
+    tooltipSortedAscending: 'Відсортовано за зростанням',
+    tooltipSortedDescending: 'Відсортовано за спаданням',
+    tooltipExpandGroup: 'Розгорнути групу',
+    tooltipCollapseGroup: 'Згорнути групу',
+    tooltipSelectAllRows: 'Вибрати всі рядки',
+    tooltipDeselectAllRows: 'Скасувати вибір усіх рядків',
+    tooltipSelectRow: 'Вибрати рядок',
+    tooltipDeselectRow: 'Скасувати вибір рядка',
+    tooltipResizeColumn: 'Змінити розмір стовпця',
+    tooltipDragToMove: 'Перетягніть, щоб перемістити',
+    tooltipTurnOnPivotMode: 'Увімкнути режим зведеної таблиці',
+    tooltipTurnOffPivotMode: 'Вимкнути режим зведеної таблиці',
+    columnsToolPanelTooltip: 'Налаштувати стовпці',
+    filtersToolPanelTooltip: 'Налаштувати фільтри',
+
     // Set Filter
     selectAll: '(Вибрати все)',
     selectAllSearchResults: '(Вибрати всі результати пошуку)',

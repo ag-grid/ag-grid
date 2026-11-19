@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_ET_EE = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Mine lehele',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Sorditud kasvavalt',
+    tooltipSortedDescending: 'Sorditud kahanevalt',
+    tooltipExpandGroup: 'Laienda rühm',
+    tooltipCollapseGroup: 'Ahenda rühm',
+    tooltipSelectAllRows: 'Vali kõik read',
+    tooltipDeselectAllRows: 'Tühista kõigi ridade valik',
+    tooltipSelectRow: 'Vali rida',
+    tooltipDeselectRow: 'Tühista rea valik',
+    tooltipResizeColumn: 'Muuda veeru suurust',
+    tooltipDragToMove: 'Lohista teisaldamiseks',
+    tooltipTurnOnPivotMode: 'Lülita risttabeli režiim sisse',
+    tooltipTurnOffPivotMode: 'Lülita risttabeli režiim välja',
+    columnsToolPanelTooltip: 'Seadista veerud',
+    filtersToolPanelTooltip: 'Seadista filtrid',
+
     // Set Filter
     selectAll: '(Vali kõik)',
     selectAllSearchResults: '(Vali kõik otsingutulemused)',

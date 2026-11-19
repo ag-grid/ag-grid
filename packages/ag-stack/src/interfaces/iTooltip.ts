@@ -20,10 +20,15 @@ export interface TooltipDetails<TLocation extends string> {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface TooltipCtrl<TLocation extends string, TDetails extends TooltipDetails<TLocation>> {
+    /** Identifies an opt-in built-in control tooltip. Ordinary tooltip sources leave this unset. */
+    control?: string;
     getTooltip?(): TDetails;
     getGui(): HTMLElement;
+    /** The container receiving keyboard focus when it is outside the pointer source. */
+    getFocusElement?(): HTMLElement;
     /** The accessible owner when keyboard focus is managed outside the tooltip source. */
     getAriaElement?(): HTMLElement;
+    getTooltipAccessibleName?(): string | null | undefined;
     getLocation?(): TLocation | 'UNKNOWN';
 
     getTooltipShowDelayOverride?(): number;
@@ -31,8 +36,13 @@ export interface TooltipCtrl<TLocation extends string, TDetails extends TooltipD
     getTooltipHideDelayOverride?(): number;
     shouldDisplayTooltip?(tooltip: TDetails): boolean;
     /**
-     * Only needed for components that move focus on hover, such as menu items, to suppress hover-driven focus tooltips.
+     * Whether focus within the source should trigger the tooltip, e.g. excluding hover-driven focus in menus.
      * Checked synchronously on focusin, before scheduling tooltip display.
      */
     shouldDisplayTooltipOnFocus?(): boolean;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ComponentTooltipSource = Omit<TooltipCtrl<string, TooltipDetails<string>>, 'getGui'> & {
+    getGui?(): HTMLElement;
+};

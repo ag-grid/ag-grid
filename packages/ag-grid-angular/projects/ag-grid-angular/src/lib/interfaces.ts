@@ -3,6 +3,7 @@ import type {
     FilterDisplayParams,
     FloatingFilterDisplay,
     FloatingFilterDisplayParams,
+    IBuiltInTooltipParams,
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -154,6 +155,10 @@ export interface IToolbarItemAngularComp<TData = any, TContext = any, TParams = 
 
 export interface ITooltipAngularComp<TData = any, TValue = any, TContext = any> extends AgFrameworkComponent<
     ITooltipParams<TData, TValue, TContext>
+> {}
+
+export interface IBuiltInTooltipAngularComp<TData = any, TContext = any> extends AgFrameworkComponent<
+    IBuiltInTooltipParams<TData, TContext>
 > {}
 
 export interface IMenuItemAngularComp<TData = any, TContext = any>

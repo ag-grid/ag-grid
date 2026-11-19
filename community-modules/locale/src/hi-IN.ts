@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_HI_IN = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'पृष्ठ पर जाएँ',
+    tooltipFilter: 'फ़िल्टर',
+    tooltipSortedAscending: 'आरोही क्रम में सॉर्ट किया गया',
+    tooltipSortedDescending: 'अवरोही क्रम में सॉर्ट किया गया',
+    tooltipExpandGroup: 'समूह फैलाएँ',
+    tooltipCollapseGroup: 'समूह समेटें',
+    tooltipSelectAllRows: 'सभी पंक्तियाँ चुनें',
+    tooltipDeselectAllRows: 'सभी पंक्तियों का चयन हटाएँ',
+    tooltipSelectRow: 'पंक्ति चुनें',
+    tooltipDeselectRow: 'पंक्ति का चयन हटाएँ',
+    tooltipResizeColumn: 'कॉलम का आकार बदलें',
+    tooltipDragToMove: 'स्थान बदलने के लिए खींचें',
+    tooltipTurnOnPivotMode: 'पिवट मोड चालू करें',
+    tooltipTurnOffPivotMode: 'पिवट मोड बंद करें',
+    columnsToolPanelTooltip: 'कॉलम कॉन्फ़िगर करें',
+    filtersToolPanelTooltip: 'फ़िल्टर कॉन्फ़िगर करें',
+
     // Set Filter
     selectAll: '(सभी चुनें)',
     selectAllSearchResults: '(सभी खोज परिणाम चुनें)',

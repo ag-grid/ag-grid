@@ -1,0 +1,59 @@
+---
+title: "Built-in Control Tooltips"
+---
+
+With `TooltipModule` registered, the grid's built-in controls show tooltips describing their current action. They are enabled by default and use [Localisation](./localisation/) text.
+
+| Area                     | Controls                                                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Pagination               | First, previous, next and last page; page-number entry                                                           |
+| Headers and rows         | Column menu, filter, sort, group expand/collapse, resize, selection and row drag; floating-filter value previews |
+| Tool panels and grouping | Pivot Mode toggle, column/group drag handles and grouping, pivot and value pill removal                          |
+| Side Bar                 | Columns and Filters tabs, including the New Filters panel; configured custom tabs                                |
+| Dialogs and inputs       | Close, maximise/restore and input clear buttons                                                                  |
+| Quick Access Toolbar     | Find previous/next, action and menu buttons                                                                      |
+
+For example, the Pivot Mode toggle shows "Turn on pivot mode" or "Turn off pivot mode". Hovering a control inside a header shows the control tooltip rather than the enclosing header tooltip.
+
+Hover the pagination buttons, the Columns tab or the Athlete header's menu button below. Toggle the options to compare suppression, custom and default rendering.
+
+{% gridExampleRunner title="Built-in Control Tooltips" name="built-in-control-tooltips" exampleHeight=460 /%}
+
+## Suppression
+
+Set `suppressBuiltInTooltips: true` to hide these hints without disabling cell, header or validation tooltips.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    suppressBuiltInTooltips: true,
+};
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["suppressBuiltInTooltips"] /%}
+
+## Custom Component
+
+Use `builtInTooltipComponent` to customise rendering; it does not inherit `colDef.tooltipComponent` or its parameters. The component receives the localised `text`, `location`, `control` and available column or row metadata. Render `text`, not the ordinary tooltip component's `value`.
+
+The grid supplies the background, border, padding and arrow; your component renders the content.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    builtInTooltipComponent: CustomBuiltInTooltip,
+    builtInTooltipComponentParams: { heading: 'Grid control' },
+};
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["builtInTooltipComponent", "builtInTooltipComponentParams"] /%}
+
+{% expandingSection headerText="IBuiltInTooltipParams" %}
+{% interfaceDocumentation interfaceName="IBuiltInTooltipParams" /%}
+{% /expandingSection %}
+
+## Side Bar Tabs
+
+Side Bar tabs configure their tooltips with `ToolPanelDef.tooltipKey` and `tooltipDefault`. See [Tab Tooltips](./side-bar/#tab-tooltips).
+
+## Validation Tooltips
+
+The grid also shows error tooltips for invalid input, which `suppressBuiltInTooltips` does not affect: see [Cell Editing Validation](./cell-editing-validation/), [Calculated Columns](./calculated-columns-validation/) and the [Number](./filter-number/) and [Date](./filter-date/) Filter inputs.

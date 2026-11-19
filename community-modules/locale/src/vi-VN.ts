@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_VI_VN = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Đi đến trang',
+    tooltipFilter: 'Lọc',
+    tooltipSortedAscending: 'Đã sắp xếp tăng dần',
+    tooltipSortedDescending: 'Đã sắp xếp giảm dần',
+    tooltipExpandGroup: 'Mở rộng nhóm',
+    tooltipCollapseGroup: 'Thu gọn nhóm',
+    tooltipSelectAllRows: 'Chọn tất cả các hàng',
+    tooltipDeselectAllRows: 'Bỏ chọn tất cả các hàng',
+    tooltipSelectRow: 'Chọn hàng',
+    tooltipDeselectRow: 'Bỏ chọn hàng',
+    tooltipResizeColumn: 'Thay đổi kích thước cột',
+    tooltipDragToMove: 'Kéo để di chuyển',
+    tooltipTurnOnPivotMode: 'Bật chế độ bảng tổng hợp',
+    tooltipTurnOffPivotMode: 'Tắt chế độ bảng tổng hợp',
+    columnsToolPanelTooltip: 'Cấu hình cột',
+    filtersToolPanelTooltip: 'Cấu hình bộ lọc',
+
     // Set Filter
     selectAll: '(Chọn Tất Cả)',
     selectAllSearchResults: '(Chọn Tất Cả Các Kết Quả Tìm Kiếm)',

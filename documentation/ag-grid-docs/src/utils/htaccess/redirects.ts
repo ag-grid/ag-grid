@@ -3064,11 +3064,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-overlay/', to: '/react-data-grid/overlays/' },
     { from: '/vue-data-grid/component-overlay/', to: '/vue-data-grid/overlays/' },
 
-    { from: '/javascript-data-grid/component-tooltip/', to: '/javascript-data-grid/tooltips/' },
-    { from: '/angular-data-grid/component-tooltip/', to: '/angular-data-grid/tooltips/' },
-    { from: '/react-data-grid/component-tooltip/', to: '/react-data-grid/tooltips/' },
-    { from: '/vue-data-grid/component-tooltip/', to: '/vue-data-grid/tooltips/' },
-
     { from: '/javascript-data-grid/component-date/', to: '/javascript-data-grid/filter-date/' },
     { from: '/angular-data-grid/component-date/', to: '/angular-data-grid/filter-date/' },
     { from: '/react-data-grid/component-date/', to: '/react-data-grid/filter-date/' },

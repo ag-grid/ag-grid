@@ -5,6 +5,7 @@ import type {
     ColumnEvent,
     ElementParams,
     FilterChangedEvent,
+    FilterHandler,
     FloatingFilterDisplayParams,
     GridInputTextField,
     IFloatingFilterComp,
@@ -14,6 +15,7 @@ import {
     AgInputTextField,
     AgPromise,
     Component,
+    _addFloatingFilterValueTooltip,
     _getDisplayHandler,
     _getFloatingFilterAriaLabel,
     _isGroupMultiAutoColumn,
@@ -38,6 +40,8 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;
     private haveAddedColumnListeners: boolean = false;
+    private getTooltipValue?: () => string;
+    private refreshValueTooltip?: () => void;
 
     constructor() {
         super(GroupFloatingFilterElement);
@@ -121,6 +125,13 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 .addGuiEventListener('click', () => this.params.showParentFilter());
 
             this.setParams();
+            this.refreshValueTooltip = _addFloatingFilterValueTooltip(
+                this,
+                this.beans,
+                () => this.params.column,
+                this.eFloatingFilterText,
+                () => this.getTooltipValue?.()
+            );
         }
 
         this.updateDisplayedValue();
@@ -202,15 +213,23 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }
         const colFilter = this.beans.colFilter!;
         const column = this.getSelectedColumn();
-        const updateText = (filterOrHandler?: { getModelAsString?: (model: any) => string } | null) => {
+        const updateText = (filterOrHandler?: Pick<FilterHandler, 'getModelAsString'> | null) => {
             if (!filterOrHandler) {
+                this.getTooltipValue = undefined;
                 eFloatingFilterText.setValue('');
                 eFloatingFilterText.setDisplayed(false);
             } else {
                 const model = column ? colFilter.getModelForColumn(column) : null;
-                eFloatingFilterText.setValue(model == null ? '' : (filterOrHandler.getModelAsString?.(model) ?? ''));
+                const summary = model == null ? '' : (filterOrHandler.getModelAsString?.(model) ?? '');
+                const isSetFilter = 'filterType' in filterOrHandler && filterOrHandler.filterType === 'set';
+                this.getTooltipValue = () =>
+                    isSetFilter && model != null
+                        ? (filterOrHandler.getModelAsString?.(model, 'floatingTooltip') ?? '')
+                        : summary;
+                eFloatingFilterText.setValue(summary);
                 eFloatingFilterText.setDisplayed(true);
             }
+            this.refreshValueTooltip?.();
         };
         if (!column) {
             updateText();

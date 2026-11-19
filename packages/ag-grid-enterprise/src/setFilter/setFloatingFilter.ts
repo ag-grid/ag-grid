@@ -3,13 +3,19 @@ import { RefPlaceholder } from 'ag-stack';
 import type {
     AgColumn,
     ElementParams,
+    FilterHandler,
     FloatingFilterDisplayParams,
     GridInputTextField,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, Component, _getFloatingFilterAriaLabel } from 'ag-grid-community';
+import {
+    AgInputTextFieldSelector,
+    Component,
+    _addFloatingFilterValueTooltip,
+    _getFloatingFilterAriaLabel,
+} from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
 
@@ -29,6 +35,8 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
+    private getTooltipValue?: () => string;
+    private refreshValueTooltip?: () => void;
 
     constructor() {
         super(SetFloatingFilterElement, [AgInputTextFieldSelector]);
@@ -41,6 +49,13 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
         this.setParams(params);
         this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
+        this.refreshValueTooltip = _addFloatingFilterValueTooltip(
+            this,
+            this.beans,
+            () => this.params.column,
+            this.eFloatingFilterText,
+            () => this.getTooltipValue?.()
+        );
     }
 
     private setParams(params: IFloatingFilterParams): void {
@@ -79,17 +94,17 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
+        const updateText = (filterOrHandler?: Pick<FilterHandler, 'getModelAsString'>) => {
+            this.getTooltipValue = () => filterOrHandler?.getModelAsString?.(parentModel, 'floatingTooltip') ?? '';
+            this.eFloatingFilterText.setValue(filterOrHandler?.getModelAsString?.(parentModel) ?? '');
+            this.refreshValueTooltip?.();
+        };
         if (parentModel == null) {
-            this.eFloatingFilterText.setValue('');
+            updateText();
         } else if (this.gos.get('enableFilterHandlers')) {
-            this.eFloatingFilterText.setValue(
-                (this.params as unknown as FloatingFilterDisplayParams).getHandler().getModelAsString?.(parentModel) ??
-                    ''
-            );
+            updateText((this.params as unknown as FloatingFilterDisplayParams).getHandler());
         } else {
-            this.parentSetFilterInstance((setFilter) => {
-                this.eFloatingFilterText.setValue(setFilter.getModelAsString(parentModel));
-            });
+            this.parentSetFilterInstance(updateText);
         }
     }
 }

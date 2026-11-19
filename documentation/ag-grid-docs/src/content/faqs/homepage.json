@@ -25,7 +25,7 @@
     },
     {
         "question": "Can I use my own components with AG Grid?",
-        "answer": "Yes, you can add your own components to [cells](./component-cell-renderer/) and [headers](./column-headers-components/#custom-component), and replace things like [filters](./component-filter/), [overlays](./overlays-overview), and [tooltips](./tooltips/#custom-component) with your own functionality if you want to."
+        "answer": "Yes, you can add your own components to [cells](./component-cell-renderer/) and [headers](./column-headers-components/#custom-component), and replace things like [filters](./component-filter/), [overlays](./overlays-overview), and [tooltips](./component-tooltip/) with your own functionality if you want to."
     },
     {
         "question": "Can I add project planning and scheduling to my AG Grid app?",

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_AR_EG = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'الانتقال إلى الصفحة',
+    tooltipFilter: 'تصفية',
+    tooltipSortedAscending: 'مرتب تصاعديًا',
+    tooltipSortedDescending: 'مرتب تنازليًا',
+    tooltipExpandGroup: 'توسيع المجموعة',
+    tooltipCollapseGroup: 'طي المجموعة',
+    tooltipSelectAllRows: 'تحديد كل الصفوف',
+    tooltipDeselectAllRows: 'إلغاء تحديد كل الصفوف',
+    tooltipSelectRow: 'تحديد الصف',
+    tooltipDeselectRow: 'إلغاء تحديد الصف',
+    tooltipResizeColumn: 'تغيير حجم العمود',
+    tooltipDragToMove: 'اسحب للنقل',
+    tooltipTurnOnPivotMode: 'تفعيل وضع الجدول المحوري',
+    tooltipTurnOffPivotMode: 'إيقاف وضع الجدول المحوري',
+    columnsToolPanelTooltip: 'إعداد الأعمدة',
+    filtersToolPanelTooltip: 'إعداد الفلاتر',
+
     // Set Filter
     selectAll: '(تحديد الكل)',
     selectAllSearchResults: '(تحديد كل نتائج البحث)',

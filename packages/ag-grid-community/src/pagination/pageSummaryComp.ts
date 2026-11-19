@@ -59,12 +59,23 @@ export class PageSummaryComp extends Component {
     private initNavButtons(): void {
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        for (const { el, fn } of [
-            { el: btFirst, fn: this.onBtFirst.bind(this) },
-            { el: btPrevious, fn: this.onBtPrevious.bind(this) },
-            { el: btNext, fn: this.onBtNext.bind(this) },
-            { el: btLast, fn: this.onBtLast.bind(this) },
+        for (const { el, fn, control, defaultValue } of [
+            { el: btFirst, fn: this.onBtFirst.bind(this), control: 'firstPage', defaultValue: 'First Page' },
+            {
+                el: btPrevious,
+                fn: this.onBtPrevious.bind(this),
+                control: 'previousPage',
+                defaultValue: 'Previous Page',
+            },
+            { el: btNext, fn: this.onBtNext.bind(this), control: 'nextPage', defaultValue: 'Next Page' },
+            { el: btLast, fn: this.onBtLast.bind(this), control: 'lastPage', defaultValue: 'Last Page' },
         ]) {
+            this.addTooltip({
+                control,
+                getGui: () => el,
+                getLocation: () => 'pagination',
+                getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+            });
             this.addManagedListeners(el, {
                 click: fn,
                 keydown: (e: KeyboardEvent) => {
@@ -81,6 +92,12 @@ export class PageSummaryComp extends Component {
         const { lbCurrentInput, pagination } = this;
         const eInput = lbCurrentInput.getInputElement();
         _setAriaRole(eInput, 'spinbutton');
+        lbCurrentInput.addTooltip({
+            control: 'pageNumber',
+            getLocation: () => 'pagination',
+            getAriaElement: () => eInput,
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipGoToPage', 'Go to page') }),
+        });
         this.addManagedListeners(eInput, {
             keydown: (e: KeyboardEvent) => {
                 const { key } = e;

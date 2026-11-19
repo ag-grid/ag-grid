@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _addManagedElementListeners, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type {
@@ -46,6 +47,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     protected abstract createGetDragItem(): () => DragItem<TItem>;
     protected abstract getDragSourceType(): DragSourceType;
     private tooltipFeature?: TooltipFeature;
+    private dragTooltip?: ITooltipFeature;
+    private removeTooltip?: ITooltipFeature;
 
     constructor(
         private readonly dragSourceDropTarget: DropTarget,
@@ -95,6 +98,29 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.setupComponents();
 
+        if (!this.ghost) {
+            this.dragTooltip = this.addTooltip({
+                getGui: () => eDragHandle,
+                getLocation: () => this.getTooltipLocation(),
+                control: 'drag',
+                getTooltip: () => ({
+                    value: this.isDraggable() ? this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move') : null,
+                    params: this.getTooltipParams(),
+                }),
+            });
+            this.removeTooltip = this.addTooltip({
+                getGui: () => eButton,
+                getLocation: () => this.getTooltipLocation(),
+                control: 'remove',
+                getTooltip: () => ({
+                    value: this.isRemovable()
+                        ? this.getLocaleTextFunc()('advancedFilterBuilderRemoveButtonTooltip', 'Remove')
+                        : null,
+                    params: this.getTooltipParams(),
+                }),
+            });
+        }
+
         if (!this.ghost && this.isDraggable()) {
             this.addDragSource();
         }
@@ -113,6 +139,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected refreshDraggable(): void {
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !this.isDraggable());
+        this.dragTooltip?.refreshTooltip();
     }
 
     protected setupAria() {
@@ -136,7 +163,11 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.refreshTooltip();
+        const refresh = () => {
+            this.tooltipFeature?.refreshTooltip();
+            this.dragTooltip?.refreshTooltip();
+            this.removeTooltip?.refreshTooltip();
+        };
 
         refresh();
 
@@ -196,6 +227,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.eText.textContent = this.getDisplayValue();
         this.setupAria();
         this.tooltipFeature?.refreshTooltip();
+        this.dragTooltip?.refreshTooltip();
+        this.removeTooltip?.refreshTooltip();
     }
 
     protected isRemovable(): boolean {
@@ -204,6 +237,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected refreshRemove(): void {
         _setDisplayed(this.eButton, this.isRemovable());
+        this.removeTooltip?.refreshTooltip();
     }
 
     private setupRemove(): void {

@@ -476,24 +476,37 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public enableBrowserTooltips: boolean | undefined = undefined;
+    /** Hide built-in control tooltips without affecting cell, header or validation tooltips.
+     * @default false
+     * @agModule `TooltipModule`
+     */
+    @Input({ transform: booleanAttribute }) public suppressBuiltInTooltips: boolean | undefined = undefined;
+    /** Custom component for built-in control tooltips, separate from a column's `tooltipComponent`.
+     * Receives `IBuiltInTooltipParams`.
+     * @agModule `TooltipModule`
+     */
+    @Input() public builtInTooltipComponent: any = undefined;
+    /** Additional parameters for `builtInTooltipComponent`.     */
+    @Input() public builtInTooltipComponentParams: any = undefined;
     /** The trigger that will cause tooltips to show and hide.
      * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
      *  - `hover` - The tooltip will show/hide when its element is hovered.
      *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
      *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
      * Source-specific show delays take precedence in all modes.
+     * Built-in control tooltips always show on hover and immediately on focus.
      * @default 'hover'
      * @initial
      * @agModule `TooltipModule`
      */
     @Input() public tooltipTrigger: 'hover' | 'focus' | 'hoverOrFocus' | undefined = undefined;
     /** Preferred tooltip placement. Flips or shifts to stay within the available space.
-     * Return `undefined` from the callback to use the default placement, `top-start`.
+     * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
      * Does not apply to browser tooltips.
      * @agModule `TooltipModule`
      */
     @Input() public tooltipPosition: TooltipPosition | TooltipPositionCallback<TData> | undefined = undefined;
-    /** Anchor for hover tooltips. Focus tooltips always use the target; mouse tracking uses the pointer.
+    /** Anchor for hover tooltips. Focus and built-in control tooltips always use the target; mouse tracking uses the pointer.
      * Does not apply to browser tooltips.
      * @default 'target'
      * @agModule `TooltipModule`
@@ -513,6 +526,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getTooltipAriaDescription:
         ((params: TooltipContentParams<TData>) => string | null | undefined) | undefined = undefined;
     /** The delay in milliseconds before a tooltip shows on hover or focus.
+     * Built-in control tooltips use this delay on hover but show immediately on focus.
      * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
      * Pointer switching uses `tooltipSwitchShowDelay` instead.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
@@ -534,6 +548,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed.
+     * Does not apply to built-in control tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`

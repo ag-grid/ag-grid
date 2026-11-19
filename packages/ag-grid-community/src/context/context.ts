@@ -215,6 +215,7 @@ export type UserComponentName =
     | 'agFileInputOverlay'
     | 'agErrorOverlay'
     | 'agTooltipComponent'
+    | 'agBuiltInTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
     | 'agNumberColumnFilter'

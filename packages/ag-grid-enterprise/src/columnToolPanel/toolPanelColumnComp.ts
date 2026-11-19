@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
@@ -61,6 +62,7 @@ export class ToolPanelColumnComp extends Component {
     private eDragHandle: Element;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private dragTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -288,6 +290,18 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
+        this.dragTooltip = this.addTooltip({
+            getGui: () => eDragHandle as HTMLElement,
+            getLocation: () => 'columnToolPanelColumn',
+            control: 'drag',
+            getTooltip: () => ({
+                value: eDragHandle.classList.contains('ag-column-select-column-readonly')
+                    ? null
+                    : this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.column, colDef: this.column.colDef },
+            }),
+        });
+
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
@@ -390,6 +404,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
+        this.dragTooltip?.refreshTooltip();
         this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_LV_LV = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Pāriet uz lapu',
+    tooltipFilter: 'Filtrēt',
+    tooltipSortedAscending: 'Sakārtots augošā secībā',
+    tooltipSortedDescending: 'Sakārtots dilstošā secībā',
+    tooltipExpandGroup: 'Izvērst grupu',
+    tooltipCollapseGroup: 'Sakļaut grupu',
+    tooltipSelectAllRows: 'Atlasīt visas rindas',
+    tooltipDeselectAllRows: 'Atcelt visu rindu atlasi',
+    tooltipSelectRow: 'Atlasīt rindu',
+    tooltipDeselectRow: 'Atcelt rindas atlasi',
+    tooltipResizeColumn: 'Mainīt kolonnas izmēru',
+    tooltipDragToMove: 'Velciet, lai pārvietotu',
+    tooltipTurnOnPivotMode: 'Ieslēgt rakurstabulas režīmu',
+    tooltipTurnOffPivotMode: 'Izslēgt rakurstabulas režīmu',
+    columnsToolPanelTooltip: 'Konfigurēt kolonnas',
+    filtersToolPanelTooltip: 'Konfigurēt filtrus',
+
     // Set Filter
     selectAll: '(Atlasīt visu)',
     selectAllSearchResults: '(Atlasīt visus meklēšanas rezultātus)',

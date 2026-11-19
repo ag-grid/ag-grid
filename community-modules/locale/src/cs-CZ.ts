@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_CS_CZ = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Přejít na stránku',
+    tooltipFilter: 'Filtrovat',
+    tooltipSortedAscending: 'Seřazeno vzestupně',
+    tooltipSortedDescending: 'Seřazeno sestupně',
+    tooltipExpandGroup: 'Rozbalit skupinu',
+    tooltipCollapseGroup: 'Sbalit skupinu',
+    tooltipSelectAllRows: 'Vybrat všechny řádky',
+    tooltipDeselectAllRows: 'Zrušit výběr všech řádků',
+    tooltipSelectRow: 'Vybrat řádek',
+    tooltipDeselectRow: 'Zrušit výběr řádku',
+    tooltipResizeColumn: 'Změnit velikost sloupce',
+    tooltipDragToMove: 'Přetažením přesunout',
+    tooltipTurnOnPivotMode: 'Zapnout kontingenční režim',
+    tooltipTurnOffPivotMode: 'Vypnout kontingenční režim',
+    columnsToolPanelTooltip: 'Nastavit sloupce',
+    filtersToolPanelTooltip: 'Nastavit filtry',
+
     // Set Filter
     selectAll: '(Vybrat vše)',
     selectAllSearchResults: '(Vybrat všechny výsledky hledání)',

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_TH_TH = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'ไปที่หน้า',
+    tooltipFilter: 'ตัวกรอง',
+    tooltipSortedAscending: 'เรียงลำดับจากน้อยไปมากแล้ว',
+    tooltipSortedDescending: 'เรียงลำดับจากมากไปน้อยแล้ว',
+    tooltipExpandGroup: 'ขยายกลุ่ม',
+    tooltipCollapseGroup: 'ยุบกลุ่ม',
+    tooltipSelectAllRows: 'เลือกแถวทั้งหมด',
+    tooltipDeselectAllRows: 'ยกเลิกการเลือกแถวทั้งหมด',
+    tooltipSelectRow: 'เลือกแถว',
+    tooltipDeselectRow: 'ยกเลิกการเลือกแถว',
+    tooltipResizeColumn: 'ปรับขนาดคอลัมน์',
+    tooltipDragToMove: 'ลากเพื่อย้าย',
+    tooltipTurnOnPivotMode: 'เปิดโหมดพิวอต',
+    tooltipTurnOffPivotMode: 'ปิดโหมดพิวอต',
+    columnsToolPanelTooltip: 'ตั้งค่าคอลัมน์',
+    filtersToolPanelTooltip: 'ตั้งค่าตัวกรอง',
+
     // Set Filter
     selectAll: '(เลือกทั้งหมด)',
     selectAllSearchResults: '(เลือกผลการค้นหาทั้งหมด)',

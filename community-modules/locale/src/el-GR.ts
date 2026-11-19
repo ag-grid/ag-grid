@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_EL_GR = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Μετάβαση στη σελίδα',
+    tooltipFilter: 'Φιλτράρισμα',
+    tooltipSortedAscending: 'Ταξινομημένο σε αύξουσα σειρά',
+    tooltipSortedDescending: 'Ταξινομημένο σε φθίνουσα σειρά',
+    tooltipExpandGroup: 'Ανάπτυξη ομάδας',
+    tooltipCollapseGroup: 'Σύμπτυξη ομάδας',
+    tooltipSelectAllRows: 'Επιλογή όλων των γραμμών',
+    tooltipDeselectAllRows: 'Αποεπιλογή όλων των γραμμών',
+    tooltipSelectRow: 'Επιλογή γραμμής',
+    tooltipDeselectRow: 'Αποεπιλογή γραμμής',
+    tooltipResizeColumn: 'Αλλαγή μεγέθους στήλης',
+    tooltipDragToMove: 'Σύρετε για μετακίνηση',
+    tooltipTurnOnPivotMode: 'Ενεργοποίηση λειτουργίας συγκεντρωτικού πίνακα',
+    tooltipTurnOffPivotMode: 'Απενεργοποίηση λειτουργίας συγκεντρωτικού πίνακα',
+    columnsToolPanelTooltip: 'Ρύθμιση στηλών',
+    filtersToolPanelTooltip: 'Ρύθμιση φίλτρων',
+
     // Set Filter
     selectAll: '(Επιλογή όλων)',
     selectAllSearchResults: '(Επιλογή όλων των αποτελεσμάτων αναζήτησης)',

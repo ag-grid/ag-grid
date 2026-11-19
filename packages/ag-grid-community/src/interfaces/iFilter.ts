@@ -108,8 +108,9 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter. This will happen if you create a custom filter and NOT a custom floating
      * filter. This is also used by the new filters tool panel to display the summary.
+     * The `floatingTooltip` source requests an unabridged tooltip value, not the floating input summary.
      */
-    getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
+    getModelAsString?(model: TModel | null, source?: 'floating' | 'floatingTooltip' | 'filterToolPanel'): string;
     /**
      * Optional: When using an apply button with the filter, this method will be called before the apply happens,
      * The returned model will be applied, allowing for any validation or updates to be performed.
@@ -224,8 +225,9 @@ interface ReadOnlyFloatingFilterParent<TModel = any> {
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
      * filter.
+     * The `floatingTooltip` source requests an unabridged tooltip value, not the floating input summary.
      */
-    getModelAsString?(model: TModel | null): string;
+    getModelAsString?(model: TModel | null, source?: 'floating' | 'floatingTooltip' | 'filterToolPanel'): string;
 }
 
 export interface BaseFilter extends SharedFilterUi, ReadOnlyFloatingFilterParent {

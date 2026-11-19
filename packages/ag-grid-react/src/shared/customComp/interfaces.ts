@@ -12,6 +12,7 @@ import type {
     BaseToolPanelParams,
     FilterDisplayParams,
     FloatingFilterDisplayParams,
+    IBuiltInTooltipParams,
     ICellEditorParams,
     ICellRendererParams,
     IColumnSelectionLabelRendererParams,
@@ -222,6 +223,12 @@ export interface CustomTooltipProps<
     TContext = any,
     TTooltipValue = TValue,
 > extends ITooltipParams<TData, TValue, TContext, TTooltipValue> {}
+
+/** Props provided to custom built-in control tooltip components. */
+export interface CustomBuiltInTooltipProps<TData = any, TContext = any> extends IBuiltInTooltipParams<
+    TData,
+    TContext
+> {}
 
 // *** Callbacks ***
 

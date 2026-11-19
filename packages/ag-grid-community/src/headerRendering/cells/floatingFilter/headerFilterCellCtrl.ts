@@ -3,6 +3,7 @@ import {
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
+    _getAriaLabel,
     _isElementChildOfClass,
     _setAriaLabel,
 } from 'ag-stack';
@@ -19,6 +20,7 @@ import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptions
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
 import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
+import type { TooltipSource } from '../../../tooltip/tooltipFeature';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -111,6 +113,20 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     protected resizeHeader(): void {
         // empty abstract method
+    }
+
+    public getFilterButtonTooltip(): TooltipSource {
+        const eButton = this.eButtonShowMainFilter;
+        return {
+            control: 'filter',
+            getGui: () => eButton,
+            getTooltipAccessibleName: () => _getAriaLabel(eButton),
+            getLocation: () => 'floatingFilter',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Filter'),
+                params: { column: this.column },
+            }),
+        };
     }
 
     protected override moveHeader(): void {

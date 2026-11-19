@@ -1,3 +1,5 @@
+import { _getAriaLabel } from 'ag-stack';
+
 import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
 import { getDragSign } from '../entities/agColumn';
@@ -26,6 +28,19 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             this.comp.setResizableDisplayed(false);
             return;
         }
+
+        this.createOptionalManagedBean(
+            this.beans.tooltipSvc?.createTooltip({
+                control: 'resizeColumn',
+                getGui: () => this.eResize,
+                getTooltipAccessibleName: () => _getAriaLabel(this.eResize),
+                getLocation: () => 'headerGroup',
+                getTooltip: () => ({
+                    value: this.getLocaleTextFunc()('tooltipResizeColumn', 'Resize column'),
+                    params: { column: this.columnGroup },
+                }),
+            })
+        );
 
         const { horizontalResizeSvc, gos, colAutosize } = this.beans;
 

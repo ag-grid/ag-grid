@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 import { BaseTooltipStateManager, _isTooltipPosition } from 'ag-stack';
 
-import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
+import { _getBuiltInTooltipCompDetails, _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { BeanCollection } from '../context/context';
 import { isColumn } from '../entities/agColumn';
 import type { AgEventTypeParams } from '../events';
@@ -13,7 +13,13 @@ import { DOM_DATA_KEY_HEADER_CTRL } from '../headerRendering/cells/abstractCell/
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../rendering/renderUtils';
-import type { ITooltipParams, TooltipCallbackParams, TooltipLocation, TooltipPosition } from './tooltipComponent';
+import type {
+    BuiltInTooltipControl,
+    ITooltipParams,
+    TooltipCallbackParams,
+    TooltipLocation,
+    TooltipPosition,
+} from './tooltipComponent';
 import type { ResolvedTooltip } from './tooltipFeature';
 
 export class TooltipStateManager extends BaseTooltipStateManager<
@@ -30,14 +36,34 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     private onContextMenuEventCallback: (() => null) | undefined;
 
     protected override isTooltipAllowed(): boolean {
-        return !this.beans.tooltipSvc?.isContextMenuOpen || this.tooltipCtrl.getLocation?.() === 'menu';
+        return (
+            !(this.tooltipCtrl.control && this.gos.get('suppressBuiltInTooltips')) &&
+            (!this.beans.tooltipSvc?.isContextMenuOpen || this.tooltipCtrl.getLocation?.() === 'menu')
+        );
+    }
+
+    protected override getTooltipTrigger() {
+        return this.tooltipCtrl.control ? 'hoverOrFocus' : super.getTooltipTrigger();
+    }
+
+    protected override getTooltipFocusShowDelay(): number | undefined {
+        return this.tooltipCtrl.control ? 0 : super.getTooltipFocusShowDelay();
+    }
+
+    protected override isTooltipMouseTracking(): boolean {
+        return !this.tooltipCtrl.control && super.isTooltipMouseTracking();
+    }
+
+    protected override isTooltipPointerAnchored(): boolean {
+        return !this.tooltipCtrl.control && super.isTooltipPointerAnchored();
     }
 
     protected override getTooltipPosition(tooltip: ResolvedTooltip, trigger: 'hover' | 'focus'): TooltipPosition {
         const configured = this.gos.get('tooltipPosition');
         const position =
             typeof configured === 'function' ? configured({ ...this.getCallbackParams(tooltip), trigger }) : configured;
-        return _isTooltipPosition(position) ? position : super.getTooltipPosition(tooltip, trigger);
+        const fallback = this.tooltipCtrl.control ? 'top' : super.getTooltipPosition(tooltip, trigger);
+        return _isTooltipPosition(position) ? position : fallback;
     }
 
     protected override getTooltipInteraction(tooltip?: ResolvedTooltip): boolean {
@@ -95,6 +121,23 @@ export class TooltipStateManager extends BaseTooltipStateManager<
         tooltip: ResolvedTooltip,
         callback: (comp: IComponent<ITooltipParams<any, any, any>>) => void
     ): void {
+        const control = this.tooltipCtrl.control as BuiltInTooltipControl | undefined;
+        if (control) {
+            const { value, ...common } = params;
+            const userDetails = _getBuiltInTooltipCompDetails(this.beans.userCompFactory, {
+                ...common,
+                control,
+                text: String(value),
+                hideTooltipCallback: params.hideTooltipCallback!,
+            });
+            userDetails?.newAgStackInstance().then((comp) => {
+                if (comp) {
+                    comp.getGui().classList.add('ag-tooltip');
+                    callback(comp);
+                }
+            });
+            return;
+        }
         const userDetails = _getTooltipCompDetails(this.beans.userCompFactory, params, tooltip.componentDefinition);
         userDetails?.newAgStackInstance().then(callback);
     }

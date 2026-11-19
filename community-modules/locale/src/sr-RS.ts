@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_SR_RS = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Иди на страницу',
+    tooltipFilter: 'Филтрирај',
+    tooltipSortedAscending: 'Сортирано растуће',
+    tooltipSortedDescending: 'Сортирано опадајуће',
+    tooltipExpandGroup: 'Прошири групу',
+    tooltipCollapseGroup: 'Сажми групу',
+    tooltipSelectAllRows: 'Изабери све редове',
+    tooltipDeselectAllRows: 'Поништи избор свих редова',
+    tooltipSelectRow: 'Изабери ред',
+    tooltipDeselectRow: 'Поништи избор реда',
+    tooltipResizeColumn: 'Промени величину колоне',
+    tooltipDragToMove: 'Превуци за премештање',
+    tooltipTurnOnPivotMode: 'Укључи пивот режим',
+    tooltipTurnOffPivotMode: 'Искључи пивот режим',
+    columnsToolPanelTooltip: 'Подеси колоне',
+    filtersToolPanelTooltip: 'Подеси филтере',
+
     // Set Filter
     selectAll: '(Изабери све)',
     selectAllSearchResults: '(Изабери све резултате претраге)',
