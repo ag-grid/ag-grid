@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="BUNDLE_DIR/BUNDLE_FILE"></script>
+  <style>#grid { height: 600px; }</style>
+</head>
+<body>
+  <div id="grid"></div>
+  <script>
+    var TERRITORIES = Number(new URLSearchParams(location.search).get("t") || 166667), SPECIES = ['A', 'B', 'C'], SEXES = ['M', 'F'], VALUE_COLUMNS = 10;
+    var api = null;
+    function buildRows() {
+      var rows = [], i = 0;
+      for (var t = 0; t < TERRITORIES; t++)
+        for (var s = 0; s < SPECIES.length; s++)
+          for (var x = 0; x < SEXES.length; x++)
+            rows.push({ territory: 'T' + t, species: SPECIES[s], sex: SEXES[x], i: i++ });
+      return rows;
+    }
+    function buildColumns(grouped) {
+      var cols = grouped
+        ? [{ field: 'territory', rowGroup: true, hide: true }, { field: 'species', rowGroup: true, hide: true }, { field: 'sex' }]
+        : [{ field: 'territory' }, { field: 'species' }, { field: 'sex' }];
+      for (var c = 0; c < VALUE_COLUMNS; c++) {
+        (function (c) {
+          cols.push({ headerName: 'v' + c, valueGetter: function (p) { return p.data ? (p.data.i * (c + 7)) % 100000 : null; } });
+        })(c);
+      }
+      return cols;
+    }
+    window.run = function (mode, extra) {
+      return new Promise(function (resolve) {
+        if (api) { api.destroy(); api = null; }
+        var rows = buildRows();
+        var grouped = mode !== 'flat';
+        var t0 = performance.now();
+        var opts = {
+          columnDefs: buildColumns(grouped),
+          rowData: rows,
+          groupDefaultExpanded: mode === 'grouped' ? -1 : 0,
+          onFirstDataRendered: function () {
+            var t1 = performance.now();
+            setTimeout(function () { resolve({ firstDataRendered: Math.round(t1 - t0), idle: Math.round(performance.now() - t0), displayed: api.getDisplayedRowCount() }); }, 0);
+          }
+        };
+        Object.assign(opts, extra || {});
+        api = agGrid.createGrid(document.getElementById('grid'), opts);
+      });
+    };
+  </script>
+</body>
+</html>
