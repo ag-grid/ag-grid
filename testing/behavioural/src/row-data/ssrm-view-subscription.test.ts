@@ -595,6 +595,35 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
+    test('rows in view are subscribed again after a subscribeRows call that throws', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('debounceMs still calls the handlers while data updates keep arriving', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
@@ -675,6 +704,22 @@ describe('SSRM viewSubscription', () => {
                 await nextAnimationFrame();
 
                 expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            });
+
+            test('removing viewSubscription with another option in one update unsubscribes every row', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid();
+                subscribe(api, recorder);
+
+                // getRowId's listener runs before viewSubscription's, and finds the option already removed.
+                api.updateGridOptions({
+                    getRowId: (params) => params.data.id,
+                    viewSubscription: undefined,
+                } as GridOptions);
+
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
+                expect(recorder.violations).toEqual([]);
             });
 
             test('removing getRowId unsubscribes every row', async () => {

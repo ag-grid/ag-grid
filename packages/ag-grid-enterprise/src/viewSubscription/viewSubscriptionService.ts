@@ -61,6 +61,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
      * Rows loaded before a later `getRowId` keep the IDs the grid generated, which do not match the server's.
      */
     private hasInitialRowIds = false;
+    /**
+     * The last handlers set. One `updateGridOptions` call can remove `viewSubscription` and change another option,
+     * whose listener may run first and find the option gone, so the rows are unsubscribed through these.
+     */
+    private lastOptions: ViewSubscriptionOptions | undefined;
 
     public postConstruct(): void {
         this.hasInitialRowIds = !!_getRowIdCallback(this.beans);
@@ -138,12 +143,14 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
+        const lastOptions = options ?? previousOptions ?? this.lastOptions;
+        this.lastOptions = options;
         const wanted =
             !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
         this.setWatching(wanted);
         if (!options || !wanted || this.isPaused(options)) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
-            this.stop(options ?? previousOptions);
+            this.stop(lastOptions);
         } else if (!this.sub) {
             this.start(options);
         }
@@ -305,6 +312,8 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             for (const row of rows) {
                 sub.rows.delete(row.id);
             }
+            // Try the rows in view again, as no other change may come to subscribe them.
+            this.schedule();
             throw e;
         }
     }
