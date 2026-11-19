@@ -3,15 +3,11 @@ import type { Locator, Page } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-const NOTES_TEXT = 'A long note that wraps onto several lines and is clipped by the height of the row';
-const WRAPPED_TEXT = 'Another long note that wraps onto several lines and is clipped by the height of the row';
-// The second line ends inside the cell's border box but below its padding box, so it is clipped by the border.
-const BORDERED_TEXT = 'First line\nSecond line';
-
 // Browser zoom cannot be set headlessly, so CSS zoom on the root element stands in for it: below 100% Chromium
 // snaps the cells' 1px borders to a whole device pixel there too, which is what shrinks the cell's content box.
 const mountZoomedGrid = (page: Page, zoom: number) =>
     mountGrid(page, {
+        width: 1000,
         css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }
             .ag-cell.bordered-cell { white-space: pre-line; line-height: 20px; border-bottom: 12px solid red; }`,
         options: () => ({
@@ -26,9 +22,10 @@ const mountZoomedGrid = (page: Page, zoom: number) =>
                 {
                     athlete: 'Michael Phelps',
                     country: 'United States',
-                    notes: NOTES_TEXT,
-                    wrapped: WRAPPED_TEXT,
-                    bordered: BORDERED_TEXT,
+                    notes: 'A long note that wraps onto several lines and is clipped by the height of the row',
+                    wrapped: 'Another long note that wraps onto several lines and is clipped by the height of the row',
+                    // The second line ends below the padding edge but inside the 12px bottom border.
+                    bordered: 'First line\nSecond line',
                 },
             ],
             tooltipShowDelay: 0,
@@ -43,6 +40,10 @@ const tooltipAfterHover = async (page: Page, target: Locator) => {
     await page.waitForTimeout(300);
     return page.locator('.ag-tooltip');
 };
+
+// The previous cell's tooltip can still be in the page while the next one shows, so match each by its text.
+const tooltipWithText = async (page: Page, target: Locator, text: RegExp) =>
+    (await tooltipAfterHover(page, target)).filter({ hasText: text });
 
 test.describe('tooltipShowMode whenTruncated at fractional zoom', () => {
     for (const zoom of [1, 0.8, 0.67]) {
@@ -59,13 +60,13 @@ test.describe('tooltipShowMode whenTruncated at fractional zoom', () => {
 
         test(`shows a tooltip for wrapped text clipped by the row height at ${zoom * 100}% zoom`, async ({ page }) => {
             const { cell } = await mountZoomedGrid(page, zoom);
-            await expect(await tooltipAfterHover(page, cell(0, 'notes'))).toHaveText(NOTES_TEXT);
-            await expect(await tooltipAfterHover(page, cell(0, 'wrapped'))).toHaveText(WRAPPED_TEXT);
+            await expect(await tooltipWithText(page, cell(0, 'notes'), /^A long note/)).toHaveCount(1);
+            await expect(await tooltipWithText(page, cell(0, 'wrapped'), /^Another long note/)).toHaveCount(1);
         });
 
         test(`shows a tooltip for text clipped inside the bottom border at ${zoom * 100}% zoom`, async ({ page }) => {
             const { cell } = await mountZoomedGrid(page, zoom);
-            await expect(await tooltipAfterHover(page, cell(0, 'bordered'))).toHaveText(BORDERED_TEXT);
+            await expect(await tooltipWithText(page, cell(0, 'bordered'), /^First line\s+Second line$/)).toHaveCount(1);
         });
     }
 });
