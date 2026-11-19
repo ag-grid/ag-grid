@@ -342,8 +342,28 @@ export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
 
+const SUB_PIXEL_OVERFLOW_TOLERANCE = 0.5;
+
 function _isVerticalScrollShowing(element: HTMLElement): boolean {
-    return element.clientHeight < element.scrollHeight;
+    if (element.clientHeight >= element.scrollHeight) {
+        return false;
+    }
+    // At fractional zoom borders snap to whole device pixels, so a line box that exactly fits its container
+    // overflows by a fraction of a pixel and the rounded scroll metrics report it. Confirm from the content geometry.
+    const range = element.ownerDocument.createRange();
+    if (typeof range.getBoundingClientRect !== 'function') {
+        return true;
+    }
+    range.selectNodeContents(element);
+    const content = range.getBoundingClientRect();
+    if (content.width === 0 && content.height === 0) {
+        return false;
+    }
+    const box = element.getBoundingClientRect();
+    return (
+        content.top < box.top - SUB_PIXEL_OVERFLOW_TOLERANCE ||
+        content.bottom > box.bottom + SUB_PIXEL_OVERFLOW_TOLERANCE
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
