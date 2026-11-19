@@ -66,7 +66,7 @@ export type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './interfaces/iProperties';
-export type { ITooltipFeature, TooltipCtrl } from './interfaces/iTooltip';
+export type { ITooltipFeature, TooltipCtrl, TooltipDetails } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
 export {
@@ -78,6 +78,10 @@ export {
     toRelativeRect as _toRelativeRect,
 } from './popup/popupPositionUtils';
 export type { Alignment, Anchor } from './popup/popupPositionUtils';
+export {
+    isTooltipPosition as _isTooltipPosition,
+    TOOLTIP_POSITIONS as _TOOLTIP_POSITIONS,
+} from './popup/tooltipPositionUtils';
 export { AgPositionableFeature } from './rendering/agPositionableFeature';
 export type { PositionableOptions, ResizableSides, ResizableStructure } from './rendering/agPositionableFeature';
 export { AutoScrollService } from './rendering/autoScrollService';

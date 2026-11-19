@@ -81,8 +81,12 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
             inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
         }
         const isBoolean = inputType === 'boolean | undefined';
+        let inputOptions = isBoolean ? '{ transform: booleanAttribute }' : '';
+        if (typeName?.trim().startsWith('boolean |') && typeName.includes('=>')) {
+            inputOptions = `{ transform: (value: unknown) => typeof value === 'function' ? value : booleanAttribute(value) }`;
+        }
 
-        line += `    @Input(${isBoolean ? '{ transform: booleanAttribute }' : ''}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
+        line += `    @Input(${inputOptions}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
         const order = typeKeysOrder.findIndex((p) => p === property);
         propsToWrite.push({ order, line });
 

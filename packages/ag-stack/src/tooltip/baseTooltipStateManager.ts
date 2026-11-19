@@ -3,12 +3,15 @@ import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
-import type { ICommonSource } from '../interfaces/iEvent';
+import type { ICommonSource, WithoutCommon } from '../interfaces/iEvent';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { TooltipCtrl } from '../interfaces/iTooltip';
+import type { TooltipCtrl, TooltipDetails } from '../interfaces/iTooltip';
+import { getTooltipSourceRect, isSourceClipped, positionPopupForTooltip } from '../popup/tooltipPopupPositioning';
+import type { TooltipPosition } from '../popup/tooltipPositionUtils';
 import { _getAriaDescribedBy, _setAriaDescribedBy, _setAriaHidden, _setAriaRole } from '../utils/aria';
-import { _getActiveDomElement, _getDocument, _getWindow } from '../utils/document';
+import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _observeResize, _throttleToFrame } from '../utils/dom';
 import { _addManagedElementListeners } from '../utils/event';
 import { _findFocusableElements } from '../utils/focus';
 
@@ -56,13 +59,14 @@ export abstract class BaseTooltipStateManager<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
-    TTooltipCtrlParams,
+    TTooltipCtrlParams extends TooltipDetails<TLocation>,
     TLocation extends string,
 > extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService> {
     private popupSvc?: IPopupService<any>;
     private state = TooltipStates.NOTHING;
     private sharedState!: SharedTooltipState;
     private tooltipTrigger: NonNullable<BaseProperties['tooltipTrigger']>;
+    private tooltipPosition: TooltipPosition = 'top-start';
     private interactionEnabled = false;
     private sourceHovered = false;
     private sourceFocused = false;
@@ -73,6 +77,20 @@ export abstract class BaseTooltipStateManager<
     private hideTimeout: number | undefined;
     private leaveTimeout: number | undefined;
     private tooltipComp: IComponent<TTooltipParams> | undefined;
+    private tooltipToPosition: IComponent<TTooltipParams> | undefined;
+    private readonly queuePositionTooltip = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => {
+            const comp = this.tooltipToPosition;
+            this.tooltipToPosition = undefined;
+            if (comp && comp === this.tooltipComp) {
+                this.positionTooltip();
+            }
+        }
+    );
+    private tooltipParams: TTooltipParams | undefined;
+    private tooltipSize: { width: number; height: number } | undefined;
     private tooltipPopupDestroyFunc: (() => void) | undefined;
     private tooltipInstanceCount = 0;
     private showEventDispatched = false;
@@ -84,7 +102,7 @@ export abstract class BaseTooltipStateManager<
 
     constructor(
         protected readonly tooltipCtrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
-        private readonly getTooltipValue: () => any
+        private readonly getTooltip: () => TTooltipCtrlParams
     ) {
         super();
     }
@@ -95,13 +113,26 @@ export abstract class BaseTooltipStateManager<
 
     protected abstract createTooltipComp(
         params: TTooltipParams,
+        tooltip: TTooltipCtrlParams,
         callback: (comp: IComponent<TTooltipParams>) => void
     ): void;
     protected abstract setEventHandlers(listener: () => void): void;
     protected abstract clearEventHandlers(): void;
 
-    protected getPopupPositionParams(): unknown {
+    protected getPopupPositionParams(_position: TooltipPosition, _params: TTooltipParams): unknown {
         return undefined;
+    }
+
+    protected getTooltipPosition(_tooltip: TTooltipCtrlParams, _trigger: 'hover' | 'focus'): TooltipPosition {
+        return 'top-start';
+    }
+
+    protected getTooltipInteraction(_tooltip?: TTooltipCtrlParams): boolean {
+        return this.gos.get('tooltipInteraction') === true;
+    }
+
+    protected isTooltipAllowed(): boolean {
+        return true;
     }
 
     protected getAriaDescription(params: TTooltipParams): string | undefined {
@@ -118,7 +149,7 @@ export abstract class BaseTooltipStateManager<
         this.sharedState = sharedState;
         const trigger = this.gos.get('tooltipTrigger');
         this.tooltipTrigger = trigger === 'focus' || trigger === 'hoverOrFocus' ? trigger : 'hover';
-        this.interactionEnabled = !!this.gos.get('tooltipInteraction');
+        this.interactionEnabled = this.gos.get('tooltipInteraction') === true;
         const el = this.tooltipCtrl.getGui();
 
         if (this.tooltipTrigger !== 'focus') {
@@ -143,7 +174,8 @@ export abstract class BaseTooltipStateManager<
                     if (this.lastMouseEvent) {
                         this.lastMouseEvent = event;
                         if (this.gos.get('tooltipMouseTrack') && this.tooltipComp) {
-                            this.positionTooltip();
+                            this.tooltipToPosition = this.tooltipComp;
+                            this.queuePositionTooltip();
                         }
                     }
                 },
@@ -167,7 +199,14 @@ export abstract class BaseTooltipStateManager<
 
         this.addManagedListeners(el, {
             mousedown: () => {
-                if (this.tooltipTrigger === 'hover' && !this.interactionEnabled) {
+                if (this.tooltipTrigger !== 'hover') {
+                    return;
+                }
+                const interactionEnabled =
+                    this.state === TooltipStates.WAITING_TO_SHOW
+                        ? this.getTooltipInteraction()
+                        : this.interactionEnabled;
+                if (!interactionEnabled) {
                     this.hideTooltip();
                 }
             },
@@ -250,7 +289,7 @@ export abstract class BaseTooltipStateManager<
 
     public prepareToShowTooltip(mouseEvent?: MouseEvent | Touch, showDelayOverride?: number): void {
         this.clearLeaveTimeout();
-        if (this.state !== TooltipStates.NOTHING || !this.isAlive()) {
+        if (this.state !== TooltipStates.NOTHING || !this.isAlive() || !this.isTooltipAllowed()) {
             return;
         }
         window.clearTimeout(this.hoverGraceTimeout);
@@ -295,68 +334,70 @@ export abstract class BaseTooltipStateManager<
     }
 
     protected canShowTooltip(): boolean {
-        return this.getParams() != null;
+        return this.isTooltipAllowed() && this.getTooltipDetails() != null;
     }
 
-    private isSourceClipped(): boolean {
-        const source = this.tooltipCtrl.getGui();
-        const rect = source.getBoundingClientRect();
-        const win = _getWindow(this.beans);
-        let parent: Element | null = source.parentElement;
-        while (parent) {
-            const { overflowX, overflowY } = win.getComputedStyle(parent);
-            const bounds = parent.getBoundingClientRect();
-            if (
-                (overflowX && overflowX !== 'visible' && (rect.right <= bounds.left || rect.left >= bounds.right)) ||
-                (overflowY && overflowY !== 'visible' && (rect.bottom <= bounds.top || rect.top >= bounds.bottom))
-            ) {
-                return true;
-            }
-            parent = parent.parentElement ?? (parent.getRootNode() as ShadowRoot).host ?? null;
-        }
-        return false;
-    }
-
-    private getParams(): TTooltipParams | undefined {
-        const ctrl = this.tooltipCtrl;
-        const value = this.getTooltipValue();
-        if (value == null || value === '' || ctrl.shouldDisplayTooltip?.() === false) {
+    protected getTooltipDetails(): TTooltipCtrlParams | undefined {
+        const tooltip = this.getTooltip();
+        const value = tooltip.value;
+        if (value == null || value === '' || this.tooltipCtrl.shouldDisplayTooltip?.(tooltip) === false) {
             return;
         }
+        return tooltip;
+    }
+
+    private getParams(tooltip: TTooltipCtrlParams): TTooltipParams {
         return this.gos.addCommon<TCommon & TTooltipParams>({
-            location: ctrl.getLocation?.() ?? 'UNKNOWN',
-            value,
-            hideTooltipCallback: () => this.hideTooltip(true),
-            ...ctrl.getAdditionalParams?.(),
-        } as BaseTooltipParams<TLocation> as any);
+            ...tooltip.params,
+            location: tooltip.location ?? this.tooltipCtrl.getLocation?.() ?? 'UNKNOWN',
+            value: tooltip.value,
+        } as unknown as WithoutCommon<TCommon, TCommon & TTooltipParams>);
     }
 
     private showTooltip(): void {
         this.showTimeout = undefined;
-        if (!this.isAlive() || this.sharedState.owner !== this) {
+        if (!this.isAlive() || this.sharedState.owner !== this || !this.isTooltipAllowed()) {
             this.hideTooltip(true);
             return;
         }
-        const params = this.getParams();
-        if (!params || (this.sourceFocused && this.isSourceClipped())) {
+        const instance = ++this.tooltipInstanceCount;
+        const tooltip = this.getTooltipDetails();
+        if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
+            return;
+        }
+        if (!tooltip || (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))) {
             this.hideTooltip(true);
             return;
         }
         this.state = TooltipStates.SHOWING;
-        const instance = ++this.tooltipInstanceCount;
-        this.createTooltipComp(params, (comp) => {
+        this.tooltipPosition = this.getTooltipPosition(tooltip, this.lastMouseEvent ? 'hover' : 'focus');
+        if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
+            return;
+        }
+        this.interactionEnabled = this.getTooltipInteraction(tooltip);
+        if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
+            return;
+        }
+        const params = this.getParams(tooltip);
+        this.createTooltipComp({ ...params, hideTooltipCallback: () => this.hideTooltip(true) }, tooltip, (comp) => {
             if (!this.isAlive() || this.state !== TooltipStates.SHOWING || instance !== this.tooltipInstanceCount) {
                 this.destroyBean(comp);
                 return;
             }
-            this.showComponent(comp);
+            if (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui())) {
+                this.hideTooltip(true);
+                this.destroyBean(comp);
+                return;
+            }
+            this.showComponent(comp, params);
         });
     }
 
-    private showComponent(comp: IComponent<TTooltipParams>): void {
+    private showComponent(comp: IComponent<TTooltipParams>, params: TTooltipParams): void {
         const eGui = comp.getGui();
         eGui.id ||= `ag-tooltip-${++tooltipIdSequence}`;
         this.tooltipComp = comp;
+        this.tooltipParams = params;
         if (!eGui.classList.contains('ag-tooltip')) {
             eGui.classList.add('ag-tooltip-custom');
         }
@@ -378,14 +419,26 @@ export abstract class BaseTooltipStateManager<
         }
         const popup = this.popupSvc?.addPopup({
             eChild: eGui,
-            ...(this.interactionEnabled
-                ? { ariaLabel: this.getLocaleTextFunc()('ariaLabelTooltip', 'Tooltip') }
-                : { ariaOwns: this.tooltipCtrl.getGui() }),
+            ariaLabel: this.interactionEnabled ? this.getLocaleTextFunc()('ariaLabelTooltip', 'Tooltip') : undefined,
         });
         this.tooltipPopupDestroyFunc = popup?.hideFunc;
         this.positionTooltip();
+        if (this.tooltipComp !== comp) {
+            return;
+        }
 
+        this.addScrollListeners(eGui);
         this.popupListeners.push(
+            _observeResize(this.beans, eGui, () => {
+                const size = this.tooltipSize;
+                if (
+                    this.tooltipComp !== comp ||
+                    (size?.width === eGui.offsetWidth && size?.height === eGui.offsetHeight)
+                ) {
+                    return;
+                }
+                this.positionTooltip();
+            }),
             ..._addManagedElementListeners(this, eGui, {
                 mouseenter: () => {
                     this.tooltipHovered = true;
@@ -418,6 +471,20 @@ export abstract class BaseTooltipStateManager<
         this.startHideTimeout();
     }
 
+    private addScrollListeners(eGui: HTMLElement): void {
+        const ancestors = new Set<Node>();
+        const hide = () => this.hideTooltip(true);
+        for (const element of [this.tooltipCtrl.getGui(), eGui]) {
+            let parent = element.parentNode;
+            // Scroll does not bubble or cross shadow roots.
+            while (parent && !ancestors.has(parent)) {
+                ancestors.add(parent);
+                this.popupListeners.push(...this.addManagedListeners(parent, { scroll: hide }));
+                parent = parent.parentNode ?? (parent as ShadowRoot).host;
+            }
+        }
+    }
+
     public isTooltipFocused(): boolean {
         return !!this.interactionEnabled && !!this.tooltipComp?.getGui().contains(_getActiveDomElement(this.beans));
     }
@@ -447,13 +514,14 @@ export abstract class BaseTooltipStateManager<
         }
     }
 
-    public hideTooltip(forceHide?: boolean): void {
+    public hideTooltip(forceHide?: boolean, immediate = false): void {
         if (!forceHide && this.isTooltipFocused()) {
             return;
         }
         this.tooltipInstanceCount++;
+        this.tooltipToPosition = undefined;
         if (this.tooltipComp) {
-            this.destroyTooltipComp();
+            this.destroyTooltipComp(immediate);
             this.sharedState.lastHideTime = Date.now();
         }
         if (this.sharedState.owner === this) {
@@ -510,12 +578,12 @@ export abstract class BaseTooltipStateManager<
     }
 
     private refreshAriaDescription(): void {
-        const params = this.getParams();
-        if (!params) {
+        const tooltip = this.getTooltipDetails();
+        if (!tooltip) {
             this.disconnectAriaDescription();
             return;
         }
-        const text = this.getAriaDescription(params);
+        const text = this.getAriaDescription(this.getParams(tooltip));
         if (!text) {
             this.disconnectAriaDescription();
             return;
@@ -557,39 +625,61 @@ export abstract class BaseTooltipStateManager<
         this.description = this.describedById = this.describedBySource = undefined;
     }
 
-    private positionTooltip(): void {
-        const params = {
-            type: 'tooltip',
-            ePopup: this.tooltipComp!.getGui(),
-            nudgeY: 18,
-            skipObserver: this.gos.get('tooltipMouseTrack'),
-            additionalParams: this.getPopupPositionParams(),
-        };
-        if (this.lastMouseEvent) {
-            this.popupSvc?.positionPopupUnderMouseEvent({ ...params, mouseEvent: this.lastMouseEvent });
-        } else {
-            this.popupSvc?.positionPopupByComponent({
-                ...params,
-                eventSource: this.tooltipCtrl.getGui(),
-                position: 'under',
-                keepWithinBounds: true,
-                nudgeY: 5,
-            });
-        }
+    protected getTooltipSourceRect(eventSource: HTMLElement): {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    } {
+        return getTooltipSourceRect(eventSource);
     }
 
-    private destroyTooltipComp(): void {
+    private positionTooltip(): void {
+        const { gos, popupSvc, lastMouseEvent } = this;
+        if (!popupSvc) {
+            return;
+        }
+        const eventSource = this.tooltipCtrl.getGui();
+        const tracking = !!gos.get('tooltipMouseTrack');
+        const offset = gos.get('tooltipOffset');
+        const ePopup = this.tooltipComp!.getGui();
+        const params = this.tooltipParams!;
+        this.tooltipSize = positionPopupForTooltip(popupSvc, {
+            ePopup,
+            pointer:
+                lastMouseEvent && (tracking || gos.get('tooltipAnchor') === 'pointer') ? lastMouseEvent : undefined,
+            position: this.tooltipPosition,
+            gap: typeof offset === 'number' && Number.isFinite(offset) && offset >= 0 ? offset : 6,
+            enableRtl: !!gos.get('enableRtl'),
+            getSourceRect: () => this.getTooltipSourceRect(eventSource),
+            postProcessCallback: (position) =>
+                popupSvc.callPostProcessPopup(
+                    this.getPopupPositionParams(position, params),
+                    'tooltip',
+                    ePopup,
+                    eventSource,
+                    lastMouseEvent
+                ),
+        });
+    }
+
+    private destroyTooltipComp(immediate = false): void {
         const comp = this.tooltipComp!;
         const gui = comp.getGui();
         const destroyPopup = this.tooltipPopupDestroyFunc;
         gui.classList.add('ag-tooltip-hiding');
         _setAriaHidden(gui, true);
-        const delay = this.lastMouseEvent ? FADE_OUT_TOOLTIP_TIMEOUT : 0;
+        const delay = !immediate && this.lastMouseEvent ? FADE_OUT_TOOLTIP_TIMEOUT : 0;
+        if (immediate) {
+            gui.style.display = 'none';
+        }
         window.setTimeout(() => {
             destroyPopup?.();
             this.destroyBean(comp);
         }, delay);
         this.tooltipComp = undefined;
+        this.tooltipParams = undefined;
+        this.tooltipSize = undefined;
         this.tooltipPopupDestroyFunc = undefined;
     }
 

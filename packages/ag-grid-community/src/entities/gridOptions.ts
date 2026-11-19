@@ -213,7 +213,12 @@ import type {
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
-import type { ITooltipParams } from '../tooltip/tooltipComponent';
+import type {
+    TooltipCallbackParams,
+    TooltipContentParams,
+    TooltipPosition,
+    TooltipPositionCallback,
+} from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     CheckboxSelectionCallback,
@@ -297,12 +302,33 @@ export interface GridOptions<TData = any> {
      */
     tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     /**
+     * Preferred tooltip placement. Flips or shifts to stay within the available space.
+     * Return `undefined` from the callback to use the default placement, `top-start`.
+     * Does not apply to browser tooltips.
+     * @agModule `TooltipModule`
+     */
+    tooltipPosition?: TooltipPosition | TooltipPositionCallback<TData>;
+    /**
+     * Anchor for hover tooltips. Focus tooltips always use the target; mouse tracking uses the pointer.
+     * Does not apply to browser tooltips.
+     * @default 'target'
+     * @agModule `TooltipModule`
+     */
+    tooltipAnchor?: 'target' | 'pointer';
+    /**
+     * Distance in pixels between the tooltip and its anchor, along the placement axis.
+     * Does not apply to browser tooltips.
+     * @default 6
+     * @agModule `TooltipModule`
+     */
+    tooltipOffset?: number;
+    /**
      * Provides a plain-text accessible description, available on focus before the visual tooltip appears.
      * Use this for custom tooltips whose resolved `params.value` is structured data.
      * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
      * @agModule `TooltipModule`
      */
-    getTooltipAriaDescription?: (params: ITooltipParams<TData>) => string | null | undefined;
+    getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined;
     /**
      * The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
@@ -343,11 +369,13 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
      * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+     * A callback receives the source parameters and decides separately each time a tooltip opens.
+     * Does not apply to browser tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
-    tooltipInteraction?: boolean;
+    tooltipInteraction?: boolean | ((params: TooltipCallbackParams<TData>) => boolean);
     /**
      * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */

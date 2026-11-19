@@ -216,11 +216,12 @@ export interface CustomLoadingCellRendererProps<TData = any, TContext = any> ext
 > {}
 
 /** Props provided to custom tooltip components */
-export interface CustomTooltipProps<TData = any, TValue = any, TContext = any> extends ITooltipParams<
-    TData,
-    TValue,
-    TContext
-> {}
+export interface CustomTooltipProps<
+    TData = any,
+    TValue = any,
+    TContext = any,
+    TTooltipValue = TValue,
+> extends ITooltipParams<TData, TValue, TContext, TTooltipValue> {}
 
 // *** Callbacks ***
 

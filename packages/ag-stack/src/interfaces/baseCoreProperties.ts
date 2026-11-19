@@ -18,7 +18,9 @@ export interface BaseCoreProperties {
     tooltipSwitchShowDelay?: number;
     tooltipHideDelay?: number;
     tooltipMouseTrack?: boolean;
-    tooltipInteraction?: boolean;
+    tooltipAnchor?: 'target' | 'pointer';
+    tooltipOffset?: number;
+    tooltipInteraction?: boolean | ((params: any) => boolean);
     suppressTouch?: boolean;
     suppressInputClearButton?: boolean;
     enableInputAutoComplete?: boolean;

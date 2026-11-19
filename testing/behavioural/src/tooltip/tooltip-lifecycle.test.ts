@@ -48,6 +48,29 @@ describe('Tooltip lifecycle', () => {
     const leave = (element: HTMLElement) => element.dispatchEvent(new MouseEvent('mouseleave'));
     const visibleText = () => getVisibleTooltips().map((element) => element.textContent);
 
+    test.each(['hover', 'focus', 'hoverOrFocus'] as const)(
+        '%s tooltips describe the source without changing its accessible name',
+        async (tooltipTrigger) => {
+            const { first } = await createGrid({
+                columnDefs: [{ field: 'value', tooltip: () => 'Tooltip for First' }],
+                tooltipTrigger,
+            });
+            if (tooltipTrigger === 'hover') {
+                enter(first);
+            } else {
+                first.focus();
+            }
+            await vi.advanceTimersByTimeAsync(0);
+
+            const tooltip = getVisibleTooltips()[0];
+            expect(tooltip).toHaveAttribute('role', 'tooltip');
+            expect(tooltip).toHaveAccessibleName('Tooltip for First');
+            expect(first).toHaveAccessibleName('First');
+            expect(first).toHaveAccessibleDescription('Tooltip for First');
+            expect(first).not.toHaveAttribute('aria-owns');
+        }
+    );
+
     test('invalid triggers fall back to hover without a focus description', async () => {
         enableDevValidations({ throwOn: [] });
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -482,6 +505,57 @@ describe('Tooltip lifecycle', () => {
         await vi.advanceTimersByTimeAsync(100);
         expect(visibleText()).toEqual([]);
         expect(destroy).toHaveBeenCalledTimes(1);
+    });
+
+    test.each([false, true])('rechecks visibility after async tooltip creation (clipped: %s)', async (clipped) => {
+        let finishInit: () => void;
+        const destroy = vi.fn();
+        const postProcessPopup = vi.fn();
+        class DelayedTooltip implements ITooltipComp {
+            private readonly gui = document.createElement('div');
+            public init(params: ITooltipParams): AgPromise<void> {
+                this.gui.textContent = String(params.value);
+                return new AgPromise((resolve) => {
+                    finishInit = resolve;
+                });
+            }
+            public getGui(): HTMLElement {
+                return this.gui;
+            }
+            public destroy = destroy;
+        }
+        const { api, first } = await createGrid({
+            columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: DelayedTooltip }],
+            tooltipTrigger: 'focus',
+            popupParent: document.body,
+            postProcessPopup,
+        });
+        const viewport = getGridElement(api) as HTMLElement;
+        viewport.style.overflowY = 'hidden';
+        vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 800, 300));
+        const sourceRect = vi.spyOn(first, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 100, 200, 40));
+        first.focus();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(finishInit!).toBeDefined();
+        expect(visibleText()).toEqual([]);
+
+        sourceRect.mockReturnValue(new DOMRect(0, clipped ? -100 : 80, 200, 40));
+        viewport.dispatchEvent(new Event('scroll'));
+        finishInit!();
+        expect(visibleText()).toEqual(clipped ? [] : ['First']);
+        expect(destroy).toHaveBeenCalledTimes(clipped ? 1 : 0);
+        expect(postProcessPopup).toHaveBeenCalledTimes(clipped ? 0 : 1);
+        expect(first).toHaveFocus();
+        expect(first).toHaveAccessibleDescription('First');
+
+        if (clipped) {
+            first.blur();
+            sourceRect.mockReturnValue(new DOMRect(0, 100, 200, 40));
+            first.focus();
+            await vi.advanceTimersByTimeAsync(0);
+            finishInit!();
+            expect(visibleText()).toEqual(['First']);
+        }
     });
 
     test.each(['hover', 'focus'] as const)('preserves the existing %s-only trigger', async (tooltipTrigger) => {
