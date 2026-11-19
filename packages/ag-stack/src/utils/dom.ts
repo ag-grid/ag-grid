@@ -348,8 +348,7 @@ function _isVerticalScrollShowing(element: HTMLElement): boolean {
     if (element.clientHeight >= element.scrollHeight) {
         return false;
     }
-    // At fractional zoom borders snap to whole device pixels, so a line box that exactly fits its container
-    // overflows by a fraction of a pixel and the rounded scroll metrics report it. Confirm from the content geometry.
+    // Fractional zoom snaps borders to device pixels, so rounded scroll metrics can report sub-pixel overflow.
     const range = element.ownerDocument.createRange();
     if (typeof range.getBoundingClientRect !== 'function') {
         return true;
@@ -359,8 +358,7 @@ function _isVerticalScrollShowing(element: HTMLElement): boolean {
     if (content.width === 0 && content.height === 0) {
         return false;
     }
-    // Overflow is clipped at the padding edge, so inset the border box by the borders. Computed lengths are in the
-    // element's own CSS pixels, which CSS zoom scales relative to the rects.
+    // Overflow clips at the padding edge; computed border widths are unzoomed CSS pixels, hence the scale.
     const box = element.getBoundingClientRect();
     const scale = element.offsetHeight ? box.height / element.offsetHeight : 1;
     const style = window.getComputedStyle(element);
