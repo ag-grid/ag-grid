@@ -441,6 +441,8 @@ describe('column header drag reorder', () => {
         const fieldsOf = (defs: (ColDef | ColGroupDef)[]): string[] =>
             defs.flatMap((def) => ('children' in def ? fieldsOf(def.children) : [def.field!]));
 
+        const groupHeader = '.ag-header-group-cell[col-id^="g_"]';
+
         // Runs `act` on a grid whose definitions changed in place (same groupId), then on a fresh grid made with them.
         async function onKeptAndFresh<T>(
             options: GridOptions,
@@ -450,6 +452,7 @@ describe('column header drag reorder', () => {
         ): Promise<{ kept: T; fresh: T }> {
             const fields = fieldsOf(after).sort();
             const keptApi = await gridsManager.createGridAndWait('myGrid', { ...options, columnDefs: before, rowData });
+            const groupHeaderBefore = el(keptApi, groupHeader);
             keptApi.setGridOption('columnDefs', after);
             await waitFor(() => {
                 for (const field of fields) {
@@ -457,6 +460,7 @@ describe('column header drag reorder', () => {
                 }
                 expect(colOrder(keptApi).sort()).toEqual(fields);
             });
+            expect(el(keptApi, groupHeader)).toBe(groupHeaderBefore);
             const kept = await act(keptApi);
             gridsManager.reset();
 
@@ -464,8 +468,6 @@ describe('column header drag reorder', () => {
             const fresh = await act(freshApi);
             return { kept, fresh };
         }
-
-        const groupHeader = '.ag-header-group-cell[col-id^="g_"]';
 
         const dragGroup = (fromClientX: number, toClientX: number) => async (api: GridApi) => {
             const before = colOrder(api);

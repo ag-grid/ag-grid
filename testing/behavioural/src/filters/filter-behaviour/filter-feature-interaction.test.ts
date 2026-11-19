@@ -413,13 +413,18 @@ describe('Filter + feature interaction', () => {
         await asyncSetTimeout(0);
         const afterEqual = modelUpdated;
 
-        api.setGridOption('autoGroupColumnDef', { ...autoGroupColumnDef(), headerName: 'Tree' });
+        // The positive control: a changed definition that re-sorts the rows is counted in the same window.
+        api.setGridOption('autoGroupColumnDef', { ...autoGroupColumnDef(), headerName: 'Tree', sort: 'desc' });
         await asyncSetTimeout(0);
+        const rowOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => rowOrder.push(node.id!));
 
         expect({
             afterEqual,
+            afterChanged: modelUpdated > 0,
+            rowOrder,
             header: api.getDisplayNameForColumn(api.getColumn('ag-Grid-AutoColumn')!, 'header'),
-        }).toEqual({ afterEqual: 0, header: 'Tree' });
+        }).toEqual({ afterEqual: 0, afterChanged: true, rowOrder: ['D', 'A', 'B'], header: 'Tree' });
     });
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
