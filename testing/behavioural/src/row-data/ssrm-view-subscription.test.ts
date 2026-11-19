@@ -1264,6 +1264,25 @@ describe('SSRM viewSubscription', () => {
                 []
             );
         });
+
+        test('a group row stays subscribed while its total row is in view after the group row scrolls out', async () => {
+            // Without sticky group rows, Spain's group row leaves the view while its total row is still shown.
+            const api = createGroupedGrid({ groupTotalRow: 'bottom', suppressGroupRowsSticky: true });
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.ids()).toContain('Spain');
+
+            const spainTotalRow = api.getRowNode('Spain')!.sibling!;
+            api.ensureIndexVisible(spainTotalRow.rowIndex!, 'bottom');
+
+            await waitFor(() => expect(recorder.ids()).toContain('Spain/Spain-9'));
+            expect(recorder.ids()).not.toContain('Ireland');
+            expect(recorder.ids()).toContain('Spain');
+            expect(recorder.violations).toEqual([]);
+        });
     });
 
     describe('grand total row', () => {

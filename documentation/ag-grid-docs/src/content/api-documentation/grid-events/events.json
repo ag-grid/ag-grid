@@ -523,12 +523,7 @@
                 "url": "./grid-size/"
             }
         },
-        "virtualRowRemoved": {
-            "more": {
-                "name": "View Subscription",
-                "url": "./server-side-model-updating-view-subscription/"
-            }
-        },
+        "virtualRowRemoved": {},
         "viewportChanged": {},
         "bodyScroll": {},
         "bodyScrollEnd": {}
