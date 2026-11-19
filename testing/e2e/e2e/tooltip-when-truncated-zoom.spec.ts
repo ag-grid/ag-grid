@@ -10,7 +10,7 @@ const mountZoomedGrid = (page: Page, zoom: number) =>
         css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }`,
         options: () => ({
             columnDefs: [
-                { field: 'athlete', tooltipField: 'athlete', width: 130 },
+                { field: 'athlete', tooltipField: 'athlete', width: 180 },
                 { field: 'country', tooltipField: 'country', width: 100 },
                 { field: 'notes', tooltipField: 'notes', width: 200, cellClass: 'multiline-cell' },
                 { field: 'wrapped', tooltipField: 'wrapped', width: 200, wrapText: true },
