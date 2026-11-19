@@ -38,7 +38,7 @@ import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 import type { RowsInViewAnchor } from './rowsInViewAnchor';
-import { _captureRowsInView, _correctRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
+import { _captureRowsInView, _captureWithLoadedRows, _correctRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -789,20 +789,25 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
         // the focused cell and cell ranges follow their rows wherever the viewport is
-        const rowsInView = {
+        this.rowsInView = _captureWithLoadedRows(beans, () => ({
             anchor: printLayout ? null : _captureRowsInView(beans),
             followFocus: this.focusSvc.followFocusedRow(),
             followRanges: beans.rangeSvc?.followCellRanges(),
-        };
-        this.rowsInView = rowsInView;
+        }));
         this.rowsInViewAnchorForHeights = null;
-        // the update redraws in the same task, so a capture left after it is from an update that threw before its
-        // redraw, and a later redraw must not restore it
-        void Promise.resolve().then(() => {
-            if (this.rowsInView === rowsInView) {
-                this.rowsInView = null;
-            }
-        });
+    }
+
+    /**
+     * Runs a data update that captures the rows in view, dropping its capture if it throws before its redraw, so a
+     * later redraw does not restore it.
+     */
+    public discardRowsInViewOnThrow<T>(update: () => T): T {
+        try {
+            return update();
+        } catch (e) {
+            this.rowsInView = null;
+            throw e;
+        }
     }
 
     /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */

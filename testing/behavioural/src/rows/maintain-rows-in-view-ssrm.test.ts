@@ -12,7 +12,12 @@ import {
     RowAutoHeightModule,
     ScrollApiModule,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    MasterDetailModule,
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 interface Row {
     id: string;
@@ -34,6 +39,7 @@ describe('maintaining rows in view with the server-side row model', () => {
             ClientSideRowModelApiModule,
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
+            MasterDetailModule,
             ScrollApiModule,
             ExternalFilterModule,
             PaginationModule,
@@ -121,6 +127,34 @@ describe('maintaining rows in view with the server-side row model', () => {
             api.applyServerSideTransaction({ add: createRows('new', 3), addIndex: 0 });
 
             expect(api.getFocusedCell()?.rowIndex).toBe(58);
+        });
+
+        test('keeps the view inside an expanded detail row taller than it when rows are added above', async () => {
+            const rowData = createRows('r', 60);
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'value' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                rowHeight: ROW_HEIGHT,
+                masterDetail: true,
+                detailRowHeight: SCROLL_TOP * 10,
+                detailCellRenderer: () => 'detail',
+                serverSideDatasource: {
+                    getRows: ({ request, success }) =>
+                        success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            api.getRowNode('r1')!.setExpanded(true);
+            await waitForNoLoadingRows(api);
+            // deep inside the detail row of r1, so no other row is within a viewport height of the view
+            const scrollTop = 2 * ROW_HEIGHT + SCROLL_TOP * 5;
+            scrollTo(api, scrollTop);
+
+            api.applyServerSideTransaction({ add: createRows('new', 3), addIndex: 0 });
+
+            expect(getViewport(api).scrollTop).toBe(scrollTop + 3 * ROW_HEIGHT);
         });
 
         test('keeps rows in view when a transaction removes rows above them', async () => {

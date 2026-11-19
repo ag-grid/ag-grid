@@ -80,12 +80,48 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     };
 }
 
+/** The loaded server-side rows by index, read once for each capture of the rows in view. */
+let capturedRows: { beans: BeanCollection; byIndex?: Map<number, RowNode> } | null = null;
+
+/**
+ * Runs a capture of the rows in view, focus and cell ranges, during which the loaded server-side rows are walked at
+ * most once, however many rows it looks up.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _captureWithLoadedRows<T>(beans: BeanCollection, capture: () => T): T {
+    const outer = capturedRows;
+    capturedRows = { beans };
+    try {
+        return capture();
+    } finally {
+        capturedRows = outer;
+    }
+}
+
+/** The displayed loaded server-side rows by index, expanded detail rows included. */
+function getLoadedRowsByIndex(rowModel: BeanCollection['rowModel']): Map<number, RowNode> {
+    const byIndex = new Map<number, RowNode>();
+    const add = (rowNode: RowNode | undefined) => {
+        if (rowNode?.rowIndex != null) {
+            byIndex.set(rowNode.rowIndex, rowNode);
+        }
+    };
+    rowModel.forEachDisplayedNode?.((rowNode) => {
+        add(rowNode);
+        if (rowNode.master && rowNode.expanded) {
+            add(rowNode.detailNode);
+        }
+    });
+    return byIndex;
+}
+
 /**
  * In display order, the loaded rows from the first index to the last. The client-side row model reads them by index.
  * The server-side row model creates the rows it reads by index that are not loaded, and finds one by index by scanning
- * its loaded rows, so its loaded rows are walked once instead.
+ * its loaded rows, so its loaded rows are walked instead, once for each capture.
  */
-function getLoadedRows({ gos, rowModel }: BeanCollection, first: number, last: number): RowNode[] {
+function getLoadedRows(beans: BeanCollection, first: number, last: number): RowNode[] {
+    const { gos, rowModel } = beans;
     const rows: RowNode[] = [];
     if (_isClientSideRowModel(gos)) {
         for (let i = first; i <= last; ++i) {
@@ -96,13 +132,19 @@ function getLoadedRows({ gos, rowModel }: BeanCollection, first: number, last: n
         }
         return rows;
     }
-    rowModel.forEachDisplayedNode?.((rowNode) => {
-        const { rowIndex } = rowNode;
-        if (rowIndex != null && rowIndex >= first && rowIndex <= last) {
+    let byIndex: Map<number, RowNode>;
+    if (capturedRows?.beans === beans) {
+        byIndex = capturedRows.byIndex ??= getLoadedRowsByIndex(rowModel);
+    } else {
+        byIndex = getLoadedRowsByIndex(rowModel);
+    }
+    for (let i = first; i <= last; ++i) {
+        const rowNode = byIndex.get(i);
+        if (rowNode) {
             rows.push(rowNode);
         }
-    });
-    return rows.sort((a, b) => a.rowIndex! - b.rowIndex!);
+    }
+    return rows;
 }
 
 const isPositioned = (rowNode: RowNode): boolean =>

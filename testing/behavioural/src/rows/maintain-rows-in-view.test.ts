@@ -87,7 +87,7 @@ describe('maintaining rows in view', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP * 2);
         });
 
-        test('an update that throws before its redraw does not restore its rows in view in a later redraw', async () => {
+        test('an update that throws before its redraw does not restore its rows in view in a later redraw', () => {
             let throwOnSort = false;
             const api = createGrid({
                 columnDefs: [{ field: 'value', sort: 'asc' }],
@@ -103,7 +103,6 @@ describe('maintaining rows in view', () => {
                 'postSortRows failed'
             );
             throwOnSort = false;
-            await Promise.resolve();
 
             scrollTo(api, SCROLL_TOP * 2);
             api.refreshClientSideRowModel('sort');
