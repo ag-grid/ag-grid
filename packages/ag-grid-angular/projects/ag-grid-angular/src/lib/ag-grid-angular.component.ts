@@ -513,7 +513,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getTooltipAriaDescription:
         ((params: TooltipContentParams<TData>) => string | null | undefined) | undefined = undefined;
     /** The delay in milliseconds before a tooltip shows on hover or focus.
-     * Filter Apply-button validation and Advanced Filter validation tooltips use a fixed 1000ms delay instead.
+     * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+     * Pointer switching uses `tooltipSwitchShowDelay` instead.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`

@@ -363,16 +363,16 @@ export abstract class BaseTooltipStateManager<
                 this.disconnectAriaDescription();
             }
         }
-        if (this.showEventDispatched) {
-            this.showEventDispatched = false;
-            this.eventSvc.dispatchEvent({ type: 'tooltipHide', parentGui: this.tooltipCtrl.getGui() });
-        }
         window.clearTimeout(this.showTimeout);
         window.clearTimeout(this.hideTimeout);
         this.showTimeout = this.hideTimeout = undefined;
         this.state = TooltipStates.WAITING_TO_SHOW;
         this.revalidatePointerOnShow = true;
         this.scrollResumeDelay = resumeDelay;
+        if (this.showEventDispatched) {
+            this.showEventDispatched = false;
+            this.eventSvc.dispatchEvent({ type: 'tooltipHide', parentGui: this.tooltipCtrl.getGui() });
+        }
     }
 
     /** Scrolling moves the source under a stationary pointer, so a scroll-deferred attempt re-checks the landing. */
