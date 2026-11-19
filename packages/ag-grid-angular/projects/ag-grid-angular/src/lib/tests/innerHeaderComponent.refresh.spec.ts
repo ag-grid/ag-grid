@@ -1,0 +1,143 @@
+/*
+ * Issue: an Angular `innerHeaderComponent` never has its `refresh` method called when the column
+ * definitions change, so it keeps showing the old header name. The default header calls
+ * `innerHeaderComponent.refresh?.(params)`, but the Angular component wrapper only proxies the
+ * "optional methods" listed for the component type, and `innerHeaderComponent` (and
+ * `innerHeaderGroupComponent`) list none, unlike `headerComponent` which lists `refresh`.
+ *
+ * Setup: a column with `headerComponentParams.innerHeaderComponent` set to an Angular component
+ * implementing `IInnerHeaderAngularComp`, plus a minimal header `template` (see below). The host's
+ * `columnDefs` input is then replaced with one that has a new `headerName`.
+ *
+ * Expected: IHeader.refresh is documented as "Get the header to refresh. Gets called whenever Column
+ * Defs are updated.", so `refresh` is called with the new params and the displayed name updates. A
+ * plain JavaScript inner header component behaves this way (control below).
+ *
+ * Actual: `refresh` is never called on the Angular inner header component.
+ *
+ * Reported on ag-grid-angular 34.3.1 and 35.0.0.
+ *
+ * Source: AG Grid docs MCP search log analysis (AG-18665). Coding agents on Angular searched twice:
+ * on 35.0.0 in February 2026 and on 34.3.1 in May 2026 (the latter: "inner header component refresh
+ * when columnDefs change innerHeaderComponent").
+ */
+import { Component } from '@angular/core';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
+import type { ColDef, IHeaderParams, Module } from 'ag-grid-community';
+import { AllCommunityModule } from 'ag-grid-community';
+
+import { AgGridAngular } from '../ag-grid-angular.component';
+import type { IInnerHeaderAngularComp } from '../interfaces';
+
+let angularRefreshedWith: string[] = [];
+let jsRefreshedWith: string[] = [];
+
+@Component({
+    standalone: true,
+    template: `<span class="ng-inner-header">{{ displayName }}</span>`,
+})
+class NgInnerHeader implements IInnerHeaderAngularComp {
+    displayName = '';
+
+    agInit(params: IHeaderParams): void {
+        this.displayName = params.displayName;
+    }
+
+    refresh(params: IHeaderParams): boolean {
+        angularRefreshedWith.push(params.displayName);
+        this.displayName = params.displayName;
+        return true;
+    }
+}
+
+class JsInnerHeader {
+    private eGui = document.createElement('span');
+
+    init(params: IHeaderParams): void {
+        this.eGui.className = 'js-inner-header';
+        this.eGui.textContent = params.displayName;
+    }
+
+    getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    refresh(params: IHeaderParams): boolean {
+        jsRefreshedWith.push(params.displayName);
+        this.eGui.textContent = params.displayName;
+        return true;
+    }
+}
+
+@Component({
+    selector: 'app-grid-wrapper',
+    imports: [AgGridAngular],
+    template: `<ag-grid-angular [rowData]="rowData" [columnDefs]="columnDefs" [modules]="modules"></ag-grid-angular>`,
+})
+class TestHostComponent {
+    modules: Module[] = [AllCommunityModule];
+    rowData = [{ a: 1, b: 2 }];
+    columnDefs: ColDef[] = columnDefs('A', 'B');
+}
+
+// A minimal header template. We need to supply this because of a separate bug
+// default-header-inner-header-component-not-refreshed.test.ts where not supplying a template causes
+// the component to always rebuild and never refresh.
+const template = `<div><span data-ref="eMenu"></span><span data-ref="eText"></span></div>`;
+
+function columnDefs(ngHeaderName: string, jsHeaderName: string): ColDef[] {
+    return [
+        {
+            field: 'a',
+            headerName: ngHeaderName,
+            headerComponentParams: { innerHeaderComponent: NgInnerHeader, template },
+        },
+        {
+            field: 'b',
+            headerName: jsHeaderName,
+            headerComponentParams: { innerHeaderComponent: JsInnerHeader, template },
+        },
+    ];
+}
+
+async function waitFor(fixture: ComponentFixture<unknown>, condition: () => boolean): Promise<void> {
+    for (let i = 0; i < 50 && !condition(); i++) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        await fixture.whenStable();
+    }
+}
+
+// TODO: disabled due to AG-19211 - re-enable once fixed
+xdescribe('innerHeaderComponent refresh', () => {
+    let fixture: ComponentFixture<TestHostComponent>;
+    const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent;
+
+    beforeEach(async () => {
+        angularRefreshedWith = [];
+        jsRefreshedWith = [];
+        await TestBed.configureTestingModule({ imports: [TestHostComponent] }).compileComponents();
+        fixture = TestBed.createComponent(TestHostComponent);
+        fixture.autoDetectChanges();
+        await waitFor(fixture, () => text('.ng-inner-header') === 'A' && text('.js-inner-header') === 'B');
+    });
+
+    it('calls refresh on an Angular inner header component when column definitions change', async () => {
+        fixture.componentInstance.columnDefs = columnDefs('A2', 'B');
+        fixture.detectChanges();
+        await waitFor(fixture, () => angularRefreshedWith.length > 0);
+
+        expect(angularRefreshedWith).toEqual(['A2']);
+        expect(text('.ng-inner-header')).toBe('A2');
+    });
+
+    it('control: calls refresh on a plain JavaScript inner header component', async () => {
+        fixture.componentInstance.columnDefs = columnDefs('A', 'B2');
+        fixture.detectChanges();
+        await waitFor(fixture, () => jsRefreshedWith.length > 0);
+
+        expect(jsRefreshedWith).toEqual(['B2']);
+        expect(text('.js-inner-header')).toBe('B2');
+    });
+});
