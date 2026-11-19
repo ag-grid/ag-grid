@@ -4,6 +4,7 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     PinnedRowModule,
     RowApiModule,
@@ -25,7 +26,14 @@ interface OrderRow {
 
 describe('ensureDomOrder', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, PinnedRowModule, RowApiModule, ScrollApiModule, TextEditorModule],
+        modules: [
+            ClientSideRowModelApiModule,
+            ClientSideRowModelModule,
+            PinnedRowModule,
+            RowApiModule,
+            ScrollApiModule,
+            TextEditorModule,
+        ],
     });
 
     afterEach(() => {
@@ -157,6 +165,53 @@ describe('ensureDomOrder', () => {
             );
         });
     });
+
+    test.each([true, false])(
+        'a transaction removing and adding rows leaves the rows it keeps in place (ensureDomOrder %s)',
+        async (ensureDomOrder) => {
+            const api = createGrid(gridsManager, ensureDomOrder, {
+                columnDefs: [{ field: 'value' }],
+                rowData: Array.from({ length: 10 }, (_, i) => ({ id: `r${i}`, value: i })),
+            });
+            await asyncSetTimeout(0);
+
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const rowsBefore = getRowsById(root);
+            const removedRows = new Set<Node>();
+            const observer = new MutationObserver((records) => {
+                for (const record of records) {
+                    for (const node of record.removedNodes) {
+                        removedRows.add(node);
+                    }
+                }
+            });
+            observer.observe(root, { childList: true, subtree: true });
+
+            api.applyTransaction({
+                remove: [{ id: 'r2' }, { id: 'r3' }],
+                add: [{ id: 'n1', value: 100 }],
+                addIndex: 4,
+            });
+            await asyncSetTimeout(0);
+            for (const record of observer.takeRecords()) {
+                for (const node of record.removedNodes) {
+                    removedRows.add(node);
+                }
+            }
+            observer.disconnect();
+
+            const rowsAfter = getRowsById(root);
+            const keptIds = Array.from(rowsBefore.keys()).filter((id) => rowsAfter.has(id));
+            expect(keptIds).toEqual(['r0', 'r1', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9']);
+            const movedOrRecreated = keptIds.filter(
+                (id) => rowsAfter.get(id) !== rowsBefore.get(id) || removedRows.has(rowsBefore.get(id)!)
+            );
+            expect(movedOrRecreated).toEqual([]);
+            if (ensureDomOrder) {
+                expect(getScrollableRowIds(api)).toEqual(getDisplayedRowIds(api));
+            }
+        }
+    );
 
     test('keeps cell DOM order aligned with displayed order when enabled', async () => {
         const api = createCellOrderGrid(gridsManager, true);
