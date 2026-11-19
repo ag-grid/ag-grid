@@ -73,6 +73,50 @@
             "description": "Background color of selected rows in the grid and in dropdown menus",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
+        "--ag-selected-row-text-color": {
+            "description": "Colour of text in selected rows. When not set, selected rows keep their normal text colour",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-range-selection-border-color": {
+            "description": "Colour to draw around selected cell ranges and the focused cell within selected rows. Defaults to `--ag-range-selection-border-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-drag-indicator-color": {
+            "description": "Colour of the row drag indicator line within selected rows. Defaults to `--ag-row-drag-indicator-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-drag-handle-color": {
+            "description": "Colour of the row drag handle within selected rows. Defaults to `--ag-secondary-foreground-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-note-indicator-color": {
+            "description": "Colour of the indicator on cells with notes within selected rows. Defaults to `--ag-note-indicator-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-value-change-delta-up-color": {
+            "description": "Colour applied to increasing values in selected rows when using the `agAnimateShowChangeCellRenderer`. Defaults to `--ag-value-change-delta-up-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-value-change-delta-down-color": {
+            "description": "Colour applied to decreasing values in selected rows when using the `agAnimateShowChangeCellRenderer`. Defaults to `--ag-value-change-delta-down-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-checkbox-background-color": {
+            "description": "Background colour of checkboxes within selected rows. Defaults to `--ag-checkbox-background-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-checkbox-checked-color": {
+            "description": "Colour of checked checkboxes within selected rows. Defaults to `--ag-checkbox-checked-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-checkbox-unchecked-color": {
+            "description": "Colour of unchecked checkboxes within selected rows. Defaults to `--ag-checkbox-unchecked-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-selected-row-checkbox-indeterminate-color": {
+            "description": "Colour of indeterminate checkboxes within selected rows. Defaults to `--ag-checkbox-indeterminate-color`",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-data-background-color": {
             "description": "Background colour applied to rows",
             "type": "CSS color (e.g. `red` or `#fff`)"
