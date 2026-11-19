@@ -832,7 +832,7 @@ describe('Column API', () => {
                 const api = createAbcd('invalid-index');
                 const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
                 try {
-                    api.moveColumns(['b', 'missing'], 4);
+                    api.moveColumns(['b', 'c'], 3);
 
                     expect(warnSpy.mock.calls.map((call) => call[0])).toEqual(['AG Grid: warning #30']);
                     expect(allColIds(api)).toEqual(['a', 'b', 'c', 'd']);
