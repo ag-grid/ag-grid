@@ -156,6 +156,14 @@ export class RowContainerComp extends Component {
             drawn.push(rowCtrl);
         }
 
+        // Detached before placing so the kept rows are already in order: a moved row loses the pointer's hover.
+        for (let i = 0, len = prevRowCtrls.length; i < len; ++i) {
+            const rowComp = prevRowCtrls[i].drawnRowComp;
+            if (rowComp !== undefined && rowComp.drawnInPass < pass) {
+                rowComp.getGui().remove();
+            }
+        }
+
         if (rowsToPlace !== null) {
             for (let i = 0, len = rowsToPlace.length; i < len; ++i) {
                 const eGui = rowsToPlace[i].getGui();
@@ -173,7 +181,6 @@ export class RowContainerComp extends Component {
             const rowComp = rowCtrl.drawnRowComp;
             if (rowComp !== undefined && rowComp.drawnInPass < pass) {
                 rowCtrl.drawnRowComp = undefined;
-                rowComp.getGui().remove();
                 rowComp.destroy();
             }
         }
