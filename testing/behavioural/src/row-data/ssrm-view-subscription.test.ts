@@ -1129,6 +1129,24 @@ describe('SSRM viewSubscription', () => {
             });
         }
 
+        test('a row covered by a sticky group row is not subscribed', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+
+            // Scrolling to the top of Spain-3 leaves room for Spain's sticky row, which covers Spain-2.
+            api.ensureIndexVisible(api.getRowNode('Spain/Spain-3')!.rowIndex!, 'top');
+
+            await waitFor(() => expect(recorder.ids()).not.toContain('Ireland'));
+            expect(recorder.ids()).toContain('Spain');
+            expect(recorder.ids()).toContain('Spain/Spain-3');
+            expect(recorder.ids()).not.toContain('Spain/Spain-2');
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('group rows carry their route; leaf rows carry only parentKeys', async () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
