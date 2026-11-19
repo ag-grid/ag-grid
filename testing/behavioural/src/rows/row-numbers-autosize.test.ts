@@ -9,7 +9,7 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     getGridElement,
 } from 'ag-grid-community';
-import { RowNumbersModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
     id: string;
@@ -24,7 +24,7 @@ const makeRows = (count: number, start = 0): RowData[] =>
 
 describe('Row numbers column autosize', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ExternalFilterModule, RowNumbersModule],
+        modules: [ClientSideRowModelModule, ExternalFilterModule, RowGroupingModule, RowNumbersModule],
     });
     let measure: MockInstance<(form: HTMLFormElement) => number>;
 
@@ -386,5 +386,43 @@ describe('Row numbers column autosize', () => {
 
         api.applyTransaction({ add: makeRows(1, 100) });
         await expectWidth(api, '102');
+    });
+
+    test('resetting column state fits the row numbers to the rows it leaves, as a new grid with that state does', async () => {
+        interface CountryRow {
+            id: string;
+            country: string;
+        }
+        const countries = ['Ireland', 'Spain', 'Italy'];
+        const options: GridOptions<CountryRow> = {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'id' }],
+            rowData: Array.from({ length: 1000 }, (_, i) => ({ id: String(i), country: countries[i % 3] })),
+            rowNumbers: true,
+            groupDefaultExpanded: 0,
+            getRowId: (params) => params.data.id,
+        };
+        const create = async (id: string) => {
+            const gridApi = gridMgr.createGrid(id, options);
+            await waitForEvent('firstDataRendered', gridApi);
+            await pastDebounce();
+            return gridApi;
+        };
+
+        const fresh = await create('fresh');
+        expect(fresh.getDisplayedRowCount()).toBe(3);
+        const freshWidth = rowNumberWidth(fresh);
+
+        const api = await create('reset');
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(rowNumberWidth(api)).toBe(freshWidth);
+
+        api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] });
+        await expectWidth(api, '1000');
+        expect(api.getDisplayedRowCount()).toBe(1000);
+
+        api.resetColumnState();
+        expect(api.getDisplayedRowCount()).toBe(3);
+
+        await waitFor(() => expect(rowNumberWidth(api)).toBe(freshWidth));
     });
 });

@@ -2203,7 +2203,23 @@ describe('the rows a column update refreshes', () => {
             refreshes,
             removedRows,
             displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
-        }).toEqual({ refreshes: [true], removedRows: 0, displayed: ['Ireland', 1] });
+            pivots: api.getPivotColumns().map((column) => column.getColId()),
+            pivotKeySports: [
+                ...new Set(
+                    api
+                        .getPivotResultColumns()!
+                        .map((column) => column.getColDef().pivotKeys!)
+                        .filter((keys) => keys.length === 2)
+                        .map((keys) => keys[1])
+                ),
+            ],
+        }).toEqual({
+            refreshes: [true],
+            removedRows: 0,
+            displayed: ['Ireland', 1],
+            pivots: ['year', 'sport'],
+            pivotKeySports: ['Rowing'],
+        });
     });
 
     test('onSortChanged after the row data was changed out of band sorts the displayed rows by the current sort, refreshing them once', async () => {

@@ -61,12 +61,14 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const pivots = () => pivotsOf(api);
         await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']));
         const countBeforeSort = getRowsCount();
+        const firstRow = api.getDisplayedRowAtIndex(0);
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         // The reorder is a pure column rebuild, so it animates synchronously.
         expect(document.querySelector('.ag-column-moving')).not.toBeNull();
 
         await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
+        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
         expect(getRowsCount()).toBe(countBeforeSort);
     });
 
@@ -77,6 +79,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         await waitFor(() => expect(pivotsOf(api)).toEqual(ascending));
         const countBeforeSort = getRowsCount();
+        const firstRow = api.getDisplayedRowAtIndex(0);
 
         api.setGridOption('columnDefs', [
             { field: 'country', rowGroup: true, hide: true },
@@ -86,6 +89,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         await waitFor(() => expect(pivotsOf(api)).toEqual([...ascending].reverse()));
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
         expect(getRowsCount()).toBe(countBeforeSort);
     });
 
@@ -99,6 +103,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await waitFor(() => expect(pivots()).toEqual(ascending));
         const rowCountBefore = api.getDisplayedRowCount();
         const countBeforeSort = getRowsCount();
+        const firstRow = api.getDisplayedRowAtIndex(0);
 
         const yearCol = api.getColumn('year') as any;
         const strategy = yearCol.beans.columnStateUpdateStrategy;
@@ -124,6 +129,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         expect(getRowsCount()).toBe(countBeforeSort);
         expect(api.getDisplayedRowCount()).toBe(rowCountBefore);
+        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
     });
 
     test('pivotComparator defines the ascending order and pivotSort desc reverses it', async () => {

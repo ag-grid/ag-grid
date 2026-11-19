@@ -238,15 +238,16 @@ describe('calculated columns - placement after row grouping is cleared and set a
         for (const maintainColumnOrder of [false, true]) {
             const move = await run('move', maintainColumnOrder);
             const state = await run('state', maintainColumnOrder);
+            const leaves = ['region', 'country', 'revenue', 'cost'];
+            const placed = (x1: string) => ({
+                afterCall: [x1, regionAuto, countryAuto, ...leaves],
+                regrouped: [regionAuto, countryAuto, x1, ...leaves],
+            });
             expect({
                 maintainColumnOrder,
-                firstAfterCall: { move: move.afterCall[0], state: state.afterCall[0] },
+                move: { afterCall: move.afterCall, regrouped: move.regrouped },
                 state: { afterCall: state.afterCall, regrouped: state.regrouped },
-            }).toEqual({
-                maintainColumnOrder,
-                firstAfterCall: { move: move.x1, state: state.x1 },
-                state: { afterCall: move.afterCall, regrouped: move.regrouped },
-            });
+            }).toEqual({ maintainColumnOrder, move: placed(move.x1), state: placed(state.x1) });
         }
     });
 });

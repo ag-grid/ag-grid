@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -382,6 +382,38 @@ describe('Filter + feature interaction', () => {
         });
     });
 
+    test('an autoGroupColumnDef equal to the current one, passed as a new object, refreshes nothing', async () => {
+        const comparator = (_a: unknown, _b: unknown, nodeA: IRowNode, nodeB: IRowNode) =>
+            String(nodeA.data.n).localeCompare(String(nodeB.data.n));
+        const autoGroupColumnDef = () => ({
+            headerName: 'Group',
+            filter: 'agTextColumnFilter',
+            filterParams: { caseSensitive: true },
+            comparator,
+        });
+        let modelUpdated = 0;
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'n' }],
+            autoGroupColumnDef: autoGroupColumnDef(),
+            treeData: true,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { id: 'A', n: 'A' },
+                { id: 'B', parentId: 'A', n: 'B' },
+                { id: 'D', n: 'D' },
+            ],
+            getRowId: (params) => params.data.id,
+            treeDataParentIdField: 'parentId',
+            onModelUpdated: () => ++modelUpdated,
+        });
+        await asyncSetTimeout(0);
+
+        modelUpdated = 0;
+        api.setGridOption('autoGroupColumnDef', autoGroupColumnDef());
+        await asyncSetTimeout(0);
+
+        expect(modelUpdated).toBe(0);
+    });
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],

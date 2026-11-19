@@ -934,10 +934,19 @@ describe('Column Mutations', () => {
             });
             api.setRowGroupColumns([year]);
             const before = ids(api.getRowGroupColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
 
-            expect({ before, after: ids(api.getRowGroupColumns()) }).toEqual({ before: [year], after: [year] });
+            expect({
+                before,
+                after: ids(api.getRowGroupColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+            });
         });
 
         test('a rebuild keeps a level the user pivoted alone under a source that is not pivoted', () => {
@@ -952,10 +961,19 @@ describe('Column Mutations', () => {
             });
             api.setPivotColumns([year]);
             const before = ids(api.getPivotColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
 
             rebuild(api);
 
-            expect({ before, after: ids(api.getPivotColumns()) }).toEqual({ before: [year], after: [year] });
+            expect({
+                before,
+                after: ids(api.getPivotColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+            });
         });
     });
 
