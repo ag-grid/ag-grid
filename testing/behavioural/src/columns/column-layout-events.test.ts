@@ -2551,7 +2551,7 @@ describe('the column events of an updateGridOptions call changing column options
     test('one update changing rowData before autoGroupColumnDef refreshes the rows before columnEverythingChanged', async () => {
         const api = createGroupedGrid();
         await settle();
-        // Each event with the top-level group keys displayed when it arrives.
+        // The top-level group keys each event's listener sees; grid listeners all run after the update call returns.
         const heard: string[] = [];
         const topGroupKeys = () => {
             const keys: string[] = [];

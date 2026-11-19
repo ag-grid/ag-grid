@@ -492,6 +492,7 @@ describe('Filter + feature interaction', () => {
             await asyncSetTimeout(0);
             expect(groups(api)).toEqual(['C', 'B', 'A']);
 
+            // Latest keeps the groups in the comparator's order once it is removed: only the kept sort is pinned.
             api.setGridOption('autoGroupColumnDef', {});
             await asyncSetTimeout(0);
             expect(api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
