@@ -2130,6 +2130,17 @@ describe('the rows a column update refreshes', () => {
         });
     });
 
+    test('a columnDefs update reversing the pivot sort reverses the pivot result columns, refreshing the rows once', async () => {
+        const { order, displayed } = await reversePivotSort((api) =>
+            api.setGridOption('columnDefs', pivotColumnDefs({ field: 'year', pivot: true, pivotSort: 'desc' }))
+        );
+
+        expect({ refreshes: order.filter((type) => type === 'modelUpdated').length, displayed }).toEqual({
+            refreshes: 1,
+            displayed: ['2012', '2008', '2004', '2000'],
+        });
+    });
+
     const columnEvents = [
         'columnMoved',
         'columnsReset',

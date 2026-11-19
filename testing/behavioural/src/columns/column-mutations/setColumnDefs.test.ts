@@ -2379,12 +2379,14 @@ describe('Column Mutations', () => {
     describe('setColumnDefs: stateful colDef attrs still apply on update (BC)', () => {
         test('a columnDefs update moving a column width bound past its width brings the width within it', () => {
             const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }, { field: 'b', width: 300 }],
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
             });
+            api.setColumnWidths([{ key: 'b', newWidth: 300 }]);
+            expect(api.getColumn('b')!.getActualWidth()).toBe(300);
 
             api.setGridOption('columnDefs', [
                 { field: 'a', minWidth: 250 },
-                { field: 'b', width: 300, maxWidth: 220 },
+                { field: 'b', maxWidth: 220 },
             ]);
 
             expect([api.getColumn('a')!.getActualWidth(), api.getColumn('b')!.getActualWidth()]).toEqual([250, 220]);

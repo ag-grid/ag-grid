@@ -411,8 +411,15 @@ describe('Filter + feature interaction', () => {
         modelUpdated = 0;
         api.setGridOption('autoGroupColumnDef', autoGroupColumnDef());
         await asyncSetTimeout(0);
+        const afterEqual = modelUpdated;
 
-        expect(modelUpdated).toBe(0);
+        api.setGridOption('autoGroupColumnDef', { ...autoGroupColumnDef(), headerName: 'Tree' });
+        await asyncSetTimeout(0);
+
+        expect({
+            afterEqual,
+            header: api.getDisplayNameForColumn(api.getColumn('ag-Grid-AutoColumn')!, 'header'),
+        }).toEqual({ afterEqual: 0, header: 'Tree' });
     });
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
