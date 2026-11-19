@@ -16,7 +16,7 @@ interface ComparisonPageSchemaOptions {
 /**
  * The content-collection schema for comparison pages (`/compare/{product}-vs-{competitor}/`).
  *
- * Every competitor claim, whether in a table cell, a price or prose, carries `sourceUrl` and
+ * Every competitor claim, whether in a table cell, a pricing row or prose, carries `sourceUrl` and
  * `checkedOn`, and a claim checked more than `maxClaimAgeDays` ago fails the build. That makes
  * the SE-148 rule ("no unverified competitor claim is published") something the build enforces
  * rather than something a reviewer has to remember.
@@ -46,7 +46,7 @@ export function createComparisonPageSchema({
 
     const pricingRow = z.object({
         plan: z.string(),
-        price: z.string(),
+        cost: z.enum(['free', 'paid', 'conditional', 'on-request']),
         licence: z.string(),
     });
 

@@ -5,7 +5,7 @@
  * passing the JSON-LD from `buildDecisionPageStructuredData` plus its reviewer nodes.
  *
  * Slots:
- * - review-credit: the site's "Technically reviewed by" credit, rendered at the end of the page.
+ * - review-credit: the site's "Technically reviewed by" credit, rendered in the hero beside the last-updated date.
  *
  * Section order and labels match `buildComparisonPageMarkdown`, the page's `.md` twin.
  */
@@ -45,11 +45,15 @@ const competitor = {
 <DecisionHero
     site={site}
     hubName={hubName}
+    pageName={`${productName} vs ${competitorName}`}
     heading={content.hero.heading}
     subHeading={content.hero.subHeading}
     lastUpdated={content.lastUpdated}
     analyticsPrefix={content.analyticsPrefix}
-/>
+    logos={{ product: product.logo, competitor: competitor.logo }}
+>
+    <slot name="review-credit" slot="review-credit" />
+</DecisionHero>
 
 <DecisionSection
     id="short-answer"
@@ -59,7 +63,7 @@ const competitor = {
     <div class={styles.shortAnswer} set:html={renderMarkdocHtml(content.shortAnswer, site.framework)} />
 </DecisionSection>
 
-<DecisionSection id="key-differences" heading={COMPARISON_SECTIONS.keyFigures}>
+<DecisionSection id="key-differences" heading={COMPARISON_SECTIONS.keyFigures} tone="muted">
     <KeyFigures figures={content.keyFigures} />
 </DecisionSection>
 
@@ -75,20 +79,22 @@ const competitor = {
 <DecisionSection id="pricing" heading={COMPARISON_SECTIONS.pricing} subHeading={content.pricing.subHeading}>
     <PricingTables
         tables={[
-            { ...product, rows: content.pricing.product },
-            { ...competitor, rows: content.pricing.competitor },
+            { name: productName, rows: content.pricing.product, isProduct: true },
+            { name: competitorName, rows: content.pricing.competitor },
         ]}
-        productName={productName}
-        pricingUrl={site.resolveUrl(site.urls.pricing)}
+        site={site}
+        analyticsPrefix={content.analyticsPrefix}
     />
 </DecisionSection>
 
-<DecisionSection id="choose" heading={COMPARISON_SECTIONS.chooseIf}>
+<DecisionSection id="choose" heading={COMPARISON_SECTIONS.chooseIf} tone="muted">
     <ChooseIf
         options={[
             { name: productName, reasons: content.chooseIf.product, isProduct: true },
             { name: competitorName, reasons: content.chooseIf.competitor },
         ]}
+        site={site}
+        analyticsPrefix={content.analyticsPrefix}
     />
 </DecisionSection>
 
@@ -111,5 +117,3 @@ const competitor = {
         <RelatedPages groups={related} resolveUrl={site.resolveUrl} />
     </DecisionSection>
 )}
-
-<slot name="review-credit" />

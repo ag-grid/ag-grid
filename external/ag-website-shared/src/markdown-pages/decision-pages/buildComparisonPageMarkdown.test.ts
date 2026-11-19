@@ -32,9 +32,15 @@ const CONTENT: ComparisonPageContent = {
         ],
     },
     pricing: {
-        subHeading: 'List prices per developer.',
-        product: [{ plan: 'Community', price: 'Free', licence: 'MIT' }],
-        competitor: [{ plan: 'TanStack Table', price: 'Free', licence: 'MIT', ...SOURCE }],
+        subHeading: 'The plans each library offers.',
+        product: [
+            { plan: 'Community', cost: 'free', licence: 'MIT' },
+            { plan: 'Enterprise', cost: 'paid', licence: 'Perpetual' },
+        ],
+        competitor: [
+            { plan: 'TanStack Table', cost: 'free', licence: 'MIT', ...SOURCE },
+            { plan: 'Enterprise Support', cost: 'on-request', licence: 'A support service', ...SOURCE },
+        ],
     },
     chooseIf: { product: ['You want a grid UI.'], competitor: ['You want full control.'] },
     faq: [{ question: 'Is AG Grid free?', answer: 'Yes. See [pricing](/license-pricing/).' }],
@@ -100,6 +106,20 @@ describe('buildComparisonPageMarkdown', () => {
         );
     });
 
+    test('renders key figures with their value suffix, when there is one', () => {
+        const keyFigures = [
+            { value: '4', valueSuffix: 'vs 1', label: 'Frameworks supported', detail: 'React only.' },
+            { value: 'MIT', label: 'Both free cores', detail: 'Both are MIT licensed.' },
+        ];
+
+        expect(build({ content: { ...CONTENT, keyFigures } })).toContain(
+            [
+                '- **4 vs 1** Frameworks supported: React only.',
+                '- **MIT** Both free cores: Both are MIT licensed.',
+            ].join('\n')
+        );
+    });
+
     test('renders feature cells with status symbol, plan and escaped detail', () => {
         expect(build()).toContain(
             [
@@ -110,6 +130,20 @@ describe('buildComparisonPageMarkdown', () => {
         );
     });
 
+    test('renders each pricing plan with its cost tier rather than a price', () => {
+        const markdown = build();
+
+        expect(markdown).toContain(
+            [
+                '| Plan | Cost | Licence |',
+                '| --- | --- | --- |',
+                '| Community | ✓ Free | MIT |',
+                '| Enterprise | ✓ Paid | Perpetual |',
+            ].join('\n')
+        );
+        expect(markdown).toContain('| Enterprise Support | On request | A support service |');
+    });
+
     test('makes links absolute in authored copy, CTAs and related pages', () => {
         const markdown = build();
 
@@ -117,7 +151,7 @@ describe('buildComparisonPageMarkdown', () => {
             'AG Grid renders its own UI. See [pivoting](https://www.ag-grid.com/react-data-grid/pivoting/).'
         );
         expect(markdown).toContain('Yes. See [pricing](https://www.ag-grid.com/license-pricing/).');
-        expect(markdown).toContain('- [Get started](https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(markdown).toContain('- [Explore the Docs](https://www.ag-grid.com/react-data-grid/getting-started/)');
         expect(markdown).toContain('- [AG Grid vs MUI X](https://www.ag-grid.com/compare/ag-grid-vs-mui-x/)');
     });
 

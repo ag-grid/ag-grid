@@ -1,7 +1,7 @@
 import type { DecisionPageSite } from './types';
 
 export type DecisionPageCtaAction = 'get-started' | 'demo' | 'trial' | 'pricing';
-export type DecisionPageCtaPlacement = 'hero' | 'get-started' | 'pricing';
+export type DecisionPageCtaPlacement = 'hero' | 'get-started' | 'pricing' | 'choose-if';
 
 /**
  * Attributes for a decision page CTA. The id follows `{product}-{action}-{placement}` and the

@@ -1,38 +1,39 @@
 {
     "meta": {
-        "title": "AG Grid vs MUI X: Features, Pricing and Licensing",
+        "title": "AG Grid vs MUI X Data Grid: Features, Pricing and Licensing",
         "description": "Compare AG Grid and MUI X Data Grid (MUI DataGrid) feature by feature: framework support, free and paid features, large datasets, pricing and licensing.",
         "targetTerm": "ag grid vs mui x",
         "demandSource": "Google US People Also Ask questions for \"ag grid vs mui data grid\", DataForSEO, October 2026 (SE-149); no US monthly volume reported for the term"
     },
     "analyticsPrefix": "compare-mui-x",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-11",
+    "lastUpdated": "2026-11-19",
     "competitor": {
         "name": "MUI X Data Grid",
         "slug": "mui-x",
         "logo": "/images/compare/logos/mui-x.svg"
     },
     "hero": {
-        "heading": "AG Grid vs MUI X",
-        "subHeading": "How AG Grid and MUI X Data Grid compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "heading": "AG Grid vs MUI X Data Grid",
+        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
     },
-    "shortAnswer": "AG Grid and MUI X Data Grid (the MUI DataGrid) both render a complete grid UI, and both have a free, MIT-licensed version and paid plans. AG Grid works with React, Angular, Vue and plain JavaScript; MUI X Data Grid is built for React only and needs Material UI as a peer dependency. AG Grid Community includes row virtualisation, column pinning and multi-column sorting. In the free MUI X Data Grid, row virtualisation is limited to 100 rows, and column pinning and multi-column sorting need the paid Pro plan. Row grouping, aggregation, pivoting and Excel export are paid in both: in [AG Grid Enterprise](/license-pricing/), a perpetual licence, and in MUI X Premium, at $599 per developer per year or $1,318 per developer for a perpetual licence.",
+    "shortAnswer": "AG Grid and MUI X Data Grid (the MUI DataGrid) both render a complete grid UI, and both have a free, MIT-licensed version and paid plans. AG Grid works with React, Angular, Vue and plain JavaScript; MUI X Data Grid is built for React only and needs Material UI as a peer dependency. The free version of AG Grid includes unlimited row virtualisation, column pinning and lazy loading from the server, which MUI X puts in its paid Pro plan. Row grouping, aggregation, pivoting and Excel export are paid in both: in [AG Grid Enterprise](/license-pricing/), a perpetual licence, and in MUI X Premium, sold per developer as an annual or a perpetual licence.",
     "keyFigures": [
         {
-            "value": "4 vs 1",
+            "value": "4",
+            "valueSuffix": "vs 1",
             "label": "Frameworks supported",
-            "detail": "AG Grid: React, Angular, Vue and plain JavaScript. MUI X Data Grid: React only."
+            "detail": "AG Grid: React, Angular, Vue and JavaScript. MUI X Data Grid: React only."
         },
         {
             "value": "100",
-            "label": "Row virtualisation limit in the free MUI X Data Grid",
-            "detail": "Beyond that it is a Pro plan feature. AG Grid Community virtualises rows by default."
+            "label": "Row virtualisation limit in free MUI X Data Grid",
+            "detail": "AG Grid Community virtualises rows and columns by default."
         },
         {
-            "value": "Premium",
-            "label": "MUI X plan for row grouping, pivoting and Excel export",
-            "detail": "$599 per developer per year, or $1,318 per developer for a perpetual licence."
+            "value": "6",
+            "label": "Features MUI X Data Grid does not include",
+            "detail": "Including Find, cell notes, the Set Filter and the status bar, all in AG Grid Enterprise."
         }
     ],
     "features": {
@@ -105,7 +106,7 @@
                         "competitor": {
                             "status": "limited",
                             "plan": "Limited",
-                            "detail": "Limited to 100 rows in the free Data Grid; a Pro plan feature beyond that",
+                            "detail": "Limited to 100 rows in the free MUI X Data Grid; a Pro plan feature beyond that",
                             "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
                             "checkedOn": "2026-11-11"
                         }
@@ -121,7 +122,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Included in the free Data Grid",
+                            "detail": "Included in the free MUI X Data Grid",
                             "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
                             "checkedOn": "2026-11-11"
                         }
@@ -135,9 +136,9 @@
                             "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Data Source layer in the free Data Grid; lazy loading in Pro; server-side row grouping in Premium",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Data Source layer in the free MUI X Data Grid; lazy loading in Pro; server-side row grouping in Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/server-side-data/",
                             "checkedOn": "2026-11-11"
                         }
@@ -180,12 +181,58 @@
                         }
                     },
                     {
+                        "feature": "Set Filter",
+                        "docsUrl": "./filter-set/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A checkbox list of the values in a column"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No list of column values to filter by; header filters and custom filter inputs instead",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/header-filters/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Advanced Filter",
+                        "docsUrl": "./filter-advanced/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Conditions across columns, in a type-ahead input or a visual builder with nested AND/OR groups"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Pro: several filters joined by a single AND or a single OR, with no nesting",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/multi-filters/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Find",
+                        "docsUrl": "./find/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Highlights every match and steps between them, like the browser’s Ctrl+F"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Quick filter hides rows that don’t match; no highlighting or stepping between matches",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/quick-filter/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
                         "feature": "Cell editing",
                         "docsUrl": "./cell-editing/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors and undo/redo"
+                            "detail": "Built-in editors"
                         },
                         "competitor": {
                             "status": "yes",
@@ -193,6 +240,37 @@
                             "detail": "Cell and row editing",
                             "sourceUrl": "https://mui.com/x/react-data-grid/editing/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Undo / redo",
+                        "docsUrl": "./undo-redo-edits/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Undoes cell edits, pastes and fill operations"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Undoes cell and row edits, pastes and computed-column changes",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/undo-redo/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Cell notes",
+                        "docsUrl": "./notes/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Notes attached to cells, shown on hover and edited from the context menu"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No cell notes or comments",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/cells/",
+                            "checkedOn": "2026-11-17"
                         }
                     },
                     {
@@ -208,6 +286,51 @@
                             "plan": "Pro",
                             "sourceUrl": "https://mui.com/x/react-data-grid/column-pinning/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Row numbers",
+                        "docsUrl": "./row-numbers/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No row number column",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/column-definition/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Right-click menu with copy, paste, export and chart items"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "detail": "Built-in column header menu; a right-click row menu is a documented recipe you build yourself",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/components/",
+                            "checkedOn": "2026-11-19",
+                            "plan": "Limited"
+                        }
+                    },
+                    {
+                        "feature": "Aligned grids",
+                        "docsUrl": "./aligned-grids/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keeps column widths, order and scrolling in step across grids"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No syncing of column widths or scrolling between grids",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/scrolling/",
+                            "checkedOn": "2026-11-17"
                         }
                     }
                 ]
@@ -292,14 +415,62 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Enterprise chart types need the Enterprise Bundle"
+                            "detail": "Users chart a selected range or a pivot from the grid; Enterprise chart types need the Enterprise Bundle"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Premium: a chart the developer places beside the grid that follows its grouping, aggregation and pivoting; users can’t chart a selected range. Needs @mui/x-charts-premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/charts-integration/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Line, area, bar and column charts in cells"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "detail": "No built-in sparkline column; a documented recipe renders the @mui/x-charts Sparkline in a custom cell",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/custom-columns/",
+                            "checkedOn": "2026-11-19",
+                            "plan": "Limited"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet formulas in cells, with cell references and custom functions"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Needs the @mui/x-charts-premium package",
-                            "sourceUrl": "https://mui.com/x/react-data-grid/charts-integration/",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Cell formulas with A1 references and custom functions; not with server-side data or pivoting",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/formulas/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Calculated columns",
+                        "docsUrl": "./calculated-columns/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users add columns from an expression, through a dialog"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Users add read-only computed columns from the toolbar or column menu",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/computed-columns/",
+                            "checkedOn": "2026-11-17"
                         }
                     }
                 ]
@@ -321,6 +492,21 @@
                             "detail": "Single cells or ranges",
                             "sourceUrl": "https://mui.com/x/react-data-grid/cell-selection/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Shows the sum, average and count of selected cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Footer shows row counts and pagination; no sum, average or count of selected cells",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/components/#footer",
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -406,12 +592,28 @@
                         }
                     },
                     {
-                        "feature": "AI features",
+                        "feature": "AI coding tools",
                         "docsUrl": "./mcp-server/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "MCP server for AI coding assistants is free; the AI Toolkit for end users is in Enterprise"
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MUI MCP server (@mui/mcp), MIT licensed",
+                            "sourceUrl": "https://mui.com/x/introduction/mcp/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
                         },
                         "competitor": {
                             "status": "yes",
@@ -441,50 +643,50 @@
         ]
     },
     "pricing": {
-        "subHeading": "Licences and prices. AG Grid Enterprise is priced per developer; configure your licence on the pricing page to see your price.",
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
         "product": [
             {
                 "plan": "Community",
-                "price": "Free",
+                "cost": "free",
                 "licence": "MIT, including commercial use"
             },
             {
                 "plan": "Enterprise",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             },
             {
                 "plan": "Enterprise Bundle (AG Grid + AG Charts)",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             }
         ],
         "competitor": [
             {
                 "plan": "Community",
-                "price": "Free",
+                "cost": "free",
                 "licence": "MIT",
                 "sourceUrl": "https://mui.com/pricing/",
                 "checkedOn": "2026-11-11"
             },
             {
                 "plan": "Pro",
-                "price": "$299 per developer per year, or $657 per developer perpetual",
-                "licence": "Annual, or perpetual with 12 months of updates and support; a multi-app licence costs more",
+                "cost": "paid",
+                "licence": "Annual, or perpetual with 12 months of updates and support",
                 "sourceUrl": "https://mui.com/pricing/",
                 "checkedOn": "2026-11-11"
             },
             {
                 "plan": "Premium",
-                "price": "$599 per developer per year, or $1,318 per developer perpetual",
-                "licence": "Annual, or perpetual with 12 months of updates and support; a multi-app licence costs more",
+                "cost": "paid",
+                "licence": "Annual, or perpetual with 12 months of updates and support",
                 "sourceUrl": "https://mui.com/pricing/",
                 "checkedOn": "2026-11-11"
             },
             {
                 "plan": "Enterprise",
-                "price": "$1,399 per developer per year, or $2,798 per developer perpetual",
-                "licence": "Through sales, from 15 developers; includes a multi-app licence and priority support",
+                "cost": "paid",
+                "licence": "Annual or perpetual, through sales, from 15 developers; includes priority support",
                 "sourceUrl": "https://mui.com/pricing/",
                 "checkedOn": "2026-11-11"
             }
@@ -500,38 +702,33 @@
         "competitor": [
             "Your application is built with React and already uses Material UI.",
             "You want the grid to follow your existing Material UI theme.",
-            "You want one licence to cover other MUI X components, such as the Date and Time Pickers and Charts.",
-            "You prefer an annual plan, from $299 per developer per year for Pro."
+            "Your free-tier needs fit within 100 rows."
         ]
     },
     "faq": [
         {
-            "question": "What is the difference between AG Grid and MUI DataGrid?",
-            "answer": "MUI DataGrid is the free component of MUI X Data Grid. Both grids render a complete UI and have a free, MIT-licensed version. AG Grid supports React, Angular, Vue and plain JavaScript; MUI X Data Grid is built for React only and depends on Material UI. In the free MUI X Data Grid, row virtualisation is limited to 100 rows, and column pinning and multi-column sorting need the Pro plan; AG Grid Community includes all three. Row grouping, pivoting and Excel export are paid features in both."
+            "question": "Can I use AG Grid for free?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model."
         },
         {
             "question": "Is MUI Data Grid Pro free?",
-            "answer": "No. MUI X Data Grid has a free, MIT-licensed Community version, but Pro is a paid plan: $299 per developer per year, or $657 per developer for a perpetual licence with 12 months of updates and support. Row grouping, aggregation, pivoting and Excel export need the Premium plan, at $599 per developer per year or $1,318 per developer perpetual."
+            "answer": "No. MUI X Data Grid has a free, MIT-licensed Community version, but Pro is a paid plan, sold per developer as an annual or a perpetual licence. Row grouping, aggregation, pivoting and Excel export need the Premium plan."
         },
         {
             "question": "What is a Data Grid in MUI?",
-            "answer": "MUI X Data Grid is a React data grid component from MUI, the company behind Material UI. It is built for React only, needs Material UI as a peer dependency, and comes in Community, Pro, Premium and Enterprise plans."
+            "answer": "MUI X Data Grid is a React data grid component from MUI, the company behind Material UI. It is built for React only, uses Material UI for its styling, and comes in Community, Pro, Premium and Enterprise plans."
         },
         {
             "question": "Which React data grid is free?",
-            "answer": "AG Grid Community and the Community version of MUI X Data Grid are both free under the MIT licence. AG Grid Community includes row virtualisation, column pinning and lazy loading from the server. In the free MUI X Data Grid, row virtualisation is limited to 100 rows, and column pinning and server-side lazy loading need the Pro plan."
+            "answer": "AG Grid Community and the MUI X Data Grid Community version are both free under the MIT licence. In AG Grid Community, row virtualisation has no row limit, and column pinning and lazy loading from the server are included. In the free MUI X Data Grid, row virtualisation is limited to 100 rows, and column pinning and lazy loading need the Pro plan."
         },
         {
             "question": "Does MUI X Data Grid work with Angular or Vue?",
-            "answer": "No. MUI X Data Grid is built for React only. AG Grid supports React, Angular, Vue and plain JavaScript. See [Getting Started](./getting-started/)."
+            "answer": "No. MUI X Data Grid is built for React only. AG Grid supports React, Angular, Vue and plain JavaScript."
         },
         {
-            "question": "Can I use AG Grid for free?",
-            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model. See [Community vs Enterprise](./community-vs-enterprise/)."
-        },
-        {
-            "question": "How much does an AG Grid licence cost?",
-            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are perpetual licences priced per developer, with one year of updates and support. [Configure your licence](/license-pricing/) to see your price."
+            "question": "Can I use AG Grid in a Material UI application?",
+            "answer": "Yes. AG Grid renders its own UI and does not depend on Material UI, so it works alongside it in a React application. Its built-in Material theme follows Google's Material Design v2, and the Theming API lets you set colours, fonts and spacing to match the rest of your application."
         }
     ],
     "proseClaims": [
@@ -586,29 +783,24 @@
             "checkedOn": "2026-11-11"
         },
         {
-            "claim": "MUI X Pro is $299 per developer per year, or $657 per developer for a perpetual licence with 12 months of updates and support.",
-            "sourceUrl": "https://mui.com/pricing/",
-            "checkedOn": "2026-11-11"
-        },
-        {
-            "claim": "MUI X Premium is $599 per developer per year, or $1,318 per developer for a perpetual licence.",
-            "sourceUrl": "https://mui.com/pricing/",
-            "checkedOn": "2026-11-11"
-        },
-        {
             "claim": "MUI X Data Grid follows the Material UI theme.",
             "sourceUrl": "https://mui.com/x/react-data-grid/style/",
             "checkedOn": "2026-11-11"
         },
         {
-            "claim": "An MUI X Pro or Premium licence also covers other MUI X components, such as the Date and Time Pickers and Charts.",
+            "claim": "An MUI X Pro or Premium licence also covers the paid versions of other MUI X components, such as the Date and Time Range Pickers and advanced Charts.",
             "sourceUrl": "https://mui.com/x/introduction/licensing/",
-            "checkedOn": "2026-11-11"
+            "checkedOn": "2026-11-19"
         },
         {
             "claim": "MUI X Data Grid is made by MUI, the company behind Material UI.",
             "sourceUrl": "https://mui.com/x/introduction/licensing/",
             "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Pro and Premium are sold per developer as an annual licence or a perpetual licence with 12 months of updates and support.",
+            "sourceUrl": "https://mui.com/pricing/",
+            "checkedOn": "2026-11-19"
         }
     ]
 }

@@ -1,8 +1,9 @@
 ---
 import styles from '../DecisionPage.module.scss';
-import { FEATURE_STATUS, type FeatureCellTone, featureCellLabel, featureCellTone } from '../decisionPageText';
+import { FEATURE_STATUS, featureCellLabel, featureCellTone } from '../decisionPageText';
 import type { FeatureCell, FeatureGroup } from '../types';
 import ProductHeading from './ProductHeading.astro';
+import TonePill from './TonePill.astro';
 
 interface Props {
     groups: FeatureGroup[];
@@ -13,18 +14,11 @@ interface Props {
 
 const { groups, product, competitor, resolveUrl } = Astro.props;
 
-const TONE_CLASS: Record<FeatureCellTone, string> = {
-    free: styles.pillFree,
-    paid: styles.pillPaid,
-    limited: styles.pillLimited,
-    none: styles.pillNone,
-};
-
 const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product, row.competitor];
 ---
 
 <div class={styles.tableWrapper}>
-    <table class={styles.table}>
+    <table class:list={[styles.table, styles.featureTable]}>
         <colgroup>
             <col class={styles.featureColumn} />
             <col class={styles.productColumn} />
@@ -33,7 +27,7 @@ const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product
         <thead>
             <tr>
                 <th scope="col">Feature</th>
-                <th scope="col">
+                <th scope="col" class={styles.productColumnHeading}>
                     <ProductHeading name={product.name} logo={product.logo} />
                 </th>
                 <th scope="col">
@@ -44,22 +38,28 @@ const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product
         {groups.map((group) => (
             <tbody>
                 <tr class={styles.groupRow}>
-                    <th scope="rowgroup">{group.name}</th>
-                    {/* Empty cells rather than a colspan, so the product column's tint runs through the row */}
-                    <td />
-                    <td />
+                    <th scope="rowgroup" colspan="3">
+                        {group.name}
+                    </th>
                 </tr>
                 {group.rows.map((row) => (
                     <tr>
                         <th scope="row">
-                            {row.docsUrl ? <a href={resolveUrl(row.docsUrl)}>{row.feature}</a> : row.feature}
+                            {row.docsUrl ? (
+                                <a class={styles.featureLink} href={resolveUrl(row.docsUrl)}>
+                                    {row.feature}
+                                </a>
+                            ) : (
+                                row.feature
+                            )}
                         </th>
-                        {cells(row).map((value) => (
-                            <td>
-                                <span class:list={[styles.pill, TONE_CLASS[featureCellTone(value)]]}>
-                                    <span aria-hidden="true">{FEATURE_STATUS[value.status].symbol}</span>
-                                    {featureCellLabel(value)}
-                                </span>
+                        {cells(row).map((value, index) => (
+                            <td class:list={[index === 0 && styles.productCell]}>
+                                <TonePill
+                                    tone={featureCellTone(value)}
+                                    symbol={FEATURE_STATUS[value.status].symbol}
+                                    label={featureCellLabel(value)}
+                                />
                                 {value.detail && <div class={styles.cellDetail}>{value.detail}</div>}
                             </td>
                         ))}

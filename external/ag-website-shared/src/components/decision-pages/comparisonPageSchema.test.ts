@@ -33,9 +33,9 @@ function validPage({ checkedOn = '2026-11-01' }: { checkedOn?: string } = {}) {
             ],
         },
         pricing: {
-            subHeading: 'List prices.',
-            product: [{ plan: 'Community', price: 'Free', licence: 'MIT' }],
-            competitor: [{ plan: 'TanStack Table', price: 'Free', licence: 'MIT', sourceUrl: SOURCE, checkedOn }],
+            subHeading: 'The plans each library offers.',
+            product: [{ plan: 'Community', cost: 'free', licence: 'MIT' }],
+            competitor: [{ plan: 'TanStack Table', cost: 'free', licence: 'MIT', sourceUrl: SOURCE, checkedOn }],
         },
         chooseIf: { product: ['You want a grid UI.'], competitor: ['You want full control.'] },
         faq: [{ question: 'Is TanStack Table free?', answer: 'Yes.' }],
@@ -51,6 +51,14 @@ describe('createComparisonPageSchema', () => {
 
         expect(result.success).toBe(true);
         expect(result.data?.lastUpdated).toEqual(new Date('2026-11-11'));
+    });
+
+    test('keeps a key figure value suffix', () => {
+        const keyFigures = [{ value: '4', valueSuffix: 'vs 1', label: 'Frameworks supported', detail: 'React only.' }];
+
+        const result = schema.safeParse({ ...validPage(), keyFigures });
+
+        expect(result.data?.keyFigures).toEqual(keyFigures);
     });
 
     test('rejects a competitor claim checked longer ago than the maximum age', () => {
@@ -93,6 +101,17 @@ describe('createComparisonPageSchema', () => {
 
         expect(result.success).toBe(false);
         expect(result.error?.issues[0].path.join('.')).toBe('proseClaims.0.sourceUrl');
+    });
+
+    test('rejects a pricing row cost that is not a known tier', () => {
+        const page = validPage();
+        const result = schema.safeParse({
+            ...page,
+            pricing: { ...page.pricing, product: [{ plan: 'Enterprise', cost: '$999', licence: 'Perpetual' }] },
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.error?.issues[0].path.join('.')).toBe('pricing.product.0.cost');
     });
 
     test('rejects a reviewer the site does not know', () => {

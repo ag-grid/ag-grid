@@ -1,6 +1,8 @@
 import {
     COMPARISON_SECTIONS,
     FEATURE_STATUS,
+    GET_STARTED_CTAS,
+    PRICING_COST,
     chooseIfHeading,
     featureCellLabel,
     formatLastUpdated,
@@ -9,6 +11,7 @@ import type {
     ComparisonPageContent,
     DecisionPageSite,
     FeatureCell,
+    PricingCost,
     RelatedPageGroup,
 } from '@ag-website-shared/components/decision-pages/types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
@@ -33,6 +36,9 @@ const featureCell = (value: FeatureCell): string =>
     cell(
         [`${FEATURE_STATUS[value.status].symbol} ${featureCellLabel(value)}`, value.detail].filter(Boolean).join(': ')
     );
+
+const pricingCost = (cost: PricingCost): string =>
+    [PRICING_COST[cost].symbol, PRICING_COST[cost].label].filter(Boolean).join(' ');
 
 const table = (header: string[], rows: string[][]): string[] => [
     `| ${header.map(cell).join(' | ')} |`,
@@ -74,7 +80,10 @@ export function buildComparisonPageMarkdown({
         [
             `## ${COMPARISON_SECTIONS.keyFigures}`,
             content.keyFigures
-                .map(({ value, valueSuffix, label, detail }) => `- **${[value, valueSuffix].filter(Boolean).join(' ')}** ${label}: ${detail}`)
+                .map(
+                    ({ value, valueSuffix, label, detail }) =>
+                        `- **${[value, valueSuffix].filter(Boolean).join(' ')}** ${label}: ${detail}`
+                )
                 .join('\n'),
         ],
         [
@@ -97,11 +106,11 @@ export function buildComparisonPageMarkdown({
             ].flatMap(({ name, rows }) => [
                 `### ${name}`,
                 table(
-                    ['Plan', 'Price', 'Licence'],
-                    rows.map((row) => [cell(row.plan), cell(row.price), cell(row.licence)])
+                    ['Plan', 'Cost', 'Licence'],
+                    rows.map((row) => [cell(row.plan), pricingCost(row.cost), cell(row.licence)])
                 ).join('\n'),
             ]),
-            `See [${productName} pricing](${absolute(site.urls.pricing)}) for volume and deployment terms.`,
+            `See [${productName} pricing](${absolute(site.urls.pricing)}) for prices, volume and deployment terms.`,
         ],
         [
             `## ${COMPARISON_SECTIONS.chooseIf}`,
@@ -124,9 +133,8 @@ export function buildComparisonPageMarkdown({
             `### ${site.getStarted.heading}`,
             site.getStarted.body,
             [
-                `- [Get started](${absolute(site.urls.getStarted)})`,
-                `- [See the live demo](${absolute(site.urls.demo)})`,
-                `- [Start a free trial](${absolute(site.urls.trial)})`,
+                `- [${GET_STARTED_CTAS.docs}](${absolute(site.urls.getStarted)})`,
+                `- [${GET_STARTED_CTAS.trial}](${absolute(site.urls.trial)})`,
             ].join('\n'),
         ],
         related.length

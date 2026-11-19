@@ -8,7 +8,7 @@
     },
     "analyticsPrefix": "compare-tanstack-table",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-11",
+    "lastUpdated": "2026-11-19",
     "competitor": {
         "name": "TanStack Table",
         "slug": "tanstack-table",
@@ -174,9 +174,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Column, global and fuzzy filtering and faceting; you build the filter inputs",
+                            "detail": "Column and global filtering and faceting, with custom filter functions such as fuzzy matching; you build the filter inputs",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-filtering",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -402,25 +402,40 @@
                         "competitor": {
                             "status": "limited",
                             "plan": "Limited",
-                            "detail": "Your application owns the markup and its accessibility; React Aria examples are provided",
+                            "detail": "Your application owns the markup and its accessibility; a React Aria example is provided",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
-                        "feature": "AI features",
+                        "feature": "AI coding tools",
                         "docsUrl": "./mcp-server/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "MCP server for AI coding assistants is free; the AI Toolkit for end users is in Enterprise"
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
                         },
                         "competitor": {
-                            "status": "limited",
-                            "plan": "Limited",
-                            "detail": "Agent Skills for AI coding assistants; no end-user AI features documented",
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Agent Skills for AI coding assistants",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/agent-skills",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No end-user AI features documented",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -443,35 +458,35 @@
         ]
     },
     "pricing": {
-        "subHeading": "Licences and prices. AG Grid Enterprise is priced per developer; configure your licence on the pricing page to see your price.",
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
         "product": [
             {
                 "plan": "Community",
-                "price": "Free",
+                "cost": "free",
                 "licence": "MIT, including commercial use"
             },
             {
                 "plan": "Enterprise",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             },
             {
                 "plan": "Enterprise Bundle (AG Grid + AG Charts)",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             }
         ],
         "competitor": [
             {
                 "plan": "TanStack Table",
-                "price": "Free",
+                "cost": "free",
                 "licence": "MIT",
                 "sourceUrl": "https://github.com/TanStack/table/blob/main/LICENSE",
                 "checkedOn": "2026-11-11"
             },
             {
                 "plan": "Enterprise Support",
-                "price": "On request",
+                "cost": "on-request",
                 "licence": "A paid support service, not a licence",
                 "sourceUrl": "https://tanstack.com/paid-support",
                 "checkedOn": "2026-11-11"
@@ -489,7 +504,7 @@
             "You want full control of every element of the table's markup and styling.",
             "You already have a design system and want to render the table with it.",
             "You use a framework TanStack supports through an adapter, such as Svelte, Solid, Preact or Lit.",
-            "You never want a paid licence."
+            "You need row grouping, aggregation, tree data or cell range selection without a paid licence."
         ]
     },
     "faq": [
@@ -514,8 +529,8 @@
             "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model. See [Community vs Enterprise](./community-vs-enterprise/)."
         },
         {
-            "question": "How much does an AG Grid licence cost?",
-            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are perpetual licences priced per developer, with one year of updates and support. [Configure your licence](/license-pricing/) to see your price."
+            "question": "Does AG Grid include virtualisation and cell editing?",
+            "answer": "Yes. AG Grid Community includes row and column virtualisation and built-in cell editors, free under the MIT licence. TanStack Table has neither built in: it pairs with the separate TanStack Virtual package for virtualisation, and its documentation points to TanStack Form for editable cells."
         }
     ],
     "proseClaims": [
@@ -540,9 +555,9 @@
             "checkedOn": "2026-11-11"
         },
         {
-            "claim": "TanStack offers paid Enterprise Support as a separate service, with pricing on request.",
+            "claim": "TanStack offers paid Enterprise Support as a separate service and publishes no prices for it.",
             "sourceUrl": "https://tanstack.com/paid-support",
-            "checkedOn": "2026-11-11"
+            "checkedOn": "2026-11-19"
         },
         {
             "claim": "TanStack Table has official adapters for Svelte, Solid, Preact and Lit.",

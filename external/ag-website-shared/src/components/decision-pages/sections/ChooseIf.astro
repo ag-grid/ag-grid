@@ -1,12 +1,18 @@
 ---
 import styles from '../DecisionPage.module.scss';
+import { ctaAttributes } from '../decisionPageCta';
 import { chooseIfHeading } from '../decisionPageText';
+import type { DecisionPageSite } from '../types';
 
 interface Props {
+    /** The product's own option ends with a get-started link. */
     options: Array<{ name: string; reasons: string[]; isProduct?: boolean }>;
+    site: DecisionPageSite;
+    analyticsPrefix: string;
 }
 
-const { options } = Astro.props;
+const { options, site, analyticsPrefix } = Astro.props;
+const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started', placement: 'choose-if' });
 ---
 
 <div class={styles.chooseIf}>
@@ -18,6 +24,15 @@ const { options } = Astro.props;
                     <li>{reason}</li>
                 ))}
             </ul>
+            {isProduct && (
+                <a
+                    {...getStarted.attributes}
+                    class:list={['button', styles.chooseIfCta, getStarted.analyticsClass]}
+                    href={site.resolveUrl(site.urls.getStarted)}
+                >
+                    Get started free
+                </a>
+            )}
         </div>
     ))}
 </div>

@@ -44,9 +44,16 @@ export interface FeatureGroup {
     rows: FeatureRow[];
 }
 
+/**
+ * What a plan costs, without the amount: list prices go stale and each pricing page states its own.
+ * `conditional` is free only on terms, e.g. non-commercial use or a revenue limit; `on-request`
+ * is quoted by sales.
+ */
+export type PricingCost = 'free' | 'paid' | 'conditional' | 'on-request';
+
 export interface PricingRow {
     plan: string;
-    price: string;
+    cost: PricingCost;
     licence: string;
 }
 

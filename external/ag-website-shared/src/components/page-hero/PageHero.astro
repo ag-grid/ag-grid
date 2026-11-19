@@ -4,6 +4,9 @@ import styles from './PageHero.module.scss';
 /**
  * Each part takes either a plain string prop or, for markup a string can't express
  * (a logotype standing in for words, a forced line break), a same-named slot.
+ *
+ * Slots:
+ * - media: an image or logo lockup between the eyebrow and the headline.
  */
 interface Props {
     eyebrow?: string;
@@ -30,6 +33,7 @@ const hasSubhead = subhead != null || Astro.slots.has('subhead');
             <slot name="eyebrow">{eyebrow}</slot>
         </p>
     )}
+    <slot name="media" />
     {hasHeadline && (
         <h1 class={styles.pageHeroHeadline}>
             <slot name="headline">{headline}</slot>

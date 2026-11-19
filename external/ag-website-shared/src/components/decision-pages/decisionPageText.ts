@@ -1,4 +1,4 @@
-import type { FeatureCell, FeatureStatus } from './types';
+import type { FeatureCell, FeatureStatus, PricingCost } from './types';
 
 /**
  * Section labels and value formatting shared by the decision page templates and their markdown
@@ -17,6 +17,12 @@ export const COMPARISON_SECTIONS = {
 } as const;
 
 export const chooseIfHeading = (name: string): string => `Choose ${name} if`;
+
+/** The get started panel's two calls to action: the docs, and an Enterprise trial licence. */
+export const GET_STARTED_CTAS = {
+    docs: 'Explore the Docs',
+    trial: 'Try Enterprise Free',
+} as const;
 
 export const FEATURE_STATUS: Record<FeatureStatus, { symbol: string; label: string }> = {
     yes: { symbol: '✓', label: 'Included' },
@@ -42,6 +48,14 @@ export const featureCellTone = ({ status, plan }: FeatureCell): FeatureCellTone 
 
 /** The label under a feature cell's symbol: its plan, or the status when no plan applies. */
 export const featureCellLabel = ({ status, plan }: FeatureCell): string => plan ?? FEATURE_STATUS[status].label;
+
+/** The pill shown for a pricing plan's cost, in the same tones as the feature cells. */
+export const PRICING_COST: Record<PricingCost, { symbol?: string; label: string; tone: FeatureCellTone }> = {
+    free: { symbol: '✓', label: 'Free', tone: 'free' },
+    paid: { symbol: '✓', label: 'Paid', tone: 'paid' },
+    conditional: { symbol: '◐', label: 'Free, with conditions', tone: 'limited' },
+    'on-request': { label: 'On request', tone: 'none' },
+};
 
 /** UK long-form date, e.g. `11 November 2026`, read in UTC so it matches the ISO date authored. */
 export const formatLastUpdated = (date: Date): string =>

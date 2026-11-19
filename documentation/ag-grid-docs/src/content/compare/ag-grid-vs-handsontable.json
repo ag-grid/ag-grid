@@ -6,7 +6,7 @@
     },
     "analyticsPrefix": "compare-handsontable",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-11",
+    "lastUpdated": "2026-11-19",
     "competitor": {
         "name": "Handsontable",
         "slug": "handsontable",
@@ -16,22 +16,22 @@
         "heading": "AG Grid vs Handsontable",
         "subHeading": "How AG Grid and Handsontable compare on framework support, free and paid features, large datasets, pricing and licensing."
     },
-    "shortAnswer": "AG Grid has a free, MIT-licensed Community edition that can be used commercially. Handsontable is a spreadsheet-style data grid whose free licence key covers non-commercial use and evaluation only, so commercial production use needs a paid licence. Both support React, Angular, Vue and JavaScript. AG Grid Enterprise includes pivoting, group-by-column row grouping and integrated charts; Handsontable's documentation does not list pivoting or built-in charts, and its nested rows show pre-structured parent and child rows.",
+    "shortAnswer": "AG Grid has a free, MIT-licensed Community edition that can be used commercially. Handsontable is a spreadsheet-style data grid whose free licence key covers non-commercial use, and evaluation and development, so commercial production use needs a paid licence. Both support React, Angular, Vue and JavaScript. AG Grid Enterprise includes pivoting, group-by-column row grouping and integrated charts; Handsontable's documentation does not list pivoting or built-in charts, and its nested rows show pre-structured parent and child rows.",
     "keyFigures": [
         {
-            "value": "MIT",
-            "label": "AG Grid Community licence",
-            "detail": "Free for commercial use. Handsontable's free licence is for non-commercial use and evaluation."
+            "value": "$0",
+            "label": "AG Grid Community for commercial use",
+            "detail": "MIT licence. Handsontable's free key is for non-commercial use."
+        },
+        {
+            "value": "AI",
+            "label": "Natural-language grid control",
+            "detail": "Users query and change the grid in plain language with AG Grid's AI Toolkit."
         },
         {
             "value": "3",
-            "label": "AG Grid features Handsontable does not include",
-            "detail": "Pivoting, integrated charts and row grouping by column."
-        },
-        {
-            "value": "~400",
-            "label": "Handsontable formula functions",
-            "detail": "Through the HyperFormula engine, which is licensed separately."
+            "label": "AG Grid features not in Handsontable",
+            "detail": "Pivoting, integrated charts and the AI Toolkit."
         }
     ],
     "features": {
@@ -52,8 +52,8 @@
                             "status": "yes",
                             "plan": "Commercial",
                             "detail": "Official wrappers for React, Angular and Vue 3, plus plain JavaScript",
-                            "sourceUrl": "https://handsontable.com/docs/react-data-grid/installation/",
-                            "checkedOn": "2026-11-11"
+                            "sourceUrl": "https://handsontable.com/",
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -205,9 +205,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "About 400 functions through HyperFormula, which needs its own commercial licence or the Bundle",
+                            "detail": "About 400 functions through HyperFormula, licensed separately (free under GPLv3, otherwise commercial) and installed separately since version 18.0",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/formula-calculation/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -419,25 +419,39 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Keyboard navigation, screen reader support and ARIA roles; targets WCAG 2.2 Level A and AA",
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/accessibility/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
-                        "feature": "AI features",
+                        "feature": "AI coding tools",
                         "docsUrl": "./mcp-server/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "MCP server for AI coding assistants is free; the AI Toolkit for end users is in Enterprise"
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
                         },
                         "competitor": {
-                            "status": "limited",
-                            "plan": "Limited",
-                            "detail": "Docs MCP server, Skills for Claude Code and an AI theme builder for developers; no end-user AI features documented",
+                            "status": "yes",
+                            "detail": "Docs MCP server, Skills for Claude Code and an AI theme builder",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/docs-mcp-server/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No end-user AI features documented",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/docs-mcp-server/",
+                            "checkedOn": "2026-11-19"
                         }
                     },
                     {
@@ -460,100 +474,80 @@
         ]
     },
     "pricing": {
-        "subHeading": "Licences and prices. AG Grid Enterprise is priced per developer; configure your licence on the pricing page to see your price.",
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
         "product": [
             {
                 "plan": "Community",
-                "price": "Free",
+                "cost": "free",
                 "licence": "MIT, including commercial use"
             },
             {
                 "plan": "Enterprise",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             },
             {
                 "plan": "Enterprise Bundle (AG Grid + AG Charts)",
-                "price": "Paid, per developer",
+                "cost": "paid",
                 "licence": "Perpetual, with one year of updates and support"
             }
         ],
         "competitor": [
             {
                 "plan": "Non-commercial",
-                "price": "Free",
+                "cost": "conditional",
                 "licence": "Research, private study and evaluation; no commercial production use",
                 "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/software-license/",
                 "checkedOn": "2026-11-11"
             },
             {
-                "plan": "Trial",
-                "price": "Free for 45 days",
-                "licence": "Full access to every feature, for evaluation",
-                "sourceUrl": "https://handsontable.com/pricing",
-                "checkedOn": "2026-11-11"
-            },
-            {
                 "plan": "Handsontable DataGrid",
-                "price": "Quote from sales, priced by number of end users",
-                "licence": "Commercial, subscription or perpetual, with a support plan",
+                "cost": "on-request",
+                "licence": "Quoted by sales",
                 "sourceUrl": "https://handsontable.com/faq",
-                "checkedOn": "2026-11-11"
-            },
-            {
-                "plan": "HyperFormula (formulas)",
-                "price": "Free under GPLv3; otherwise quote from sales",
-                "licence": "Separate commercial licence, or the Bundle with Handsontable DataGrid",
-                "sourceUrl": "https://handsontable.com/pricing",
                 "checkedOn": "2026-11-11"
             }
         ]
     },
     "chooseIf": {
         "product": [
-            "You want a grid you can use commercially without paying for a licence.",
+            "You need a grid you can use commercially for free.",
             "You need pivoting, row grouping by column or integrated charts.",
-            "You need master/detail panels or filtering within tree data.",
-            "You want to use the free edition in production and pay only for Enterprise features."
+            "You need server-side data with grouping and aggregation."
         ],
         "competitor": [
-            "Your users expect a spreadsheet-like interface for data entry.",
-            "You need a large set of spreadsheet formula functions.",
-            "Your project is non-commercial.",
-            "You prefer a licence priced by end users rather than by developers."
+            "Your users expect a spreadsheet-style interface for data entry.",
+            "You need spreadsheet formulas (through the HyperFormula library).",
+            "Your project is non-commercial."
         ]
     },
     "faq": [
         {
-            "question": "What are the key differences between AG Grid and Handsontable?",
-            "answer": "Both are JavaScript data grids with their own UI. Handsontable has a spreadsheet-like interface and formulas through HyperFormula; its documentation does not list pivoting, built-in charts or row grouping by column. AG Grid Community is free for commercial use under the MIT licence, and AG Grid Enterprise adds row grouping, pivoting and integrated charts."
-        },
-        {
             "question": "Is Handsontable free to use?",
-            "answer": "Handsontable has a free licence for non-commercial purposes such as research, private study and evaluation. Production use connected with commercial activity needs a commercial licence. HyperFormula, the formula engine, is free under GPLv3 for non-commercial or open-source projects and otherwise needs its own commercial licence."
-        },
-        {
-            "question": "How is Handsontable priced?",
-            "answer": "Handsontable does not publish prices. Its commercial licence is priced by the number of end users of the applications you build, and is sold through its sales team as a subscription or perpetual licence."
+            "answer": "Handsontable has a free licence key for non-commercial use, such as research, private study and evaluation. Commercial production use needs a paid licence."
         },
         {
             "question": "Does Handsontable support pivot tables?",
-            "answer": "Handsontable's documentation does not list a pivot table feature. AG Grid includes [pivoting](./pivoting/) in AG Grid Enterprise."
+            "answer": "Handsontable's documentation does not list a pivot table feature. AG Grid includes pivoting in AG Grid Enterprise."
         },
         {
-            "question": "Can I use AG Grid for free?",
-            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model. See [Community vs Enterprise](./community-vs-enterprise/)."
+            "question": "Is AG Grid free for commercial use?",
+            "answer": "Yes. AG Grid Community is released under the MIT licence, which allows commercial use. AG Grid Enterprise is a paid licence for the advanced features."
         },
         {
-            "question": "How much does an AG Grid licence cost?",
-            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are perpetual licences priced per developer, with one year of updates and support. [Configure your licence](/license-pricing/) to see your price."
+            "question": "Does AG Grid support spreadsheet-style formulas?",
+            "answer": "Yes. AG Grid Enterprise includes formulas: users enter spreadsheet-style expressions in cells, and the values update when the data they reference changes. Handsontable provides formulas through HyperFormula, which is licensed and installed separately."
+        },
+        {
+            "question": "What is AG Grid used for?",
+            "answer": "AG Grid is a JavaScript data grid for displaying, editing and analysing tabular data in web applications built with React, Angular, Vue or plain JavaScript. Its features include sorting, filtering, cell editing, virtualisation for large datasets and, in Enterprise, row grouping, pivoting, Excel export and integrated charts."
         }
     ],
     "proseClaims": [
         {
             "claim": "Handsontable renders its own UI and supports React, Angular, Vue and plain JavaScript.",
-            "sourceUrl": "https://handsontable.com/docs/react-data-grid/installation/",
-            "checkedOn": "2026-11-11"
+            "sourceUrl": "https://handsontable.com/",
+            "checkedOn": "2026-11-19"
         },
         {
             "claim": "Handsontable's free licence covers non-commercial use, such as research, private study and evaluation; production use connected with commercial activity needs a commercial licence.",
@@ -572,8 +566,8 @@
         },
         {
             "claim": "HyperFormula is free under GPLv3 for non-commercial or open-source projects and otherwise needs its own commercial licence, or the Bundle.",
-            "sourceUrl": "https://handsontable.com/pricing",
-            "checkedOn": "2026-11-11"
+            "sourceUrl": "https://handsontable.com/docs/hyperformula/guide/licensing.html",
+            "checkedOn": "2026-11-19"
         },
         {
             "claim": "Handsontable's documentation does not list pivoting or built-in charts.",
@@ -589,6 +583,11 @@
             "claim": "Handsontable's trial gives full access to every feature for 45 days.",
             "sourceUrl": "https://handsontable.com/pricing",
             "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable has an AI theme builder for developers.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/ai-theme-builder/",
+            "checkedOn": "2026-11-19"
         }
     ]
 }
