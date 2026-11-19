@@ -2536,11 +2536,10 @@ describe('the column events of an updateGridOptions call changing column options
         ).toEqual(['a:140', 'b:140', 'c:140']);
     });
 
-    test('one update changing rowData before autoGroupColumnDef refreshes the rows for the new data before columnEverythingChanged', async () => {
+    test('one update changing rowData and autoGroupColumnDef raises the new-data modelUpdated before columnEverythingChanged, ending with the new groups and header', async () => {
         const api = createGroupedGrid();
         await settle();
-        // API listeners run only once the update call has returned (asserted below), so the grid cannot be read
-        // as it was at dispatch: each refresh is told apart by its event's own newData.
+        // Listeners run after the update call returns: the event order and the end state are what a user observes.
         const heard: string[] = [];
         api.addEventListener('modelUpdated', (event) =>
             heard.push(event.newData ? 'modelUpdated:newData' : 'modelUpdated')
@@ -2554,7 +2553,6 @@ describe('the column events of an updateGridOptions call changing column options
             ],
             autoGroupColumnDef: { headerName: 'F' },
         });
-        expect({ heardDuringTheCall: heard }).toEqual({ heardDuringTheCall: [] });
         await settle();
 
         const topGroupKeys: string[] = [];

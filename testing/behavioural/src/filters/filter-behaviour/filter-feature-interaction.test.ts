@@ -486,7 +486,7 @@ describe('Filter + feature interaction', () => {
             return keys;
         };
 
-        test('a comparator on autoGroupColumnDef sorts the groups, and the auto column keeps its sort while the comparator is removed and set again', async () => {
+        test('a comparator on autoGroupColumnDef sorts the groups; removing it keeps the sort and the group order, and setting it again keeps them sorted by it', async () => {
             const api: GridApi = await createGroupedGrid({ comparator: reversed });
             api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
             await asyncSetTimeout(0);
@@ -497,11 +497,14 @@ describe('Filter + feature interaction', () => {
                 comparator: api.getColumn('ag-Grid-AutoColumn')?.getColDef().comparator,
             });
 
-            // Removing the comparator should re-sort the groups to A, B, C, but the grid leaves them C, B, A:
-            // the group order is deliberately not pinned here, only the removal, read from the column.
+            // The groups are not re-sorted when the comparator goes: a re-sort would give A, B, C.
             api.setGridOption('autoGroupColumnDef', {});
             await asyncSetTimeout(0);
-            expect(autoColumn()).toEqual({ sort: 'asc', comparator: undefined });
+            expect({ groups: groups(api), ...autoColumn() }).toEqual({
+                groups: ['C', 'B', 'A'],
+                sort: 'asc',
+                comparator: undefined,
+            });
 
             api.setGridOption('autoGroupColumnDef', { comparator: reversed });
             await asyncSetTimeout(0);

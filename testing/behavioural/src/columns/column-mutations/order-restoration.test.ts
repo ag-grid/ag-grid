@@ -1356,9 +1356,16 @@ describe('Column Mutations - order restoration', () => {
             expect({
                 ids: columns.map((col) => col.getColId()),
                 current: columns.map((col) => col === api.getColumn(col.getColId())),
+                displayedCurrent: api.getAllDisplayedColumns().map((col) => col === api.getColumn(col.getColId())),
                 removed: api.getColumn('b'),
                 headerName: api.getColumn('a')!.getColDef().headerName,
-            }).toEqual({ ids: ['a', 'c'], current: [true, true], removed: null, headerName: 'A!' });
+            }).toEqual({
+                ids: ['a', 'c'],
+                current: [true, true],
+                displayedCurrent: [true, true],
+                removed: null,
+                headerName: 'A!',
+            });
         });
     });
 
