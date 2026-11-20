@@ -58,6 +58,12 @@ Use the controls below to scroll to a row or column with each position option.
 
 {% gridExampleRunner title="Scroll Controls" name="scroll-controls" /%}
 
+## Scroll Position on Data Updates
+
+When an update adds or removes rows above the rows the user is looking at, the grid scrolls by the same amount, so the rows in view stay where they are. This applies to [row data updates](./data-update-row-data/) when the rows have [Row IDs](./row-ids/), to [transactions](./data-update-transactions/) and [async transactions](./data-update-high-frequency/), and to [Server-Side Transactions](./server-side-model-updating-transactions/). No configuration is needed.
+
+While the grid is scrolled to the top, rows added at the top come into view. While it is scrolled to the bottom, it stays at the bottom, so rows added at the end come into view. The focused cell and cell selection ranges stay on their rows. A cell selection range follows the rows at its start and end, so an update that reorders rows, such as a sort, can move other rows into or out of it.
+
 ## Debounce Vertical Scroll
 
 Set `debounceVerticalScrollbar: true` to update the displayed rows only once vertical scrolling pauses. This can give smoother scrolling on slow machines, but is not recommended in most cases, as the rows lag behind the scrollbar and blank cells may appear briefly. See [Scrolling Performance](./scrolling-performance/) for other ways to improve scrolling on slow machines.

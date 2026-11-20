@@ -343,33 +343,42 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const params: RefreshModelParams = { step: 'nothing', changedProps };
-        if (newRowData) {
-            const immutable =
-                !extractData &&
-                !!this.rootNode?._leafs?.length &&
-                newRowData.length > 0 &&
-                gos.exists('getRowId') &&
-                // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
-                !gos.get('resetRowDataOnUpdate');
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            if (immutable) {
-                params.keepRenderedRows = true;
-                params.animate = !gos.get('suppressAnimationFrame');
-                params.changedRowNodes = new ChangedRowNodes();
-                nodeManager.setImmutableRowData(params, newRowData);
-            } else {
-                params.rowDataUpdated = true;
-                params.newData = true;
-                nodeManager.setNewRowData(newRowData);
-                this.rowNodesCountReady = true;
+        beans.rowRenderer.discardRowsInViewOnThrow(() => {
+            if (newRowData) {
+                const immutable =
+                    !extractData &&
+                    !!this.rootNode?._leafs?.length &&
+                    newRowData.length > 0 &&
+                    gos.exists('getRowId') &&
+                    // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
+                    !gos.get('resetRowDataOnUpdate');
+                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                if (immutable) {
+                    // new row data replaces every row, so only an update has rows to keep in view
+                    beans.rowRenderer.captureRowsInView();
+                    params.keepRenderedRows = true;
+                    params.animate = !gos.get('suppressAnimationFrame');
+                    const changedRowNodes = new ChangedRowNodes();
+                    params.changedRowNodes = changedRowNodes;
+                    nodeManager.setImmutableRowData(params, newRowData);
+                    if (changedRowNodes.adds.size === this.rootNode?._leafs?.length) {
+                        // every row is new, so there are no rows to keep in view and the scroll position stays, unless at the bottom
+                        beans.rowRenderer.forgetRowsInView();
+                    }
+                } else {
+                    params.rowDataUpdated = true;
+                    params.newData = true;
+                    nodeManager.setNewRowData(newRowData);
+                    this.rowNodesCountReady = true;
+                }
             }
-        }
 
-        const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
-        if (step) {
-            params.step = step;
-            this.refreshModel(params);
-        }
+            const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
+            if (step) {
+                params.step = step;
+                this.refreshModel(params);
+            }
+        });
     }
 
     private getRefreshedStage(properties: (keyof GridOptions)[]): ClientSideRowModelStage | null {
@@ -680,6 +689,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
+            if (suppressUpdateTransaction) {
+                // no redraw follows, so a later unrelated one must not restore the rows in view captured for this update
+                this.beans.rowRenderer.discardRowsInView();
+            }
             const selectionSvc = this.beans.selectionSvc;
             if (rowDataUpdated && started && !this.refreshingModel && selectionSvc) {
                 if (suppressUpdateTransaction) {
@@ -1236,16 +1249,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
-        for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
-            this.rowNodesCountReady = true;
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
-            rowNodeTrans.push(rowNodeTransaction);
-            if (callback) {
-                callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+        beans.rowRenderer.discardRowsInViewOnThrow(() => {
+            beans.rowRenderer.captureRowsInView();
+            for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
+                this.rowNodesCountReady = true;
+                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
+                rowNodeTrans.push(rowNodeTransaction);
+                if (callback) {
+                    callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+                }
             }
-        }
-        this.commitTransactions(changedRowNodes, animate);
+            this.commitTransactions(changedRowNodes, animate);
+        });
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1277,10 +1293,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
-        this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-        const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
-        this.commitTransactions(changedRowNodes, animate);
-        return rowNodeTransaction;
+        const { rowRenderer } = this.beans;
+        return rowRenderer.discardRowsInViewOnThrow(() => {
+            rowRenderer.captureRowsInView();
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+            const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
+            this.commitTransactions(changedRowNodes, animate);
+            return rowNodeTransaction;
+        });
     }
 
     /**

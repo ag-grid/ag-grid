@@ -2386,7 +2386,7 @@ describe('Column Features', () => {
             );
         });
 
-        test('a row that moves off the focused index drops the cell it kept for focus', async () => {
+        test('a row keeps the cell it kept for focus as focus follows it, and drops it once focus leaves', async () => {
             const rows = [
                 { ...virtualisedRow(120), id: 'r0' },
                 { ...virtualisedRow(120), id: 'r1' },
@@ -2406,6 +2406,11 @@ describe('Column Features', () => {
             expect(keptCell()).not.toBeNull();
 
             api.setGridOption('rowData', [rows[1], rows[0]]);
+            await asyncSetTimeout(0);
+            expect(api.getFocusedCell()).toMatchObject({ rowIndex: 1, column: api.getColumn('c0') });
+            expect(keptCell()).not.toBeNull();
+
+            api.setFocusedCell(0, 'c60');
             await waitFor(() => expect(keptCell()).toBeNull());
         });
 

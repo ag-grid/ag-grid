@@ -37,6 +37,8 @@ import { _refreshCellPosition } from './cell/cellPositionFeature';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
+import type { RowsInViewAnchor } from './rowsInViewAnchor';
+import { _captureRowsInView, _captureWithLoadedRows, _correctRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -117,6 +119,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private stickyRowFeature?: IStickyRowFeature;
 
     private dataFirstRenderedFired = false;
+
+    /**
+     * Captured at the start of a data update, until the redraw it causes restores it: the rows in view, or `null` when
+     * none are kept, and how to move the focused cell and cell ranges with their rows.
+     */
+    private rowsInView: {
+        anchor: RowsInViewAnchor | null;
+        followFocus?: () => boolean;
+        followRanges?: () => void;
+    } | null = null;
+    /** Kept after a data update with auto height active, until the rows it drew are measured. */
+    private rowsInViewAnchorForHeights: RowsInViewAnchor | null = null;
+    /** Set while a draw scrolls to keep the rows in view. */
+    private restoringRowsInView = false;
 
     public postConstruct(): void {
         this.ctrlsSvc.whenReady(this, (p) => {
@@ -479,6 +495,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             // is doing transaction updates, the pinned rows are not getting constantly
             // trashed - or editing cells in pinned rows are not refreshed and put into read mode
             onlyBody: true,
+            keepRowsInView: true,
         };
         this.redrawAfterModelUpdate(params);
     }
@@ -651,6 +668,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
+        // other redraws, such as for pinned rows, can run during the update before the rows have moved
+        const rowsInView = params.keepRowsInView ? this.rowsInView : null;
+        if (rowsInView) {
+            this.rowsInView = null; // later redraws in the same update start from the restored position
+        }
+        // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
+        const focusMoved = !!rowsInView?.followFocus?.();
+        rowsInView?.followRanges?.();
+
         // a draw that threw is redone whole, so an update of the body alone also draws the pinned rows
         const onlyBody = params.onlyBody && this.drawState !== ROWS_DRAW_INTERRUPTED;
         this.getLockOnRefresh();
@@ -659,24 +685,37 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             this.updateContainerHeights();
             this.scrollToTopIfNewData(params);
+            const rowsInViewAnchor = rowsInView?.anchor ?? null;
+            let keptRowsInView = !!rowsInViewAnchor && this.restoreRowsInView(rowsInViewAnchor);
+            if (params.keepRowsInView) {
+                // kept until the rows drawn are measured, as their auto heights can move the rows in view even when the
+                // update itself did not
+                this.rowsInViewAnchorForHeights = this.beans.rowAutoHeight?.active ? rowsInViewAnchor : null;
+            }
 
             // never recycle rows on layout change as rows could change from normal DOM layout
             // back to the grid's row positioning.
             const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
-            const animate = params.animate && _isAnimateRows(this.gos);
+            const animateRows = params.animate && _isAnimateRows(this.gos);
 
             // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
             // however we can reuse the rows, so we keep them but index by rowNode.id
             const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
             const { stickyRowFeature, gos } = this;
             // kept rows are in no map until reused, so those not reused are destroyed however drawing ends
+            let animate = animateRows;
             try {
                 if (!recycleRows) {
                     // a redraw that does not animate skips the fade-out, else rapid replaces flicker via opacity:0
-                    this.removeAllRowComps(!animate);
+                    this.removeAllRowComps(!animateRows || keptRowsInView);
                 }
 
                 this.workOutFirstAndLastRowsToRender();
+                // working out the heights of the rows to render can move the rows kept in view again
+                if (rowsInViewAnchor && this.restoreRowsInView(rowsInViewAnchor, true)) {
+                    keptRowsInView = true;
+                    this.workOutFirstAndLastRowsToRender();
+                }
 
                 if (stickyRowFeature) {
                     stickyRowFeature.checkStickyRows();
@@ -688,6 +727,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     }
                 }
 
+                // checks animateRows itself, as the CSS transitions move the rows even when this redraw does not animate
+                if (keptRowsInView && _isAnimateRows(gos)) {
+                    // rows kept in view by scrolling must not animate from where they were before the scroll
+                    this.gridBodyCtrl.pauseRowAnimation();
+                }
+                animate = animateRows && !keptRowsInView;
                 this.recycleRows(rowsToRecycle, animate);
             } finally {
                 if (rowsToRecycle) {
@@ -703,6 +748,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
 
             this.dispatchDisplayedRowsChanged();
+
+            if (focusMoved) {
+                this.updateCellFocus(); // rows took their new indexes before the focused cell followed its row
+            }
 
             // if a cell was focused before, ensure focus now.
             if (focusedCell != null) {
@@ -724,6 +773,119 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.scrollFeature.scrollToTop();
             this.stickyRowFeature?.resetOffsets();
+            this.rowsInView = null;
+            this.rowsInViewAnchorForHeights = null;
+        }
+    }
+
+    /**
+     * Called at the start of a data update that moves rows, so the redraw it causes keeps the rows in view, the focused
+     * cell and cell ranges on their rows.
+     */
+    public captureRowsInView(): void {
+        const { beans, gridBodyCtrl, printLayout } = this;
+        if (!gridBodyCtrl || this.isRowsInViewIdle()) {
+            this.rowsInView = null;
+            return;
+        }
+        // the focused cell and cell ranges follow their rows wherever the viewport is
+        this.rowsInView = _captureWithLoadedRows(beans, () => ({
+            anchor: printLayout ? null : _captureRowsInView(beans),
+            followFocus: this.focusSvc.followFocusedRow(),
+            followRanges: beans.rangeSvc?.followCellRanges(),
+        }));
+        this.rowsInViewAnchorForHeights = null;
+    }
+
+    /**
+     * Runs a data update that captures the rows in view, dropping its capture if it throws before its redraw, so a
+     * later redraw does not restore it.
+     */
+    public discardRowsInViewOnThrow<T>(update: () => T): T {
+        try {
+            return update();
+        } catch (e) {
+            this.rowsInView = null;
+            throw e;
+        }
+    }
+
+    /** Whether there is nothing to keep in view: no focused cell or cell ranges, at the top of the first page. */
+    private isRowsInViewIdle(): boolean {
+        const { beans, focusSvc, gridBodyCtrl } = this;
+        if (
+            focusSvc.getFocusedCell() ||
+            !(beans.rangeSvc?.isEmpty() ?? true) ||
+            beans.pageBounds.getPixelOffset() !== 0
+        ) {
+            return false;
+        }
+        // the viewport can scroll before its scroll event updates the cached position
+        const { scrollFeature } = gridBodyCtrl;
+        scrollFeature.invalidateVerticalScroll();
+        return scrollFeature.getVScrollPosition().top === 0;
+    }
+
+    /** Scrolls to keep the rows in view during a draw. True if it scrolled. */
+    private restoreRowsInView(anchor: RowsInViewAnchor, correct?: boolean): boolean {
+        // a scroll event dispatched synchronously would redraw while this draw holds the lock
+        this.restoringRowsInView = true;
+        try {
+            return correct ? _correctRowsInView(this.beans, anchor) : _restoreRowsInView(this.beans, anchor);
+        } finally {
+            this.restoringRowsInView = false;
+        }
+    }
+
+    /** Drops the capture of a data update that turned out not to redraw, so a later redraw does not restore it. */
+    public discardRowsInView(): void {
+        this.rowsInView = null;
+    }
+
+    /**
+     * Stops the data update captured from keeping rows in view, as it left none of them. A grid scrolled to the bottom
+     * stays at the bottom, as that needs no rows.
+     */
+    public forgetRowsInView(): void {
+        const rowsInView = this.rowsInView;
+        if (rowsInView && !rowsInView.anchor?.atBottom) {
+            rowsInView.anchor = null;
+        }
+    }
+
+    /**
+     * Takes the rows kept in view for auto heights, before a change of auto heights redraws the rows, unless the
+     * viewport scrolled since.
+     */
+    public takeRowsInViewForHeights(): RowsInViewAnchor | null {
+        const anchor = this.rowsInViewAnchorForHeights;
+        this.rowsInViewAnchorForHeights = null;
+        if (!anchor) {
+            return null;
+        }
+        // checked before the redraw for the new heights, as the viewport clamps to a shorter grid in it, which would read
+        // as a scroll; the viewport itself is read, as a debounced scroll elsewhere may not have been handled yet
+        const scrollFeature = this.ctrlsSvc.getScrollFeature();
+        scrollFeature.invalidateVerticalScroll();
+        return scrollFeature.getVScrollPosition().top === anchor.scrollTop ? anchor : null;
+    }
+
+    /**
+     * Called after a pass of auto heights, which redrew the rows if `heightsChanged`, to keep the rows the last data
+     * update kept in view where it left them. The anchor expires once the rows are measured.
+     */
+    public keepRowsInViewForHeights(anchor: RowsInViewAnchor, heightsChanged: boolean, measured: boolean): void {
+        if (!heightsChanged) {
+            if (!measured) {
+                this.rowsInViewAnchorForHeights = anchor;
+            }
+            return;
+        }
+        if (_correctRowsInView(this.beans, anchor) && _isAnimateRows(this.gos)) {
+            this.gridBodyCtrl.pauseRowAnimation();
+        }
+        if (!measured) {
+            this.rowsInViewAnchorForHeights = anchor;
         }
     }
 
@@ -1063,8 +1225,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onBodyScroll(e: BodyScrollEvent) {
-        if (e.direction !== 'vertical') {
-            return;
+        if (e.direction !== 'vertical' || this.restoringRowsInView) {
+            return; // the draw restoring the rows in view works out the rows to render once it has scrolled
         }
         this.redraw({ afterScroll: true });
     }
@@ -1748,6 +1910,8 @@ interface RefreshViewParams {
     newData?: boolean;
     newPage?: boolean;
     domLayoutChanged?: boolean;
+    /** Set when the rows moved, so a data update captured by `captureRowsInView` restores the rows in view. */
+    keepRowsInView?: boolean;
 }
 
 export function mapRowNodes(rowNodes?: IRowNode[] | null): RowIdsByPinned | undefined {

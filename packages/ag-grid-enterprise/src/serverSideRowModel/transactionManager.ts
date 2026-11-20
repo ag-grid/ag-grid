@@ -2,6 +2,7 @@ import type {
     BeanCollection,
     IServerSideTransactionManager,
     NamedBean,
+    RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
@@ -20,11 +21,13 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     beanName = 'ssrmTxnManager' as const;
 
     private valueCache?: ValueCache;
+    private rowRenderer: RowRenderer;
     private serverSideRowModel: ServerSideRowModel;
     private selectionSvc?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
+        this.rowRenderer = beans.rowRenderer;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;
     }
@@ -53,7 +56,11 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (!this.asyncTransactions) {
             return;
         }
+        this.rowRenderer.discardRowsInViewOnThrow(() => this.applyAsyncTransactions());
+    }
 
+    private applyAsyncTransactions(): void {
+        this.rowRenderer.captureRowsInView();
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
 
@@ -106,6 +113,8 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (atLeastOneTransactionApplied) {
             this.valueCache?.onDataChanged();
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
+        } else {
+            this.rowRenderer.discardRowsInView();
         }
 
         if (resultsForEvent.length > 0) {
@@ -125,6 +134,11 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
+        return this.rowRenderer.discardRowsInViewOnThrow(() => this.applyTransactionToStore(transaction));
+    }
+
+    private applyTransactionToStore(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
+        this.rowRenderer.captureRowsInView();
         let res: ServerSideTransactionResult | undefined;
 
         const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, (store) => {
@@ -132,6 +146,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         });
 
         if (!hasStarted) {
+            this.rowRenderer.discardRowsInView();
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
             this.valueCache?.onDataChanged();
@@ -143,6 +158,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
             return res;
         } else {
+            this.rowRenderer.discardRowsInView();
             return { status: ServerSideTransactionResultStatus.StoreNotFound };
         }
     }

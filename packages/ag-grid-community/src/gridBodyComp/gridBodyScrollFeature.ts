@@ -146,7 +146,8 @@ export class GridBodyScrollFeature extends BeanStub {
         this.isHorizontalPositionInvalidated = true;
     }
 
-    private invalidateVerticalScroll(): void {
+    /** Makes the next `getVScrollPosition` read the viewport, in case it scrolled since its last scroll event. */
+    public invalidateVerticalScroll(): void {
         this.isVerticalPositionInvalidated = true;
     }
 
@@ -488,6 +489,12 @@ export class GridBodyScrollFeature extends BeanStub {
     public setVerticalScrollPosition(vScrollPosition: number): void {
         this.invalidateVerticalScroll();
         this.eGridViewport.scrollTop = vScrollPosition;
+    }
+
+    /** The vertical scroll position with the viewport scrolled as far down as it goes. */
+    public getMaxVScrollPosition(): number {
+        const { scrollHeight, clientHeight } = this.eGridViewport;
+        return Math.max(scrollHeight - clientHeight, 0);
     }
 
     public getVScrollPosition(): VerticalScrollPosition {

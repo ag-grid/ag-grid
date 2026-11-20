@@ -41,6 +41,7 @@ import {
     KeyCode,
     _areCellsEqual,
     _canScrollVertically,
+    _followRow,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getEnableColumnSelection,
@@ -349,6 +350,55 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (countBefore > this.cellRanges.length) {
             this.dispatchChangedEvent(false, true);
         }
+    }
+
+    /**
+     * Records the rows of the cell ranges before a data update, returning how to move the ranges with their rows after
+     * it, so they keep the same cells.
+     */
+    public followCellRanges(): (() => void) | undefined {
+        const { beans, cellRanges, newestRangeStartCell } = this;
+        if (!cellRanges.length) {
+            return undefined;
+        }
+        const followRow = <T extends RowPosition>(row: T | undefined): (() => T | undefined) => {
+            const getRowIndex = row && _followRow(beans, row);
+            return () => {
+                if (!row) {
+                    return row;
+                }
+                // a removed row keeps its index, within the rows left
+                const lastIndex = beans.rowModel.getRowCount() - 1;
+                const rowIndex = getRowIndex?.() ?? (lastIndex < 0 ? row.rowIndex : Math.min(row.rowIndex, lastIndex));
+                return rowIndex !== row.rowIndex ? { ...row, rowIndex } : row;
+            };
+        };
+        const followed = cellRanges.map(
+            (cellRange) => [cellRange, followRow(cellRange.startRow), followRow(cellRange.endRow)] as const
+        );
+        const followStartCell = followRow(newestRangeStartCell);
+        return () => {
+            if (this.newestRangeStartCell === newestRangeStartCell) {
+                this.newestRangeStartCell = followStartCell();
+            }
+            // read again after each event, as its listeners can remove ranges
+            let liveRanges: Set<CellRange> | null = null;
+            for (const [cellRange, getStartRow, getEndRow] of followed) {
+                const startRow = getStartRow();
+                const endRow = getEndRow();
+                if (startRow === cellRange.startRow && endRow === cellRange.endRow) {
+                    continue;
+                }
+                liveRanges ??= new Set(this.cellRanges);
+                if (!liveRanges.has(cellRange)) {
+                    continue;
+                }
+                cellRange.startRow = startRow;
+                cellRange.endRow = endRow;
+                this.dispatchChangedEvent(false, true, cellRange.id);
+                liveRanges = null;
+            }
+        };
     }
 
     public refreshLastRangeStart(): void {
