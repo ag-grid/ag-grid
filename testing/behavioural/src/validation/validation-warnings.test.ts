@@ -292,6 +292,19 @@ describe('ag-grid validation warnings', () => {
             expect(deprecationWarnings('columnEverythingChanged')).toHaveLength(1);
         });
 
+        test.each([
+            ['columnEverythingChanged', 'Either use `displayedColumnsChanged`'],
+            ['rangeSelectionChanged', 'Use `cellSelectionChanged` instead'],
+        ] as const)('the %s warning names replacement events, not grid options', (eventType, replacement) => {
+            const api = eventGridsManager.createGrid('myGrid', { columnDefs: [], rowData: [] });
+
+            api.addEventListener(eventType, () => {});
+
+            const [warning] = consoleWarnSpy.mock.calls.filter((args) => args.join(' ').includes(`\`${eventType}\``));
+            expect(warning.join(' ')).toContain(replacement);
+            expect(warning.join(' ')).not.toMatch(/\bon[A-Z]/);
+        });
+
         test('api.addEventListener does not warn for a non-deprecated event', () => {
             const api = eventGridsManager.createGrid('myGrid', { columnDefs: [], rowData: [] });
 

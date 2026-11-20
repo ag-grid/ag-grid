@@ -58,7 +58,8 @@ export class ValidationService extends BeanStub implements NamedBean {
     /**
      * Warns once per event type when a listener is added via `api.addEventListener` for an event whose
      * grid option (`on<Event>`) is deprecated. Reuses the grid option deprecation entries so the version
-     * and message are defined in one place.
+     * and message are defined in one place, rewriting the `on<Event>` option names in the message to the
+     * event names `addEventListener` takes.
      */
     public validateEventListener(eventType: string): void {
         const handlerName = _PUBLIC_EVENT_HANDLERS_MAP[eventType as AgPublicEventType];
@@ -68,7 +69,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
         this.deprecatedEventsReported.add(eventType);
         const { version, message } = deprecation;
-        this.beans.log.deprecated(306, { version, name: eventType, message });
+        const eventMessage = message?.replace(
+            /\bon([A-Z]\w*)/g,
+            (_, name: string) => name[0].toLowerCase() + name.slice(1)
+        );
+        this.beans.log.deprecated(306, { version, name: eventType, message: eventMessage });
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
