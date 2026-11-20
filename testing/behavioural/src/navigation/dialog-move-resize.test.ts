@@ -15,9 +15,9 @@ const RESIZE_BUTTONS = ['Narrower', 'Wider', 'Shorter', 'Taller'];
 
 /**
  * Dialogs can be moved and resized without dragging (WCAG 2.1.1 and 2.5.7). The Move and Resize button in the title
- * bar starts a mode in which the arrow keys move the dialog, Shift with the arrow keys resizes it, Enter finishes and
- * Escape cancels; step buttons do the same for pointer users. The geometry needs real layout, so it is covered by the
- * grid e2e spec; these tests cover the states, keys and labels.
+ * bar starts a mode in which the arrow keys move a ghost of the dialog, Shift with the arrow keys resizes it, Enter
+ * moves the dialog to it and Escape cancels; step buttons do the same for pointer users. The geometry needs real
+ * layout, so it is covered by the grid e2e spec; these tests cover the states, keys and labels.
  */
 describe('Moving and resizing dialogs without dragging', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -158,7 +158,7 @@ describe('Moving and resizing dialogs without dragging', () => {
         expect(dialog.querySelector('.ag-dialog-move-resize-bar')).toHaveClass('ag-hidden');
     });
 
-    test('the mode shows a bar under the title bar, with a labelled group for position, width and height', async () => {
+    test('the mode shows a bar after the title bar, with a labelled group for position, width and height', async () => {
         const { dialog } = await openColumnChooser();
         const bar = dialog.querySelector<HTMLElement>('.ag-dialog-move-resize-bar')!;
         expect(dialog.querySelector('.ag-panel-title-bar')!.nextElementSibling).toBe(bar);
@@ -180,6 +180,26 @@ describe('Moving and resizing dialogs without dragging', () => {
                 b.getAttribute('aria-label')
             )
         ).toEqual(RESIZE_BUTTONS);
+    });
+
+    test('in the mode, a ghost of the dialog sits just behind it and its outline just over it, until the mode ends', async () => {
+        const { dialog } = await openColumnChooser();
+        const toggle = await startWithKeyboard(dialog);
+
+        const fill = dialog.previousElementSibling;
+        const outline = dialog.nextElementSibling;
+        expect(fill).toHaveClass('ag-dialog-ghost', 'ag-dialog-ghost-fill');
+        expect(outline).toHaveClass('ag-dialog-ghost', 'ag-dialog-ghost-outline');
+        expect(fill).toHaveAttribute('aria-hidden', 'true');
+        expect(outline).toHaveAttribute('aria-hidden', 'true');
+
+        await userEvent.keyboard('{Escape}');
+        expect(toggle).toHaveAttribute('aria-pressed', 'false');
+        expect(document.querySelector('.ag-dialog-ghost')).toBeNull();
+
+        await startWithKeyboard(dialog);
+        await userEvent.keyboard('{Enter}');
+        expect(document.querySelector('.ag-dialog-ghost')).toBeNull();
     });
 
     test('the step buttons are native buttons outside the Tab order, and clicking one keeps the mode and focus', async () => {

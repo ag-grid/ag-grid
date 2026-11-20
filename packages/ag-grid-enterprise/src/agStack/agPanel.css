@@ -54,8 +54,6 @@
     overflow: hidden;
 }
 
-/* Move and Resize mode: the dialog is outlined, the Move and Resize button shows as pressed, and the bar of step
-   buttons shows */
 .ag-dialog-move-resize-active {
     outline: 2px solid var(--ag-accent-color);
 
@@ -70,16 +68,25 @@
     box-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-active-background-color);
 }
 
-/* the bar of step buttons under the title bar. The dialog grows to fit it, so it never covers or squeezes the content */
+/* over the content, so starting the mode doesn't resize the dialog; `top` is set from the title bar's height */
 .ag-dialog-move-resize-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
     display: flex;
-    flex: none;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--ag-spacing) calc(var(--ag-spacing) * 2.5);
     padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
     color: var(--ag-panel-title-bar-text-color);
-    background-color: var(--ag-panel-title-bar-background-color);
+
+    /* opaque over the content, whatever the title bar's own background */
+    background-color: var(--ag-panel-background-color);
+    background-image: linear-gradient(
+        var(--ag-panel-title-bar-background-color),
+        var(--ag-panel-title-bar-background-color)
+    );
     border-bottom: var(--ag-panel-title-bar-border);
 }
 
@@ -95,6 +102,24 @@
 
 .ag-dialog-step-button {
     display: flex;
+}
+
+/* the dialog's z-index, above the grid's rows; DOM order puts the fill behind the dialog and the outline over it */
+.ag-dialog-ghost {
+    position: absolute;
+    z-index: 5;
+    box-sizing: border-box;
+    border: 2px dashed var(--ag-accent-color);
+    border-radius: var(--ag-border-radius);
+    pointer-events: none;
+
+    @media (forced-colors: active) {
+        border-color: Highlight;
+    }
+}
+
+.ag-dialog-ghost-fill {
+    background-color: color-mix(in srgb, transparent, var(--ag-accent-color) 12%);
 }
 
 /* greyed out, without transparency, when the dialog can't move or resize any further that way */

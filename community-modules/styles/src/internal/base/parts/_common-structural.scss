@@ -1534,8 +1534,7 @@
         position: absolute;
     }
 
-    // Move and Resize mode: the dialog is outlined, the Move and Resize button shows as pressed, and the bar of step
-    // buttons shows. Two classes, to win over the theme files' outline reset on every `ag-` class, which loads after this
+    // two classes, to win over the theme files' later outline reset on every `ag-` class
     .ag-dialog.ag-dialog-move-resize-active {
         outline: 2px solid var(--ag-range-selection-border-color);
 
@@ -1549,15 +1548,19 @@
         color: var(--ag-range-selection-border-color);
     }
 
-    // the bar of step buttons under the title bar. The dialog grows to fit it, so it never covers or squeezes the content
+    // over the content, so starting the mode doesn't resize the dialog; `top` is set from the title bar's height
     .ag-dialog-move-resize-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 2;
         display: flex;
-        flex: none;
         flex-wrap: wrap;
         align-items: center;
         gap: var(--ag-grid-size) calc(var(--ag-grid-size) * 2.5);
         padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
         color: var(--ag-header-foreground-color);
+        background-color: var(--ag-panel-background-color);
         border-bottom: var(--ag-borders) var(--ag-border-color);
     }
 
@@ -1578,6 +1581,24 @@
         border: 0;
         background-color: unset;
         cursor: pointer;
+    }
+
+    // the dialog's z-index, above the grid's rows; DOM order puts the fill behind the dialog and the outline over it
+    .ag-dialog-ghost {
+        position: absolute;
+        z-index: 5;
+        box-sizing: border-box;
+        border: 2px dashed var(--ag-range-selection-border-color);
+        border-radius: var(--ag-border-radius);
+        pointer-events: none;
+
+        @media (forced-colors: active) {
+            border-color: Highlight;
+        }
+    }
+
+    .ag-dialog-ghost-fill {
+        background-color: color-mix(in srgb, transparent, var(--ag-range-selection-border-color) 12%);
     }
 
     // greyed out, without transparency, when the dialog can't move or resize any further that way

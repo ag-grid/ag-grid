@@ -25,6 +25,14 @@ interface StepButton {
     el: HTMLButtonElement;
     x: number;
     y: number;
+    resize: boolean;
+}
+
+interface DialogRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 
 interface DialogMoveResizeParams {
@@ -42,11 +50,16 @@ const buttonParams = (cls: string): AgElementParams<string> => ({
     attrs: { type: 'button', tabindex: '-1' },
 });
 
+const isSameRect = (a: DialogRect, b: DialogRect): boolean =>
+    a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+
 /**
- * Moves and resizes a dialog without dragging. The Move and Resize button in the title bar starts a mode in which
- * the arrow keys move the dialog and Shift with the arrow keys resizes it, and a bar of step buttons under the title
- * bar does the same for pointer users: arrows for its position, and minus and plus for its width and height. Enter or
- * the button finishes, and Escape puts the dialog back where it was.
+ * Moves and resizes a dialog without dragging. The Move and Resize button in the title bar starts a mode in which a
+ * ghost of the dialog, drawn behind it, shows where it will go: the arrow keys move the ghost and Shift with the arrow
+ * keys resizes it, and a bar of step buttons over the top of the dialog's content does the same for pointer users,
+ * arrows for its position, and minus and plus for its width and height. The dialog itself stays where it is, so the
+ * buttons stay under the pointer, until the mode ends: Enter, the button, Tab or clicking away move the dialog to the
+ * ghost, and Escape leaves it where it was.
  */
 export class AgDialogMoveResizeFeature<
     TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -60,13 +73,13 @@ export class AgDialogMoveResizeFeature<
     private ePositionButtons: HTMLElement;
     private eWidthButtons: HTMLElement;
     private eHeightButtons: HTMLElement;
-    private readonly moveButtons: StepButton[] = [];
-    private readonly resizeButtons: StepButton[] = [];
+    /** The ghost, behind the dialog, and its outline, over the dialog, so it shows as it shrinks within the dialog. */
+    private eGhost: HTMLElement;
+    private eGhostOutline: HTMLElement;
+    private readonly stepButtons: StepButton[] = [];
     private active = false;
-    /** Where the dialog was when the mode started, so Escape can put it back. */
-    private start: { x: number; y: number; width: number; height: number } | null = null;
-    /** How much the dialog grew, and moved up, to make room for the bar, both undone as the mode ends. */
-    private barRoom = { height: 0, shift: 0 };
+    /** Where the dialog will go as the mode ends. */
+    private ghost: DialogRect | null = null;
 
     constructor(private readonly params: DialogMoveResizeParams) {
         super();
@@ -97,12 +110,7 @@ export class AgDialogMoveResizeFeature<
         this.eToggle = eToggle;
 
         // each group is labelled with what it changes, so arrows read as moving and minus and plus as sizing
-        const createGroup = (
-            cls: string,
-            label: string,
-            buttons: StepButton[],
-            defs: [string, string, number, number][]
-        ) => {
+        const createGroup = (cls: string, label: string, resize: boolean, defs: [string, string, number, number][]) => {
             const eGroup = _createAgElement({ tag: 'div', cls: `ag-dialog-step-buttons ${cls}`, role: 'group' });
             _setAriaLabel(eGroup, label);
             const eLabel = _createAgElement({ tag: 'span', cls: 'ag-dialog-step-buttons-label', children: label });
@@ -111,59 +119,68 @@ export class AgDialogMoveResizeFeature<
             eGroup.appendChild(eLabel);
             for (const [buttonLabel, iconName, x, y] of defs) {
                 const el = createButton('ag-dialog-step-button', buttonLabel, iconName);
-                buttons.push({ el, x, y });
+                this.stepButtons.push({ el, x, y, resize });
                 eGroup.appendChild(el);
             }
             return eGroup;
         };
 
-        this.ePositionButtons = createGroup(
-            'ag-dialog-position-buttons',
-            translate('position', 'Position'),
-            this.moveButtons,
-            [
-                [translate('moveLeft', 'Move Left'), 'menuMoveLeft', -STEP, 0],
-                [translate('moveUp', 'Move Up'), 'menuMoveUp', 0, -STEP],
-                [translate('moveDown', 'Move Down'), 'menuMoveDown', 0, STEP],
-                [translate('moveRight', 'Move Right'), 'menuMoveRight', STEP, 0],
-            ]
-        );
-        this.eWidthButtons = createGroup('ag-dialog-width-buttons', translate('width', 'Width'), this.resizeButtons, [
+        this.ePositionButtons = createGroup('ag-dialog-position-buttons', translate('position', 'Position'), false, [
+            [translate('moveLeft', 'Move Left'), 'menuMoveLeft', -STEP, 0],
+            [translate('moveUp', 'Move Up'), 'menuMoveUp', 0, -STEP],
+            [translate('moveDown', 'Move Down'), 'menuMoveDown', 0, STEP],
+            [translate('moveRight', 'Move Right'), 'menuMoveRight', STEP, 0],
+        ]);
+        this.eWidthButtons = createGroup('ag-dialog-width-buttons', translate('width', 'Width'), true, [
             [translate('ariaLabelNarrower', 'Narrower'), 'calculatedColumnRemove', -STEP, 0],
             [translate('ariaLabelWider', 'Wider'), 'calculatedColumnAdd', STEP, 0],
         ]);
-        this.eHeightButtons = createGroup(
-            'ag-dialog-height-buttons',
-            translate('height', 'Height'),
-            this.resizeButtons,
-            [
-                [translate('ariaLabelShorter', 'Shorter'), 'calculatedColumnRemove', 0, -STEP],
-                [translate('ariaLabelTaller', 'Taller'), 'calculatedColumnAdd', 0, STEP],
-            ]
-        );
+        this.eHeightButtons = createGroup('ag-dialog-height-buttons', translate('height', 'Height'), true, [
+            [translate('ariaLabelShorter', 'Shorter'), 'calculatedColumnRemove', 0, -STEP],
+            [translate('ariaLabelTaller', 'Taller'), 'calculatedColumnAdd', 0, STEP],
+        ]);
 
-        // in the flow under the title bar, so it never covers the dialog's content: the content gives up the room
+        // laid over the top of the content, so starting the mode doesn't change the dialog's size
         const eBar = _createAgElement({ tag: 'div', cls: 'ag-dialog-move-resize-bar' });
         eBar.append(this.ePositionButtons, this.eWidthButtons, this.eHeightButtons);
         this.eBar = eBar;
+
+        const createGhostLayer = (cls: string) => {
+            const el = _createAgElement({ tag: 'div', cls: `ag-dialog-ghost ${cls}` });
+            _setAriaHidden(el, true);
+            return el;
+        };
+        this.eGhost = createGhostLayer('ag-dialog-ghost-fill');
+        this.eGhostOutline = createGhostLayer('ag-dialog-ghost-outline');
 
         eTitleBarButtons.prepend(eToggle);
         eTitleBar.after(eBar);
         this.refreshAvailability();
 
         _addManagedElementListeners(this, eToggle, { click: () => this.setActive(!this.active) });
-        for (const { el, x, y } of this.moveButtons) {
-            _addManagedElementListeners(this, el, { click: () => this.step(() => this.moveBy(x, y)) });
+        for (const { el, x, y, resize } of this.stepButtons) {
+            _addManagedElementListeners(this, el, { click: () => this.stepGhost(x, y, resize) });
         }
-        for (const { el, x, y } of this.resizeButtons) {
-            _addManagedElementListeners(this, el, { click: () => this.step(() => this.resizeBy(x, y)) });
-        }
+        // dragging the dialog itself moves it straight away, so the ghost drops what it hadn't applied
+        this.addManagedListeners(this.params.positionableFeature, {
+            dragStart: () => this.syncGhost(),
+            dragEnd: () => {
+                this.syncGhost();
+                // a resize handle passes focus to the dialog, so give it back for the arrow keys
+                if (this.active) {
+                    this.eToggle.focus({ preventScroll: true });
+                }
+            },
+        });
         // keep focus on the Move and Resize button, as a press on a step button or anywhere in the bar would take it
         _addManagedElementListeners(this, eBar, { mousedown: (e: MouseEvent) => e.preventDefault() });
         _addManagedElementListeners(this, eDialog, {
             keydown: this.onKeyDown.bind(this),
+            // clicking away, out of the dialog or onto a control in it, finishes; pressing on its edges or a blank part
+            // of it focuses the dialog itself, which doesn't
             focusout: (e: FocusEvent) => {
-                if (this.active && !this.isControl(e.relatedTarget as Node | null)) {
+                const target = e.relatedTarget as Node | null;
+                if (this.active && target !== eDialog && !this.isControl(target)) {
                     this.setActive(false);
                 }
             },
@@ -171,9 +188,18 @@ export class AgDialogMoveResizeFeature<
     }
 
     public override destroy(): void {
-        this.eToggle?.remove();
-        this.eBar?.remove();
+        for (const el of [this.eToggle, this.eBar, this.eGhost, this.eGhostOutline]) {
+            el?.remove();
+        }
         super.destroy();
+    }
+
+    /** Matches the ghost to the dialog, after it has moved or resized some other way, as by dragging or maximising. */
+    public syncGhost(): void {
+        if (this.active) {
+            this.ghost = this.getDialogRect();
+            this.refreshGhost();
+        }
     }
 
     /** Shows or hides the Move and Resize button, as the dialog becomes movable or resizable or stops being so. */
@@ -184,7 +210,7 @@ export class AgDialogMoveResizeFeature<
         if (available) {
             this.refreshStepButtonsDisplayed();
         } else {
-            this.setActive(false);
+            this.setActive(false, false);
         }
     }
 
@@ -193,75 +219,46 @@ export class AgDialogMoveResizeFeature<
      * than by CSS alone, so the grid's own Tab handling never lands on the step buttons.
      */
     private refreshStepButtonsDisplayed(): void {
-        const { positionableFeature } = this.params;
+        const { eTitleBar, positionableFeature } = this.params;
         const resizable = positionableFeature.isResizable();
         _setDisplayed(this.eBar, this.active);
         _setDisplayed(this.ePositionButtons, positionableFeature.isMovable());
         _setDisplayed(this.eWidthButtons, resizable);
         _setDisplayed(this.eHeightButtons, resizable);
+        if (this.active) {
+            this.eBar.style.top = `${eTitleBar.offsetTop + eTitleBar.offsetHeight}px`;
+        }
     }
 
-    private setActive(active: boolean, revert = false): void {
+    /** Starts or ends the mode. Ending it moves the dialog to the ghost, unless `apply` is false, as for Escape. */
+    private setActive(active: boolean, apply = true): void {
         if (active === this.active) {
             return;
         }
-        const { eDialog, positionableFeature, onStart } = this.params;
+        const { eDialog, onStart } = this.params;
         if (active) {
             onStart();
-            const { x, y } = positionableFeature.getPosition();
-            this.start = { x, y, width: positionableFeature.getWidth()!, height: positionableFeature.getHeight()! };
+            this.ghost = this.getDialogRect();
+            // in the dialog's own popup wrapper, so the ghost shares its position and stacks just behind it
+            eDialog.before(this.eGhost);
+            eDialog.after(this.eGhostOutline);
             this.eToggle.focus({ preventScroll: true });
+        } else {
+            if (apply && this.ghost) {
+                this.setDialogRect(this.ghost);
+            }
+            this.ghost = null;
+            this.eGhost.remove();
+            this.eGhostOutline.remove();
         }
         this.active = active;
         eDialog.classList.toggle('ag-dialog-move-resize-active', active);
         _setAriaPressed(this.eToggle, active);
         this.refreshStepButtonsDisplayed();
         if (active) {
-            this.makeRoomForBar();
-            this.refreshStepButtonsDisabled();
+            this.refreshGhost();
             this.announceInstructions();
-            return;
         }
-        if (revert && this.start) {
-            const { x, y, width, height } = this.start;
-            // move back first, so the old size fits, then move again in case the larger size held the dialog off
-            positionableFeature.offsetElement(x, y);
-            positionableFeature.setWidth(width);
-            positionableFeature.setHeight(height);
-            positionableFeature.offsetElement(x, y);
-        } else {
-            const { height, shift } = this.barRoom;
-            positionableFeature.setHeight(positionableFeature.getHeight()! - height);
-            positionableFeature.moveBy(0, shift);
-        }
-        this.start = null;
-        this.barRoom = { height: 0, shift: 0 };
-    }
-
-    /**
-     * Grows the dialog by the height of the bar, so its content keeps its size rather than being cut off, moving it up
-     * first when there isn't room below.
-     */
-    private makeRoomForBar(): void {
-        const { positionableFeature } = this.params;
-        const needed = this.eBar.offsetHeight;
-        const height = positionableFeature.getHeight()!;
-        positionableFeature.setHeight(height + needed);
-        let grown = positionableFeature.getHeight()! - height;
-        let shift = 0;
-        if (grown < needed) {
-            const { y } = positionableFeature.getPosition();
-            positionableFeature.moveBy(0, grown - needed);
-            shift = y - positionableFeature.getPosition().y;
-            positionableFeature.setHeight(height + needed);
-            grown = positionableFeature.getHeight()! - height;
-        }
-        this.barRoom = { height: grown, shift };
-    }
-
-    /** The smallest height while the bar shows: the dialog's own minimum, plus the room made for the bar. */
-    private getMinHeightWithBar(): number {
-        return this.params.positionableFeature.getMinHeight() + this.barRoom.height;
     }
 
     private announceInstructions(): void {
@@ -287,7 +284,7 @@ export class AgDialogMoveResizeFeature<
             // cancel the move rather than close the dialog
             e.preventDefault();
             e.stopPropagation();
-            this.setActive(false, true);
+            this.setActive(false, false);
             return;
         }
         if (key === KeyCode.ENTER) {
@@ -305,52 +302,79 @@ export class AgDialogMoveResizeFeature<
         }
         e.preventDefault();
         const [x, y] = direction;
-        if (shiftKey) {
-            this.step(() => this.resizeBy(x, y));
-        } else {
-            this.step(() => this.moveBy(x, y));
+        this.stepGhost(x, y, shiftKey);
+    }
+
+    private stepGhost(x: number, y: number, resize: boolean): void {
+        const next = this.getNextGhost(x, y, resize);
+        if (next) {
+            this.ghost = next;
+            this.refreshGhost();
         }
     }
 
-    private moveBy(x: number, y: number): void {
+    /** Where a step would take the ghost, or null if the dialog can't move or resize that way. */
+    private getNextGhost(x: number, y: number, resize: boolean): DialogRect | null {
+        const { ghost } = this;
         const { positionableFeature } = this.params;
-        if (positionableFeature.isMovable()) {
-            positionableFeature.moveBy(x, y);
+        if (!ghost || !(resize ? positionableFeature.isResizable() : positionableFeature.isMovable())) {
+            return null;
         }
+        return this.fitDialogRect(
+            resize
+                ? { ...ghost, width: ghost.width + x, height: ghost.height + y }
+                : { ...ghost, x: ghost.x + x, y: ghost.y + y }
+        );
     }
 
-    private resizeBy(width: number, height: number): void {
+    /**
+     * Where the dialog would end up if moved and sized to `rect`, kept within the grid and its size limits as it would
+     * be. Found by trying it on the dialog and putting the dialog back before the browser draws it.
+     */
+    private fitDialogRect(rect: DialogRect): DialogRect {
+        const current = this.getDialogRect();
+        this.setDialogRect(rect);
+        const fitted = this.getDialogRect();
+        this.setDialogRect(current);
+        return fitted;
+    }
+
+    private getDialogRect(): DialogRect {
         const { positionableFeature } = this.params;
-        if (!positionableFeature.isResizable()) {
+        const { x, y } = positionableFeature.getPosition();
+        return { x, y, width: positionableFeature.getWidth()!, height: positionableFeature.getHeight()! };
+    }
+
+    private setDialogRect({ x, y, width, height }: DialogRect): void {
+        const { positionableFeature } = this.params;
+        // move first, so the new size fits, then move again in case the old size held the dialog off
+        positionableFeature.offsetElement(x, y);
+        if (positionableFeature.isResizable()) {
+            positionableFeature.setWidth(width);
+            positionableFeature.setHeight(height);
+        }
+        positionableFeature.offsetElement(x, y);
+    }
+
+    /** Draws the ghost once it differs from the dialog, and greys out the steps it can't take. */
+    private refreshGhost(): void {
+        const { ghost } = this;
+        if (!ghost) {
             return;
         }
-        if (height < 0) {
-            // the content keeps its minimum height, with the bar on top
-            const room = Math.max(0, positionableFeature.getHeight()! - this.getMinHeightWithBar());
-            height = Math.max(height, -room);
+        const shown = !isSameRect(ghost, this.getDialogRect());
+        for (const el of [this.eGhost, this.eGhostOutline]) {
+            _setDisplayed(el, shown);
+            Object.assign(el.style, {
+                left: `${ghost.x}px`,
+                top: `${ghost.y}px`,
+                width: `${ghost.width}px`,
+                height: `${ghost.height}px`,
+            });
         }
-        positionableFeature.resizeBy(width, height);
-    }
-
-    private step(action: () => void): void {
-        action();
-        this.refreshStepButtonsDisabled();
-    }
-
-    /** Disables each step button that can't move or resize the dialog any further, as at the edge or minimum size. */
-    private refreshStepButtonsDisabled(): void {
-        const { positionableFeature } = this.params;
-        // only probe what the dialog allows
-        if (positionableFeature.isMovable()) {
-            for (const { el, x, y } of this.moveButtons) {
-                _setAriaDisabled(el, !positionableFeature.canMoveBy(x, y));
-            }
-        }
-        if (positionableFeature.isResizable()) {
-            const canShrinkHeight = positionableFeature.getHeight()! > this.getMinHeightWithBar();
-            for (const { el, x, y } of this.resizeButtons) {
-                _setAriaDisabled(el, y < 0 ? !canShrinkHeight : !positionableFeature.canResizeBy(x, y));
-            }
+        for (const { el, x, y, resize } of this.stepButtons) {
+            const next = this.getNextGhost(x, y, resize);
+            _setAriaDisabled(el, !next || isSameRect(next, ghost));
         }
     }
 

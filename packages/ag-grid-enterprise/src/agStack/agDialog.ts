@@ -215,6 +215,7 @@ export class AgDialog<
 
         this.isMaximized = !this.isMaximized;
         this.refreshMaximizeIcon();
+        this.moveResizeFeature?.syncGhost();
     }
 
     private refreshMaximizeIcon() {
