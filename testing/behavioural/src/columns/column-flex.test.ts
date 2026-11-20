@@ -1360,6 +1360,61 @@ describe('Column Flex with animateColumnResizing', () => {
         }
     });
 
+    test('a viewport resize with no flex column to re-flex keeps a running width animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 100 }, { colId: 'b' }],
+                animateColumnResizing: true,
+            });
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 300 }] });
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 1200;
+            triggerResizeObservers();
+            await nextAnimationFrame();
+
+            expect(isAnimating(api)).toBe(true);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
+    });
+
+    test('a viewport resize that unpins the pinned columns it has no room for applies at once, ending a running width animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 600, pinned: 'left' }, { colId: 'b', width: 100 }, { colId: 'c' }],
+                animateColumnResizing: true,
+            });
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+
+            api.applyColumnState({ state: [{ colId: 'b', width: 300 }] });
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 500;
+            triggerResizeObservers();
+            await nextAnimationFrame();
+
+            expect(api.getColumn('a')!.getPinned()).toBeNull();
+            expect(isAnimating(api)).toBe(false);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
+    });
     test('a reorder drops the width animation even when a layout listener begins a change of its own', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
@@ -1378,11 +1433,76 @@ describe('Column Flex with animateColumnResizing', () => {
         expect(isAnimating(api)).toBe(false);
     });
 
+    test('a resize by hand straight after an animated change applies at once, through the API, the keyboard on a column header or on a group header', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { groupId: 'g', children: [{ colId: 'd' }, { colId: 'e' }] },
+            ],
+            defaultColDef: { width: 200, resizable: true },
+            animateColumnResizing: true,
+        });
+
+        api.setColumnsVisible(['c'], false);
+        expect(isAnimating(api)).toBe(true);
+        api.setColumnWidths([{ key: 'a', newWidth: 250 }]);
+        expect(isAnimating(api)).toBe(false);
+
+        api.setColumnsVisible(['c'], true);
+        expect(isAnimating(api)).toBe(true);
+        const header = api.getGridElement()!.querySelector<HTMLElement>('.ag-header-cell[col-id="b"]')!;
+        header.focus();
+        header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+        expect(api.getColumn('b')!.getActualWidth()).toBeGreaterThan(200);
+        expect(isAnimating(api)).toBe(false);
+
+        const groupWidth = () => api.getColumn('d')!.getActualWidth() + api.getColumn('e')!.getActualWidth();
+        api.setColumnsVisible(['c'], false);
+        expect(isAnimating(api)).toBe(true);
+        const groupWidthBefore = groupWidth();
+        const groupHeader = api.getGridElement()!.querySelector<HTMLElement>('.ag-header-group-cell')!;
+        groupHeader.focus();
+        groupHeader.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+        expect(groupWidth()).toBeGreaterThan(groupWidthBefore);
+        expect(isAnimating(api)).toBe(false);
+    });
+
     describe('restoring a state', () => {
         const stateGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, ColumnApiModule, GridStateModule],
         });
         afterEach(() => stateGridsManager.reset());
+
+        test('neither animates the widths it sets nor slides the columns it moves', async () => {
+            const api = stateGridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                defaultColDef: { width: 200 },
+                animateColumnResizing: true,
+            });
+            // past the restore of the initial state, which suppresses animation until its own timer
+            await asyncSetTimeout(0);
+            // nor in the windows earlier changes still animate
+            api.applyColumnState({ state: [{ colId: 'b', width: 250 }] });
+            api.moveColumns(['a'], 1);
+            expect([isAnimating(api), api.getGridElement()!.querySelector('.ag-column-moving') !== null]).toEqual([
+                true,
+                true,
+            ]);
+
+            api.setState({
+                columnSizing: { columnSizingModel: [{ colId: 'a', width: 300 }] },
+                columnOrder: { orderedColIds: ['a', 'b'] },
+            });
+
+            expect(api.getAllDisplayedColumns().map((col) => `${col.getColId()}:${col.getActualWidth()}`)).toEqual([
+                'a:300',
+                'b:250',
+            ]);
+            expect(isAnimating(api)).toBe(false);
+            expect(api.getGridElement()!.querySelector('.ag-column-moving')).toBeNull();
+        });
 
         test('the first row data, which restores the initial state, leaves a running width animation', async () => {
             const api = stateGridsManager.createGrid('myGrid', {

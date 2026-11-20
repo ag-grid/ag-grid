@@ -2,7 +2,7 @@
 // them drives, and the layout polyfills the popup needs. Siblings rather than one file because vitest
 // parallelises across files but not within one, so ~100 grid-building tests serialise in a single worker.
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, clickMenuOption, clickSelectOption, openPicker, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
@@ -30,6 +30,19 @@ import {
     TreeDataModule,
     ViewportRowModelModule,
 } from 'ag-grid-enterprise';
+
+import { getExpressionInput } from './calculatedColumnDialog';
+
+export {
+    clickDialogButton,
+    closeDialog,
+    getCalculatedColumnDialog,
+    getDialogButton,
+    getExpressionInput,
+    selectDataType,
+    setExpression,
+    setTitle,
+} from './calculatedColumnDialog';
 
 export const flashCssClass = 'ag-cell-data-changed';
 export const gridRowsOpts = { useFormatter: false } as const;
@@ -177,36 +190,6 @@ export async function openEditDialogViaMenu(
     await clickMenuOption('Edit Calculated Column');
 }
 
-export function getCalculatedColumnDialog(): HTMLElement {
-    const dialog = document.querySelector<HTMLElement>('.ag-calculated-column-form');
-    expect(dialog).toBeTruthy();
-    return dialog!;
-}
-
-export function setExpression(expression: string): void {
-    const input = getExpressionInput();
-    input.value = expression;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-export function clickDialogButton(label: string): void {
-    const button = getDialogButton(label);
-    button.click();
-}
-
-export function getDialogButton(label: string): HTMLButtonElement {
-    const button = Array.from(getCalculatedColumnDialog().querySelectorAll<HTMLButtonElement>('button')).find(
-        (element) => element.textContent?.trim() === label
-    );
-    expect(button).toBeTruthy();
-    return button!;
-}
-
-export async function selectDataType(label: string): Promise<void> {
-    await openPicker(getCalculatedColumnDialog().querySelector('.ag-select')!);
-    await clickSelectOption(label);
-}
-
 export function getSuggestionLabels(): string[] {
     return Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-row-label')).map(
         (element) => element.textContent?.trim() ?? ''
@@ -230,10 +213,6 @@ export function getOpenMenuEntries(): string[] {
             ? 'separator'
             : (element.querySelector<HTMLElement>('.ag-menu-option-text')?.textContent?.trim() ?? '')
     );
-}
-
-export function getExpressionInput(): HTMLTextAreaElement {
-    return getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea')!;
 }
 
 // Polls until the first row has data. `modelUpdated` is unreliable across row models in

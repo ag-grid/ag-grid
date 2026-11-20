@@ -4,9 +4,9 @@ import type {
     AdvancedFilterModel,
     AgColumn,
     BeanCollection,
+    ColumnEventType,
     ColumnModel,
     ColumnNameService,
-    ColumnPivotChangedEvent,
     ColumnVO,
     FilterManager,
     FilterModel,
@@ -26,6 +26,7 @@ import type {
     SortModelItem,
     SortService,
     StoreRefreshAfterParams,
+    _RowModelChange,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -128,14 +129,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public postConstruct(): void {
-        const resetListener = this.resetRootStore.bind(this);
         this.addManagedEventListeners({
-            newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.onStoreUpdated.bind(this),
-            columnValueChanged: resetListener,
-            columnPivotChanged: this.onPivotChanged.bind(this),
-            columnRowGroupChanged: resetListener,
-            columnPivotModeChanged: resetListener,
         });
         _addRowHeightChangedListener(this, () => this.onRowHeightStyleChanged());
 
@@ -150,7 +145,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 'removePivotHeaderRowWhenSingleValueColumn',
                 'cacheBlockSize',
             ],
-            resetListener
+            () => this.resetRootStore()
         );
         this.addManagedPropertyListeners(
             ['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow', 'alwaysShowGrandTotalRow'],
@@ -213,6 +208,20 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         return cache.isLastRowIndexKnown();
     }
 
+    public refreshAfterChange(change: _RowModelChange): void {
+        if (change.rowGroups || change.values || change.pivotMode) {
+            this.resetRootStore();
+            return;
+        }
+        // a pivot change raised with new columns (a columnDefs pivotSort) is re-derived before they are compared
+        if (change.pivot || change.pivotResultNames) {
+            this.onPivotChanged(change.pivotSource);
+        }
+        if (change.columnsLoaded) {
+            this.onColumnEverything();
+        }
+    }
+
     private onColumnEverything(): void {
         // if first time, always reset
         if (!this.storeParams) {
@@ -270,16 +279,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         } else {
             // cols may have changed even if we didn't do a reset. storeParams ref will be provided when getRows
             // is called, so it's important to keep it up to date.
-            const newParams = this.createStoreParams();
-            this.storeParams.rowGroupCols = newParams.rowGroupCols;
-            this.storeParams.pivotCols = newParams.pivotCols;
-            this.storeParams.valueCols = newParams.valueCols;
+            const storeParams = this.storeParams;
+            storeParams.rowGroupCols = rowGroupColumnVos;
+            storeParams.pivotCols = pivotColumnVos;
+            storeParams.valueCols = valueColumnVos;
         }
     }
 
     /** A `pivotSort` toggle reorders the pivot result columns without changing what the server is asked for,
      *  so re-derive the column defs from the fields already loaded instead of refetching every block. */
-    private onPivotChanged(event: ColumnPivotChangedEvent): void {
+    private onPivotChanged(source: ColumnEventType): void {
         if (!this.arePivotColsUnchanged()) {
             this.resetRootStore();
             return;
@@ -288,7 +297,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         // Application-supplied columns win: `setPivotResultColumns` hands the order to the application, even if
         // this row model generated columns from `pivotResultFields` earlier. Re-order the applied ones in place.
         if (pivotResultCols?.suppliedColDefs) {
-            pivotResultCols.resortPivotResultCols(event.source);
+            pivotResultCols.resortPivotResultCols(source);
             return;
         }
         const pivotResultFields = this.pivotResultFields;

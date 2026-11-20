@@ -1338,13 +1338,13 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
-    test('rowNumbers options mutated at runtime propagate via updateColumns', async () => {
+    test('rowNumbers options mutated at runtime update the row numbers column', async () => {
         const api = await createGrid({
             columnDefs,
             rowData,
             rowNumbers: { width: 80 },
         });
-        await new GridColumns(api, `rowNumbers options mutated at runtime propagate via updateColumns setup`)
+        await new GridColumns(api, `rowNumbers options mutated at runtime update the row numbers column setup`)
             .checkColumns(`
                 LEFT
                 └── ag-Grid-RowNumbersColumn width:80 !resizable !sortable suppressMovable lockPosition:left
@@ -1361,7 +1361,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         api.setGridOption('rowNumbers', { width: 120, headerTooltip: 'New' });
         await new GridColumns(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).checkColumns(`
             LEFT
             └── ag-Grid-RowNumbersColumn width:120 !resizable !sortable suppressMovable lockPosition:left
@@ -1373,7 +1373,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
         await new GridRows(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"

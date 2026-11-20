@@ -5,6 +5,7 @@ import type { ColGroupDef } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     findColumnDef,
     findGroupDef,
@@ -73,7 +74,7 @@ describe('ag-grid calculated columns', () => {
 
             api.applyColumnState({ state: [{ colId: 'calculated_1', pinned: null }] });
             setExpression('[Revenue]');
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
             expect(api.getColumn('calculated_1')!.getPinned()).toBeNull();
         }
     );
@@ -271,10 +272,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // Regrouping rebuilds the auto-group columns as a leading block, so the calc col ends up after both
-    // rather than back beside the one it was anchored to. Whether the anchor should survive the round trip
-    // is a product question, so this pins what happens today and claims nothing about what should.
-    test('(characterization) calc col added against an auto-group col sits after both once grouping is toggled', async () => {
+    test('a calc col added from one of several auto-group cols is back beside it once grouping is toggled', async () => {
         const api = createGrid('calculated-autogroup-toggle-multi', {
             calculatedColumns: { applyMode: 'deferred' },
             groupDisplayType: 'multipleColumns',
@@ -322,8 +320,8 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'two auto-group toggle - re-grouped').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-            ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── calculated_1 "Untitled" width:200 ƒ
+            ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);

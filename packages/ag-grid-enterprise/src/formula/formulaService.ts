@@ -28,6 +28,14 @@ import { isValidFunctionName } from './refUtils';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
+const SUPPRESS_FLASH_PARAMS = { suppressFlash: true } as const;
+
+/** What the cells owe a column update: nothing, a refresh of the changed values, or a forced one (formula mode). */
+const COL_UPDATE_CELLS_FRESH = 0;
+const COL_UPDATE_CELLS_VALUES_STALE = 1;
+const COL_UPDATE_CELLS_MODE_CHANGED = 2;
+type ColUpdateCells =
+    typeof COL_UPDATE_CELLS_FRESH | typeof COL_UPDATE_CELLS_VALUES_STALE | typeof COL_UPDATE_CELLS_MODE_CHANGED;
 
 /** A1-style column-label alphabet and its length (base 26). */
 const COL_REF_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -99,10 +107,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Calculated columns use formula evaluation without enabling editable formula behaviours. */
     private calculatedColumnsActive = false;
 
-    /** The `colDefsVersion` the references were last rebuilt and the cache dropped for. */
+    /** The `colDefsVersion` the references and the cache were last checked for. */
     private refreshedColDefsVersion = -1;
-    /** Set when the active state changes, until the column refresh that changed it settles. */
+    /** The `colsMovedVersion` the references were last checked for. */
+    private refreshedColsMovedVersion = -1;
+    /** Set when the active state changes, until the column update that changed it ends. */
     private activeChanged = false;
+    /** What the cells owe the open column update, until {@link refreshCellsForColChanges} refreshes them. */
+    private colUpdateCells: ColUpdateCells = COL_UPDATE_CELLS_FRESH;
 
     public hasCachedRows(): boolean {
         return this.cachedResult.size > 0;
@@ -146,18 +158,43 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    public onColsRefreshed(): void {
+    /** New definitions or an active state change drop every cached formula; a new order re-evaluates the moved refs. */
+    public refreshForColChanges(): void {
+        const colModel = this.beans.colModel;
+        const colDefsVersion = colModel.colDefsVersion;
+        const colsMovedVersion = colModel.colsMovedVersion;
+        const colDefsChanged = colDefsVersion !== this.refreshedColDefsVersion;
+        const colsMoved = colsMovedVersion !== this.refreshedColsMovedVersion;
+        this.refreshedColDefsVersion = colDefsVersion;
+        this.refreshedColsMovedVersion = colsMovedVersion;
         if (this.activeChanged) {
             this.activeChanged = false;
-            this.refreshForCols();
+            this.rebuildColRefMap();
+            this.cachedResult.clear();
+            // every formula cell changes mode (value, editor, error style): all redrawn
+            this.colUpdateCells = COL_UPDATE_CELLS_MODE_CHANGED;
+        } else if (colDefsChanged && this.isEvaluationActive()) {
+            this.rebuildColRefMap();
+            this.cachedResult.clear();
+            this.colUpdateCells ||= COL_UPDATE_CELLS_VALUES_STALE;
+        } else if (colsMoved && this.isEvaluationActive() && this.rebuildColRefMap() && this.cachedResult.size !== 0) {
+            // the columns are the same instances: parsed ASTs stay, absolute refs re-resolve by label
+            ++this.valueCacheVersion;
+            this.colUpdateCells ||= COL_UPDATE_CELLS_VALUES_STALE;
         }
     }
 
-    /** Rebuilds the references and drops every cached formula, whose columns may have been recreated. */
-    private refreshForCols(): void {
-        this.rebuildColRefMap();
-        this.refreshFormulas(true);
-        this.refreshedColDefsVersion = this.beans.colModel.colDefsVersion;
+    /** Once the cells a column update redefined are redrawn, refreshes those whose formula value it changed. */
+    public refreshCellsForColChanges(): void {
+        const cells = this.colUpdateCells;
+        if (cells === COL_UPDATE_CELLS_FRESH) {
+            return;
+        }
+        this.colUpdateCells = COL_UPDATE_CELLS_FRESH;
+        // unforced, a redefined cell already shows its new value and is skipped
+        this.beans.rowRenderer.refreshCells(
+            cells === COL_UPDATE_CELLS_MODE_CHANGED ? REFRESH_CELLS_PARAMS : SUPPRESS_FLASH_PARAMS
+        );
     }
 
     public isEvaluationActive(): boolean {
@@ -214,29 +251,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.onRowDataChanged(event.node as RowNode);
         };
 
-        const onNewColumnsLoaded = () => {
-            // skipped when the column refresh of these definitions already did it
-            if (this.isEvaluationActive() && this.refreshedColDefsVersion !== this.beans.colModel.colDefsVersion) {
-                this.refreshForCols();
-            }
-        };
-        const onColumnMoved = () => {
-            if (!this.isEvaluationActive()) {
-                return;
-            }
-            // Rebuild unconditionally: `col.formulaRef` is read by the header and formula input,
-            // and absolute `COLUMN("A",true)` refs resolve via `colRefMap`, so both must reflect
-            // the new order even when no formula has been evaluated yet.
-            this.rebuildColRefMap();
-            if (this.cachedResult.size === 0) {
-                return;
-            }
-            // Column instances are stable across a reorder — only their positions changed. Parsed
-            // ASTs keep referring to the right colIds; only absolute `COLUMN("A",true)` refs pick
-            // up different columns via colRefMap. Bumping the value version re-evaluates surviving
-            // cells while preserving their parsed ASTs.
-            this.bumpValueCacheAndRefresh();
-        };
         const onPinnedRowsChanged = () => {
             const cache = this.cachedResult;
             if (!this.isEvaluationActive() || cache.size === 0) {
@@ -280,8 +294,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.addManagedListeners(this.beans.eventSvc, {
             cellValueChanged: onCellValueChanged,
             rowNodeDataChanged: onRowNodeDataChanged,
-            newColumnsLoaded: onNewColumnsLoaded,
-            columnMoved: onColumnMoved,
             modelUpdated: onModelUpdated,
             storeUpdated: onModelUpdated,
             pinnedRowDataChanged: onPinnedRowsChanged,
@@ -375,7 +387,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             needsRefresh = reordered || removals.length > 0 || adds.size > 0 || updates.size > 0;
         }
 
-        if (needsRefresh) {
+        if (!needsRefresh) {
+            return;
+        }
+        if (!changed && this.beans.colModel.colUpdateDepth > 0) {
+            // a column update's own rows refresh: its cells refresh once, as the update's columns are redrawn
+            ++this.valueCacheVersion;
+            this.colUpdateCells ||= COL_UPDATE_CELLS_VALUES_STALE;
+        } else {
             this.bumpValueCacheAndRefresh();
         }
     }
@@ -456,21 +475,19 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /**
-     * Rebuild the A1-style label -> AgColumn map from the current primary column order.
+     * Rebuild the A1-style label -> AgColumn map from the current primary column order; whether a label moved.
      * Does NOT touch the formula cache; callers are responsible for invalidating values if needed.
      */
-    private rebuildColRefMap() {
+    private rebuildColRefMap(): boolean {
         const { beans, colRefMap, colToRefMap } = this;
         colRefMap.clear();
         colToRefMap.clear();
 
         if (!this.isEvaluationActive()) {
-            return;
+            return false;
         }
         const list = beans.colModel.colsList;
-        if (!list) {
-            return;
-        }
+        let labelsChanged = false;
 
         let idx = 0;
         for (let i = 0, len = list.length; i < len; ++i) {
@@ -490,11 +507,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
             if (col.formulaRef !== label) {
                 col.formulaRef = label;
+                labelsChanged = true;
                 col.dispatchColEvent('formulaRefChanged', 'api');
             }
             colRefMap.set(label, col);
             colToRefMap.set(col, label);
         }
+        return labelsChanged;
     }
 
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */

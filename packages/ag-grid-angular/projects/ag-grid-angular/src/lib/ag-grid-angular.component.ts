@@ -609,7 +609,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A default column definition. Items defined in the actual column definitions get precedence.
      */
     @Input() public defaultColDef: ColDef<TData> | undefined = undefined;
-    /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.
+    /** A default column group definition. All column group definitions will use these properties, except `groupId`. Items defined in the actual column group definition get precedence.
      * @initial
      */
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;

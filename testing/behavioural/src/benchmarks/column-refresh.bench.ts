@@ -193,7 +193,7 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
         api.setGridOption('columnDefs', i & 1 ? cols20FlexA : cols20FlexB);
     });
 
-    // 100-col scenarios — setColumnDefs is the full rebuild path (refreshCols + visibleCols.refresh).
+    // 100-col scenarios — setColumnDefs is the full rebuild path (tree build + refreshCols + visibleCols.refresh).
     const cols100A = buildFlatCols(100, 'A');
     const cols100B = buildFlatCols(100, 'B');
     benchRefresh('setColumnDefs 100 flat cols (alternating defs)', { columnDefs: cols100A }, (api, i) => {

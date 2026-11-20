@@ -101,7 +101,7 @@ export class RowContainerComp extends Component {
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, eContainer, eSpannedContainer, eViewport);
+        ctrl.setComp(compProxy, eContainer, eViewport);
         this.initialised = true;
     }
 

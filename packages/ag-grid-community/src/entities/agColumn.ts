@@ -128,6 +128,10 @@ const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
 const COL_FLAG_WIDTH_SET = 0x00010000;
 /** Redefined since its filter, if any, last derived its params. */
 const COL_FLAG_FILTER_REDEFINED = 0x00020000;
+/** A column build gave its id by position or with a suffix, not from its def's own colId or field. */
+const COL_FLAG_ID_GENERATED = 0x00040000;
+/** Its cells must re-read a new definition, which they are then taken to do. */
+const COL_FLAG_CELLS_REDEFINED = 0x00080000;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -145,7 +149,7 @@ export class AgColumn<TValue = any>
     public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
 
     /** Sanitised version of the column id */
-    public readonly colIdSanitised: string;
+    public colIdSanitised: string;
 
     // ── Per-cell hot path ── read by getValue / formatValue / cellCtrl for every cell; clustered first and
     // contiguous for cache locality. The colDef mirrors are (re)set on colDef change ({@link initColDefHotFields}
@@ -209,14 +213,16 @@ export class AgColumn<TValue = any>
     public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
-    /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
+    /** The latest build that claimed this col, or the build that destroyed it. */
     public buildToken: number = 0;
+    /** The build that created this col; 0 when no column build did. */
+    public createdBuildToken: number = 0;
     /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
     public allColsIndex: number = -1;
     /** Slot in a row's colSpans cache, stamped with `allColsIndex`; `-1` without `colDef.colSpan` or not displayed. */
     public colSpanIndex: number = -1;
     /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
-     *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
+     *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `ColumnModel.refreshCols`. */
     public inColsList: boolean = false;
     /** 1-based `aria-colindex`: position in `colsList` reordered `[left, center, right]` (hidden included). `0` = not in `colsList`. */
     public ariaColIndex: number = 0;
@@ -234,10 +240,11 @@ export class AgColumn<TValue = any>
      *  when none. `showValuesAs.type` is the active mode; the active mode is owned by column state. */
     public showValuesAs: AgShowValuesAsResolved | null = null;
 
-    /** colId this column sits immediately after in display order. Order restoration seats new cols after
-     *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
-     *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
+    /** colId of the column a dynamic calculated column sits right after in display order, seated there by the
+     *  calculated columns service (also after an auto-group col, which has no tree slot). `undefined` = not anchored. */
     public anchoredToColId: string | undefined = undefined;
+    /** The column a group or hierarchy column was generated for; reused, and kept in a saved order, only for it. */
+    public derivedFromCol: AgColumn | null = null;
 
     /** `COL_FLAG_*` bits; outside this file, read and written through the methods naming them. */
     public colFlags: number = 0;
@@ -265,7 +272,7 @@ export class AgColumn<TValue = any>
         // kept only for object-identity checks in ColumnFactory (matching an updated col list to an
         // existing column); this.colDef can't serve as it is the merge result
         public userProvidedColDef: ColDef<any, TValue> | null,
-        public readonly colId: string,
+        public colId: string,
         public readonly primary: boolean,
         public readonly colKind: ColKind
     ) {
@@ -284,6 +291,12 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.colFlags &= ~(COL_FLAG_LAST_LEFT_PINNED | COL_FLAG_FIRST_RIGHT_PINNED);
         this.beans.rowSpanSvc?.deregister(this);
+    }
+
+    /** Gives a column no view has drawn yet the id `colId`. */
+    public renameId(colId: string): void {
+        this.colId = colId;
+        this.colIdSanitised = _escapeString(colId)!;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -315,7 +328,7 @@ export class AgColumn<TValue = any>
         const oldColDef = this.colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colDef = colDef;
-        if (_mergedEqual(colDef, oldColDef)) {
+        if (_mergedEqual(colDef, oldColDef) && !this.isDotNotationStale()) {
             this.initCalculatedColumnState(colDef);
             return false;
         }
@@ -332,43 +345,54 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.colFlags |= COL_FLAG_FILTER_REDEFINED;
-        // an update of its own when none is open, so the filter re-derives its params once the columns are final
-        colModel.beginColUpdate();
-        try {
-            this.dispatchColEvent('colDefChanged', source);
-            pivotResultCols?.recreateColDefsForSource(this, source);
-        } finally {
-            colModel.endColUpdate();
-        }
+        this.colFlags |= COL_FLAG_FILTER_REDEFINED | COL_FLAG_CELLS_REDEFINED;
+        this.dispatchColEvent('colDefChanged', source);
+        pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
 
     /** Re-apply `def` to a reused column. Stateful attrs are only (re)applied when the user authored the
-     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. */
-    public reapplyColDef(def: ColDef, source: ColumnEventType, newColDefs: boolean): void {
-        const merged = _addColumnDefaultAndTypes(this.beans, def, this.colId);
+     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. `merged`:
+     *  `def` merged with the defaults and column types, when the caller already made it. */
+    public reapplyColDef(
+        def: ColDef,
+        source: ColumnEventType,
+        newColDefs: boolean,
+        merged = _addColumnDefaultAndTypes(this.beans, def, this.colId)
+    ): void {
         this.setColDef(merged, def, source);
         if (newColDefs) {
-            updateSomeColumnState(
-                this.beans,
-                this,
-                merged.hide,
-                merged.sort,
-                merged.sortIndex,
-                merged.pinned,
-                merged.flex,
-                source
-            );
-            // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
-            const pivotSort = merged.pivotSort;
-            if (pivotSort !== undefined) {
-                this.pivotSort = normalizeSortDirection(pivotSort);
-            }
-            // Read `flex` after the state update so a flex→fixed switch applies before width.
-            const colFlex = this.flex;
-            if (colFlex == null || colFlex <= 0) {
-                this.setActualWidth(merged.width ?? this.actualWidth, source);
+            this.applyColDefState(merged.hide, source);
+            this.beans.pivotResultCols?.reapplyStateForSource(this, source);
+        }
+    }
+
+    /** Applies the stateful attributes of the column's merged colDef, with `hide` as given (`undefined`: kept). */
+    public applyColDefState(hide: boolean | null | undefined, source: ColumnEventType): void {
+        const colDef = this.colDef;
+        updateSomeColumnState(
+            this.beans,
+            this,
+            hide,
+            colDef.sort,
+            colDef.sortIndex,
+            colDef.pinned,
+            colDef.flex,
+            source
+        );
+        // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
+        const pivotSort = colDef.pivotSort;
+        if (pivotSort !== undefined) {
+            this.pivotSort = normalizeSortDirection(pivotSort);
+        }
+        // Read `flex` after the state update so a flex→fixed switch applies before width.
+        const colFlex = this.flex;
+        if (colFlex == null || colFlex <= 0) {
+            const width = colDef.width;
+            const actualWidth = this.actualWidth;
+            // no width of its own keeps the column's, set again only when its new bounds move it
+            if (width != null || actualWidth < this.minWidth || actualWidth > this.maxWidth) {
+                this.setActualWidth(width ?? actualWidth, source);
             }
         }
     }
@@ -397,6 +421,21 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_WIDTH_SET;
         this.initDotNotation();
         this.initTooltip();
+    }
+
+    /** Whether a dotted `field` or `tooltipField` was read under the other `suppressFieldDotNotation`. */
+    private isDotNotationStale(): boolean {
+        const { field, tooltipField } = this.colDef;
+        const fieldDotted = typeof field === 'string' && field.includes('.');
+        const tooltipDotted = typeof tooltipField === 'string' && tooltipField.includes('.');
+        if (!fieldDotted && !tooltipDotted) {
+            return false;
+        }
+        const suppress = this.gos.get('suppressFieldDotNotation');
+        return (
+            (fieldDotted && (this.fieldPath === null) !== suppress) ||
+            (tooltipDotted && ((this.colFlags & COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS) !== 0) === suppress)
+        );
     }
 
     private initDotNotation(): void {
@@ -728,6 +767,13 @@ export class AgColumn<TValue = any>
         return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
     }
 
+    /** Whether its cells must re-read its definition, which they are then taken to do. */
+    public takeCellsRedefined(): boolean {
+        const flags = this.colFlags;
+        this.colFlags = flags & ~COL_FLAG_CELLS_REDEFINED;
+        return (flags & COL_FLAG_CELLS_REDEFINED) !== 0;
+    }
+
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
         this.warn(261);
@@ -857,6 +903,15 @@ export class AgColumn<TValue = any>
 
     public setUserSized(userSized: boolean): void {
         this.colFlags = userSized ? this.colFlags | COL_FLAG_USER_SIZED : this.colFlags & ~COL_FLAG_USER_SIZED;
+    }
+
+    public isIdGenerated(): boolean {
+        return (this.colFlags & COL_FLAG_ID_GENERATED) !== 0;
+    }
+
+    /** Set once, by the column build that creates it. */
+    public markIdGenerated(): void {
+        this.colFlags |= COL_FLAG_ID_GENERATED;
     }
 
     public getAutoHeaderHeight(): number | null {
@@ -1004,6 +1059,8 @@ export class AgColumn<TValue = any>
         // one update with the auto columns a rename redefines, so each is told once all hold the new name
         colModel.beginColUpdate();
         try {
+            this.beans.autoColSvc?.onHeaderNameChanged(this, source);
+            this.beans.pivotResultCols?.onValueColRenamed(this, source);
             // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
             // without filtering by colId; the grid-level event drives the state service.
             this.dispatchColEvent('headerNameChanged', source);

@@ -403,6 +403,51 @@ describe('Column Autosize', () => {
             }
         });
 
+        test('an auto-size tells each column its width once, with its final width, with and without scale-up', async () => {
+            const run = async (scaleUpToFitGridWidth: boolean) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                    rowData: [{ a: 'x', b: 'y' }],
+                });
+                api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+                const widthChanged: { col: string; width: number }[] = [];
+                for (const col of api.getAllDisplayedColumns()) {
+                    col.addEventListener('widthChanged', () => {
+                        widthChanged.push({ col: col.getColId(), width: col.getActualWidth() });
+                    });
+                }
+                const resized: { finished: boolean | undefined; source: string; cols: string[] }[] = [];
+                api.addEventListener('columnResized', (e) => {
+                    resized.push({
+                        finished: e.finished,
+                        source: e.source,
+                        cols: (e.columns ?? []).map((col) => col.getColId()),
+                    });
+                });
+
+                api.autoSizeColumns({ colIds: ['a', 'b'], scaleUpToFitGridWidth });
+                await waitFor(() => expect(resized.length).toBeGreaterThan(0), { timeout: 1000 });
+                await asyncSetTimeout(0);
+
+                const finalWidths = api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+                expect(resized.map((e) => ({ ...e, cols: [...e.cols].sort() }))).toEqual([
+                    { finished: true, source: 'autosizeColumns', cols: ['a', 'b'] },
+                ]);
+                expect([...widthChanged].sort((x, y) => x.col.localeCompare(y.col))).toEqual([
+                    { col: 'a', width: finalWidths[0] },
+                    { col: 'b', width: finalWidths[1] },
+                ]);
+                gridsManager.reset();
+                return finalWidths;
+            };
+
+            const withScaleUp = await run(true);
+            const without = await run(false);
+            // premise: the scale-up happened
+            expect(withScaleUp[0]).toBeGreaterThan(without[0]);
+            expect(withScaleUp[1]).toBeGreaterThan(without[1]);
+        });
+
         test('a fit to a grid with no width retries until it has one, and warns once it gives up', async () => {
             // Asserts warning #29 (the grid has no width to fit to).
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [29] });
@@ -934,6 +979,46 @@ describe('Column Autosize', () => {
                 process.off('unhandledRejection', onRejection);
             }
         });
+
+        test('animateColumnResizing: an autosize waiting for its data animates nothing while it waits', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a', width: 300 }],
+                // a type override makes the autosize wait for the row data its types are inferred from
+                dataTypeDefinitions: {
+                    percentage: { baseDataType: 'number', extendsDataType: 'number', columnTypes: 'percentage' },
+                },
+                animateColumnResizing: true,
+            });
+            await asyncSetTimeout(0);
+            const animating = () => document.querySelector('.ag-animate-autosize') !== null;
+
+            api.autoSizeColumns(['a']);
+            await asyncSetTimeout(0);
+            expect(animating()).toBe(false);
+
+            // the data arrives: the autosize sizes the column, animating only that change
+            api.setGridOption('rowData', [{ a: 1 }]);
+            expect([api.getColumn('a')!.getActualWidth() < 300, animating()]).toEqual([true, true]);
+        });
+
+        test('animateColumnResizing switched off while an autosize animates makes a width set next apply at once', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', width: 300 },
+                    { colId: 'b', width: 300 },
+                ],
+                animateColumnResizing: true,
+            });
+            await asyncSetTimeout(0);
+            const animating = () => document.querySelector('.ag-animate-autosize') !== null;
+
+            api.autoSizeColumns(['a']);
+            expect(animating()).toBe(true);
+            api.setGridOption('animateColumnResizing', false);
+            api.applyColumnState({ state: [{ colId: 'b', width: 123 }] });
+
+            expect(animating()).toBe(false);
+        });
     });
 
     describe('autoSizeAllColumns', () => {
@@ -1044,23 +1129,11 @@ describe('Column Autosize', () => {
             `);
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `pinned cols are excluded; suppressAutoSize cols are excluded after autoSizeAllColumns`
-            ).checkColumns(`
-                LEFT
-                └── left1 width:100
-                CENTER
-                ├── suppressed width:100
-                └── center1 width:60
-                RIGHT
-                └── right1 width:100
-            `);
             await asyncSetTimeout(0);
 
-            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes).
-            // center1's exact width depends on the zero-layout scale-up math (which short-circuits
-            // when grid width = 0); the assertion that matters here is the filter exclusion.
+            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes); center1, the
+            // only column scaled, takes the rest of the 1000px viewport
+            expect(api.getColumn('center1')!.getActualWidth()).toBe(700);
             expect(api.getColumn('left1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('right1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('suppressed')!.getActualWidth()).toBe(100);
@@ -1100,14 +1173,6 @@ describe('Column Autosize', () => {
 
             // Pass the hidden col explicitly so it reaches the scale-up filter.
             api.autoSizeColumns({ colIds: ['hiddenLeft', 'center1', 'center2'], scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `hidden pinned col is treated as not-pinned by the filter (matches latest display after autoSizeColumns`
-            ).checkColumns(`
-                CENTER
-                ├── center1 width:60
-                └── center2 width:60
-            `);
             await asyncSetTimeout(0);
 
             // Non-displayed → never resized by content or scale-up pass; original width preserved.
@@ -1134,13 +1199,6 @@ describe('Column Autosize', () => {
             const rowNumberWidthBefore = rowNumberCol!.getActualWidth();
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(api, `row-number col is excluded from both passes after autoSizeAllColumns`)
-                .checkColumns(`
-                    LEFT
-                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                    CENTER
-                    └── a width:80
-                `);
             await asyncSetTimeout(0);
 
             expect(rowNumberCol!.getActualWidth()).toBe(rowNumberWidthBefore);

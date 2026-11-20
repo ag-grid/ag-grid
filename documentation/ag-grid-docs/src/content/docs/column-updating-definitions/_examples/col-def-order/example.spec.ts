@@ -25,9 +25,9 @@ test.agExample(import.meta, () => {
         await page.getByRole('button', { name: 'Clear' }).click();
         await expect(page.locator('.ag-header-cell')).toHaveCount(0);
 
-        // Applying a set restores the columns with that set's header names.
+        // Set B lists gold first, but the columns come back in their order before the Clear.
         await page.getByRole('button', { name: 'Column Set B' }).click();
         await expect(agIdFor.headerCell('gold')).toContainText('B Gold');
-        await expect(agIdFor.headerCell('athlete')).toContainText('B Athlete');
+        await expect(firstHeader(page)).toContainText('B Athlete');
     });
 });

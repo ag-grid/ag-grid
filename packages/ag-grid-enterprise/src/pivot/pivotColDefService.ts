@@ -9,6 +9,7 @@ import type {
     IPivotColsService,
     IValueColsService,
     NamedBean,
+    ValueGetterParams,
 } from 'ag-grid-community';
 import { BeanStub, _resolvePivotSort } from 'ag-grid-community';
 
@@ -148,23 +149,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         this.colNames = beans.colNames;
     }
 
-    private fieldSeparator: string;
-    private pivotDefaultExpanded: number;
-
-    public postConstruct(): void {
-        const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
-        this.fieldSeparator = getFieldSeparator();
-        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {
-            this.fieldSeparator = getFieldSeparator();
-        });
-
-        const getPivotDefaultExpanded = () => this.gos.get('pivotDefaultExpanded');
-        this.pivotDefaultExpanded = getPivotDefaultExpanded();
-        this.addManagedPropertyListener('pivotDefaultExpanded', () => {
-            this.pivotDefaultExpanded = getPivotDefaultExpanded();
-        });
-    }
-
     public createPivotColumnDefs(uniqueValues: Map<string, any>): (ColDef | ColGroupDef)[] {
         // this is passed to the colModel, to configure the columns and groups we show
 
@@ -247,10 +231,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // Recursive case
         const groups: ColGroupDef[] = [];
+        const pivotDefaultExpanded = this.gos.get('pivotDefaultExpanded');
+        // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
+        const openByDefault = pivotDefaultExpanded === -1 || index < pivotDefaultExpanded;
         for (const key of uniqueValue.keys()) {
-            // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
-            const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
-
             const newPivotKeys = [...pivotKeys, key];
             groups.push({
                 children: this.recursivelyBuildGroup(
@@ -499,13 +483,19 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
 
-        // preserve pivot-result identity from the old colDef.
-        newColDef.columnGroupShow = columnGroupShow;
+        // pivot-result identity from the old colDef; no key for `undefined`, which would make it unequal
+        if (newColDef.columnGroupShow !== columnGroupShow) {
+            newColDef.columnGroupShow = columnGroupShow;
+        }
         newColDef.colId = colId;
         newColDef.field = field;
         newColDef.valueGetter = valueGetter;
-        newColDef.aggFunc = aggFunc;
-        newColDef.pivotTotalColumnIds = pivotTotalColumnIds;
+        if (newColDef.aggFunc !== aggFunc) {
+            newColDef.aggFunc = aggFunc;
+        }
+        if (newColDef.pivotTotalColumnIds !== pivotTotalColumnIds) {
+            newColDef.pivotTotalColumnIds = pivotTotalColumnIds;
+        }
 
         this.gos.get('processPivotResultColDef')?.(newColDef);
 
@@ -545,7 +535,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         colDef.field = colDef.colId;
         // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
         // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
-        colDef.valueGetter = (params) => params.data?.[params.colDef.field!];
+        colDef.valueGetter = valueByField;
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
@@ -629,13 +619,17 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // The comparator only depends on the level's pivot column, so resolve one per level up front rather
         // than reconstructing it for every group node during the recursive walk.
         const levelComparators = pivotColumns.map((col) => this.getPivotGroupComparator(col));
+        const gos = this.gos;
+        const fieldSeparator = gos.get('serverSidePivotResultFieldSeparator') ?? '_';
+        const pivotDefaultExpanded = gos.get('pivotDefaultExpanded');
+        const collapseSingleChildren = gos.get('removePivotHeaderRowWhenSingleValueColumn');
         type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
         const uniqueValues: UniqueValue = new Map(); // use maps over objects as objects sort numeric keys
         for (let i = 0; i < fields.length; i++) {
             const field = fields[i];
-            const parts = field.split(this.fieldSeparator);
+            const parts = field.split(fieldSeparator);
 
             let level: UniqueValue = uniqueValues;
             for (let p = 0; p < parts.length; p++) {
@@ -658,13 +652,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
             for (const [childKey, item] of uniqueValues) {
-                const child = uniqueValuesToGroups(
-                    `${id}${this.fieldSeparator}${childKey}`,
+                const child = uniqueValuesToGroups(`${id}${fieldSeparator}${childKey}`, childKey, item, depth + 1, [
+                    ...path,
                     childKey,
-                    item,
-                    depth + 1,
-                    [...path, childKey]
-                );
+                ]);
                 children.push(child);
             }
 
@@ -701,14 +692,13 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            const collapseSingleChildren = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];
             }
 
             const group: ColGroupDef = {
-                openByDefault: this.pivotDefaultExpanded === -1 || depth < this.pivotDefaultExpanded,
+                openByDefault: pivotDefaultExpanded === -1 || depth < pivotDefaultExpanded,
                 groupId: id,
                 headerName: key,
                 children,
@@ -726,6 +716,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         return res;
     }
+}
+
+/** One function for every pivot result column, so rebuilding an unchanged column leaves its def equal. */
+function valueByField(params: ValueGetterParams): any {
+    return params.data?.[params.colDef.field!];
 }
 
 function getPivotHeaderName(key: string, colDef: ColDef): string {

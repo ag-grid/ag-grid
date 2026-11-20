@@ -523,6 +523,48 @@ describe('pivot with groupHierarchy (date-time)', () => {
             groupDisplayType: 'multipleColumns',
         });
 
+    test('adding a hierarchy source col that is already grouped leaves its ungrouped levels ungrouped', async () => {
+        const api = createHierarchyGrid('hierarchyReAddSource');
+        await asyncSetTimeout(0);
+        api.removeRowGroupColumns([YEAR_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+
+        api.addRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+        expect(api.getColumn(YEAR_COL)!.isRowGroupActive()).toBe(false);
+    });
+
+    test('an array getRowGroupColumns returned keeps its order when column state reorders hierarchy groups', async () => {
+        const api = gridsManager.createGrid('hierarchyHeldArray', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+        const before = api.getRowGroupColumns();
+        expect(before.map((c) => c.getColId())).toEqual(['country', YEAR_COL, MONTH_COL, 'date']);
+
+        api.applyColumnState({
+            state: [
+                { colId: 'date', rowGroupIndex: 0 },
+                { colId: 'country', rowGroupIndex: 1 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([YEAR_COL, MONTH_COL, 'date', 'country']);
+        expect(before.map((c) => c.getColId())).toEqual(['country', YEAR_COL, MONTH_COL, 'date']);
+    });
+
     test('setRowGroupColumns gives the same groups whatever the current hierarchy state', async () => {
         const api = createHierarchyGrid('hierarchyExplicitList');
         await asyncSetTimeout(0);
@@ -700,6 +742,46 @@ describe('pivot with groupHierarchy (date-time)', () => {
         ]);
     });
 
+    test.each([
+        ['a part colId another column has as its field', [{ colId: 'y' }], { field: 'y' }, ['y_1', 'date', 'y']],
+        ['a numeric part colId', [{ colId: '0' }], { headerName: 'Anon' }, ['0_1', 'date', '0']],
+        [
+            'a generated part id another column has as its field',
+            ['year'],
+            { field: 'ag-Grid-HierarchyColumn-date-year' },
+            ['ag-Grid-HierarchyColumn-date-year_1', 'date', 'ag-Grid-HierarchyColumn-date-year'],
+        ],
+    ])('a new grid with %s gives the hierarchy column another id', async (_name, groupHierarchy, other, ids) => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const date: ColDef = { field: 'date', rowGroup: true, groupHierarchy };
+        const api = gridsManager.createGrid('hierarchyIdYields', {
+            columnDefs: [date, other],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        expect({
+            ids: api.getAllGridColumns().map((c) => c.getColId()),
+            warned: warn.mock.calls.flat().join(' ').includes('warning #273'),
+        }).toEqual({ ids: ['ag-Grid-AutoColumn', ...ids], warned: typeof groupHierarchy[0] !== 'string' });
+    });
+
+    test.each([
+        ['a part colId', [{ colId: 'year' }], 'year'],
+        ['a generated part id', ['year'], 'ag-Grid-HierarchyColumn-date-year'],
+    ])('a column replacing a removed hierarchy source takes the id of its %s', async (_name, groupHierarchy, field) => {
+        const date: ColDef = { field: 'date', rowGroup: true, groupHierarchy };
+        const api = gridsManager.createGrid('hierarchyIdFreed', {
+            columnDefs: [date],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', [{ field }]);
+        await asyncSetTimeout(0);
+        expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual([field]);
+    });
+
     test('a column added at the part colId of a source without colId or field keeps the hierarchy column at it', async () => {
         const source: ColDef = {
             headerName: 'When',
@@ -807,6 +889,48 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
     });
 
+    test('removing the column that holds a hierarchy part’s id keeps the hierarchy column and its width', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const date: ColDef = { field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y' }] };
+        const api = gridsManager.createGrid('hierarchyIdKeptAfterBlocker', {
+            columnDefs: [date, { field: 'y' }],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        const before = api.getColumn('y_1');
+        api.applyColumnState({ state: [{ colId: 'y_1', width: 333 }] });
+
+        api.setGridOption('columnDefs', [date]);
+        await asyncSetTimeout(0);
+        expect({
+            same: api.getColumn('y_1') === before,
+            width: api.getColumn('y_1')?.getActualWidth(),
+            warned: warn.mock.calls.flat().join(' ').includes('warning #273'),
+        }).toEqual({ same: true, width: 333, warned: true });
+    });
+
+    test('removing the column that holds the colId two parts of one source share keeps both hierarchy columns', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: `y` is taken
+        const date: ColDef = { field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y' }, { colId: 'y' }] };
+        const api = gridsManager.createGrid('hierarchySharedIdKeptAfterBlocker', {
+            columnDefs: [date, { field: 'y' }],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        const before = [api.getColumn('y_1'), api.getColumn('y_2')];
+
+        api.setGridOption('columnDefs', [date]);
+        await asyncSetTimeout(0);
+        expect({
+            kept: [api.getColumn('y_1'), api.getColumn('y_2')].map((c, i) => c != null && c === before[i]),
+        }).toEqual({
+            kept: [true, true],
+        });
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+    });
+
     test.each([
         ['initialAggFunc', { colId: 'y', initialAggFunc: 'count' }, { values: ['y'], pivots: [] }],
         ['initialPivot', { colId: 'y', initialPivot: true }, { values: [], pivots: ['y'] }],
@@ -820,6 +944,26 @@ describe('pivot with groupHierarchy (date-time)', () => {
             values: api.getValueColumns().map((c) => c.getColId()),
             pivots: api.getPivotColumns().map((c) => c.getColId()),
         }).toEqual(expected);
+    });
+
+    test('two hierarchy parts with one colId get distinct ids', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = gridsManager.createGrid('hierarchySharedPartColId', {
+            columnDefs: [
+                { field: 'd1', rowGroup: true, groupHierarchy: [{ colId: 'y' }] },
+                { field: 'd2', rowGroup: true, groupHierarchy: [{ colId: 'y' }] },
+            ],
+            rowData: [{ d1: new Date(2020, 0, 1), d2: new Date(2021, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        expect(
+            api
+                .getAllGridColumns()
+                .map((c) => c.getColId())
+                .sort()
+        ).toEqual(['ag-Grid-AutoColumn', 'd1', 'd2', 'y', 'y_1']);
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
     });
 
     test('every canonical date part extracts the expected value', async () => {
@@ -1487,10 +1631,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
     });
 
     test('setRowGroupColumns adding a hierarchy col to an existing group keeps rowGroupActiveIndex in order', async () => {
-        // singleColumn display => the auto-group column count does NOT change when a second row-group
-        // level is added, so no auto-col-driven colDef rebuild is forced. This isolates the
-        // setColList re-stamp path: onColumnsChanged stamps rowGroupActiveIndex BEFORE setColActive
-        // splices the date col's virtuals into the list.
+        // singleColumn: adding a level rebuilds no auto column, so only setRowGroupColumns re-stamps the indexes
         const api = gridsManager.createGrid('setRowGroupHierarchyIndexSingle', {
             columnDefs: [
                 { field: 'country', rowGroup: true },

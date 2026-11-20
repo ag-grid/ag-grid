@@ -7,14 +7,17 @@ import {
     _exists,
     _getActiveDomElement,
     _getVerticalPaddingAndBorder,
+    _getWindow,
     _normaliseQwertyAzerty,
     _observeResize,
     _setAriaColIndex,
 } from 'ag-stack';
 
+import { _cancelColumnWidthAnimation } from '../../../columns/columnWidthAnimation';
 import type { CompBeanOwner } from '../../../components/emptyBean';
 import { destroyCompBean } from '../../../components/emptyBean';
 import { BeanStub } from '../../../context/beanStub';
+import type { BeanCollection } from '../../../context/context';
 import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import { getDragSign } from '../../../entities/agColumn';
@@ -399,7 +402,9 @@ export abstract class AbstractHeaderCellCtrl<
         window.clearTimeout(this.resizeToggleTimeout);
         this.isResizing = true;
         this.resizeMultiplier += 1;
-        const takeFromAdjacent = !!this.beans.colResize?.takesFromAdjacent(e.shiftKey);
+        const beans = this.beans;
+        const takeFromAdjacent = !!beans.colResize?.takesFromAdjacent(e.shiftKey);
+        _cancelColumnWidthAnimation(beans); // a resize by hand applies at once
         this.resizeHeader(this.getViewportAdjustedResizeDiff(e, takeFromAdjacent), takeFromAdjacent);
         this.resizeFeature?.toggleColumnResizing(true);
     }
@@ -576,8 +581,11 @@ export abstract class AbstractHeaderCellCtrl<
         this.targetLeft = left;
         this.placeAt(oldLeft, width);
         colAnimation.executeNextVMTurn(() => {
+            const eGui = this.eGui;
             // a layout since has placed the cell itself
-            if (this.targetLeft === left) {
+            if (eGui && this.targetLeft === left) {
+                // so the slide starts where the cell was placed, also when mounted late (React)
+                flushStyle(beans, eGui);
                 this.placeAt(left, this.drawnWidth);
             }
         });
@@ -635,3 +643,6 @@ export abstract class AbstractHeaderCellCtrl<
         (this.rowCtrl as any) = null;
     }
 }
+
+/** Computes the style of `eGui` now, so a transition starts from the values written before. */
+const flushStyle = (beans: BeanCollection, eGui: HTMLElement): string => _getWindow(beans).getComputedStyle(eGui).left;

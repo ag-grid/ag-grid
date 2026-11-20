@@ -2,19 +2,22 @@ import { _pushToMapArray } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ICalculatedColumnsService } from '../interfaces/iCalculatedColumns';
+import { _isMatchedAtId } from './columnTree/matching/columnMatcher';
 
 export const applyPrevColumnsOrder = (
     colsList: AgColumn[],
     colsById: Record<string, AgColumn>,
-    prevOrder: string[]
+    prevOrder: AgColumn[],
+    calculatedColsSvc: ICalculatedColumnsService | undefined
 ): AgColumn[] => {
     const colsListLen = colsList.length;
     const prevOrderLen = prevOrder.length;
-    // Fast path: same length and colId at every index -> already ordered (width/sort/hide-only refresh).
+    // Fast path: same length and column at every index -> already ordered (width/sort/hide-only refresh).
     if (colsListLen === prevOrderLen) {
         let inOrder = true;
         for (let i = 0; i < prevOrderLen; ++i) {
-            if (colsList[i].colId !== prevOrder[i]) {
+            if (colsList[i] !== prevOrder[i]) {
                 inOrder = false;
                 break;
             }
@@ -23,23 +26,17 @@ export const applyPrevColumnsOrder = (
             return colsList;
         }
     }
-    // Phase 1: resolve prevOrder colIds to live cols. In-order walk keeps positions monotonic, so
-    // `groupHighestLeaf` ends holding each group's highest leaf (the O(1) answer findPreviousSibling needs).
+    // Phase 1: the previous order's columns still here, in that order.
     const preservedOrder: AgColumn[] = [];
     const colPositionMap = new Map<AgColumn, number>();
-    const groupHighestLeaf = new Map<AgProvidedColumnGroup, AgColumn>();
     let hasPreservedAutoGroup = false;
     for (let i = 0; i < prevOrderLen; ++i) {
-        const current = colsById[prevOrder[i]];
-        if (current != null) {
+        const prev = prevOrder[i];
+        const current = colsById[prev.colId];
+        if (current != null && isSameCol(prev, current)) {
             colPositionMap.set(current, preservedOrder.length);
             preservedOrder.push(current);
             hasPreservedAutoGroup ||= current.colKind === 'auto-group';
-            let g = current.originalParent;
-            while (g != null) {
-                groupHighestLeaf.set(g, current);
-                g = g.originalParent;
-            }
         }
     }
     if (hasPreservedAutoGroup) {
@@ -49,19 +46,15 @@ export const applyPrevColumnsOrder = (
         return preservedOrder; // all preserved — order already correct
     }
     if (preservedOrder.length === 0) {
-        return colsList; // no preserved anchors; keep current order (service cols already at head)
+        // no preserved anchors; keep current order (service cols already at head), calculated cols seated
+        return calculatedColsSvc?.seatCalculatedCols(colsList, colsById, colPositionMap) ?? colsList;
     }
 
     // Phase 2: bucket new cols. New service col -> after the preserved service col it trails (front if none),
-    // so a runtime-added auto col stays with its siblings. New calc col -> right after its (preserved) anchor,
-    // so same-anchor adds stack newest-first; anchor not yet preserved (chained on a sibling added this
-    // build) -> after `lastPreserved` (else front); unanchored calc -> tail (`endCalc`); rest -> `additionalCols`.
+    // so a runtime-added auto col stays with its siblings; rest -> `additionalCols`.
     const serviceFront: AgColumn[] = [];
     const additionalCols: AgColumn[] = [];
-    const frontCalc: AgColumn[] = [];
-    const endCalc: AgColumn[] = [];
     let serviceFollowers: Map<AgColumn, AgColumn[]> | null = null;
-    let calcFollowers: Map<AgColumn, AgColumn[]> | null = null;
     let lastPreserved: AgColumn | null = null;
     for (let i = 0; i < colsListLen; ++i) {
         const col = colsList[i];
@@ -77,45 +70,27 @@ export const applyPrevColumnsOrder = (
                 serviceFollowers ??= new Map<AgColumn, AgColumn[]>();
                 _pushToMapArray(serviceFollowers, lastPreserved, col);
             }
-        } else if (col.isCalculatedCol) {
-            // Gated on `isCalculatedCol` for perf: only calc cols carry `anchoredToColId` today, so we
-            // skip the field read for every other column (the field itself is column-kind agnostic).
-            const anchorId = col.anchoredToColId;
-            const anchor = anchorId != null ? colsById[anchorId] : undefined;
-            if (anchor !== undefined && colPositionMap.has(anchor)) {
-                calcFollowers ??= new Map<AgColumn, AgColumn[]>();
-                _pushToMapArray(calcFollowers, anchor, col);
-            } else if (anchorId == null) {
-                endCalc.push(col);
-            } else if (lastPreserved === null) {
-                frontCalc.push(col);
-            } else {
-                calcFollowers ??= new Map<AgColumn, AgColumn[]>();
-                _pushToMapArray(calcFollowers, lastPreserved, col);
-            }
         } else {
             additionalCols.push(col);
         }
     }
 
-    // Phase 3: resolve group-sibling anchors for non-calc additional cols (skipped for flat colDefs).
+    // Phase 3: resolve group-sibling anchors for additional cols (skipped for flat colDefs).
     let followers: Map<AgColumn, AgColumn[]> | null = null;
     let noSiblings: AgColumn[] = additionalCols;
-    if (additionalCols.length > 0 && anyPreservedHasSiblings(preservedOrder)) {
+    const groupHighestLeaf = additionalCols.length > 0 ? highestPreservedLeaves(preservedOrder) : null;
+    if (groupHighestLeaf !== null) {
         const partitioned = partitionBySiblings(additionalCols, colPositionMap, groupHighestLeaf);
         followers = partitioned.followers;
         noSiblings = partitioned.orphans;
     }
 
-    // Phase 4: emit forward — front service cols, front calc, each preserved col with its trailing service
-    // cols then calc then group-sibling followers, then non-calc orphans, then end calc cols.
+    // Phase 4: emit forward — front service cols, each preserved col with its trailing service cols then
+    // group-sibling followers, then orphans; calculated cols are then seated after their sources.
     const result = new Array<AgColumn>(colsListLen);
     let pos = 0;
     for (let i = 0, len = serviceFront.length; i < len; ++i) {
         result[pos++] = serviceFront[i];
-    }
-    for (let i = 0, len = frontCalc.length; i < len; ++i) {
-        result[pos++] = frontCalc[i];
     }
     for (let i = 0, len = preservedOrder.length; i < len; ++i) {
         const col = preservedOrder[i];
@@ -124,12 +99,6 @@ export const applyPrevColumnsOrder = (
         if (serviceBucket !== undefined) {
             for (let j = 0, m = serviceBucket.length; j < m; ++j) {
                 result[pos++] = serviceBucket[j];
-            }
-        }
-        const calcBucket = calcFollowers?.get(col);
-        if (calcBucket !== undefined) {
-            for (let j = 0, m = calcBucket.length; j < m; ++j) {
-                result[pos++] = calcBucket[j];
             }
         }
         const bucket = followers?.get(col);
@@ -142,11 +111,31 @@ export const applyPrevColumnsOrder = (
     for (let i = 0, len = noSiblings.length; i < len; ++i) {
         result[pos++] = noSiblings[i];
     }
-    for (let i = 0, len = endCalc.length; i < len; ++i) {
-        result[pos++] = endCalc[i];
-    }
-    return result;
+    return calculatedColsSvc?.seatCalculatedCols(result, colsById, colPositionMap) ?? result;
 };
+
+/** The object, or one a later build recreated at its id from the same source as the matcher would pair them. */
+const isSameCol = (prev: AgColumn, current: AgColumn): boolean => {
+    if (current === prev) {
+        return true;
+    }
+    const prevPivotValue = prev.pivotValueColumn;
+    // A pivot result column outlives its value column across `columnDefs: []`: that column's check below judges it.
+    if (prevPivotValue == null && prev.buildToken === current.createdBuildToken && prev.buildToken > 0) {
+        return false; // the build that created `current` destroyed `prev`: matching kept them apart
+    }
+    return (
+        isSameSource(prev.derivedFromCol, current.derivedFromCol) &&
+        isSameSource(prevPivotValue, current.pivotValueColumn) &&
+        _isMatchedAtId(prev, current)
+    );
+};
+
+/** `isSameCol` judges columns at one id; a pivot total column's id leaves out its value column's. */
+const isSameSource = (prev: AgColumn | null | undefined, current: AgColumn | null | undefined): boolean =>
+    prev == null || current == null
+        ? prev == null && current == null
+        : prev.colId === current.colId && isSameCol(prev, current);
 
 /** Re-seat preserved auto-group cols into `colsList` (hierarchy) order without moving their slots: each
  *  auto-col position in `preservedOrder` takes the next preserved auto col as `colsList` lists them. */
@@ -172,18 +161,20 @@ const resnapAutoGroupCols = (
     }
 };
 
-/** True when any preserved col sits in a group with siblings — i.e. there are anchors to resolve. */
-const anyPreservedHasSiblings = (preservedOrder: AgColumn[]): boolean => {
+/** Each group's highest preserved leaf; null when no preserved col sits in a group with siblings (no anchors). */
+const highestPreservedLeaves = (preservedOrder: AgColumn[]): Map<AgProvidedColumnGroup, AgColumn> | null => {
+    const highest = new Map<AgProvidedColumnGroup, AgColumn>();
+    let hasSiblings = false;
     for (let i = 0, len = preservedOrder.length; i < len; ++i) {
-        let ancestor = preservedOrder[i].originalParent;
+        const col = preservedOrder[i];
+        let ancestor = col.originalParent;
         while (ancestor != null) {
-            if (ancestor.children.length > 1) {
-                return true;
-            }
+            highest.set(ancestor, col);
+            hasSiblings ||= ancestor.children.length > 1;
             ancestor = ancestor.originalParent;
         }
     }
-    return false;
+    return hasSiblings ? highest : null;
 };
 
 /** Map each `additionalCols` entry to its previous-refresh sibling anchor:

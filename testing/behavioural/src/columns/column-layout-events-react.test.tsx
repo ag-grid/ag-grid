@@ -1,10 +1,10 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import React from 'react';
-import { afterEach, beforeAll, describe, expect, test } from 'vitest';
+import React, { Profiler } from 'react';
+import { afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -100,6 +100,45 @@ describe('rows drawing a column change (React)', () => {
         unmount();
     });
 
+    test('a column group shows its resize handle only while one of its columns is resizable, across columnDefs updates', async () => {
+        const columnDefs = (resizable: boolean): (ColDef | ColGroupDef)[] => [
+            {
+                groupId: 'medals',
+                headerName: 'Medals',
+                children: [
+                    { field: 'gold', resizable },
+                    { field: 'silver', resizable },
+                ],
+            },
+        ];
+        const grid = (resizable: boolean) => (
+            <React.StrictMode>
+                <AgGridReact
+                    suppressColumnVirtualisation
+                    columnDefs={columnDefs(resizable)}
+                    rowData={rowData}
+                    modules={[ClientSideRowModelModule, ColumnApiModule]}
+                />
+            </React.StrictMode>
+        );
+        const handleShown = () => {
+            const handle = document.querySelector('.ag-header-group-cell .ag-header-cell-resize');
+            return handle !== null && !handle.classList.contains('ag-hidden');
+        };
+
+        const { rerender, unmount } = render(grid(true));
+        await waitFor(() => expect(handleShown()).toBe(true));
+
+        for (const resizable of [false, true, false, true]) {
+            await act(async () => {
+                rerender(grid(resizable));
+                await asyncSetTimeout(0);
+            });
+            await waitFor(() => expect(handleShown()).toBe(resizable));
+        }
+        unmount();
+    });
+
     test('pinning a hidden column shows its cells in every row’s pinned section', async () => {
         let api: GridApi | undefined;
         const grid = (
@@ -128,5 +167,55 @@ describe('rows drawing a column change (React)', () => {
 
         const shown = { 'pinned-left': ['country'], scrolling: ['sport', 'gold'] };
         await waitFor(() => expect(renderedCells()).toEqual({ 0: shown, 1: shown }));
+    });
+
+    test('with ensureDomOrder, after mount settles, a sort and equal columnDefs commit React 0 times, removing the only column group once', async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        let api: GridApi | undefined;
+        let commits = 0;
+        const grouped = (): (ColDef | ColGroupDef)[] => [
+            { groupId: 'medals', headerName: 'Medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+            { field: 'country' },
+            { field: 'sport' },
+        ];
+        const flat = (): ColDef[] => [{ field: 'gold' }, { field: 'silver' }, { field: 'country' }, { field: 'sport' }];
+        const view = render(
+            <React.StrictMode>
+                <Profiler id="grid" onRender={() => ++commits}>
+                    <AgGridReact
+                        ensureDomOrder
+                        suppressColumnMoveAnimation
+                        suppressColumnVirtualisation
+                        columnDefs={flat()}
+                        rowData={rowData}
+                        modules={[ClientSideRowModelModule, ColumnApiModule]}
+                        onGridReady={(e) => (api = e.api)}
+                    />
+                </Profiler>
+            </React.StrictMode>
+        );
+        /** The commits one call causes, its timers included (the scrollbar re-check runs 500 ms after a layout). */
+        const commitsOf = async (call: () => void) => {
+            commits = 0;
+            await act(async () => {
+                call();
+                await vi.advanceTimersByTimeAsync(1000);
+            });
+            return commits;
+        };
+
+        await waitFor(() => expect(renderedCells()['0']?.scrolling).toEqual(['gold', 'silver', 'country', 'sport']));
+        await commitsOf(() => {});
+
+        const sort = await commitsOf(() => api!.applyColumnState({ state: [{ colId: 'silver', sort: 'asc' }] }));
+        const equalDefs = await commitsOf(() => api!.setGridOption('columnDefs', flat()));
+        await commitsOf(() => api!.setGridOption('columnDefs', grouped()));
+        await waitFor(() => expect(document.querySelector('.ag-header-group-cell')).not.toBeNull());
+        const groupRemoved = await commitsOf(() => api!.setGridOption('columnDefs', flat()));
+        await waitFor(() => expect(document.querySelector('.ag-header-group-cell')).toBeNull());
+
+        expect({ sort, equalDefs, groupRemoved }).toEqual({ sort: 0, equalDefs: 0, groupRemoved: 1 });
+        view.unmount();
+        vi.useRealTimers();
     });
 });

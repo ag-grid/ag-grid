@@ -248,4 +248,24 @@ describe('Grid body width push (React)', () => {
         act(() => api.setColumnWidths([{ key: 'right', newWidth: 210 }]));
         await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '210px']));
     });
+
+    test('lays out no pinned lane in print layout, and restores it when the layout returns to normal', async () => {
+        const api = await renderGrid({
+            columnDefs: [{ colId: 'left', width: 120, pinned: 'left' }, { colId: 'a' }],
+            rowData: [{}],
+        });
+        const pinnedLane = () => ({
+            left: document
+                .querySelector<HTMLElement>('.ag-grid-viewport')!
+                .style.getPropertyValue('--ag-internal-pinned-left-width'),
+            hasLeftClass: document.querySelector('.ag-root')!.classList.contains('ag-has-left-pinned-cols'),
+        });
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '120px', hasLeftClass: true }));
+
+        act(() => api.setGridOption('domLayout', 'print'));
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '0px', hasLeftClass: false }));
+
+        act(() => api.setGridOption('domLayout', 'normal'));
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '120px', hasLeftClass: true }));
+    });
 });

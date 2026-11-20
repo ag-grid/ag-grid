@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
+    DragEventDispatcher,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -9,7 +10,7 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { enableDevValidations, getGridElement } from 'ag-grid-community';
+import { convertColumnState, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('StateService - Grid State Management', () => {
@@ -200,6 +201,66 @@ describe('StateService - Grid State Management', () => {
                     },
                 ],
             });
+        });
+
+        test('the column sizing state follows each width and flex change, and a resize that changes none leaves it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', field: 'name', flex: 1 },
+                    { colId: 'b', field: 'age', width: 100 },
+                    { colId: 'c', field: 'sport', width: 100, minWidth: 0 },
+                ],
+                rowData: defaultRowData,
+                colResizeDefault: 'shift',
+            });
+            const sources: string[][] = [];
+            api.addEventListener('stateUpdated', (e) => sources.push(e.sources));
+            await waitFor(() => expect(sources).toEqual([['gridInitializing']]));
+            sources.length = 0;
+            const expectSizingOf = (updates: number): Promise<void> =>
+                waitFor(() => {
+                    expect(sources).toEqual(Array.from({ length: updates }, () => ['columnSizing']));
+                    expect(api.getState().columnSizing).toEqual(convertColumnState(api.getColumnState()).columnSizing);
+                });
+
+            // a flex ended at the width it gave, which no resize reports
+            api.applyColumnState({ state: [{ colId: 'a', flex: null }] });
+            await expectSizingOf(1);
+            expect(api.getState().columnSizing!.columnSizingModel[0]).toEqual({
+                colId: 'a',
+                flex: undefined,
+                width: api.getColumn('a')!.getActualWidth(),
+            });
+
+            // shift takes the drag's 20px from `b`
+            const bar = getGridElement(api)!.querySelector<HTMLElement>(
+                '.ag-header-cell[col-id="a"] .ag-header-cell-resize'
+            )!;
+            const dispatcher = new DragEventDispatcher('mouse');
+            await dispatcher.startDrag(bar, 500, 10);
+            await dispatcher.movePointer(bar, 520, 10);
+            await dispatcher.finishDrag();
+            await expectSizingOf(2);
+
+            api.setColumnWidths([{ key: 'b', newWidth: 50 }]);
+            await expectSizingOf(3);
+
+            // the call that changes nothing raises nothing, once the debounced update has had its turn
+            api.setColumnWidths([{ key: 'c', newWidth: api.getColumn('c')!.getActualWidth() }]);
+            await asyncSetTimeout(0);
+            expect(sources.length).toBe(3);
+            api.setColumnWidths([{ key: 'c', newWidth: 0 }]);
+            await expectSizingOf(4);
+
+            // a zero width is kept, so the state restores it
+            const restored = gridsManager.createGrid('restored', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c', width: 100, minWidth: 0 }],
+                initialState: api.getState(),
+            });
+            expect(restored.getColumn('c')!.getActualWidth()).toBe(0);
+
+            api.setGridOption('columnDefs', []);
+            expect(api.getState().columnSizing).toBeUndefined();
         });
 
         test('should capture column pinning state', async () => {
@@ -1047,6 +1108,52 @@ describe('StateService - Grid State Management', () => {
             expect(api.getDisplayedRowCount()).toBe(2);
         });
 
+        test.each([
+            { name: 'omits it', otherExpansion: undefined },
+            {
+                name: 'carries a different one',
+                otherExpansion: { expandAll: true, invertedRowGroupIds: ['ie'] },
+            },
+        ])(
+            'SSRM expandAll strategy: setState ignoring ssrmRowGroupExpansion keeps the groups as they are when the state $name',
+            async (row) => {
+                const api = await createIrelandOnlyExpandedGrid('ssrmIgnoredExpansion');
+
+                const state = structuredClone(api.getState());
+                if (row.otherExpansion) {
+                    state.ssrmRowGroupExpansion = row.otherExpansion;
+                } else {
+                    delete state.ssrmRowGroupExpansion;
+                }
+
+                api.setState(state, ['ssrmRowGroupExpansion']);
+                await waitForNoLoadingRows(api);
+                await asyncSetTimeout(0);
+
+                expect(api.getRowNode('ie')!.expanded).toBe(true);
+                expect(api.getRowNode('fr')!.expanded).toBe(false);
+                // Ireland, its leaf, France
+                expect(api.getDisplayedRowCount()).toBe(3);
+                expect(api.getState().ssrmRowGroupExpansion).toEqual(irelandOnlyExpanded);
+            }
+        );
+
+        test('SSRM expandAll strategy: an ignored rowGroupExpansion in setState expands no group', async () => {
+            const api = await createIrelandOnlyExpandedGrid('ssrmIgnoredClientExpansion');
+
+            const state = structuredClone(api.getState());
+            delete state.ssrmRowGroupExpansion;
+            state.rowGroupExpansion = { expandedRowGroupIds: ['fr'], collapsedRowGroupIds: [] };
+
+            api.setState(state, ['rowGroupExpansion']);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0);
+
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+            expect(api.getRowNode('fr')!.expanded).toBe(false);
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
         test('SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on grid creation', async () => {
             // Tests the gridInitializing path: ssrmRowGroupExpansion must be checked (not just
             // rowGroupExpansion) when deciding whether to call setRowGroupExpansionState.
@@ -1228,6 +1335,134 @@ describe('StateService - Grid State Management', () => {
                 'row-group-sport-Tennis',
                 'row-group-sport-Golf',
             ]);
+        });
+
+        test('CSRM: getState lists the expanded groups right after new column definitions regroup the rows', async () => {
+            const api = gridsManager.createGrid('csrmRegroupByColumnDefs', {
+                columnDefs: [{ field: 'sport', rowGroup: true, hide: true }, { field: 'name' }],
+                rowData: defaultRowData.slice(0, 2),
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await waitFor(() =>
+                expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual([
+                    'row-group-sport-Football',
+                    'row-group-sport-Tennis',
+                ])
+            );
+
+            api.setGridOption('columnDefs', [
+                { field: 'sport', rowGroup: false },
+                { field: 'name', rowGroup: true, hide: true },
+            ]);
+            const now = api.getState().rowGroupExpansion?.expandedRowGroupIds;
+            await asyncSetTimeout(0);
+            const later = api.getState().rowGroupExpansion?.expandedRowGroupIds;
+
+            const regrouped = ['row-group-name-Alice', 'row-group-name-Bob'];
+            expect({ now, later }).toEqual({ now: regrouped, later: regrouped });
+        });
+
+        test('CSRM: getState and stateUpdated list the groups groupDefaultExpanded opens when new column definitions add row grouping', async () => {
+            let lastState: GridState | undefined;
+            const api = gridsManager.createGrid('csrmGroupByColumnDefs', {
+                columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'v', aggFunc: 'sum' }],
+                rowData: [
+                    { country: 'A', sport: 'x', v: 1 },
+                    { country: 'B', sport: 'y', v: 2 },
+                ],
+                groupDefaultExpanded: -1,
+                onStateUpdated: (event) => {
+                    lastState = event.state;
+                },
+            });
+            const groupIds = () => {
+                const ids: string[] = [];
+                api.forEachNode((node) => {
+                    if (node.group) {
+                        ids.push(node.id!);
+                    }
+                });
+                return ids.sort();
+            };
+            expect({
+                groups: groupIds(),
+                expanded: api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [],
+            }).toEqual({ groups: [], expanded: [] });
+
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true },
+                { field: 'sport' },
+                { field: 'v', aggFunc: 'sum' },
+            ]);
+
+            await waitFor(() => {
+                const groups = groupIds();
+                const expandedNow = [...(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                const expandedEvent = [...(lastState?.rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                expect({ groups: groups.length, expandedNow, expandedEvent }).toEqual({
+                    groups: 2,
+                    expandedNow: groups,
+                    expandedEvent: groups,
+                });
+            });
+        });
+
+        test('CSRM: getState and stateUpdated list the groups groupDefaultExpanded opens when new column definitions change the keyCreator of the row group column', async () => {
+            let lastState: GridState | undefined;
+            const api = gridsManager.createGrid('csrmGroupKeyCreatorChange', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, keyCreator: (p) => 'k1-' + p.value },
+                    { field: 'v', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'A', v: 1 },
+                    { country: 'B', v: 2 },
+                ],
+                groupDefaultExpanded: -1,
+                onStateUpdated: (event) => {
+                    lastState = event.state;
+                },
+            });
+            const groups = () => {
+                const ids: string[] = [];
+                const keys: string[] = [];
+                api.forEachNode((node) => {
+                    if (node.group) {
+                        ids.push(node.id!);
+                        keys.push(node.key!);
+                    }
+                });
+                return { ids: ids.sort(), keys: keys.sort() };
+            };
+            const expandedIds = () => [...(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+
+            await waitFor(() => {
+                const { ids, keys } = groups();
+                expect({ keyPrefixes: keys.map((key) => key.slice(0, 3)), expanded: expandedIds() }).toEqual({
+                    keyPrefixes: ['k1-', 'k1-'],
+                    expanded: ids,
+                });
+            });
+
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, keyCreator: (p) => 'k2-' + p.value },
+                { field: 'v', aggFunc: 'sum' },
+            ]);
+
+            await waitFor(() => {
+                const { ids, keys } = groups();
+                const expandedEvent = [...(lastState?.rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                expect({
+                    keyPrefixes: keys.map((key) => key.slice(0, 3)),
+                    expandedNow: expandedIds(),
+                    expandedEvent,
+                }).toEqual({
+                    keyPrefixes: ['k2-', 'k2-'],
+                    expandedNow: ids,
+                    expandedEvent: ids,
+                });
+            });
         });
 
         test('should capture pagination state', async () => {

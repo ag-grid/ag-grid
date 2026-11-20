@@ -206,7 +206,12 @@ export class GridOptionsService
                     changeSet,
                     source,
                 };
-                events.push(event);
+                if (key === 'pivotMode') {
+                    // first: the other options' listeners rebuild columns and rows reading the pivot mode ColumnModel holds
+                    events.unshift(event);
+                } else {
+                    events.push(event);
+                }
             }
         }
 

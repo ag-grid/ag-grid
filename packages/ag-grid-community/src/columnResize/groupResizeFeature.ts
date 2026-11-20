@@ -8,6 +8,9 @@ import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/
 import type { GroupResizePlan } from './columnResizeService';
 
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
+    private removeResizeBar: (() => void) | null = null;
+    private removeAutoSize: (() => void) | null = null;
+    private canResize: boolean | undefined = undefined;
     private dragPlan: GroupResizePlan | null = null;
     private dragTakeFromAdjacent = false;
     private dragGroupWidth = 0;
@@ -22,14 +25,24 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     public postConstruct(): void {
-        if (!this.columnGroup.isResizable()) {
-            this.comp.setResizableDisplayed(false);
+        this.refresh();
+    }
+
+    /** A group is resizable while one of its displayed leaves is: its header calls this at every displayed columns change. */
+    public refresh(): void {
+        const resizable = this.columnGroup.isResizable();
+        if (resizable === this.canResize) {
+            return;
+        }
+        this.canResize = resizable;
+        this.removeResize();
+        this.comp.setResizableDisplayed(resizable);
+        if (!resizable) {
             return;
         }
 
         const { horizontalResizeSvc, gos, colAutosize } = this.beans;
-
-        const finishedWithResizeFunc = horizontalResizeSvc!.addResizeBar({
+        this.removeResizeBar = horizontalResizeSvc!.addResizeBar({
             eResizeBar: this.eResize,
             isColumn: true,
             onResizeStart: this.onResizeStart.bind(this),
@@ -37,15 +50,18 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             onResizeEnd: this.onResizing.bind(this, true),
         });
 
-        this.addDestroyFunc(finishedWithResizeFunc);
-
         if (!gos.get('suppressAutoSize') && colAutosize) {
-            this.addDestroyFunc(
-                colAutosize.addColumnGroupResize(this.eResize, this.columnGroup, () =>
-                    this.resizeLeafColumnsToFit('uiColumnResized')
-                )
+            this.removeAutoSize = colAutosize.addColumnGroupResize(this.eResize, this.columnGroup, () =>
+                this.resizeLeafColumnsToFit('uiColumnResized')
             );
         }
+    }
+
+    private removeResize(): void {
+        this.removeResizeBar?.();
+        this.removeAutoSize?.();
+        this.removeResizeBar = null;
+        this.removeAutoSize = null;
     }
 
     private onResizeStart(shiftKey: boolean): void {
@@ -102,7 +118,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     public override destroy(): void {
         super.destroy();
-
+        this.removeResize();
         this.dragPlan = null;
     }
 }

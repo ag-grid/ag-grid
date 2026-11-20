@@ -3,7 +3,6 @@ import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup
 import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
 import { _dispatchGroupHeaderNameChangedEvent } from '../columnEventUtils';
-import { _setColumnWidthAnimation } from '../columnWidthAnimation';
 
 interface ColGroupState {
     groupId: string;
@@ -64,7 +63,7 @@ export const _setColGroupState = (
     stateItems: ColGroupState[],
     source: ColumnEventType
 ): void => {
-    const { colAnimation, visibleCols, eventSvc, colModel } = beans;
+    const { visibleCols, eventSvc, colModel } = beans;
     const groupsById = colModel.colsGroupsById;
     const stateLen = stateItems.length;
     if (!groupsById.size || !stateLen) {
@@ -74,8 +73,6 @@ export const _setColGroupState = (
     // one update, so a group is told once every group holds its state and the columns are laid out
     colModel.beginColUpdate();
     try {
-        colAnimation?.start();
-        _setColumnWidthAnimation(beans, true);
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -107,6 +104,8 @@ export const _setColGroupState = (
         }
 
         if (impactedGroups) {
+            colModel.animateColUpdate();
+            colModel.animateColWidths();
             visibleCols.refresh(source, true);
             eventSvc.dispatchEvent({
                 type: 'columnGroupOpened',
@@ -115,8 +114,6 @@ export const _setColGroupState = (
             });
         }
     } finally {
-        _setColumnWidthAnimation(beans, false);
-        colAnimation?.finish();
         colModel.endColUpdate();
     }
 };

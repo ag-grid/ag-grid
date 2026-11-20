@@ -120,31 +120,21 @@ state attributes as by default they will be `undefined`.
 
 ## Matching Columns
 
-When a new Column Definition is passed to the grid, the grid needs to work out if it's an update of a Column or a new
-Column.
+When new Column Definitions are set, the grid matches each one to an existing Column. A matched Column keeps its state, such as width, sort and filter, apart from the stateful attributes its definition sets. A definition that matches no Column gets a new Column, created from that definition.
 
-Most of the time the `field` attribute will match the Column. However `field` is both an optional and non-unique
-attribute, e.g. a `valueGetter` could be used instead of field, or two columns could share the same field.
+A definition with a `colId` matches the Column with that `colId`. One without matches the Column created from the same Column Definition object, else the Column created from the same `field`. A definition without `colId` or `field` is matched on a best-effort basis by its `headerName` and its position.
 
-Given the `field` is not a unique identifier, the grid uses the following rules to match columns:
-
-1. If `colId` provided, match using `colId`
-1. Otherwise if `field` provided, match using `field`
-1. Otherwise match using object equality on Column Definition instance
-
-In other words, to have the grid correctly match Columns make sure each Column has either a `field` or `colId`.
-
-Matching by Column Definition instance only works within the lifetime of a grid, so a `field` or `colId` is required if you save and restore [Grid State](./grid-state/) or [Column State](./column-state/). A column with neither is identified by its position, and its state is re-applied to whichever column later occupies that position.
+{% note %}
+We recommend giving every Column its own `colId`: the definition is then always matched to the right Column, and saved [Grid State](./grid-state/) and [Column State](./column-state/) are always restored to it.
+{% /note %}
 
 The example below demonstrates the different matching strategies. Note the following:
 
-- All columns, with the exception of Country, are matched correctly. This means any column width, sort etc
-  will be kept between changes to the columns. Country will have its state reset, as it will be treated as a new column
-  each time.
 - Athlete column is matched by object equality as the same column definition instance is provided to the grid each time.
 - Age column is matched by `colId`. The `colId` is needed as the column has no `field` attribute.
-- All other columns except Country are matched using the `field` attribute.
-- Country column is not matched as it's a different object instance and has no `colId` or `field` attributes.
+- Country column has no `colId` or `field` and is a new object instance each time, so it is matched by its `headerName` and keeps its state, also when **Exclude Medal Columns** moves it first.
+- All other columns are matched using the `field` attribute.
+- Athlete, Age, Country, Sport, Year and Date keep their width, sort etc between changes to the columns. The medal columns start with their default state each time they are included, as **Exclude Medal Columns** removes them.
 
 {% gridExampleRunner title="Matching Columns" name="matching-columns" /%}
 
@@ -152,9 +142,13 @@ The example below demonstrates the different matching strategies. Note the follo
 
 When providing new [Column Definitions](./column-definitions/) to the grid, the order in which they are provided
 is the order in which the columns are displayed. This can mean that when overwriting columns with a new set of columns,
-any columns moved by the user will have their position reset.
+any columns moved by the user will have their position reset. Changing column defaults, such as `defaultColDef`, `columnTypes` or `dataTypeDefinitions`, keeps the column order.
 
 If you instead want to prioritise the order of the columns as they appear in the grid, set the grid property `maintainColumnOrder` to `true`.
+
+A column matched as described in [Matching Columns](#matching-columns) keeps its place. Columns given again after the Column Definitions
+were cleared keep it too when they have a `colId` or `field`, or come in the same order as before. Other new columns are added after the
+other columns of their group, else at the end.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -168,15 +162,9 @@ In the example below, note the following:
 - The columns can be reordered by dragging them.
 - Two buttons exist, **Column Set A** and **Column Set B**. Clicking these buttons will swap between two column definitions, each with a different order of columns.
 - Swapping between the column sets does not reset or change the column order, instead preserving the grid state.
-- A **Clear** button also exists, when clicking this the columns are removed, and subsequently applying a column set applies their order.
+- A **Clear** button removes the columns. A column set applied after it creates its columns again with their default state, in the order the columns had before.
 
 {% gridExampleRunner title="Column Definition Order" name="col-def-order" /%}
-
-If there are new Columns added, then these new Columns will always be added at the end.
-
-In order for the Column Order to be maintained, the grid needs to match the Columns. This can be done by ensuring
-each Column has a unique `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and
-placed at the end.
 
 ## Column Events
 
@@ -198,8 +186,9 @@ The current column definitions can be retrieved with `getColumnDefs`:
 
 ## Column Groups
 
-Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. For expandable
-groups, to have open / closed state to be maintained, you need to assign `groupId` in the Column Group Definition.
+Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. An expandable
+group with a `groupId` keeps its open / closed state. A group without one keeps it on a best-effort basis, by its
+`headerName` and its position. Assign `groupId` to keep it however the definitions change.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -220,7 +209,7 @@ In the example below, note the following:
 
 1. Clicking the top buttons alternates the columns from two sets of definitions.
 1. Column Group A - `groupId` is provided, so expand / collapse is preserved. The Header Name also changes.
-1. Column Group B - `groupId` is NOT provided, so expand / collapse is lost, group always closes when updates happen.
+1. Column Group B - `groupId` is NOT provided, so expand / collapse is kept by its Header Name, which does not change.
 1. Column Group C - `groupId` is provided, so expand / collapse is preserved. Child columns are changed.
 
 {% gridExampleRunner title="Column Groups" name="column-groups" /%}

@@ -139,12 +139,7 @@ export class RowContainerCtrl extends BeanStub {
         return this.name === name;
     }
 
-    public setComp(
-        view: IRowContainerComp,
-        eContainer: HTMLElement,
-        eSpannedContainer: HTMLElement | undefined,
-        eViewport: HTMLElement
-    ): void {
+    public setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement): void {
         this.comp = view;
         this.eContainer = eContainer;
         this.eViewport = eViewport;
@@ -176,8 +171,7 @@ export class RowContainerCtrl extends BeanStub {
         );
     }
 
-    /** Pushed by `GridBodyCtrl.updateWidths`. Several events report one column change, so the same
-     *  width arrives more than once per refresh. */
+    /** Pushed by `GridBodyCtrl.updateWidths`, which can push the same width again. */
     public setContainerWidth(width: number): void {
         if (width !== this.containerWidth) {
             this.containerWidth = width;
@@ -187,16 +181,12 @@ export class RowContainerCtrl extends BeanStub {
 
     private addListeners(): void {
         const { spannedRowRenderer, gos } = this.beans;
-        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
 
         this.addManagedEventListeners({
             stylesChanged: this.setPinnedRowBorderWidth.bind(this),
-            displayedColumnsChanged: onDisplayedColumnsChanged,
-            displayedColumnsWidthChanged: onDisplayedColumnsChanged,
             displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
         });
 
-        onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
         if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
@@ -227,12 +217,6 @@ export class RowContainerCtrl extends BeanStub {
 
         this.addManagedPropertyListener('domLayout', listener);
         listener();
-    }
-
-    public onDisplayedColumnsChanged(): void {
-        if (this.isScrollingCenterContainer()) {
-            this.beans.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport();
-        }
     }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used

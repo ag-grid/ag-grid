@@ -945,6 +945,130 @@ describe('SortService', () => {
             `);
             expect(getSortModel(api)).toEqual([{ colId: 'b', sort: 'desc' }]);
         });
+
+        test('the header follows the sort an applyColumnState set, though the column comparator throws sorting the rows', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        field: 'a',
+                        comparator: () => {
+                            throw new Error('comparator failed on purpose');
+                        },
+                    },
+                    { colId: 'b', field: 'b' },
+                ],
+                rowData,
+            });
+            const header = TestGridsManager.getHTMLElement(api)!.querySelector('.ag-header-cell[col-id="a"]')!;
+            expect(header.getAttribute('aria-sort')).toBe('none');
+
+            expect(() => api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] })).toThrow(
+                'comparator failed on purpose'
+            );
+            await asyncSetTimeout(0);
+
+            expect({
+                ariaSort: header.getAttribute('aria-sort'),
+                visibleSortIcons: Array.from(header.querySelectorAll<HTMLElement>('.ag-sort-indicator-icon'))
+                    .filter((el) => !el.classList.contains('ag-hidden'))
+                    .map((el) => el.className),
+                sortModel: getSortModel(api),
+            }).toEqual({
+                ariaSort: 'ascending',
+                visibleSortIcons: ['ag-sort-indicator-icon ag-sort-ascending-icon'],
+                sortModel: [{ colId: 'a', sort: 'asc' }],
+            });
+        });
+
+        test('a column told it was hidden finds the layout done, though the comparator of a sorted column throws', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        field: 'a',
+                        comparator: () => {
+                            throw new Error('comparator failed on purpose');
+                        },
+                    },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData,
+            });
+            const gridEl = TestGridsManager.getHTMLElement(api)!;
+            const headerOf = (colId: string) => gridEl.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+            expect(headerOf('b')).not.toBeNull();
+            const seenByB: { headerOfBInDom: boolean }[] = [];
+            api.getColumn('b')!.addEventListener('visibleChanged', () => {
+                seenByB.push({ headerOfBInDom: headerOf('b') !== null });
+            });
+
+            expect(() =>
+                api.applyColumnState({
+                    state: [
+                        { colId: 'a', sort: 'asc' },
+                        { colId: 'b', hide: true },
+                    ],
+                })
+            ).toThrow('comparator failed on purpose');
+
+            expect(seenByB).toEqual([{ headerOfBInDom: false }]);
+        });
+
+        test('a sort a column listener applies during a column update has sorted the rows when the API call starting the update returns', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData: [
+                    { id: '1', a: 'd', b: 'w', c: 1 },
+                    { id: '2', a: 'b', b: 'x', c: 2 },
+                    { id: '3', a: 'c', b: 'y', c: 3 },
+                    { id: '4', a: 'a', b: 'z', c: 4 },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+            const gridEl = TestGridsManager.getHTMLElement(api)!;
+            const displayedIds = () => {
+                const ids: string[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id!));
+                return ids;
+            };
+            const renderedIds = () =>
+                Array.from(gridEl.querySelectorAll('.ag-row[row-id][row-index]'))
+                    .sort((x, y) => Number(x.getAttribute('row-index')) - Number(y.getAttribute('row-index')))
+                    .map((row) => row.getAttribute('row-id'));
+            await waitFor(() => expect(renderedIds()).toEqual(['1', '2', '3', '4']));
+            expect({ displayed: displayedIds(), rendered: renderedIds() }).toEqual({
+                displayed: ['1', '2', '3', '4'],
+                rendered: ['1', '2', '3', '4'],
+            });
+
+            let sortApplied = 0;
+            api.getColumn('c')!.addEventListener('visibleChanged', () => {
+                if (sortApplied++ === 0) {
+                    api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+                }
+            });
+
+            api.setColumnsVisible(['c'], false);
+
+            expect({
+                listenerRuns: sortApplied,
+                sortModel: getSortModel(api),
+                displayed: displayedIds(),
+                rendered: renderedIds(),
+            }).toEqual({
+                listenerRuns: 1,
+                sortModel: [{ colId: 'a', sort: 'asc' }],
+                displayed: ['4', '2', '3', '1'],
+                rendered: ['4', '2', '3', '1'],
+            });
+        });
     });
 
     describe('sort with alwaysMultiSort', () => {

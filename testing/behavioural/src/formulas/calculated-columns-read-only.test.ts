@@ -9,6 +9,7 @@ import { GridStateModule, LocaleModule, ModuleRegistry, ValidationModule } from 
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     getExpressionInput,
@@ -37,7 +38,6 @@ describe('calculated columns - read-only definitions', () => {
         },
     ];
     const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
-    const closeDialog = () => document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
 
     test.each([
         { applyMode: 'live', applyDebounce: 0 },

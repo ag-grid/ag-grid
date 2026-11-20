@@ -14,7 +14,7 @@ import {
     createGrid,
     editViaDialog,
     entryOf,
-    getDialog,
+    getCalculatedColumnDialog,
     order,
     propertiesOf,
     removeViaMenu,
@@ -37,7 +37,7 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         // Typing does not commit under deferred mode, so nothing is persisted yet.
         expect(order(api)).toEqual(['a', 'b']);
@@ -58,7 +58,7 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         clickDialogButton('Cancel');
 
@@ -78,14 +78,14 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         clickDialogButton('Apply');
         await waitFor(() => expect(api.getColumn('calculated_1')).toBeTruthy());
 
         api.showColumnMenu('calculated_1');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 3');
         clickDialogButton('Cancel');
 
@@ -446,6 +446,47 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         await waitFor(() => expect(ids()).toEqual(['e', 'a', 'b', 'c']));
     });
 
+    test.each([
+        [
+            'a suffixed id',
+            [
+                { field: 'b', headerName: 'B0' },
+                { field: 'b', headerName: 'B1' },
+            ],
+            'b_1',
+        ],
+        ['a positional id', [{ headerName: 'B0' }, { headerName: 'B1' }], '1'],
+    ])(
+        'a created column restored at %s a declared column holds keeps it, and the declared column takes another',
+        (_name, columnDefs, colId) => {
+            const api = createGrid('state-created-at-generated-id', { rowData: [{ id: 'r1', b: 2 }], columnDefs });
+            const generated = api.getColumns()!.map((col) => col.getColId());
+
+            api.setState({
+                userColumns: [
+                    {
+                        colId,
+                        created: true,
+                        parentGroupId: null,
+                        properties: [
+                            { property: 'calculatedExpression', value: '1 + 1' },
+                            { property: 'headerName', value: 'DYN' },
+                        ],
+                    },
+                ],
+            });
+
+            const columns = api.getColumns()!;
+            expect({
+                generated: generated.includes(colId),
+                ids: new Set(columns.map((col) => col.getColId())).size,
+                created: api.getColumn(colId)?.getColDef().headerName,
+                // a created column without a source column goes at the end, after the declared ones
+                displayed: api.getAllDisplayedColumns().map((col) => col.getColDef().headerName),
+            }).toEqual({ generated: true, ids: columns.length, created: 'DYN', displayed: ['B0', 'B1', 'DYN'] });
+        }
+    );
+
     test('a created entry with no calculated expression leaves a declared column its generated id and state', () => {
         const api = createGrid('state-created-no-expression', {
             rowData: [{ id: 'r1', b: 2 }],
@@ -470,6 +511,65 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         expect(
             api.getColumns()!.map((col) => `${col.getColId()} ${col.getColDef().headerName} ${col.getActualWidth()}`)
         ).toEqual(['b B0 200', 'b_1 B1 333']);
+    });
+
+    test('a created column restored at a hierarchy column’s id keeps it, and the hierarchy column takes another', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('state-created-at-hierarchy-id', {
+            rowData: [{ id: 'r1', date: new Date(2020, 0, 1) }],
+            columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y' }] }],
+        });
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'y',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'calculatedExpression', value: '1 + 1' }],
+                },
+            ],
+        });
+
+        const ids = api.getAllGridColumns().map((col) => col.getColId());
+        expect({
+            unique: new Set(ids).size === ids.length,
+            yIds: ids.filter((id) => id.startsWith('y')).sort(),
+            expression: api.getColumn('y')?.getColDef().calculatedExpression,
+            warned: warn.mock.calls.flat().join(' ').includes('warning #273'),
+        }).toEqual({ unique: true, yIds: ['y', 'y_1'], expression: '1 + 1', warned: true });
+        warn.mockRestore();
+    });
+
+    test('a hierarchy part added with the id of a created column takes another, and the created column keeps it', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('state-hierarchy-added-at-created-id', {
+            rowData: [{ id: 'r1', date: new Date(2020, 0, 1) }],
+            columnDefs: [{ field: 'date', rowGroup: true, type: 'parts' }],
+            columnTypes: { parts: {} },
+        });
+        api.setState({
+            userColumns: [
+                {
+                    colId: 'y',
+                    created: true,
+                    parentGroupId: null,
+                    properties: [{ property: 'calculatedExpression', value: '1 + 1' }],
+                },
+            ],
+        });
+
+        api.setGridOption('columnTypes', { parts: { groupHierarchy: [{ colId: 'y' }] } });
+
+        const ids = api.getAllGridColumns().map((col) => col.getColId());
+        expect({
+            unique: new Set(ids).size === ids.length,
+            yIds: ids.filter((id) => id.startsWith('y')).sort(),
+            expression: api.getColumn('y')?.getColDef().calculatedExpression,
+            warned: warn.mock.calls.flat().join(' ').includes('warning #273'),
+        }).toEqual({ unique: true, yIds: ['y', 'y_1'], expression: '1 + 1', warned: true });
+        warn.mockRestore();
     });
 
     test('turning calculated columns off frees a calculated column’s id for a new declared column', () => {

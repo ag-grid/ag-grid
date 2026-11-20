@@ -12,7 +12,7 @@ import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, CellFocusedEvent, ColumnEvent, PaginationChangedEvent } from '../events';
+import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
@@ -84,8 +84,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    /** The columns the cell listeners are on, copied as `colsList` can be reordered in place. */
-    private listenedCols: AgColumn[] = [];
+    /** The `colModel.colDefsVersion` the cells were last redrawn for. */
+    private cellsColDefsVersion = 0;
 
     public firstRenderedRow: number;
     public lastRenderedRow: number;
@@ -102,6 +102,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private pinningLeft: boolean;
     private pinningRight: boolean;
+    /** The `displayedColsVersion` at the cells' last `onDisplayedColumnsChanged`. */
+    private cellsColsVersion = -1;
 
     public firstVisibleVPixel: number;
     public lastVisibleVPixel: number;
@@ -130,7 +132,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
             paginationChanged: this.onPageLoaded.bind(this),
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
             pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
             bodyHeightChanged: this.redraw.bind(this, {}),
         });
@@ -175,15 +176,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const { stickyRowSvc, gos, showRowGroupCols } = this.beans;
         if (showRowGroupCols) {
-            const refreshShowRowGroupCells = () => {
-                const columns = showRowGroupCols.columns;
-                if (columns.length) {
-                    this.refreshCells({ columns, force: true });
-                }
-            };
-            this.addManagedPropertyListener('showOpenedGroup', refreshShowRowGroupCells);
-            // the auto-group colDef is unchanged when row groups change, so no colDefChanged re-renders these cells
-            this.addManagedEventListeners({ columnRowGroupChanged: refreshShowRowGroupCells });
+            this.addManagedPropertyListener('showOpenedGroup', () => this.refreshShowRowGroupCells());
         }
 
         if (stickyRowSvc) {
@@ -205,6 +198,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.embedFullWidthRows = this.printLayout || gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
+    }
+
+    /** Re-renders the group cells, whose colDef a regroup keeps: called once the rows are regrouped. */
+    public refreshShowRowGroupCells(): void {
+        const columns = this.beans.showRowGroupCols?.columns;
+        if (columns?.length) {
+            this.refreshCells({ columns, force: true });
+        }
     }
 
     private initialiseCache(): void {
@@ -328,27 +329,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     }
                 }
             },
-            displayedColumnsChanged: () => {
-                const rowCtrls = this.getAllRowCtrls();
-                for (let i = 0, len = rowCtrls.length; i < len; ++i) {
-                    const cellCtrls = rowCtrls[i].getAllCellCtrls();
-                    for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
-                        cellCtrls[j].onDisplayedColumnsChanged();
-                    }
-                }
-            },
         });
 
         this.setupRangeSelectionListeners();
-
-        // add listeners to the grid columns
-        this.refreshListenersToColumnsForCellComps();
-        // if the grid columns change, then refresh the listeners again
-        this.addManagedEventListeners({
-            gridColumnsChanged: this.refreshListenersToColumnsForCellComps.bind(this),
-        });
-
-        this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
 
     private readonly setupRangeSelectionListeners = () => {
@@ -384,46 +367,98 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     };
 
-    private removeGridColumnListeners(): void {
-        const cols = this.listenedCols;
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            cols[i].__removeEventListener('colDefChanged', this.onColDefChanged);
+    /** Redraws the cells of each column redefined since the last call. Call at each pass of a column update, before
+     *  its column events, so a `colDefChanged` listener finds every redefined column's cells drawn. */
+    public refreshRedefinedCells(): void {
+        const colModel = this.colModel;
+        const version = colModel.colDefsVersion;
+        if (version === this.cellsColDefsVersion) {
+            return;
         }
-        this.listenedCols = [];
+        const cols = colModel.colsList;
+        let rowCtrls: RowCtrl[] | null = null;
+        let threw = false;
+        let error: unknown;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            if (!col.takeCellsRedefined()) {
+                continue;
+            }
+            rowCtrls ??= this.getAllRowCtrls();
+            for (let j = 0, rowLen = rowCtrls.length; j < rowLen; ++j) {
+                try {
+                    rowCtrls[j].getOwnCellCtrl(col)?.onColDefChanged();
+                } catch (e) {
+                    // a cell throwing stops no other cell; the first error is rethrown once all are drawn
+                    error = threw ? error : e;
+                    threw = true;
+                }
+            }
+        }
+        this.cellsColDefsVersion = version;
+        if (threw) {
+            throw error;
+        }
     }
 
-    // this function adds listeners onto all the grid columns, which are the column that we could have cellComps for.
-    // when the grid columns change, we add listeners again. in an ideal design, each CellComp would just register to
-    // the column it belongs to on creation, however this was a bottleneck with the number of cells, so do it here
-    // once instead.
-    private refreshListenersToColumnsForCellComps(): void {
-        this.removeGridColumnListeners();
-
-        const cols = this.colModel.colsList.slice();
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            cols[i].__addEventListener('colDefChanged', this.onColDefChanged);
+    /** Called by the visible columns once per column layout; `displayedChanged` false: only the rendered columns changed. */
+    public layOutCells(displayedChanged: boolean): void {
+        const visibleCols = this.visibleCols;
+        if (displayedChanged) {
+            const pinningLeft = visibleCols.leftCols.length > 0;
+            const pinningRight = visibleCols.rightCols.length > 0;
+            if (this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight) {
+                this.pinningLeft = pinningLeft;
+                this.pinningRight = pinningRight;
+                if (this.embedFullWidthRows) {
+                    this.redrawFullWidthEmbeddedRows();
+                }
+            }
         }
-        this.listenedCols = cols;
-    }
-
-    private readonly onColDefChanged = (event: ColumnEvent): void => {
-        const col = event.column as AgColumn;
-        const rowCtrls = this.getAllRowCtrls();
+        const colsVersion = visibleCols.displayedColsVersion;
+        const refreshCells = colsVersion !== this.cellsColsVersion;
+        this.cellsColsVersion = colsVersion;
+        const rowCtrls = this.getLaidOutRowCtrls();
         for (let i = 0, len = rowCtrls.length; i < len; ++i) {
-            rowCtrls[i].getOwnCellCtrl(col)?.onColDefChanged();
+            const rowCtrl = rowCtrls[i];
+            // a cell renderer can redraw the rows while an earlier row is laid out
+            if (!rowCtrl.isAlive()) {
+                continue;
+            }
+            if (displayedChanged) {
+                rowCtrl.rowModeFeature.onDisplayedColumnsChanged();
+            } else {
+                rowCtrl.rowModeFeature.onVirtualColumnsChanged?.();
+            }
+            if (refreshCells) {
+                const cellCtrls = rowCtrl.getAllCellCtrls();
+                for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                    cellCtrls[j].onDisplayedColumnsChanged();
+                }
+            }
         }
-    };
+    }
 
     /** Called by the visible columns once every left and width is set; a cell writes only what moved, so a span rewritten later costs one write. */
-    public refreshCellPositions(): void {
+    public refreshCellPositions(sectionWidthsChanged: boolean): void {
         const beans = this.beans;
-        const rowCtrls = this.getAllRowCtrls();
+        const rowCtrls = this.getLaidOutRowCtrls();
         for (let i = 0, len = rowCtrls.length; i < len; ++i) {
-            const cellCtrls = rowCtrls[i].getAllCellCtrls();
+            const rowCtrl = rowCtrls[i];
+            if (sectionWidthsChanged) {
+                rowCtrl.refreshPinnedCellGroupWidths();
+            }
+            const cellCtrls = rowCtrl.getAllCellCtrls();
             for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
                 _refreshCellPosition(beans, cellCtrls[j]);
             }
         }
+    }
+
+    /** The rendered rows, and the detail rows kept while collapsed, as those are shown again as they are. */
+    private getLaidOutRowCtrls(): RowCtrl[] {
+        const cachedRowCtrls = this.cachedRowCtrls?.getEntries();
+        return cachedRowCtrls?.length ? this.getAllRowCtrls().concat(cachedRowCtrls) : this.getAllRowCtrls();
     }
 
     /** Called by the visible columns with the columns that left or reached a pinned edge, null where none did. */
@@ -1244,22 +1279,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
             type: 'displayedRowsChanged',
             afterScroll,
         });
-    }
-
-    private onDisplayedColumnsChanged(): void {
-        const visibleCols = this.visibleCols;
-        const pinningLeft = visibleCols.leftCols.length > 0;
-        const pinningRight = visibleCols.rightCols.length > 0;
-        const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
-
-        if (atLeastOneChanged) {
-            this.pinningLeft = pinningLeft;
-            this.pinningRight = pinningRight;
-
-            if (this.embedFullWidthRows) {
-                this.redrawFullWidthEmbeddedRows();
-            }
-        }
     }
 
     // when embedding, what gets showed in each section depends on what is pinned. eg if embedding group expand / collapse,

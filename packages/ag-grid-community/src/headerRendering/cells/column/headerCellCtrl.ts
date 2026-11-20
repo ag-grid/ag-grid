@@ -162,14 +162,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshEditHighlight();
 
         if (beans.showValuesAsSvc) {
-            // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
+            // The active mode (and its dormancy, which follows the rows' grouping and pivot) feed the aria description.
             const refreshShowValuesAsAria = () => this.refreshAriaShowValuesAs();
             compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValuesAsAria });
-            compBean.addManagedEventListeners({
-                columnRowGroupChanged: refreshShowValuesAsAria,
-                columnPivotChanged: refreshShowValuesAsAria,
-                columnPivotModeChanged: refreshShowValuesAsAria,
-            });
+            compBean.addManagedEventListeners({ modelUpdated: refreshShowValuesAsAria });
         }
 
         compBean.addDestroyFunc(() => {
@@ -700,11 +696,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private refreshAriaShowValuesAs(): void {
-        const translate = this.getLocaleTextFunc();
         const label = this.beans.showValuesAsSvc?.getActiveModeLabel(this.column);
         this.setAriaDescriptionProperty(
             'showValuesAs',
-            label ? `${translate('ariaColumnShowValuesAs', 'Showing Values As')} ${label}` : null
+            label ? `${this.getLocaleTextFunc()('ariaColumnShowValuesAs', 'Showing Values As')} ${label}` : null
         );
     }
 

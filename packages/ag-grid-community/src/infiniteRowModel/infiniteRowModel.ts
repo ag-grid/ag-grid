@@ -5,7 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
 import { _addRowHeightChangedListener, _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
-import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { IRowModel, RowBounds, RowModelChange, RowModelType } from '../interfaces/iRowModel';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import { _getSortModel } from '../sort/sortService';
 import type { InfiniteCacheParams } from './infiniteCache';
@@ -75,9 +75,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private addEventListeners(): void {
         this.addManagedEventListeners({
-            filterChanged: this.reset.bind(this),
-            sortChanged: this.reset.bind(this),
-            newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.dispatchModelUpdatedEvent.bind(this),
         });
         _addRowHeightChangedListener(this, () => this.refreshRowHeight());
@@ -98,18 +95,16 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
         this.updateRowHeights();
     }
 
-    private onColumnEverything(): void {
-        let resetRequired;
-        // if cache params, we require reset only if sort model has changed. we don't need to check
-        // for filter model, as the filter manager will fire an event when columns change that result
-        // in the filter changing.
-        if (this.cacheParams) {
-            resetRequired = !_jsonEquals(this.cacheParams.sortModel, _getSortModel(this.beans.sortSvc));
-        } else {
-            // if no cacheParams, means first time creating the cache, so always create one
-            resetRequired = true;
+    public refreshAfterChange(change: RowModelChange): void {
+        if (change.filter || change.sort) {
+            this.reset();
         }
-        if (resetRequired) {
+        if (!change.columnsLoaded) {
+            return;
+        }
+        // with cache params only a sort-model change resets: a filter change refreshes the rows itself
+        const cacheParams = this.cacheParams;
+        if (!cacheParams || !_jsonEquals(cacheParams.sortModel, _getSortModel(this.beans.sortSvc))) {
             this.reset();
         }
     }

@@ -632,6 +632,23 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
         expect(namesWhenTold.filter((entry) => entry.includes(' vs '))).toEqual([]);
     });
 
+    test('auto group column: each multipleColumns group column follows its own row-group column when autoGroupColumnDef sets showRowGroup', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, headerNameEditable: true },
+                { field: 'country', rowGroup: true },
+            ],
+            rowData,
+            groupDisplayType: 'multipleColumns',
+            autoGroupColumnDef: { showRowGroup: 'athlete' },
+        });
+        const autoHeaders = () => texts('.ag-header-cell[col-id^="ag-Grid-AutoColumn"] .ag-header-cell-text');
+        await waitFor(() => expect(autoHeaders()).toBe('Athlete | Country'));
+
+        await renameFromHeaderMenu(api, 'athlete', 'Competitor');
+        await waitFor(() => expect(autoHeaders()).toBe('Competitor | Country'));
+    });
+
     describe('floating filter aria-labels', () => {
         class ReadOnlyCustomFilter {
             private readonly gui = document.createElement('div');

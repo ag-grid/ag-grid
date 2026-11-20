@@ -129,15 +129,8 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
 
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
-        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         const refreshAccessibility = this.refreshAccessibility.bind(this);
-        const refreshPinnedCellGroupWidths = this.refreshPinnedCellGroupWidths.bind(this);
         compBean.addManagedEventListeners({
-            displayedColumnsWidthChanged: refreshPinnedCellGroupWidths,
-            leftPinnedWidthChanged: refreshPinnedCellGroupWidths,
-            rightPinnedWidthChanged: refreshPinnedCellGroupWidths,
-            displayedColumnsChanged: onDisplayedColumnsChanged,
-            virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
             stylesChanged: onHeightChanged,
@@ -148,7 +141,7 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         compBean.addManagedPropertyListeners(['suppressHeaderFocus'], refreshAccessibility);
 
         // when print layout changes, it changes what columns are in what section
-        compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
+        compBean.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
         compBean.addManagedPropertyListener('ensureDomOrder', (e) => {
             this.isEnsureDomOrder = e.currentValue;
             this.onVirtualColumnsChanged(false, true);
@@ -166,21 +159,25 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         );
     }
 
-    private onDisplayedColumnsChanged(): void {
+    /** Called by the header row container once per column layout, and on a print layout change. */
+    public onDisplayedColumnsChanged(): void {
         const isPrintLayout = _isDomLayout(this.gos, 'print');
         const layoutChanged = isPrintLayout !== this.isPrintLayout;
         this.isPrintLayout = isPrintLayout;
         this.onVirtualColumnsChanged(false, layoutChanged);
         if (layoutChanged) {
-            this.refreshCellPositions();
+            this.refreshCellPositions(true);
         }
         this.onRowHeightChanged();
     }
 
-    public refreshCellPositions(): void {
+    public refreshCellPositions(sectionWidthsChanged: boolean): void {
         const allCtrls = this.allCtrls;
         for (let i = 0, len = allCtrls.length; i < len; ++i) {
             allCtrls[i].refreshPosition();
+        }
+        if (sectionWidthsChanged) {
+            this.refreshPinnedCellGroupWidths();
         }
     }
 
@@ -195,7 +192,6 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     /** Pushed by `GridBodyCtrl.updateWidths`, so the row does not derive it from the viewport itself. */
     public setRowWidth(width: number): void {
         this.comp?.setWidth(`${width}px`);
-        this.refreshPinnedCellGroupWidths();
     }
 
     private refreshPinnedCellGroupWidths(): void {
@@ -235,11 +231,11 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         return { topOffset, rowHeight: filterHeight };
     }
 
-    private onVirtualColumnsChanged(afterScroll: boolean = false, force: boolean = false): void {
+    public onVirtualColumnsChanged(afterScroll: boolean = false, force: boolean = false): void {
         if (!this.comp) {
             return;
         }
-        // Both `virtualColumnsChanged` and `displayedColumnsChanged` land here for one column change, and
+        // A rendered-columns layout and the displayed one can both land here for one column change, and
         // the version covers only the rendered sections, not a ctrl kept alive for focus outside them.
         const headerRowsVersion = this.beans.colViewport.headerRowsVersion;
         if (

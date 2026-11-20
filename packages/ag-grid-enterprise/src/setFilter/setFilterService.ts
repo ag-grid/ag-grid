@@ -17,10 +17,8 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
     private readonly handlersByColId = new Map<string, Set<SetFilterHandler<any>>>();
 
     public postConstruct(): void {
-        const createPreservingFilters = () => this.createPreservingFilters();
         this.addManagedEventListeners({
-            newColumnsLoaded: createPreservingFilters,
-            advancedFilterEnabledChanged: createPreservingFilters,
+            advancedFilterEnabledChanged: () => this.createPreservingFilters(),
         });
     }
 

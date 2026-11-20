@@ -665,6 +665,38 @@ describe('Continuous Column Autosize', () => {
         });
     });
 
+    test('a widthChanged listener throwing during a re-size leaves its columnResized events as without the throw', async () => {
+        /** The columnResized events of a data change re-sizing a column back at its initial width. */
+        const resizeAfterReset = async (throwing: boolean) => {
+            const api = createGrid();
+            await settleOnFakeClock();
+            api.resetColumnState();
+            const resized: string[] = [];
+            api.addEventListener('columnResized', (event) =>
+                resized.push(`${(event.columns ?? []).map((column) => column.getColId())}:${event.source}`)
+            );
+            let thrown = 0;
+            api.getColumn('eligible')!.addEventListener('widthChanged', () => {
+                if (throwing) {
+                    ++thrown;
+                    throw new Error('listener boom');
+                }
+            });
+            api.setGridOption('rowData', LONGER_DATA);
+            await settleOnFakeClock();
+            const width = widthOf(api, 'eligible');
+            gridsManager.reset();
+            return { thrown, width, resized };
+        };
+
+        vi.useFakeTimers();
+        const quiet = await resizeAfterReset(false);
+        const throwing = await resizeAfterReset(true);
+
+        expect(quiet.resized).toContain('eligible:autosizeColumns');
+        expect(throwing).toEqual({ ...quiet, thrown: 1 });
+    });
+
     describe('all strategy types', () => {
         test('`fitProvidedWidth` re-distributes the provided width on a data change', async () => {
             const api = createGrid({

@@ -126,26 +126,20 @@ export function getNextValueIfDifferent<T extends { diffIndex: number }>(
     maintainOrder: boolean,
     placeNewInOrder = false
 ): T[] {
-    if (prev === undefined) {
+    if (prev === undefined || prev === next) {
         return next;
     }
     const prevLen = prev.length;
     const nextLen = next.length;
-
-    // If same array instance nothing to do.
-    // If both empty arrays maintain reference of prev.
-    if (prev === next || (nextLen === 0 && prevLen === 0)) {
-        return prev;
+    // Both empty keeps prev's reference; one side empty has no previous order to keep
+    if (prevLen === 0 || nextLen === 0) {
+        return prevLen === nextLen ? prev : next;
     }
-
-    // If maintaining dom order just return next
-    // If either side is empty there is no previous order to maintain
-    if (maintainOrder || prevLen === 0 || nextLen === 0) {
-        return next;
-    }
-
     if (_areEqual(prev, next)) {
         return prev;
+    }
+    if (maintainOrder) {
+        return next;
     }
 
     // Values are matched by a `diffIndex` stamp instead of a map: each `prev` value is stamped with its index, and a

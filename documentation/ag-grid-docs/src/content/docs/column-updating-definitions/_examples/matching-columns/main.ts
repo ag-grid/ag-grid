@@ -44,19 +44,19 @@ function getColDefsMedalsIncluded(): ColDef<IOlympicData>[] {
 
 function getColDefsMedalsExcluded(): ColDef<IOlympicData>[] {
     return [
+        {
+            headerName: 'Country',
+            headerClass: 'country-header',
+            valueGetter: (params: ValueGetterParams<IOlympicData>) => {
+                return params.data ? params.data.country : undefined;
+            },
+        },
         athleteColumn,
         {
             colId: 'myAgeCol',
             headerName: 'Age',
             valueGetter: (params: ValueGetterParams<IOlympicData>) => {
                 return params.data ? params.data.age : undefined;
-            },
-        },
-        {
-            headerName: 'Country',
-            headerClass: 'country-header',
-            valueGetter: (params: ValueGetterParams<IOlympicData>) => {
-                return params.data ? params.data.country : undefined;
             },
         },
         { field: 'sport' },

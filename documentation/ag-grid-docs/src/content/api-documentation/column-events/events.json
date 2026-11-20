@@ -152,7 +152,7 @@
             }
         },
         "columnValueChanged": {
-            "description": "The 'value' value has changed.",
+            "description": "A column was added to or removed from the value columns.",
             "type": {
                 "arguments": {
                     "event": "ColumnEvent"

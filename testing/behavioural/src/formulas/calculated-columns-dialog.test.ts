@@ -7,6 +7,7 @@ import type { ColGroupDef, IsColumnReferenceableParams } from 'ag-grid-community
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     findColumnDef,
     getCalculatedColumnDialog,
@@ -258,7 +259,7 @@ describe('ag-grid calculated columns', () => {
             await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'profit' })).toBe(20));
             api.hidePopupMenu();
             if (applyMode === 'live') {
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
             }
             await openEditDialogViaMenu(api, 'bonus');
             clickDialogButton('Columns');
@@ -342,7 +343,7 @@ describe('ag-grid calculated columns', () => {
                     expect(getDialogButton('Apply')).toBeDisabled();
                 }
             }
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
             if (applyMode === 'live') {
                 expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe(
                     'SUM(REF(COLUMN("revenue"), ROW("r1"), COLUMN("cost"), ROW("r2")))'
@@ -417,7 +418,7 @@ describe('ag-grid calculated columns', () => {
             if (applyMode === 'deferred') {
                 clickDialogButton('Apply');
             } else {
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
             }
             referenceable.mockClear();
             await openEditDialogViaMenu(api, 'calculated_1');
@@ -533,7 +534,7 @@ describe('ag-grid calculated columns', () => {
             expect(getExpressionInput().value).toBe('[Revenue]');
             clickDialogButton('Columns');
             expect(getSuggestionLabels()).toEqual(['Country', 'Year', 'Revenue']);
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
         }
     });
 
@@ -614,7 +615,7 @@ describe('ag-grid calculated columns', () => {
         const reference = getExpressionInput().value;
         context.allowFirst = false;
         expect(getSuggestionLabels()).toEqual(['2025›Q4', '2026›Q4']);
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         await openEditDialogViaMenu(api, 'profit');
         expect(getExpressionInput().value).toBe(reference);
         clickDialogButton('Columns');

@@ -30,9 +30,10 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         colModel.beginColUpdate();
         try {
             this.resetActiveCols(reordered);
+            this.stampActiveIndexes();
             // Reorder: multiple group cols must resnap to the new hierarchy order, sliding as they go.
-            this.stageColChange(movedColumn);
-            colModel.stageColChanges(source, 'reorder');
+            this.recordColChange(movedColumn);
+            colModel.stageColRefresh(source);
         } finally {
             colModel.endColUpdate();
         }
@@ -49,13 +50,15 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         }
     }
 
-    protected override onColActiveChangesComplete(source: ColumnEventType): void {
+    /** Raises the batched `columnVisible` of the columns grouping hid or showed, then the row group change. */
+    public override dispatchColChange(source: ColumnEventType): void {
         const pending = this.pendingVisibilityChanges;
         if (pending.size) {
             const cols = Array.from(pending);
             pending.clear();
             dispatchColumnVisibleEvent(this.eventSvc, cols, source);
         }
+        super.dispatchColChange(source);
     }
 
     protected override setActiveFlag(col: AgColumn, active: boolean): boolean {
@@ -67,7 +70,7 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
     }
 
     /** Stamps each active col's position as its row-group level (`rowGroupActiveIndex`, valid only when active). */
-    protected override onColumnsChanged(): void {
+    protected override stampActiveIndexes(): void {
         const cols = this.columns;
         for (let i = 0, len = cols.length; i < len; ++i) {
             cols[i].rowGroupActiveIndex = i;

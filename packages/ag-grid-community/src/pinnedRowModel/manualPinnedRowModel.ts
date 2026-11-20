@@ -80,13 +80,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             firstDataRendered: runIsRowPinned,
         });
 
-        this.addManagedPropertyListener('pivotMode', () => {
-            this.top.refreshVisibility();
-            this.bottom.refreshVisibility();
-            this.refreshRowPositions();
-            this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
-        });
-
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
     }
 

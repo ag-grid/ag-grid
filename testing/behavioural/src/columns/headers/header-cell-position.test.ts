@@ -12,6 +12,7 @@ import {
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 /** The `left` and `width` of every header cell of `colId`, one per header row it is drawn in. */
 const headerPositions = (api: GridApi, colId: string) => {
@@ -335,5 +336,85 @@ describe('header cell positions', () => {
         // b retries on the same frames as a would
         await waitFor(() => expect(api.getColumn('b')!.getAutoHeaderHeight()).toBe(80));
         expect(api.getColumn('a')!.getAutoHeaderHeight()).toBeNull();
+    });
+});
+
+describe('header height of a server-side grid', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => gridsManager.reset());
+
+    test('pivoting an SSRM grid with floating filters through column state keeps the header sized for its two rows', async () => {
+        const years = [2020, 2024];
+        const countries = ['Ireland', 'France', 'Germany'];
+        const api = gridsManager.createGrid('myGrid', {
+            rowModelType: 'serverSide',
+            columnDefs: [
+                {
+                    field: 'country',
+                    enableRowGroup: true,
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                },
+                { field: 'year', enablePivot: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+                {
+                    field: 'gold',
+                    enableValue: true,
+                    aggFunc: 'sum',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                },
+            ],
+            processPivotResultColDef: (colDef) => {
+                colDef.floatingFilter = false;
+            },
+            serverSideDatasource: {
+                getRows(params) {
+                    const { pivotMode, pivotCols, rowGroupCols, groupKeys } = params.request;
+                    if (pivotMode && pivotCols.length && rowGroupCols.length && groupKeys.length === 0) {
+                        const rowData = countries.map((country, i) => {
+                            const row: Record<string, unknown> = { country };
+                            years.forEach((year, j) => (row[`${year}_gold`] = (i + 1) * (j + 3)));
+                            return row;
+                        });
+                        params.success({
+                            rowData,
+                            rowCount: rowData.length,
+                            pivotResultFields: years.map((year) => `${year}_gold`),
+                        });
+                        return;
+                    }
+                    const rowData = countries.flatMap((country, i) =>
+                        years.map((year, j) => ({ country, year, gold: (i + 1) * (j + 3) }))
+                    );
+                    params.success({ rowData, rowCount: rowData.length });
+                },
+            },
+        });
+        const header = () => getGridElement(api)!.querySelector<HTMLElement>('.ag-header')!;
+        const headerRows = () =>
+            Array.from(header().querySelectorAll('.ag-header-row')).map((row) =>
+                (['group', 'column', 'filter'] as const).find((kind) => row.classList.contains(`ag-header-row-${kind}`))
+            );
+        await waitFor(() => expect(headerRows()).toEqual(['column', 'filter']));
+        const heightBefore = header().style.height;
+        expect(heightBefore).not.toBe('');
+
+        api.setGridOption('pivotMode', true);
+        api.applyColumnState({
+            state: [
+                { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                { colId: 'year', pivot: true, pivotIndex: 0 },
+                { colId: 'gold', aggFunc: 'sum' },
+            ],
+            applyOrder: true,
+        });
+
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(2));
+
+        // Pivot result columns have no floating filter: a group row above the column row.
+        await waitFor(() => expect(headerRows()).toEqual(['group', 'column']), { timeout: 1000 });
+        expect(header().querySelectorAll('.ag-header-row-group .ag-header-group-cell')).toHaveLength(2);
+        await waitFor(() => expect(header().style.height).toBe(heightBefore), { timeout: 1000 });
     });
 });

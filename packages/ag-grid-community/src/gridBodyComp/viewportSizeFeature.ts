@@ -93,21 +93,25 @@ export class ViewportSizeFeature extends BeanStub {
         }
 
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
-            const { pinnedCols, colFlex } = this.beans;
+            const { pinnedCols, colFlex, visibleCols } = this.beans;
             const gridBodyCtrl = this.gridBodyCtrl;
             // One resolution for the whole frame. It stays live, so the reads below still see the effect of
             // anything written in between.
             const style = window.getComputedStyle(gridBodyCtrl.eGridViewport);
             // The viewport has just resized, and the pinned-width rule is enforced against it.
-            gridBodyCtrl.refreshViewportWidth(_getInnerWidth(gridBodyCtrl.eGridViewport, style));
-            pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
+            const viewportWidth = _getInnerWidth(gridBodyCtrl.eGridViewport, style);
+            gridBodyCtrl.refreshViewportWidth(viewportWidth);
+            const unpinned = !!pinnedCols?.keepPinnedColumnsNarrowerThanViewport(viewportWidth);
             this.checkViewportAndScrolls(style);
 
             // The width reported above, so the flex pass and the containers are sized from the same one.
             const newWidth = gridBodyCtrl.getReportedCenterWidth();
 
-            if (colFlex && newWidth !== colFlex.flexViewportWidth) {
-                gridBodyCtrl.cancelColumnWidthAnimation();
+            const reflexes = !!colFlex && newWidth !== colFlex.flexViewportWidth;
+            if (unpinned || (reflexes && visibleCols.lastFlexIndex !== -1)) {
+                gridBodyCtrl.cancelColumnWidthAnimation(); // what the viewport itself moves follows it at once
+            }
+            if (colFlex && reflexes) {
                 colFlex.refreshFlexedColumns({
                     viewportWidth: newWidth,
                     updateBodyWidths: true,

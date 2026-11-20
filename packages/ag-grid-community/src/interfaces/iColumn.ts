@@ -324,7 +324,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
 
     /** Returns the column group definition for this column.
      * The column group definition will be the result of merging the application provided column group definition with any provided defaults
-     * (e.g. `defaultColGroupDef` grid option.
+     * (e.g. `defaultColGroupDef` grid option, except its `groupId`).
      */
     getColGroupDef(): ColGroupDef | null;
 
@@ -374,7 +374,7 @@ export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgPr
 
     /** Returns the column group definition for this column.
      * The column group definition will be the result of merging the application provided column group definition with any provided defaults
-     * (e.g. `defaultColGroupDef` grid option.
+     * (e.g. `defaultColGroupDef` grid option, except its `groupId`).
      */
     getColGroupDef(): ColGroupDef | null;
 

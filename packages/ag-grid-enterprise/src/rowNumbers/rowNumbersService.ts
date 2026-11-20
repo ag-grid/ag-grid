@@ -6,7 +6,6 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     _BaseSingleColService,
     _addGridCommonParams,
-    _convertColumnEventSourceType,
     _createElement,
     _getFirstRow,
     _getRowNode,
@@ -30,7 +29,6 @@ import type {
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
     NamedBean,
-    PropertyValueChangedEvent,
     RowNode,
     RowNumbersOptions,
     RowPosition,
@@ -86,12 +84,6 @@ export class RowNumbersService
             modelUpdated: (params) => onRowsChanged_debounced(!params.keepRenderedRows),
             rangeSelectionChanged: () => this.refreshCells(true),
             pinnedRowsChanged: () => onRowsChanged_debounced(true),
-        });
-
-        this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
-            this.updateColumns(e);
-            // the cells' range classes read `cellSelection`, and an unchanged colDef refreshes no cell
-            this.refreshCells(true);
         });
 
         this.refreshSelectionIntegration();
@@ -173,8 +165,7 @@ export class RowNumbersService
         rangeSvc.handleCellKeyboardSelect(keyboardEvent, cellPosition);
     }
 
-    public updateColumns(event: PropertyValueChangedEvent<any>): void {
-        const source = _convertColumnEventSourceType(event.source);
+    public applyRowNumbersOptions(source: ColumnEventType): void {
         const prevOverrides = this.rowNumberOverrides;
         this.refreshSelectionIntegration();
         const had = this.column !== null;
@@ -198,6 +189,8 @@ export class RowNumbersService
                 this.autoSize(column, true);
             }
         }
+        // the cells' range classes read `cellSelection`, and an unchanged colDef refreshes no cell
+        this.refreshCells(true);
     }
 
     /** `width` is the fit floor: re-sent, or below `minWidth`, it keeps the fitted or dragged width. */
@@ -212,6 +205,14 @@ export class RowNumbersService
         }
         column.resetActualWidth(source);
         this.autoSizedTextLength = 0;
+    }
+
+    public fitAfterReset(): void {
+        const column = this.column;
+        if (!column) {
+            return;
+        }
+        this.autoSize(column, true);
     }
 
     public override destroy(): void {

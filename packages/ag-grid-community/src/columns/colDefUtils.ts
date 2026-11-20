@@ -19,6 +19,7 @@ export function _createUserColumn(
     const merged = _addColumnDefaultAndTypes(beans, userColDef, colId);
     const column = new AgColumn(merged, userColDef, colId, isPrimary, 'user');
     column.buildToken = buildToken;
+    column.createdBuildToken = buildToken;
     beans.context.createBean(column);
     return column;
 }

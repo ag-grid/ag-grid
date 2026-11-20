@@ -5,6 +5,7 @@ import { onTestFinished, vi } from 'vitest';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     getExpressionInput,
@@ -41,7 +42,7 @@ describe('calculated column dialog APIs', () => {
         if (applyMode === 'deferred') {
             clickDialogButton('Apply');
         } else {
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
         }
 
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
@@ -76,6 +77,23 @@ describe('calculated column dialog APIs', () => {
         expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['revenue', 'calculated_1', 'cost']);
         expect(added.getOriginalParent()!.getGroupId()).toBe('sales');
         expect(added.getColDef().columnGroupShow).toBe('open');
+    });
+
+    test('Add gives the new column an id no group holds', () => {
+        const api = createGrid('calculated-api-group-id', {
+            columnDefs: [
+                { groupId: 'calculated_1', headerName: 'G', children: [{ field: 'revenue' }] },
+                { field: 'cost' },
+            ],
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+        });
+        api.openAddCalculatedColumnDialog();
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+
+        const groupIds = api.getColumnGroupState().map((state) => state.groupId);
+        const added = api.getAllGridColumns().at(-1)!.getColId();
+        expect({ added, taken: groupIds.includes(added) }).toEqual({ added: 'calculated_2', taken: false });
     });
 
     test('Add accepts an auto group column as its source', () => {
@@ -212,7 +230,7 @@ describe('calculated column dialog APIs', () => {
             ],
         });
         api.openCalculatedColumnDialog('profit');
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         expect(document.querySelector('.ag-header-cell[col-id="profit"]')).toHaveFocus();
     });
 
@@ -229,7 +247,7 @@ describe('calculated column dialog APIs', () => {
                 setExpression('[Revenue]');
                 clickDialogButton('Apply');
             } else {
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
             }
             expect(document.querySelector('.ag-header-cell[col-id="calculated_1"]')).toHaveFocus();
         }

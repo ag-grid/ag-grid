@@ -42,11 +42,11 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         this.aggFuncSvc = beans.aggFuncSvc;
     }
 
-    /** Value cols are included from a truthy aggFunc; `undefined` falls back to `initialAggFunc`
-     *  (new cols) or the current flag (existing). Ordering is driven by `valueIndex`/`initialValueIndex`. */
-    public override extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void {
+    /** Value cols are included from a truthy aggFunc, else `initialAggFunc` (new cols) or the current flag (existing);
+     *  ordered by `valueIndex`/`initialValueIndex`. Definitions are read for new cols or new definitions only. */
+    public override extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType, newColDefs: boolean): void {
         const colDef = col.colDef;
-        const aggFunc = colDef.aggFunc;
+        const aggFunc = colIsNew || newColDefs ? colDef.aggFunc : undefined;
         let include: boolean;
         if (aggFunc !== undefined) {
             include = aggFunc !== null && aggFunc !== '';
@@ -62,14 +62,14 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             // total) to a value column, using the mode's `defaultAggFunc`.
             const modeAggFunc = col.showValuesAs?.def.defaultAggFunc;
             if (modeAggFunc) {
-                this.bucketCol(col, colIsNew);
+                this.bucketCol(col, colIsNew, newColDefs);
                 if (!col.aggFunc) {
                     writeAggFunc(col, modeAggFunc, source);
                 }
             }
             return;
         }
-        this.bucketCol(col, colIsNew);
+        this.bucketCol(col, colIsNew, newColDefs);
         if (aggFunc != null && aggFunc !== '') {
             writeAggFunc(col, aggFunc, source);
         } else if (!col.aggFunc) {
@@ -77,12 +77,15 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
-    /** Seat an included value col: indexed (`valueIndex`, or `initialValueIndex` for new cols) cols are
-     *  sorted by `commitExtract`; the rest keep their prior/col-def order. */
-    private bucketCol(col: AgColumn, colIsNew: boolean): void {
+    /** Seat an included value col: indexed (`valueIndex` for new cols or definitions, or `initialValueIndex` for new
+     *  cols) cols are sorted by `commitExtract`; the rest keep their prior/col-def order. */
+    private bucketCol(col: AgColumn, colIsNew: boolean, newColDefs: boolean): void {
+        if (!colIsNew && !newColDefs) {
+            this.bucketByKey(col, null); // a rebuild keeps an existing col's place
+            return;
+        }
         const colDef = col.colDef;
-        const key = colDef.valueIndex ?? (colIsNew ? colDef.initialValueIndex : null);
-        this.bucketByKey(col, key);
+        this.bucketByKey(col, colDef.valueIndex ?? (colIsNew ? colDef.initialValueIndex : null));
     }
 
     // Imperative-only (the base gates on `runSideEffects`); the state/agg-func paths set the func explicitly.
@@ -121,16 +124,19 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
                 return;
             }
             const membershipChanged = change === AGG_MEMBERSHIP;
-            // (De)activation moves the value-column set → reindex + rebuild pivot result cols; a func-only change
-            // keeps positions and re-aggregates event-driven, so just record it for dispatch (no reindex/rebuild).
+            // (de)activation moves the value cols (re-stamped, pivot result cols rebuilt); a func-only change does not
             if (before !== null) {
                 this.stageRemovedFrom(before);
-            } else if (membershipChanged) {
-                this.stageColChange(column);
             } else {
                 this.recordColChange(column);
             }
-            colModel.stageColChanges(source, membershipChanged ? 'membership' : 'dispatch');
+            if (membershipChanged) {
+                this.stampActiveIndexes();
+                colModel.stageColRefresh(source);
+                colModel.stageEverythingChanged(source);
+            } else {
+                colModel.stageColDispatch(source);
+            }
         } finally {
             colModel.endColUpdate();
         }
@@ -167,7 +173,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
     }
 
     /** Stamps each active col's position as its value-column order (`aggregationActiveIndex`, valid only when active). */
-    protected override onColumnsChanged(): void {
+    protected override stampActiveIndexes(): void {
         const cols = this.columns;
         for (let i = 0, len = cols.length; i < len; ++i) {
             cols[i].aggregationActiveIndex = i;

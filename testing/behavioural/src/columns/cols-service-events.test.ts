@@ -65,6 +65,25 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
 
+        test('a columnDefs update keeping the grouping keeps the row group columns list', async () => {
+            const defs = () => [
+                { colId: 'a', field: 'a', rowGroup: true },
+                { colId: 'b', field: 'b', rowGroup: true },
+                { colId: 'c', field: 'c' },
+            ];
+            const api = gridsManager.createGrid('g', { columnDefs: defs(), rowData: [{ a: 'x', b: 'p', c: 1 }] });
+            await asyncSetTimeout(0);
+            const before = api.getRowGroupColumns();
+            const events = capture(api, 'columnRowGroupChanged');
+
+            api.setGridOption('columnDefs', defs());
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns()).toBe(before);
+            expect(ids(before)).toEqual(['a', 'b']);
+            expect(events.length).toBe(0);
+        });
+
         test('removing a hierarchy column not grouped from the row groups groups none of its levels', () => {
             const api = gridsManager.createGrid(
                 'g',
@@ -399,6 +418,100 @@ describe('Cols service events', () => {
             ]);
             await asyncSetTimeout(0);
             expect(everything.length).toBe(1);
+        });
+
+        test('a defaultColDef change in a grid grouping by a column raises it once, and one resize and one pin event for the group column and the others together', async () => {
+            const api = gridsManager.createGrid('g', {
+                ...baseOptions(),
+                columnDefs: [
+                    { colId: 'a', field: 'a', rowGroup: true },
+                    { colId: 'b', field: 'b' },
+                ],
+            });
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+            const resized = capture(api, 'columnResized');
+            const pinned = capture(api, 'columnPinned');
+            const ids = (events: { columns?: Column[] | null }[]) =>
+                events.map((event) => (event.columns ?? []).map((col) => col.getColId()).sort());
+
+            api.setGridOption('defaultColDef', { width: 150, pinned: 'left' });
+            await asyncSetTimeout(0);
+
+            expect({ everything: everything.length, resized: ids(resized), pinned: ids(pinned) }).toEqual({
+                everything: 1,
+                resized: [['a', 'ag-Grid-AutoColumn', 'b']],
+                pinned: [['a', 'ag-Grid-AutoColumn', 'b']],
+            });
+            expect(api.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(150);
+        });
+
+        test('a hide a column listener makes during another hide raises its own in that update, and a later column move raises none', async () => {
+            const api = gridsManager.createGrid('g', {
+                columnDefs: ['a', 'b', 'c', 'd', 'e'].map((colId) => ({ colId, field: colId })),
+                rowData: [{ a: 1, b: 2, c: 3, d: 4, e: 5 }],
+            });
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+            const order = () => api.getAllGridColumns().map((col) => col.getColId());
+
+            // control: a move owes none on a grid without the listener
+            api.moveColumns(['b'], 0);
+            await asyncSetTimeout(0);
+            const control = { raised: everything.length, order: order() };
+
+            let listenerRuns = 0;
+            api.getColumn('c')!.addEventListener('visibleChanged', () => {
+                if (listenerRuns++ === 0) {
+                    api.setColumnsVisible(['e'], false);
+                }
+            });
+
+            api.setColumnsVisible(['c'], false);
+            await asyncSetTimeout(0);
+            const afterHide = {
+                listenerRuns,
+                visible: api.getAllDisplayedColumns().map((col) => col.getColId()),
+                raised: everything.length,
+            };
+
+            api.moveColumns(['a'], 0);
+            await asyncSetTimeout(0);
+
+            expect({ control, afterHide, afterMove: { raised: everything.length, order: order() } }).toEqual({
+                control: { raised: 0, order: ['b', 'a', 'c', 'd', 'e'] },
+                afterHide: { listenerRuns: 1, visible: ['b', 'a', 'd'], raised: 2 },
+                afterMove: { raised: 2, order: ['a', 'b', 'c', 'd', 'e'] },
+            });
+        });
+
+        test('a dataTypeDefinitions change in a grid grouping by a column raises it once, and one resize and one pin event', async () => {
+            const api = gridsManager.createGrid('g', {
+                ...baseOptions(),
+                columnDefs: [
+                    { colId: 'a', field: 'a', rowGroup: true },
+                    { colId: 'b', field: 'b' },
+                ],
+                columnTypes: { wide: { width: 150, pinned: 'left' } },
+            });
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+            const resized = capture(api, 'columnResized');
+            const pinned = capture(api, 'columnPinned');
+            const ids = (events: { columns?: Column[] | null }[]) =>
+                events.map((event) => (event.columns ?? []).map((col) => col.getColId()).sort());
+
+            api.setGridOption('dataTypeDefinitions', {
+                text: { baseDataType: 'text', extendsDataType: 'text', columnTypes: 'wide' },
+            });
+            await asyncSetTimeout(0);
+
+            expect({ everything: everything.length, resized: ids(resized), pinned: ids(pinned) }).toEqual({
+                everything: 1,
+                resized: [['a', 'b']],
+                pinned: [['a', 'b']],
+            });
+            expect(api.getColumn('b')!.getActualWidth()).toBe(150);
         });
     });
 

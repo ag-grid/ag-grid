@@ -19,7 +19,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
      *  reused across builds, so it stays put when the structure does; readers only compare it. */
     public groupVersion = 0;
 
-    /** Cache service-column wrappers (auto-group/selection/row-numbers) across `refreshCols` by `(col, depth)`. */
+    /** Service-column wrappers (auto-group/selection/row-numbers) kept across `refreshCols` runs by `(col, depth)`. */
     public wrapperCache: ColWrapperCache;
 
     public wireBeans(beans: BeanCollection): void {

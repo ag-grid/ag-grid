@@ -91,6 +91,11 @@ export class ValueService extends BeanStub implements NamedBean {
         }
     }
 
+    /** The column model sets it from a `treeData` change before the rows refresh for it. */
+    public setIsTreeData(isTreeData: boolean): void {
+        this.isTreeData = isTreeData;
+    }
+
     public postConstruct(): void {
         this.init();
 
@@ -100,7 +105,6 @@ export class ValueService extends BeanStub implements NamedBean {
         this.eventSvc.addListener('cellValueChanged', listener, true);
         this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
 
-        this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
         this.addManagedPropertyListener(
             'groupSuppressBlankHeader',
             (propChange) => (this.groupSuppressBlankHeader = propChange.currentValue)

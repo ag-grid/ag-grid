@@ -1,8 +1,21 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clickMenuOption,
+    nextAnimationFrame,
+} from 'ag-test-utils';
 
 import type { CalculatedColumnChanges, ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    NumberEditorModule,
+    TextEditorModule,
+    ValidationModule,
+} from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
     ColumnMenuModule,
@@ -12,6 +25,16 @@ import {
     RowGroupingModule,
     RowNumbersModule,
 } from 'ag-grid-enterprise';
+
+import {
+    addViaDialog,
+    clickDialogButton,
+    getCalculatedColumnDialog,
+    order,
+    removeViaMenu,
+    setExpression,
+    setTitle,
+} from './calculatedColumnsStateHarness';
 
 // Behavioural spec for calculated-column DISPLAY ORDERING. The expectations encode the intended
 // behaviour of this branch's column model. Rules 3 and 4 intentionally diverge from the stale
@@ -33,6 +56,7 @@ describe('calculated columns - display ordering', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
             CalculatedColumnsModule,
             FormulaModule,
             ColumnMenuModule,
@@ -46,16 +70,12 @@ describe('calculated columns - display ordering', () => {
         ] as Module[],
     });
 
-    let restoreOffsetParent: (() => void) | undefined;
-
     beforeEach(() => {
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
@@ -87,102 +107,10 @@ describe('calculated columns - display ordering', () => {
         return nextColumnDefs;
     }
 
-    function order(api: GridApi): string[] {
-        return api.getAllGridColumns()!.map((col) => col.getColId());
-    }
-
-    // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
-
-    function enableOffsetParentPolyfill(): void {
-        if (restoreOffsetParent) {
-            return;
-        }
-        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get(this: HTMLElement) {
-                return this.parentElement;
-            },
-        });
-        restoreOffsetParent = () => {
-            if (original) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-            } else {
-                delete (HTMLElement.prototype as any).offsetParent;
-            }
-        };
-    }
-
-    async function clickColumnMenuItem(name: string): Promise<void> {
-        const menuItem = await waitFor(() => {
-            const text = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
-                (element) => element.textContent?.trim() === name
-            );
-            const element = text?.closest<HTMLElement>('.ag-menu-option');
-            expect(element).toBeTruthy();
-            return element!;
-        });
-        menuItem.click();
-    }
-
-    function getDialog(): HTMLElement {
-        const dialog = document.querySelector<HTMLElement>('.ag-calculated-column-form');
-        expect(dialog).toBeTruthy();
-        return dialog!;
-    }
-
-    function setExpression(expression: string): void {
-        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea')!;
-        input.value = expression;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
     function getExpressionInput(): HTMLTextAreaElement {
-        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea');
+        const input = getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea');
         expect(input).toBeTruthy();
         return input!;
-    }
-
-    function setTitle(title: string): void {
-        const input = getDialog().querySelector<HTMLInputElement>('input');
-        expect(input).toBeTruthy();
-        input!.value = title;
-        input!.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    function clickDialogButton(label: string): void {
-        const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(button).toBeTruthy();
-        button!.click();
-    }
-
-    /** Adds a calc col through the header menu of {@link anchorColId} (the documented "anchor").
-     *  Returns the auto-generated colId of the new column, discovered by diffing the column set. */
-    async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
-        const before = new Set(order(api));
-        enableOffsetParentPolyfill();
-        api.showColumnMenu(anchorColId);
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
-        setExpression(expression);
-        clickDialogButton('Apply');
-        // Wait past the live-apply animation frame so no expression flush is in flight when the
-        // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
-        await nextAnimationFrame();
-        await nextAnimationFrame();
-        const added = order(api).filter((id) => !before.has(id));
-        expect(added).toHaveLength(1);
-        return added[0];
-    }
-
-    /** Removes a dynamic (dialog-added) calc col through its header menu — dynamic calc cols are not in
-     *  `columnDefs`, so they can only be removed via the menu's "Remove Calculated Column" action. */
-    async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
-        enableOffsetParentPolyfill();
-        api.showColumnMenu(colId);
-        await clickColumnMenuItem('Remove Calculated Column');
     }
 
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
@@ -400,14 +328,13 @@ describe('calculated columns - display ordering', () => {
         });
         const before = new Set(order(api));
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getCalculatedColumnDialog());
 
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toEqual(['calculated_1']);
-        const visibleButtonLabels = Array.from(getDialog().querySelectorAll('button'))
+        const visibleButtonLabels = Array.from(getCalculatedColumnDialog().querySelectorAll('button'))
             .filter(
                 (button) =>
                     button.closest<HTMLElement>('.ag-calculated-column-actions')?.classList.contains('ag-hidden') !==
@@ -428,6 +355,9 @@ describe('calculated columns - display ordering', () => {
         expect(api.getColumn('calculated_1')!.getColDef().headerName).toBe('Double Age');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe(46);
         await waitFor(() => expect(events).toHaveLength(2));
+        // a duplicate from a later live-apply frame would land within this window
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
         expect(events).toEqual([
             { type: 'calculatedColumnCreated', expression: '' },
             {
@@ -446,10 +376,9 @@ describe('calculated columns - display ordering', () => {
             columnDefs: [{ field: 'age' }],
         });
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getCalculatedColumnDialog());
 
         setExpression('[Age] +');
         await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
@@ -502,8 +431,8 @@ describe('calculated columns - display ordering', () => {
         `);
 
         api.showColumnMenu('age');
-        await clickColumnMenuItem('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getCalculatedColumnDialog());
 
         setExpression('[Age] * 2');
         clickDialogButton('Apply');
@@ -879,6 +808,148 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
+    test('a column added from the auto group column stays next to it after a columnTypes change', async () => {
+        const api = createGrid('dialog-autogroup-anchor-column-types', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const first = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const second = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const expected = ['ag-Grid-AutoColumn', second, first, 'region', 'revenue', 'cost'];
+        expect(order(api)).toEqual(expected);
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+
+        await waitFor(() => expect(order(api)).toEqual(expected));
+    });
+
+    test('a column added from a column added from the auto group column stays next to it after a columnTypes change, whatever order a column state restore stored them in', async () => {
+        const api = createGrid('dialog-autogroup-anchor-chain-column-types', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const a = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const b = await addViaDialog(api, a, '[Revenue] - [Cost]');
+        const expected = order(api);
+        expect(expected.indexOf(a)).toBe(expected.indexOf('ag-Grid-AutoColumn') + 1);
+        expect(expected.indexOf(b)).toBe(expected.indexOf(a) + 1);
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect(order(api)).toEqual(expected);
+
+        // A column state restore stores the calculated columns in the state's order.
+        const storedOrders = [
+            { stored: 'b, a', state: [{ colId: b }, { colId: a }], width: 100 },
+            { stored: 'a, b', state: [{ colId: a }, { colId: b }], width: 101 },
+        ];
+        for (const { stored, state, width } of storedOrders) {
+            api.resetColumnState();
+            api.applyColumnState({ state });
+            api.setGridOption('columnTypes', { someType: { width } });
+            await nextAnimationFrame();
+
+            expect({ stored, order: order(api) }).toEqual({ stored, order: expected });
+        }
+    });
+
+    test('columns added from the auto group column are put back next to it by a column state restore after a reset', async () => {
+        const api = createGrid('dialog-autogroup-anchor-restore-after-reset', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const x2 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const x3 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const expected = ['ag-Grid-AutoColumn', x3, x2, x1, 'region', 'revenue', 'cost'];
+        expect(order(api)).toEqual(expected);
+
+        const storedOrders = [
+            { stored: 'x3, x2, x1', state: [x3, x2, x1].map((colId) => ({ colId })), width: 99 },
+            { stored: 'x1, x2, x3', state: [x1, x2, x3].map((colId) => ({ colId })), width: 100 },
+        ];
+        for (const { stored, state, width } of storedOrders) {
+            api.resetColumnState();
+            api.applyColumnState({ state });
+            api.setGridOption('columnTypes', { someType: { width } });
+            await nextAnimationFrame();
+
+            expect({ stored, order: order(api) }).toEqual({ stored, order: expected });
+        }
+    });
+
+    test('a chain of calculated columns put back together by a column state restore stays together with maintainColumnOrder', async () => {
+        const api = createGrid('dialog-autogroup-chain-restore-maintain-order', {
+            maintainColumnOrder: true,
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const x2 = await addViaDialog(api, x1, '[Revenue] - [Cost]');
+        const expected = ['ag-Grid-AutoColumn', x1, x2, 'region', 'revenue', 'cost'];
+        expect(order(api)).toEqual(expected);
+
+        api.resetColumnState();
+        api.applyColumnState({ state: [{ colId: x1 }, { colId: x2 }] });
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect(order(api)).toEqual(expected);
+    });
+
+    test('columns added from an auto group column keep their places when row grouping is cleared and set again', async () => {
+        for (const maintainColumnOrder of [false, true]) {
+            gridsManager.reset();
+            const api = createGrid(`dialog-multi-autogroup-regroup-${maintainColumnOrder}`, {
+                groupDisplayType: 'multipleColumns',
+                maintainColumnOrder,
+                rowData: [{ id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 }],
+                columnDefs: [
+                    { field: 'region', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                    { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+                ],
+            });
+            const regionAuto = 'ag-Grid-AutoColumn-region';
+            const countryAuto = 'ag-Grid-AutoColumn-country';
+            await waitFor(() => expect(order(api)).toEqual(expect.arrayContaining([regionAuto, countryAuto])));
+
+            const x1 = await addViaDialog(api, regionAuto, '[Revenue] - [Cost]');
+            const x2 = await addViaDialog(api, x1, '[Revenue] - [Cost]');
+            const expected = [regionAuto, x1, x2, countryAuto, 'region', 'country', 'revenue', 'cost'];
+            expect({ maintainColumnOrder, order: order(api) }).toEqual({ maintainColumnOrder, order: expected });
+
+            api.setRowGroupColumns([]);
+            await waitFor(() => expect(order(api).some((id) => id.startsWith('ag-Grid-AutoColumn'))).toBe(false));
+            api.setRowGroupColumns(['region', 'country']);
+            await waitFor(() => expect(order(api)).toEqual(expect.arrayContaining([regionAuto, countryAuto])));
+
+            expect({ maintainColumnOrder, order: order(api) }).toEqual({ maintainColumnOrder, order: expected });
+        }
+    });
+
     test('a column the user moved to the end stays last when row grouping is cleared and set again', async () => {
         for (const groupDisplayType of ['singleColumn', 'multipleColumns'] as const) {
             gridsManager.reset();
@@ -960,6 +1031,117 @@ describe('calculated columns - display ordering', () => {
         expect(order(api).at(-1)).toBe(x1);
     });
 
+    test('a columnTypes change without maintainColumnOrder keeps a calculated column where the user moved it', async () => {
+        const api = createGrid('dialog-autogroup-moved-last-column-types', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnTypes: { someType: {} },
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum', type: 'someType' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const x1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        api.moveColumns([x1], order(api).indexOf('revenue'));
+        const moved = order(api);
+        expect(moved).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', x1, 'cost']);
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect({ order: order(api), costWidth: api.getColumn('cost')!.getActualWidth() }).toEqual({
+            order: moved,
+            costWidth: 99,
+        });
+    });
+
+    test('a column added from one of several auto group columns stays next to it after a columnTypes change', async () => {
+        const api = createGrid('dialog-multi-autogroup-anchor-column-types', {
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        const firstAuto = 'ag-Grid-AutoColumn-region';
+        const secondAuto = 'ag-Grid-AutoColumn-country';
+        await waitFor(() => expect(order(api)).toEqual(expect.arrayContaining([firstAuto, secondAuto])));
+
+        const added = await addViaDialog(api, firstAuto, '[Revenue] - [Cost]');
+        const expected = order(api);
+        expect(expected.indexOf(added)).toBe(expected.indexOf(firstAuto) + 1);
+        expect(expected.indexOf(secondAuto)).toBeGreaterThan(expected.indexOf(added));
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect(order(api)).toEqual(expected);
+    });
+
+    test('a column added from the auto group column keeps its place across rebuilds while the auto group column is gone', async () => {
+        const api = createGrid('dialog-autogroup-anchor-group-column-gone', {
+            rowData: [{ id: 'r1', g: 'EMEA', revenue: 10, cost: 3 }],
+            columnTypes: { t: { rowGroup: true } },
+            columnDefs: [
+                { field: 'g', type: 't', hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const added = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+
+        api.setGridOption('columnTypes', { t: { rowGroup: false } });
+        await waitFor(() => expect(order(api)).not.toContain('ag-Grid-AutoColumn'));
+        const goneOrder = order(api);
+        expect(goneOrder).toContain(added);
+
+        api.setGridOption('columnTypes', { t: { rowGroup: false, width: 98 } });
+        await nextAnimationFrame();
+        expect(order(api)).toEqual(goneOrder);
+
+        api.setGridOption('columnTypes', { t: { rowGroup: true } });
+        await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+        const regrouped = order(api);
+        expect(regrouped.indexOf(added)).toBe(regrouped.indexOf('ag-Grid-AutoColumn') + 1);
+    });
+
+    test('a columnTypes change ungrouping and regrouping the source keeps a calculated column where the user moved it, with or without maintainColumnOrder', async () => {
+        for (const maintainColumnOrder of [false, true]) {
+            gridsManager.reset();
+            const api = createGrid(`dialog-autogroup-moved-middle-ungrouped-types-${maintainColumnOrder}`, {
+                maintainColumnOrder,
+                rowData: [{ id: 'r1', g: 'EMEA', revenue: 10, cost: 3, z: 1 }],
+                columnTypes: { t: { rowGroup: true } },
+                columnDefs: [
+                    { field: 'g', type: 't', hide: true },
+                    { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                    { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+                    { field: 'z' },
+                ],
+            });
+            await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+            const added = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+            // without maintainColumnOrder the regroup keeps a moved column only in the last slot
+            const moved = maintainColumnOrder
+                ? ['ag-Grid-AutoColumn', 'g', 'revenue', added, 'cost', 'z']
+                : ['ag-Grid-AutoColumn', 'g', 'revenue', 'cost', 'z', added];
+            api.moveColumns([added], moved.indexOf(added));
+            expect({ maintainColumnOrder, moved: order(api) }).toEqual({ maintainColumnOrder, moved });
+
+            api.setGridOption('columnTypes', { t: { rowGroup: false } });
+            await waitFor(() => expect(order(api)).not.toContain('ag-Grid-AutoColumn'));
+            api.setRowGroupColumns(['g']);
+            await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
+
+            expect({ maintainColumnOrder, regrouped: order(api) }).toEqual({ maintainColumnOrder, regrouped: moved });
+        }
+    });
+
     test('a column the user moved to the end stays last through pivot mode on and off, and when row grouping is then cleared and set again', async () => {
         const api = createGrid('dialog-autogroup-moved-last-pivot-mode', {
             rowData: [{ id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 }],
@@ -996,9 +1178,43 @@ describe('calculated columns - display ordering', () => {
         expect({ step: 'regrouped', last: order(api).at(-1) }).toEqual({ step: 'regrouped', last: x1 });
     });
 
+    test('columns added from a leaf, from no column and from the auto group column keep their places after a columnTypes change', async () => {
+        const api = createGrid('dialog-mixed-anchors-column-types', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'unanchored',
+                        created: true,
+                        parentGroupId: null,
+                        properties: [{ property: 'calculatedExpression', value: '[revenue] + [cost]' }],
+                    },
+                ],
+            },
+        });
+        await waitFor(() => expect(order(api)).toEqual(expect.arrayContaining(['ag-Grid-AutoColumn', 'unanchored'])));
+
+        const fromLeaf = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+        const fromAuto = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] * [Cost]');
+        const placed = order(api);
+        expect(placed.indexOf(fromAuto)).toBe(placed.indexOf('ag-Grid-AutoColumn') + 1);
+        expect(placed.indexOf(fromLeaf)).toBe(placed.indexOf('revenue') + 1);
+
+        api.setGridOption('columnTypes', { someType: { width: 99 } });
+        await nextAnimationFrame();
+
+        expect(order(api)).toEqual(placed);
+    });
+
     test('a column added from the auto group column leaves the pivot result columns as they are after a columnTypes change', async () => {
         const api = createGrid('dialog-autogroup-anchor-pivot-column-types', {
             enableStrictPivotColumnOrder: true,
+            columnTypes: { someType: {} },
             rowData: [
                 { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
                 { id: 'r2', country: 'UK', year: 2020, revenue: 20, cost: 5 },
@@ -1008,7 +1224,7 @@ describe('calculated columns - display ordering', () => {
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', pivot: true },
                 { field: 'revenue', aggFunc: 'sum' },
-                { field: 'cost', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum', type: 'someType' },
             ],
         });
         await waitFor(() => expect(order(api)).toContain('ag-Grid-AutoColumn'));
@@ -1025,10 +1241,10 @@ describe('calculated columns - display ordering', () => {
 
         expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(pivoted);
         const after = api.getPivotResultColumns()!;
-        expect({ count: after.length, kept: after.filter((col, i) => col === pivotResultColumns[i]).length }).toEqual({
-            count: pivotResultColumns.length,
-            kept: pivotResultColumns.length,
-        });
+        expect({
+            costWidth: api.getColumn('cost')!.getActualWidth(),
+            kept: after.map((col, i) => col === pivotResultColumns[i]),
+        }).toEqual({ costWidth: 99, kept: pivotResultColumns.map(() => true) });
     });
 
     test('adding from a moved auto-group column preserves the moved auto-group position', async () => {
@@ -1096,7 +1312,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    test('a moved calc column with maintainColumnOrder survives a recreateColumnDefs', async () => {
+    test('a moved calc column with maintainColumnOrder survives a column definitions rebuild', async () => {
         const api = createGrid('move-calc-maintain-order', {
             maintainColumnOrder: true,
             rowData: [{ id: 'r1', revenue: 10, cost: 3, qty: 2 }],
@@ -1110,7 +1326,7 @@ describe('calculated columns - display ordering', () => {
         api.moveColumns([calc], 3);
         await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]));
 
-        // A recreateColumnDefs-style refresh (defaultColDef change). With maintainColumnOrder the moved
+        // A rebuild from a defaultColDef change. With maintainColumnOrder the moved
         // calc col is preserved exactly like a normal column.
         api.setGridOption('defaultColDef', { resizable: false });
         await waitFor(() => expect(order(api)).toEqual(['revenue', 'cost', 'qty', calc]));
@@ -1159,7 +1375,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    test('a mid-list calc column with maintainColumnOrder stays in place across a recreateColumnDefs', async () => {
+    test('a mid-list calc column with maintainColumnOrder stays in place across a column definitions rebuild', async () => {
         const api = createGrid('mid-calc-maintain-order', {
             maintainColumnOrder: true,
             rowData: [{ id: 'r1', revenue: 10, cost: 3, qty: 2 }],
@@ -1172,7 +1388,7 @@ describe('calculated columns - display ordering', () => {
         const calc = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', calc, 'cost', 'qty']);
 
-        // recreateColumnDefs-style refresh (defaultColDef change); calc not moved → stays mid-list.
+        // A rebuild from a defaultColDef change; calc not moved → stays mid-list.
         api.setGridOption('defaultColDef', { resizable: false });
         // Gate on the defaultColDef change taking effect — the order is unchanged by it, so polling the
         // order would resolve before the columns were recreated.

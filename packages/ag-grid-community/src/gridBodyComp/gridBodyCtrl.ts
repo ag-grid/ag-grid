@@ -1,4 +1,5 @@
 import {
+    FAST_TEST_TIMINGS,
     _addManagedElementListeners,
     _debounce,
     _getInnerWidth,
@@ -30,7 +31,7 @@ const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 const CSS_CLASS_COLUMN_WIDTH_ANIMATION = 'ag-animate-autosize';
 /** The 0.2s width transition plus a few frames, as a transition starts at the first style recalc after the writes. */
-const COLUMN_WIDTH_ANIMATION_MS = 250;
+const COLUMN_WIDTH_ANIMATION_MS = FAST_TEST_TIMINGS ? 20 : 250;
 
 export interface PinnedSectionState {
     height: number;
@@ -95,6 +96,8 @@ export class GridBodyCtrl extends BeanStub {
 
     private columnWidthAnimationDepth = 0;
     private columnWidthAnimationTimeout: number | undefined;
+    /** `visibleCols.layoutChangeVersion` as the outermost window opened; -1 over a running transition. */
+    private columnWidthAnimationLayoutVersion = -1;
 
     public setComp(
         comp: IGridBodyComp,
@@ -138,8 +141,7 @@ export class GridBodyCtrl extends BeanStub {
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
         this.updatePinnedColumnStickyOffsets();
-        this.updatePinnedWidths();
-        this.updateScrollingClasses();
+        this.onPinnedWidthChanged();
 
         // Every completion of the registered set, not just the first: React may re-create a consumer,
         // and it is sized by this push rather than by asking.
@@ -153,26 +155,19 @@ export class GridBodyCtrl extends BeanStub {
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
 
-        const onPinnedWidthChanged = () => {
-            this.updatePinnedWidths();
-            this.updateWidths();
-            this.updateScrollingClasses();
-        };
-
         // Wrappers, not `bind`: both take an optional measured width, which an event argument would fill.
-        const updateWidths = (): void => this.updateWidths();
-        const updateViewportGeometry = (): void => this.updateViewportGeometry();
-
-        this.addManagedPropertyListener('domLayout', updateWidths);
+        this.addManagedPropertyListener('domLayout', () => this.updateWidths());
+        this.addManagedPropertyListener('animateColumnResizing', (event) => {
+            if (event.currentValue) {
+                return;
+            }
+            this.cancelColumnWidthAnimation(); // a width set next applies at once
+        });
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
-            displayedColumnsChanged: updateWidths,
-            displayedColumnsWidthChanged: updateWidths,
-            leftPinnedWidthChanged: onPinnedWidthChanged,
-            rightPinnedWidthChanged: onPinnedWidthChanged,
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
-            scrollbarWidthChanged: updateViewportGeometry,
+            scrollbarWidthChanged: () => this.updateViewportGeometry(),
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setPinnedRowsHeights,
             pinnedHeightChanged: setPinnedRowsHeights,
@@ -214,7 +209,6 @@ export class GridBodyCtrl extends BeanStub {
     private onGridColumnsChanged(): void {
         const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
-        this.updateWidths();
         // Row-group / pivot columns declared in the initial column defs are only populated by the time the
         // grid columns are refreshed, which is after this ctrl is constructed.
         this.setGridRole();
@@ -234,7 +228,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     /** The one place the horizontal widths are worked out; consumers are pushed the result. */
-    private updateWidths(viewportWidth: number = this.getReportedViewportWidth()): void {
+    public updateWidths(viewportWidth: number = this.getReportedViewportWidth()): void {
         const verticalScrollShowing = this.scrollVisibleSvc.verticalScrollShowing;
         const scrollbarWidth = this.getVerticalScrollbarWidth(verticalScrollShowing);
         // Collapsing the scroll range lets the browser clamp the scroll position, which the next report
@@ -463,6 +457,14 @@ export class GridBodyCtrl extends BeanStub {
         if (!gos.get('animateColumnResizing') || gos.get('enableRtl')) {
             return;
         }
+        if (this.beans.colAnimation?.suppressAnimation) {
+            this.removeColumnWidthAnimation(); // a state restore's widths apply at once, an earlier change's window too
+            return;
+        }
+        if (this.columnWidthAnimationDepth === 1) {
+            this.columnWidthAnimationLayoutVersion =
+                this.columnWidthAnimationTimeout === undefined ? this.beans.visibleCols.layoutChangeVersion : -1;
+        }
         window.clearTimeout(this.columnWidthAnimationTimeout);
         this.columnWidthAnimationTimeout = undefined;
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
@@ -480,6 +482,11 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
         if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
+            return;
+        }
+        if (this.beans.visibleCols.layoutChangeVersion === this.columnWidthAnimationLayoutVersion) {
+            // nothing moved or resized, so no transition needs the class
+            this.removeColumnWidthAnimation();
             return;
         }
         window.clearTimeout(this.columnWidthAnimationTimeout);
@@ -511,19 +518,18 @@ export class GridBodyCtrl extends BeanStub {
         const {
             eGridBody: { classList },
             scrollVisibleSvc,
-            beans: { visibleCols },
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
-        classList.toggle('ag-has-left-pinned-cols', visibleCols.getLeftStickyColumnContainerWidth() > 0);
-        classList.toggle('ag-has-right-pinned-cols', visibleCols.getRightStickyColumnContainerWidth() > 0);
+        classList.toggle('ag-has-left-pinned-cols', this.pinnedLeftWidth > 0);
+        classList.toggle('ag-has-right-pinned-cols', this.pinnedRightWidth > 0);
     }
 
-    /** Read by the sticky group header labels' offsets. */
-    private updatePinnedWidths(): void {
-        const visibleCols = this.beans.visibleCols;
-        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
-        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
+    /** Called by the pinned columns before the body widths' update; sticky group header labels read the CSS widths. */
+    public onPinnedWidthChanged(): void {
+        const pinnedCols = this.beans.pinnedCols;
+        const leftWidth = pinnedCols?.leftWidth ?? 0;
+        const rightWidth = pinnedCols?.rightWidth ?? 0;
         const style = this.eGridViewport.style;
         if (leftWidth !== this.pinnedLeftWidth) {
             this.pinnedLeftWidth = leftWidth;
@@ -533,6 +539,7 @@ export class GridBodyCtrl extends BeanStub {
             this.pinnedRightWidth = rightWidth;
             style.setProperty('--ag-internal-pinned-right-width', `${rightWidth}px`);
         }
+        this.updateScrollingClasses();
     }
 
     private updatePinnedColumnStickyOffsets(): void {

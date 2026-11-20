@@ -68,7 +68,7 @@ const RowContainerComp = ({
             return;
         }
 
-        const eSpanContainerForCtrl = eSpanContainer.current ?? undefined;
+        const eSpanContainerForCtrl = eSpanContainer.current;
 
         const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
             const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current);
@@ -130,7 +130,7 @@ const RowContainerComp = ({
         };
 
         rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
-        rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eSpanContainerForCtrl, eViewportForCtrl);
+        rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eViewportForCtrl);
     }, [context, isSpanning, name, viewportElement]);
 
     useEffect(

@@ -104,6 +104,28 @@ describe('Value Column Order (valueIndex)', () => {
         await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
+    test('an array getValueColumns returned keeps its order when column state reorders the value columns', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+            ],
+            rowData,
+        });
+        const before = api.getValueColumns();
+        expect(before.map((col) => col.getColId())).toEqual(['gold', 'silver']);
+
+        api.applyColumnState({
+            state: [
+                { colId: 'silver', valueIndex: 0 },
+                { colId: 'gold', valueIndex: 1 },
+            ],
+        });
+
+        await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
+        expect(before.map((col) => col.getColId())).toEqual(['gold', 'silver']);
+    });
+
     test('value columns keep their order through a columnDefs update that sets their aggFunc again', async () => {
         const defs = () => [
             { field: 'gold', aggFunc: 'sum' },
@@ -180,11 +202,56 @@ describe('Value Column Order (valueIndex)', () => {
             { colId: 'bronze', aggFunc: 'sum' },
         ]);
     });
+
+    const aggregatingDefs = () => [
+        { field: 'g', rowGroup: true },
+        { field: 'a', aggFunc: 'sum' },
+        { field: 'b', aggFunc: 'sum' },
+        { field: 'c', aggFunc: 'sum' },
+        { field: 'd' },
+    ];
+    const aggregatingRow = [{ g: 'x', a: 1, b: 2, c: 3, d: 4 }];
+
+    const valueRecord = (api: ReturnType<typeof gridsManager.createGrid>) => {
+        const state = api.getColumnState();
+        return {
+            valueColumns: valueColIdsInOrder(api),
+            valueIndex: Object.fromEntries(
+                ['a', 'b', 'c', 'd'].map((id) => [id, state.find((s) => s.colId === id)?.valueIndex])
+            ),
+        };
+    };
+
+    test('turning a value column off through column state renumbers the value indexes of the rest', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: aggregatingDefs(),
+            rowData: aggregatingRow,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'a', aggFunc: null }] });
+
+        expect(valueRecord(api)).toEqual({
+            valueColumns: ['b', 'c'],
+            valueIndex: { a: null, b: 0, c: 1, d: null },
+        });
+    });
+
+    test('turning a value column on through column state numbers the value indexes after the existing ones', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: aggregatingDefs(),
+            rowData: aggregatingRow,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'd', aggFunc: 'sum' }] });
+
+        expect(valueRecord(api)).toEqual({
+            valueColumns: ['a', 'b', 'c', 'd'],
+            valueIndex: { a: 0, b: 1, c: 2, d: 3 },
+        });
+    });
 });
 
-// rowGroupIndex/pivotIndex in column state derive from the active-col index re-stamped at flush. An
-// imperative reorder must re-stamp so the saved state reflects the new order — the rowGroup/pivot
-// counterpart of the valueIndex coverage above (both fail if the flush-time re-index is skipped).
+// rowGroupIndex/pivotIndex follow the active cols' positions, as valueIndex does above
 describe('Role Column Order (rowGroupIndex / pivotIndex)', () => {
     const gridsManager = new TestGridsManager({
         modules: [AllEnterpriseModule],
@@ -249,5 +316,71 @@ describe('Role Column Order (rowGroupIndex / pivotIndex)', () => {
 
         api.applyColumnState({ state: savedState, applyOrder: true });
         await waitFor(() => expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['b', 'a']));
+    });
+
+    const indexesByColId = (
+        api: ReturnType<typeof gridsManager.createGrid>,
+        key: 'rowGroupIndex' | 'pivotIndex',
+        colIds: string[]
+    ) => {
+        const state = api.getColumnState();
+        return Object.fromEntries(colIds.map((id) => [id, state.find((s) => s.colId === id)?.[key]]));
+    };
+
+    test('turning a row group column off through column state renumbers the row group indexes of the rest', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true }, { field: 'h', rowGroup: true }, { field: 'a' }],
+            rowData: [{ g: 'x', h: 'y', a: 1 }],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'g', rowGroup: false }] });
+
+        expect({
+            rowGroupColumns: api.getRowGroupColumns().map((col) => col.getColId()),
+            rowGroupIndex: indexesByColId(api, 'rowGroupIndex', ['g', 'h', 'a']),
+        }).toEqual({
+            rowGroupColumns: ['h'],
+            rowGroupIndex: { g: null, h: 0, a: null },
+        });
+    });
+
+    test('turning a row group column on through column state numbers the row group indexes after the existing ones', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true }, { field: 'h', rowGroup: true }, { field: 'a' }],
+            rowData: [{ g: 'x', h: 'y', a: 1 }],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'a', rowGroup: true }] });
+
+        expect({
+            rowGroupColumns: api.getRowGroupColumns().map((col) => col.getColId()),
+            rowGroupIndex: indexesByColId(api, 'rowGroupIndex', ['g', 'h', 'a']),
+        }).toEqual({
+            rowGroupColumns: ['g', 'h', 'a'],
+            rowGroupIndex: { g: 0, h: 1, a: 2 },
+        });
+    });
+
+    test('turning a pivot column off through column state renumbers the pivot indexes of the rest', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'g', rowGroup: true },
+                { field: 'p', pivot: true },
+                { field: 'q', pivot: true },
+                { field: 'a', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowData: [{ g: 'x', p: 'y', q: 'z', a: 1 }],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'p', pivot: false }] });
+
+        expect({
+            pivotColumns: api.getPivotColumns().map((col) => col.getColId()),
+            pivotIndex: indexesByColId(api, 'pivotIndex', ['p', 'q']),
+        }).toEqual({
+            pivotColumns: ['q'],
+            pivotIndex: { p: null, q: 0 },
+        });
     });
 });

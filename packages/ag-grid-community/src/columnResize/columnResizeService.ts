@@ -1,4 +1,5 @@
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
+import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -40,7 +41,9 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
         source: ColumnEventType
     ): void {
-        const { colModel, visibleCols } = this.beans;
+        const beans = this.beans;
+        const { colModel, visibleCols } = beans;
+        _cancelColumnWidthAnimation(beans); // a resize by hand applies at once
         const columns: AgColumn[] = [];
         const widths: number[] = [];
         // under shift, keyed by column so adjacent named cols keep their widths whatever the call's order
@@ -226,29 +229,31 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         let flexedCols: AgColumn[] | undefined;
 
-        if (atLeastOneColChanged) {
-            const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
-            flexedCols = colFlex?.refreshFlexedColumns({
-                resizingCols,
-                skipSetLeft: true,
-                // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
-                viewportWidth:
-                    (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
-            });
-            visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
-            colViewport.checkViewportColumns();
-        }
-
-        // a finished resize always reports, changed or not, so a stream of moves is always seen to end
-        if (atLeastOneColChanged || finished) {
-            let colsForEvent = columns;
-            if (flexedCols?.length) {
-                colsForEvent = resizingCols ? columns.concat(flexedCols) : joinReflexed(columns, flexedCols);
-            } else if (columnsReused) {
-                colsForEvent = columns.slice();
+        try {
+            if (atLeastOneColChanged) {
+                const { colFlex, visibleCols, ctrlsSvc } = this.beans;
+                flexedCols = colFlex?.refreshFlexedColumns({
+                    resizingCols,
+                    skipSetLeft: true,
+                    // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
+                    viewportWidth:
+                        (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
+                });
+                visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
             }
-            const flexColumns = resizingCols ? (flexedCols ?? []) : null;
-            dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexColumns);
+        } finally {
+            // a finished resize always reports, changed or not, so a stream of moves is always seen to end; a layout
+            // listener throwing stops no report
+            if (atLeastOneColChanged || finished) {
+                let colsForEvent = columns;
+                if (flexedCols?.length) {
+                    colsForEvent = resizingCols ? columns.concat(flexedCols) : joinReflexed(columns, flexedCols);
+                } else if (columnsReused) {
+                    colsForEvent = columns.slice();
+                }
+                const flexColumns = resizingCols ? (flexedCols ?? []) : null;
+                dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexColumns);
+            }
         }
     }
 

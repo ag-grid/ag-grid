@@ -11,19 +11,11 @@ export function _setColumnWidthAnimation({ ctrlsSvc }: BeanCollection, enable: b
     }
 }
 
-/**
- * Opens a width animation window for an operation that may also reorder columns, returning the function that closes it.
- * The transition slides cells too, so a reorder drops the window when `suppressColumnMoveAnimation` is set.
- */
-export function _startReorderingColumnWidthAnimation(beans: BeanCollection): () => void {
-    const { gos, visibleCols, ctrlsSvc } = beans;
-    const orderBefore =
-        gos.get('animateColumnResizing') && gos.get('suppressColumnMoveAnimation') ? visibleCols.allCols : null;
-    _setColumnWidthAnimation(beans, true);
-    return () => {
-        const gridBodyCtrl = ctrlsSvc.isAlive() ? ctrlsSvc.get('gridBodyCtrl') : undefined;
-        gridBodyCtrl?.finishColumnWidthAnimation(orderBefore != null && hasReordered(orderBefore, visibleCols.allCols));
-    };
+/** Closes a width animation window; one whose columns the window reordered (`orderBefore` given) ends at once. */
+export function _finishColumnWidthAnimation(beans: BeanCollection, orderBefore: AgColumn[] | null): void {
+    const { ctrlsSvc, visibleCols } = beans;
+    const gridBodyCtrl = ctrlsSvc.isAlive() ? ctrlsSvc.get('gridBodyCtrl') : undefined;
+    gridBodyCtrl?.finishColumnWidthAnimation(orderBefore != null && hasReordered(orderBefore, visibleCols.allCols));
 }
 
 /** Drops any lingering animation window so the next width changes apply immediately, e.g. during a header drag. */

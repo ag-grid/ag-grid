@@ -2,24 +2,18 @@ import { _areEqual, _pushToMapArray } from 'ag-stack';
 
 import type {
     AgColumn,
-    AgProvidedColumnGroup,
     BeanCollection,
     ColDef,
     ColGroupDef,
     ColKey,
     ColumnEventType,
     ColumnModel,
+    ColumnTreeBuild,
     IPivotResultColsService,
     NamedBean,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _buildColumnTree, _destroyColumnTreeAll, _destroyColumnTreeUnused } from 'ag-grid-community';
-
-type SavedPivotCols = {
-    tree: (AgColumn | AgProvidedColumnGroup)[];
-    cols: AgColumn[] | null;
-    groups: AgProvidedColumnGroup[];
-};
+import { BeanStub, _buildColumnTree, _destroyColumnTreeAll, _finalizeColumnTree } from 'ag-grid-community';
 
 export class PivotResultColsService extends BeanStub implements NamedBean, IPivotResultColsService {
     beanName = 'pivotResultCols' as const;
@@ -33,23 +27,9 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 
     public pivotCols: AgColumn[] | null = null;
-    public pivotTree: (AgColumn | AgProvidedColumnGroup)[] = [];
-    public pivotTreeDepth = 0;
-    /** Source value col → pivot result cols derived from it; lazily built on first `recreateColDefsForSource`
-     *  after a rebuild (`null` ⇒ needs rebuild), so a rebuild with no value-col def change skips the O(N) walk. */
+    public pivotBuild: ColumnTreeBuild | null = null;
+    /** Source value col → `pivotBuild`'s cols derived from it; `null` till the first lookup after a build. */
     private dependentsByValueCol: Map<AgColumn, AgColumn[]> | null = null;
-    /** True iff any `pivotTree` group carries `marryChildren`; `ColumnModel` reads it while pivoting. */
-    public pivotHasMarryChildren = false;
-    /** Non-padding groups in `pivotTree`, keyed by `groupId`. Built by `_buildColumnTree`. */
-    public pivotGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
-    /** Cols in `pivotTree` keyed by colId / userProvidedColDef ref / field. Cached so the next
-     *  build's reuse lookup can skip the existing-tree DFS. */
-    private pivotColsByKey: Map<string | ColDef, AgColumn> = new Map();
-    /** Every group (padding + non-padding) in `pivotTree`; the orphan sweep and `visibleColsService`
-     *  (via `colModel.colsAllGroups`) need padding groups included when pruning/resetting `displayInstances`. */
-    public pivotAllGroups: AgProvidedColumnGroup[] = [];
-    /** Held between clear and the next apply so generated col instances are reused. */
-    private savedPivot: SavedPivotCols | null = null;
     /** The colDefs last passed to `setPivotResultColumns`, exactly as the application supplied them; `null` when
      *  the grid generated the current pivot result cols itself. Held so {@link resortPivotResultCols} can re-derive
      *  the order on a `pivotSort` change, and so `pivotSort: null` resolves back to the supplied order rather than
@@ -160,11 +140,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
                 this.processPivotResultColDef(colDefs);
                 if (appSupplied) {
                     this.suppliedColDefs = colDefs;
-                    this.applyPivotResultColDefs(this.orderColDefs(colDefs), source);
+                    this.applyPivotResultColDefs(this.orderColDefs(colDefs), source, true);
                 } else {
                     // Generated colDefs arrive already ordered (row totals included), and own the order from here.
                     this.suppliedColDefs = null;
-                    this.applyPivotResultColDefs(colDefs, source);
+                    this.applyPivotResultColDefs(colDefs, source, false);
                 }
             } else {
                 this.suppliedColDefs = null;
@@ -188,7 +168,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         colModel.beginColUpdate();
         try {
             // Always re-derived from the supplied order, so "no sort" resolves to it rather than to the last direction.
-            this.applyPivotResultColDefs(this.orderColDefs(suppliedColDefs), source);
+            this.applyPivotResultColDefs(this.orderColDefs(suppliedColDefs), source, false);
             this.visibleCols.refresh(source, false);
         } finally {
             colModel.endColUpdate();
@@ -200,83 +180,96 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 
     public override destroy(): void {
-        // Release pivot cols/groups including any saved set held over a clear/restore window.
-        if (this.pivotCols) {
-            _destroyColumnTreeAll(this.pivotCols, this.pivotAllGroups);
-        }
-        this.pivotTree = [];
+        // Release the last build's cols/groups, held over a clear too.
+        const build = this.pivotBuild;
         this.pivotCols = null;
-        this.pivotAllGroups = [];
+        this.pivotBuild = null;
         this.dependentsByValueCol = null;
-        const saved = this.savedPivot;
-        if (saved) {
-            this.savedPivot = null;
-            _destroyColumnTreeAll(saved.cols, saved.groups);
+        if (build) {
+            _destroyColumnTreeAll(build.columns, build.allGroups);
         }
         super.destroy();
     }
 
-    /** Builds a new pivot result column tree from the supplied colDefs and refreshes display. */
-    private applyPivotResultColDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType): void {
+    /** Builds the pivot result tree and refreshes; `newColDefs`: from the application, so kept cols re-apply state. */
+    private applyPivotResultColDefs(
+        colDefs: (ColDef | ColGroupDef)[],
+        source: ColumnEventType,
+        newColDefs: boolean
+    ): void {
         const beans = this.beans;
-        const currentPivotCols = this.pivotCols;
-        const currentPivotTree = currentPivotCols ? this.pivotTree : null;
-        const saved = this.savedPivot;
-        const strictResort = beans.pivotColsSvc?.isStrictColumnOrder() ?? false;
-        const restoring = currentPivotTree == null && saved != null && !strictResort;
-        const previousTree = currentPivotTree ?? saved?.tree ?? null;
-        // Pick the cols/groups lists that pair with `previousTree` for the post-build sweep.
-        const previousCols = currentPivotTree ? currentPivotCols! : (saved?.cols ?? null);
-        const previousAllGroups = currentPivotTree ? this.pivotAllGroups : (saved?.groups ?? null);
-        const buildToken = beans.colModel.nextBuildToken();
+        const previous = this.pivotBuild;
+        const restoring =
+            this.pivotCols == null && previous != null && !(beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
         const balanced = _buildColumnTree(
             beans,
             /* defs */ colDefs,
             /* primaryColumns */ false,
-            /* existingGroupsById */ this.pivotGroupsById,
-            /* existingColsByKey */ this.pivotColsByKey,
-            /* existingColsById */ beans.colModel.colsById,
+            /* previous */ previous,
             /* source */ source,
-            // Generated cols: re-apply their stateful attrs each pivot rebuild (pre-live-state-flag behaviour).
-            /* newColDefs */ true,
-            /* buildToken */ buildToken,
+            /* newColDefs */ newColDefs,
             /* wrapperCache */ null
         );
-        // `previousTree` (not `currentPivotTree`) covers the clear/restore window where `currentPivotTree` is
-        // null but saved bean refs survive. Skip the sweep when the tree is missing or unchanged.
-        if (previousTree && previousTree !== balanced.columnTree) {
-            _destroyColumnTreeUnused(previousCols ?? [], previousAllGroups ?? [], buildToken);
-        }
+        // `previous` covers the clear/restore window too, where `pivotCols` is null but its columns survive.
+        _finalizeColumnTree(balanced, previous);
 
         this.pivotCols = balanced.columns;
-        this.pivotTree = balanced.columnTree;
-        this.pivotTreeDepth = balanced.treeDepth;
-        this.pivotHasMarryChildren = balanced.marryChildren;
-        this.pivotGroupsById = balanced.groupsById;
-        this.pivotColsByKey = balanced.colsByKey;
-        this.pivotAllGroups = balanced.allGroups;
-        this.savedPivot = null;
+        this.pivotBuild = balanced;
         this.dependentsByValueCol = null;
 
-        // `newColDefs=true` resets sticky col order; suppress when restoring pivot after a clear to preserve prev order.
+        // refreshCols(true) resets sticky col order; false when restoring after a clear keeps it.
         this.colModel.refreshCols(!restoring, source);
     }
 
     private clearPivotResultCols(source: ColumnEventType): void {
-        this.savedPivot = { tree: this.pivotTree, cols: this.pivotCols, groups: this.pivotAllGroups };
-        this.pivotCols = null;
-        this.pivotTree = [];
-        this.pivotTreeDepth = 0;
-        this.pivotHasMarryChildren = false;
-        this.pivotAllGroups = [];
-        this.dependentsByValueCol = null;
+        this.pivotCols = null; // `pivotBuild` is kept, so the next apply reuses its columns
         this.colModel.refreshCols(false, source);
     }
 
     public recreateColDefsForSource(sourceCol: AgColumn, source: ColumnEventType): void {
-        const cols = this.pivotCols;
-        if (cols == null) {
+        const deps = this.dependentsOf(sourceCol);
+        const pivotColDefSvc = this.beans.pivotColDefSvc;
+        if (deps === undefined || !pivotColDefSvc) {
             return;
+        }
+        for (let i = 0, len = deps.length; i < len; ++i) {
+            const pivotCol = deps[i];
+            const newColDef = pivotColDefSvc.recreateColDef(pivotCol.colDef);
+            pivotCol.setColDef(newColDef, newColDef, source);
+        }
+    }
+
+    public onValueColRenamed(valueCol: AgColumn, source: ColumnEventType): void {
+        const colModel = this.colModel;
+        if (
+            this.suppliedColDefs ||
+            !this.pivotCols ||
+            !colModel.isPivotActive() ||
+            this.dependentsOf(valueCol) === undefined
+        ) {
+            return;
+        }
+        const change = colModel.rowsChange;
+        change.columns = true;
+        change.pivotResultNames = true;
+        change.pivotSource = source;
+    }
+
+    public reapplyStateForSource(sourceCol: AgColumn, source: ColumnEventType): void {
+        const deps = this.dependentsOf(sourceCol);
+        if (deps === undefined) {
+            return;
+        }
+        for (let i = 0, len = deps.length; i < len; ++i) {
+            deps[i].applyColDefState(undefined, source); // shown when created, then as the user leaves it
+        }
+    }
+
+    /** The pivot result cols of the last build derived from `sourceCol`, also while kept across a clear. */
+    private dependentsOf(sourceCol: AgColumn): AgColumn[] | undefined {
+        const cols = this.pivotBuild?.columns;
+        if (cols == null) {
+            return undefined;
         }
         let map = this.dependentsByValueCol;
         if (map === null) {
@@ -291,19 +284,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             }
             this.dependentsByValueCol = map;
         }
-        const deps = map.get(sourceCol);
-        if (deps === undefined) {
-            return;
-        }
-        const pivotColDefSvc = this.beans.pivotColDefSvc;
-        if (!pivotColDefSvc) {
-            return;
-        }
-        for (let i = 0, len = deps.length; i < len; ++i) {
-            const pivotCol = deps[i];
-            const newColDef = pivotColDefSvc.recreateColDef(pivotCol.colDef);
-            pivotCol.setColDef(newColDef, newColDef, source);
-        }
+        return map.get(sourceCol);
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[]): void {

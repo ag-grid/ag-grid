@@ -1,8 +1,9 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { AgColumn, ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import { enableDevValidations } from 'ag-grid-community';
 
 import {
     addCalculatedColumnDef,
@@ -253,7 +254,7 @@ describe('ag-grid calculated columns', () => {
         expect(seen).toEqual(['profit,revenue,cost']);
     });
 
-    test('a rendered cell is not refreshed again by newColumnsLoaded when the first calculated column turns formulas on', async () => {
+    test('a rendered cell is refreshed once when the first calculated column turns formulas on', async () => {
         let refreshes = 0;
         class CountingRenderer implements ICellRendererComp {
             private readonly eGui = document.createElement('span');
@@ -280,22 +281,22 @@ describe('ag-grid calculated columns', () => {
             { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
         ]);
 
-        // not a third time by `newColumnsLoaded`
-        expect(refreshes).toBe(2);
+        expect(refreshes).toBe(1);
     });
 
-    test('the cells are refreshed once when the first calculated column turns formulas on', () => {
-        let refreshes = 0;
+    test('a cell first drawn by the update turning formulas on is drawn once', () => {
+        const drawn: string[] = [];
         class CountingRenderer implements ICellRendererComp {
             private readonly eGui = document.createElement('span');
             public init(params: ICellRendererParams): void {
+                drawn.push('init ' + params.value);
                 this.eGui.textContent = String(params.value);
             }
             public getGui(): HTMLElement {
                 return this.eGui;
             }
-            public refresh(): boolean {
-                ++refreshes;
+            public refresh(params: ICellRendererParams): boolean {
+                drawn.push('refresh ' + params.value);
                 return true;
             }
         }
@@ -310,7 +311,7 @@ describe('ag-grid calculated columns', () => {
             { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
         ]);
 
-        expect(refreshes).toBe(1);
+        expect(drawn).toEqual(['init 10']);
     });
 
     test('calculated column columnDefs mutations dispatch newColumnsLoaded', async () => {
@@ -648,5 +649,93 @@ describe('ag-grid calculated columns', () => {
         // Flush the batched public-event queue so a missed dispatch would have landed by now.
         await asyncSetTimeout(0);
         expect(validationStateChanged).not.toHaveBeenCalled();
+    });
+
+    describe('updateGridOptions changing calculatedColumns together with columnDefs', () => {
+        const columnDefs = (badExpression: string): ColDef[] => [
+            { field: 'a' },
+            { field: 'b' },
+            { colId: 'calc', calculatedExpression: '[a] + [b]' },
+            { colId: 'bad', calculatedExpression: badExpression },
+        ];
+
+        // Records the calculated column events as [type, colId, detail?] and the `newColumnsLoaded` count.
+        function recordEvents(api: GridApi) {
+            const events: unknown[][] = [];
+            const loaded = { count: 0 };
+            api.addGlobalListener((type: string, event: any) => {
+                if (type === 'newColumnsLoaded') {
+                    ++loaded.count;
+                } else if (type === 'calculatedColumnExpressionChanged') {
+                    events.push([type, event.column.getColId(), event.oldExpression, event.expression]);
+                } else if (type === 'calculatedColumnValidationStateChanged') {
+                    events.push([type, event.column.getColId(), event.valid]);
+                } else if (type.startsWith('calculatedColumn')) {
+                    events.push([type, event.column.getColId()]);
+                }
+            });
+            return { events, loaded };
+        }
+
+        test('turning calculatedColumns off with columnDefs raises no calculated column event', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+            const api = createGrid('calculated-toggle-off-with-defs', {
+                calculatedColumns: true,
+                columnDefs: columnDefs('[a]'),
+                rowData: [{ id: 'r1', a: 1, b: 2 }],
+            });
+            const { events, loaded } = recordEvents(api);
+            await asyncSetTimeout(0);
+            events.length = 0;
+            const loadedBefore = loaded.count;
+
+            api.updateGridOptions({ calculatedColumns: false, columnDefs: columnDefs('[zz]') });
+
+            // the update took effect: the columns were reloaded
+            await waitFor(() => expect(loaded.count).toBeGreaterThan(loadedBefore));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([]);
+        });
+
+        test('turning calculatedColumns on with columnDefs compares them with the definitions before the call', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+            const api = createGrid('calculated-toggle-on-with-defs', {
+                calculatedColumns: false,
+                columnDefs: columnDefs('[a]'),
+                rowData: [{ id: 'r1', a: 1, b: 2 }],
+            });
+            const { events, loaded } = recordEvents(api);
+            await asyncSetTimeout(0);
+            events.length = 0;
+            const loadedBefore = loaded.count;
+
+            api.updateGridOptions({ calculatedColumns: true, columnDefs: columnDefs('[zz]') });
+
+            await waitFor(() => expect(loaded.count).toBeGreaterThan(loadedBefore));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([
+                ['calculatedColumnChanged', 'bad'],
+                ['calculatedColumnExpressionChanged', 'bad', '[a]', '[zz]'],
+                ['calculatedColumnValidationStateChanged', 'bad', false],
+            ]);
+        });
+
+        test('turning calculatedColumns on alone raises only the validation state of an invalid column', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+            const api = createGrid('calculated-toggle-on-alone', {
+                calculatedColumns: false,
+                columnDefs: columnDefs('[zz]'),
+                rowData: [{ id: 'r1', a: 1, b: 2 }],
+            });
+            const events = recordEvents(api).events;
+            await asyncSetTimeout(0);
+            events.length = 0;
+
+            api.updateGridOptions({ calculatedColumns: true });
+
+            await waitFor(() => expect(events.length).toBeGreaterThan(0));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([['calculatedColumnValidationStateChanged', 'bad', false]]);
+        });
     });
 });

@@ -1,8 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColumnEvent, ColumnEventType } from '../events';
-import type { ColumnChangedEventType } from '../interfaces/iColsService';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnEventType } from '../events';
 import type { IEventService } from '../interfaces/iEventService';
 
 function getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T): T | undefined {
@@ -70,21 +68,6 @@ export function dispatchColumnVisibleEvent(
         column,
         source,
     });
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _dispatchColumnChangedEvent<T extends ColumnChangedEventType>(
-    eventSvc: IEventService,
-    type: T,
-    columns: AgColumn[],
-    source: ColumnEventType
-): void {
-    eventSvc.dispatchEvent({
-        type,
-        columns,
-        column: columns?.length == 1 ? columns[0] : null,
-        source,
-    } as WithoutGridCommon<ColumnEvent>);
 }
 
 export function dispatchColumnResizedEvent(

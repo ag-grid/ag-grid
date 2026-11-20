@@ -14,7 +14,6 @@ import type {
 import {
     BeanStub,
     _applyColumnState,
-    _dispatchColumnChangedEvent,
     _resolvePivotSort,
     _setColsVisible,
     isColumnGroupAutoCol,
@@ -321,9 +320,14 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public progressPivotSortFromEvent(column: AgColumn): void {
         column.pivotSort = getNextPivotSort(_resolvePivotSort(this.beans, column.pivotSort));
-        // Pivot membership is unchanged, so applyColumnState wouldn't fire this - dispatch it to trigger
-        // the pivot refresh (columnPivotChanged → refreshModel step 'pivot') that re-derives column order.
-        _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
+        // not through applyColumnState, which also raises columnMoved for the reorder: the pivot refresh re-derives it
+        const colModel = this.beans.colModel;
+        colModel.beginColUpdate();
+        try {
+            colModel.dispatchColumnChangedEvent('columnPivotChanged', [column], 'uiColumnSorted');
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     public getPivotSort(column: AgColumn): SortDirection | undefined {

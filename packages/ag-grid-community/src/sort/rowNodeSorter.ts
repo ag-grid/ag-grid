@@ -28,24 +28,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
+        this.refreshOptions();
+    }
 
-        const updatePivotModeState = () => {
-            this.pivotActive = this.colModel.isPivotActive();
-        };
-
-        const updateOptions = () => {
-            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
-        };
-
-        this.addManagedPropertyListeners(['autoGroupColumnDef', 'treeData'], updateOptions);
-
-        this.addManagedEventListeners({
-            columnPivotModeChanged: updatePivotModeState,
-            columnPivotChanged: updatePivotModeState,
-        });
-
-        updateOptions();
-        updatePivotModeState();
+    /** Re-reads the group-sort coupling and pivot state; the column model calls it before the rows refresh. */
+    public refreshOptions(): void {
+        this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
+        this.pivotActive = this.colModel.isPivotActive();
     }
 
     public wireBeans(beans: BeanCollection): void {

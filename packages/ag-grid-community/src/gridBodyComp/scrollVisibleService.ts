@@ -52,11 +52,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
         this.ctrlsSvc.whenReady(this, () => this.measureScrollbar());
 
-        const refresh = this.refresh.bind(this);
         this.addManagedEventListeners({
-            displayedColumnsChanged: refresh,
-            displayedColumnsWidthChanged: refresh,
-            newColumnsLoaded: refresh,
             stylesChanged: (event: StylesChangedEvent) => {
                 if (event.themeChanged) {
                     this.measureScrollbar();
@@ -65,6 +61,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         });
     }
 
+    /** Called once per column layout and per viewport or column width change outside one. */
     public refresh(): void {
         this.refreshImpl();
         window.clearTimeout(this.refreshTimer);
@@ -80,34 +77,40 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private refreshImpl(): void {
-        // Because of column animation, if user removes cols anywhere except at the RHS,
-        // then the cols on the RHS will animate to the left to fill the gap. This animation
-        // means just after the cols are removed, the remaining cols are still in the original
-        // location at the start of the animation, so pre animation the H scrollbar is still
-        // needed, but post animation it is not. So if animation is active, we only update
-        // after the animation has ended.
+        // Removed columns slide left into their gap, so a scrollbar they leave stays until the slide ends; one the
+        // new layout needs, or a gap it closes, applies at once.
         const { colAnimation } = this;
         if (colAnimation?.isActive()) {
+            this.refreshScrollState(true);
             colAnimation.executeLaterVMTurn(() => {
-                colAnimation.executeLaterVMTurn(() => this.refreshScrollState());
+                colAnimation.executeLaterVMTurn(() => this.refreshScrollState(false));
             });
         } else {
-            this.refreshScrollState();
+            this.refreshScrollState(false);
         }
     }
 
-    private refreshScrollState(): void {
+    private refreshScrollState(sliding: boolean): void {
         const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
 
-        if (!this.isAlive() || !gridBodyCtrl || this.colAnimation?.isActive()) {
+        if (!this.isAlive() || !gridBodyCtrl || (!sliding && this.colAnimation?.isActive())) {
             return;
         }
 
         const scrollVisibilityState = this.calculateScrollVisibilityState(gridBodyCtrl);
+        if (sliding) {
+            scrollVisibilityState.horizontalScrollShowing ||= this.horizontalScrollShowing;
+            scrollVisibilityState.verticalScrollShowing ||= this.verticalScrollShowing;
+        }
         this.applyScrollVisibility(scrollVisibilityState);
         // Gap measurements depend on the current DOM geometry, so they must be read
         // after visibility updates have synchronously adjusted widths and classes.
-        this.applyScrollGap(this.calculateScrollGapState(gridBodyCtrl, scrollVisibilityState.verticalScrollShowing));
+        const scrollGapState = this.calculateScrollGapState(gridBodyCtrl, scrollVisibilityState.verticalScrollShowing);
+        if (sliding) {
+            scrollGapState.horizontalScrollGap &&= this.horizontalScrollGap;
+            scrollGapState.verticalScrollGap &&= this.verticalScrollGap;
+        }
+        this.applyScrollGap(scrollGapState);
     }
 
     private calculateScrollVisibilityState(gridBodyCtrl: GridBodyCtrl): ScrollVisibilityState {

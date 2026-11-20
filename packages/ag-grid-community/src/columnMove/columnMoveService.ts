@@ -1,7 +1,7 @@
 import type { HorizontalDirection } from 'ag-stack';
 import { _last, _moveInArray, _removeFromArray } from 'ag-stack';
 
-import { _setColsVisible } from '../columns/columnStateUtils';
+import { _setColsVisible, isColVisibilityLockedInUi } from '../columns/columnStateUtils';
 import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -37,13 +37,27 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         finished: boolean = true
     ): void {
-        const { colModel, visibleCols } = this.beans;
-        const colAnimation = this.beans.colAnimation;
+        const { colModel, visibleCols, calculatedColsSvc } = this.beans;
         const gridColumns = colModel.colsList;
 
-        if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
-            // Trying to insert in invalid position
+        const movedColumns: AgColumn[] = [];
+        const keysLen = columnsToMoveKeys.length;
+        const seen = keysLen > 1 ? new Set<AgColumn>() : null;
+        for (let i = 0; i < keysLen; ++i) {
+            const col = colModel.getCol(columnsToMoveKeys[i]);
+            if (col && !seen?.has(col)) {
+                seen?.add(col);
+                movedColumns.push(col);
+            }
+        }
+        if (!movedColumns.length) {
+            return;
+        }
+        if (toIndex > gridColumns.length - movedColumns.length) {
             this.warn(30, { toIndex });
+            return;
+        }
+        if (!this.doesMovePassRules(movedColumns, toIndex)) {
             return;
         }
 
@@ -51,32 +65,29 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             // a lingering width transition would otherwise slide the moved columns
             _cancelColumnWidthAnimation(this.beans);
         }
-        colAnimation?.start();
+        colModel.beginColUpdate(); // layout events follow `columnMoved`, as after any column change
         try {
-            // we want to pull all the columns out first and put them into an ordered list
-            const movedColumns: AgColumn[] = [];
-            for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
-                const col = colModel.getCol(columnsToMoveKeys[i]);
-                if (col) {
-                    movedColumns.push(col);
-                }
+            colModel.animateColUpdate();
+            let changesOrder = false;
+            for (let i = 0, len = calculatedColsSvc ? movedColumns.length : 0; i < len && !changesOrder; ++i) {
+                changesOrder = gridColumns[toIndex + i] !== movedColumns[i];
             }
-
-            if (this.doesMovePassRules(movedColumns, toIndex)) {
-                _moveInArray(colModel.colsList, movedColumns, toIndex);
-                colModel.markColsListIndexDirty();
-                visibleCols.refresh(source, false);
-                this.eventSvc.dispatchEvent({
-                    type: 'columnMoved',
-                    columns: movedColumns,
-                    column: movedColumns.length === 1 ? movedColumns[0] : null,
-                    toIndex,
-                    finished,
-                    source,
-                });
+            _moveInArray(gridColumns, movedColumns, toIndex);
+            colModel.markColsListIndexDirty();
+            if (changesOrder) {
+                calculatedColsSvc?.markPlacedByUser(movedColumns);
             }
+            visibleCols.refresh(source, false);
+            this.eventSvc.dispatchEvent({
+                type: 'columnMoved',
+                columns: movedColumns,
+                column: movedColumns.length === 1 ? movedColumns[0] : null,
+                toIndex,
+                finished,
+                source,
+            });
         } finally {
-            colAnimation?.finish();
+            colModel.endColUpdate(); // rethrows a listener's error once all are raised
         }
     }
 
@@ -255,7 +266,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const { gos, dragAndDrop, visibleCols } = beans;
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
-        const columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+        // a kept group header's children change with columnDefs: read them as each drag starts
+        let columns: AgColumn[] = [];
         const getDragItem = isGroup
             ? () => createDragItemForGroup(column, visibleCols.allCols)
             : () => createDragItem(column);
@@ -266,7 +278,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             getDragItem,
             dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+                hideColumnOnExit =
+                    !gos.get('suppressDragLeaveHidesColumns') &&
+                    columns.some((col) => col.isVisible() && !isColVisibilityLockedInUi(col));
                 setColumnsMoving(columns, true);
             },
             onDragStopped: () => setColumnsMoving(columns, false),

@@ -67,8 +67,12 @@ export interface RowNumbersOptions extends Pick<
 export interface IRowNumbersService {
     column: AgColumn | null;
     refreshCols(): AgColumn<any> | null;
+    /** Applies new `rowNumbers` or `cellSelection` options. */
+    applyRowNumbersOptions(source: ColumnEventType): void;
     /** Restore the colDef width and let the next autosize measure from scratch, for a column state reset. */
     resetColumnState(source: ColumnEventType): void;
+    /** Fits the column to its rows once a column state reset has finished, as a new row numbers column is fitted. */
+    fitAfterReset(): void;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;

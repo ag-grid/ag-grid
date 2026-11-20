@@ -491,7 +491,46 @@ describe('Grid body width push', () => {
             hasRightClass: root.classList.contains('ag-has-right-pinned-cols'),
         };
     };
+    // Printing lays out no pinned lane (printing docs: "When in print layout, the column is not pinned").
+    const PINNED = { left: '120px', right: '150px', hasLeftClass: true, hasRightClass: true };
     const NOT_PINNED = { left: '0px', right: '0px', hasLeftClass: false, hasRightClass: false };
+
+    test('lays out no pinned lane in print layout, and restores it when the layout returns to normal', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100 },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(PINNED);
+
+        api.setGridOption('domLayout', 'print');
+        await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(NOT_PINNED);
+
+        api.setGridOption('domLayout', 'normal');
+        await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(PINNED);
+    });
+
+    test('a grid created in print layout has no pinned lane', async () => {
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100 },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [{}],
+            domLayout: 'print',
+        });
+        await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(NOT_PINNED);
+    });
 
     test('pushes zero pinned widths for a grid with none, so a grid nested inside another does not inherit its widths', async () => {
         gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }], rowData: [{}] });

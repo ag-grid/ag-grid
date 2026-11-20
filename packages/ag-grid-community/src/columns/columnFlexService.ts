@@ -119,9 +119,8 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             if (i > flexAfterDisplayIndex && flex != null && flex > 0) {
                 continue;
             }
-            const width = col.actualWidth;
-            col.setActualWidth(width, source);
-            unfrozenSpace -= width;
+            // kept at its width, so no width is set: inference still gives the column its inferred width
+            unfrozenSpace -= col.actualWidth;
         }
 
         // a. Check for flexible items. If all the flex items on the line are
@@ -205,23 +204,26 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         }
 
         const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues();
-        if (params.updateBodyWidths) {
-            visibleCols.updateBodyWidths(source, widths);
-        }
-
-        if (params.fireResizedEvent) {
-            const changedColumns: AgColumn[] = [];
-            for (let i = 0; i < itemCount; ++i) {
-                const item = items[i];
-                if (item.initialSize !== item.frozenSize) {
-                    changedColumns.push(item.col);
+        try {
+            if (params.updateBodyWidths) {
+                visibleCols.updateBodyWidths(source, widths);
+            }
+        } finally {
+            // a layout listener throwing stops neither the report nor the reveal
+            if (params.fireResizedEvent) {
+                const changedColumns: AgColumn[] = [];
+                for (let i = 0; i < itemCount; ++i) {
+                    const item = items[i];
+                    if (item.initialSize !== item.frozenSize) {
+                        changedColumns.push(item.col);
+                    }
                 }
+
+                dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexedColumns);
             }
 
-            dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexedColumns);
+            this.revealColumns(colDelayRenderSvc);
         }
-
-        this.revealColumns(colDelayRenderSvc);
 
         return flexedColumns;
     }

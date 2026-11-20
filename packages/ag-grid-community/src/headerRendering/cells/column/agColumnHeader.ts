@@ -16,12 +16,14 @@ import { getColumnHeaderMenuAnchor } from '../../headerUtils';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
-function getHeaderCompElementParams(
-    includeColumnRefIndicator: boolean,
-    includeCalculatedColumnIndicator: boolean,
-    includeSortIndicator: boolean,
-    includeShowValuesAsIndicator: boolean
-): ElementParams {
+/** The default template's indicators as bits, so two headers needing the same template compare equal. */
+const COLUMN_REF_INDICATOR = 1;
+const CALCULATED_COLUMN_INDICATOR = 2;
+const SORT_INDICATOR = 4;
+const SHOW_VALUES_AS_INDICATOR = 8;
+
+function getHeaderCompElementParams(indicators: number): ElementParams {
+    const includeColumnRefIndicator = (indicators & COLUMN_REF_INDICATOR) !== 0;
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
@@ -47,7 +49,7 @@ function getHeaderCompElementParams(
                 role: 'presentation',
                 children: [
                     includeColumnRefIndicator ? { tag: 'span', ref: 'eColRef', cls: 'ag-header-col-ref' } : null,
-                    includeCalculatedColumnIndicator
+                    indicators & CALCULATED_COLUMN_INDICATOR
                         ? {
                               tag: 'span',
                               ref: 'eCalculatedColumn',
@@ -62,7 +64,7 @@ function getHeaderCompElementParams(
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         attrs: hiddenAttrs,
                     },
-                    includeShowValuesAsIndicator
+                    indicators & SHOW_VALUES_AS_INDICATOR
                         ? {
                               tag: 'span',
                               ref: 'eShowValuesAs',
@@ -70,7 +72,7 @@ function getHeaderCompElementParams(
                               attrs: hiddenAttrs,
                           }
                         : null,
-                    includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
+                    indicators & SORT_INDICATOR ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],
             },
         ],
@@ -104,7 +106,8 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     public params: IHeaderParams;
 
     private currentDisplayName: string;
-    private currentTemplate: ElementParams | string | null | undefined;
+    /** A custom template, or the default template's indicators. */
+    private currentTemplate: string | number | null | undefined;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
@@ -114,6 +117,8 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     private isLoadingInnerComponent: boolean = false;
 
     private mouseListener?: HeaderCellMouseListenerFeature;
+    /** The inner header component class the colDef named when this header was built. */
+    private innerHeaderComponentClass: unknown;
 
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
@@ -128,7 +133,12 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             (params.column as AgColumn).formulaRef != this.currentRef ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
             oldParams.enableFilterButton != params.enableFilterButton ||
-            oldParams.enableFilterIcon != params.enableFilterIcon
+            oldParams.enableFilterIcon != params.enableFilterIcon ||
+            // a still loading inner header would miss this refresh; a new one is the colDef's to build
+            this.isLoadingInnerComponent ||
+            // resolved as init resolves it, so a registered name and its class count as one component
+            _getInnerHeaderCompDetails(this.beans.userCompFactory, params, params)?.componentClass !==
+                this.innerHeaderComponentClass
         ) {
             return false;
         }
@@ -145,18 +155,18 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         return true;
     }
 
-    private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+    private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | number {
         const { formula, showValuesAsSvc } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         }
-        return getHeaderCompElementParams(
-            !!formula?.active,
-            (params.column as AgColumn).isCalculatedCol,
-            isSorting,
-            !!showValuesAsSvc
+        return (
+            (formula?.active ? COLUMN_REF_INDICATOR : 0) |
+            ((params.column as AgColumn).isCalculatedCol ? CALCULATED_COLUMN_INDICATOR : 0) |
+            (isSorting ? SORT_INDICATOR : 0) |
+            (showValuesAsSvc ? SHOW_VALUES_AS_INDICATOR : 0)
         );
     }
 
@@ -165,8 +175,12 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
         const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
         const sortComp = sortSvc?.SortIndicatorSelector;
-        this.currentTemplate = this.workOutTemplate(params, !!sortComp);
-        this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
+        const template = this.workOutTemplate(params, !!sortComp);
+        this.currentTemplate = template;
+        this.setTemplate(
+            typeof template === 'string' ? template : getHeaderCompElementParams(template),
+            sortComp ? [sortComp] : undefined
+        );
 
         if (this.eLabel) {
             this.mouseListener ??= this.createManagedBean(
@@ -190,7 +204,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
     private workOutInnerHeaderComponent(userCompFactory: UserComponentFactory, params: IHeaderParams): void {
         const userCompDetails = _getInnerHeaderCompDetails(userCompFactory, params, params);
-
+        this.innerHeaderComponentClass = userCompDetails?.componentClass;
         if (!userCompDetails) {
             return;
         }
@@ -426,8 +440,8 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         const column = params.column as AgColumn;
         this.addInIcon('showValuesAs', eShowValuesAs, column);
         // Three states: hidden (no active mode), active (applying), dormant (active but not meaningful in the
-        // current view — see ShowValuesAsService.isApplying). Dormancy flips on grouping/pivot change without a
-        // column-state event, so listen for those too.
+        // current view — see ShowValuesAsService.isApplying). Dormancy follows the rows' grouping and pivot, which
+        // change without a column-state event, so refresh on each model update too.
         const refresh = () => {
             const resolved = column.showValuesAs;
             const show = resolved != null && !column.showValuesAsDef?.suppressHeaderIndicator;
@@ -438,11 +452,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             }
         };
         this.addManagedListeners(column, { columnStateUpdated: refresh });
-        this.addManagedEventListeners({
-            columnRowGroupChanged: refresh,
-            columnPivotChanged: refresh,
-            columnPivotModeChanged: refresh,
-        });
+        this.addManagedEventListeners({ modelUpdated: refresh });
         refresh();
     }
 

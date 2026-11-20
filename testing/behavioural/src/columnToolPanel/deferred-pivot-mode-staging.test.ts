@@ -385,6 +385,59 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         expect(gridApi.isPivotMode()).toBe(false);
     });
 
+    test('commit raises the pivot change and its column moves before the pivot mode change', async () => {
+        const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
+
+        getPivotModeToggle(toolPanelGui).click();
+
+        const raised: string[] = [];
+        for (const type of ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'] as const) {
+            gridApi.addEventListener(type, () => {
+                raised.push(type);
+            });
+        }
+        getApplyButton(toolPanelGui).click();
+
+        await waitFor(() => expect(raised).toContain('columnPivotModeChanged'), { timeout: 500 });
+        await asyncSetTimeout(0);
+
+        expect({ raised, pivotMode: gridApi.isPivotMode() }).toEqual({
+            raised: ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'],
+            pivotMode: false,
+        });
+    });
+
+    test('an aggregation throwing while the commit switches pivot mode off leaves pivot mode off and the grid told of it', async () => {
+        let aggregationArmed = false;
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            { field: 'country', rowGroup: true, enableRowGroup: true, enablePivot: true },
+            { field: 'year', pivot: true, enableRowGroup: true, enablePivot: true },
+            {
+                field: 'gold',
+                enableValue: true,
+                aggFunc: (params) => {
+                    if (aggregationArmed) {
+                        throw new Error('aggregation failed');
+                    }
+                    return params.values.reduce((sum, value) => sum + value, 0);
+                },
+            },
+        ]);
+        gridApi.setGridOption('pivotMode', true);
+        await asyncSetTimeout(0);
+        expect(gridApi.isPivotMode()).toBe(true);
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        const pivotModeChanges: boolean[] = [];
+        gridApi.addEventListener('columnPivotModeChanged', () => pivotModeChanges.push(gridApi.isPivotMode()));
+
+        aggregationArmed = true;
+        expect(() => commitChanges(toolPanel)).toThrow('aggregation failed');
+        aggregationArmed = false;
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        await waitFor(() => expect(pivotModeChanges).toEqual([false]), { timeout: 500 });
+    });
+
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {
         const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 

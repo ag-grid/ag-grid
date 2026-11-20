@@ -1,8 +1,10 @@
 import type { ColumnState } from '../../columns/columnStateUtils';
+import type { AgColumn } from '../../entities/agColumn';
 import type {
     AggregationColumnState,
     ColumnGroupState,
     ColumnSizeState,
+    ColumnSizingState,
     GridState,
     PivotSortModelItem,
     ShowValuesAsColumnState,
@@ -95,8 +97,9 @@ export function convertColumnState(
         if (hide) {
             hiddenColIds.push(colId);
         }
-        if (flex != null || width) {
-            columnSizes.push({ colId, flex: flex ?? undefined, width: width === null ? undefined : width });
+        // a zero width is a width, which restoring the state must keep
+        if (flex != null || width != null) {
+            columnSizes.push({ colId, flex: flex ?? undefined, width: width ?? undefined });
         }
     }
 
@@ -121,6 +124,37 @@ export function convertColumnState(
         columnOrder: columns.length ? { orderedColIds: columns } : undefined,
         columnHeaderName: columnHeaderNames.length ? { columnHeaderNames } : undefined,
     };
+}
+
+/** The column sizing state of `cols`, in state order, one entry each: `prev` itself while every entry matches. */
+export function _getColumnSizingState(
+    cols: AgColumn[],
+    prev: ColumnSizingState | undefined
+): ColumnSizingState | undefined {
+    const count = cols.length;
+    const prevModel = prev?.columnSizingModel;
+    if (prevModel?.length === count) {
+        let changed = false;
+        for (let i = 0; i < count && !changed; ++i) {
+            const entry = prevModel[i];
+            const col = cols[i];
+            changed =
+                entry.colId !== col.colId || entry.flex !== (col.flex ?? undefined) || entry.width !== col.actualWidth;
+        }
+        if (!changed) {
+            return prev;
+        }
+    }
+    if (count === 0) {
+        return undefined;
+    }
+    // fresh entries: a state handed out stays as it was
+    const columnSizingModel: ColumnSizeState[] = [];
+    for (let i = 0; i < count; ++i) {
+        const col = cols[i];
+        columnSizingModel.push({ colId: col.colId, flex: col.flex ?? undefined, width: col.actualWidth });
+    }
+    return { columnSizingModel };
 }
 
 // Removes null or undefined values from an array to catch the case where sortIndex, rowGroupIndex or pivotIndex

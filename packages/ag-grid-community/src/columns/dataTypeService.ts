@@ -114,19 +114,19 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private hasObjectValueFormatter: boolean;
     private initialData: any[] | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
-    // keep track of any column state updates whilst waiting for data types to be inferred
-    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
+    /** The columns waiting for row data to infer their data types. */
+    private readonly colIdsPendingInference = new Set<string>();
+    /** The state keys set on each column before its data type is inferred, kept by a later build keeping the column. */
+    private stateSetBeforeInference = new WeakMap<AgColumn, Set<keyof ColumnStateParams>>();
+    /** Whether `dataTypeDefinitions` overrode column types when inference started waiting for row data. */
+    private pendingColumnTypeOverrides = false;
 
     public postConstruct(): void {
         this.processDataTypeDefinitions();
-
-        this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
-            this.processDataTypeDefinitions();
-            this.colModel.recreateColumnDefs(event);
-        });
     }
 
-    private processDataTypeDefinitions(): void {
+    /** Re-reads `dataTypeDefinitions`; the column model rebuilds the columns after it. */
+    public processDataTypeDefinitions(): void {
         const defaultDataTypes = this.getDefaultDataTypes();
         const newDataTypeDefinitions: DataTypeDefinitionMap = {};
         const newFormatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc } = {};
@@ -316,7 +316,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /** Records a state key set on a column before its data type is inferred, which inference then keeps. */
     public columnStateUpdated(column: AgColumn, key: keyof ColumnStateParams): void {
-        this.columnStateUpdatesPendingInference[column.colId]?.add(key);
+        if (!this.colIdsPendingInference.has(column.colId)) {
+            return;
+        }
+        const stateSet = this.stateSetBeforeInference;
+        let keys = stateSet.get(column);
+        if (!keys) {
+            keys = new Set();
+            stateSet.set(column, keys);
+        }
+        keys.add(key);
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
@@ -392,34 +401,43 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.initialData?.length ? this.initialData : null;
     }
 
+    /** A column waiting for its type inference moved from `oldId` to `colId`. */
+    public onColIdChanged(oldId: string, colId: string): void {
+        const pending = this.colIdsPendingInference;
+        if (pending.delete(oldId)) {
+            pending.add(colId);
+        }
+    }
+
     private initWaitForRowData(colId: string): void {
-        this.columnStateUpdatesPendingInference[colId] = new Set();
+        this.colIdsPendingInference.add(colId);
         if (this.isPendingInference) {
             return;
         }
         this.isPendingInference = true;
         const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        const { colAutosize, eventSvc } = this.beans;
+        this.pendingColumnTypeOverrides = columnTypeOverridesExist;
+        const colAutosize = this.beans.colAutosize;
         if (columnTypeOverridesExist && colAutosize) {
             colAutosize.shouldQueueResizeOperations = true;
         }
-        const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: ({ rowData }) => {
-                if (!rowData?.length) {
-                    return;
-                }
-                destroyFunc?.();
-                this.isPendingInference = false;
-                this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
-                this.columnStateUpdatesPendingInference = Object.create(null);
-                if (columnTypeOverridesExist) {
-                    colAutosize?.processResizeOperations();
-                }
-                eventSvc.dispatchEvent({
-                    type: 'dataTypesInferred',
-                });
-            },
-        });
+    }
+
+    /** Called by the client-side row model as it starts loading row data, whose first rows infer the waiting types. */
+    public onRowDataUpdateStarted(rowData: any[] | null): void {
+        if (!this.isPendingInference || !rowData?.length) {
+            return;
+        }
+        this.isPendingInference = false;
+        const columnTypeOverridesExist = this.pendingColumnTypeOverrides;
+        this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
+        this.colIdsPendingInference.clear();
+        this.stateSetBeforeInference = new WeakMap();
+        const { colAutosize, eventSvc } = this.beans;
+        if (columnTypeOverridesExist) {
+            colAutosize?.processResizeOperations();
+        }
+        eventSvc.dispatchEvent({ type: 'dataTypesInferred' });
     }
 
     private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
@@ -440,7 +458,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
-        for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
+        for (const colId of this.colIdsPendingInference) {
             const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
             if (!updatedColumnState) {
                 continue;
@@ -481,7 +499,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnTypeOverridesExist || !newColDef.type || newColDef.type === oldColDef.type) {
             return null;
         }
-        return getUpdatedColumnState(this.beans, column, this.columnStateUpdatesPendingInference[colId]);
+        return getUpdatedColumnState(this.beans, column, this.stateSetBeforeInference.get(column));
     }
 
     private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
@@ -587,7 +605,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public isColPendingInference(colId: string): boolean {
-        return this.isPendingInference && !!this.columnStateUpdatesPendingInference[colId];
+        return this.isPendingInference && this.colIdsPendingInference.has(colId);
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
@@ -808,7 +826,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.dataTypeDefinitions = {};
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
-        this.columnStateUpdatesPendingInference = Object.create(null);
+        this.colIdsPendingInference.clear();
         super.destroy();
     }
 }
@@ -1006,16 +1024,18 @@ function doColDefPropsPreventInference(
 function getUpdatedColumnState(
     beans: BeanCollection,
     column: AgColumn,
-    columnStateUpdates: Set<keyof ColumnStateParams>
+    columnStateUpdates: ReadonlySet<keyof ColumnStateParams> | undefined
 ): ColumnState {
     const columnState = getColumnStateFromColDef(beans, column);
-    for (const key of columnStateUpdates) {
-        // if the column state has been updated, don't update again
-        delete columnState[key];
-        if (key === 'rowGroup') {
-            delete columnState.rowGroupIndex;
-        } else if (key === 'pivot') {
-            delete columnState.pivotIndex;
+    if (columnStateUpdates) {
+        for (const key of columnStateUpdates) {
+            // if the column state has been updated, don't update again
+            delete columnState[key];
+            if (key === 'rowGroup') {
+                delete columnState.rowGroupIndex;
+            } else if (key === 'pivot') {
+                delete columnState.pivotIndex;
+            }
         }
     }
     return columnState;

@@ -1440,6 +1440,32 @@ describe('Column Features', () => {
                 └── locked width:200 lockPosition:right
             `);
         });
+
+        test('a move made after an earlier animation ended animates for its whole transition', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+            });
+            await asyncSetTimeout(0);
+            const moving = () => api.getGridElement()!.querySelector('.ag-column-moving') !== null;
+            vi.useFakeTimers();
+            try {
+                api.moveColumns(['a'], 1);
+                vi.advanceTimersByTime(100);
+                // joins the first move's animation, which ends 200ms after that move
+                api.moveColumns(['a'], 2);
+                vi.advanceTimersByTime(150);
+                const seen = [moving()];
+                api.moveColumns(['a'], 3);
+                vi.advanceTimersByTime(100);
+                seen.push(moving());
+                vi.advanceTimersByTime(100);
+                seen.push(moving());
+
+                expect(seen).toEqual([false, true, false]);
+            } finally {
+                vi.useRealTimers();
+            }
+        });
     });
 
     describe('lockVisible', () => {

@@ -8,7 +8,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -16,7 +16,13 @@ import {
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { MultiFilterModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
+import {
+    AggregationModule,
+    MultiFilterModule,
+    RowGroupingModule,
+    SetFilterModule,
+    TreeDataModule,
+} from 'ag-grid-enterprise';
 
 /**
  * Black-box coverage for how column filters compose with OTHER grid features (sort, pagination, row
@@ -32,6 +38,7 @@ describe('Filter + feature interaction', () => {
             MultiFilterModule,
             PaginationModule,
             RowGroupingModule,
+            AggregationModule,
             TreeDataModule,
             ClientSideRowModelModule,
         ],
@@ -382,6 +389,339 @@ describe('Filter + feature interaction', () => {
         });
     });
 
+    test.each([
+        [false, 'n'],
+        [true, 'n'],
+        [false, 'ag-Grid-AutoColumn'],
+        [true, 'ag-Grid-AutoColumn'],
+    ])(
+        'with enableFilterHandlers %s, new filterParams on column %s re-filter the rows once, raising no filterChanged',
+        async (enableFilterHandlers, colId) => {
+            const textFilter = (caseSensitive: boolean) => ({
+                filter: 'agTextColumnFilter',
+                filterParams: { caseSensitive },
+            });
+            const counts = { modelUpdated: 0, filterChanged: 0 };
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [{ field: 'n', ...textFilter(true) }],
+                autoGroupColumnDef: textFilter(true),
+                treeData: true,
+                groupDefaultExpanded: -1,
+                rowData: [
+                    { id: 'A', n: 'A' },
+                    { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'D', n: 'D' },
+                ],
+                getRowId: (params) => params.data.id,
+                treeDataParentIdField: 'parentId',
+                onModelUpdated: () => ++counts.modelUpdated,
+                onFilterChanged: () => ++counts.filterChanged,
+            });
+            api.setFilterModel({ [colId]: { filterType: 'text', type: 'equals', filter: 'a' } });
+            await asyncSetTimeout(0);
+            expect({ displayed: api.getDisplayedRowCount(), filterChanged: counts.filterChanged }).toEqual({
+                displayed: 0,
+                filterChanged: 1,
+            });
+
+            counts.modelUpdated = 0;
+            counts.filterChanged = 0;
+            if (colId === 'n') {
+                api.setGridOption('columnDefs', [{ field: 'n', ...textFilter(false) }]);
+            } else {
+                api.setGridOption('autoGroupColumnDef', textFilter(false));
+            }
+            await asyncSetTimeout(0);
+
+            const displayed: (string | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                displayed.push(api.getDisplayedRowAtIndex(i)?.id);
+            }
+            expect(api.getFilterModel()).toEqual({ [colId]: { filterType: 'text', type: 'equals', filter: 'a' } });
+            expect(displayed).toEqual(['A', 'B']);
+            expect(counts).toEqual({ modelUpdated: 1, filterChanged: 0 });
+        }
+    );
+
+    test.each(['n', 'ag-Grid-AutoColumn'])(
+        'with a sort on column %s, a new comparator re-sorts the rows once, raising no sortChanged',
+        async (colId) => {
+            const comparator = (reversed: boolean) => (_a: unknown, _b: unknown, nodeA: IRowNode, nodeB: IRowNode) => {
+                const order = String(nodeA.data.n).localeCompare(String(nodeB.data.n));
+                return reversed ? -order : order;
+            };
+            const counts = { modelUpdated: 0, sortChanged: 0 };
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'n', comparator: comparator(false) }],
+                autoGroupColumnDef: { comparator: comparator(false) },
+                treeData: true,
+                groupDefaultExpanded: -1,
+                rowData: [
+                    { id: 'A', n: 'A' },
+                    { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'D', n: 'D' },
+                ],
+                getRowId: (params) => params.data.id,
+                treeDataParentIdField: 'parentId',
+                onModelUpdated: () => ++counts.modelUpdated,
+                onSortChanged: () => ++counts.sortChanged,
+            });
+            api.applyColumnState({ state: [{ colId, sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            const order = () => {
+                const ids: (string | undefined)[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id));
+                return ids;
+            };
+            expect({ order: order(), sortChanged: counts.sortChanged }).toEqual({
+                order: ['A', 'B', 'D'],
+                sortChanged: 1,
+            });
+
+            counts.modelUpdated = 0;
+            counts.sortChanged = 0;
+            if (colId === 'n') {
+                api.setGridOption('columnDefs', [{ field: 'n', comparator: comparator(true) }]);
+            } else {
+                api.setGridOption('autoGroupColumnDef', { comparator: comparator(true) });
+            }
+            await asyncSetTimeout(0);
+
+            expect(order()).toEqual(['D', 'A', 'B']);
+            expect(counts).toEqual({ modelUpdated: 1, sortChanged: 0 });
+        }
+    );
+
+    test('a new autoGroupColumnDef comparator on a sorted group column reverses the groups without re-aggregating them', async () => {
+        const country = (node: IRowNode): string => node.key ?? node.data.country;
+        const ascending = (_a: unknown, _b: unknown, nodeA: IRowNode, nodeB: IRowNode) =>
+            country(nodeA).localeCompare(country(nodeB));
+        const descending = (_a: unknown, _b: unknown, nodeA: IRowNode, nodeB: IRowNode) =>
+            country(nodeB).localeCompare(country(nodeA));
+        let aggFuncCalls = 0;
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    field: 'v',
+                    aggFunc: (params) => {
+                        ++aggFuncCalls;
+                        return params.values.reduce((sum: number, value: number) => sum + value, 0);
+                    },
+                },
+            ],
+            autoGroupColumnDef: { comparator: ascending },
+            rowData: [
+                { country: 'B', v: 2 },
+                { country: 'A', v: 1 },
+                { country: 'C', v: 4 },
+                { country: 'A', v: 8 },
+            ],
+        });
+        api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+        await asyncSetTimeout(0);
+        const displayed = () => {
+            const groups: { key: string | null | undefined; v: unknown }[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                const node = api.getDisplayedRowAtIndex(i);
+                groups.push({ key: node?.key, v: node?.aggData?.v });
+            }
+            return groups;
+        };
+        expect(displayed()).toEqual([
+            { key: 'A', v: 9 },
+            { key: 'B', v: 2 },
+            { key: 'C', v: 4 },
+        ]);
+
+        aggFuncCalls = 0;
+        api.setGridOption('autoGroupColumnDef', { comparator: descending });
+        await asyncSetTimeout(0);
+
+        expect({ groups: displayed(), aggFuncCalls }).toEqual({
+            groups: [
+                { key: 'C', v: 4 },
+                { key: 'B', v: 2 },
+                { key: 'A', v: 9 },
+            ],
+            aggFuncCalls: 0,
+        });
+    });
+
+    describe('row groups sorted by the auto group column', () => {
+        const reversed = (valueA: string, valueB: string) => {
+            if (valueA === valueB) {
+                return 0;
+            }
+            return valueA < valueB ? 1 : -1;
+        };
+        const createGroupedGrid = (autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }],
+                autoGroupColumnDef,
+                rowData: [{ country: 'B' }, { country: 'A' }, { country: 'C' }],
+            });
+        const groups = (api: GridApi) => {
+            const keys: (string | null | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                keys.push(api.getDisplayedRowAtIndex(i)?.key);
+            }
+            return keys;
+        };
+
+        test('a comparator set, removed and set again on autoGroupColumnDef re-sorts the groups each time', async () => {
+            const withoutComparator: GridApi = await createGroupedGrid({});
+            withoutComparator.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            const defaultOrder = groups(withoutComparator);
+            expect(defaultOrder).not.toEqual(['C', 'B', 'A']);
+            gridsManager.reset();
+
+            const api: GridApi = await createGroupedGrid({ comparator: reversed });
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            expect(groups(api)).toEqual(['C', 'B', 'A']);
+
+            const autoColumn = () => ({
+                sort: api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort,
+                comparator: api.getColumn('ag-Grid-AutoColumn')?.getColDef().comparator,
+            });
+
+            api.setGridOption('autoGroupColumnDef', {});
+            await asyncSetTimeout(0);
+            expect({ groups: groups(api), ...autoColumn() }).toEqual({
+                groups: defaultOrder,
+                sort: 'asc',
+                comparator: undefined,
+            });
+
+            api.setGridOption('autoGroupColumnDef', { comparator: reversed });
+            await asyncSetTimeout(0);
+            expect({ groups: groups(api), ...autoColumn() }).toEqual({
+                groups: ['C', 'B', 'A'],
+                sort: 'asc',
+                comparator: reversed,
+            });
+        });
+
+        test('a comparator given at runtime to a grid created without one re-sorts the groups', async () => {
+            const api: GridApi = await createGroupedGrid(undefined);
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            expect(api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
+
+            api.setGridOption('autoGroupColumnDef', { comparator: reversed });
+            await asyncSetTimeout(0);
+            expect(groups(api)).toEqual(['C', 'B', 'A']);
+        });
+
+        test('switching treeData at runtime sorts the new groups by the auto group column, as a grid created with that treeData does', async () => {
+            const options = (treeData: boolean): GridOptions => ({
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }],
+                treeData,
+                getDataPath: (data) => data.path,
+                rowData: [
+                    { path: ['B', 'b1'], country: 'X' },
+                    { path: ['A', 'a1'], country: 'Y' },
+                    { path: ['C', 'c1'], country: 'X' },
+                ],
+            });
+            const sortByAutoGroupColumn = async (api: GridApi) => {
+                api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+                await asyncSetTimeout(0);
+                expect(api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
+            };
+
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', options(false));
+            await sortByAutoGroupColumn(api);
+            expect(groups(api)).toEqual(['X', 'Y']);
+
+            api.setGridOption('treeData', true);
+            await asyncSetTimeout(0);
+            const switched = groups(api);
+
+            gridsManager.reset();
+            const created: GridApi = await gridsManager.createGridAndWait('grid1', options(true));
+            await sortByAutoGroupColumn(created);
+
+            expect({ switched, created: groups(created) }).toEqual({
+                switched: ['A', 'B', 'C'],
+                created: ['A', 'B', 'C'],
+            });
+        });
+    });
+
+    test('an autoGroupColumnDef equal to the current one, passed as a new object, refreshes nothing', async () => {
+        const comparator = (_a: unknown, _b: unknown, nodeA: IRowNode, nodeB: IRowNode) =>
+            String(nodeA.data.n).localeCompare(String(nodeB.data.n));
+        const autoGroupColumnDef = () => ({
+            headerName: 'Group',
+            filter: 'agTextColumnFilter',
+            filterParams: { caseSensitive: true },
+            comparator,
+        });
+        const filterModel = { filterType: 'text', type: 'notEqual', filter: 'C' };
+        // Each update on its own grid, so a refresh the equal one queues cannot be credited to the control.
+        const refreshesAfterUpdate = async (update: GridOptions['autoGroupColumnDef']) => {
+            let modelUpdated = 0;
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'n' }],
+                autoGroupColumnDef: autoGroupColumnDef(),
+                treeData: true,
+                groupDefaultExpanded: -1,
+                rowData: [
+                    { id: 'A', n: 'A' },
+                    { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'C', n: 'C' },
+                    { id: 'D', n: 'D' },
+                ],
+                getRowId: (params) => params.data.id,
+                treeDataParentIdField: 'parentId',
+                onModelUpdated: () => ++modelUpdated,
+            });
+            await api.setColumnFilterModel('ag-Grid-AutoColumn', filterModel);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            const column = api.getColumn('ag-Grid-AutoColumn');
+            const filter = await api.getColumnFilterInstance('ag-Grid-AutoColumn');
+            modelUpdated = 0;
+            api.setGridOption('autoGroupColumnDef', update);
+            await asyncSetTimeout(0);
+            return {
+                api,
+                refreshes: modelUpdated,
+                columnKept: api.getColumn('ag-Grid-AutoColumn') === column,
+                filterKept: (await api.getColumnFilterInstance('ag-Grid-AutoColumn')) === filter,
+            };
+        };
+
+        const equal = await refreshesAfterUpdate(autoGroupColumnDef());
+        const afterEqual = {
+            refreshes: equal.refreshes,
+            columnKept: equal.columnKept,
+            filterKept: equal.filterKept,
+            filterModel: equal.api.getColumnFilterModel('ag-Grid-AutoColumn'),
+        };
+        gridsManager.reset();
+        // The positive control: a changed definition that re-sorts the rows is counted in the same window.
+        const changed = await refreshesAfterUpdate({ ...autoGroupColumnDef(), headerName: 'Tree', sort: 'desc' });
+        const api = changed.api;
+        const rowOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => rowOrder.push(node.id!));
+
+        expect({
+            afterEqual,
+            afterChanged: changed.refreshes > 0,
+            rowOrder,
+            header: api.getDisplayNameForColumn(api.getColumn('ag-Grid-AutoColumn')!, 'header'),
+        }).toEqual({
+            afterEqual: { refreshes: 0, columnKept: true, filterKept: true, filterModel },
+            afterChanged: true,
+            rowOrder: ['D', 'A', 'B'],
+            header: 'Tree',
+        });
+    });
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],

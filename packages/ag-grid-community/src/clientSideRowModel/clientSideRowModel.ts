@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _nearestDisplayedRow } from '../entities/rowNodeUtils';
-import type { FilterChangedEvent } from '../events';
 import {
     _addRowHeightChangedListener,
     _canScrollVertically,
@@ -19,7 +18,7 @@ import type {
     IClientSideRowModel,
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
-import type { ForEachNodeCallback, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { ForEachNodeCallback, RowBounds, RowModelChange, RowModelType } from '../interfaces/iRowModel';
 import {
     DETAIL_ROW_ID_PREFIX,
     GRAND_TOTAL_ROW_ID,
@@ -93,6 +92,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called. */
     private rowDataUpdatedPending: boolean = false;
 
+    /** Step and changed options of the refreshes asked inside an open column update, run as it ends; null when none. */
+    private deferredParams: RefreshModelParams | null = null;
+    /** Set while the column update's own refresh runs, which is never deferred. */
+    private refreshingAfterChange = false;
+
     /**
      * This is to prevent refresh model being called when it's already being called.
      * E.g. the group stage can trigger initial state filter model to be applied. This fires onFilterChanged,
@@ -125,26 +129,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rootNode = rootNode;
         this.nodeManager = this.createBean(new ClientSideNodeManager(rootNode));
 
-        const onColumnsChanged = () => {
-            this.beans.groupStage?.invalidateGroupCols(); // in case refresh is skipped
-            this.refreshModel({
-                step: 'group',
-                afterColumnsChanged: true,
-                keepRenderedRows: true,
-                animate: !this.gos.get('suppressAnimationFrame'),
-            });
-        };
-
         this.addManagedEventListeners({
-            newColumnsLoaded: onColumnsChanged,
-            columnRowGroupChanged: onColumnsChanged,
-            columnValueChanged: this.onValueChanged.bind(this),
-            columnPivotChanged: this.onPivotChanged.bind(this),
-            columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
-            filterChanged: this.onFilterChanged.bind(this),
-            sortChanged: this.onSortChanged.bind(this),
             gridReady: this.onGridReady.bind(this),
-            rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
 
         this.addPropertyListeners(); // Property listeners which call `refreshModel` at different stages
@@ -206,7 +192,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.addManagedPropertyListeners([...stagesRefreshProps.keys(), 'rowData'], (params) => {
             const properties = params.changeSet?.properties;
-            if (properties) {
+            // a call changing a column option too is applied by the column model, inside its column update
+            if (properties && !this.beans.colModel.isColumnOptionsChange(properties)) {
                 this.onPropChange(properties);
             }
         });
@@ -322,11 +309,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return res;
     }
 
-    private onPropChange(properties: (keyof GridOptions)[]): void {
-        const { nodeManager, gos, beans } = this;
+    public onPropChange(properties: readonly (keyof GridOptions)[]): void {
+        const { nodeManager, gos, beans, stagesRefreshProps } = this;
         const groupStage = beans.groupStage;
         if (!nodeManager) {
             return; // Destroyed
+        }
+        // the column model hands every options change it applies: one holding none of these is not the rows'
+        if (!properties.some((property) => property === 'rowData' || stagesRefreshProps.has(property))) {
+            return;
         }
         const changedProps = new Set(properties);
         const extractData = groupStage?.onPropChange(changedProps);
@@ -372,7 +363,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private getRefreshedStage(properties: (keyof GridOptions)[]): ClientSideRowModelStage | null {
+    private getRefreshedStage(properties: readonly (keyof GridOptions)[]): ClientSideRowModelStage | null {
         const { stages, stagesRefreshProps } = this;
         if (!stages) {
             return null;
@@ -591,40 +582,73 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return rowNode ? { rowTop: rowNode.rowTop!, rowHeight: rowNode.rowHeight! } : null;
     }
 
-    private onRowGroupOpened(): void {
+    public refreshAfterExpansion(): void {
         this.refreshModel({ step: 'map', keepRenderedRows: true, animate: _isAnimateRows(this.gos) });
     }
 
-    private onFilterChanged({ afterDataChange, columns }: FilterChangedEvent): void {
-        if (!afterDataChange) {
-            const primaryOrQuickFilterChanged = columns.length === 0 || columns.some((col) => col.isPrimary());
-            const step: ClientSideRowModelStage = primaryOrQuickFilterChanged ? 'filter' : 'filter_aggregates';
-            this.refreshModel({ step: step, keepRenderedRows: true, animate: _isAnimateRows(this.gos) });
+    public refreshAfterChange(change: RowModelChange): void {
+        const groups = change.columnsLoaded || change.rowGroups;
+        if (groups) {
+            this.beans.groupStage?.invalidateGroupCols(); // in case refresh is skipped
         }
-    }
-
-    private onPivotChanged(): void {
-        // With a filter present, FilterManager's columnPivotChanged handler runs a comprehensive
-        // filter refresh that already rebuilds the pivot stage, so this would be a redundant repeat.
-        if (!this.beans.filterManager?.isAnyFilterPresent()) {
-            this.refreshModel({ step: 'pivot' });
+        const filter = change.filterModel;
+        let step: ClientSideRowModelStage | null;
+        if (groups || change.pivotMode) {
+            step = 'group';
+        } else if (filter && change.primaryFilter) {
+            step = 'filter';
+        } else if (change.pivot || (change.values && this.beans.colModel.isPivotActive())) {
+            step = 'pivot';
+        } else if (change.values) {
+            step = 'aggregate';
+        } else if (filter) {
+            step = 'filter_aggregates';
+        } else if (change.sort) {
+            step = 'sort';
+        } else {
+            step = null; // a filter refreshed after a data change: that data change refreshes the rows
         }
-    }
-
-    private onSortChanged(): void {
-        this.refreshModel({
-            step: 'sort',
-            keepRenderedRows: true,
-            animate: _isAnimateRows(this.gos),
-        });
+        const deferred = this.deferredParams;
+        this.deferredParams = null;
+        // a pivot stage run by this refresh re-derives them itself, reading the new names
+        if (change.pivotResultNames && (step === null || STAGE_ORDER[step] > STAGE_ORDER.pivot)) {
+            this.beans.pivotStage?.refreshColDefs(change.pivotSource);
+        }
+        let params: RefreshModelParams;
+        if (step === null) {
+            if (deferred === null) {
+                return;
+            }
+            // the flags the deferred refreshes asked for were recorded as they were asked, and apply here
+            params = { ...deferred, keepRenderedRows: true, animate: true, keepUndoRedoStack: true };
+        } else {
+            const rowsAnimate = filter || change.sort;
+            const gos = this.gos;
+            params = {
+                step,
+                afterColumnsChanged: groups,
+                // with a filter refresh a pivot change asks for no refresh of its own: the filter step runs the pivot stage
+                keepRenderedRows: !change.values && !(change.pivot && !filter) && !change.pivotMode,
+                animate:
+                    (groups || rowsAnimate) &&
+                    (!groups || !gos.get('suppressAnimationFrame')) &&
+                    (!rowsAnimate || _isAnimateRows(gos)),
+            };
+            if (deferred !== null) {
+                mergeDeferredParams(deferred, params);
+            }
+        }
+        const wasRefreshing = this.refreshingAfterChange;
+        this.refreshingAfterChange = true;
+        try {
+            this.refreshModel(params);
+        } finally {
+            this.refreshingAfterChange = wasRefreshing;
+        }
     }
 
     public getType(): RowModelType {
         return 'clientSide';
-    }
-
-    private onValueChanged(): void {
-        this.refreshModel({ step: this.beans.colModel.isPivotActive() ? 'pivot' : 'aggregate' });
     }
 
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
@@ -675,7 +699,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const suppressUpdateTransaction = this.isSuppressModelUpdateAfterUpdateTransaction(params);
-        if (this.deferRefresh(suppressUpdateTransaction)) {
+        if (this.deferRefresh(params, suppressUpdateTransaction)) {
             // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
@@ -696,6 +720,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.rowDataUpdatedPending) {
             this.rowDataUpdatedPending = false;
             params.step = 'group'; // Ensure grouping runs
+            params.afterColumnsChanged = false; // the new rows are grouped even when the group columns are not new
+            params.rowDataUpdated = true; // what reads a data change (masters, filter values) runs on the deferred one
         }
 
         // Apply forced flags from any previous skipped refresh calls
@@ -704,7 +730,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let succeeded = false;
         this.refreshingModel = true; // Prevent nested refreshModel calls
         try {
-            this.executeRefresh(params, rowDataUpdated);
+            this.executeRefresh(params);
             succeeded = true;
         } finally {
             // Reset lock flags even on failure to prevent the grid from being stuck
@@ -722,23 +748,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.beans.formula?.onRowsChanged(params.changedRowNodes, params.newData);
 
-        // finally dispatch the final model updated event with the correct values
-        eventSvc.dispatchEvent({
-            type: 'modelUpdated',
-            animate: params.animate,
-            keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData,
-            newPage: false,
-            keepUndoRedoStack: params.keepUndoRedoStack,
-        });
+        // the auto cols' visibility the new rows decide is final at modelUpdated; its column events follow it
+        const colModel = this.beans.colModel;
+        colModel.beginColUpdate();
+        try {
+            this.beans.autoColSvc?.updateColumnVisibility();
+            eventSvc.dispatchEvent({
+                type: 'modelUpdated',
+                animate: params.animate,
+                keepRenderedRows: params.keepRenderedRows,
+                newData: params.newData,
+                newPage: false,
+                keepUndoRedoStack: params.keepUndoRedoStack,
+            });
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     /** Executes the refresh pipeline stages and updates row positions. */
-    private executeRefresh(params: RefreshModelParams, rowDataUpdated: boolean): void {
+    private executeRefresh(params: RefreshModelParams): void {
         const { beans, rootNode } = this;
 
         beans.masterDetailSvc?.refreshModel(params);
-        if (rowDataUpdated && params.step !== 'group') {
+        if (params.rowDataUpdated && params.step !== 'group') {
             beans.colFilter?.refreshModel();
         }
 
@@ -790,14 +823,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /** Checks if the refresh should be deferred. Caller must call setPendingRefreshFlags when this returns true. */
-    private deferRefresh(suppressUpdateTransaction: boolean): boolean {
+    private deferRefresh(params: RefreshModelParams, suppressUpdateTransaction: boolean): boolean {
         if (this.refreshingModel) {
             return true; // Nested refresh
-        }
-
-        if (this.beans.colModel.changeEventsDispatching) {
-            // Columns being set up - refresh will follow via newColumnsLoaded event
-            return true;
         }
 
         if (suppressUpdateTransaction) {
@@ -810,6 +838,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (!this.started) {
             // Not started yet - start() will trigger the initial refresh
+            return true;
+        }
+
+        const colModel = this.beans.colModel;
+        if (colModel.colUpdateDepth > 0 && !this.refreshingAfterChange) {
+            // once, as the update ends, after its columns are final; a throwing update too
+            colModel.rowsChange.rows = true;
+            const deferred = this.deferredParams;
+            if (deferred === null) {
+                const changedProps = params.changedProps;
+                this.deferredParams = {
+                    step: params.step,
+                    changedProps: changedProps && new Set(changedProps),
+                    changedRowNodes: params.changedRowNodes,
+                };
+            } else {
+                mergeDeferredParams(params, deferred);
+            }
             return true;
         }
 
@@ -1446,6 +1492,39 @@ const addAllLeafs = (result: RowNode[], node: RowNode): void => {
             if (child.group) {
                 addAllLeafs(result, child);
             }
+        }
+    }
+};
+
+/** The pipeline order of the stages: a refresh from one runs every later one. */
+const STAGE_ORDER: { readonly [stage in ClientSideRowModelStage]: number } = {
+    group: 0,
+    filter: 1,
+    pivot: 2,
+    aggregate: 3,
+    filter_aggregates: 4,
+    sort: 5,
+    map: 6,
+    nothing: 7,
+};
+
+/** Folds `from` into `into`: both refreshes' options over every row, from the earlier of their stages. */
+const mergeDeferredParams = (from: RefreshModelParams, into: RefreshModelParams): void => {
+    const step = from.step;
+    if (STAGE_ORDER[step] < STAGE_ORDER[into.step]) {
+        into.step = step;
+    }
+    // the rows one refresh changed are no delta of the two: either's step applies to every row
+    into.changedRowNodes = undefined;
+    const props = from.changedProps;
+    if (props) {
+        const intoProps = into.changedProps;
+        if (intoProps) {
+            for (const prop of props) {
+                intoProps.add(prop);
+            }
+        } else {
+            into.changedProps = new Set(props);
         }
     }
 };

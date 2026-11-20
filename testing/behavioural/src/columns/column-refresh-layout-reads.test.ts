@@ -1,4 +1,12 @@
-import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import {
+    TestGridsManager,
+    asyncSetTimeout,
+    installMockResizeObserver,
+    mockGridLayout,
+    nextAnimationFrame,
+    polyfillOffsetParent,
+    triggerResizeObservers,
+} from 'ag-test-utils';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
@@ -108,6 +116,53 @@ const countViewportMeasurements = async (act: () => void): Promise<number> => {
     return count;
 };
 
+/** The mock never clamps above 0 (and reads `clientWidth` as 0): emulate the browser on this element. */
+const clampScrollLeftLikeABrowser = (viewport: HTMLElement): void => {
+    let owner = Object.getPrototypeOf(viewport);
+    let descriptor = Object.getOwnPropertyDescriptor(owner, 'scrollLeft');
+    while (!descriptor && owner) {
+        owner = Object.getPrototypeOf(owner);
+        descriptor = owner ? Object.getOwnPropertyDescriptor(owner, 'scrollLeft') : undefined;
+    }
+    const original = descriptor!;
+    Object.defineProperty(viewport, 'scrollLeft', {
+        configurable: true,
+        get(this: HTMLElement) {
+            const max = Math.max(0, this.scrollWidth - this.getBoundingClientRect().width);
+            return Math.min(original.get!.call(this), max);
+        },
+        set(this: HTMLElement, value: number) {
+            original.set!.call(this, value);
+        },
+    });
+};
+
+/** happy-dom stores no negative scrollLeft: keep the RTL value on the element, clamped on read. */
+const clampRtlScrollLeftLikeABrowser = (viewport: HTMLElement, initial: number): void => {
+    let stored = initial;
+    Object.defineProperty(viewport, 'scrollLeft', {
+        configurable: true,
+        get(this: HTMLElement) {
+            const min = -Math.max(0, this.scrollWidth - this.getBoundingClientRect().width);
+            return Math.max(Math.min(stored, 0), min);
+        },
+        set(value: number) {
+            stored = value;
+        },
+    });
+};
+
+/** Records every value written to an element's scrollLeft. */
+const recordScrollLeftWrites = (el: HTMLElement): number[] => {
+    const writes: number[] = [];
+    Object.defineProperty(el, 'scrollLeft', {
+        configurable: true,
+        get: () => writes[writes.length - 1] ?? 0,
+        set: (value: number) => void writes.push(value),
+    });
+    return writes;
+};
+
 describe('Column refresh layout reads', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnApiModule, PinnedRowModule, ScrollApiModule],
@@ -141,10 +196,8 @@ describe('Column refresh layout reads', () => {
         expect({ onMove, onReset, onHide, onShow }).toEqual({ onMove: 0, onReset: 0, onHide: 0, onShow: 0 });
     });
 
-    // A change to the body width moves every column's `left`, so the virtual-column extraction has to run
-    // again, asking every centre column where it now is. Each row container asks for that on the same
-    // change, and all but the first have nothing left to recompute.
-    test('a column refresh extracts the virtual columns once, not once per row container', async () => {
+    // A body width change moves every `left`: one extraction serves both the viewport update and the refresh.
+    test('a column refresh changing the body width extracts the virtual columns once', async () => {
         // The suite suppresses column virtualisation, which skips the filtering this counts.
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: buildCols(50),
@@ -171,10 +224,8 @@ describe('Column refresh layout reads', () => {
             api.setColumnsVisible(['c1'], false);
             await asyncSetTimeout(0);
 
-            // Two extractions, one per reported change, at one pass each: the rendered and header sets are
-            // built together. Each row container asks as well, and is answered from the layout version the
-            // extraction recorded rather than extracting again.
-            expect(leftReads, 'getLeft calls on one unrendered column').toBe(2);
+            // One pass builds the rendered and header sets; every later ask reads the recorded layout version.
+            expect(leftReads, 'getLeft calls on one unrendered column').toBe(1);
         } finally {
             column!.getLeft = getLeft;
         }
@@ -308,11 +359,8 @@ describe('Column refresh layout reads', () => {
         expect(api.getPinnedTopRowCount(), 'the pinned-row change this counted must have landed').toBe(2);
     });
 
-    // A move reports one change and reads once. Hiding reports two and reads twice, and the second read is
-    // the point: narrowing the columns lets the browser clamp `scrollLeft`, and the clamp only lands when a
-    // read forces layout, so the first read still holds the pre-clamp position. Neither caching the value
-    // nor dropping the second read is safe.
-    test('a column refresh reads the scroll position once per reported change', async () => {
+    // Narrowing lets a browser clamp `scrollLeft`, seen only by a read after the widths are pushed: one read then.
+    test('a column refresh reads the scroll position once after it pushes new widths, and not without them', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: buildCols(50),
             rowData: [{ c0: 1 }],
@@ -323,11 +371,84 @@ describe('Column refresh layout reads', () => {
         expect(viewport, 'grid viewport should be rendered').not.toBeNull();
 
         const onMove = await countPropertyReads(viewport, 'scrollLeft', () => api.moveColumnByIndex(0, 10));
-        expect(onMove, 'scrollLeft reads on a column move').toBe(1);
+        expect(onMove, 'scrollLeft reads on a column move').toBe(0);
 
         const ids = api.getAllGridColumns().map((col) => col.getColId());
         const onHide = await countPropertyReads(viewport, 'scrollLeft', () => api.setColumnsVisible(ids, false));
-        expect(onHide, 'scrollLeft reads on hiding every column').toBe(2);
+        expect(onHide, 'scrollLeft reads on hiding every column').toBe(1);
+    });
+
+    // A browser clamps `scrollLeft` once the narrowed widths are pushed, seen only by a read after that push.
+    test('narrowing the columns while scrolled to the far right renders the columns around the clamped position', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(30),
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+
+        const viewport = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        api.ensureColumnVisible('c29');
+        await asyncSetTimeout(0);
+        expect(viewport.scrollLeft, 'the far right of 30 columns of 200px').toBe(5000);
+
+        clampScrollLeftLikeABrowser(viewport);
+        const rendered = () => api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        const narrowed = Array.from({ length: 20 }, (_, i) => `c${i + 10}`);
+
+        try {
+            // each read straight after the call: no scroll event has been delivered
+            api.setColumnWidths(narrowed.map((key) => ({ key, newWidth: 40 })));
+            // 2800px of columns and a 1000px viewport clamp to 1800px: 1600px to 3000px, c7 ending on its edge
+            expect(viewport.scrollLeft, 'clamped after the widths').toBe(1800);
+            expect(rendered()).toEqual(Array.from({ length: 23 }, (_, i) => `c${i + 7}`));
+
+            api.setColumnsVisible(narrowed, false);
+            // 2000px of columns clamp to 1000px: 800px to 2200px, c3 ending on its edge
+            expect(viewport.scrollLeft, 'clamped after the hide').toBe(1000);
+            expect(rendered()).toEqual(['c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9']);
+        } finally {
+            delete (viewport as { scrollLeft?: number }).scrollLeft;
+        }
+    });
+
+    test('narrowing the columns while scrolled to the far end in RTL syncs the scrollbar to the clamped position', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(30),
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+            enableRtl: true,
+        });
+        await asyncSetTimeout(0);
+
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        const scrollbar = root.querySelector<HTMLElement>('.ag-body-horizontal-scroll-viewport')!;
+        const narrowed = Array.from({ length: 20 }, (_, i) => `c${i + 10}`);
+        clampRtlScrollLeftLikeABrowser(viewport, 0);
+
+        try {
+            api.ensureColumnVisible('c29');
+            await asyncSetTimeout(0);
+            expect(viewport.scrollLeft, 'the far end of 30 columns of 200px in RTL').toBe(-5000);
+
+            const scrollbarWrites = recordScrollLeftWrites(scrollbar);
+            // each read straight after the call: no scroll event has been delivered
+            api.setColumnWidths(narrowed.map((key) => ({ key, newWidth: 40 })));
+            // 2800px of columns and a 1000px viewport clamp to -1800px
+            expect({
+                viewport: viewport.scrollLeft,
+                scrollbarWrites,
+                rendered: api.getAllDisplayedVirtualColumns().map((col) => col.getColId()),
+            }).toEqual({
+                viewport: -1800,
+                scrollbarWrites: [-1800],
+                rendered: Array.from({ length: 23 }, (_, i) => `c${i + 7}`),
+            });
+        } finally {
+            delete (viewport as { scrollLeft?: number }).scrollLeft;
+            delete (scrollbar as { scrollLeft?: number }).scrollLeft;
+        }
     });
 
     // What is left is the viewport checks that deliberately measure and report, each resolving one style
@@ -374,6 +495,40 @@ describe('Column refresh layout reads', () => {
         const onPin = await countViewportMeasurements(() => api.setColumnsPinned(['c2', 'c3'], 'left'));
 
         expect({ onMove, onPin }).toEqual({ onMove: 0, onPin: 1 });
+    });
+
+    // The resize observer reports one new size, and every step of that frame (pinned limits, flex, scrollbars)
+    // reads it from one measurement rather than measuring for itself.
+    test('a viewport resize with pinned columns measures the viewport once per resize callback', async () => {
+        const columnDefs = buildCols(50).map((col) => ({ ...col, flex: 1, minWidth: 1 }));
+        columnDefs[0].pinned = 'left';
+        columnDefs[1].pinned = 'right';
+
+        const originalGridWidth = mockGridLayout.gridWidth;
+        // `_isInDOM` tests offsetParent, and the container-resize path returns early without one.
+        const restoreOffsetParent = polyfillOffsetParent();
+        const uninstallResizeObserver = installMockResizeObserver();
+        try {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{ c0: 1 }] });
+            await asyncSetTimeout(0);
+            const columnsWidth = () =>
+                api.getAllDisplayedColumns().reduce((total, col) => total + col.getActualWidth(), 0);
+            const widthBefore = columnsWidth();
+            expect(widthBefore, 'the flex columns fill the 1000px viewport').toBe(1000);
+
+            const reads = await countViewportMeasurements(() => {
+                mockGridLayout.gridWidth = 1200;
+                triggerResizeObservers();
+            });
+
+            expect(columnsWidth(), 'the resize this counted must have been delivered and flexed').toBe(1200);
+            // the grid's size change and the viewport's own resize frame, each measuring once
+            expect(reads, 'getComputedStyle on the grid viewport').toBe(2);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver();
+            restoreOffsetParent();
+        }
     });
 
     // A flexed width is kept on the column and escapes as `columnResized`, so the flex pass measures

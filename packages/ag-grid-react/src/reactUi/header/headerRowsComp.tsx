@@ -66,11 +66,7 @@ const HeaderRowsComp = ({
     return (
         <>
             {headerRowCtrls.map((ctrl) => (
-                <HeaderRowComp
-                    ctrl={ctrl}
-                    key={ctrl.instanceId}
-                    setGuiRef={(eGui) => setRowGui(ctrl.instanceId, eGui)}
-                />
+                <HeaderRowComp ctrl={ctrl} key={ctrl.instanceId} setRowGui={setRowGui} />
             ))}
         </>
     );

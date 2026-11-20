@@ -304,7 +304,8 @@ export class ToolPanelColumnComp extends Component {
             getDefaultIconName: () => (hideColumnOnExit && !isDeferredMode(this.params) ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                // a read-only item's drop out of the grid hides nothing
+                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns') && this.isSelectable();
                 eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.column,

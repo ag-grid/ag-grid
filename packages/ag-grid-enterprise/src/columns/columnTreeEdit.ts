@@ -17,7 +17,7 @@ interface ColumnTreeEditState extends ColumnTreeEdit {
 /** Materialise spliced `columns` from the list; at depth > 0 also rebuild touched parents' `.children`.
  *  The in-order walk yields each parent's children already ordered, so no sort; others keep theirs. */
 const commitEdit = (build: ColumnTreeBuild): void => {
-    // Enterprise is the sole writer of `build.edit`, so widening back to the concrete state is sound.
+    // Enterprise is the sole writer of a non-null `build.edit`, so widening back to the concrete state is sound.
     const edit = build.edit as ColumnTreeEditState;
     const sentinel = edit.node;
     const columns: AgColumn[] = [];
@@ -79,6 +79,12 @@ const openEdit = (build: ColumnTreeBuild): ColumnTreeEditState => {
     };
     build.edit = edit;
     return edit;
+};
+
+/** The build's column at `colId`, the spliced ones included once the edit session is open. */
+export const getBuildColumn = (build: ColumnTreeBuild, colId: string): AgColumn | undefined => {
+    const edit = build.edit as ColumnTreeEditState | null;
+    return edit ? edit.byId.get(colId)?.col : build.colsById.get(colId);
 };
 
 /** Append `col` after `afterColId` (inheriting its group) if present, else at top-level end. O(1), lazily

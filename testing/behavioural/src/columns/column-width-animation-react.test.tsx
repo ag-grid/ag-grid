@@ -1,4 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
@@ -67,5 +68,27 @@ describe('column width animation (React)', () => {
 
         await waitFor(() => expect(api?.getAllDisplayedColumns().map((col) => col.getActualWidth())).toEqual([50, 50]));
         await waitFor(() => expect(animating()).toBe(false));
+    });
+
+    test('a fit to the width the columns already fill leaves column width changes unanimated', async () => {
+        const api = await renderGrid({
+            columnDefs: [
+                { colId: 'a', width: 300 },
+                { colId: 'b', width: 300 },
+            ],
+            animateColumnResizing: true,
+        });
+        expect(animating()).toBe(false);
+
+        act(() => {
+            api.sizeColumnsToFit(600);
+        });
+
+        expect(api.getAllDisplayedColumns().map((col) => col.getActualWidth())).toEqual([300, 300]);
+        expect(animating()).toBe(false);
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(animating()).toBe(false);
     });
 });

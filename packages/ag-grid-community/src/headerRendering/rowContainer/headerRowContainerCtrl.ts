@@ -1,4 +1,4 @@
-import { _addManagedElementListeners } from 'ag-stack';
+import { _addManagedElementListeners, _areEqual } from 'ag-stack';
 
 import type { ColumnMoveService } from '../../columnMove/columnMoveService';
 import { BeanStub } from '../../context/beanStub';
@@ -39,10 +39,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.setupDragAndDrop(colMoves, eGui);
 
-        const onDisplayedColsChanged = this.refresh.bind(this, true);
         this.addManagedEventListeners({
-            displayedColumnsChanged: onDisplayedColsChanged,
-            advancedFilterEnabledChanged: onDisplayedColsChanged,
+            advancedFilterEnabledChanged: this.refresh.bind(this, true),
         });
 
         ctrlsSvc.register('headerRowContainerCtrl', this);
@@ -55,7 +53,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     /** Pushed by `GridBodyCtrl.updateWidths`. Walks the fields rather than `getAllCtrls`, which
      *  allocates, because this runs on every column width change. */
     public setRowWidths(width: number): void {
-        // Several events report one column change, and a row created later reads `rowWidth` itself.
+        // `updateWidths` can push the same width again, and a row created later reads `rowWidth` itself.
         if (width === this.rowWidth) {
             return;
         }
@@ -68,13 +66,33 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.filtersRowCtrl?.setRowWidth(width);
     }
 
-    public refreshCellPositions(): void {
+    /** Called by the visible columns once per column layout; `displayedChanged` false: only the rendered columns changed. */
+    public layOutHeaderCells(displayedChanged: boolean, afterScroll: boolean): void {
+        const groupsRowCtrls = this.groupsRowCtrls;
+        if (displayedChanged) {
+            this.refresh(true);
+            for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
+                groupsRowCtrls[i].onDisplayedColumnsChanged();
+            }
+            this.columnsRowCtrl?.onDisplayedColumnsChanged();
+            this.filtersRowCtrl?.onDisplayedColumnsChanged();
+        } else {
+            for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
+                groupsRowCtrls[i].onVirtualColumnsChanged(afterScroll);
+            }
+            this.columnsRowCtrl?.onVirtualColumnsChanged(afterScroll);
+            this.filtersRowCtrl?.onVirtualColumnsChanged(afterScroll);
+        }
+    }
+
+    /** Called by the visible columns; `sectionWidthsChanged`: a centre width can change with no row width moving. */
+    public refreshCellPositions(sectionWidthsChanged: boolean): void {
         const groupsRowCtrls = this.groupsRowCtrls;
         for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
-            groupsRowCtrls[i].refreshCellPositions();
+            groupsRowCtrls[i].refreshCellPositions(sectionWidthsChanged);
         }
-        this.columnsRowCtrl?.refreshCellPositions();
-        this.filtersRowCtrl?.refreshCellPositions();
+        this.columnsRowCtrl?.refreshCellPositions(sectionWidthsChanged);
+        this.filtersRowCtrl?.refreshCellPositions(sectionWidthsChanged);
     }
 
     /** Called by the visible columns with the columns that left or reached a pinned edge, null where none did. */
@@ -185,7 +203,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         refreshFilters();
 
         const allCtrls = this.getAllCtrls();
-        this.comp.setCtrls(allCtrls);
+        if (!_areEqual(oldCtrls, allCtrls)) {
+            this.comp.setCtrls(allCtrls);
+        }
 
         this.restoreFocusOnHeader(focusSvc, focusedHeaderPosition);
 

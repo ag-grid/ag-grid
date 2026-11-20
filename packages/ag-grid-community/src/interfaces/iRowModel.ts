@@ -1,4 +1,6 @@
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import type { ColumnEventType } from '../events';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 
 export interface RowBounds {
@@ -10,6 +12,33 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export type ForEachNodeCallback<TData = any> = (node: RowNode<TData>, index: number) => void;
+
+/** The column, filter and sort changes the rows have not refreshed for yet, gathered by the column model.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface RowModelChange {
+    /** Set with each of `columnsLoaded`, `rowGroups`, `values`, `pivot`, `pivotMode` and `pivotResultNames`. */
+    columns: boolean;
+    columnsLoaded: boolean;
+    rowGroups: boolean;
+    values: boolean;
+    pivot: boolean;
+    /** The source of the latest pivot change, or of the value column rename re-deriving the pivot result columns. */
+    pivotSource: ColumnEventType;
+    /** A value column feeding the generated pivot result columns was renamed: their definitions are re-derived. */
+    pivotResultNames: boolean;
+    pivotMode: boolean;
+    /** Any `filterChanged`, a filter refreshed after a data change too. */
+    filter: boolean;
+    /** A filter change other than a refresh after a data change. */
+    filterModel: boolean;
+    /** A primary column or the quick filter changed, not only pivot result column filters. */
+    primaryFilter: boolean;
+    sort: boolean;
+    /** `treeData` or `autoGroupColumnDef` changed, which decide whether sorting a grouped column sorts its groups. */
+    groupSortCoupling: boolean;
+    /** A row model refresh asked inside the update, run at its end. */
+    rows: boolean;
+}
 
 export interface IRowModel {
     /**
@@ -24,6 +53,13 @@ export interface IRowModel {
 
     /** True while a CSRM row-data update and its pipeline refresh are in flight; unset on other models. */
     readonly refreshingData?: boolean;
+
+    /** Called by the column model after each pass of a column update, or at once outside one, with what changed. */
+    refreshAfterChange?(change: RowModelChange): void;
+    /** Applies the row options an options change changed; inside the column update when a column option changed too. */
+    onPropChange?(properties: readonly (keyof GridOptions)[]): void;
+    /** Maps the rows again after groups were opened or closed one by one, keeping the rendered rows; CSRM only. */
+    refreshAfterExpansion?(): void;
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;

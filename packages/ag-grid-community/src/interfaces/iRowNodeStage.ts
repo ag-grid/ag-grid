@@ -1,6 +1,7 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import type { ColumnEventType } from '../events';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, RefreshModelParams } from './iClientSideRowModel';
 
@@ -23,6 +24,8 @@ export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
 export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
     /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
     execute(changedPath: ChangedPath | undefined, changedProps: Set<keyof GridOptions> | undefined): boolean;
+    /** Regenerates the pivot result columns from the pivot values last bucketed, the rows left as they are. */
+    refreshColDefs(source: ColumnEventType): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

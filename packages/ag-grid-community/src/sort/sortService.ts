@@ -150,10 +150,17 @@ export class SortService extends BeanStub implements NamedBean {
     // Called by API when data changes out-of-band; we can't know what changed, so drop everything.
     public onSortChanged(source: string, columns?: AgColumn[]): void {
         this.invalidate();
-        this.dispatchSortChangedEvents(source, columns);
+        const colModel = this.beans.colModel;
+        colModel.beginColUpdate();
+        try {
+            this.dispatchSortChangedEvents(source, columns);
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     public dispatchSortChangedEvents(source: string, columns?: AgColumn[]): void {
+        this.beans.colModel.refreshRowsForSort();
         const event: WithoutGridCommon<SortChangedEvent> = { type: 'sortChanged', source, columns };
         this.eventSvc.dispatchEvent(event);
     }

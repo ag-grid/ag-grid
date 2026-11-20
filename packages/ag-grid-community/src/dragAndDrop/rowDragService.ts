@@ -21,20 +21,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         ctrl.addDestroyFunc(() => dragAndDrop.removeDropTarget(rowDragFeature));
         this.rowDragFeature = rowDragFeature;
 
-        const refreshVisibility = () => this.refreshVisibility();
-
-        this.addManagedPropertyListeners(
-            ['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'],
-            refreshVisibility
+        this.addManagedPropertyListeners(['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'], () =>
+            this.refreshVisibility()
         );
-
-        this.addManagedEventListeners({
-            newColumnsLoaded: refreshVisibility,
-            columnRowGroupChanged: refreshVisibility,
-            columnPivotModeChanged: refreshVisibility,
-            sortChanged: refreshVisibility,
-            filterChanged: refreshVisibility,
-        });
 
         this.visibility = this.computeVisibility();
     }
@@ -132,7 +121,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         return 'visible';
     }
 
-    private refreshVisibility(): void {
+    public refreshVisibility(): void {
         const previousVisibility = this.visibility;
         const newVisibility = this.computeVisibility();
         if (previousVisibility !== newVisibility) {

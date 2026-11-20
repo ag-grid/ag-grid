@@ -6,8 +6,9 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { ColumnFilterService } from '../filter/columnFilterService';
+import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { ColumnFlexService } from './columnFlexService';
@@ -29,9 +30,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private colViewport: ColumnViewportService;
     private ctrlsSvc: CtrlsService;
     private colFlex?: ColumnFlexService;
-    private colFilter?: ColumnFilterService;
     private rowRenderer: RowRenderer;
     private rowAutoHeight?: RowAutoHeightService;
+    private scrollVisibleSvc: ScrollVisibleService;
+    private pinnedCols?: PinnedColumnService;
     /** The `allColsIndex` of the last displayed centre col with `flex > 0`, -1 when none, counted per layout. */
     public lastFlexIndex = -1;
 
@@ -68,14 +70,29 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Bumped once per pass that restamps the column lefts, so anything derived from where the columns
      *  are can tell whether it is looking at the same layout without re-deriving it. */
     public layoutVersion = 0;
+    /** Bumped by a pass that moves, resizes, shows or hides a displayed column: what an animation slides. */
+    public layoutChangeVersion = 0;
+    /** The pass moved a column (a rebuild from its reported left, a resize from its last left) or the displayed set. */
+    private layoutChanged = false;
 
     /** A cell may have moved or resized with no section total changing since the cells were last placed. */
     private cellsMoved = false;
     /** The source of the first layout made inside a column update, whose layout events wait for its end. */
     private pendingLayoutSource: ColumnEventType | null = null;
+    /** The `*_COLUMNS_CHANGED_BIT` grid events a column update's end raises, once each however many layouts it made. */
+    private pendingLayoutEvents = 0;
 
-    /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
+    /** Bumped when the displayed columns, their lanes, an `aria-colindex` or the colDefs change: its caches' key. */
     public displayedColsVersion = 0;
+    /** What `displayedColsVersion` was last bumped for, kept as `allCols` while the columns match. */
+    private versionedCols: AgColumn[] = [];
+    /** A column `joinCols` placed differs from `versionedCols` at its index. */
+    private displayedColsMoved = false;
+    /** A hidden column moved past a displayed one changes the span `aria-colspan` reports, and nothing displayed. */
+    private ariaColIndexesMoved = false;
+    private versionedLeftCount = 0;
+    private versionedRightCount = 0;
+    private versionedColDefsVersion = -1;
 
     /** The pinned-edge cols, so `setPinnedEdges` swaps the roles in O(1). */
     private lastLeftPinnedCol: AgColumn | null = null;
@@ -87,15 +104,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.colViewport = beans.colViewport;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colFlex = beans.colFlex;
-        this.colFilter = beans.colFilter;
         this.rowRenderer = beans.rowRenderer;
         this.rowAutoHeight = beans.rowAutoHeight;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
+        this.pinnedCols = beans.pinnedCols;
     }
 
     /** `skipTreeBuild=true` reuses the trees; valid only when liveCols are unchanged (group toggle, width autosize).
      *  Returns the columns the flex pass sized, when one ran. */
     public refresh(source: ColumnEventType, skipTreeBuild: boolean): AgColumn[] | undefined {
-        const { colFlex, colModel, colViewport, ctrlsSvc } = this;
+        const { colFlex, colModel, ctrlsSvc } = this;
         if (!skipTreeBuild) {
             this.buildTrees();
         }
@@ -140,7 +158,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         // Run flex sizing when a flex col exists OR cols await a flex-then-reveal pass
         // (a "had flex" → "no flex" transition still needs the reveal).
-        const runFlex = this.lastFlexIndex >= 0 || colFlex?.columnsHidden;
+        const runFlex = colFlex && (this.lastFlexIndex >= 0 || colFlex.columnsHidden);
         let flexedCols: AgColumn[] | undefined;
         if (runFlex) {
             // colFlex's cached viewport width only updates on DOM resize, but pinning changes centre
@@ -151,28 +169,30 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 const centerWidth = viewportWidth - widths.left - widths.right;
                 flexParams = { viewportWidth: centerWidth > 0 ? centerWidth : 0 };
             }
-            flexedCols = colFlex?.refreshFlexedColumns(flexParams);
+            flexedCols = colFlex.refreshFlexedColumns({ ...flexParams, skipSetLeft: true });
+            // the flex pass resizes centre columns only: the pinned sections keep their lefts and totals
+            widths.center = this.setLeftsLeftToRight(centerCols);
+            this.setLeftValuesOfGroups();
         }
         // a changed displayed set can trade one column's width for another's with no left or total moving
         this.cellsMoved = true;
-        // Reuse the section totals — except after a flex pass, which resized centre cols, so re-sum.
-        this.layoutBodyWidths(runFlex ? undefined : widths);
-        colViewport.checkViewportColumns(false);
+        this.layoutBodyWidths(widths);
 
         this.rowAutoHeight?.requestCheckAutoHeight();
-        this.colFilter?.refreshRedefinedFilters();
-        this.dispatchLayoutEvents(source);
-        this.eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
+        this.dispatchLayoutEvents(source, DISPLAYED_COLUMNS_CHANGED_BIT);
         return flexedCols;
     }
 
     /** Ends a resize, a fit or a flex pass; `widths` reuses totals already summed, else they are re-summed. */
     public updateBodyWidths(source: ColumnEventType, widths?: SectionWidths): void {
-        this.layoutBodyWidths(widths);
-        this.dispatchLayoutEvents(source);
+        if (this.layoutBodyWidths(widths)) {
+            this.scrollVisibleSvc.refresh();
+        }
+        this.dispatchLayoutEvents(source, 0);
     }
 
-    private layoutBodyWidths(widths: SectionWidths | undefined): void {
+    /** Whether a section total changed; a displayed columns change refreshes the scrollbars itself. */
+    private layoutBodyWidths(widths: SectionWidths | undefined): boolean {
         // Above the comparison below: a move restamps the lefts and leaves all three totals unchanged.
         ++this.layoutVersion;
 
@@ -180,55 +200,97 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const newLeftWidth = widths ? widths.left : getWidthOfColsInList(this.leftCols);
         const newRightWidth = widths ? widths.right : getWidthOfColsInList(this.rightCols);
 
-        if (this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
+        const widthsKept =
+            this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth;
+        if (this.layoutChanged || !widthsKept) {
+            this.layoutChanged = false;
+            ++this.layoutChangeVersion;
+        }
+        if (widthsKept) {
             // over the same displayed columns, a width change moves a section total or a later left
             if (this.cellsMoved) {
                 this.cellsMoved = false;
-                this.refreshCellPositions();
+                this.refreshCellPositions(false);
+                this.colViewport.checkViewportColumns();
             }
-            return;
+            return false;
         }
         this.bodyWidth = newBodyWidth;
         this.leftWidth = newLeftWidth;
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
         this.cellsMoved = false;
-        this.refreshCellPositions();
+        this.refreshCellPositions(true);
 
-        // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
-        // before the scrollbar updates its visibility.
-        const eventSvc = this.eventSvc;
+        const { eventSvc, ctrlsSvc } = this;
+        // Unused by the grid; still raised as applications may listen to it by name.
         eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
+        this.pinnedCols?.refreshWidths(newLeftWidth, newRightWidth);
+        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
+        if (gridBodyCtrl) {
+            gridBodyCtrl.updateWidths();
+            // after the widths are pushed, as a browser clamps `scrollLeft` to them only on a later read
+            gridBodyCtrl.scrollFeature.onDisplayedColumnsWidthChanged();
+            gridBodyCtrl.updateColumnViewport();
+        }
+        // Only the test ids listen in the grid; still raised as applications may listen to it by name.
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });
+        return true;
     }
 
     /** Body cells and header cells are sized and placed here, once every left and width is set, never by column events. */
-    private refreshCellPositions(): void {
-        this.rowRenderer.refreshCellPositions();
-        this.ctrlsSvc.getHeaderRowContainerCtrl()?.refreshCellPositions();
+    private refreshCellPositions(sectionWidthsChanged: boolean): void {
+        this.rowRenderer.refreshCellPositions(sectionWidthsChanged);
+        this.ctrlsSvc.getHeaderRowContainerCtrl()?.refreshCellPositions(sectionWidthsChanged);
     }
 
-    /** Each column and group reports how its layout changed since it last did, now that the layout is final: inside
-     *  a column update, at its end, after its column events. */
-    private dispatchLayoutEvents(source: ColumnEventType): void {
+    /** `gridEvents`, then column and group layout events (none for a `null` source), now or at the update's end. */
+    public dispatchLayoutEvents(source: ColumnEventType | null, gridEvents: number): void {
         if (this.colModel.colUpdateDepth === 0) {
-            this.raiseLayoutEvents(source);
+            this.raiseGridLayoutEvents(source, gridEvents);
+            this.raiseColLayoutEvents(source);
         } else {
             // the first layout's: a nested or listener-made layout joins the update, it does not relabel it
             this.pendingLayoutSource ??= source;
+            this.pendingLayoutEvents |= gridEvents;
         }
     }
 
-    /** Raises the layout events a column update deferred; called as it ends. */
+    /** Raises the grid layout events the open column update deferred; its columns' own wait for its end. */
+    public raiseDeferredGridLayoutEvents(): void {
+        const gridEvents = this.pendingLayoutEvents;
+        this.pendingLayoutEvents = 0;
+        this.raiseGridLayoutEvents(this.pendingLayoutSource, gridEvents);
+    }
+
+    /** Raises every layout event a column update deferred: call once it has ended. */
     public raiseDeferredLayoutEvents(): void {
         const source = this.pendingLayoutSource;
-        if (source !== null) {
-            this.pendingLayoutSource = null;
-            this.raiseLayoutEvents(source);
+        const gridEvents = this.pendingLayoutEvents;
+        this.pendingLayoutSource = null;
+        this.pendingLayoutEvents = 0;
+        this.raiseGridLayoutEvents(source, gridEvents);
+        this.raiseColLayoutEvents(source);
+    }
+
+    private raiseGridLayoutEvents(source: ColumnEventType | null, gridEvents: number): void {
+        const eventSvc = this.eventSvc;
+        if (gridEvents !== 0) {
+            this.layOutCells((gridEvents & DISPLAYED_COLUMNS_CHANGED_BIT) !== 0, false);
+        }
+        if (gridEvents & VIRTUAL_COLUMNS_CHANGED_BIT) {
+            eventSvc.dispatchEvent({ type: 'virtualColumnsChanged', afterScroll: false });
+        }
+        if (source !== null && gridEvents & DISPLAYED_COLUMNS_CHANGED_BIT) {
+            this.scrollVisibleSvc.refresh();
+            eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
         }
     }
 
-    private raiseLayoutEvents(source: ColumnEventType): void {
+    private raiseColLayoutEvents(source: ColumnEventType | null): void {
+        if (source === null) {
+            return;
+        }
         const colModel = this.colModel;
         dispatchColLayoutEvents(colModel.colsList, source);
         // the primary columns are parked out of `colsList` while pivoting, and can still be resized
@@ -241,6 +303,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             dispatchGroupLayoutEvents(this.treeCenter);
             dispatchGroupLayoutEvents(this.treeRight);
         }
+    }
+
+    /** Lays out row and header cells once, before the change's events, so their listeners read them drawn. */
+    public layOutCells(displayedChanged: boolean, afterScroll: boolean): void {
+        this.ctrlsSvc.getHeaderRowContainerCtrl()?.layOutHeaderCells(displayedChanged, afterScroll);
+        this.rowRenderer.layOutCells(displayedChanged);
     }
 
     /** Repositions each col's section-relative `left` without rebuilding the displayed set; returns
@@ -418,7 +486,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.centerCols = [];
         this.allCols = [];
         this.lastFlexIndex = -1;
-        ++this.displayedColsVersion;
         this.autoHeightCols.length = 0;
         this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
@@ -433,12 +500,17 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         for (let i = 0, total = cols.length; i < total; ++i) {
             const col = cols[i];
             const lane = col.pinnedLane;
+            let ariaColIndex: number;
             if (lane === 2) {
-                col.ariaColIndex = rightCursor++;
+                ariaColIndex = rightCursor++;
             } else if (lane === 0) {
-                col.ariaColIndex = leftCursor++;
+                ariaColIndex = leftCursor++;
             } else {
-                col.ariaColIndex = centerCursor++;
+                ariaColIndex = centerCursor++;
+            }
+            if (col.ariaColIndex !== ariaColIndex) {
+                col.ariaColIndex = ariaColIndex;
+                this.ariaColIndexesMoved = true;
             }
         }
     }
@@ -458,6 +530,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             prev.left = null;
         }
         const all: AgColumn[] = [];
+        this.displayedColsMoved = false;
         this.autoHeightCols.length = 0;
         this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
@@ -479,24 +552,45 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             rightWidth = this.layoutSection(rightCols, all, hidePaddedHeaderRows);
         }
 
-        this.allCols = all;
-        ++this.displayedColsVersion;
+        const colsMoved = this.displayedColsMoved || all.length !== this.versionedCols.length;
+        this.layoutChanged ||= colsMoved;
+        this.allCols = colsMoved ? all : this.versionedCols;
+        const colDefsVersion = this.colModel.colDefsVersion;
+        if (
+            colsMoved ||
+            this.ariaColIndexesMoved ||
+            colDefsVersion !== this.versionedColDefsVersion ||
+            leftCols.length !== this.versionedLeftCount ||
+            rightCols.length !== this.versionedRightCount
+        ) {
+            this.versionedCols = this.allCols;
+            this.ariaColIndexesMoved = false;
+            this.versionedLeftCount = leftCols.length;
+            this.versionedRightCount = rightCols.length;
+            this.versionedColDefsVersion = colDefsVersion;
+            ++this.displayedColsVersion;
+        }
         return { left: leftWidth, center: centerWidth, right: rightWidth };
     }
 
     /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in the
      *  per-column lists and `lastFlexIndex`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
     private layoutSection(cols: AgColumn[], all: AgColumn[], hidePaddedHeaderRows: boolean): number {
-        const { autoHeightCols, rowSpanCols } = this;
+        const { autoHeightCols, rowSpanCols, versionedCols } = this;
         let left = 0;
+        let moved = false;
+        let relaid = false;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
         let lastParent: AgColumnGroup | null = null;
         for (let i = 0, len = cols.length; i < len; ++i) {
             const col = cols[i];
-            col.allColsIndex = all.length;
+            const index = all.length;
+            col.allColsIndex = index;
             col.displayed = true;
             col.oldLeft = col.reportedLeft;
             col.left = left;
+            moved ||= versionedCols[index] !== col;
+            relaid ||= col.oldLeft !== left;
             all.push(col);
             if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
@@ -513,7 +607,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             if (col.pinned == null) {
                 const flex = col.flex;
                 if (flex != null && flex > 0) {
-                    this.lastFlexIndex = col.allColsIndex;
+                    this.lastFlexIndex = index;
                 }
             }
             if (hidePaddedHeaderRows) {
@@ -528,6 +622,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             }
             left += col.actualWidth;
         }
+        this.displayedColsMoved ||= moved;
+        this.layoutChanged ||= relaid;
         return left;
     }
 
@@ -543,6 +639,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             left += col.actualWidth;
         }
         this.cellsMoved ||= moved;
+        this.layoutChanged ||= moved;
         return left;
     }
 
@@ -582,6 +679,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return (isFirst ? allCols[0] : allCols[allLen - 1]) === target;
     }
 }
+
+/** Grid-level layout events in {@link VisibleColsService.dispatchLayoutEvents}' bits. */
+export const VIRTUAL_COLUMNS_CHANGED_BIT = 1;
+const DISPLAYED_COLUMNS_CHANGED_BIT = 2;
 
 /** Top-down DFS: computes each `group.displayedChildren`, replaced only when it changes, and collects displayed
  *  leaves into `out` in one pass. `parentWithExpansion` carries `columnGroupShow` down (no per-group parent walk). */

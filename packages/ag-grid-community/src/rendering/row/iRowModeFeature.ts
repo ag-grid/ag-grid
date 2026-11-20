@@ -24,7 +24,7 @@ export interface IRowModeFeature {
     destroyCells(): void;
     isSuppressMouseEvent(mouseEvent: MouseEvent): boolean;
     onDisplayedColumnsChanged(): void;
-    onVirtualColumnsChanged(): void;
+    onVirtualColumnsChanged?(): void;
     onSpannedCellsUpdated(pinned: ColumnPinnedType): void;
 
     // Optional Features

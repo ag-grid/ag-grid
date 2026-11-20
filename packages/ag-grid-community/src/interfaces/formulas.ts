@@ -77,7 +77,10 @@ export interface IFormulaService extends Bean {
     isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(columns: AgColumn[]): void;
-    onColsRefreshed(): void;
+    /** Called at each pass of a column update, before the rows refresh. */
+    refreshForColChanges(): void;
+    /** Called at each pass of a column update and as it ends, once the redefined cells are redrawn. */
+    refreshCellsForColChanges(): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;

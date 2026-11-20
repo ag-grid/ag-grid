@@ -115,28 +115,6 @@ export const _destroyColumnTreeAll = (
     }
 };
 
-/** Destroys prev-build nodes absent from the new build. Walks flat prev lists, not `.children`:
- *  orphans whose parent's array was replaced are otherwise unreachable.
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _destroyColumnTreeUnused = (
-    prevCols: readonly AgColumn[],
-    prevAllGroups: readonly AgProvidedColumnGroup[],
-    buildToken: number
-): void => {
-    for (let i = 0, len = prevCols.length; i < len; ++i) {
-        const col = prevCols[i];
-        if (col.buildToken !== buildToken && col.isAlive()) {
-            col.destroy();
-        }
-    }
-    for (let i = 0, len = prevAllGroups.length; i < len; ++i) {
-        const group = prevAllGroups[i];
-        if (group.buildToken !== buildToken && group.isAlive()) {
-            group.destroy();
-        }
-    }
-};
-
 /** Calls `callback` for each leaf `ColDef`, recursing into `ColGroupDef` children; not called on groups. */
 export function forEachColDef(columnDefs: (ColDef | ColGroupDef)[], callback: (colDef: ColDef) => void): void {
     for (let i = 0, len = columnDefs.length; i < len; ++i) {
