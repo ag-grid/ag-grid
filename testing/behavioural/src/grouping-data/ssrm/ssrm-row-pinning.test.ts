@@ -8,7 +8,7 @@ import {
 } from 'ag-test-utils';
 
 import type { DefaultMenuItem, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { PinnedRowModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import { GridStateModule, PinnedRowModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { ContextMenuModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 interface RowData {
@@ -24,7 +24,13 @@ function rightClick(element: HTMLElement): void {
 
 describe('Manual row pinning with the Server-Side Row Model', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, PinnedRowModule, ContextMenuModule],
+        modules: [
+            ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
+            PinnedRowModule,
+            ContextMenuModule,
+            GridStateModule,
+        ],
     });
     let restoreOffsetParent: (() => void) | undefined;
 
@@ -46,7 +52,10 @@ describe('Manual row pinning with the Server-Side Row Model', () => {
             rowModelType: 'serverSide',
             getRowId: ({ data }) => data.id,
             serverSideDatasource: {
-                getRows: (params) => setTimeout(() => params.success({ rowData: ROWS, rowCount: ROWS.length })),
+                getRows: (params) =>
+                    setTimeout(() =>
+                        params.success({ rowData: ROWS, rowCount: ROWS.length, grandTotalData: { id: 'total' } })
+                    ),
             },
             enableRowPinning: true,
             ...options,
@@ -62,6 +71,17 @@ describe('Manual row pinning with the Server-Side Row Model', () => {
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
         expect(api.getPinnedTopRowCount()).toBe(0);
+    });
+
+    test('with a fixed grand total, a row pinning state pins only the grand total', async () => {
+        const api = createGrid('ssrmPinState', { grandTotalRow: 'pinnedBottom' });
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+
+        api.setState({ rowPinning: { top: ['3'], bottom: ['5'] } });
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
     });
 
     test('the context menu offers no Pin Row, by default or when listed', async () => {

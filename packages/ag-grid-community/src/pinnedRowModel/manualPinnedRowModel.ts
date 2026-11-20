@@ -124,6 +124,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             }
         }
 
+        if (float != null && !_getEnableRowPinning(this.gos)) {
+            return;
+        }
+
         // cell-span pinning/unpinning
         const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
         const sources: RowNode[] = [];
@@ -228,6 +232,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             grandTotalPinned = 'top';
         }
         this.takeUserGrandTotalPin(grandTotalPinned);
+        if (!_getEnableRowPinning(this.gos)) {
+            topQueued.clear();
+            bottomQueued.clear();
+        }
         // Rows listed in the other container are moved, not detached, so they report one `rowPinned`.
         const sources = this.detachPinnedRows((n) => {
             const id = n.pinnedSibling?.id;
