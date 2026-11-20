@@ -595,6 +595,22 @@ describe('SSRM viewSubscription', () => {
         expect(api.isDestroyed()).toBe(true);
     });
 
+    test('a handler error does not escape when throwOn includes warnings', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        api.setGridOption('viewSubscription', {
+            subscribeRows: recorder.handlers.subscribeRows,
+            unsubscribeRows: () => {
+                throw new Error('unsubscribe failed');
+            },
+        });
+
+        expect(() => api.destroy()).not.toThrow();
+        expectHandlerWarning('unsubscribe failed');
+        expect(api.isDestroyed()).toBe(true);
+    });
+
     test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();

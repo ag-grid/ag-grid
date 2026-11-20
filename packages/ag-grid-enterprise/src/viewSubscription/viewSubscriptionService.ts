@@ -300,7 +300,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         try {
             options?.unsubscribeRows(refs, this.createParams());
         } catch (error) {
-            this.warn(333, { callback: 'viewSubscription.unsubscribeRows', error });
+            this.reportHandlerError('unsubscribeRows', error);
         }
     }
 
@@ -327,7 +327,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
                 sub.retried = true;
                 this.schedule();
             }
-            this.warn(333, { callback: 'viewSubscription.subscribeRows', error });
+            this.reportHandlerError('subscribeRows', error);
+        }
+    }
+
+    /**
+     * Reports a handler error as warning #333. Reporting never throws, so `throwOn` or a thrown value the
+     * logger cannot format does not stop the grid part-way through destroying or updating subscriptions.
+     */
+    private reportHandlerError(handler: 'subscribeRows' | 'unsubscribeRows', error: unknown): void {
+        try {
+            this.warn(333, { callback: `viewSubscription.${handler}`, error });
+        } catch {
+            // the warning has been raised; only its throw or formatting failed
         }
     }
 
