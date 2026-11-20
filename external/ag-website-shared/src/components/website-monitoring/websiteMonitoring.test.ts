@@ -455,7 +455,9 @@ describe('slow interactions', () => {
         await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
 
         expect(reporter.stop).toHaveBeenCalledTimes(1);
-        expect(reporter.stop).toHaveBeenCalledBefore(dash0.terminateSession);
+        expect(reporter.stop.mock.invocationCallOrder[0]).toBeLessThan(
+            dash0.terminateSession.mock.invocationCallOrder[0]
+        );
     });
 });
 
