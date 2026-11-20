@@ -1,4 +1,10 @@
-import type { DecisionHubCard, DecisionHubContent } from '@ag-website-shared/components/decision-pages/decisionHub';
+import { findStaleClaims } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
+import {
+    type DecisionHubCard,
+    type DecisionHubContent,
+    sortHubCards,
+} from '@ag-website-shared/components/decision-pages/decisionHub';
+import { toIsoDate } from '@ag-website-shared/components/decision-pages/decisionPageText';
 import type {
     ComparisonPageContent,
     DecisionPageSite,
@@ -69,10 +75,11 @@ export function compareRelatedPages({
     slug: string;
     pages: Array<{ slug: string; content: ComparisonPageContent }>;
 }): RelatedPageGroup[] {
-    const otherComparisons = pages
-        .filter((page) => page.slug !== slug)
-        .map((page) => ({ title: page.content.hero.heading, url: comparePageUrl(page.slug) }))
-        .sort((a, b) => a.title.localeCompare(b.title));
+    const otherComparisons = sortHubCards(
+        pages
+            .filter((page) => page.slug !== slug)
+            .map((page) => ({ title: page.content.hero.heading, url: comparePageUrl(page.slug) }))
+    );
 
     return [
         ...(otherComparisons.length ? [{ name: 'Compare', links: otherComparisons }] : []),
@@ -86,4 +93,31 @@ export function compareRelatedPages({
             ],
         },
     ];
+}
+
+/**
+ * `getStaticPaths` for a comparison page and its `.md` twin, so both build from the same entries
+ * and related links.
+ */
+export function comparePagePaths<Content extends ComparisonPageContent>(entries: Array<{ id: string; data: Content }>) {
+    const pages = entries.map(({ id, data }) => ({ slug: id, content: data }));
+    return pages.map(({ slug, content }) => ({
+        params: { comparePage: slug },
+        props: { content, related: compareRelatedPages({ slug, pages }) },
+    }));
+}
+
+/**
+ * Warns, without failing the build, about competitor claims due a re-check against their source.
+ * Dates are judged against the build date.
+ */
+export function warnStaleClaims(entries: Array<{ id: string; data: ComparisonPageContent }>): void {
+    for (const { id, data } of entries) {
+        for (const { path, sourceUrl, checkedOn } of findStaleClaims(data)) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `[compare/${id}] ${path} was last checked on ${toIsoDate(checkedOn)}: re-verify it against ${sourceUrl} and update checkedOn`
+            );
+        }
+    }
 }

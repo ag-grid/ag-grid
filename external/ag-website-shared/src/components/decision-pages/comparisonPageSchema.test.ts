@@ -1,4 +1,5 @@
-import { createComparisonPageSchema } from './comparisonPageSchema';
+import { createComparisonPageSchema, findStaleClaims } from './comparisonPageSchema';
+import type { ComparisonPageContent } from './types';
 
 const NOW = new Date('2026-11-11T00:00:00Z');
 const SOURCE = 'https://tanstack.com/table/latest/docs/introduction';
@@ -61,17 +62,12 @@ describe('createComparisonPageSchema', () => {
         expect(result.data?.keyFigures).toEqual(keyFigures);
     });
 
-    test('rejects a competitor claim checked longer ago than the maximum age', () => {
-        const result = schema.safeParse(validPage({ checkedOn: '2026-07-01' }));
+    test('accepts a competitor claim checked long ago, leaving it to findStaleClaims to warn', () => {
+        expect(schema.safeParse(validPage({ checkedOn: '2025-01-01' })).success).toBe(true);
+    });
 
-        expect(result.success).toBe(false);
-        const paths = result.error?.issues.map((issue) => issue.path.join('.'));
-        expect(paths).toEqual([
-            'features.groups.0.rows.0.competitor.checkedOn',
-            'pricing.competitor.0.checkedOn',
-            'proseClaims.0.checkedOn',
-        ]);
-        expect(result.error?.issues[0].message).toMatch(/re-verify it against its source/);
+    test("accepts tomorrow's UTC date, which is already today east of UTC", () => {
+        expect(schema.safeParse(validPage({ checkedOn: '2026-11-12' })).success).toBe(true);
     });
 
     test('rejects a checked date in the future', () => {
@@ -120,11 +116,25 @@ describe('createComparisonPageSchema', () => {
         expect(result.success).toBe(false);
         expect(result.error?.issues[0].path).toEqual(['technicalReviewer']);
     });
+});
+
+describe('findStaleClaims', () => {
+    const parse = (checkedOn: string) => schema.parse(validPage({ checkedOn })) as ComparisonPageContent;
+
+    test('lists every competitor claim checked longer ago than the maximum age', () => {
+        expect(findStaleClaims(parse('2026-07-01'), { now: NOW }).map(({ path }) => path)).toEqual([
+            'features.groups.0.rows.0.competitor',
+            'pricing.competitor.0',
+            'proseClaims.0',
+        ]);
+    });
+
+    test('lists nothing when every claim was checked recently', () => {
+        expect(findStaleClaims(parse('2026-11-01'), { now: NOW })).toEqual([]);
+    });
 
     test('honours a custom maximum claim age', () => {
-        const strict = createComparisonPageSchema({ reviewerKeys: ['james'], maxClaimAgeDays: 5, now: NOW });
-
-        expect(strict.safeParse(validPage({ checkedOn: '2026-11-01' })).success).toBe(false);
-        expect(strict.safeParse(validPage({ checkedOn: '2026-11-08' })).success).toBe(true);
+        expect(findStaleClaims(parse('2026-11-01'), { now: NOW, maxClaimAgeDays: 5 })).toHaveLength(3);
+        expect(findStaleClaims(parse('2026-11-08'), { now: NOW, maxClaimAgeDays: 5 })).toEqual([]);
     });
 });

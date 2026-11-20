@@ -18,6 +18,10 @@ export const COMPARISON_SECTIONS = {
 
 export const chooseIfHeading = (name: string): string => `Choose ${name} if`;
 
+/** A comparison page's short name, e.g. `AG Grid vs MUI X Data Grid`: its breadcrumb, visible and in JSON-LD. */
+export const comparisonPageName = (productName: string, competitorName: string): string =>
+    `${productName} vs ${competitorName}`;
+
 /** The get started panel's two calls to action: the docs, and an Enterprise trial licence. */
 export const GET_STARTED_CTAS = {
     docs: 'Explore the Docs',
@@ -56,6 +60,9 @@ export const PRICING_COST: Record<PricingCost, { symbol?: string; label: string;
     conditional: { symbol: '◐', label: 'Free, with conditions', tone: 'limited' },
     'on-request': { label: 'On request', tone: 'none' },
 };
+
+/** ISO calendar date, e.g. `2026-11-11`, read in UTC like `formatLastUpdated`. */
+export const toIsoDate = (date: Date): string => date.toISOString().slice(0, 10);
 
 /** UK long-form date, e.g. `11 November 2026`, read in UTC so it matches the ISO date authored. */
 export const formatLastUpdated = (date: Date): string =>

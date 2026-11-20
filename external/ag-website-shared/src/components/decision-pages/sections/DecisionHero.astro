@@ -3,7 +3,7 @@ import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 
 import styles from '../DecisionPage.module.scss';
 import { ctaAttributes } from '../decisionPageCta';
-import { formatLastUpdated } from '../decisionPageText';
+import { formatLastUpdated, toIsoDate } from '../decisionPageText';
 import type { DecisionPageSite } from '../types';
 
 interface Props {
@@ -59,7 +59,7 @@ const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: '
     </div>
     <div class={styles.heroMeta}>
         <p>
-            Last updated <time datetime={lastUpdated.toISOString().slice(0, 10)}>{formatLastUpdated(lastUpdated)}</time>
+            Last updated <time datetime={toIsoDate(lastUpdated)}>{formatLastUpdated(lastUpdated)}</time>
         </p>
         <slot name="review-credit" />
     </div>

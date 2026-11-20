@@ -1,6 +1,8 @@
 import { z } from 'astro/zod';
 
-/** How long a competitor claim stays publishable after it was last checked against its source. */
+import type { ComparisonPageContent } from './types';
+
+/** How long a competitor claim goes before the build warns that it needs re-checking. */
 export const DEFAULT_MAX_CLAIM_AGE_DAYS = 90;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -8,34 +10,28 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 interface ComparisonPageSchemaOptions {
     /** The site's technical reviewer keys, so a page can only credit a known engineer. */
     reviewerKeys: readonly [string, ...string[]];
-    maxClaimAgeDays?: number;
-    /** The date claims are judged against. Defaults to the build date; fixed in tests. */
+    /** The date `checkedOn` must not be after. Defaults to the build date; fixed in tests. */
     now?: Date;
 }
 
 /**
  * The content-collection schema for comparison pages (`/compare/{product}-vs-{competitor}/`).
  *
- * Every competitor claim, whether in a table cell, a pricing row or prose, carries `sourceUrl` and
- * `checkedOn`, and a claim checked more than `maxClaimAgeDays` ago fails the build. That makes
- * the SE-148 rule ("no unverified competitor claim is published") something the build enforces
- * rather than something a reviewer has to remember.
+ * Every competitor claim, whether in a table cell, a pricing row or prose, must carry `sourceUrl`
+ * and `checkedOn`, so no unverified competitor claim is published (SE-148). How recently a claim
+ * was checked is not validated here: `findStaleClaims` reports old ones as build warnings, so a
+ * date passing never breaks a build.
  */
-export function createComparisonPageSchema({
-    reviewerKeys,
-    maxClaimAgeDays = DEFAULT_MAX_CLAIM_AGE_DAYS,
-    now = new Date(),
-}: ComparisonPageSchemaOptions) {
-    const oldestAllowed = new Date(now.getTime() - maxClaimAgeDays * DAY_MS);
+export function createComparisonPageSchema({ reviewerKeys, now = new Date() }: ComparisonPageSchemaOptions) {
+    // `checkedOn` is a calendar date read as UTC midnight; a day's grace accepts today's date in
+    // every time zone.
+    const latestAllowed = new Date(now.getTime() + DAY_MS);
 
     const claimSource = {
         sourceUrl: z.string().url(),
         checkedOn: z.coerce
             .date()
-            .refine((checkedOn) => checkedOn >= oldestAllowed, {
-                message: `Claim was checked more than ${maxClaimAgeDays} days ago: re-verify it against its source and update checkedOn`,
-            })
-            .refine((checkedOn) => checkedOn <= now, { message: 'checkedOn is in the future' }),
+            .refine((checkedOn) => checkedOn <= latestAllowed, { message: 'checkedOn is in the future' }),
     };
 
     const featureCell = z.object({
@@ -112,4 +108,33 @@ export function createComparisonPageSchema({
         ),
         proseClaims: z.array(z.object({ claim: z.string(), ...claimSource })),
     });
+}
+
+export interface StaleClaim {
+    /** Where the claim is in the page content, e.g. `pricing.competitor.0`. */
+    path: string;
+    sourceUrl: string;
+    checkedOn: Date;
+}
+
+/** The competitor claims last checked more than `maxClaimAgeDays` before `now`, for a build warning. */
+export function findStaleClaims(
+    content: ComparisonPageContent,
+    { now = new Date(), maxClaimAgeDays = DEFAULT_MAX_CLAIM_AGE_DAYS }: { now?: Date; maxClaimAgeDays?: number } = {}
+): StaleClaim[] {
+    const oldestAllowed = now.getTime() - maxClaimAgeDays * DAY_MS;
+    const claims = [
+        ...content.features.groups.flatMap((group, groupIndex) =>
+            group.rows.map((row, rowIndex) => ({
+                path: `features.groups.${groupIndex}.rows.${rowIndex}.competitor`,
+                ...row.competitor,
+            }))
+        ),
+        ...content.pricing.competitor.map((row, index) => ({ path: `pricing.competitor.${index}`, ...row })),
+        ...content.proseClaims.map((claim, index) => ({ path: `proseClaims.${index}`, ...claim })),
+    ];
+
+    return claims
+        .filter(({ checkedOn }) => checkedOn.getTime() < oldestAllowed)
+        .map(({ path, sourceUrl, checkedOn }) => ({ path, sourceUrl, checkedOn }));
 }

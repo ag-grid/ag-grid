@@ -15,5 +15,5 @@ export interface DecisionHubContent {
 }
 
 /** Cards sorted by title, so the hub order is stable however the collection loads. */
-export const sortHubCards = (cards: DecisionHubCard[]): DecisionHubCard[] =>
+export const sortHubCards = <T extends { title: string }>(cards: T[]): T[] =>
     [...cards].sort((a, b) => a.title.localeCompare(b.title));

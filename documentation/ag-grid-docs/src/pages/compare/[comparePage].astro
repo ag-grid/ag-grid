@@ -1,21 +1,25 @@
 ---
 import ComparisonPage from '@ag-website-shared/components/decision-pages/ComparisonPage.astro';
 import { buildDecisionPageStructuredData } from '@ag-website-shared/components/decision-pages/decisionPageStructuredData';
+import { comparisonPageName } from '@ag-website-shared/components/decision-pages/decisionPageText';
 import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import Layout from '@layouts/Layout.astro';
-import { COMPARE_HUB_NAME, GRID_DECISION_SITE, compareRelatedPages } from '@utils/decisionPages';
+import {
+    COMPARE_HUB_NAME,
+    GRID_DECISION_SITE,
+    comparePagePaths,
+    type compareRelatedPages,
+    warnStaleClaims,
+} from '@utils/decisionPages';
 import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
     const entries = await getCollection('comparePages');
-    const pages = entries.map(({ id, data }) => ({ slug: id, content: data }));
-    return pages.map(({ slug, content }) => ({
-        params: { comparePage: slug },
-        props: { content, related: compareRelatedPages({ slug, pages }) },
-    }));
+    warnStaleClaims(entries);
+    return comparePagePaths(entries);
 }
 
 type Props = {
@@ -42,7 +46,7 @@ const pageStructuredData = [
         breadcrumbs: [
             { name: GRID_DECISION_SITE.productName, url: new URL('/', metadata.canonicalUrlBase).href },
             { name: COMPARE_HUB_NAME, url: hubUrl },
-            { name: content.hero.heading, url: pageUrl },
+            { name: comparisonPageName(GRID_DECISION_SITE.productName, content.competitor.name), url: pageUrl },
         ],
         faq: content.faq,
         competitorName: content.competitor.name,

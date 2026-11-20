@@ -13,7 +13,7 @@ import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/Land
 import { renderFAQAnswers, renderMarkdocHtml } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
 
 import styles from './DecisionPage.module.scss';
-import { COMPARISON_SECTIONS } from './decisionPageText';
+import { COMPARISON_SECTIONS, comparisonPageName } from './decisionPageText';
 import ChooseIf from './sections/ChooseIf.astro';
 import DecisionHero from './sections/DecisionHero.astro';
 import DecisionSection from './sections/DecisionSection.astro';
@@ -45,7 +45,7 @@ const competitor = {
 <DecisionHero
     site={site}
     hubName={hubName}
-    pageName={`${productName} vs ${competitorName}`}
+    pageName={comparisonPageName(productName, competitorName)}
     heading={content.hero.heading}
     subHeading={content.hero.subHeading}
     lastUpdated={content.lastUpdated}

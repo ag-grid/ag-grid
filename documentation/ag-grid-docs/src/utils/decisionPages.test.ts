@@ -15,7 +15,6 @@ const COMPARE_PAGES = readdirSync(COMPARE_CONTENT_DIR)
         json: JSON.parse(readFileSync(join(COMPARE_CONTENT_DIR, file), 'utf8')),
     }));
 
-// Today's date, as the build judges it, so a claim going stale fails here before it fails a deploy.
 const schema = createComparisonPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS });
 
 describe('comparison page content', () => {
@@ -26,7 +25,7 @@ describe('comparison page content', () => {
     describe.each(COMPARE_PAGES)('$slug', ({ slug, json }) => {
         const result = schema.safeParse(json);
 
-        test('matches the schema, with every competitor claim sourced and in date', () => {
+        test('matches the schema, with every competitor claim sourced', () => {
             expect(result.error?.issues ?? []).toEqual([]);
         });
 

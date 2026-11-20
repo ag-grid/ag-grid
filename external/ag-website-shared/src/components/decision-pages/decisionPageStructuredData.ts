@@ -8,6 +8,7 @@ import {
     markdownToPlainText,
 } from '@ag-website-shared/utils/structuredData';
 
+import { toIsoDate } from './decisionPageText';
 import type { DecisionPageFaqItem } from './types';
 
 interface DecisionPageStructuredDataInput {
@@ -22,8 +23,6 @@ interface DecisionPageStructuredDataInput {
     /** The competitor the page compares against; emitted as a mentioned `SoftwareApplication`. */
     competitorName?: string;
 }
-
-const toIsoDate = (date: Date): string => date.toISOString().slice(0, 10);
 
 /**
  * JSON-LD for a purchase-decision page: a `WebPage` about the product's `SoftwareApplication`
