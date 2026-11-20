@@ -268,6 +268,8 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
             }
         }
         expect(verdict('bytespider', '/llms.txt')).toBe('block');
+        // The local parser compares the User-agent value literally, so this shows the line is emitted,
+        // not how HubSpot's own parser reads a token with a space (see BLOCKED_CRAWLERS).
         expect(verdict('hubspot crawler', '/llms.txt')).toBe('block');
     });
 
