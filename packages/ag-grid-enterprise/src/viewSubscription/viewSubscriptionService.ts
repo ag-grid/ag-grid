@@ -189,7 +189,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
         const refs = Array.from(sub.rows.values(), (row) => row.ref);
         if (refs.length) {
-            options?.unsubscribeRows(refs, this.createParams());
+            this.callUnsubscribeRows(refs, options);
         }
     }
 
@@ -264,13 +264,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
 
         if (removed.length) {
-            try {
-                this.getOptions()?.unsubscribeRows(removed, this.createParams());
-            } catch (e) {
-                // The added rows are not subscribed yet, and no change may come to schedule them.
-                this.schedule();
-                throw e;
-            }
+            this.callUnsubscribeRows(removed, this.getOptions());
         }
         this.subscribeNodes(sub, added);
     }
@@ -301,7 +295,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         }
     }
 
-    /** Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`. */
+    /** An error thrown by the handler is reported, so one failed call does not stop the grid or later calls. */
+    private callUnsubscribeRows(refs: ViewRowRef[], options: ViewSubscriptionOptions | undefined): void {
+        try {
+            options?.unsubscribeRows(refs, this.createParams());
+        } catch (error) {
+            this.warn(343, { handler: 'unsubscribeRows', error });
+        }
+    }
+
+    /**
+     * Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`.
+     * The error is reported, so one failed call does not stop the grid or later calls.
+     */
     private callSubscribeRows(
         sub: ActiveSubscription,
         rows: ViewRow[],
@@ -312,7 +318,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         try {
             options?.subscribeRows(rows, this.createParams());
             sub.retried = false;
-        } catch (e) {
+        } catch (error) {
             for (const id of ids) {
                 sub.rows.delete(id);
             }
@@ -321,7 +327,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
                 sub.retried = true;
                 this.schedule();
             }
-            throw e;
+            this.warn(343, { handler: 'subscribeRows', error });
         }
     }
 
