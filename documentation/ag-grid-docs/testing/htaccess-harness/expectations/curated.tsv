@@ -2,7 +2,7 @@
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 307
+# @min-rows 310
 # @category curated-tickets
 
 # --- SE-30 ---
@@ -431,6 +431,7 @@ blog	/index.php/author/maxkoretskyi/	301	https://www.ag-grid.com/blog/author/max
 # @category curated-tickets
 # --- SE-169: the static EULA files redirect to the /eula/ pages ---
 www	/eula/AG-Grid-Enterprise-License-Latest.html	301	/eula/commercial/
+www	/eula/ag-grid-enterprise-license-latest.html	301	/eula/commercial/
 www	/eula/AG-Grid-Community-License.html	301	/eula/community/
 
 # @category curated-tickets
@@ -441,6 +442,8 @@ www	/javascript-data-grid/license-install/Kind/	301	/javascript-data-grid/licens
 www	/pricing/	301	/license-pricing/
 www	/javascript-data-grid/row-grouping/	301	/javascript-data-grid/grouping/
 www	/react-data-grid/row-grouping/	301	/react-data-grid/grouping/
+www	/angular-data-grid/row-grouping/	301	/angular-data-grid/grouping/
+www	/vue-data-grid/row-grouping/	301	/vue-data-grid/grouping/
 www	/eula/AG-Grid-Enterprise-License-v12.0.html	301	/eula/commercial/
 www	/eula/AG-Grid-Enterprise-License-v13.0.html	301	/eula/commercial/
 www	/eula/AG-Grid-Enterprise-License-v14.0.html	301	/eula/commercial/
