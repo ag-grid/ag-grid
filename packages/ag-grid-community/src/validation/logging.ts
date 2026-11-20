@@ -376,26 +376,6 @@ export function _resetMissingModuleReports(): void {
     reportedMissingModuleKeys.clear();
 }
 
-const loggedOncePerPageIds = new Set<ErrorId>();
-
-/** Returns `true` the first time `id` is passed on this page, `false` after. */
-function claimOncePerPage(id: ErrorId): boolean {
-    if (loggedOncePerPageIds.has(id)) {
-        return false;
-    }
-    // Recorded before logging, so a diagnostic that throws (throw mode) is not re-raised by the next grid.
-    loggedOncePerPageIds.add(id);
-    return true;
-}
-
-/**
- * Forgets which once-per-page diagnostics were logged, for a test runner that treats each test as a fresh page.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _resetOncePerPageLogging(): void {
-    loggedOncePerPageIds.clear();
-}
-
 /**
  * Returns diagnostics to a fresh page's state (no logger, capture, buffered reports or framework doc link):
  * for a test runner that keeps one module graph across files.
@@ -407,7 +387,6 @@ export function _resetValidationLogging(): void {
     bootstrapPanelRenderer = null;
     baseDocLink = DEFAULT_DOC_LINK;
     _resetMissingModuleReports();
-    _resetOncePerPageLogging();
     diagnosticListeners.clear();
     bufferedDiagnostics.length = 0;
 }
@@ -599,20 +578,6 @@ export function _warnForGrid(gridId: string, id: ErrorId, params?: any): void {
 
 export function _deprecatedForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
-}
-
-/** Like `_warnForGrid`, but logs and captures each id only once per page, however many grids report it. */
-export function _warnOncePerPageForGrid(gridId: string, id: ErrorId, params?: any): void {
-    if (claimOncePerPage(id)) {
-        _warnForGrid(gridId, id, params);
-    }
-}
-
-/** Like `_deprecatedForGrid`, but logs and captures each id only once per page, however many grids report it. */
-export function _deprecatedOncePerPageForGrid(gridId: string, id: ErrorId, params?: any): void {
-    if (claimOncePerPage(id)) {
-        _deprecatedForGrid(gridId, id, params);
-    }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

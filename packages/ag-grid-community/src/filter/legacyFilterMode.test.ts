@@ -43,7 +43,7 @@ describe('legacy filter mode warnings in production', () => {
         vi.restoreAllMocks();
     });
 
-    // First: the once-per-page record would otherwise already hold 343.
+    // First: the console de-dupe would otherwise hide a 343 logged here.
     test('`enableFilterHandlers: false` logs nothing', () => {
         createGrids({
             enableFilterHandlers: false,
@@ -54,7 +54,7 @@ describe('legacy filter mode warnings in production', () => {
         expect(legacyWarnings()).toEqual([]);
     });
 
-    test('a legacy custom filter logs the short form with a link, once per page', () => {
+    test('a legacy custom filter logs the short form with a link', () => {
         createGrids({ columnDefs: [{ field: 'name', filter: LegacyFilter }], rowData: [] });
 
         const warnings = legacyWarnings();

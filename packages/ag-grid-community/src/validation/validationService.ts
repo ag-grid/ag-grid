@@ -52,7 +52,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         if (options.enableFilterHandlers !== false) {
             return;
         }
-        this.beans.log.deprecatedOncePerPage(348);
+        this.beans.log.deprecated(348);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(

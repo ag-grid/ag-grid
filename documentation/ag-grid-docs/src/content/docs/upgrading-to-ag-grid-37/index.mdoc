@@ -167,7 +167,7 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 
 Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38.
 
-When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development, once per page for each case. Setting `enableFilterHandlers: false` logs a deprecation in development only.
+When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development. Setting `enableFilterHandlers: false` logs a deprecation in development only.
 
 Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filters and `enableFilterHandlers` unset will now throw where the legacy feature is first used: usually when the grid is created, or for Multi Filter buttons and methods, when the filter is created or the method is called.
 

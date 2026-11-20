@@ -1,5 +1,5 @@
 import { _doOnce } from 'ag-stack';
-import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 import type { MockInstance } from 'vitest';
 
@@ -192,7 +192,7 @@ describe('legacy filter mode warnings', () => {
             expect(count(343)).toBe(1);
         });
 
-        test('reports once per page, however many columns and grids use legacy filters', () => {
+        test('each grid reports once, however many of its columns use legacy filters', () => {
             const options: GridOptions = {
                 columnDefs: [
                     { field: 'name', filter: LegacyFilter },
@@ -202,7 +202,7 @@ describe('legacy filter mode warnings', () => {
             createGrid(options, 'grid1');
             createGrid(options, 'grid2');
 
-            expect(count(343)).toBe(1);
+            expect(count(343)).toBe(2);
         });
 
         test('the warning recommends migrating before setting `enableFilterHandlers: false`', () => {
@@ -212,14 +212,6 @@ describe('legacy filter mode warnings', () => {
             const linkIndex = message.indexOf('/component-filter/#migrating-to-filter-handlers');
             expect(linkIndex).toBeGreaterThan(-1);
             expect(linkIndex).toBeLessThan(message.indexOf('enableFilterHandlers: false'));
-        });
-
-        test('in throw mode, only the first grid throws', () => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, showOverlayOn: [] });
-            const options: GridOptions = { columnDefs: [{ field: 'name', filter: LegacyFilter }] };
-
-            expect(() => createGrid(options, 'grid1')).toThrow('warning #343');
-            expect(() => createGrid(options, 'grid2')).not.toThrow();
         });
     });
 
@@ -336,9 +328,8 @@ describe('legacy filter mode warnings', () => {
             onFilterModified: () => {},
         };
 
-        test('`false` reports one deprecation per page and no warnings', () => {
-            createGrid({ ...legacyUsage, enableFilterHandlers: false }, 'grid1');
-            createGrid({ ...legacyUsage, enableFilterHandlers: false }, 'grid2');
+        test('`false` reports a deprecation and no warnings', () => {
+            createGrid({ ...legacyUsage, enableFilterHandlers: false });
 
             expect(legacyIdsRaised()).toEqual([348]);
             expect(raised.find((event) => event.id === 348)!.severity).toBe('deprecation');

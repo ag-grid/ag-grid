@@ -42,7 +42,7 @@ export const ROWS = [
 
 export const AGE_LT_20 = { filterType: 'number', type: 'lessThan', filter: 20 };
 
-/** `enableFilterHandlers: false` is reported once per page, so only a file's first grid would capture it. */
+/** The console logs the `enableFilterHandlers: false` deprecation once per page, so only a file's first grid would capture it. */
 export const FILTER_HANDLERS_FALSE_DEPRECATION = '348';
 
 /** The phase a test is in, and each model a `RecordingFilter` was given with the phase it came in. */

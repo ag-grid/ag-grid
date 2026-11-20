@@ -18,12 +18,12 @@ interface FilterWithGridMethods<TFilter> {
 }
 
 /**
- * Warns, once per page, that a legacy filter feature is in use while `enableFilterHandlers` is unset.
+ * Warns that a legacy filter feature is in use while `enableFilterHandlers` is unset.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _warnLegacyFilterMode(beans: BeanCollection, id: LegacyFilterModeWarningId): void {
     if (!beans.gos.exists('enableFilterHandlers')) {
-        beans.log.warnOncePerPage(id);
+        beans.log.warn(id);
     }
 }
 
