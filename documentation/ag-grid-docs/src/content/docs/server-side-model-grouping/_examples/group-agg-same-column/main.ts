@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then(function (data) {
             // athletes without a gold medal are left out, so no group has a sum of 0
-            const fakeServer = new FakeServer(data.filter((row: IOlympicData) => row.gold > 0));
+            const fakeServer = FakeServer(data.filter((row: IOlympicData) => row.gold > 0));
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);
