@@ -3413,6 +3413,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
     // Older versioned and translated EULA addresses also go to the current EULA.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
+    // Redirect paths are case-sensitive, and the lower-case form of the address is still requested.
+    { from: '/eula/ag-grid-enterprise-license-latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
     { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Enterprise-License-v13.0.html', to: '/eula/commercial/' },
@@ -3435,4 +3437,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/pricing/', to: '/license-pricing/' },
     { from: '/javascript-data-grid/row-grouping/', to: '/javascript-data-grid/grouping/' },
     { from: '/react-data-grid/row-grouping/', to: '/react-data-grid/grouping/' },
+    { from: '/angular-data-grid/row-grouping/', to: '/angular-data-grid/grouping/' },
+    { from: '/vue-data-grid/row-grouping/', to: '/vue-data-grid/grouping/' },
 ];
