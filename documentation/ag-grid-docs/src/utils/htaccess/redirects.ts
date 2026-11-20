@@ -23,7 +23,9 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 
 /**
  * Note: when changing this file please add/update the tests in
- * documentation/ag-grid-docs/testing/htaccess-harness
+ * documentation/ag-grid-docs/testing/htaccess-harness, and the production edge tests in the
+ * ag-grid/ag-devops repo (edge-tests/src/expected/redirects.ts) for redirects a ticket asks for.
+ * See .rulesync/rules/redirects-and-edge-tests.md.
  */
 
 // SE-64 (www) and SE-66 (bare apex) chain shortening. These legacy paths currently reach

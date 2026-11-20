@@ -38,6 +38,7 @@ mcp.json
 !/rules/grid-code-conventions.md
 !/rules/grid-state.md
 !/rules/grid-styling.md
+!/rules/redirects-and-edge-tests.md
 !/rules/integrated-charts.md
 !/rules/scripts-and-ci.md
 !/rules/testing.md
