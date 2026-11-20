@@ -1,10 +1,21 @@
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IToolbarItemParams } from 'ag-grid-community';
+
 const PANELS = [
     { value: 'filters', label: 'Filters' },
     { value: 'columns', label: 'Columns' },
     { value: 'none', label: 'None' },
 ];
 
-export default {
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IToolbarItemParams>,
+            required: true,
+        },
+    },
     template: `
         <div class="ag-toolbar-item" role="radiogroup" style="display: flex; gap: 12px; padding: 10px; align-items: center;">
             <span>Tool Panel:</span>
@@ -29,7 +40,7 @@ export default {
         };
     },
     methods: {
-        onChange(value) {
+        onChange(value: string) {
             if (value === 'none') {
                 this.params.api.closeToolPanel();
             } else {
@@ -37,11 +48,11 @@ export default {
             }
         },
         // Public method, called externally via api.getToolbarItemInstance(key).
-        setSelected(value) {
+        setSelected(value: string) {
             this.selected = value;
         },
     },
     mounted() {
         this.groupName = `tool-panel-${this.params.key}`;
     },
-};
+});

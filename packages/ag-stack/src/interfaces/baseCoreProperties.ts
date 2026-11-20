@@ -13,12 +13,15 @@ export interface BaseCoreProperties {
     themeCssLayer?: string;
     styleNonce?: string;
     enableBrowserTooltips?: boolean;
-    tooltipTrigger?: 'hover' | 'focus';
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
+    suppressBuiltInTooltips?: boolean;
     tooltipShowDelay?: number;
     tooltipSwitchShowDelay?: number;
     tooltipHideDelay?: number;
     tooltipMouseTrack?: boolean;
-    tooltipInteraction?: boolean;
+    tooltipAnchor?: 'target' | 'pointer';
+    tooltipOffset?: number;
+    tooltipInteraction?: boolean | ((params: any) => boolean);
     suppressTouch?: boolean;
     suppressInputClearButton?: boolean;
     enableInputAutoComplete?: boolean;

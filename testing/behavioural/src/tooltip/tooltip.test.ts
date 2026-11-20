@@ -608,6 +608,8 @@ describe('Tooltips', () => {
             }
         }
 
+        const position = vi.fn(() => 'top-start' as const);
+        const interaction = vi.fn(() => false);
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', editable: true },
@@ -618,6 +620,8 @@ describe('Tooltips', () => {
             editType: 'fullRow',
             getFullRowEditValidationErrors: ({ editorsState }) =>
                 editorsState.some((state) => String(state.newValue).includes('bad')) ? ['Row is not allowed'] : [],
+            tooltipPosition: position,
+            tooltipInteraction: interaction,
             tooltipShowDelay: 0,
             tooltipSwitchShowDelay: 0,
         };
@@ -635,6 +639,13 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveClass('validation-error-tooltip');
         expect(getTooltips()[0]).toHaveTextContent('Row is not allowed');
+        const expected = expect.objectContaining({
+            location: 'cellEditor',
+            column: api.getColumn('B'),
+            value: 'Row is not allowed',
+        });
+        expect(position).toHaveBeenCalledWith(expected);
+        expect(interaction).toHaveBeenCalledWith(expected);
 
         await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(0);

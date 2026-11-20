@@ -1,6 +1,6 @@
 import { createApp, defineComponent, onBeforeMount, ref, shallowRef } from 'vue';
 
-import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, ExcelSheetPageSetup, GridApi, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -137,8 +137,8 @@ const VueExample = defineComponent({
             flex: 1,
         });
 
-        const popupParent = ref(null);
-        const rowData = ref<any[]>(null);
+        const popupParent = ref<HTMLElement | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             popupParent.value = document.body;
@@ -147,7 +147,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) =>
+            const updateData = (data: any[]) =>
                 params.api.setGridOption(
                     'rowData',
                     data.filter((rec) => rec.country != null)
@@ -158,10 +158,10 @@ const VueExample = defineComponent({
                 .then((data) => updateData(data));
         };
 
-        const onFormSubmit = (e) => {
+        const onFormSubmit = (e: Event) => {
             e.preventDefault();
             const { pageSetup, margins } = getSheetConfig();
-            gridApi.value.exportDataAsExcel({ pageSetup, margins });
+            gridApi.value!.exportDataAsExcel({ pageSetup, margins });
         };
 
         return {
@@ -176,23 +176,23 @@ const VueExample = defineComponent({
     },
 });
 
-function getNumber(id) {
-    var el = document.querySelector(id);
-    if (!el || isNaN(el.value)) {
+function getNumber(id: string) {
+    var el = document.querySelector<HTMLInputElement>(id);
+    if (!el || isNaN(Number(el.value))) {
         return 0;
     }
     return parseFloat(el.value);
 }
 
-function getValue(id) {
-    return document.querySelector(id).value;
+function getValue(id: string) {
+    return document.querySelector<HTMLSelectElement>(id)!.value;
 }
 
 function getSheetConfig() {
     return {
         pageSetup: {
-            orientation: getValue('#pageOrientation'),
-            pageSize: getValue('#pageSize'),
+            orientation: getValue('#pageOrientation') as ExcelSheetPageSetup['orientation'],
+            pageSize: getValue('#pageSize') as ExcelSheetPageSetup['pageSize'],
         },
         margins: {
             top: getNumber('#top'),

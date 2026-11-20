@@ -467,6 +467,8 @@ export type { CheckboxSelectionComponent } from './selection/checkboxSelectionCo
 export type {
     FooterValueGetterFunc,
     GroupCellRendererParams,
+    GroupCheckboxSelectionCallback,
+    GroupCheckboxSelectionCallbackParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IGroupCellRendererFullRowParams,
@@ -614,6 +616,18 @@ export type {
     RefreshServerSideParams,
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
+export type {
+    ViewGroupRow,
+    ViewGroupRowRef,
+    ViewLeafRow,
+    ViewLeafRowRef,
+    ViewRow,
+    ViewRowRef,
+    ViewSubscriptionOptions,
+    ViewSubscriptionParams,
+    ViewTreeRow,
+    ViewTreeRowRef,
+} from './interfaces/iViewSubscription';
 export type {
     IServerSideStore,
     ServerSideGroupLevelState,
@@ -801,6 +815,8 @@ export type {
     GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
     GroupRowValueSetterParams,
+    HeaderCheckboxSelectionCallback,
+    HeaderCheckboxSelectionCallbackParams,
     HeaderClass,
     HeaderClassParams,
     HeaderLocation,
@@ -890,7 +906,7 @@ export type {
     ValueParserLiteFunc,
     ValueParserLiteParams,
 } from './entities/dataType';
-export type { SortDef, SortDirection, SortType } from './interfaces/iSort';
+export type { AccentedSortOptions, SortDef, SortDirection, SortType } from './interfaces/iSort';
 
 // Grid Configuration
 export type {
@@ -1025,7 +1041,6 @@ export type {
     SendToClipboard,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
-    ServerSideStoreParams,
     SetFillValueCallback,
     TabToNextCell,
     TabToNextCellParams,
@@ -1049,10 +1064,19 @@ export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from 
 
 // Tooltips
 export type {
+    BuiltInTooltipControl,
+    IBuiltInTooltipComp,
+    IBuiltInTooltipParams,
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
     ITooltipComp,
     ITooltipParams,
+    TooltipPosition,
+    TooltipPositionParams,
+    TooltipPositionCallback,
     TooltipCallbackFunc,
     TooltipCallbackParams,
+    TooltipContentParams,
     TooltipDefinition,
     TooltipLocation,
 } from './tooltip/tooltipComponent';
@@ -1264,7 +1288,7 @@ export {
 export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
-export type { IconName, Icons } from './utils/icon';
+export type { IconKey, IconName, Icons } from './utils/icon';
 
 // Testing
 export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

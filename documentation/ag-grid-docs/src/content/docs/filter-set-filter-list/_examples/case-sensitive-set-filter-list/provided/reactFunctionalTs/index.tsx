@@ -98,6 +98,16 @@ const GridExample = () => {
                 cellRenderer: colourCellRenderer,
             },
         },
+        {
+            headerName: 'Case Sensitive Search',
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitive: true,
+                miniFilterCaseSensitive: true,
+                cellRenderer: colourCellRenderer,
+            },
+        },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {

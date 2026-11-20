@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
         <div v-if="!hidden" :class="cssClass">
             <button @click="clicked()">Click</button>
@@ -17,7 +28,7 @@ export default {
             node: { rowIndex },
         } = this.params;
 
-        if ((pinned === 'left' && rowIndex % 4 === 0) || (pinned === 'right' && rowIndex % 2 === 0)) {
+        if ((pinned === 'left' && rowIndex! % 4 === 0) || (pinned === 'right' && rowIndex! % 2 === 0)) {
             this.hidden = true;
             return;
         }
@@ -32,4 +43,4 @@ export default {
             console.log('button clicked');
         },
     },
-};
+});

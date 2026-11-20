@@ -7,8 +7,14 @@ import {
     cachedJSONObjects,
 } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, QuickFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    QuickFilterModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 function getVisibleAutoGroupColIds(api: GridApi): string[] {
@@ -1912,5 +1918,103 @@ describe('ag-grid groupHideColumnsUntilExpanded with pivot mode', () => {
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2021 ag-Grid-AutoColumn-year:"2021" gold:1
             · · └── LEAF hidden id:4 country:"France" year:"2021" gold:1
         `);
+    });
+});
+
+describe('ag-grid auto group columns cannot be hidden or shown by the user', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, GridStateModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = cachedJSONObjects.array([
+        { id: '1', country: 'Ireland', year: '2020', athlete: 'John Smith', gold: 1 },
+        { id: '2', country: 'Italy', year: '2021', athlete: 'Mario Rossi', gold: 3 },
+    ]);
+
+    const MULTI_IDS = ['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year'];
+    const SINGLE_IDS = ['ag-Grid-AutoColumn'];
+
+    const rowGroupColumnDefs = [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'athlete' },
+        { field: 'gold' },
+    ];
+
+    function createGrid(options: GridOptions) {
+        const autoColumnVisibleEvents: string[][] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: rowGroupColumnDefs,
+            rowData,
+            getRowId: (params) => params.data.id,
+            ...options,
+            onColumnVisible: (event) => {
+                const colIds = (event.columns ?? []).map((col) => col.getColId());
+                if (colIds.some((colId) => colId.startsWith('ag-Grid-AutoColumn'))) {
+                    autoColumnVisibleEvents.push(colIds);
+                }
+            },
+        });
+        return { api, autoColumnVisibleEvents };
+    }
+
+    /** Every observer of the auto columns' visibility: displayed columns, column state, state and events. */
+    async function readAutoColumns(api: GridApi, autoColumnVisibleEvents: string[][], colIds: string[]) {
+        await asyncSetTimeout(0);
+        const columnState = api.getColumnState();
+        return {
+            displayed: getVisibleAutoGroupColIds(api),
+            hide: colIds.map((colId) => columnState.find((s) => s.colId === colId)?.hide),
+            autoHiddenColIds: (api.getState().columnVisibility?.hiddenColIds ?? []).filter((colId) =>
+                colId.startsWith('ag-Grid-AutoColumn')
+            ),
+            events: autoColumnVisibleEvents,
+        };
+    }
+
+    const shown = (colIds: string[]) => ({
+        displayed: colIds,
+        hide: colIds.map(() => false),
+        autoHiddenColIds: [],
+        events: [],
+    });
+
+    test('autoGroupColumnDef hide: true leaves the auto columns displayed, multiple columns then a single one', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({
+            groupDisplayType: 'multipleColumns',
+            autoGroupColumnDef: { hide: true },
+        });
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
+
+        api.setGridOption('groupDisplayType', 'singleColumn');
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
+    });
+
+    test('autoGroupColumnDef hide: true leaves the single auto column of a new grid displayed', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({
+            groupDisplayType: 'singleColumn',
+            autoGroupColumnDef: { hide: true },
+        });
+
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
+    });
+
+    test('defaultColDef hide: true hides the user columns but not the auto columns', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({
+            groupDisplayType: 'multipleColumns',
+            defaultColDef: { hide: true },
+        });
+
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
+        // the user columns are hidden by the default, so the auto columns are the only ones displayed
+        expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(MULTI_IDS);
     });
 });

@@ -16,9 +16,10 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
     beanName = 'tooltipTouchSvc' as const;
 
     private readonly targets = new Map<HTMLElement, TooltipTouchTarget[]>();
+    private touchCandidates: TooltipTouchTarget[] = [];
     private selectedTarget: TooltipTouchTarget | undefined;
     private lastTouchEventTime = 0;
-    private lastTouchTarget: Node | undefined;
+    private lastTouchPath: EventTarget[] | undefined;
 
     public postConstruct(): void {
         const doc = this.beans.eRootDiv.ownerDocument;
@@ -27,7 +28,7 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
             // Tooltips must not steal the long press from context menu / column menu listeners.
             yieldsLongTap: true,
             shouldTrackTouch: (event) => this.startTracking(event),
-            getLongTapTarget: (event) => this.resolveLongTapTarget(event),
+            getLongTapTarget: () => this.resolveLongTapTarget(),
         });
         touchListener.addEventListener('longTap', ({ touchStart }: LongTapEvent) => {
             const target = this.selectedTarget;
@@ -69,17 +70,17 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
      * touch. Scoped to the touched element so a real mouse hover elsewhere on a hybrid device still shows.
      */
     public isCompatibilityMouseEvent(sourceElement: HTMLElement): boolean {
-        const target = this.lastTouchTarget;
-        if (!target || Date.now() - this.lastTouchEventTime >= COMPATIBILITY_MOUSE_EVENT_WINDOW_MS) {
+        const path = this.lastTouchPath;
+        if (!path || Date.now() - this.lastTouchEventTime >= COMPATIBILITY_MOUSE_EVENT_WINDOW_MS) {
             return false;
         }
-        return sourceElement.contains(target) || target.contains(sourceElement);
+        const target = path[0];
+        return path.includes(sourceElement) || (target instanceof Node && target.contains(sourceElement));
     }
 
     private recordTouchAt(event: Event): void {
         this.lastTouchEventTime = Date.now();
-        const target = this.getEventPath(event)[0];
-        this.lastTouchTarget = target instanceof Node ? target : undefined;
+        this.lastTouchPath = event.composedPath();
     }
 
     private startTracking(event: TouchEvent): boolean {
@@ -87,16 +88,18 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
         if (this.gos.get('suppressTouch')) {
             return false;
         }
-        const hasTarget = this.getCandidates(event).length > 0;
+        // composedPath is only available during dispatch, not when the long-press timer runs.
+        this.touchCandidates = this.getCandidates(event);
+        const hasTarget = this.touchCandidates.length > 0;
         if (hasTarget) {
             this.recordTouchAt(event);
         }
         return hasTarget;
     }
 
-    private resolveLongTapTarget(event: TouchEvent): Element | undefined {
-        for (const target of this.getCandidates(event)) {
-            if (target.canShow()) {
+    private resolveLongTapTarget(): Element | undefined {
+        for (const target of this.touchCandidates) {
+            if (target.active && target.canShow()) {
                 this.selectedTarget = target;
                 return target.element;
             }
@@ -106,8 +109,13 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
     }
 
     private getCandidates(event: Event): TooltipTouchTarget[] {
+        const path = event.composedPath();
+        // Use the original element, not the shadow host exposed to the document listener.
+        if (!this.beans.environment.isElementInThisInstance(path[0] as HTMLElement)) {
+            return [];
+        }
         const candidates: TooltipTouchTarget[] = [];
-        for (const item of this.getEventPath(event)) {
+        for (const item of path) {
             const targets = this.targets.get(item as HTMLElement);
             if (!targets) {
                 continue;
@@ -119,21 +127,6 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
             }
         }
         return candidates;
-    }
-
-    private getEventPath(event: Event): EventTarget[] {
-        const path = event.composedPath?.();
-        if (path?.length) {
-            return path;
-        }
-
-        const result: EventTarget[] = [];
-        let current = event.target as Node | null;
-        while (current) {
-            result.push(current);
-            current = current.parentNode;
-        }
-        return result;
     }
 
     private unregisterSource(target: TooltipTouchTarget): void {
@@ -153,8 +146,9 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.targets.clear();
+        this.touchCandidates = [];
         this.selectedTarget = undefined;
-        this.lastTouchTarget = undefined;
+        this.lastTouchPath = undefined;
         super.destroy();
     }
 }

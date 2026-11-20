@@ -7,10 +7,16 @@ import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { ITooltipParams, TooltipDefinition } from '../tooltip/tooltipComponent';
+import type {
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
+    ITooltipParams,
+    TooltipCallbackParams,
+    TooltipDefinition,
+} from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     BaseColDefOptionalDataParams,
@@ -51,7 +57,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * When the column is grouped with `groupDisplayType: 'multipleColumns'`, the generated group column header inherits this value.
      * @agModule `TooltipModule`
      */
-    headerTooltip?: TooltipDefinition<TData, TValue>;
+    headerTooltip?: HeaderTooltipDefinition<TData, TValue>;
 
     /**
      * Callback that should return the value to use for a tooltip.
@@ -63,9 +69,15 @@ export interface AbstractColDef<TData = any, TValue = any> {
      */
     headerTooltipValueGetter?: HeaderTooltipValueGetterFunc<TData, TValue>;
 
-    /** An object of CSS values / or function returning an object of CSS values for a particular header. */
+    /**
+     * An object of CSS values / or function returning an object of CSS values for a particular header.
+     * Also applied to the column's floating filter cell; use `params.floatingFilter` in the callback to tell them apart.
+     */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
-    /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
+    /**
+     * CSS class to use for the header cell. Can be a string, array of strings, or function.
+     * Also applied to the column's floating filter cell; use `params.floatingFilter` in the callback to tell them apart.
+     */
     headerClass?: HeaderClass<TData, TValue>;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
     suppressHeaderKeyboardEvent?: SuppressHeaderKeyboardEventFunc<TData, TValue>;
@@ -93,7 +105,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /**
      * Provide your own tooltip component for the column.
-     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
      * When the column is grouped, group rows in the generated group column inherit this component.
      * @agModule `TooltipModule`
      */
@@ -417,6 +429,20 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     tooltipComponentSelector?: TooltipComponentSelectorFunc<TData, TValue>;
 
     /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
+     *
+     * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
+     * @default false
+     */
+    checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
+     *
+     * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
+    showDisabledCheckboxes?: boolean;
+    /**
      * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
      * @initial
      * */
@@ -669,6 +695,26 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `ContextMenuModule`
      */
     contextMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
+    /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
+     *
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     */
+    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
+     *
+     * If `true`, the header checkbox selection will only select filtered items.
+     * @default false
+     */
+    headerCheckboxSelectionFilteredOnly?: boolean;
+    /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
+     *
+     * If `true`, the header checkbox selection will only select nodes on the current page.
+     * @default false
+     */
+    headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
 
@@ -1019,6 +1065,16 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
     /**
+     * Set to `true` to sort this column's strings using locale-specific rules, so accented characters are taken into account, or provide an object to sort
+     * using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Set to `false` to turn locale-specific sorting off for this column.
+     *
+     * When set, overrides the `accentedSort` grid option for this column. Set it on `defaultColDef` to apply it to all columns.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
+     * Not used when a `comparator` is provided.
+     */
+    accentedSort?: boolean | AccentedSortOptions;
+    /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
      */
@@ -1187,6 +1243,16 @@ export interface SuppressNoteActionsCallbackParams<
 export type SuppressNoteActionsCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNoteActionsCallbackParams<TData, TValue, TContext>
 ) => boolean;
+export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
+    column: Column<TValue>;
+    colDef: ColDef<TData, TValue>;
+}
+export type HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
+    params: HeaderCheckboxSelectionCallbackParams<TData, TValue, TContext>
+) => boolean;
 
 interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value for the cell. May be `null` or `undefined` — for example on group rows or when the `field` is absent from the row data; the callback must handle this. */
@@ -1292,18 +1358,18 @@ export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = a
 export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: HeaderValueGetterParams<TData, TValue, TContext>
 ) => string;
-/** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
+/** @deprecated v36.2 Use `HeaderTooltipDefinition` instead. */
 export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: HeaderTooltipCallbackParams<TData, TValue, TContext>
 ) => string | any;
 
 /** @deprecated v36.2 Use `TooltipCallbackFunc` instead. */
 export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: TooltipCallbackParams<TData, TValue, TContext>
 ) => string | any;
 
 export type TooltipComponentSelectorFunc<TData = any, TValue = any, TContext = any> = (
-    params: ITooltipParams<TData, TValue, TContext>
+    params: ITooltipParams<TData, TValue, TContext, any>
 ) => TooltipComponentSelectorResult | undefined;
 
 export interface TooltipComponentSelectorResult {

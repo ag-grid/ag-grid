@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderGroupParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderGroupParams>,
+            required: true,
+        },
+    },
     template: `
         <div class="ag-header-group-cell-label">
             <div class="customHeaderLabel">{{params.displayName}}</div>
@@ -27,4 +38,4 @@ export default {
             this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         },
     },
-};
+});

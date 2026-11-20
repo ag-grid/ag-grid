@@ -111,7 +111,10 @@ export interface ISizeAllColumnsToContentParams extends DefaultWidthLimits {
     colIds?: string[];
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
-    /** Proportionally scale up columns after sizing to fill any empty space remaining in the grid. */
+    /**
+     * Proportionally scale up columns after sizing to fill any empty space remaining in the grid.
+     * Columns with a `width` or `initialWidth` scale in proportion to that width, other columns in proportion to their auto-sized width.
+     */
     scaleUpToFitGridWidth?: boolean;
 }
 

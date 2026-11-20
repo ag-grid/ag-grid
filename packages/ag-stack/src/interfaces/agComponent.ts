@@ -4,6 +4,7 @@ import type { AgBean } from './agBean';
 import type { AgEvent } from './agEvent';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
+import type { ComponentTooltipSource, ITooltipFeature } from './iTooltip';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
@@ -23,6 +24,8 @@ export interface AgComponent<
     getFocusableElement(): HTMLElement;
 
     getAriaElement(): Element;
+
+    addTooltip(source: ComponentTooltipSource): ITooltipFeature | undefined;
 
     setParentComponent(component: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>): void;
 

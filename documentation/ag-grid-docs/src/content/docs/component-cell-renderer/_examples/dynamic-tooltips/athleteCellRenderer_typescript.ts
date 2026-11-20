@@ -8,11 +8,9 @@ export class AthleteCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams<IOlympicData, string>) {
         this.params = params;
         const div: HTMLElement = document.createElement('div');
-        div.style.overflow = 'hidden';
-        div.style.textOverflow = 'ellipsis';
         div.textContent = params.value || '';
         this.eGui = div;
-        params.setTooltip(`Dynamic Tooltip for ${params.value}`, () => this.eGui.scrollWidth > this.eGui.clientWidth);
+        params.setTooltip('Won more than one gold medal at these Games', () => params.data!.gold > 1);
     }
 
     getGui() {

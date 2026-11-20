@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
     // padding and legend styling). Those overrides are painted onto the chart canvas, so they
     // cannot be asserted from the DOM. We verify the documented setup instead: the grid renders
     // the charted columns and a grouped-column range chart is created from them on first render.
-    test.eachFramework('Common Overrides', async ({ page, remoteGrid }) => {
+    test.eachFramework('Common Overrides', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: 'Ireland' }).first()).toBeVisible();
 
         // A grouped-column range chart is auto-created over the category + three series columns.
-        const models = await waitForChartModels(remoteGrid(page));
+        const models = await waitForChartModels(page);
         expect(models[0].chartType).toBe('groupedColumn');
         expect(models[0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);
 

@@ -2,11 +2,6 @@ import type { GridApi } from 'ag-grid-community';
 
 const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
 
-const ajv = new ajv7({
-    validateSchema: true, // Validate schemas against meta-schema
-    strict: true,
-});
-
 export async function callChatGPT(userRequest: string, currentState: any, gridApi: GridApi): Promise<any> {
     const { $defs, ...structuredSchema } = gridApi.getStructuredSchema({
         columns: {

@@ -35,6 +35,7 @@ import { StatusBarModule } from './statusBar/statusBarModule';
 import { ToolbarModule } from './toolbar/toolbarModule';
 import { TreeDataModule } from './treeData/treeDataModule';
 import { VERSION } from './version';
+import { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 import { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
 
 type AllEnterpriseModuleType = { with: (params: IntegratedModule) => _ModuleWithoutApi } & _ModuleWithoutApi;
@@ -68,6 +69,7 @@ const dependsOn = [
     StatusBarModule,
     ToolbarModule,
     ViewportRowModelModule,
+    ViewSubscriptionModule,
     PivotModule,
     ShowValuesAsModule,
     TreeDataModule,

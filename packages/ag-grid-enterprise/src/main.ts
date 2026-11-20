@@ -70,6 +70,7 @@ export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
 export { SideBarModule } from './sideBar/sideBarModule';
 export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
+export { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 export { ClipboardModule } from './clipboard/clipboardModule';
 export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';

@@ -1,23 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
-export default (props: CustomCellRendererProps) => {
-    const wrapper = useRef<HTMLDivElement>(null);
+import type { IOlympicData } from './interfaces';
 
+export default (props: CustomCellRendererProps<IOlympicData>) => {
     useEffect(() => {
-        if (!wrapper || !wrapper.current) {
-            return;
-        }
-        props.setTooltip(
-            `Dynamic Tooltip for ${props.value}`,
-            () => wrapper.current?.scrollWidth! > wrapper.current?.clientWidth!
-        );
-    }, [wrapper]);
+        props.setTooltip('Won more than one gold medal at these Games', () => props.data!.gold > 1);
+    }, []);
 
-    return (
-        <div ref={wrapper} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {props.value}
-        </div>
-    );
+    return <div>{props.value}</div>;
 };

@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarItemActionParams } from 'ag-grid-community';
@@ -21,6 +22,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private params!: IToolbarItemParams;
+    private actionTooltip?: ITooltipFeature;
 
     constructor() {
         super(ButtonToolbarItemElement);
@@ -28,6 +30,11 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
 
     public init(params: IToolbarItemParams): void {
         this.applyParams(params);
+        this.actionTooltip = this.addTooltip({
+            getLocation: () => 'toolbar',
+            control: 'toolbarAction',
+            getTooltip: () => ({ value: this.params.tooltip ?? this.params.label }),
+        });
         _addManagedElementListeners(this, this.getGui(), {
             click: () => this.invokeAction(),
         });
@@ -48,6 +55,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
             label: params.label,
             hoverText: params.tooltip ?? params.label,
         });
+        this.actionTooltip?.refreshTooltip();
     }
 
     private invokeAction(): void {

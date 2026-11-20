@@ -7,7 +7,7 @@ test.agExample(import.meta, () => {
     // cannot be asserted from the DOM. We verify the documented setup: the grid renders the
     // charted columns and a column/line combo chart is created with the documented per-series
     // chart types (efficiency on a secondary line axis).
-    test.eachFramework('Label Formatting', async ({ page, remoteGrid }) => {
+    test.eachFramework('Label Formatting', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -16,7 +16,7 @@ test.agExample(import.meta, () => {
         await expect(page.getByRole('columnheader', { name: 'Efficiency' })).toBeVisible();
         await expect(page.locator('.ag-cell', { hasText: '2016' }).first()).toBeVisible();
 
-        const models = await waitForChartModels(remoteGrid(page));
+        const models = await waitForChartModels(page);
         // Mixed per-series chart types are stored as a custom combo.
         expect(models[0].chartType).toBe('customCombo');
         expect(models[0].cellRange.columns).toEqual(['year', 'generated', 'consumed', 'surplus', 'efficiency']);

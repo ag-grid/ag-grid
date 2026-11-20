@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -40,7 +41,7 @@ const GridExample = () => {
 type PartSelectorProps<T extends { id: string } | null> = {
     options: T[];
     value: T;
-    setValue: (value: T) => void;
+    setValue: Dispatch<SetStateAction<T>>;
 };
 
 const PartSelector = <T extends { id: string; variant?: string } | null>({

@@ -32,7 +32,7 @@ export async function withGridEvent(
 
     await page.evaluate(
         ({ token, eventType, match, gridId }) => {
-            const api = (window as any).getGridApi?.(gridId);
+            const api = window.getGridApi?.(gridId);
             if (!api) {
                 throw new Error(`withGridEvent: getGridApi('${gridId}') returned nothing`);
             }

@@ -146,6 +146,9 @@ function addGridDropZone(params: GridReadyEvent) {
             }
         },
     });
+    if (!dropZoneParams) {
+        return;
+    }
 
     params.api.addRowDropZone(dropZoneParams);
 }

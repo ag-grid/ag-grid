@@ -4,7 +4,7 @@ export default {
         <span v-else :style="{color: removeSpaces(params.valueFormatted)}">{{params.valueFormatted}}</span>
     `,
     methods: {
-        removeSpaces(str) {
+        removeSpaces(str: string | null | undefined) {
             return str ? str.replace(/\s/g, '') : str;
         },
     },

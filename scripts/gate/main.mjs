@@ -59,6 +59,7 @@ async function main() {
         report: gate.report ?? Boolean(quiet || filtered),
         filter: filtered ? { tail: logTail, grep: logGrep } : undefined,
         failRe: gate.failRe,
+        warnRe: gate.warnRe,
         summaryRe: gate.summaryRe,
     });
     const context = { rootDir, bin, runLog, state, argv };

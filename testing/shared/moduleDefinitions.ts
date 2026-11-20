@@ -96,6 +96,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     ToolbarModule: true,
     TreeDataModule: true,
     ViewportRowModelModule: true,
+    ViewSubscriptionModule: true,
 };
 
 interface ModuleTest {

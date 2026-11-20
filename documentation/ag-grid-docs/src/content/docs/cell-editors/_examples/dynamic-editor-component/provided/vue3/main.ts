@@ -19,6 +19,7 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RichSelect
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data.ts';
+import type { IRow } from './data.ts';
 import MoodEditor from './moodEditorVue.ts';
 import NumericCellEditor from './numericCellEditorVue.ts';
 import './styles.css';
@@ -96,7 +97,7 @@ const VueExample = defineComponent({
                 flex: 1,
                 cellDataType: false,
             },
-            rowData: null,
+            rowData: null as IRow[] | null,
         };
     },
     created() {

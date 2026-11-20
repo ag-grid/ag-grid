@@ -6,6 +6,8 @@ const DEFAULT_COLUMN_COMP: ToolPanelDef = {
     labelKey: 'columns',
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
+    tooltipKey: 'columnsToolPanelTooltip',
+    tooltipDefault: 'Configure columns',
 };
 
 const DEFAULT_FILTER_COMP: ToolPanelDef = {
@@ -14,6 +16,8 @@ const DEFAULT_FILTER_COMP: ToolPanelDef = {
     labelKey: 'filters',
     iconKey: 'filtersToolPanel',
     toolPanel: 'agFiltersToolPanel',
+    tooltipKey: 'filtersToolPanelTooltip',
+    tooltipDefault: 'Configure filters',
 };
 
 const DEFAULT_NEW_FILTER_COMP: ToolPanelDef = {
@@ -22,6 +26,8 @@ const DEFAULT_NEW_FILTER_COMP: ToolPanelDef = {
     labelKey: 'filters',
     iconKey: 'filtersToolPanel',
     toolPanel: 'agNewFiltersToolPanel',
+    tooltipKey: 'filtersToolPanelTooltip',
+    tooltipDefault: 'Configure filters',
 };
 
 const DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
@@ -99,6 +105,21 @@ function parseComponents(from: (ToolPanelDef | string)[] | undefined, log: LogSe
 
 function parseOneComponent(it: ToolPanelDef | string, log: LogService): ToolPanelDef | null {
     if (typeof it !== 'string') {
+        if (it.tooltipKey == null && it.tooltipDefault == null) {
+            let defaults: ToolPanelDef | undefined;
+            switch (it.toolPanel) {
+                case 'agColumnsToolPanel':
+                    defaults = DEFAULT_COLUMN_COMP;
+                    break;
+                case 'agFiltersToolPanel':
+                case 'agNewFiltersToolPanel':
+                    defaults = DEFAULT_FILTER_COMP;
+                    break;
+            }
+            if (defaults) {
+                return { ...it, tooltipKey: defaults.tooltipKey, tooltipDefault: defaults.tooltipDefault };
+            }
+        }
         return it;
     }
     if (DEFAULT_BY_KEY[it]) {

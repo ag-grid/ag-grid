@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _getAriaCheckboxStateName } from 'ag-stack';
 
 import { AgCheckboxSelector } from '../agWidgets/agCheckbox';
@@ -5,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
+import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import type { ElementParams } from '../utils/element';
 import { _stopPropagationForAgGrid } from '../utils/gridEvent';
 import { Component } from '../widgets/component';
@@ -28,8 +30,10 @@ export class CheckboxSelectionComponent extends Component {
 
     private rowNode: RowNode;
     private column: AgColumn | undefined;
+    private selectionTooltip?: ITooltipFeature;
+    private tooltipSelected = false;
     private overrides?: {
-        isVisible: boolean | CheckboxSelectionCallback | undefined;
+        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
         callbackParams: any;
         removeHidden: boolean;
     };
@@ -64,13 +68,18 @@ export class CheckboxSelectionComponent extends Component {
 
         eCheckbox.setValue(state, true);
         eCheckbox.setInputAriaLabel(`${translatedLabel} (${stateName})`);
+        const selected = state === true;
+        if (this.tooltipSelected !== selected) {
+            this.tooltipSelected = selected;
+            this.selectionTooltip?.refreshTooltip();
+        }
     }
 
     public init(params: {
         rowNode: RowNode;
         column?: AgColumn;
         overrides?: {
-            isVisible: boolean | CheckboxSelectionCallback | undefined;
+            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
             callbackParams: any;
             removeHidden: boolean;
         };
@@ -80,6 +89,19 @@ export class CheckboxSelectionComponent extends Component {
         this.overrides = params.overrides;
 
         this.onSelectionChanged();
+
+        const eInput = this.eCheckbox.getInputElement();
+        this.selectionTooltip = this.addTooltip({
+            control: 'selectRow',
+            getAriaElement: () => eInput,
+            getLocation: () => 'cell',
+            getTooltip: () => ({
+                value: this.tooltipSelected
+                    ? this.getLocaleTextFunc()('tooltipDeselectRow', 'Deselect row')
+                    : this.getLocaleTextFunc()('tooltipSelectRow', 'Select row'),
+                params: { column: this.column, node: this.rowNode, data: this.rowNode.data },
+            }),
+        });
 
         this.addManagedListeners(this.eCheckbox.getWrapperElement(), {
             // we don't want double click on this icon to open a group
@@ -162,7 +184,8 @@ export class CheckboxSelectionComponent extends Component {
         const visible = selectable || checkboxes;
 
         const so = gos.get('rowSelection');
-        const showDisabledCheckboxes = !!so && typeof so !== 'string' && !_getHideDisabledCheckboxes(so);
+        const showDisabledCheckboxes =
+            so && typeof so !== 'string' ? !_getHideDisabledCheckboxes(so) : !!column?.colDef.showDisabledCheckboxes;
 
         this.setVisible(visible && (disabled ? showDisabledCheckboxes : true));
         this.setDisplayed(visible && (disabled ? showDisabledCheckboxes : true));
@@ -186,6 +209,7 @@ export class CheckboxSelectionComponent extends Component {
             return _getCheckboxes(so);
         }
 
-        return undefined;
+        // column will be missing if groupDisplayType = 'groupRows'
+        return this.column?.colDef?.checkboxSelection;
     }
 }

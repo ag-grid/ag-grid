@@ -16,7 +16,7 @@ import type {
     IToolbarItem,
     IToolbarItemComp,
     IToolbarItemParams,
-    IconName,
+    IconKey,
     Toolbar,
     ToolbarButtonItemDef,
     ToolbarItemActionParams,
@@ -48,7 +48,7 @@ interface NormalisedToolbarItem {
     key: string;
     label?: string;
     tooltip?: string;
-    icon?: IconName;
+    icon?: IconKey;
     action?: (params: ToolbarItemActionParams) => void;
 }
 
@@ -61,7 +61,7 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
     let toolbarItemParams: unknown = item.toolbarItemParams;
     let label: string | undefined;
     let tooltip: string | undefined;
-    let icon: IconName | undefined;
+    let icon: IconKey | undefined;
     let action: ((params: ToolbarItemActionParams) => void) | undefined;
 
     if (toolbarItem == null) {

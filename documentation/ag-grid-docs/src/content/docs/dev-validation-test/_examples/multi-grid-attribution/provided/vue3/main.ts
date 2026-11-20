@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -66,14 +66,17 @@ const VueExample = defineComponent({
                 { id: 'toyota', make: 'Toyota', model: 'Corolla', price: 29600 },
             ],
             getRowId: (params: { data: { id: string } }) => params.data.id,
+            gridApiA: null as GridApi | null,
+            gridApiB: null as GridApi | null,
         };
     },
     methods: {
-        apiFor(grid: string) {
-            return grid === 'a' ? this.gridApiA : this.gridApiB;
+        apiFor(grid: string): GridApi {
+            return (grid === 'a' ? this.gridApiA : this.gridApiB)!;
         },
         // Updating an initial-only option after creation emits warning #22 on the targeted grid.
         triggerWarning(grid: string) {
+            // @ts-expect-error deliberately updates an initial-only option
             this.apiFor(grid).setGridOption('tooltipInteraction', true);
         },
         // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling

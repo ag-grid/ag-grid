@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderParams, SortDirection } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderParams>,
+            required: true,
+        },
+    },
     template: `
         <div style="display: flex">
             <span v-if="enableFilterButton" ref="menuButton" class="ag-icon ag-icon-menu" @click="onMenuClicked($event)"></span>
@@ -13,12 +24,12 @@ export default {
     `,
     data: function () {
         return {
-            ascSort: null,
-            descSort: null,
-            noSort: null,
+            ascSort: null as string | null,
+            descSort: null as string | null,
+            noSort: null as string | null,
             enableFilterButton: false,
-            enableSorting: false,
-            displayName: null,
+            enableSorting: false as boolean | undefined,
+            displayName: null as string | null,
         };
     },
     beforeMount() {
@@ -37,7 +48,7 @@ export default {
     },
     methods: {
         onMenuClicked() {
-            this.params.showColumnMenu(this.$refs.menuButton);
+            this.params.showColumnMenu(this.$refs.menuButton as HTMLElement);
         },
 
         onSortChanged() {
@@ -52,11 +63,11 @@ export default {
             }
         },
 
-        onSortRequested(order, event) {
+        onSortRequested(order: SortDirection, event: MouseEvent) {
             this.params.setSort(order, event.shiftKey);
         },
 
-        refresh(params) {
+        refresh(params: IHeaderParams): boolean {
             const filterChanged = this.enableFilterButton === params.enableFilterButton;
             console.log('CustomHeader refresh() -> ' + this.params.column.getId() + ' returning ' + filterChanged);
             this.enableFilterButton = params.enableFilterButton;
@@ -65,4 +76,4 @@ export default {
             return filterChanged;
         },
     },
-};
+});

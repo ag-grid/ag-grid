@@ -11,6 +11,7 @@ import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
+import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
 import { provideValidationServiceLogger } from './logging';
@@ -163,7 +164,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             // directly referencing icon
             return;
         }
-        this.warn(134, { iconName });
+        this.warn(134, { iconName, suggestions: suggestIconNames(iconName) });
     }
 
     public isProvidedUserComp(compName: string): boolean {
@@ -331,3 +332,23 @@ const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
     'lastChildChanged',
     'childIndexChanged',
 ]);
+
+function suggestIconNames(iconName: string): string[] {
+    const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    if (ICON_VALUES[hyphenatedName as IconValue]) {
+        return [hyphenatedName];
+    }
+    const cssSuggestions = _fuzzySuggestions({
+        inputValue: hyphenatedName,
+        allSuggestions: Object.keys(ICON_VALUES),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    const gridSuggestions = _fuzzySuggestions({
+        inputValue: iconName,
+        allSuggestions: Object.keys(ICON_NAME_TO_VALUE),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    return [...gridSuggestions, ...cssSuggestions].slice(0, 3);
+}

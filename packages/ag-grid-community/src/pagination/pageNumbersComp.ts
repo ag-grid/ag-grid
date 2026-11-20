@@ -73,10 +73,10 @@ export class PageNumbersComp extends Component {
         this.btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.beans)!);
         this.btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.beans)!);
 
-        this.initNavButton(this.btFirst, () => this.onBtFirst());
-        this.initNavButton(this.btPrevious, () => this.onBtPrevious());
-        this.initNavButton(this.btNext, () => this.onBtNext());
-        this.initNavButton(this.btLast, () => this.onBtLast());
+        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'First Page');
+        this.initNavButton(this.btPrevious, () => this.onBtPrevious(), 'previousPage', 'Previous Page');
+        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'Next Page');
+        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'Last Page');
 
         this.addManagedListeners(this.eNumbers, {
             click: (e: MouseEvent) => this.onPageActivated(e.target as HTMLElement | null),
@@ -91,7 +91,13 @@ export class PageNumbersComp extends Component {
         this.refresh();
     }
 
-    private initNavButton(button: HTMLElement, action: () => void): void {
+    private initNavButton(button: HTMLElement, action: () => void, control: string, defaultValue: string): void {
+        this.addTooltip({
+            control,
+            getGui: () => button,
+            getLocation: () => 'pagination',
+            getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+        });
         this.activateTabIndex([button]);
         this.addManagedListeners(button, {
             click: action,

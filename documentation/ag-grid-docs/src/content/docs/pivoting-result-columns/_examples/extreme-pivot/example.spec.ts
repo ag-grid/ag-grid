@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 const LIMIT_WARNING = 'limit of 1000 generated columns has been exceeded';
 
@@ -9,11 +9,11 @@ const LIMIT_WARNING = 'limit of 1000 generated columns has been exceeded';
 test.agExample(import.meta, () => {
     test.eachFramework(
         'Pivoting by athlete exceeds the generated-column limit',
-        async ({ page, remoteGrid }) => {
+        async ({ page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            const remoteApi = remoteGrid(page, '1');
+            const api = await gridApiHandle(page, '1');
 
             // Baseline: no active pivot, so only the value columns are shown (no pivot result columns).
             const initialCols = await page.locator('.ag-header-cell[col-id]').count();
@@ -30,7 +30,7 @@ test.agExample(import.meta, () => {
             page.on('console', handler);
 
             // Pivot by athlete: too many unique values -> exceeds pivotMaxGeneratedColumns (1000).
-            await remoteApi.setPivotColumns(['athlete']);
+            await api.evaluate((api) => api.setPivotColumns(['athlete']));
 
             // The handler fires and logs the documented warning.
             await expect(() => {

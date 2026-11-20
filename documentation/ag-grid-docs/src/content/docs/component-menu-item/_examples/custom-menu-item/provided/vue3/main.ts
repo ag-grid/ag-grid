@@ -2,7 +2,9 @@ import { createApp, defineComponent, onBeforeMount, ref, shallowRef } from 'vue'
 
 import type {
     ColDef,
+    GetContextMenuItems,
     GetContextMenuItemsParams,
+    GetMainMenuItems,
     GetMainMenuItemsParams,
     GridApi,
     GridReadyEvent,
@@ -67,9 +69,9 @@ const VueExample = defineComponent({
             flex: 1,
             minWidth: 100,
         });
-        const getMainMenuItems = ref(null);
-        const getContextMenuItems = ref(null);
-        const rowData = ref<any[]>(null);
+        const getMainMenuItems = ref<GetMainMenuItems | null>(null);
+        const getContextMenuItems = ref<GetContextMenuItems | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             getMainMenuItems.value = (params: GetMainMenuItemsParams) => {
@@ -119,7 +121,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 rowData.value = data;
             };
 

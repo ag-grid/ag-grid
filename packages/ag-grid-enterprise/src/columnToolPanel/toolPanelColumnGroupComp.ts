@@ -17,9 +17,9 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     IAggFunc,
     LongTapEvent,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -152,31 +152,29 @@ export class ToolPanelColumnGroupComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(columnGroup.getColGroupDef()),
                 getLocation: () => 'columnToolPanelColumnGroup',
-                getTooltipValue: () => {
+                getTooltip: () => {
                     const colDef = columnGroup.getColGroupDef();
                     const displayName = this.displayName;
-                    return _resolveHeaderTooltipValue(
-                        colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
-                            location: 'columnToolPanelColumnGroup',
-                            colDef,
-                            column: this.gridColumnGroup,
-                            value: displayName,
-                            valueFormatted: displayName,
-                        })
-                    );
-                },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
-                getAdditionalParams: () => {
-                    const colDef = columnGroup.getColGroupDef();
-                    return {
+                    const params = {
                         ...(colDef ? { colDef } : {}),
                         column: this.gridColumnGroup,
-                        valueFormatted: this.displayName,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return {
+                        value: _resolveHeaderTooltipValue(
+                            colDef,
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                                location: 'columnToolPanelColumnGroup',
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
                     };
                 },
+                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
             })
         );
 
@@ -297,6 +295,16 @@ export class ToolPanelColumnGroupComp extends Component {
             _setDisplayed(this.eDragHandle, false);
             return;
         }
+
+        this.addTooltip({
+            getGui: () => this.eDragHandle as HTMLElement,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            control: 'drag',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.gridColumnGroup, colDef: this.columnGroup.getColGroupDef() },
+            }),
+        });
 
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;

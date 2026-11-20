@@ -1,7 +1,6 @@
 import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
 import { callChatGPT } from './chatgptApi';
-import type { ChatMessage } from './types';
 
 export interface ChatMessage {
     role: 'system' | 'user' | 'assistant';
@@ -148,7 +147,7 @@ export class ChatToolPanel implements IToolPanel {
         }
     }
 
-    private renderMessage(role: 'user' | 'assistant', content: string, isError = false): void {
+    private renderMessage(role: ChatMessage['role'], content: string, isError = false): void {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${role}-message${isError ? ' error-message' : ''}`;
 

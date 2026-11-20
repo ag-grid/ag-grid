@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
 type SuppressValue = 'false' | 'true' | 'suppressHideOnGroup' | 'suppressShowOnUngroup';
 
@@ -20,8 +20,8 @@ const cases: Case[] = [
 ];
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
-        const remoteApi = remoteGrid(page, '1');
+    test.eachFramework('Example', async ({ agIdFor, page }) => {
+        const api = await gridApiHandle(page, '1');
         const dropdown = page.locator('#visibility-behaviour');
         const resetButton = page.getByRole('button', { name: 'Reset Column Visibility' });
         const countryHeader = agIdFor.headerCell('country');
@@ -31,7 +31,7 @@ test.agExample(import.meta, () => {
         for (const { value, hiddenAfterGroup, hiddenAfterUngroup } of cases) {
             await dropdown.selectOption(value);
 
-            await remoteApi.addRowGroupColumns(['country']);
+            await api.evaluate((api) => api.addRowGroupColumns(['country']));
             if (hiddenAfterGroup) {
                 await expect(countryHeader, `${value}: country header should be hidden after grouping`).toBeHidden();
             } else {
@@ -41,7 +41,7 @@ test.agExample(import.meta, () => {
                 ).toBeVisible();
             }
 
-            await remoteApi.removeRowGroupColumns(['country']);
+            await api.evaluate((api) => api.removeRowGroupColumns(['country']));
             if (hiddenAfterUngroup) {
                 await expect(
                     countryHeader,

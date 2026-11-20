@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const columnDefs: ColDef[] = [
+const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         headerName: 'Athlete Details',
         children: [

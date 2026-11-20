@@ -66,7 +66,7 @@ export type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './interfaces/iProperties';
-export type { ITooltipFeature, TooltipCtrl } from './interfaces/iTooltip';
+export type { ComponentTooltipSource, ITooltipFeature, TooltipCtrl, TooltipDetails } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
 export {
@@ -78,6 +78,10 @@ export {
     toRelativeRect as _toRelativeRect,
 } from './popup/popupPositionUtils';
 export type { Alignment, Anchor } from './popup/popupPositionUtils';
+export {
+    isTooltipPosition as _isTooltipPosition,
+    TOOLTIP_POSITIONS as _TOOLTIP_POSITIONS,
+} from './popup/tooltipPositionUtils';
 export { AgPositionableFeature } from './rendering/agPositionableFeature';
 export type { PositionableOptions, ResizableSides, ResizableStructure } from './rendering/agPositionableFeature';
 export { AutoScrollService } from './rendering/autoScrollService';
@@ -120,6 +124,7 @@ export { BaseTooltipStateManager } from './tooltip/baseTooltipStateManager';
 export type { BaseTooltipParams } from './tooltip/baseTooltipStateManager';
 export {
     _getAriaCheckboxStateName,
+    _getAriaDescribedBy,
     _getAriaLabel,
     _getAriaPosInSet,
     _removeAriaExpanded,
@@ -259,6 +264,7 @@ export {
     _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _resetKeyboardMode,
     _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _debounce } from './utils/debounce';
@@ -274,6 +280,7 @@ export {
     _missing,
     _toStringOrNull,
 } from './utils/generic';
+export type { StringComparator } from './utils/generic';
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
 export { _isPromise } from './utils/promise';

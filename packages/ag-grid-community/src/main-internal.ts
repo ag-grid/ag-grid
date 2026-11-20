@@ -168,6 +168,7 @@ export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
+export { _addFloatingFilterValueTooltip } from './filter/floating/provided/floatingFilterValueTooltip';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     _ADVANCED_FILTER_ONLY_OPTIONS,
@@ -256,6 +257,7 @@ export {
     _isServerSideRowModel,
     _isSetFilterByDefault,
     _isUsingNewCellSelectionAPI,
+    _isUsingNewRowSelectionAPI,
     _processOnChange,
     _shouldUpdateColVisibilityAfterGroup,
 } from './gridOptionsUtils';
@@ -360,6 +362,7 @@ export type { GroupValueResult, IShowRowGroupColsValueService } from './interfac
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export { _getColumnStringComparator } from './sort/accentedSort';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
 export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
@@ -377,6 +380,7 @@ export {
     _findEnterpriseCoreModule,
     _getGridRegisteredModules,
     _registerModule,
+    _resetModuleRegistry,
     _setUmd,
 } from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
@@ -419,6 +423,7 @@ export {
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
+    type ResolvedTooltip,
 } from './tooltip/tooltipFeature';
 export {
     _getLegacyTooltipFieldValue,
@@ -461,6 +466,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

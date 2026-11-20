@@ -151,6 +151,38 @@ export interface _RowSelectionGridApi<TData = any> {
     deselectAll(mode?: SelectAllMode, source?: SelectionEventSourceType): void;
 
     /**
+     * Select all filtered rows.
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
+     *
+     * @deprecated as of v33. Use `selectAll('filtered')` instead
+     */
+    selectAllFiltered(source?: SelectionEventSourceType): void;
+
+    /**
+     * Clear all filtered selections.
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
+     *
+     * @deprecated as of v33. Use `deselectAll('filtered')` instead
+     */
+    deselectAllFiltered(source?: SelectionEventSourceType): void;
+
+    /**
+     * Select all rows on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
+     *
+     * @deprecated as of v33. Use `selectAll('currentPage')` instead
+     */
+    selectAllOnCurrentPage(source?: SelectionEventSourceType): void;
+
+    /**
+     * Clear all filtered on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
+     *
+     * @deprecated as of v33. Use `deselectAll('currentPage')` instead
+     */
+    deselectAllOnCurrentPage(source?: SelectionEventSourceType): void;
+
+    /**
      * Returns an unsorted list of selected nodes.
      * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,
      * as the node can be traversed.
@@ -1479,11 +1511,6 @@ export interface _InfiniteRowModelGridApi {
      * @agModule `InfiniteRowModelModule`
      */
     purgeInfiniteCache(): void;
-
-    /**
-     * @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead.
-     */
-    getInfiniteRowCount(): number | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

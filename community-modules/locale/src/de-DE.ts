@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_DE_DE = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Zur Seite wechseln',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Aufsteigend sortiert',
+    tooltipSortedDescending: 'Absteigend sortiert',
+    tooltipExpandGroup: 'Gruppe aufklappen',
+    tooltipCollapseGroup: 'Gruppe zuklappen',
+    tooltipSelectAllRows: 'Alle Zeilen auswählen',
+    tooltipDeselectAllRows: 'Auswahl aller Zeilen aufheben',
+    tooltipSelectRow: 'Zeile auswählen',
+    tooltipDeselectRow: 'Auswahl der Zeile aufheben',
+    tooltipResizeColumn: 'Spaltengröße ändern',
+    tooltipDragToMove: 'Zum Verschieben ziehen',
+    tooltipTurnOnPivotMode: 'Pivot-Modus aktivieren',
+    tooltipTurnOffPivotMode: 'Pivot-Modus deaktivieren',
+    columnsToolPanelTooltip: 'Spalten konfigurieren',
+    filtersToolPanelTooltip: 'Filter konfigurieren',
+
     // Set Filter
     selectAll: '(Alles auswählen)',
     selectAllSearchResults: '(Alle Suchergebnisse auswählen)',
@@ -745,14 +763,20 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',
     ariaFilterFromValue: 'Filter vom Wert',
+    ariaFilterFromValueForColumn: 'Filter vom Wert für ${variable}',
     ariaFilterInput: 'Filtereingang',
+    ariaFilterInputForColumn: 'Filtereingang für ${variable}',
     ariaLabelInputClear: 'Löschen',
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filter zum Wert',
+    ariaFilterToValueForColumn: 'Filter zum Wert für ${variable}',
     ariaFilterValue: 'Filterwert',
+    ariaFilterValueForColumn: 'Filterwert für ${variable}',
     ariaNotInCurrentData: 'nicht in den aktuellen Daten',
     ariaFilterMenuOpen: 'Filtermenü öffnen',
+    ariaFilterMenuOpenForColumn: 'Filtermenü für ${variable} öffnen',
     ariaFilteringOperator: 'Filteroperator',
+    ariaFilteringOperatorForColumn: 'Filteroperator für ${variable}',
     ariaHidden: 'versteckt',
     ariaIndeterminate: 'unbestimmt',
     ariaInputEditor: 'Eingabeeditor',
@@ -774,6 +798,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
     ariaRowSelectionDisabled: 'Zeilenauswahl ist für diese Zeile deaktiviert',
     ariaSearch: 'Suche',
+    ariaFindActiveMatch: 'Treffer ${variable} von ${variable}, ${variable}, Zeile ${variable}',
+    ariaFindActiveMatchRow: 'Treffer ${variable} von ${variable}, Zeile ${variable}',
     ariaSortPriority: 'Sortierpriorität ${priority} von ${count}',
     ariaSortableColumn: 'Drücken Sie EINGABETASTE, um zu sortieren',
     ariaSortableColumnWithCellSelection: 'Drücken Sie ALT EINGABETASTE, um zu sortieren',
@@ -783,6 +809,13 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaVisible: 'sichtbar',
     ariaSearchFilterValues: 'Filterwerte suchen',
     ariaPageSizeSelectorLabel: 'Seitengröße',
+    ariaPageSizeSelectorDescription:
+        'Durch Ändern der Seitengröße werden die im Raster angezeigten Zeilen aktualisiert',
+    ariaPaginationRowSummary: 'Datensätze ${variable} bis ${variable} von ${variable} werden angezeigt',
+    ariaPaginationRowSummaryUnknownTotal:
+        'Datensätze ${variable} bis ${variable} werden angezeigt, Gesamtzahl unbekannt',
+    ariaPaginationRowSummaryLoading: 'Datensätze ab ${variable} werden geladen',
+    ariaPaginationPanelLabel: 'Raster-Paginierung',
     ariaChartMenuClose: 'Diagramm-Bearbeitungsmenü schließen',
     ariaChartSelected: 'Ausgewählt',
     ariaChartSeriesChartType: 'Diagrammtyp für ${variable}',
@@ -825,6 +858,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelColorPickerHex: 'Hex-Farbe',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',
+    ariaLabelColumnFilterForColumn: 'Spaltenfilter für ${variable}',
     ariaLabelSelectField: 'Feld auswählen',
 
     // Cell Editor

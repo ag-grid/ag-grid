@@ -160,6 +160,9 @@ const GridExample = () => {
     const addGridDropZone = (side: string, api: GridApi) => {
         const dropApi = side === 'Left' ? rightApi : leftApi;
         const dropZone = dropApi!.getRowDropZoneParams();
+        if (!dropZone) {
+            return;
+        }
 
         api.addRowDropZone(dropZone);
     };

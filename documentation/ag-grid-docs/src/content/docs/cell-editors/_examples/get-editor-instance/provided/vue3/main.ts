@@ -92,7 +92,7 @@ const VueExample = defineComponent({
                 filter: true,
             },
             rowData: this.createRowData(),
-            interval: null,
+            interval: undefined as ReturnType<typeof setInterval> | undefined,
         };
     },
     beforeDestroy() {
@@ -103,7 +103,7 @@ const VueExample = defineComponent({
             this.interval = setInterval(() => {
                 const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0];
+                    const instance = instances[0] as InstanceType<typeof MySimpleEditor>;
                     if (instance.myCustomFunction) {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
@@ -119,7 +119,7 @@ const VueExample = defineComponent({
         },
 
         createRowData() {
-            const cloneObject = (obj) => JSON.parse(JSON.stringify(obj));
+            const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));
             const students = [
                 {
                     first_name: 'Bob',

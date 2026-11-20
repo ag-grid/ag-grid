@@ -4,7 +4,9 @@ import {
     getImport,
     indentTemplate,
     toAssignment,
+    toComponentInstanceTypes,
     toConst,
+    toGridApiRef,
     toInput,
     toMember,
     toOutput,
@@ -117,4 +119,38 @@ describe('indentTemplate', () => {
             </div>
         `.slice(1, -9)
         ));
+});
+
+describe('toGridApiRef', () => {
+    it('asserts the api is set where its members are used', () => {
+        expect(toGridApiRef('gridApi.refreshCells(); gridApi!.redrawRows();')).toBe(
+            'gridApi.value!.refreshCells(); gridApi.value!.redrawRows();'
+        );
+    });
+
+    it('keeps optional chaining', () => {
+        expect(toGridApiRef('gridApi?.destroy();')).toBe('gridApi.value?.destroy();');
+    });
+
+    it('asserts the api is set where it is passed as an argument', () => {
+        expect(toGridApiRef('setPrinterFriendly(gridApi); pin(gridApi, value);')).toBe(
+            'setPrinterFriendly(gridApi.value!); pin(gridApi.value!, value);'
+        );
+    });
+
+    it('leaves assignments, conditions and comparisons unasserted', () => {
+        expect(toGridApiRef('gridApi = api; if (gridApi) {} if (!gridApi) {} gridApi !== null;')).toBe(
+            'gridApi.value = api; if (gridApi.value) {} if (!gridApi.value) {} gridApi.value !== null;'
+        );
+    });
+});
+
+describe('toComponentInstanceTypes', () => {
+    it('types the instance of a Vue component the grid returns', () => {
+        expect(
+            toComponentInstanceTypes("gridApi.value!.getColumnFilterInstance<PartialMatchFilter>('name');", [
+                'PartialMatchFilter',
+            ])
+        ).toBe("gridApi.value!.getColumnFilterInstance<InstanceType<typeof PartialMatchFilter>>('name');");
+    });
 });

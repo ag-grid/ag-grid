@@ -503,7 +503,13 @@ export const AG_GRID_ERRORS = {
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
         `icon \`${iconName}\` function should return back a string or a dom object` as const,
-    134: ({ iconName }: { iconName: string }) => `Did not find icon \`${iconName}\`` as const,
+    134: ({ iconName, suggestions }: { iconName: string; suggestions?: string[] }) =>
+        [
+            `Did not find icon \`${iconName}\``,
+            suggestions?.length ? `Did you mean \`${suggestions.join('`, `')}\`?` : '',
+        ]
+            .filter(Boolean)
+            .join('. '),
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
     136: () =>
         `Unable to update chart as the \`type\` is missing. It must be either \`rangeChartUpdate\`, \`pivotChartUpdate\`, or \`crossFilterChartUpdate\`.` as const,
@@ -608,8 +614,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: (props?: { feature?: string }) =>
-        `\`getRowId\` callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
+    188: ({ feature }: { feature: string }) =>
+        `\`getRowId\` callback must be provided for ${feature} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -635,7 +641,7 @@ export const AG_GRID_ERRORS = {
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 
     202: () =>
-        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`rowSelection.groupSelects\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     203: () =>
         'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove `getRowHeight()` callback or b) remove `maxBlocksInCache` property. Purging has been disabled.' as const,
     204: () =>

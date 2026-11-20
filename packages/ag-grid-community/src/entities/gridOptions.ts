@@ -200,8 +200,10 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
+import type { AccentedSortOptions } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
+import type { ViewSubscriptionOptions } from '../interfaces/iViewSubscription';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type {
     DefaultColumnDropZoneMenuItem,
@@ -212,6 +214,12 @@ import type {
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
+import type {
+    TooltipCallbackParams,
+    TooltipContentParams,
+    TooltipPosition,
+    TooltipPositionCallback,
+} from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     CheckboxSelectionCallback,
@@ -284,16 +292,65 @@ export interface GridOptions<TData = any> {
      */
     enableBrowserTooltips?: boolean;
     /**
+     * Hide built-in control tooltips without affecting cell, header or validation tooltips.
+     * @default false
+     * @agModule `TooltipModule`
+     */
+    suppressBuiltInTooltips?: boolean;
+    /**
+     * Custom component for built-in control tooltips, separate from a column's `tooltipComponent`.
+     * Receives `IBuiltInTooltipParams`.
+     * @agModule `TooltipModule`
+     */
+    builtInTooltipComponent?: any;
+    /** Additional parameters for `builtInTooltipComponent`. */
+    builtInTooltipComponentParams?: any;
+    /**
      * The trigger that will cause tooltips to show and hide.
-     *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
-     *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+     * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
+     *  - `hover` - The tooltip will show/hide when its element is hovered.
+     *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
+     *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+     * Source-specific show delays take precedence in all modes.
+     * Built-in control tooltips always show on hover and immediately on focus.
      * @default 'hover'
      * @initial
      * @agModule `TooltipModule`
      */
-    tooltipTrigger?: 'hover' | 'focus';
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     /**
-     * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
+     * Preferred tooltip placement. Flips or shifts to stay within the available space.
+     * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
+     * Does not apply to browser tooltips.
+     * @agModule `TooltipModule`
+     */
+    tooltipPosition?: TooltipPosition | TooltipPositionCallback<TData>;
+    /**
+     * Anchor for hover tooltips. Focus and built-in control tooltips always use the target; mouse tracking uses the pointer.
+     * Does not apply to browser tooltips.
+     * @default 'target'
+     * @agModule `TooltipModule`
+     */
+    tooltipAnchor?: 'target' | 'pointer';
+    /**
+     * Distance in pixels between the tooltip and its anchor, along the placement axis.
+     * Does not apply to browser tooltips.
+     * @default 6
+     * @agModule `TooltipModule`
+     */
+    tooltipOffset?: number;
+    /**
+     * Provides a plain-text accessible description, available on focus before the visual tooltip appears.
+     * Use this for custom tooltips whose resolved `params.value` is structured data.
+     * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
+     * @agModule `TooltipModule`
+     */
+    getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined;
+    /**
+     * The delay in milliseconds before a tooltip shows on hover or focus.
+     * Built-in control tooltips use this delay on hover but show immediately on focus.
+     * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+     * Pointer switching uses `tooltipSwitchShowDelay` instead.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`
@@ -308,14 +365,15 @@ export interface GridOptions<TData = any> {
      */
     tooltipSwitchShowDelay?: number;
     /**
-     * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-     * **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
-     * @default 10000
+     * An optional timeout in milliseconds after a tooltip appears. By default there is no timed hide.
+     * A timeout does not close an interactive tooltip while keyboard focus is inside it.
+     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @agModule `TooltipModule`
      */
     tooltipHideDelay?: number;
     /**
      * Set to `true` to have tooltips follow the cursor once they are displayed.
+     * Does not apply to built-in control tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
@@ -330,13 +388,15 @@ export interface GridOptions<TData = any> {
      */
     tooltipShowMode?: 'standard' | 'whenTruncated';
     /**
-     * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
-     * tooltip itself it being hovered or has focus.
+     * Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
+     * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+     * A callback receives the source parameters and decides separately each time a tooltip opens.
+     * Does not apply to browser tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
-    tooltipInteraction?: boolean;
+    tooltipInteraction?: boolean | ((params: TooltipCallbackParams<TData>) => boolean);
     /**
      * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */
@@ -361,6 +421,18 @@ export interface GridOptions<TData = any> {
      * @agModule `ClipboardModule`
      */
     clipboardDelimiter?: string;
+    /**
+     * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
+     */
+    suppressCopyRowsToClipboard?: boolean;
+    /**
+     * Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
+     */
+    suppressCopySingleCellRanges?: boolean;
     /**
      * Set to `true` to always remove a trailing empty line from pasted data.
      * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
@@ -987,12 +1059,6 @@ export interface GridOptions<TData = any> {
      */
     suppressFocusAfterRefresh?: boolean;
     /**
-     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-     * @default false
-     * @initial
-     */
-    suppressBrowserResizeObserver?: boolean;
-    /**
      * Disables change detection.
      * @default false
      */
@@ -1522,6 +1588,12 @@ export interface GridOptions<TData = any> {
      */
     groupMaintainOrder?: boolean;
     /**
+     * When `true`, if you select a group, the children of the group will also be selected.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
+     */
+    groupSelectsChildren?: boolean;
+    /**
      * If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
      * @default 0
      * @initial
@@ -1570,6 +1642,12 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     groupSuppressBlankHeader?: boolean;
+    /**
+     * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
+     */
+    groupSelectsFiltered?: boolean;
     /**
      * Shows the open group in the group column for non-group rows.
      * @default false
@@ -1727,6 +1805,24 @@ export interface GridOptions<TData = any> {
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     rowModelType?: RowModelType;
+    /**
+     * Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
+     * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
+     * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
+     * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
+     * Requires `getRowId`. Supported by the Server-Side Row Model.
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscription?: ViewSubscriptionOptions<TData>;
+    /**
+     * Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
+     * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
+     * @default true
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscriptionActive?: boolean;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -1933,15 +2029,33 @@ export interface GridOptions<TData = any> {
 
     // *** Selection *** //
     /**
-     * Use the `RowSelectionOptions` object to configure row selection.
+     * Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
      * @agModule `RowSelectionModule`
      */
-    rowSelection?: RowSelectionOptions<TData>;
+    rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple';
     /**
      * Configure cell selection.
      * @agModule `CellSelectionModule`
      */
     cellSelection?: boolean | CellSelectionOptions<TData>;
+    /**
+     * Set to `true` to allow multiple rows to be selected using single click.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.enableSelectionWithoutKeys` instead
+     */
+    rowMultiSelectWithClick?: boolean;
+    /**
+     * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
+     */
+    suppressRowDeselection?: boolean;
+    /**
+     * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
+     * @default false
+     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
+     */
+    suppressRowClickSelection?: boolean;
     /**
      * If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
      * @default false
@@ -2013,10 +2127,15 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /**
-     * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+     * Set to `true` to sort strings using locale-specific rules, so accented characters are taken into account. If this feature is turned on the sort will be slower.
+     *
+     * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
+     *
+     * Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
-    accentedSort?: boolean;
+    accentedSort?: boolean | AccentedSortOptions;
     /**
      * Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
@@ -2491,6 +2610,11 @@ export interface GridOptions<TData = any> {
      */
     processRowPostCreate?: ProcessRowPostCreate<TData>;
     /**
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
+     */
+    isRowSelectable?: IsRowSelectable<TData>;
+    /**
      * Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
      * @agModule `MasterDetailModule`
      */
@@ -2869,6 +2993,7 @@ export interface GridOptions<TData = any> {
     onModelUpdated?(event: ModelUpdatedEvent<TData>): void;
     /**
      * A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewSubscription`.
      */
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
     /**

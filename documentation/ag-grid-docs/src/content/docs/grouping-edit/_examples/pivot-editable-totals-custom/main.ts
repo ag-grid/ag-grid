@@ -15,15 +15,8 @@ import {
     SideBarModule,
 } from 'ag-grid-enterprise';
 
+import type { SalesRecord } from './data';
 import { getData } from './data';
-
-interface SalesRecord {
-    id: string;
-    region: string;
-    country: string;
-    product: string;
-    amount: number;
-}
 
 let gridApi: GridApi<SalesRecord>;
 

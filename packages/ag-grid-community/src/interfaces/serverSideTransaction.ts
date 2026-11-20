@@ -7,7 +7,7 @@ export interface ServerSideTransaction<TData = any> {
      * Passing in blank to empty applies the transaction to the top level.
      */
     route?: string[];
-    /** Index position to add at. If missing, rows will be added to the end. */
+    /** Index position to add at. If missing, rows are added to the end when the row count is known. */
     addIndex?: number;
     /** Rows to add */
     add?: TData[];
@@ -42,7 +42,7 @@ export enum ServerSideTransactionResultStatus {
     Applied = 'Applied',
     /**
      * Store was not found, transaction not applied.
-     * Either invalid route, or the parent row has not yet been expanded.
+     * Either the route is invalid, or a group in the route is not loaded.
      */
     StoreNotFound = 'StoreNotFound',
     /**

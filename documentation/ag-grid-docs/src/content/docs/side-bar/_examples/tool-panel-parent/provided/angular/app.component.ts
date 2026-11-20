@@ -12,7 +12,6 @@ import {
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { IOlympicData } from './interfaces';
 import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {

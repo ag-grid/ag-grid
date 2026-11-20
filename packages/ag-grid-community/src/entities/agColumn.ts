@@ -1,4 +1,4 @@
-import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
+import type { AgBeanStubEvent, AgEvent, IAgEventEmitter, StringComparator } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
@@ -203,6 +203,10 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
+    /** Compares the column's strings for its effective `accentedSort`, `undefined` when it is off. Built lazily by `_getColumnStringComparator`. */
+    public stringComparator: StringComparator | undefined = undefined;
+    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef changes. */
+    public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
@@ -320,6 +324,7 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
+        this.stringComparatorVersion = -1; // `accentedSort` may have changed
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();

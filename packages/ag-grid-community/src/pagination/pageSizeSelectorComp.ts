@@ -1,4 +1,4 @@
-import { _areEqual, _clearElement } from 'ag-stack';
+import { _areEqual, _clearElement, _setAriaDescribedBy } from 'ag-stack';
 
 import type { ListOption } from '../agWidgets/agList';
 import { AgSelect } from '../agWidgets/agSelect';
@@ -7,6 +7,7 @@ import type { PageSizePanelParams } from '../entities/gridOptions';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
+import { _createElement } from '../utils/element';
 import { _toFiniteNumber } from '../utils/number';
 import { Component } from '../widgets/component';
 import type { GridSelect } from '../widgets/gridWidgetTypes';
@@ -195,6 +196,22 @@ export class PageSizeSelectorComp extends Component {
             .onValueChange(() => this.handlePageSizeItemSelected());
 
         this.appendChild(this.selectPageSizeComp);
+        this.appendPageSizeDescription(this.selectPageSizeComp);
+    }
+
+    /** Tells screen reader users, before they pick a value, that the page size changes the rows shown. */
+    private appendPageSizeDescription(selectComp: GridSelect): void {
+        const description = _createElement({
+            tag: 'span',
+            cls: 'ag-paging-page-size-description ag-hidden',
+            attrs: { id: `ag-${this.getCompId()}-page-size-description` },
+            children: this.getLocaleTextFunc()(
+                'ariaPageSizeSelectorDescription',
+                'Changing the page size updates the rows shown in the grid'
+            ),
+        });
+        this.getGui().appendChild(description);
+        _setAriaDescribedBy(selectComp.getAriaElement(), description.id);
     }
 
     private getPageSizeSelectorValues(): number[] {

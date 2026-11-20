@@ -10,7 +10,6 @@ import {
     DARK_INTEGRATED_START,
     getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
-    getInterfaceFileContents,
     removeModuleRegistration,
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramework } from './generator/types';
@@ -39,6 +38,7 @@ import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getO
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { resolveSharedFakeServer } from './generator/utils/getSharedFakeServer';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
+import { addSharedInterfaces } from './generator/utils/sharedInterfaces';
 
 export type ExecutorOptions = {
     mode: 'dev' | 'prod';
@@ -159,15 +159,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
     const isIntegratedCharts = typedBindings.imports.some((m) => m.module.includes('ag-charts'));
 
-    let interfaceFile = undefined;
-    if (sourceFileList.includes('interfaces.ts')) {
-        interfaceFile = await readFile(path.join(folderPath, 'interfaces.ts'));
-    }
-    const interfaces = getInterfaceFileContents(typedBindings, interfaceFile);
     let interfaceContents = undefined;
-    if (interfaces) {
+    if (sourceFileList.includes('interfaces.ts')) {
         interfaceContents = {
-            'interfaces.ts': interfaces,
+            'interfaces.ts': await readFile(path.join(folderPath, 'interfaces.ts')),
         };
     }
 
@@ -286,6 +281,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 mergedFiles['useFetchJson.' + (internalFramework === 'reactFunctionalTs' ? 'tsx' : 'jsx')] =
                     getUseFetchJsonFile(internalFramework);
             }
+        }
+
+        if (TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)) {
+            addSharedInterfaces(mergedFiles);
         }
 
         // Keep the spec files from the main script files

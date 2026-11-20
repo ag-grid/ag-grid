@@ -8,6 +8,7 @@ import {
     waitForEvent,
     waitForInput,
 } from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -38,15 +39,17 @@ const ownReservedRow = () =>
         `{"id":"own","nested":{},"__proto__":{"${KEY}":"own proto"},"constructor":{"prototype":{"${KEY}":"own ctor"}}}`
     );
 
-/** Runs `fn` with `console.warn` captured, returning the warnings that mention `#id`. */
+/** Every test here triggers warnings #339 and #340 on purpose; the tests below that assert them read this spy. */
+let warnSpy: MockInstance<typeof console.warn>;
+
+/** Runs `fn`, returning the warnings it logged that mention `#id`. */
 async function captureWarnings(id: number, fn: () => Promise<void>): Promise<string[]> {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    try {
-        await fn();
-        return warn.mock.calls.map((args) => args.join(' ')).filter((msg) => msg.includes(`#${id}`));
-    } finally {
-        warn.mockRestore();
-    }
+    const before = warnSpy.mock.calls.length;
+    await fn();
+    return warnSpy.mock.calls
+        .slice(before)
+        .map((args) => args.join(' '))
+        .filter((msg) => msg.includes(`#${id}`));
 }
 
 describe('Reserved key handling in field paths', () => {
@@ -72,12 +75,14 @@ describe('Reserved key handling in field paths', () => {
         clipboardUtils.init();
         // Refused writes log warning #339 and `__proto__` fields #340, which these tests trigger on purpose
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339, 340] });
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
     afterEach(() => {
         gridMgr.reset();
         clipboardUtils.reset();
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [] });
+        vi.restoreAllMocks();
         // Keep a failure in one test from leaking into the others
         delete (Object.prototype as Record<string, unknown>)[KEY];
         delete (Object.prototype.toString as unknown as Record<string, unknown>)[KEY];
