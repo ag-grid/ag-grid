@@ -110,7 +110,7 @@
             "ctas": [
                 {
                     "text": "Open demo",
-                    "href": "/products/gantt/examples/highlight-time-spans/",
+                    "href": "/products/gantt/examples/auto-constraints/",
                     "title": "Open demo"
                 }
             ],
