@@ -74,6 +74,9 @@ export abstract class BaseTooltipStateManager<
     private lastMouseEvent: MouseEvent | Touch | null = null;
     private hoverGraceTimeout: number | undefined;
     private showTimeout: number | undefined;
+    private showDelay = 0;
+    private revalidatePointerOnShow = false;
+    private scrollResumeDelay: number | undefined;
     private hideTimeout: number | undefined;
     private leaveTimeout: number | undefined;
     private tooltipComp: IComponent<TTooltipParams> | undefined;
@@ -95,7 +98,8 @@ export abstract class BaseTooltipStateManager<
     private tooltipInstanceCount = 0;
     private showEventDispatched = false;
     private readonly popupListeners: (() => void)[] = [];
-    private onBodyScrollEventCallback: (() => null) | undefined;
+    private readonly compListeners: (() => void)[] = [];
+    private onBodyScrollEventCallbacks: (() => null)[] | undefined;
     private description: HTMLElement | undefined;
     private describedById: string | undefined;
     private describedBySource: HTMLElement | undefined;
@@ -301,27 +305,38 @@ export abstract class BaseTooltipStateManager<
         owner?.hideTooltip(true);
         this.sharedState.owner = this;
 
-        let delay = showDelayOverride;
-        if (delay == null) {
-            if (mouseEvent) {
-                const lastHide = this.sharedState.lastHideTime;
-                delay = this.getTooltipDelay(
-                    lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF ? 'SwitchShow' : 'Show'
-                );
-            } else {
-                delay = this.tooltipTrigger === 'hoverOrFocus' ? this.getTooltipDelay('Show') : 0;
-            }
-        }
+        const lastHide = this.sharedState.lastHideTime;
+        const switching = mouseEvent && lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF;
+        const delay = showDelayOverride ?? this.getTooltipDelay(switching ? 'SwitchShow' : 'Show');
         this.lastMouseEvent = mouseEvent ?? null;
+        this.revalidatePointerOnShow = false;
+        this.scrollResumeDelay = undefined;
         this.state = TooltipStates.WAITING_TO_SHOW;
-        this.showTimeout = window.setTimeout(() => this.showTooltip(), Math.max(0, delay ?? 0));
+        this.showDelay = Math.max(0, delay ?? 0);
+        this.showTimeout = window.setTimeout(() => this.showTooltip(), this.showDelay);
 
         const hide = () => this.hideTooltip(true);
-        [this.onBodyScrollEventCallback] = this.addManagedEventListeners({
+        this.onBodyScrollEventCallbacks = this.addManagedEventListeners({
             bodyScroll: () => {
-                // Focusing an off-screen cell scrolls it into view before its tooltip appears.
-                if (!this.sourceFocused || this.state !== TooltipStates.WAITING_TO_SHOW) {
+                const { state } = this;
+                if (state === TooltipStates.SHOWING) {
+                    if (!this.lastMouseEvent || this.isTooltipFocused()) {
+                        hide();
+                    } else {
+                        this.suspendForScroll(this.getTooltipDelay('SwitchShow') ?? 0);
+                    }
+                } else if (state !== TooltipStates.WAITING_TO_SHOW) {
                     hide();
+                } else if (!this.sourceFocused && this.scrollResumeDelay == null) {
+                    // Focus scrolls its off-screen source into view; a hover attempt waits out the scroll instead.
+                    this.suspendForScroll(this.showDelay);
+                }
+            },
+            bodyScrollEnd: () => {
+                const resumeDelay = this.scrollResumeDelay;
+                if (resumeDelay != null) {
+                    this.scrollResumeDelay = undefined;
+                    this.showTimeout = window.setTimeout(() => this.showTooltip(), resumeDelay);
                 }
             },
         });
@@ -330,11 +345,56 @@ export abstract class BaseTooltipStateManager<
         const keydown = this.onDocumentKeyDown.bind(this);
         // Dismiss before the same Escape can cancel editing or close the source menu.
         doc.addEventListener('keydown', keydown, true);
-        this.popupListeners.push(() => doc.removeEventListener('keydown', keydown, true));
+        this.popupListeners.push(
+            () => doc.removeEventListener('keydown', keydown, true),
+            ..._addManagedElementListeners(this, doc, {
+                touchstart: (event) => {
+                    const eGui = this.tooltipComp?.getGui();
+                    if (event && (!eGui || !event.composedPath().includes(eGui))) {
+                        hide();
+                    }
+                },
+            })
+        );
     }
 
     protected canShowTooltip(): boolean {
         return this.isTooltipAllowed() && this.getTooltipDetails() != null;
+    }
+
+    /** Hides any visible tooltip for the scroll's duration; bodyScrollEnd re-attempts and revalidates the pointer. */
+    private suspendForScroll(resumeDelay: number): void {
+        this.tooltipInstanceCount++;
+        this.tooltipToPosition = undefined;
+        if (this.tooltipComp) {
+            this.destroyTooltipComp(true);
+            this.sharedState.lastHideTime = Date.now();
+            if (!this.sourceFocused || !this.description) {
+                this.disconnectAriaDescription();
+            }
+        }
+        window.clearTimeout(this.showTimeout);
+        window.clearTimeout(this.hideTimeout);
+        this.showTimeout = this.hideTimeout = undefined;
+        this.state = TooltipStates.WAITING_TO_SHOW;
+        this.revalidatePointerOnShow = true;
+        this.scrollResumeDelay = resumeDelay;
+        if (this.showEventDispatched) {
+            this.showEventDispatched = false;
+            this.eventSvc.dispatchEvent({ type: 'tooltipHide', parentGui: this.tooltipCtrl.getGui() });
+        }
+    }
+
+    /** Scrolling moves the source under a stationary pointer, so a scroll-deferred attempt re-checks the landing. */
+    private isPointerOverSource(): boolean {
+        const { lastMouseEvent } = this;
+        if (!this.revalidatePointerOnShow || !lastMouseEvent) {
+            return true;
+        }
+        this.revalidatePointerOnShow = false;
+        const { clientX, clientY } = lastMouseEvent;
+        const rect = this.getTooltipSourceRect(this.tooltipCtrl.getGui());
+        return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
     }
 
     protected getTooltipDetails(): TTooltipCtrlParams | undefined {
@@ -365,7 +425,11 @@ export abstract class BaseTooltipStateManager<
         if (!this.isAlive() || instance !== this.tooltipInstanceCount) {
             return;
         }
-        if (!tooltip || (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))) {
+        if (
+            !tooltip ||
+            !this.isPointerOverSource() ||
+            (this.sourceFocused && isSourceClipped(this.tooltipCtrl.getGui()))
+        ) {
             this.hideTooltip(true);
             return;
         }
@@ -428,7 +492,7 @@ export abstract class BaseTooltipStateManager<
         }
 
         this.addScrollListeners(eGui);
-        this.popupListeners.push(
+        this.compListeners.push(
             _observeResize(this.beans, eGui, () => {
                 const size = this.tooltipSize;
                 if (
@@ -457,13 +521,6 @@ export abstract class BaseTooltipStateManager<
                     }
                     this.startHideTimeout();
                 },
-            }),
-            ..._addManagedElementListeners(this, _getDocument(this.beans), {
-                touchstart: (event) => {
-                    if (event && !event.composedPath().includes(eGui)) {
-                        this.hideTooltip(true);
-                    }
-                },
             })
         );
         this.showEventDispatched = true;
@@ -473,16 +530,21 @@ export abstract class BaseTooltipStateManager<
 
     private addScrollListeners(eGui: HTMLElement): void {
         const ancestors = new Set<Node>();
-        const hide = () => this.hideTooltip(true);
+        const onScroll = (event: Event) => this.onAncestorScroll(event);
         for (const element of [this.tooltipCtrl.getGui(), eGui]) {
             let parent = element.parentNode;
             // Scroll does not bubble or cross shadow roots.
             while (parent && !ancestors.has(parent)) {
                 ancestors.add(parent);
-                this.popupListeners.push(...this.addManagedListeners(parent, { scroll: hide }));
+                this.compListeners.push(...this.addManagedListeners(parent, { scroll: onScroll }));
                 parent = parent.parentNode ?? (parent as ShadowRoot).host;
             }
         }
+    }
+
+    /** An ancestor scroll has no settle event to resume from, so it dismisses rather than suspends. */
+    protected onAncestorScroll(_event: Event): void {
+        this.hideTooltip(true);
     }
 
     public isTooltipFocused(): boolean {
@@ -529,6 +591,7 @@ export abstract class BaseTooltipStateManager<
         }
         this.state = TooltipStates.NOTHING;
         this.lastMouseEvent = null;
+        this.scrollResumeDelay = undefined;
         this.tooltipHovered = false;
         window.clearTimeout(this.hoverGraceTimeout);
         window.clearTimeout(this.showTimeout);
@@ -538,8 +601,10 @@ export abstract class BaseTooltipStateManager<
         for (const removeListener of this.popupListeners.splice(0)) {
             removeListener();
         }
-        this.onBodyScrollEventCallback?.();
-        this.onBodyScrollEventCallback = undefined;
+        for (const removeListener of this.onBodyScrollEventCallbacks ?? []) {
+            removeListener();
+        }
+        this.onBodyScrollEventCallbacks = undefined;
         this.clearEventHandlers();
         if (!this.sourceFocused || !this.description) {
             this.disconnectAriaDescription();
@@ -664,6 +729,10 @@ export abstract class BaseTooltipStateManager<
     }
 
     private destroyTooltipComp(immediate = false): void {
+        this.tooltipHovered = false;
+        for (const removeListener of this.compListeners.splice(0)) {
+            removeListener();
+        }
         const comp = this.tooltipComp!;
         const gui = comp.getGui();
         const destroyPopup = this.tooltipPopupDestroyFunc;

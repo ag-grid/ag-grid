@@ -172,7 +172,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
-        this.callSubscribeRows(sub, rows, options);
+        if (rows.length) {
+            this.callSubscribeRows(sub, rows, options);
+        }
     }
 
     /** Unsubscribes every subscribed row. Cleared first, so a handler that turns the subscription back on starts afresh. */

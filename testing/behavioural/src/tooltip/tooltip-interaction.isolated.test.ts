@@ -166,6 +166,7 @@ describe('Tooltip interaction', () => {
                 rowData: [{ age: 19 }],
                 tooltipInteraction: interaction,
                 tooltipTrigger: 'focus',
+                tooltipShowDelay: 0,
             });
             const gridDiv = getGridElement(api)! as HTMLElement;
             const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
@@ -311,6 +312,7 @@ describe('Tooltip interaction', () => {
             rowData: [data],
             context,
             tooltipTrigger: 'focus',
+            tooltipShowDelay: 0,
             tooltipInteraction: interaction,
         });
         const grid = getGridElement(api)! as HTMLElement;

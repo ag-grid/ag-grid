@@ -97,7 +97,7 @@ describe('SSRM viewSubscription', () => {
         });
     });
 
-    test('the grid makes the first call with no rows when it is ready, before anything loads, then loaded rows arrive', async () => {
+    test('the grid makes no call when it is ready, before anything loads, then loaded rows arrive', async () => {
         const recorder = createRecorder();
         gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'value' }],
@@ -111,7 +111,7 @@ describe('SSRM viewSubscription', () => {
             viewSubscription: recorder.handlers,
         });
 
-        expect(recorder.calls).toEqual([{ type: 'subscribe', ids: [] }]);
+        expect(recorder.calls).toEqual([]);
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
         expect(recorder.batches('subscribe')).toEqual([range(0, 5)]);
@@ -621,6 +621,29 @@ describe('SSRM viewSubscription', () => {
         } finally {
             vi.useRealTimers();
         }
+    });
+
+    test('a subscribeRows handler that throws on an empty array does not stop createGrid returning the api', async () => {
+        const subscribed: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: createFlatDatasource([{ id: '0', value: 0 }]),
+            viewSubscription: {
+                subscribeRows: (rows) => {
+                    if (!rows.length) {
+                        throw new Error('subscribe failed');
+                    }
+                    subscribed.push(...rows.map((row) => row.id));
+                },
+                unsubscribeRows: () => {},
+                debounceMs: 0,
+            },
+        });
+
+        expect(api).toBeDefined();
+        await waitFor(() => expect(subscribed).toEqual(['0']));
     });
 
     test('a subscribeRows handler that keeps throwing is retried once', async () => {

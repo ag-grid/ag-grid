@@ -133,6 +133,15 @@ suite('scroll — horizontal and vertical virtualisation', () => {
     );
 
     benchScroll(
+        'vertical scroll 10k rows (small steps, ensureDomOrder)',
+        { columnDefs: cols20(), rowData: rows10k(), ensureDomOrder: true },
+        (api, viewport, i) => {
+            scrollStep(viewport, 0, 1000 + sweep(i) * 42);
+            api.flushAllAnimationFrames();
+        }
+    );
+
+    benchScroll(
         'ensureColumnVisible across 200 cols',
         { columnDefs: cols200(), rowData: rows1k() },
         (api, _viewport, i) => {

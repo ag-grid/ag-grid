@@ -154,4 +154,18 @@ describe('Floating Filters (React)', () => {
         act(() => api!.setGridOption('columnDefs', withFloating(true)));
         await waitFor(() => expect(floatingInput()?.value).toBe('Thorpe'));
     });
+
+    test.each([
+        ['a string', 'a', 'a', 'a'],
+        ['a callback', (params: { floatingFilter?: boolean }) => (params.floatingFilter ? 'ff' : 'hdr'), 'hdr', 'ff'],
+    ])('headerClass as %s applies to the header and the floating filter', async (_, headerClass, header, ff) => {
+        const { container } = renderGrid(false, [
+            { field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true, headerClass },
+        ]);
+        const names = (selector: string) =>
+            Array.from(container.querySelector(selector)?.classList ?? []).filter((name) => /^(a|hdr|ff)$/.test(name));
+
+        await waitFor(() => expect(names('.ag-floating-filter[col-id="athlete"]')).toEqual([ff]));
+        expect(names('.ag-header-cell:not(.ag-floating-filter)[col-id="athlete"]')).toEqual([header]);
+    });
 });

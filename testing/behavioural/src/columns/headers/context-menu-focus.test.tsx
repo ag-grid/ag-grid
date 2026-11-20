@@ -51,6 +51,7 @@ describe('React menu initial focus with async framework menu items', () => {
                     { name: 'Next item', tooltip: 'Next tooltip' },
                 ]}
                 tooltipTrigger="focus"
+                tooltipShowDelay={0}
                 modules={[ValidationModule, ClientSideRowModelModule, ContextMenuModule, TooltipModule]}
             />
         );
