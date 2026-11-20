@@ -265,7 +265,7 @@
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum components straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial packages, configure them, and you’re ready to build.</p>",
-            "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed . Install the trial packages, configure them, and you’re ready to build.",
+            "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed. Install the trial packages, configure them, and you’re ready to build.",
             "links": [],
             "ctas": [
                 {

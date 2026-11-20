@@ -114,6 +114,13 @@ describe('Bryntum campaign content', () => {
             expect(ctaHrefs(content)).toContain(expected);
         });
 
+        it('has no space before punctuation in its plain-text copy', () => {
+            const bodyTexts = content.sections.flatMap((section) =>
+                'body_text' in section && section.body_text ? [section.body_text] : []
+            );
+            expect(bodyTexts.filter((text) => /\w +[,.;:!?)]/.test(text))).toEqual([]);
+        });
+
         it('gives each section CTA a distinct accessible name', () => {
             const names = sectionCtaNames(content);
             expect(names.filter((name, idx) => names.indexOf(name) !== idx)).toEqual([]);
