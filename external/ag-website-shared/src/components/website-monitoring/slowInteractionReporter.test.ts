@@ -12,7 +12,7 @@ const NAVIGATION_TIMING = { domInteractive: 300, domContentLoadedEventStart: 400
 interface FakeFrame {
     win: typeof window;
     emit: (type: 'event' | 'long-animation-frame', entries: object[]) => void;
-    dispatch: (type: string) => void;
+    dispatch: (type: string, properties?: object) => void;
 }
 
 // jsdom has no Event Timing or Long Animation Frames, so fake the parts of a frame the reporter reads
@@ -21,7 +21,14 @@ function createFakeFrame({
     timeOrigin = TOP_TIME_ORIGIN,
     document,
     supportsInteractions = true,
-}: { path?: string; timeOrigin?: number; document?: Document; supportsInteractions?: boolean } = {}): FakeFrame {
+    navigationTiming = NAVIGATION_TIMING,
+}: {
+    path?: string;
+    timeOrigin?: number;
+    document?: Document;
+    supportsInteractions?: boolean;
+    navigationTiming?: typeof NAVIGATION_TIMING;
+} = {}): FakeFrame {
     const callbacks = new Map<string, (entries: object[]) => void>();
 
     class FakePerformanceObserver {
@@ -53,7 +60,7 @@ function createFakeFrame({
         performance: {
             timeOrigin,
             now: () => Date.now() - timeOrigin,
-            getEntriesByType: () => [NAVIGATION_TIMING],
+            getEntriesByType: () => [navigationTiming],
         },
         document: document ?? { URL: `https://www.ag-grid.com${path}` },
         location: { pathname: path },
@@ -64,7 +71,7 @@ function createFakeFrame({
     return {
         win: win as unknown as typeof window,
         emit: (type, entries) => callbacks.get(type)?.(entries),
-        dispatch: (type) => events.dispatchEvent(new Event(type)),
+        dispatch: (type, properties) => events.dispatchEvent(Object.assign(new Event(type), properties)),
     };
 }
 
@@ -91,6 +98,7 @@ function addIframe(win: typeof window) {
             contentWindow = nextWindow;
             iframe.dispatchEvent(new Event('load'));
         },
+        remove: () => iframe.remove(),
     };
 }
 
@@ -159,6 +167,19 @@ describe('startSlowInteractionReporting', () => {
         expect(send).toHaveBeenCalledWith(expect.objectContaining({ loadState }));
     });
 
+    test('reports an interaction before the document is interactive as loading', () => {
+        top = createFakeFrame({
+            document,
+            navigationTiming: { domInteractive: 0, domContentLoadedEventStart: 0, domComplete: 0 },
+        });
+        start();
+
+        top.emit('event', [interaction()]);
+        vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+        expect(send).toHaveBeenCalledWith(expect.objectContaining({ loadState: 'loading' }));
+    });
+
     test('ignores fast interactions, and events that are not interactions', () => {
         start();
 
@@ -168,15 +189,18 @@ describe('startSlowInteractionReporting', () => {
         expect(send).not.toHaveBeenCalled();
     });
 
-    test('sends one report per interaction, spanning all of its events', () => {
+    test('sends one report per interaction, broken down from the paint of its longest event', () => {
         start();
 
         top.emit('event', [
+            // Painted on its own, before the pointer was released
             interaction({ name: 'pointerdown', duration: 216, processingStart: 600, processingEnd: 620 }),
+            // Painted together, ending at 800 and 808
+            interaction({ name: 'pointerup', startTime: 560, duration: 240, processingStart: 610, processingEnd: 630 }),
             interaction({ name: 'click', startTime: 560, duration: 248, processingStart: 640, processingEnd: 700 }),
         ]);
         vi.advanceTimersByTime(FLUSH_DELAY_MS);
-        top.emit('event', [interaction({ name: 'pointerup' })]);
+        top.emit('event', [interaction({ name: 'keydown' })]);
         vi.advanceTimersByTime(FLUSH_DELAY_MS);
 
         expect(send).toHaveBeenCalledTimes(1);
@@ -184,11 +208,30 @@ describe('startSlowInteractionReporting', () => {
             expect.objectContaining({
                 eventType: 'click',
                 duration: 248,
-                inputDelay: 100,
-                processingDuration: 100,
+                inputDelay: 50,
+                processingDuration: 90,
                 presentationDelay: 108,
+                msSinceDocumentStart: 560,
             })
         );
+    });
+
+    test('gives each interaction its own time to collect the long animation frames that painted it', () => {
+        start();
+
+        top.emit('event', [interaction({ interactionId: 1 })]);
+        vi.advanceTimersByTime(FLUSH_DELAY_MS - 100);
+        top.emit('event', [
+            interaction({ interactionId: 2, startTime: 1_500, processingStart: 1_550, processingEnd: 1_600 }),
+        ]);
+        vi.advanceTimersByTime(100);
+        expect(send).toHaveBeenCalledTimes(1);
+
+        top.emit('long-animation-frame', [{ startTime: 1_450, duration: 200, styleAndLayoutStart: 0, scripts: [] }]);
+        vi.advanceTimersByTime(FLUSH_DELAY_MS - 100);
+
+        expect(send).toHaveBeenCalledTimes(2);
+        expect(send).toHaveBeenLastCalledWith(expect.objectContaining({ animationFrameCount: 1 }));
     });
 
     test('attributes the scripts in the long animation frames the interaction overlapped', () => {
@@ -246,6 +289,42 @@ describe('startSlowInteractionReporting', () => {
             })
         );
         expect(attributes).not.toHaveProperty('script3Source');
+    });
+
+    test('sends only the scheme of a script URL that can hold the script, and no query or long label', () => {
+        start();
+
+        const script = (sourceURL: string, invoker: string, duration: number) => ({
+            sourceURL,
+            invoker,
+            invokerType: 'user-callback',
+            duration,
+        });
+        top.emit('long-animation-frame', [
+            {
+                startTime: 450,
+                duration: 200,
+                styleAndLayoutStart: 0,
+                scripts: [
+                    script('data:text/javascript,alert(document.cookie)', 'blob:https://www.ag-grid.com/0b1d', 60),
+                    script('', 'TimerHandler:setTimeout?token=secret', 50),
+                    script('https://www.ag-grid.com/_astro/a.js?v=1#top', 'A'.repeat(200), 40),
+                ],
+            },
+        ]);
+        top.emit('event', [interaction()]);
+        vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+        expect(send).toHaveBeenCalledWith(
+            expect.objectContaining({
+                script1Source: 'data:',
+                script1Invoker: 'blob:',
+                script2Source: '',
+                script2Invoker: 'TimerHandler:setTimeout',
+                script3Source: 'https://www.ag-grid.com/_astro/a.js',
+                script3Invoker: 'A'.repeat(120),
+            })
+        );
     });
 
     describe('iframes', () => {
@@ -327,6 +406,45 @@ describe('startSlowInteractionReporting', () => {
             vi.advanceTimersByTime(FLUSH_DELAY_MS);
 
             expect(send).toHaveBeenCalledTimes(1);
+            expect(send).toHaveBeenCalledWith(expect.objectContaining({ frame: 'iframe' }));
+        });
+
+        test('reports a tap inside an observed iframe from the top page when the iframe has no slow report of it', () => {
+            const example = createFakeFrame({ path: EXAMPLE_PATH });
+            addIframe(example.win);
+            start();
+
+            const targetInExample = { ownerDocument: example.win.document };
+            top.emit('event', [interaction({ target: targetInExample })]);
+            example.emit('event', [interaction({ target: targetInExample, duration: 192 })]);
+            vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+            expect(send).toHaveBeenCalledTimes(1);
+            expect(send).toHaveBeenCalledWith(expect.objectContaining({ frame: 'top' }));
+        });
+
+        test('stops observing an iframe once it has been removed from the page', () => {
+            const example = createFakeFrame({ path: EXAMPLE_PATH });
+            const iframe = addIframe(example.win);
+            start();
+
+            iframe.remove();
+            document.dispatchEvent(new Event('astro:page-load'));
+            example.emit('event', [interaction()]);
+            vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+            expect(send).not.toHaveBeenCalled();
+        });
+
+        test('keeps observing an iframe whose document is restored from the back/forward cache', () => {
+            const example = createFakeFrame({ path: EXAMPLE_PATH });
+            addIframe(example.win);
+            start();
+
+            example.dispatch('pagehide', { persisted: true });
+            example.emit('event', [interaction()]);
+            vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
             expect(send).toHaveBeenCalledWith(expect.objectContaining({ frame: 'iframe' }));
         });
 

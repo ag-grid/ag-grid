@@ -168,6 +168,9 @@ function stopMonitoring() {
         state = 'stopped';
         cspViolations?.discard();
     } else if (state === 'running') {
+        // Drops any slow interactions still waiting to be sent, which would otherwise go out as the
+        // page reloads
+        stopReportingSlowInteractions?.();
         sdk?.terminateSession();
         window.location.reload();
     }
