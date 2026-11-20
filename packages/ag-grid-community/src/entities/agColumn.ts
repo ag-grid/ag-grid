@@ -663,24 +663,24 @@ export class AgColumn<TValue = any>
         return this.colDef.sortable ?? true;
     }
 
-    /** @deprecated v32 use col.getSort() === 'asc */
+    /** @deprecated v32 use col.getSort() === 'asc' */
     public isSortAscending(): boolean {
         this.deprecated(350);
         return this.getSort() === 'asc';
     }
 
-    /** @deprecated v32 use col.getSort() === 'desc */
+    /** @deprecated v32 use col.getSort() === 'desc' */
     public isSortDescending(): boolean {
         this.deprecated(351);
         return this.getSort() === 'desc';
     }
-    /** @deprecated v32 use col.getSort() === undefined */
+    /** @deprecated v32 use !col.getSort() */
     public isSortNone(): boolean {
         this.deprecated(352);
         return !this.getSort();
     }
 
-    /** @deprecated v32 use col.getSort() !== undefined */
+    /** @deprecated v32 use col.getSort() != null */
     public isSorting(): boolean {
         this.deprecated(353);
         return this.getSort() != null;

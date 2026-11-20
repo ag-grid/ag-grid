@@ -173,16 +173,16 @@ export interface Column<TValue = any>
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;
 
-    /** @deprecated v32 use col.getSort() === 'asc */
+    /** @deprecated v32 use col.getSort() === 'asc' */
     isSortAscending(): boolean;
 
-    /** @deprecated v32 use col.getSort() === 'desc */
+    /** @deprecated v32 use col.getSort() === 'desc' */
     isSortDescending(): boolean;
 
-    /** @deprecated v32 use col.getSort() === undefined */
+    /** @deprecated v32 use !col.getSort() */
     isSortNone(): boolean;
 
-    /** @deprecated v32 use col.getSort() !== undefined */
+    /** @deprecated v32 use col.getSort() != null */
     isSorting(): boolean;
 
     /** Returns the sort index for this column. */
