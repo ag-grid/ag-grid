@@ -580,6 +580,21 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
+    test('destroying the grid finishes when unsubscribeRows throws', async () => {
+        const api = await createFlatGrid();
+        api.setGridOption('viewSubscription', {
+            subscribeRows: () => {},
+            unsubscribeRows: () => {
+                throw new Error('unsubscribe failed');
+            },
+        });
+
+        api.destroy();
+
+        expectHandlerWarning('unsubscribe failed');
+        expect(api.isDestroyed()).toBe(true);
+    });
+
     test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
