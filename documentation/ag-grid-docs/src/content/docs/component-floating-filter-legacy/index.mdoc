@@ -46,7 +46,7 @@ The Simple Filters (Text, Number, Date) provide methods that the corresponding p
 
 - **Set Filter:** The floating set filter is not editable, so no method is exposed on the parent filter for the floating filter to call.
 
-You could also call `setModel()` on the filters as an alternative. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
+You could also call `setModel()` on the filters as an alternative, then `api.onFilterChanged()` to filter the rows. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
 {% /if %}
 
 ## Example: Custom Filter And Custom Floating Filter

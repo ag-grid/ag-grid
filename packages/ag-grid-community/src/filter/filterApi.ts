@@ -6,5 +6,8 @@ export function isAnyFilterPresent(beans: BeanCollection): boolean {
 }
 
 export function onFilterChanged(beans: BeanCollection, source: FilterChangedEventSourceType = 'api') {
+    if (beans.colFilter?.requestFilterChanged(source)) {
+        return;
+    }
     beans.filterManager?.onFilterChanged({ source });
 }
