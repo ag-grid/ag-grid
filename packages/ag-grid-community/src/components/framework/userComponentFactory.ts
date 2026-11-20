@@ -35,11 +35,11 @@ const GRID_OWNED_PARAMS = new Set([
     'state',
 ]);
 
-const isIgnoredUserParam = (params: any, userParams: any, key: string): boolean => {
+const isIgnoredUserParam = (gridParams: any, userParams: any, key: string): boolean => {
     if (!GRID_OWNED_PARAMS.has(key)) {
         return false;
     }
-    const gridValue = params[key];
+    const gridValue = gridParams[key];
     return gridValue != null && gridValue !== userParams[key];
 };
 
@@ -286,28 +286,28 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         const propName = type.name + 'Params';
         if (typeof userParams === 'function') {
-            this.mergeUserParams(params, userParams(paramsFromGrid), propName);
+            this.mergeUserParams(params, userParams(paramsFromGrid), propName, paramsFromGrid);
         } else if (typeof userParams === 'object') {
-            this.mergeUserParams(params, userParams, propName);
+            this.mergeUserParams(params, userParams, propName, paramsFromGrid);
         }
 
-        this.mergeUserParams(params, paramsFromSelector, type.name + 'Selector params');
+        this.mergeUserParams(params, paramsFromSelector, type.name + 'Selector params', paramsFromGrid);
 
         return defaultCompProcessParams ? defaultCompProcessParams(params, this.beans) : params;
     }
 
     /**
      * Deep-merges application params into `params`, except keys the grid supplies as live objects
-     * (see `GRID_OWNED_PARAMS`): those keep the grid's value and the application's value is ignored with a warning.
+     * (see `GRID_OWNED_PARAMS`) in `gridParams`: those keep the grid's value and the application's value is ignored with a warning.
      */
-    public mergeUserParams(params: any, userParams: any, propName: string): void {
+    public mergeUserParams(params: any, userParams: any, propName: string, gridParams: any = params): void {
         if (userParams == null || typeof userParams !== 'object') {
             _mergeDeep(params, userParams);
             return;
         }
         let allowedParams: any = userParams;
         for (const key of Object.keys(userParams)) {
-            if (isIgnoredUserParam(params, userParams, key)) {
+            if (isIgnoredUserParam(gridParams, userParams, key)) {
                 if (allowedParams === userParams) {
                     allowedParams = { ...userParams };
                 }
