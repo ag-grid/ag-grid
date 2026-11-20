@@ -1,14 +1,9 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, IRowNode, ShowValuesAsModeDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ExternalFilterModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, ExternalFilterModule } from 'ag-grid-community';
 import { RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
-
-// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
-beforeEach(() => {
-    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-});
 
 function leaf(api: GridApi, id: string): IRowNode {
     const node = api.getRowNode(id);
@@ -111,14 +106,14 @@ describe('showValuesAs built-in modes', () => {
         expect(api.getColumn('amount')!.isValueActive()).toBe(false);
         const reported: string[] = [];
         api.addEventListener('columnValueChanged', (e) => reported.push(e.columns!.map((c) => c.getColId()).join()));
-        api.addEventListener('columnEverythingChanged', () => reported.push('everything'));
+        api.addEventListener('displayedColumnsChanged', () => reported.push('displayed'));
 
         api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
 
         // Promoted to a value column (default sum) so the grand-total denominator exists and percentages resolve.
         expect(api.getColumn('amount')!.isValueActive()).toBe(true);
         await asyncSetTimeout(0);
-        expect(reported).toEqual(['everything', 'amount']);
+        expect(reported).toEqual(['displayed', 'amount']);
         expect(transformed(api, '1', 'amount')).toBeCloseTo(0.3);
         await new GridRows(api, 'state restore promotes total mode').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"

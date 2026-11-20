@@ -10,11 +10,6 @@ import {
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
-beforeEach(() => {
-    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-});
-
 describe('Column API — extended coverage', () => {
     const gridsManager = new TestGridsManager({
         modules: [
@@ -372,9 +367,9 @@ describe('Column API — extended coverage', () => {
                 · └── LEAF hidden id:1 country:"UK" gold:2
             `);
 
-            const everythingChanged = vitest.fn();
+            const displayedChanged = vitest.fn();
             const valueChanged = vitest.fn();
-            api.addEventListener('columnEverythingChanged', everythingChanged);
+            api.addEventListener('displayedColumnsChanged', displayedChanged);
             api.addEventListener('columnValueChanged', valueChanged);
 
             api.setColumnAggFunc('gold', 'avg');
@@ -382,7 +377,7 @@ describe('Column API — extended coverage', () => {
 
             // Func-only change: dispatches columnValueChanged (drives re-aggregation) but no column rebuild.
             expect(valueChanged).toHaveBeenCalled();
-            expect(everythingChanged).not.toHaveBeenCalled();
+            expect(displayedChanged).not.toHaveBeenCalled();
             await new GridRows(api, `avg after func-only change`).check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" gold:{"count":2,"value":3}

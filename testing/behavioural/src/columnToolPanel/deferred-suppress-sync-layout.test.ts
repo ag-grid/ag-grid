@@ -569,13 +569,16 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const country = gridApi.getColumn('country')! as AgColumn;
             const sport = gridApi.getColumn('sport')! as AgColumn;
             const everything: any[] = [];
+            const displayed: any[] = [];
             gridApi.addEventListener('columnEverythingChanged', (e) => everything.push(e));
+            gridApi.addEventListener('displayedColumnsChanged', (e) => displayed.push(e));
 
             strategy.setRowGroupColumns(true, [country, sport], 'toolPanelUi');
             strategy.commit(true);
 
             await asyncSetTimeout(0);
             expect(everything.length).toBe(1);
+            expect(displayed.length).toBeGreaterThan(0);
             expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
             await new GridColumns(gridApi, 'batched add').checkColumns(`
                 CENTER

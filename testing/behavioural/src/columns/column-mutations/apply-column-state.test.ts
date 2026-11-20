@@ -1468,6 +1468,7 @@ describe('Column Mutations - applyColumnState', () => {
     describe('applyColumnState / resetColumnState event-emission baseline', () => {
         const trackedEvents = [
             'columnEverythingChanged',
+            'displayedColumnsChanged',
             'columnRowGroupChanged',
             'columnPivotChanged',
             'columnValueChanged',
@@ -1503,6 +1504,7 @@ describe('Column Mutations - applyColumnState', () => {
 
             expect(counts).toEqual({
                 columnEverythingChanged: 1,
+                displayedColumnsChanged: 1,
                 columnRowGroupChanged: 0,
                 columnPivotChanged: 0,
                 columnValueChanged: 0,
@@ -1532,6 +1534,7 @@ describe('Column Mutations - applyColumnState', () => {
             await asyncSetTimeout(0);
 
             expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.displayedColumnsChanged).toBe(1);
             expect(counts.columnRowGroupChanged).toBe(1);
         });
 
@@ -1556,6 +1559,7 @@ describe('Column Mutations - applyColumnState', () => {
             await asyncSetTimeout(0);
 
             expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.displayedColumnsChanged).toBe(1);
         });
 
         test('resetColumnState on a grouped grid emits one columnsReset and one everythingChanged', async () => {
@@ -1575,6 +1579,7 @@ describe('Column Mutations - applyColumnState', () => {
             // everythingChanged, dispatched once over the final (ordered) structure.
             expect(counts.columnsReset).toBe(1);
             expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.displayedColumnsChanged).toBe(1);
         });
     });
 
@@ -2153,9 +2158,13 @@ describe('Column Mutations - applyColumnState', () => {
             });
 
             let everythingChanged = 0;
+            let displayedChanged = 0;
             let moved = 0;
             api.addEventListener('columnEverythingChanged', () => {
                 everythingChanged++;
+            });
+            api.addEventListener('displayedColumnsChanged', () => {
+                displayedChanged++;
             });
             api.addEventListener('columnMoved', () => {
                 moved++;
@@ -2168,6 +2177,7 @@ describe('Column Mutations - applyColumnState', () => {
             await asyncSetTimeout(0);
 
             expect(everythingChanged).toBeGreaterThanOrEqual(1);
+            expect(displayedChanged).toBeGreaterThanOrEqual(1);
             expect(moved).toBeGreaterThanOrEqual(1);
             expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['c', 'b', 'a']);
             await new GridColumns(api, `applyOrder reorder events`).checkColumns(`
@@ -2536,6 +2546,7 @@ describe('Column Mutations - applyColumnState', () => {
 
             const tracked = [
                 'columnEverythingChanged',
+                'displayedColumnsChanged',
                 'columnRowGroupChanged',
                 'columnPivotChanged',
                 'columnValueChanged',
@@ -2569,6 +2580,7 @@ describe('Column Mutations - applyColumnState', () => {
             await asyncSetTimeout(0);
 
             expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.displayedColumnsChanged).toBe(1);
             expect(counts.columnRowGroupChanged).toBe(1);
             expect(counts.columnPivotChanged).toBe(1);
             expect(counts.columnValueChanged).toBe(1);
