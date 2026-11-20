@@ -4,6 +4,7 @@ import { LocalEventService } from 'ag-stack';
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
+import { _deprecatedWithoutAttribution } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 import { getNextColInstanceId } from './agColumn';
 import type { AgColumnGroup } from './agColumnGroup';
@@ -55,7 +56,12 @@ export class AgProvidedColumnGroup
     }
 
     public getInstanceId(): ColumnInstanceId {
-        this.deprecated(343);
+        // `beans` is null on a group the grid did not wire (tool panel layout copies)
+        if (this.beans) {
+            this.deprecated(343);
+        } else {
+            _deprecatedWithoutAttribution(343);
+        }
         return this.instanceId;
     }
 
