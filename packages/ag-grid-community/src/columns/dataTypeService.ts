@@ -80,6 +80,9 @@ export const DATA_TYPE_DERIVED_COL_DEF_PROPERTIES = [
     'valueParser',
 ] as const satisfies readonly (keyof ColDef)[];
 
+/** The column state keys set on each column parked awaiting inference, which inference then keeps. */
+type PendingColumnStateUpdates = { [colId: string]: Set<keyof ColumnStateParams> };
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
@@ -114,11 +117,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private hasObjectValueFormatter: boolean;
     private initialData: any[] | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
+    // captured when inference is first deferred, as the definitions can change before it resolves
+    private columnTypeOverridesExistPendingInference: boolean = false;
+    // outside the Client-Side Row Model the rows inferred from are not kept, so the value each field was
+    // inferred from is, letting a column rebuilt after inference resolve the same type without new rows.
+    // `null` records a field the rows held no value for
+    private readonly inferredValueByField: Map<string, any> = new Map();
+    // each column left untyped because it was filtered through its untyped filter before it resolved: the field
+    // it shows, and the state keys set on it since, which typing it keeps. The decision holds only while that
+    // column still shows that field and is still filtered
+    private readonly keptUntypedByColId: Map<string, { field: string; updates: Set<keyof ColumnStateParams> }> =
+        new Map();
     // keep track of any column state updates whilst waiting for data types to be inferred
-    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
+    private columnStateUpdatesPendingInference: PendingColumnStateUpdates = Object.create(null);
 
     public postConstruct(): void {
         this.processDataTypeDefinitions();
+        this.addManagedEventListeners({ filterChanged: () => this.typeColumnsWithFilterCleared() });
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
@@ -316,21 +331,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /** Records a state key set on a column before its data type is inferred, which inference then keeps. */
     public columnStateUpdated(column: AgColumn, key: keyof ColumnStateParams): void {
-        this.columnStateUpdatesPendingInference[column.colId]?.add(key);
+        const { colId } = column;
+        (this.columnStateUpdatesPendingInference[colId] ?? this.keptUntypedByColId.get(colId)?.updates)?.add(key);
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
-        const { gos } = this;
-        if (!_isClientSideRowModel(gos)) {
-            return false;
-        }
         const propsToCheckForInference = { cellRenderer: true, valueGetter: true, valueParser: true, refData: true };
         if (doColDefPropsPreventInference(userColDef, propsToCheckForInference)) {
             return false;
         }
         const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
         if (columnTypes) {
-            const columnTypeDefs = gos.get('columnTypes') ?? {};
+            const columnTypeDefs = this.gos.get('columnTypes') ?? {};
             const hasPropsPreventingInference = convertColumnTypes(columnTypes).some((columnType) => {
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
@@ -343,9 +355,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private inferCellDataType(field: string | undefined, colId: string): string | undefined {
-        if (!field) {
+        if (!field || this.isKeptUntyped(field, colId)) {
             return undefined;
         }
+        return this.sampleCellDataType(field, colId);
+    }
+
+    private sampleCellDataType(field: string, colId: string): string | undefined {
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
         if (_isProtoField(field, fieldPath)) {
             return undefined;
@@ -359,12 +375,21 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         let value: any;
         const rowData = this.getInitialRowData();
-        if (rowData) {
+        const isClientSide = _isClientSideRowModel(this.gos);
+        // a dotted field reads a nested value or a literal key depending on `suppressFieldDotNotation`,
+        // so the two lookups are sampled separately
+        const sampleKey = fieldPath ? `path:${field}` : `key:${field}`;
+        if (!isClientSide && this.inferredValueByField.has(sampleKey)) {
+            value = this.inferredValueByField.get(sampleKey);
+        } else if (rowData) {
             for (let i = 0, len = rowData.length; value == null && i < len; ++i) {
                 value = getValue(rowData[i]);
             }
+            if (!isClientSide) {
+                this.inferredValueByField.set(sampleKey, value ?? null);
+            }
         } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
+            const rowNodes = isClientSide ? (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs : undefined;
             if (!rowNodes?.length) {
                 this.initWaitForRowData(colId);
                 return undefined;
@@ -385,7 +410,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private getInitialRowData(): any[] | null {
-        const rowData = this.gos.get('rowData');
+        const rowData = _isClientSideRowModel(this.gos) ? this.gos.get('rowData') : undefined;
         if (rowData?.length) {
             return rowData;
         }
@@ -393,55 +418,108 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private initWaitForRowData(colId: string): void {
-        this.columnStateUpdatesPendingInference[colId] = new Set();
+        // a column rebuilt while it waits keeps the state keys already recorded for it
+        this.columnStateUpdatesPendingInference[colId] ??= new Set();
         if (this.isPendingInference) {
             return;
         }
+        this.columnTypeOverridesExistPendingInference = this.isColumnTypeOverrideInDataTypeDefinitions;
+        if (!_isClientSideRowModel(this.gos)) {
+            // the other row models fetch their rows with the filter model, so nothing may wait on those
+            // rows: the columns stay parked in the pending map alone, as they do awaiting leaf rows
+            return;
+        }
         this.isPendingInference = true;
-        const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        const { colAutosize, eventSvc } = this.beans;
-        if (columnTypeOverridesExist && colAutosize) {
+        const { colAutosize } = this.beans;
+        if (this.columnTypeOverridesExistPendingInference && colAutosize) {
             colAutosize.shouldQueueResizeOperations = true;
         }
-        const [destroyFunc] = this.addManagedEventListeners({
-            rowDataUpdateStarted: ({ rowData }) => {
-                if (!rowData?.length) {
-                    return;
-                }
-                destroyFunc?.();
-                this.isPendingInference = false;
-                this.processColumnsPendingInference(rowData, columnTypeOverridesExist);
-                this.columnStateUpdatesPendingInference = Object.create(null);
-                if (columnTypeOverridesExist) {
-                    colAutosize?.processResizeOperations();
-                }
-                eventSvc.dispatchEvent({
-                    type: 'dataTypesInferred',
-                });
-            },
-        });
     }
 
-    private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
+    /**
+     * Signalled by every row model when it receives rows, resolving the columns parked awaiting data.
+     * Inference resolves once, off the first rows it can infer from; a column those rows hold no value
+     * for falls back to `cellDataType: false` and is not re-inferred from later data.
+     *
+     * `canInferFrom` is false for rows that are not a column's own values — the Server-Side Row Model's
+     * group rows — which leave the columns parked for the leaf rows, but still count as the grid having
+     * rows, so that work waiting on inference is not held back until a group is expanded.
+     */
+    public onRowsReceived(rowData: any[], canInferFrom: boolean = true): void {
+        // a response carrying no rows changes nothing: the columns stay pending until rows arrive,
+        // rather than being written off before the grid has seen any data
+        if (!rowData.length) {
+            return;
+        }
+        const hasColumnsPending = !!Object.keys(this.columnStateUpdatesPendingInference).length;
+        const wasPendingFirstRows = this.isPendingInference;
+        if (!wasPendingFirstRows && !hasColumnsPending) {
+            return;
+        }
+        this.isPendingInference = false;
+
+        const { colAutosize, eventSvc } = this.beans;
+        const columnTypeOverridesExist = this.columnTypeOverridesExistPendingInference;
+        let hasResolved = false;
+        if (canInferFrom && hasColumnsPending) {
+            const pending = this.columnStateUpdatesPendingInference;
+            // detached first, so the state applied by inference is not recorded as a change the user made
+            this.columnStateUpdatesPendingInference = Object.create(null);
+            this.processColumnsPendingInference(rowData, pending, columnTypeOverridesExist, !wasPendingFirstRows);
+            hasResolved = true;
+        }
+        // queued resize operations are released on the first rows either way, as columns awaiting leaf
+        // rows would otherwise hold them for as long as the user leaves every group collapsed
+        if (columnTypeOverridesExist && wasPendingFirstRows) {
+            colAutosize?.processResizeOperations();
+        }
+        if (wasPendingFirstRows || hasResolved) {
+            eventSvc.dispatchEvent({
+                type: 'dataTypesInferred',
+            });
+        }
+    }
+
+    /**
+     * `isAfterFirstRows` marks columns resolving after the grid already had rows — the Server-Side Row
+     * Model's leaf columns while every group was collapsed — whose untyped filter could be in use.
+     */
+    private processColumnsPendingInference(
+        rowData: any[],
+        pending: PendingColumnStateUpdates,
+        columnTypeOverridesExist: boolean,
+        isAfterFirstRows: boolean
+    ): void {
         this.initialData = rowData;
         // one update, so a column redefined here is told once every inferred column holds its new definition
         const colModel = this.colModel;
         colModel.beginColUpdate();
         try {
-            this.applyInferredColDefs(columnTypeOverridesExist);
+            this.applyInferredColDefs(pending, columnTypeOverridesExist, isAfterFirstRows);
         } finally {
             colModel.endColUpdate();
         }
         this.initialData = null;
     }
 
-    private applyInferredColDefs(columnTypeOverridesExist: boolean): void {
+    private applyInferredColDefs(
+        pending: PendingColumnStateUpdates,
+        columnTypeOverridesExist: boolean,
+        isAfterFirstRows: boolean
+    ): void {
         const beans = this.beans;
         const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
-        for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
-            const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
+        for (const colId of Object.keys(pending)) {
+            if (isAfterFirstRows && this.keepColumnWithActiveFilter(colId, pending[colId])) {
+                continue;
+            }
+            const updatedColumnState = this.resetColDefAndGetColumnState(
+                colId,
+                pending[colId],
+                columnTypeOverridesExist
+            );
             if (!updatedColumnState) {
                 continue;
             }
@@ -468,7 +546,59 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
-    private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {
+    /**
+     * A column still parked once the grid has rows can already be filtered through its untyped filter. Typing it
+     * can swap that filter or its options and so discard the active model, so the column keeps the definition it
+     * is filtered by until the filter is cleared. Its rows are sampled all the same, so that releasing it later can
+     * type it from them.
+     */
+    private keepColumnWithActiveFilter(colId: string, updates: Set<keyof ColumnStateParams>): boolean {
+        const column = this.colModel.colsById[colId];
+        const field = column?.getColDef().field;
+        if (!field || !this.sampleCellDataType(field, colId) || !this.beans.colFilter?.isFilterActive(column)) {
+            return false;
+        }
+        this.keptUntypedByColId.set(colId, { field, updates });
+        return true;
+    }
+
+    private isKeptUntyped(field: string, colId: string): boolean {
+        const keptField = this.keptUntypedByColId.get(colId)?.field;
+        if (keptField == null) {
+            return false;
+        }
+        // a column removed and given back, or one that no longer filters, has nothing left to protect
+        const column = this.colModel.colsById[colId];
+        if (keptField === field && column && this.beans.colFilter?.isFilterActive(column)) {
+            return true;
+        }
+        this.keptUntypedByColId.delete(colId);
+        return false;
+    }
+
+    /**
+     * Types each kept-untyped column once its filter is cleared, from the rows already sampled for it, as inference
+     * types any other: rebuilding finds the filter no longer active, so the column is released.
+     */
+    private typeColumnsWithFilterCleared(): void {
+        const pending: PendingColumnStateUpdates = Object.create(null);
+        for (const [colId, { updates }] of this.keptUntypedByColId) {
+            const column = this.colModel.colsById[colId];
+            if (column && !this.beans.colFilter?.isFilterActive(column)) {
+                pending[colId] = updates;
+            }
+        }
+        if (Object.keys(pending).length) {
+            this.processColumnsPendingInference([], pending, this.columnTypeOverridesExistPendingInference, false);
+            this.beans.eventSvc.dispatchEvent({ type: 'dataTypesInferred' });
+        }
+    }
+
+    private resetColDefAndGetColumnState(
+        colId: string,
+        columnStateUpdates: Set<keyof ColumnStateParams>,
+        columnTypeOverridesExist: boolean
+    ): ColumnState | null {
         const column = this.colModel.colsById[colId];
         if (!column) {
             return null;
@@ -481,7 +611,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnTypeOverridesExist || !newColDef.type || newColDef.type === oldColDef.type) {
             return null;
         }
-        return getUpdatedColumnState(this.beans, column, this.columnStateUpdatesPendingInference[colId]);
+        return getUpdatedColumnState(this.beans, column, columnStateUpdates);
     }
 
     private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
@@ -809,6 +939,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = Object.create(null);
+        this.inferredValueByField.clear();
+        this.keptUntypedByColId.clear();
         super.destroy();
     }
 }

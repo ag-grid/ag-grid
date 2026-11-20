@@ -299,6 +299,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
+        // the row nodes are not built yet, so the new row data is the only source to infer data types from
+        this.beans.dataTypeSvc?.onRowsReceived(data ?? []);
         this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', rowData: data ?? null });
     }
 

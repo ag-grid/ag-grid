@@ -1,0 +1,15 @@
+<div class="example-wrapper">
+    <div class="example-controls">
+        <span>Row model:</span>
+        <label
+            ><input type="radio" name="rowModel" value="clientSide" onchange="onRowModelChange()" checked />
+            Client-Side</label
+        >
+        <label><input type="radio" name="rowModel" value="infinite" onchange="onRowModelChange()" /> Infinite</label>
+        <label
+            ><input type="radio" name="rowModel" value="serverSide" onchange="onRowModelChange()" /> Server-Side</label
+        >
+        <label><input type="radio" name="rowModel" value="viewport" onchange="onRowModelChange()" /> Viewport</label>
+    </div>
+    <div id="myGrid"></div>
+</div>

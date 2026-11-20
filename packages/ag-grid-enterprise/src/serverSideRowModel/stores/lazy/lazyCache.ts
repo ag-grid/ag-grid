@@ -969,6 +969,24 @@ export class LazyCache extends BeanStub {
         if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
         }
+
+        // group rows carry only their group key and any aggregated values, so they say nothing about
+        // the columns populated on leaf rows: inference waits for a level whose rows are the data
+        // grand total records extracted above are aggregates, not a sample of any column's values
+        const rowsToInferFrom = skippedRowCount
+            ? response.rowData.filter((data) => this.getRowId(data) !== grandTotalId)
+            : response.rowData;
+        this.beans.dataTypeSvc?.onRowsReceived(rowsToInferFrom, this.isLeafLevel());
+    }
+
+    /** Whether this store's rows are leaf rows, and so representative of every column's values. */
+    private isLeafLevel(): boolean {
+        // tree data rows hold the row's own data at every level, group rows included
+        if (this.gos.get('treeData')) {
+            return true;
+        }
+        const level = this.store.getParentNode().level + 1;
+        return level >= (this.beans.rowGroupColsSvc?.columns?.length ?? 0);
     }
 
     public fireRefreshFinishedEvent() {
