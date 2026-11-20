@@ -200,7 +200,7 @@ export interface Column<TValue = any>
      *  is {@link getShowValuesAs}. */
     getShowValuesAsDef(): ShowValuesAsDefResolved<any, TValue> | null;
 
-    /** @deprecated v32 Use col.getLeft() + col.getActualWidth() instead. */
+    /** @deprecated v32 Use `(col.getLeft() ?? 0) + col.getActualWidth()` instead. */
     getRight(): number;
 
     /** Returns `true` if filter is active on the column. */

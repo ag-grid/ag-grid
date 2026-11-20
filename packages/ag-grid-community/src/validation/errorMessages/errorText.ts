@@ -990,7 +990,7 @@ export const AG_GRID_ERRORS = {
     353: () =>
         '`column.isSorting()` is deprecated and will be removed in v38. Use `column.getSort() != null` instead.' as const,
     354: () =>
-        '`column.getRight()` is deprecated and will be removed in v38. Use `column.getLeft() + column.getActualWidth()` instead.' as const,
+        '`column.getRight()` is deprecated and will be removed in v38. Use `(column.getLeft() ?? 0) + column.getActualWidth()` instead.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
