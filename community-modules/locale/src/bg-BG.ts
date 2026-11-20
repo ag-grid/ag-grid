@@ -395,7 +395,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     addToLabels: 'Добавяне на ${variable} към етикети',
     removeFromLabels: 'Премахване на ${variable} от етикети',
     resetColumns: 'Нулиране на колони',
-    expandAll: 'Разширяване на всички групи редове',
+    expandAll: 'Разгъване на всички групи редове',
     collapseAll: 'Затваряне на всички групи редове',
     copy: 'Копиране',
     ctrlC: 'Ctrl+C',
@@ -884,7 +884,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',
     ariaFilterPanelList: 'Списък с филтри',
-    ariaFilterPanelExpandAll: 'Разширяване на всички групи филтри',
+    ariaFilterPanelExpandAll: 'Разгъване на всички групи филтри',
     ariaFilterPanelCollapseAll: 'Свиване на всички групи филтри',
 
     // ARIA labels for new Filters Tool Panel
