@@ -228,7 +228,17 @@
     }
 
     .ag-row-selected {
+        color: var(--ag-selected-row-text-color, var(--ag-data-color));
         --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
+        --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
+        --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
+        --ag-note-indicator-color: var(--ag-selected-row-note-indicator-color);
+        --ag-value-change-delta-up-color: var(--ag-selected-row-value-change-delta-up-color);
+        --ag-value-change-delta-down-color: var(--ag-selected-row-value-change-delta-down-color);
+        --ag-checkbox-background-color: var(--ag-selected-row-checkbox-background-color);
+        --ag-checkbox-checked-color: var(--ag-selected-row-checkbox-checked-color);
+        --ag-checkbox-unchecked-color: var(--ag-selected-row-checkbox-unchecked-color);
+        --ag-checkbox-indeterminate-color: var(--ag-selected-row-checkbox-indeterminate-color);
     }
 
     .ag-row-hover:not(.ag-full-width-row),

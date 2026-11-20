@@ -7,7 +7,7 @@ Control how selected rows and cells appear.
 
 ## Row Selections
 
-When [row selection](./row-selection/) is enabled, you can set the color of selected rows using the `selectedRowBackgroundColor` parameter. If your grid uses alternating row colours we recommend setting this to a semi-transparent colour so that the alternating row colours are visible below it.
+When [row selection](./row-selection/) is enabled, you can set the colour of selected rows using the `selectedRowBackgroundColor` parameter. If your grid uses alternating row colours we recommend setting this to a semi-transparent colour so that the alternating row colours are visible below it.
 
 ```js
 const myTheme = themeQuartz.withParams({
@@ -20,7 +20,30 @@ const myTheme = themeQuartz.withParams({
 });
 ```
 
+You can apply other styles to selected rows [using CSS](./theming-css/) by targeting the `.ag-row-selected` CSS class:
+
+```css
+.ag-row-selected {
+    font-style: italic;
+}
+```
+
 {% gridExampleRunner title="Custom Row Selection Colour" name="custom-row-selection-color"  exampleHeight=450 /%}
+
+### High Contrast Colours on Selected Rows
+
+If your grid uses dark text, and you set `selectedRowBackgroundColor` to a dark colour, you will find that the text is no longer visible. The grid provides `selectedRow` prefixed variants of several theme parameters to enable high contrast designs:
+
+- `selectedRowTextColor` - the text and icon colour in selected rows.
+- Every [checkbox colour parameter](./theming-widgets/#styling-checkboxes), e.g. `selectedRowCheckboxCheckedBackgroundColor`
+- `selectedRowRangeSelectionBorderColor` - the border around the focused cell and [cell selections](#cell-selections)
+- `selectedRowDragHandleColor` and `selectedRowDragIndicatorColor` - used in [row dragging](./row-dragging/)
+- `selectedRowNoteIndicatorColor` - the indicator on cells with [notes](./notes/)
+- `selectedRowValueChangeDeltaUpColor` and `selectedRowValueChangeDeltaDownColor` - value changes shown by [animate show changed cells](./change-cell-renderers/#animate-show-changed-cells)
+
+This example uses these parameters to invert selected row colours:
+
+{% gridExampleRunner title="High Contrast Colours on Selected Rows" name="selected-row-high-contrast"  exampleHeight=450 /%}
 
 ## Cell Selections
 
