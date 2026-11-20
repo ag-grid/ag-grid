@@ -415,7 +415,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Users chart a selected range or a pivot from the grid; Enterprise chart types need the Enterprise Bundle"
+                            "detail": "Users chart a selected range or a pivot from the grid. Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
                         },
                         "competitor": {
                             "status": "limited",

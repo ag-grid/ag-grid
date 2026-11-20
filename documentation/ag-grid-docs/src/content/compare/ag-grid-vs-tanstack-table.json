@@ -16,7 +16,7 @@
     },
     "hero": {
         "heading": "AG Grid vs TanStack Table",
-        "subHeading": "How AG Grid and TanStack Table compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "subHeading": "How the JavaScript data grid and the headless table library compare on framework support, free and paid features, large datasets, pricing and licensing."
     },
     "shortAnswer": "AG Grid is a complete data grid that renders its own UI. TanStack Table is a headless library: it provides table state and logic, and you write the markup and CSS. Both have a free, MIT-licensed core. TanStack Table has no built-in virtualisation (it pairs with the separate TanStack Virtual package) and no cell editing in its core, and its built-in features do not include pivoting, CSV or Excel export, or charts. AG Grid Community includes virtualisation, cell editing and CSV export, and [AG Grid Enterprise](/license-pricing/), a paid perpetual licence, adds pivoting, Excel export and integrated charts.",
     "keyFigures": [
@@ -296,7 +296,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Enterprise chart types need the Enterprise Bundle"
+                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
                         },
                         "competitor": {
                             "status": "no",

@@ -14,7 +14,7 @@
     },
     "hero": {
         "heading": "AG Grid vs Handsontable",
-        "subHeading": "How AG Grid and Handsontable compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
     },
     "shortAnswer": "AG Grid has a free, MIT-licensed Community edition that can be used commercially. Handsontable is a spreadsheet-style data grid whose free licence key covers non-commercial use, and evaluation and development, so commercial production use needs a paid licence. Both support React, Angular, Vue and JavaScript. AG Grid Enterprise includes pivoting, group-by-column row grouping and integrated charts; Handsontable's documentation does not list pivoting or built-in charts, and its nested rows show pre-structured parent and child rows.",
     "keyFigures": [
@@ -311,7 +311,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Enterprise chart types need the Enterprise Bundle"
+                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
                         },
                         "competitor": {
                             "status": "no",
