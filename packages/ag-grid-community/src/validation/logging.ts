@@ -543,7 +543,6 @@ export function _warnWithoutAttribution<
     logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _deprecatedWithoutAttribution<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
