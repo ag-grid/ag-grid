@@ -55,6 +55,7 @@ export class AgProvidedColumnGroup
     }
 
     public getInstanceId(): ColumnInstanceId {
+        this.warn(343);
         return this.instanceId;
     }
 

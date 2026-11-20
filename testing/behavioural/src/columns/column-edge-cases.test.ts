@@ -2172,6 +2172,8 @@ describe('Column Edge Cases', () => {
             const colA = api.getColumn('a')!;
             const colB = api.getColumn('b')!;
 
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [354] });
             expect(colA.getRight()).toBe(colA.getLeft()! + colA.getActualWidth());
             expect(colB.getRight()).toBe(colB.getLeft()! + colB.getActualWidth());
             await new GridRows(api, `getRight() equals getLeft() + getActualWidth() final state`).check(`

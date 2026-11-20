@@ -747,7 +747,7 @@ export const AG_GRID_ERRORS = {
             rowModelType,
             usesAgGridProvider,
         }),
-    // 261: retired (deprecated column.isHovered warning)
+    261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
     // 262-264: retired (deprecated icon key warnings)
     265: ({ colId }: { colId: string }) =>
         `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${getValidationDocLink()}/integrated-charts-range-chart#coldefchartdatatype .` as const,
@@ -971,6 +971,26 @@ export const AG_GRID_ERRORS = {
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
         `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+    343: () => '`getInstanceId()` on a column or column group is deprecated and will be removed in v38.' as const,
+    344: () => '`column.isFieldContainsDots()` is deprecated and will be removed in v38.' as const,
+    345: () => '`column.isTooltipFieldContainsDots()` is deprecated and will be removed in v38.' as const,
+    346: () =>
+        '`column.isGreaterThanMax()` is deprecated and will be removed in v38. Compare the width with `column.getMaxWidth()` instead.' as const,
+    347: () =>
+        '`column.isAnyFunctionActive()` is deprecated and will be removed in v38. Use `column.isRowGroupActive()`, `column.isPivotActive()` and `column.isValueActive()` instead.' as const,
+    348: () =>
+        '`column.isAnyFunctionAllowed()` is deprecated and will be removed in v38. Check `enableRowGroup`, `enablePivot` and `enableValue` on `column.getColDef()` instead.' as const,
+    349: () => '`columnGroup.getPartId()` is deprecated and will be removed in v38.' as const,
+    350: () =>
+        "`column.isSortAscending()` is deprecated and will be removed in v38. Use `column.getSort() === 'asc'` instead." as const,
+    351: () =>
+        "`column.isSortDescending()` is deprecated and will be removed in v38. Use `column.getSort() === 'desc'` instead." as const,
+    352: () =>
+        '`column.isSortNone()` is deprecated and will be removed in v38. Use `!column.getSort()` instead.' as const,
+    353: () =>
+        '`column.isSorting()` is deprecated and will be removed in v38. Use `column.getSort() != null` instead.' as const,
+    354: () =>
+        '`column.getRight()` is deprecated and will be removed in v38. Use `column.getLeft() + column.getActualWidth()` instead.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -986,7 +1006,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 342;
+export const MAX_ERROR_ID = 354;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

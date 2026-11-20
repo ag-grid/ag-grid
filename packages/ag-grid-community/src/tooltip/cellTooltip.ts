@@ -119,7 +119,7 @@ const resolveLegacyFieldValue = (
     }
     return {
         resolved: true,
-        value: _getLegacyTooltipFieldValue(data, tooltipField, column.isTooltipFieldContainsDots()),
+        value: _getLegacyTooltipFieldValue(data, tooltipField, column.hasTooltipFieldDots()),
     };
 };
 

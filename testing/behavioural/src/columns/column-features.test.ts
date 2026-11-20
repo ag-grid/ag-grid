@@ -1723,6 +1723,8 @@ describe('Column Features', () => {
             expect(a.isResizable()).toBe(true);
             expect(a.isSortable()).toBe(true);
             expect(a.getMinWidth()).toBe(75);
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [344, 345, 346] });
             expect(a.isGreaterThanMax(150)).toBe(false);
             expect(a.isGreaterThanMax(250)).toBe(true);
             expect(b.isResizable()).toBe(false);
@@ -1795,6 +1797,8 @@ describe('Column Features', () => {
             expect(allCol.isValueActive()).toBe(false);
             expect(allCol.isPivotActive()).toBe(false);
             expect(allCol.isRowGroupActive()).toBe(false);
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [347, 348] });
             expect(allCol.isAnyFunctionActive()).toBe(false);
 
             // Allowed flags from colDef.
@@ -2154,6 +2158,8 @@ describe('Column Features', () => {
             `);
 
             const a = api.getColumn('a')!;
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [350, 351, 352, 353] });
             expect(a.isSortNone()).toBe(true);
             expect(a.isSorting()).toBe(false);
             expect(a.isSortAscending()).toBe(false);
