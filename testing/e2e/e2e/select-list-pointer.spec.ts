@@ -3,7 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-const openLongList = async (page: Page) => {
+const openLongList = async (page: Page, rowIndex = 0) => {
     const { cell } = await mountGrid(page, {
         options: () => ({
             columnDefs: [
@@ -17,10 +17,10 @@ const openLongList = async (page: Page) => {
                     },
                 },
             ],
-            rowData: [{ country: 'A country' }],
+            rowData: [{ country: 'A country' }, { country: 'M country' }],
         }),
     });
-    await cell(0, 'country').dblclick();
+    await cell(rowIndex, 'country').dblclick();
     await page.keyboard.press('Enter');
     return page.locator('.ag-list-item.ag-active-item');
 };
@@ -46,7 +46,7 @@ test.describe('select list under a still pointer', () => {
         await expect(highlighted).toHaveText('Z country');
 
         await page.keyboard.press('Enter');
-        await expect(page.locator('.ag-cell[col-id="country"]')).toHaveText('Z country');
+        await expect(page.locator('.ag-row[row-index="0"] .ag-cell[col-id="country"]')).toHaveText('Z country');
     });
 
     test('follows the pointer again once it moves after typing', async ({ page }) => {
@@ -61,15 +61,16 @@ test.describe('select list under a still pointer', () => {
     });
 
     test('keeps the current value highlighted when the list opens', async ({ page }) => {
-        const highlighted = await openLongList(page);
-        await movePointerOver(page, page.locator('.ag-list-item').nth(2));
-        await expect(highlighted).toHaveText('C country');
+        // A value below the first screen of options, so opening the list scrolls it under the pointer.
+        const highlighted = await openLongList(page, 1);
+        await movePointerOver(page, page.locator('.ag-list-item', { hasText: 'L country' }));
+        await expect(highlighted).toHaveText('L country');
 
         await page.keyboard.press('Escape');
         await page.keyboard.press('Enter');
 
         // The window in which the browser would report a hover for the opened list.
         await page.waitForTimeout(300);
-        await expect(highlighted).toHaveText('A country');
+        await expect(highlighted).toHaveText('M country');
     });
 });
