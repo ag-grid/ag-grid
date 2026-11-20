@@ -5,6 +5,7 @@ import {
     GRAND_TOTAL_ROW_ID,
     _addGridCommonParams,
     _getRowIdCallback,
+    _isClientSideRowModel,
     _isDomLayout,
     _isServerSideRowModel,
 } from 'ag-grid-community';
@@ -150,7 +151,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private canSubscribe(): boolean {
-        if (!_isServerSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
             return false;
         }
         if (!_getRowIdCallback(this.beans)) {

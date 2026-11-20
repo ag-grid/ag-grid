@@ -564,7 +564,7 @@
                 {
                     "moduleName": "ViewSubscriptionModule",
                     "name": "View Subscription",
-                    "path": "server-side-model-updating-view-subscription",
+                    "path": "data-update-view-subscription",
                     "isEnterprise": true
                 },
                 {

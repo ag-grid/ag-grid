@@ -1795,7 +1795,7 @@ export interface GridOptions<TData = any> {
      * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
      * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
      * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
-     * Requires `getRowId`. Supported by the Server-Side Row Model.
+     * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
      * @agModule `ViewSubscriptionModule`
      */
     viewSubscription?: ViewSubscriptionOptions<TData>;
