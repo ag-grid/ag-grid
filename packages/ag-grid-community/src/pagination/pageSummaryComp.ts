@@ -9,7 +9,7 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import { _formatPaginationNumber, _getPageAriaStatus } from './paginationUtils';
 
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
@@ -240,7 +240,7 @@ export class PageSummaryComp extends Component {
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
-        this.ariaStatus = `${strPage} ${lbCurrent}${strOfTotal}`;
+        this.ariaStatus = _getPageAriaStatus(localeTextFunc, lbCurrent, lastPageFound ? lbTotalStr : null);
     }
 
     private formatNumber(value: number): string {
