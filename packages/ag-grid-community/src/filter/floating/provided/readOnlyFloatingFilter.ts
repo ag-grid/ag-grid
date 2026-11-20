@@ -13,6 +13,7 @@ import type {
     IFloatingFilterParent,
 } from '../floatingFilter';
 import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
+import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -42,6 +43,8 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         // refresh() re-runs init, so only subscribe the first time.
         if (!this.params) {
             this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
+            this.params = params;
+            _addFloatingFilterValueTooltip(this, this.beans, () => this.params.column, this.eFloatingFilterText);
         }
         this.params = params;
         this.eFloatingFilterText.setDisabled(true);

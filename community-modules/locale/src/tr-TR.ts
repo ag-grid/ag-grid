@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_TR_TR = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Sayfaya git',
+    tooltipFilter: 'Filtrele',
+    tooltipSortedAscending: 'Artan düzende sıralandı',
+    tooltipSortedDescending: 'Azalan düzende sıralandı',
+    tooltipExpandGroup: 'Grubu genişlet',
+    tooltipCollapseGroup: 'Grubu daralt',
+    tooltipSelectAllRows: 'Tüm satırları seç',
+    tooltipDeselectAllRows: 'Tüm satırların seçimini kaldır',
+    tooltipSelectRow: 'Satırı seç',
+    tooltipDeselectRow: 'Satırın seçimini kaldır',
+    tooltipResizeColumn: 'Sütunu yeniden boyutlandır',
+    tooltipDragToMove: 'Taşımak için sürükle',
+    tooltipTurnOnPivotMode: 'Pivot modunu aç',
+    tooltipTurnOffPivotMode: 'Pivot modunu kapat',
+    columnsToolPanelTooltip: 'Sütunları yapılandır',
+    filtersToolPanelTooltip: 'Filtreleri yapılandır',
+
     // Set Filter
     selectAll: '(Tümünü Seç)',
     selectAllSearchResults: '(Tüm Arama Sonuçlarını Seç)',

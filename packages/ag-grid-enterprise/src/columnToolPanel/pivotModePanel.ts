@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder } from 'ag-stack';
 
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
@@ -19,6 +20,7 @@ const PivotModePanelElement: ElementParams = {
 };
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
+    private pivotModeTooltip?: ITooltipFeature;
 
     constructor(
         private readonly params: ColumnToolPanelChildParams,
@@ -33,6 +35,7 @@ export class PivotModePanel extends Component {
 
     public syncFromGrid(): void {
         this.cbPivotMode.setValue(this.getCurrentPivotMode());
+        this.pivotModeTooltip?.refreshTooltip();
     }
 
     public refreshEditStrategy(): void {
@@ -48,17 +51,30 @@ export class PivotModePanel extends Component {
         cbPivotMode.setValue(this.getCurrentPivotMode());
         const localeTextFunc = this.getLocaleTextFunc();
         cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
+        this.pivotModeTooltip = this.addTooltip({
+            getGui: () => cbPivotMode.getGui(),
+            getAriaElement: () => cbPivotMode.getInputElement(),
+            getLocation: () => 'columnToolPanelColumn',
+            control: 'pivotMode',
+            getTooltip: () => ({
+                value: cbPivotMode.getValue()
+                    ? localeTextFunc('tooltipTurnOffPivotMode', 'Turn off pivot mode')
+                    : localeTextFunc('tooltipTurnOnPivotMode', 'Turn on pivot mode'),
+            }),
+            getTooltipAccessibleName: () => localeTextFunc('pivotMode', 'Pivot Mode'),
+        });
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
 
             columnStateUpdateStrategy.setPivotMode(isDeferredMode(this.params), newValue, 'toolPanelUi');
+            this.pivotModeTooltip?.refreshTooltip();
 
             this.onPivotModeValueChanged?.();
         };
 
         const onPivotModeChanged = () => {
-            cbPivotMode.setValue(this.getCurrentPivotMode());
+            this.syncFromGrid();
             ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
         };
 

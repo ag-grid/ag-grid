@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_PL_PL = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Przejdź do strony',
+    tooltipFilter: 'Filtr',
+    tooltipSortedAscending: 'Posortowano rosnąco',
+    tooltipSortedDescending: 'Posortowano malejąco',
+    tooltipExpandGroup: 'Rozwiń grupę',
+    tooltipCollapseGroup: 'Zwiń grupę',
+    tooltipSelectAllRows: 'Zaznacz wszystkie wiersze',
+    tooltipDeselectAllRows: 'Odznacz wszystkie wiersze',
+    tooltipSelectRow: 'Zaznacz wiersz',
+    tooltipDeselectRow: 'Odznacz wiersz',
+    tooltipResizeColumn: 'Zmień rozmiar kolumny',
+    tooltipDragToMove: 'Przeciągnij, aby przenieść',
+    tooltipTurnOnPivotMode: 'Włącz tryb tabeli przestawnej',
+    tooltipTurnOffPivotMode: 'Wyłącz tryb tabeli przestawnej',
+    columnsToolPanelTooltip: 'Konfiguruj kolumny',
+    filtersToolPanelTooltip: 'Konfiguruj filtry',
+
     // Set Filter
     selectAll: '(Zaznacz wszystko)',
     selectAllSearchResults: '(Zaznacz wszystkie wyniki wyszukiwania)',

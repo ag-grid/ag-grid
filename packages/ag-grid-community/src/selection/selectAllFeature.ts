@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { _getActiveDomElement, _getAriaCheckboxStateName, _setAriaRole } from 'ag-stack';
 
 import { AgCheckbox } from '../agWidgets/agCheckbox';
@@ -25,6 +26,8 @@ export class SelectAllFeature extends BeanStub {
     private headerCellCtrl: HeaderCellCtrl;
 
     private cbSelectAll: GridCheckbox;
+    private selectionTooltip?: ITooltipFeature;
+    private tooltipSelected = false;
 
     constructor(private readonly column: AgColumn) {
         super();
@@ -75,6 +78,18 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
         cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
+        const eInput = cbSelectAll.getInputElement();
+        this.selectionTooltip = cbSelectAll.addTooltip({
+            control: 'selectAll',
+            getAriaElement: () => eInput,
+            getLocation: () => 'header',
+            getTooltip: () => ({
+                value: this.tooltipSelected
+                    ? this.getLocaleTextFunc()('tooltipDeselectAllRows', 'Deselect all rows')
+                    : this.getLocaleTextFunc()('tooltipSelectAllRows', 'Select all rows'),
+                params: { column: this.column },
+            }),
+        });
     }
 
     private onDisplayedColumnsChanged(e: DisplayedColumnsChangedEvent): void {
@@ -134,6 +149,11 @@ export class SelectAllFeature extends BeanStub {
         );
 
         cbSelectAll.setInputAriaLabel(translate('ariaHeaderSelection', 'Column with Header Selection'));
+        const selected = checked === true;
+        if (this.tooltipSelected !== selected) {
+            this.tooltipSelected = selected;
+            this.selectionTooltip?.refreshTooltip();
+        }
 
         // skip repetitive announcements during column move
         if (!fromColumnMoved) {

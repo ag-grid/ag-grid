@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_FI_FI = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Siirry sivulle',
+    tooltipFilter: 'Suodatin',
+    tooltipSortedAscending: 'Lajiteltu nousevasti',
+    tooltipSortedDescending: 'Lajiteltu laskevasti',
+    tooltipExpandGroup: 'Laajenna ryhmä',
+    tooltipCollapseGroup: 'Kutista ryhmä',
+    tooltipSelectAllRows: 'Valitse kaikki rivit',
+    tooltipDeselectAllRows: 'Poista kaikkien rivien valinta',
+    tooltipSelectRow: 'Valitse rivi',
+    tooltipDeselectRow: 'Poista rivin valinta',
+    tooltipResizeColumn: 'Muuta sarakkeen kokoa',
+    tooltipDragToMove: 'Siirrä vetämällä',
+    tooltipTurnOnPivotMode: 'Ota pivot-tila käyttöön',
+    tooltipTurnOffPivotMode: 'Poista pivot-tila käytöstä',
+    columnsToolPanelTooltip: 'Määritä sarakkeet',
+    filtersToolPanelTooltip: 'Määritä suodattimet',
+
     // Set Filter
     selectAll: '(Valitse kaikki)',
     selectAllSearchResults: '(Valitse kaikki hakutulokset)',

@@ -1062,6 +1062,9 @@ export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from 
 
 // Tooltips
 export type {
+    BuiltInTooltipControl,
+    IBuiltInTooltipComp,
+    IBuiltInTooltipParams,
     HeaderTooltipCallbackParams,
     HeaderTooltipDefinition,
     ITooltipComp,

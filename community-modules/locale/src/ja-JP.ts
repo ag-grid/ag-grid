@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_JA_JP = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'ページへ移動',
+    tooltipFilter: 'フィルター',
+    tooltipSortedAscending: '昇順で並べ替え済み',
+    tooltipSortedDescending: '降順で並べ替え済み',
+    tooltipExpandGroup: 'グループを展開',
+    tooltipCollapseGroup: 'グループを折りたたむ',
+    tooltipSelectAllRows: 'すべての行を選択',
+    tooltipDeselectAllRows: 'すべての行の選択を解除',
+    tooltipSelectRow: '行を選択',
+    tooltipDeselectRow: '行の選択を解除',
+    tooltipResizeColumn: '列のサイズを変更',
+    tooltipDragToMove: 'ドラッグして移動',
+    tooltipTurnOnPivotMode: 'ピボットモードをオンにする',
+    tooltipTurnOffPivotMode: 'ピボットモードをオフにする',
+    columnsToolPanelTooltip: '列を設定',
+    filtersToolPanelTooltip: 'フィルターを設定',
+
     // Set Filter
     selectAll: '(すべて選択)',
     selectAllSearchResults: '(検索結果をすべて選択)',

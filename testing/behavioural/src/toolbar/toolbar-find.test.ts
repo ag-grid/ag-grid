@@ -1,9 +1,19 @@
-import { fireEvent, waitFor } from '@testing-library/dom';
+import { fireEvent, getByRole, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    getVisibleTooltips,
+    mockGridLayout,
+    waitForEvent,
+} from 'ag-test-utils';
 
 import type { GridOptions, ToolbarBuiltInItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TooltipModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 describe('Toolbar find item', () => {
@@ -13,6 +23,8 @@ describe('Toolbar find item', () => {
 
     afterEach(() => {
         gridMgr.reset();
+        vi.useRealTimers();
+        mockGridLayout.useRealOffsetDimensions = false;
     });
 
     test('renders input with placeholder', async () => {
@@ -185,6 +197,76 @@ describe('Toolbar find item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+
+    test.each([
+        ['Next Match', [1, 2, 3]],
+        ['Previous Match', [3, 2, 1]],
+    ] as const)('%s keeps its focused tooltip when navigating visible matches', async (name, matches) => {
+        // Keep matches in the viewport so navigation does not trigger scroll dismissal.
+        mockGridLayout.useRealOffsetDimensions = true;
+        const rowData = [{ name: 'Alice' }, { name: 'Anna' }];
+        const api = await gridMgr.createGridAndWait(
+            'find-tooltip',
+            {
+                columnDefs: [{ field: 'name' }],
+                rowData,
+                toolbar: { items: ['agFindToolbarItem'] },
+                findSearchValue: 'a',
+            },
+            { modules: [TooltipModule] }
+        );
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const buttons = ['Next Match', 'Previous Match'].map((label) => getByRole(gridDiv, 'button', { name: label }));
+        const button = getByRole(gridDiv, 'button', { name });
+        vi.useFakeTimers();
+        const user = userEvent.setup({ delay: null });
+
+        expect(api.findGetTotalMatches()).toBe(3);
+        for (const button of buttons) {
+            expect(button).toBeEnabled();
+        }
+        button.focus();
+        await vi.advanceTimersByTimeAsync(0);
+        const tooltip = getVisibleTooltips()[0];
+        expect(tooltip).toHaveTextContent(name);
+
+        for (const activeMatch of matches) {
+            await user.keyboard('{Enter}');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(api.findGetActiveMatch()?.numOverall).toBe(activeMatch);
+            expect(button).toHaveFocus();
+            expect(getVisibleTooltips()).toHaveLength(1);
+            expect(getVisibleTooltips()[0]).toBe(tooltip);
+        }
+
+        await user.keyboard('{Escape}{Enter}');
+        await vi.advanceTimersByTimeAsync(0);
+        expect(api.findGetActiveMatch()?.numOverall).toBe(matches[0]);
+        expect(button).toHaveFocus();
+        expect(getVisibleTooltips()).toEqual([]);
+
+        button.blur();
+        button.focus();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(getVisibleTooltips()[0]).toHaveTextContent(name);
+
+        api.setGridOption('rowData', [{ name: 'Bob' }]);
+        await vi.advanceTimersByTimeAsync(0);
+        for (const button of buttons) {
+            expect(button).toBeDisabled();
+        }
+        expect(getVisibleTooltips()).toEqual([]);
+
+        api.setGridOption('rowData', rowData);
+        await vi.advanceTimersByTimeAsync(0);
+        for (const button of buttons) {
+            expect(button).toBeEnabled();
+        }
+        button.blur();
+        button.focus();
+        await vi.advanceTimersByTimeAsync(0);
+        expect(getVisibleTooltips()[0]).toHaveTextContent(name);
     });
 
     describe('current match announcement', () => {

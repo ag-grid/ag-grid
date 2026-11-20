@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_ZH_CN = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: '跳转到页面',
+    tooltipFilter: '筛选',
+    tooltipSortedAscending: '已按升序排序',
+    tooltipSortedDescending: '已按降序排序',
+    tooltipExpandGroup: '展开分组',
+    tooltipCollapseGroup: '折叠分组',
+    tooltipSelectAllRows: '选择所有行',
+    tooltipDeselectAllRows: '取消选择所有行',
+    tooltipSelectRow: '选择行',
+    tooltipDeselectRow: '取消选择行',
+    tooltipResizeColumn: '调整列宽',
+    tooltipDragToMove: '拖动以移动',
+    tooltipTurnOnPivotMode: '开启数据透视模式',
+    tooltipTurnOffPivotMode: '关闭数据透视模式',
+    columnsToolPanelTooltip: '配置列',
+    filtersToolPanelTooltip: '配置筛选器',
+
     // Set Filter
     selectAll: '(全选)',
     selectAllSearchResults: '(全选搜索结果)',

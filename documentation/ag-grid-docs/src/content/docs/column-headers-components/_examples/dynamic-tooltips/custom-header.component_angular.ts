@@ -18,7 +18,7 @@ export interface ICustomHeaderParams {
                     <i class="fa {{ params.menuIcon }}"></i>
                 </div>
             }
-            <div #label class="customHeaderLabel">{{ params.displayName }}</div>
+            <div class="customHeaderLabel">{{ params.displayName }}</div>
             @if (params.enableSorting) {
                 <div (click)="onSortRequested('asc', $event)" [ngClass]="ascSort()" class="customSortDownLabel">
                     <i class="fa fa-long-arrow-alt-down"></i>
@@ -67,17 +67,13 @@ export class CustomHeader implements IHeaderAngularComp {
     public noSort = signal('inactive');
 
     @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
-    @ViewChild('label', { read: ElementRef }) public label!: ElementRef;
 
     agInit(params: IHeaderParams & ICustomHeaderParams): void {
         this.params = params;
 
         params.column.addEventListener('sortChanged', this.onSortChanged.bind(this));
         this.onSortChanged();
-        params.setTooltip(
-            params.displayName,
-            () => this.label.nativeElement.scrollWidth > this.label.nativeElement.clientWidth
-        );
+        params.setTooltip('Click the cross to remove the sort', () => params.column.getSortDef()?.direction != null);
     }
 
     onMenuClicked() {

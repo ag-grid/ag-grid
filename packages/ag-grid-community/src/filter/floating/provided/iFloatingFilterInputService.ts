@@ -5,6 +5,7 @@ export interface FloatingFilterInputService extends Bean {
     setEditable(editable: boolean): void;
     isFocused(): boolean;
     getValue(): string | null | undefined;
+    getInputElement(): HTMLInputElement;
     /** The text as typed, which `getValue` drops once the input calls it invalid. */
     getInputText(): string;
     setValue(value: string | null | undefined, silent?: boolean): void;

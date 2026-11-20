@@ -105,7 +105,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /**
      * Provide your own tooltip component for the column.
-     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
      * When the column is grouped, group rows in the generated group column inherit this component.
      * @agModule `TooltipModule`
      */

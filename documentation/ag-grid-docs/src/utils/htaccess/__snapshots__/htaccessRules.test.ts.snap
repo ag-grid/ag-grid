@@ -2682,10 +2682,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/component-overlay/ /angular-data-grid/overlays/
     Redirect 301 /react-data-grid/component-overlay/ /react-data-grid/overlays/
     Redirect 301 /vue-data-grid/component-overlay/ /vue-data-grid/overlays/
-    Redirect 301 /javascript-data-grid/component-tooltip/ /javascript-data-grid/tooltips/
-    Redirect 301 /angular-data-grid/component-tooltip/ /angular-data-grid/tooltips/
-    Redirect 301 /react-data-grid/component-tooltip/ /react-data-grid/tooltips/
-    Redirect 301 /vue-data-grid/component-tooltip/ /vue-data-grid/tooltips/
     Redirect 301 /javascript-data-grid/component-date/ /javascript-data-grid/filter-date/
     Redirect 301 /angular-data-grid/component-date/ /angular-data-grid/filter-date/
     Redirect 301 /react-data-grid/component-date/ /react-data-grid/filter-date/

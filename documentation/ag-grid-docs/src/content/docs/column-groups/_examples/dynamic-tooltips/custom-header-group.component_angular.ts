@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { IHeaderGroupAngularComp } from 'ag-grid-angular';
 import type { IHeaderGroupParams } from 'ag-grid-community';
@@ -10,7 +10,7 @@ import type { IHeaderGroupParams } from 'ag-grid-community';
     imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
-            <div #label class="customHeaderLabel">{{ displayName() }}</div>
+            <div class="customHeaderLabel">{{ displayName() }}</div>
             <div class="customExpandButton" [ngClass]="expandState()" (click)="expandOrCollapse()">
                 <i class="fa fa-arrow-right"></i>
             </div>
@@ -109,8 +109,6 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     displayName = signal<string>('');
     expandState = signal<string>('');
 
-    @ViewChild('label', { read: ElementRef }) public label!: ElementRef;
-
     agInit(params: IHeaderGroupParams): void {
         this.params = params;
         this.displayName.set(params.displayName);
@@ -119,8 +117,8 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
             .getProvidedColumnGroup()
             .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
         this.params.setTooltip(
-            params.displayName,
-            () => this.label.nativeElement.scrollWidth > this.label.nativeElement.clientWidth
+            'Expand the group to show more columns',
+            () => !this.params.columnGroup.getProvidedColumnGroup().isExpanded()
         );
 
         this.syncExpandButtons();

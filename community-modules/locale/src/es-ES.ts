@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_ES_ES = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Ir a la página',
+    tooltipFilter: 'Filtro',
+    tooltipSortedAscending: 'Ordenado de forma ascendente',
+    tooltipSortedDescending: 'Ordenado de forma descendente',
+    tooltipExpandGroup: 'Expandir grupo',
+    tooltipCollapseGroup: 'Contraer grupo',
+    tooltipSelectAllRows: 'Seleccionar todas las filas',
+    tooltipDeselectAllRows: 'Deseleccionar todas las filas',
+    tooltipSelectRow: 'Seleccionar fila',
+    tooltipDeselectRow: 'Deseleccionar fila',
+    tooltipResizeColumn: 'Cambiar el tamaño de la columna',
+    tooltipDragToMove: 'Arrastrar para mover',
+    tooltipTurnOnPivotMode: 'Activar el modo de tabla dinámica',
+    tooltipTurnOffPivotMode: 'Desactivar el modo de tabla dinámica',
+    columnsToolPanelTooltip: 'Configurar columnas',
+    filtersToolPanelTooltip: 'Configurar filtros',
+
     // Set Filter
     selectAll: '(Seleccionar todo)',
     selectAllSearchResults: '(Seleccionar todos los resultados de la búsqueda)',

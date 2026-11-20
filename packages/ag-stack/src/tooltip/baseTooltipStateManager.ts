@@ -22,6 +22,7 @@ enum TooltipStates {
 }
 
 interface TooltipOwner {
+    canShowTooltip(): boolean;
     hideTooltip(forceHide?: boolean): void;
     isTooltipFocused(): boolean;
     hasFocusedSourceWithin(element: HTMLElement): boolean;
@@ -30,6 +31,7 @@ interface TooltipOwner {
 }
 
 interface SharedTooltipState {
+    sources: WeakMap<Node, Set<TooltipOwner>>;
     lastHideTime?: number;
     lastMouseX?: number;
     lastMouseY?: number;
@@ -131,6 +133,19 @@ export abstract class BaseTooltipStateManager<
         return 'top-start';
     }
 
+    protected getTooltipTrigger(): NonNullable<BaseProperties['tooltipTrigger']> {
+        const trigger = this.gos.get('tooltipTrigger');
+        return trigger === 'focus' || trigger === 'hoverOrFocus' ? trigger : 'hover';
+    }
+
+    protected isTooltipMouseTracking(): boolean {
+        return !!this.gos.get('tooltipMouseTrack');
+    }
+
+    protected isTooltipPointerAnchored(): boolean {
+        return this.isTooltipMouseTracking() || this.gos.get('tooltipAnchor') === 'pointer';
+    }
+
     protected getTooltipInteraction(_tooltip?: TTooltipCtrlParams): boolean {
         return this.gos.get('tooltipInteraction') === true;
     }
@@ -147,18 +162,31 @@ export abstract class BaseTooltipStateManager<
     public postConstruct(): void {
         let sharedState = sharedStateByGrid.get(this.gos);
         if (!sharedState) {
-            sharedState = {};
+            sharedState = { sources: new WeakMap() };
             sharedStateByGrid.set(this.gos, sharedState);
         }
         this.sharedState = sharedState;
-        const trigger = this.gos.get('tooltipTrigger');
-        this.tooltipTrigger = trigger === 'focus' || trigger === 'hoverOrFocus' ? trigger : 'hover';
+        this.tooltipTrigger = this.getTooltipTrigger();
         this.interactionEnabled = this.gos.get('tooltipInteraction') === true;
         const el = this.tooltipCtrl.getGui();
+        const sources = sharedState.sources.get(el) ?? new Set<TooltipOwner>();
+        sources.add(this);
+        sharedState.sources.set(el, sources);
+        this.addDestroyFunc(() => sources.delete(this));
 
         if (this.tooltipTrigger !== 'focus') {
             this.addManagedListeners(el, {
                 mouseenter: this.onMouseEnter.bind(this),
+                mouseover: (event: MouseEvent) => {
+                    // Returning from a nested control does not fire mouseenter on its containing component.
+                    if (
+                        this.sharedState.owner !== this &&
+                        this.hasNestedSource(event.relatedTarget as Node | null) &&
+                        !this.hasNestedSource(event.target as Node | null)
+                    ) {
+                        this.onMouseEnter(event);
+                    }
+                },
                 mouseleave: () => {
                     this.sourceHovered = false;
                     window.clearTimeout(this.hoverGraceTimeout);
@@ -177,7 +205,7 @@ export abstract class BaseTooltipStateManager<
                     }
                     if (this.lastMouseEvent) {
                         this.lastMouseEvent = event;
-                        if (this.gos.get('tooltipMouseTrack') && this.tooltipComp) {
+                        if (this.isTooltipMouseTracking() && this.tooltipComp) {
                             this.tooltipToPosition = this.tooltipComp;
                             this.queuePositionTooltip();
                         }
@@ -187,14 +215,19 @@ export abstract class BaseTooltipStateManager<
         }
 
         if (this.tooltipTrigger !== 'hover') {
-            this.addManagedListeners(el, {
-                focusin: () => {
-                    if (this.tooltipCtrl.shouldDisplayTooltipOnFocus?.() !== false) {
-                        this.setFocused(true);
-                    }
+            const focusElement = this.getFocusElement();
+            this.addManagedListeners(focusElement, {
+                focusin: (event: FocusEvent) => {
+                    this.setFocused(
+                        !this.hasNestedSource(event.target as Node | null) &&
+                            this.tooltipCtrl.shouldDisplayTooltipOnFocus?.() !== false
+                    );
                 },
                 focusout: (event: FocusEvent) => {
-                    if (!el.contains(event.relatedTarget as Node)) {
+                    if (
+                        !focusElement.contains(event.relatedTarget as Node) ||
+                        this.hasNestedSource(event.relatedTarget as Node | null)
+                    ) {
                         this.setFocused(false);
                     }
                 },
@@ -226,6 +259,29 @@ export abstract class BaseTooltipStateManager<
         return this.state === TooltipStates.SHOWING;
     }
 
+    private getFocusElement(): HTMLElement {
+        return this.tooltipCtrl.getFocusElement?.() ?? this.tooltipCtrl.getGui();
+    }
+
+    private hasNestedSource(target: Node | null): boolean {
+        const source = this.tooltipCtrl.getGui();
+        if (!target || !source.contains(target)) {
+            return false;
+        }
+        while (target && target !== source) {
+            const candidates = this.sharedState.sources.get(target);
+            if (candidates) {
+                for (const candidate of candidates) {
+                    if (candidate.canShowTooltip()) {
+                        return true;
+                    }
+                }
+            }
+            target = target.parentNode;
+        }
+        return false;
+    }
+
     private updateMousePosition({ clientX, clientY }: MouseEvent): boolean {
         const state = this.sharedState;
         const moved = state.lastMouseX !== clientX || state.lastMouseY !== clientY;
@@ -244,7 +300,7 @@ export abstract class BaseTooltipStateManager<
         this.sourceHovered = true;
         const owner = this.sharedState.owner;
         // Removing a tooltip beneath a stationary pointer can synthesise mouseenter on the old source.
-        if (!this.updateMousePosition(event) && owner !== this && owner?.isTooltipTriggeredByFocus()) {
+        if (owner !== this && !this.updateMousePosition(event) && owner?.isTooltipTriggeredByFocus()) {
             return;
         }
         if (owner !== this && owner?.isTooltipHoveredOrLeaving()) {
@@ -262,6 +318,14 @@ export abstract class BaseTooltipStateManager<
         }
         this.sourceFocused = focused;
         if (focused) {
+            if (
+                this.state === TooltipStates.WAITING_TO_SHOW &&
+                this.lastMouseEvent &&
+                this.showDelay > 0 &&
+                this.getTooltipFocusShowDelay() === 0
+            ) {
+                this.hideTooltip(true);
+            }
             this.refreshAriaDescription();
             this.prepareToShowTooltip();
         } else {
@@ -274,7 +338,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     public showTooltipOnFocus(): void {
-        if (this.tooltipTrigger === 'hover' || !this.tooltipCtrl.getGui().contains(_getActiveDomElement(this.beans))) {
+        if (this.tooltipTrigger === 'hover' || !this.getFocusElement().contains(_getActiveDomElement(this.beans))) {
             return;
         }
         this.setFocused(true);
@@ -299,7 +363,14 @@ export abstract class BaseTooltipStateManager<
         window.clearTimeout(this.hoverGraceTimeout);
         this.hoverGraceTimeout = undefined;
         const owner = this.sharedState.owner;
-        if (owner !== this && (owner?.isTooltipFocused() || owner?.hasFocusedSourceWithin(this.tooltipCtrl.getGui()))) {
+        // Empty built-in hints must not displace their parent's tooltip; ordinary sources may still be mounting.
+        if (
+            owner &&
+            owner !== this &&
+            (owner.isTooltipFocused() ||
+                owner.hasFocusedSourceWithin(this.tooltipCtrl.getGui()) ||
+                (this.tooltipCtrl.control && !this.canShowTooltip()))
+        ) {
             return;
         }
         owner?.hideTooltip(true);
@@ -307,7 +378,9 @@ export abstract class BaseTooltipStateManager<
 
         const lastHide = this.sharedState.lastHideTime;
         const switching = mouseEvent && lastHide != null && Date.now() - lastHide < SHOW_SWITCH_TOOLTIP_DIFF;
-        const delay = showDelayOverride ?? this.getTooltipDelay(switching ? 'SwitchShow' : 'Show');
+        const delayType = switching ? 'SwitchShow' : 'Show';
+        const delay =
+            showDelayOverride ?? (mouseEvent ? this.getTooltipDelay(delayType) : this.getTooltipFocusShowDelay());
         this.lastMouseEvent = mouseEvent ?? null;
         this.revalidatePointerOnShow = false;
         this.scrollResumeDelay = undefined;
@@ -358,7 +431,7 @@ export abstract class BaseTooltipStateManager<
         );
     }
 
-    protected canShowTooltip(): boolean {
+    public canShowTooltip(): boolean {
         return this.isTooltipAllowed() && this.getTooltipDetails() != null;
     }
 
@@ -483,6 +556,8 @@ export abstract class BaseTooltipStateManager<
         }
         const popup = this.popupSvc?.addPopup({
             eChild: eGui,
+            // Showing a tooltip must not reorder the focused dialog underneath it.
+            alwaysOnTop: true,
             ariaLabel: this.interactionEnabled ? this.getLocaleTextFunc()('ariaLabelTooltip', 'Tooltip') : undefined,
         });
         this.tooltipPopupDestroyFunc = popup?.hideFunc;
@@ -515,7 +590,7 @@ export abstract class BaseTooltipStateManager<
                 focusin: () => this.clearLeaveTimeout(),
                 focusout: (event: FocusEvent) => {
                     const next = event.relatedTarget as Node;
-                    if (!eGui.contains(next) && !this.tooltipCtrl.getGui().contains(next)) {
+                    if (!eGui.contains(next) && !this.getFocusElement().contains(next)) {
                         this.clearLeaveTimeout();
                         this.leaveTimeout = window.setTimeout(() => this.hideWhenInactive(), TOOLTIP_LEAVE_DELAY);
                     }
@@ -556,7 +631,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     public hasFocusedSourceWithin(element: HTMLElement): boolean {
-        const source = this.tooltipCtrl.getGui();
+        const source = this.getFocusElement();
         return this.sourceFocused && source !== element && element.contains(source) && this.canShowTooltip();
     }
 
@@ -616,7 +691,7 @@ export abstract class BaseTooltipStateManager<
     }
 
     private onDocumentKeyDown(event: KeyboardEvent): void {
-        const source = this.tooltipCtrl.getGui();
+        const source = this.getFocusElement();
         if (event.key === 'Escape') {
             if (this.tooltipComp) {
                 event.preventDefault();
@@ -658,6 +733,7 @@ export abstract class BaseTooltipStateManager<
             this.disconnectAriaDescription();
             const description = source.ownerDocument.createElement('div');
             description.hidden = true;
+            description.textContent = text;
             // Keep the description in the source's tree, including when the grid is in a shadow root.
             const root = source.getRootNode();
             (root === source.ownerDocument ? source.ownerDocument.body : root).appendChild(description);
@@ -668,6 +744,10 @@ export abstract class BaseTooltipStateManager<
     }
 
     private connectAriaDescription(element: HTMLElement): void {
+        const name = this.tooltipCtrl.getTooltipAccessibleName?.();
+        if (name && element.textContent === name) {
+            return;
+        }
         element.id ||= `ag-tooltip-${++tooltipIdSequence}`;
         const source = this.tooltipCtrl.getAriaElement?.() ?? this.tooltipCtrl.getGui();
         const ids = _getAriaDescribedBy(source)?.split(/\s+/).filter(Boolean) ?? [];
@@ -705,14 +785,12 @@ export abstract class BaseTooltipStateManager<
             return;
         }
         const eventSource = this.tooltipCtrl.getGui();
-        const tracking = !!gos.get('tooltipMouseTrack');
         const offset = gos.get('tooltipOffset');
         const ePopup = this.tooltipComp!.getGui();
         const params = this.tooltipParams!;
         this.tooltipSize = positionPopupForTooltip(popupSvc, {
             ePopup,
-            pointer:
-                lastMouseEvent && (tracking || gos.get('tooltipAnchor') === 'pointer') ? lastMouseEvent : undefined,
+            pointer: lastMouseEvent && this.isTooltipPointerAnchored() ? lastMouseEvent : undefined,
             position: this.tooltipPosition,
             gap: typeof offset === 'number' && Number.isFinite(offset) && offset >= 0 ? offset : 6,
             enableRtl: !!gos.get('enableRtl'),
@@ -752,7 +830,11 @@ export abstract class BaseTooltipStateManager<
         this.tooltipPopupDestroyFunc = undefined;
     }
 
-    private getTooltipDelay(type: 'Show' | 'Hide' | 'SwitchShow'): number | undefined {
+    protected getTooltipFocusShowDelay(): number | undefined {
+        return this.getTooltipDelay('Show');
+    }
+
+    protected getTooltipDelay(type: 'Show' | 'Hide' | 'SwitchShow'): number | undefined {
         return this.tooltipCtrl[`getTooltip${type}DelayOverride`]?.() ?? this.gos.get(`tooltip${type}Delay`);
     }
 

@@ -66,7 +66,7 @@ export type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './interfaces/iProperties';
-export type { ITooltipFeature, TooltipCtrl, TooltipDetails } from './interfaces/iTooltip';
+export type { ComponentTooltipSource, ITooltipFeature, TooltipCtrl, TooltipDetails } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
 export {

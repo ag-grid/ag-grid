@@ -10,6 +10,7 @@ export const GRID_OPTION_DEFAULTS = {
     allowContextMenuWithControlKey: false,
     suppressMenuHide: true,
     enableBrowserTooltips: false,
+    suppressBuiltInTooltips: false,
     tooltipTrigger: 'hover',
     tooltipAnchor: 'target',
     tooltipOffset: 6,

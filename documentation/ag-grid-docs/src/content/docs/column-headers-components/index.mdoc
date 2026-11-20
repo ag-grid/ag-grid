@@ -483,9 +483,9 @@ If the focus is at the beginning or the end of the cell children and moving out 
 
 {% gridExampleRunner title="Custom Header Keyboard Navigation" name="header-component-keyboard-navigation" /%}
 
-### Dynamic Tooltips
+### Tooltips
 
-When using Custom Header Components it might be necessary to have a better control of how `Tooltips` are added instead of simply using the `headerTooltip` config. For this purpose, we provide the `setTooltip` method.
+When using Custom Header Components, call the `setTooltip` method instead of using the `headerTooltip` config to control when a tooltip shows. See [Tooltips for Custom Components](./tooltips-columns/#tooltips-for-custom-components) for how this interacts with column tooltip options.
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IHeaderParams" names=["setTooltip"] /%}
 {% /if %}
@@ -494,9 +494,7 @@ When using Custom Header Components it might be necessary to have a better contr
 {% interfaceDocumentation interfaceName="CustomHeaderProps" names=["setTooltip"] /%}
 {% /if %}
 
-The example below demonstrates using the Dynamic Tooltips with a Custom Header Component.
-
-- Note that only Column Headers where the text is not fully displayed will show tooltips.
+The example below registers a tooltip on the column headers. The `shouldDisplayTooltip` callback is evaluated each time the tooltip is about to show, so only sorted columns display it.
 
 {% gridExampleRunner title="Header Tooltip" name="dynamic-tooltips" /%}
 

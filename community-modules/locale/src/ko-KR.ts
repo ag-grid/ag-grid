@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_KO_KR = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: '페이지로 이동',
+    tooltipFilter: '필터',
+    tooltipSortedAscending: '오름차순으로 정렬됨',
+    tooltipSortedDescending: '내림차순으로 정렬됨',
+    tooltipExpandGroup: '그룹 펼치기',
+    tooltipCollapseGroup: '그룹 접기',
+    tooltipSelectAllRows: '모든 행 선택',
+    tooltipDeselectAllRows: '모든 행 선택 해제',
+    tooltipSelectRow: '행 선택',
+    tooltipDeselectRow: '행 선택 해제',
+    tooltipResizeColumn: '열 크기 조정',
+    tooltipDragToMove: '드래그하여 이동',
+    tooltipTurnOnPivotMode: '피벗 모드 켜기',
+    tooltipTurnOffPivotMode: '피벗 모드 끄기',
+    columnsToolPanelTooltip: '열 설정',
+    filtersToolPanelTooltip: '필터 설정',
+
     // Set Filter
     selectAll: '(전체 선택)',
     selectAllSearchResults: '(검색 결과 모두 선택)',

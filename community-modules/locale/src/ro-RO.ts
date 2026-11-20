@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_RO_RO = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Mergi la pagină',
+    tooltipFilter: 'Filtru',
+    tooltipSortedAscending: 'Sortat crescător',
+    tooltipSortedDescending: 'Sortat descrescător',
+    tooltipExpandGroup: 'Extinde grupul',
+    tooltipCollapseGroup: 'Restrânge grupul',
+    tooltipSelectAllRows: 'Selectează toate rândurile',
+    tooltipDeselectAllRows: 'Deselectează toate rândurile',
+    tooltipSelectRow: 'Selectează rândul',
+    tooltipDeselectRow: 'Deselectează rândul',
+    tooltipResizeColumn: 'Redimensionează coloana',
+    tooltipDragToMove: 'Trage pentru a muta',
+    tooltipTurnOnPivotMode: 'Activează modul pivot',
+    tooltipTurnOffPivotMode: 'Dezactivează modul pivot',
+    columnsToolPanelTooltip: 'Configurează coloanele',
+    filtersToolPanelTooltip: 'Configurează filtrele',
+
     // Set Filter
     selectAll: '(Selectează tot)',
     selectAllSearchResults: '(Selectează toate rezultatele căutării)',

@@ -24,7 +24,12 @@ import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../in
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-import type { ITooltipComp, ITooltipParams } from '../../tooltip/tooltipComponent';
+import type {
+    IBuiltInTooltipComp,
+    IBuiltInTooltipParams,
+    ITooltipComp,
+    ITooltipParams,
+} from '../../tooltip/tooltipComponent';
 import type { UserComponentFactory } from './userComponentFactory';
 
 const DateComponent: ComponentType<IDateComp> = {
@@ -84,6 +89,7 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
 };
 
 const TooltipComponent: ComponentType = { name: 'tooltipComponent', requiresBlockWrapper: true };
+const BuiltInTooltipComponent: ComponentType = { name: 'builtInTooltipComponent', requiresBlockWrapper: true };
 
 const FilterComponent: ComponentType<ISimpleFilter> = {
     name: 'filter',
@@ -282,6 +288,18 @@ export function _getTooltipCompDetails(
     def?: ColDef | ColGroupDef
 ): UserCompDetails<ITooltipComp> | undefined {
     return userCompFactory.getCompDetails(def ?? {}, TooltipComponent, 'agTooltipComponent', params, true);
+}
+
+export function _getBuiltInTooltipCompDetails(
+    userCompFactory: UserComponentFactory,
+    params: IBuiltInTooltipParams
+): UserCompDetails<IBuiltInTooltipComp> | undefined {
+    return userCompFactory.getCompDetailsFromGridOptions(
+        BuiltInTooltipComponent,
+        'agBuiltInTooltipComponent',
+        params,
+        true
+    );
 }
 
 /**

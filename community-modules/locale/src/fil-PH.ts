@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_FIL_PH = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Pumunta sa pahina',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Nakaayos nang pataas',
+    tooltipSortedDescending: 'Nakaayos nang pababa',
+    tooltipExpandGroup: 'Palawakin ang pangkat',
+    tooltipCollapseGroup: 'Paliitin ang pangkat',
+    tooltipSelectAllRows: 'Piliin ang lahat ng hilera',
+    tooltipDeselectAllRows: 'Alisin ang pagpili sa lahat ng hilera',
+    tooltipSelectRow: 'Piliin ang hilera',
+    tooltipDeselectRow: 'Alisin ang pagpili sa hilera',
+    tooltipResizeColumn: 'Baguhin ang laki ng column',
+    tooltipDragToMove: 'I-drag upang ilipat',
+    tooltipTurnOnPivotMode: 'I-on ang pivot mode',
+    tooltipTurnOffPivotMode: 'I-off ang pivot mode',
+    columnsToolPanelTooltip: 'I-configure ang mga column',
+    filtersToolPanelTooltip: 'I-configure ang mga filter',
+
     // Set Filter
     selectAll: '(Piliin Lahat)',
     selectAllSearchResults: '(Piliin Lahat ng Resulta ng Paghahanap)',

@@ -452,6 +452,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     }
 
     private setupDragging(): void {
+        this.addTooltip({
+            getGui: () => this.eDragHandle,
+            getLocation: () => 'advancedFilter',
+            control: 'drag',
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move') }),
+        });
         const dragSource: GridDragSource = {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,

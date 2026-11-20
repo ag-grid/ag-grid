@@ -296,6 +296,16 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
+        this.addTooltip({
+            getGui: () => this.eDragHandle as HTMLElement,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            control: 'drag',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.gridColumnGroup, colDef: this.columnGroup.getColGroupDef() },
+            }),
+        });
+
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 

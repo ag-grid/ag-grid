@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_LT_LT = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Eiti į puslapį',
+    tooltipFilter: 'Filtras',
+    tooltipSortedAscending: 'Surikiuota didėjimo tvarka',
+    tooltipSortedDescending: 'Surikiuota mažėjimo tvarka',
+    tooltipExpandGroup: 'Išskleisti grupę',
+    tooltipCollapseGroup: 'Suskleisti grupę',
+    tooltipSelectAllRows: 'Pažymėti visas eilutes',
+    tooltipDeselectAllRows: 'Panaikinti visų eilučių žymėjimą',
+    tooltipSelectRow: 'Pažymėti eilutę',
+    tooltipDeselectRow: 'Panaikinti eilutės žymėjimą',
+    tooltipResizeColumn: 'Keisti stulpelio dydį',
+    tooltipDragToMove: 'Vilkite norėdami perkelti',
+    tooltipTurnOnPivotMode: 'Įjungti suvestinės režimą',
+    tooltipTurnOffPivotMode: 'Išjungti suvestinės režimą',
+    columnsToolPanelTooltip: 'Konfigūruoti stulpelius',
+    filtersToolPanelTooltip: 'Konfigūruoti filtrus',
+
     // Set Filter
     selectAll: '(Pažymėti visus)',
     selectAllSearchResults: '(Pažymėti visus paieškos rezultatus)',

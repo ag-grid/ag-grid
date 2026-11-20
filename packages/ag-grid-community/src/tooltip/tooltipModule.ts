@@ -23,6 +23,10 @@ export const TooltipModule: _ModuleWithoutApi = {
     },
     userComponents: {
         agTooltipComponent: AgTooltipComponent,
+        agBuiltInTooltipComponent: {
+            classImp: AgTooltipComponent,
+            processParams: (params) => ({ ...params, value: params.text }),
+        },
     },
     dependsOn: [PopupModule],
     css: [tooltipCSS],

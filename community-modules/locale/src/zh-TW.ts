@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_ZH_TW = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: '前往頁面',
+    tooltipFilter: '篩選',
+    tooltipSortedAscending: '已依遞增順序排序',
+    tooltipSortedDescending: '已依遞減順序排序',
+    tooltipExpandGroup: '展開群組',
+    tooltipCollapseGroup: '收合群組',
+    tooltipSelectAllRows: '選取所有列',
+    tooltipDeselectAllRows: '取消選取所有列',
+    tooltipSelectRow: '選取列',
+    tooltipDeselectRow: '取消選取列',
+    tooltipResizeColumn: '調整欄寬',
+    tooltipDragToMove: '拖曳以移動',
+    tooltipTurnOnPivotMode: '開啟樞紐分析模式',
+    tooltipTurnOffPivotMode: '關閉樞紐分析模式',
+    columnsToolPanelTooltip: '設定欄位',
+    filtersToolPanelTooltip: '設定篩選條件',
+
     // Set Filter
     selectAll: '(全選)',
     selectAllSearchResults: '(全選搜尋結果)',

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_NB_NO = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Gå til side',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Sortert stigende',
+    tooltipSortedDescending: 'Sortert synkende',
+    tooltipExpandGroup: 'Utvid gruppe',
+    tooltipCollapseGroup: 'Fold sammen gruppe',
+    tooltipSelectAllRows: 'Velg alle rader',
+    tooltipDeselectAllRows: 'Opphev valg av alle rader',
+    tooltipSelectRow: 'Velg rad',
+    tooltipDeselectRow: 'Opphev valg av rad',
+    tooltipResizeColumn: 'Endre kolonnestørrelse',
+    tooltipDragToMove: 'Dra for å flytte',
+    tooltipTurnOnPivotMode: 'Slå på pivotmodus',
+    tooltipTurnOffPivotMode: 'Slå av pivotmodus',
+    columnsToolPanelTooltip: 'Konfigurer kolonner',
+    filtersToolPanelTooltip: 'Konfigurer filtre',
+
     // Set Filter
     selectAll: '(Velg alle)',
     selectAllSearchResults: '(Velg alle søkeresultater)',

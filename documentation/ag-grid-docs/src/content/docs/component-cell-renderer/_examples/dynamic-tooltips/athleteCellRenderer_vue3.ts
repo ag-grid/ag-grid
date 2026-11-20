@@ -10,7 +10,7 @@ export default defineComponent({
             required: true,
         },
     },
-    template: `<div :ref="'wrapper'" style="overflow: hidden; text-overflow: ellipsis">{{ displayValue }}</div>`,
+    template: `<div>{{ displayValue }}</div>`,
     data: function () {
         return {
             displayValue: '',
@@ -18,9 +18,6 @@ export default defineComponent({
     },
     beforeMount() {
         this.displayValue = this.params.value;
-        this.params.setTooltip(`Dynamic Tooltip for ${this.params.value}`, () => {
-            const wrapper = this.$refs.wrapper as HTMLElement;
-            return wrapper.scrollWidth > wrapper.clientWidth;
-        });
+        this.params.setTooltip('Won more than one gold medal at these Games', () => this.params.data.gold > 1);
     },
 });
