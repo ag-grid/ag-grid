@@ -14,9 +14,11 @@ interface Props {
      */
     buttonClass: string | string[];
     wrapperClass?: string;
+    /** Appended to each CTA's accessible name, so repeated labels like "Open demo" stay distinct. */
+    context?: string;
 }
 
-const { ctas, buttonClass, wrapperClass } = Astro.props;
+const { ctas, buttonClass, wrapperClass, context } = Astro.props;
 
 const classForIndex = (idx: number): string => {
     if (Array.isArray(buttonClass)) {
@@ -29,7 +31,13 @@ const classForIndex = (idx: number): string => {
 {ctas.length > 0 && (
     <div class={wrapperClass}>
         {ctas.map((cta, idx) => (
-            <a href={resolveBryntumHref(cta.href)} class={classForIndex(idx)} target="_blank" rel="noopener">
+            <a
+                href={resolveBryntumHref(cta.href)}
+                class={classForIndex(idx)}
+                aria-label={context ? `${cta.text}: ${context}` : undefined}
+                target="_blank"
+                rel="noopener"
+            >
                 {cta.text}
                 <Icon name="chevronRight" />
             </a>

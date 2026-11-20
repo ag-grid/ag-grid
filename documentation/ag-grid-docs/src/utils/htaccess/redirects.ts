@@ -3387,6 +3387,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/core-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
     { from: '/vuejs-charts/', to: 'https://www.ag-grid.com/charts/' },
     { from: '/campaigns/beyond-the-prompt/', to: '/community/beyond-the-prompt/' },
+    { from: '/campaigns/bryntum-scheduler-pro/', to: '/campaigns/bryntum-scheduler/' },
+    { from: '/campaigns/bryntum-scheduler-pro.md', to: '/campaigns/bryntum-scheduler.md' },
     { fromPattern: '^/gallery/(.*)', to: 'https://www.ag-grid.com/charts/gallery/$1' },
     { fromPattern: '^/options(/.*)?', to: 'https://www.ag-grid.com/charts/options/' },
     { fromPattern: '^/vuejs-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
