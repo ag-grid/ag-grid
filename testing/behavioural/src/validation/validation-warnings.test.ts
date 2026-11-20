@@ -2,7 +2,7 @@ import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } 
 import type { MockInstance } from 'vitest';
 
 import type { ColGroupDef, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, EventApiModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('ag-grid validation warnings', () => {
@@ -264,6 +264,40 @@ describe('ag-grid validation warnings', () => {
             await new GridRows(api, `warns only once for same deprecated property final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
+        });
+    });
+
+    describe('deprecated event listeners', () => {
+        const eventGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, EventApiModule, ValidationModule],
+        });
+
+        beforeEach(() => eventGridsManager.reset());
+        afterEach(() => eventGridsManager.reset());
+
+        const deprecationWarnings = (name: string) =>
+            consoleWarnSpy.mock.calls.filter((args) => args.join(' ').includes(`\`${name}\` is deprecated`));
+
+        test('api.addEventListener warns once for a deprecated event', () => {
+            const api = eventGridsManager.createGrid('myGrid', { columnDefs: [], rowData: [] });
+
+            api.addEventListener('columnEverythingChanged', () => {});
+            api.addEventListener('columnEverythingChanged', () => {});
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #306'),
+                expect.stringContaining('`columnEverythingChanged` is deprecated'),
+                expect.any(String)
+            );
+            expect(deprecationWarnings('columnEverythingChanged')).toHaveLength(1);
+        });
+
+        test('api.addEventListener does not warn for a non-deprecated event', () => {
+            const api = eventGridsManager.createGrid('myGrid', { columnDefs: [], rowData: [] });
+
+            api.addEventListener('displayedColumnsChanged', () => {});
+
+            expect(consoleWarnSpy).not.toHaveBeenCalled();
         });
     });
 
