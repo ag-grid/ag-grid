@@ -106,7 +106,11 @@ export function createComparisonPageSchema({ reviewerKeys, now = new Date() }: C
                 answer: z.string(),
             })
         ),
-        proseClaims: z.array(z.object({ claim: z.string(), ...claimSource })),
+        // Every page makes competitor claims in its prose (the short answer, FAQ and key figures),
+        // so it must source at least one; an empty list would leave that prose unchecked.
+        proseClaims: z
+            .array(z.object({ claim: z.string(), ...claimSource }))
+            .min(1, 'Source the competitor claims made in prose: add at least one proseClaims entry'),
     });
 }
 

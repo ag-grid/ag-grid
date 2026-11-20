@@ -99,6 +99,13 @@ describe('createComparisonPageSchema', () => {
         expect(result.error?.issues[0].path.join('.')).toBe('proseClaims.0.sourceUrl');
     });
 
+    test('rejects a page with no prose claims', () => {
+        const result = schema.safeParse({ ...validPage(), proseClaims: [] });
+
+        expect(result.success).toBe(false);
+        expect(result.error?.issues[0].path).toEqual(['proseClaims']);
+    });
+
     test('rejects a pricing row cost that is not a known tier', () => {
         const page = validPage();
         const result = schema.safeParse({
