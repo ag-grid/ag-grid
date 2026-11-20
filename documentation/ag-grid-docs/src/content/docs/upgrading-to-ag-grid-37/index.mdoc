@@ -174,7 +174,7 @@ The following `AgGridReact` props and `ag-grid-react` exports have been removed:
 
 #### Migrating React Custom Components
 
-The `reactiveCustomComponents` grid option has been removed. React custom components are always reactive, and imperative custom components, which expose grid callbacks such as `getValue` or `doesFilterPass` through `forwardRef` and `useImperativeHandle`, are no longer supported. Remove `reactiveCustomComponents` from your grid options and migrate any imperative custom components by hand, as no codemod exists for this change.
+The `reactiveCustomComponents` grid option has been removed. React custom components are always reactive, and imperative versions of the component types listed below, which expose grid callbacks such as `getValue` or `doesFilterPass` through `forwardRef` and `useImperativeHandle`, are no longer supported. Cell renderers, including full width row renderers, are not affected by this change. Remove `reactiveCustomComponents` from your grid options and migrate any imperative custom components by hand, as no codemod exists for this change.
 
 Migrate each component type as follows:
 
@@ -190,6 +190,7 @@ Migrate each component type as follows:
     - `isFilterActive` is no longer used. A `null` model means the filter is inactive.
     - Call the `onUiChange` prop when the UI changes without changing the model.
     - Without `enableFilterHandlers`, pass `doesFilterPass` (mandatory) and any other callbacks to the `useGridFilter` hook.
+    - With `enableFilterHandlers` and an `Apply` button, call the `onStateChange` prop with the model displayed in the UI instead of `onModelChange`. The grid applies that model when the button is clicked, see [Using Buttons](./component-filter/#using-buttons).
     - With `enableFilterHandlers`, pass the component's callbacks to the `useGridFilterDisplay` hook, see [Filter Callbacks](./component-filter/#filter-callbacks). The filter logic, including `doesFilterPass`, belongs in the column's filter definition instead, see [doesFilterPass Callback](./component-filter/#doesfilterpass-callback) and [Filter Handler](./component-filter/#filter-handler).
     - `api.getColumnFilterInstance()` returns a wrapper. Use the `getInstance` helper to get the React component, see [Accessing the Component Instance](./component-filter/#accessing-the-component-instance).
 - **Floating Filters** - see [Floating Filter Component](./component-floating-filter/) and [Floating Filter Component - Legacy](./component-floating-filter-legacy/).
@@ -202,7 +203,7 @@ Migrate each component type as follows:
     - `refresh` is no longer used. The component is re-rendered with the updated props.
     - `api.getToolPanelInstance()` returns a wrapper. Use the `getInstance` helper to get the React component, see [Tool Panel API](./tool-panel/#api).
 
-`forwardRef` and `useImperativeHandle` can still expose your own methods for access through `getInstance`, but not grid callbacks.
+`forwardRef` and `useImperativeHandle` can still expose your own methods for access through `getInstance`, but the grid no longer calls callbacks exposed this way on the component types above.
 
 Class components cannot use the hooks. Instead, set the custom component context and register the callbacks with `setMethods` when the component mounts. This is the same for all component types. For example, for a filter:
 
