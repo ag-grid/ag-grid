@@ -35,12 +35,17 @@ const GRID_OWNED_PARAMS = new Set([
     'state',
 ]);
 
+/**
+ * A grid-owned key is ignored whenever the grid supplies it, `null` included (e.g. `model: null` for "no filter").
+ * `value` is usually a primitive applications may override, so it is only protected when it is an object the merge
+ * would write into (an object-valued cell).
+ */
 const isIgnoredUserParam = (gridParams: any, userParams: any, key: string): boolean => {
-    if (!GRID_OWNED_PARAMS.has(key)) {
+    const gridValue = gridParams[key];
+    if (gridValue === undefined || gridValue === userParams[key]) {
         return false;
     }
-    const gridValue = gridParams[key];
-    return gridValue != null && gridValue !== userParams[key];
+    return GRID_OWNED_PARAMS.has(key) || (key === 'value' && gridValue !== null && typeof gridValue === 'object');
 };
 
 function doesImplementIComponent(candidate: any): boolean {
