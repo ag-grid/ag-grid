@@ -796,6 +796,30 @@ describe('SSRM viewSubscription', () => {
                 expect(recorder.violations).toEqual([]);
             });
 
+            test('hiding the page unsubscribes every row subscribed across several calls, in one call', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({ viewSubscription: recorder.handlers });
+                await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+
+                // Scrolling adds rows through later subscribeRows calls.
+                api.ensureIndexVisible(9, 'bottom');
+                await waitFor(() => expect(recorder.batches('subscribe').length).toBeGreaterThan(1));
+                const subscribedIds = recorder.ids();
+                const callsBeforeHiding = recorder.calls.length;
+                const sortedCalls = (from: number) =>
+                    recorder.calls.slice(from).map((c) => ({ ...c, ids: [...c.ids].sort((a, b) => +a - +b) }));
+
+                setPageHidden(true);
+
+                expect(sortedCalls(callsBeforeHiding)).toEqual([{ type: 'unsubscribe', ids: subscribedIds }]);
+                expect(recorder.subscribed.size).toBe(0);
+
+                setPageHidden(false);
+
+                expect(sortedCalls(callsBeforeHiding + 1)).toEqual([{ type: 'subscribe', ids: subscribedIds }]);
+                expect(recorder.violations).toEqual([]);
+            });
+
             test('a grid created while the page is hidden subscribes once the page is shown', async () => {
                 pageHidden = true;
                 const recorder = createRecorder();
