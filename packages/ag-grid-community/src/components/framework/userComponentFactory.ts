@@ -14,6 +14,35 @@ import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
 import type { Registry } from './registry';
 
+/**
+ * Params the grid supplies as live objects (column, row, context, filter model, ...). A user `*Params` value with
+ * one of these names would be deep-merged into the grid's own object, so it is ignored instead.
+ */
+const GRID_OWNED_PARAMS = new Set([
+    'api',
+    'context',
+    'column',
+    'colDef',
+    'columnGroup',
+    'node',
+    'data',
+    'rowModel',
+    'eGridCell',
+    'eParentOfValue',
+    'eGridHeader',
+    'filterParams',
+    'model',
+    'state',
+]);
+
+const isIgnoredUserParam = (params: any, userParams: any, key: string): boolean => {
+    if (!GRID_OWNED_PARAMS.has(key)) {
+        return false;
+    }
+    const gridValue = params[key];
+    return gridValue != null && gridValue !== userParams[key];
+};
+
 function doesImplementIComponent(candidate: any): boolean {
     if (!candidate) {
         return false;
@@ -92,6 +121,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     private agCompUtils?: AgComponentUtils;
     private registry: Registry;
     private frameworkCompWrapper?: FrameworkComponentWrapper;
+    private warnedIgnoredParams?: Set<string>;
 
     public wireBeans(beans: BeanCollection): void {
         this.agCompUtils = beans.agCompUtils;
@@ -254,15 +284,46 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         const defObjectAny = defObject as any;
         const userParams = defObjectAny?.[type.name + 'Params'];
 
+        const propName = type.name + 'Params';
         if (typeof userParams === 'function') {
-            const userParamsFromFunc = userParams(paramsFromGrid);
-            _mergeDeep(params, userParamsFromFunc);
+            this.mergeUserParams(params, userParams(paramsFromGrid), propName);
         } else if (typeof userParams === 'object') {
-            _mergeDeep(params, userParams);
+            this.mergeUserParams(params, userParams, propName);
         }
 
-        _mergeDeep(params, paramsFromSelector);
+        this.mergeUserParams(params, paramsFromSelector, type.name + 'Selector params');
 
         return defaultCompProcessParams ? defaultCompProcessParams(params, this.beans) : params;
+    }
+
+    /**
+     * Deep-merges application params into `params`, except keys the grid supplies as live objects
+     * (see `GRID_OWNED_PARAMS`): those keep the grid's value and the application's value is ignored with a warning.
+     */
+    public mergeUserParams(params: any, userParams: any, propName: string): void {
+        if (userParams == null || typeof userParams !== 'object') {
+            _mergeDeep(params, userParams);
+            return;
+        }
+        let allowedParams: any = userParams;
+        for (const key of Object.keys(userParams)) {
+            if (isIgnoredUserParam(params, userParams, key)) {
+                if (allowedParams === userParams) {
+                    allowedParams = { ...userParams };
+                }
+                delete allowedParams[key];
+                this.warnIgnoredParam(propName, key);
+            }
+        }
+        _mergeDeep(params, allowedParams);
+    }
+
+    private warnIgnoredParam(propName: string, key: string): void {
+        const warned = (this.warnedIgnoredParams ??= new Set());
+        const id = `${propName}.${key}`;
+        if (!warned.has(id)) {
+            warned.add(id);
+            this.warn(343, { propName, key });
+        }
     }
 }
