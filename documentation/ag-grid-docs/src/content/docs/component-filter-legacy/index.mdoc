@@ -21,12 +21,12 @@ The example below shows two custom filters. The first is on the `Athlete` column
 
 {% if isFramework("javascript") %}
 The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
-will be additionally added to the params object, overriding items of the same name if a name clash exists.
+will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
 {% /if %}
 
 {% if isFramework("angular") %}
 The `agInit(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
-will be additionally added to the params object, overriding items of the same name if a name clash exists.
+will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -34,7 +34,7 @@ When a Vue component is instantiated the grid will make the grid APIs, a number 
 row values available to you via `this.params` - the interface for what is provided is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
-will be additionally added to the params object, overriding items of the same name if a name clash exists.
+will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
@@ -56,7 +56,7 @@ The method `doesFilterPass(params)` takes the following as a parameter:
 
 ### Filter Props
 
-The following props are passed to the custom filter components (`CustomFilterProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
+The following props are passed to the custom filter components (`CustomFilterProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
 {% /if %}
 
 {% if isFramework("react") %}

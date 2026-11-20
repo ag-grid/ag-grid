@@ -48,5 +48,5 @@ interface IFloatingFilterComp<ParentFilter = any> {
 ### Custom Floating Filter Parameters
 
 The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
-will be additionally added to the params object, overriding items of the same name if a name clash exists.
+will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
 {% /if %}
