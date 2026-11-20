@@ -1664,6 +1664,43 @@ describe('Column Features', () => {
         });
     });
 
+    describe('deprecated Column methods', () => {
+        test('report a deprecation diagnostic with their own id ahead of their v38 removal', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g1', children: [{ colId: 'a', field: 'a' }] }],
+            });
+            await new GridColumns(api, `deprecated Column methods setup`).checkColumns(`
+                CENTER
+                └─┬ GROUP
+                  └── a width:200
+            `);
+
+            const col = api.getColumn('a')!;
+            const group = api.getColumnGroup('g1')!;
+            const provided = api.getProvidedColumnGroup('g1')!;
+            const deprecatedCalls: [number, () => unknown][] = [
+                [343, () => col.getInstanceId()],
+                [343, () => provided.getInstanceId()],
+                [344, () => col.isFieldContainsDots()],
+                [345, () => col.isTooltipFieldContainsDots()],
+                [346, () => col.isGreaterThanMax(100)],
+                [347, () => col.isAnyFunctionActive()],
+                [348, () => col.isAnyFunctionAllowed()],
+                [349, () => group.getPartId()],
+                [350, () => col.isSortAscending()],
+                [351, () => col.isSortDescending()],
+                [352, () => col.isSortNone()],
+                [353, () => col.isSorting()],
+                [354, () => col.getRight()],
+            ];
+            for (const [id, call] of deprecatedCalls) {
+                // The thrown message is prefixed with the severity, so this also rejects plain warning severity.
+                expect(call).toThrow(new RegExp(`^deprecation #${id} `));
+            }
+        });
+    });
+
     describe('Column public-interface getters', () => {
         test('reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)', async () => {
             // Retains compatibility coverage for the legacy tooltip-field Column getters.
