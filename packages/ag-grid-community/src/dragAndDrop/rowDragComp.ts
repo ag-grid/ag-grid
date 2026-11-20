@@ -210,6 +210,7 @@ export class RowDragComp extends Component {
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.gos.getDomDataKey(),
+            canStartDrag: () => this.beans.rowDragSvc?.isRowDraggable(this.rowNode) ?? true,
         };
 
         this.beans.dragAndDrop!.addDragSource(this.dragSource, true);

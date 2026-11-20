@@ -230,6 +230,31 @@ describe('isRowDraggable', () => {
         expect(handleClasses(api, '1')).toEqual(LOCKED);
     });
 
+    test('a press does not become a drag when its row becomes non-draggable before the drag starts', async () => {
+        const api = createGrid({});
+        await asyncSetTimeout(0);
+        const onEnter = vi.fn();
+        api.addEventListener('rowDragEnter', onEnter);
+
+        const handle = handleOf(api, '1');
+        const target = rowElement(api, '6');
+        const handleRect = handle.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const dispatcher = new DragEventDispatcher(
+            'mouse',
+            TestGridsManager.getHTMLElement(api)!.querySelector('.ag-grid-viewport')
+        );
+        await dispatcher.startDrag(handle, handleRect.left + 5, handleRect.top + 5);
+        applyTransactionChecked(api, { update: [{ id: '1', name: 'A', locked: true }] });
+        await dispatcher.movePointer(handle, handleRect.left + 10, handleRect.top + 10);
+        await dispatcher.movePointer(target, targetRect.left + 10, targetRect.top + targetRect.height * 0.8);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+
+        expect(onEnter).not.toHaveBeenCalled();
+        expect(rowOrder(api)).toEqual(['1', '2', '3', '4', '5', '6']);
+    });
+
     test('with cell selection a non-draggable row handle starts no row drag', async () => {
         const api = createGrid({ cellSelection: true });
         await asyncSetTimeout(0);

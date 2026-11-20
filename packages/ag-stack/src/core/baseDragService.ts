@@ -463,6 +463,11 @@ export class BaseDragService<
                 return;
             }
 
+            if (dragSource.canStartDrag?.() === false) {
+                this.destroyDrag();
+                return;
+            }
+
             this.dragging = true;
 
             if (dragSource.capturePointer) {
