@@ -2,10 +2,10 @@
  * Call from a tap handler to raise the iOS keyboard for an input that mounts after the tap. iOS only
  * shows it for a focus made during the gesture, then keeps it up as focus moves to the real input.
  */
-export function primeOnScreenKeyboard(): void {
+export function primeOnScreenKeyboard(label: string): void {
     const proxy = document.createElement('input');
     proxy.tabIndex = -1;
-    proxy.setAttribute('aria-hidden', 'true');
+    proxy.setAttribute('aria-label', label);
     Object.assign(proxy.style, {
         position: 'fixed',
         top: '0',

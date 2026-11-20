@@ -6,19 +6,20 @@ describe('primeOnScreenKeyboard', () => {
         document.body.innerHTML = '';
     });
 
-    it('focuses an input synchronously', () => {
-        primeOnScreenKeyboard();
+    it('focuses a labelled input synchronously', () => {
+        primeOnScreenKeyboard('Search');
 
         const proxy = document.activeElement;
         expect(proxy).toBeInstanceOf(HTMLInputElement);
         expect(proxy?.isConnected).toBe(true);
+        expect(proxy?.getAttribute('aria-label')).toBe('Search');
     });
 
     it('removes the input once focus moves to the real one', () => {
         const realInput = document.createElement('input');
         document.body.appendChild(realInput);
 
-        primeOnScreenKeyboard();
+        primeOnScreenKeyboard('Search');
         const proxy = document.activeElement;
         realInput.focus();
 

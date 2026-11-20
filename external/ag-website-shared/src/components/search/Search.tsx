@@ -54,7 +54,7 @@ const Search = () => {
 
     const onSearchBoxClick = () => {
         // The modal's input mounts once InstantSearch has started, a render too late for iOS
-        primeOnScreenKeyboard();
+        primeOnScreenKeyboard('Search documentation');
         setOpen(true);
     };
 
