@@ -58,6 +58,12 @@ describe('SSRM viewSubscription', () => {
         vi.restoreAllMocks();
     });
 
+    let warnSpy: ReturnType<typeof vi.spyOn>;
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [333] });
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
     /** Asserts that a handler error was reported as warning #333, and not thrown. */
     function expectHandlerWarning(message: string): void {
         const warned = warnSpy.mock.calls.flat().map(String).join(' ');
@@ -67,12 +73,6 @@ describe('SSRM viewSubscription', () => {
         );
         warnSpy.mockClear();
     }
-
-    let warnSpy: ReturnType<typeof vi.spyOn>;
-    beforeEach(() => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [333] });
-        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    });
 
     function createFlatDatasource(rows: { id: string; value: number }[]): IServerSideDatasource {
         return {
