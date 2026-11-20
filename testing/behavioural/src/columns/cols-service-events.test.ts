@@ -1,8 +1,13 @@
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { Column, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AggregationModule, AllEnterpriseModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 /**
  * Event coverage for every public entry point of the cols services (rowGroup / pivot / value).
@@ -399,6 +404,38 @@ describe('Cols service events', () => {
             ]);
             await asyncSetTimeout(0);
             expect(everything.length).toBe(1);
+        });
+    });
+
+    // `displayedColumnsChanged` is the replacement for the legacy event: it fires for the same membership
+    // changes and colDef rebuilds, so listeners migrating off `columnEverythingChanged` keep working.
+    describe('displayedColumnsChanged (replacement for the legacy event)', () => {
+        test('a direct row-group membership change raises it for each change', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            await asyncSetTimeout(0);
+            const displayed = capture(api, 'displayedColumnsChanged');
+
+            api.addRowGroupColumns(['a']);
+            await asyncSetTimeout(0);
+            const afterFirst = displayed.length;
+            expect(afterFirst).toBeGreaterThan(0);
+
+            api.setRowGroupColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+            expect(displayed.length).toBeGreaterThan(afterFirst);
+        });
+
+        test('a colDef rebuild raises it', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            await asyncSetTimeout(0);
+            const displayed = capture(api, 'displayedColumnsChanged');
+
+            api.setGridOption('columnDefs', [
+                { colId: 'a', field: 'a', rowGroup: true },
+                { colId: 'b', field: 'b' },
+            ]);
+            await asyncSetTimeout(0);
+            expect(displayed.length).toBeGreaterThan(0);
         });
     });
 

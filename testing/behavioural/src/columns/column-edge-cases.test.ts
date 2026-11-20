@@ -9,11 +9,17 @@
  * - Selection column edge cases
  * - RTL column interactions
  */
+import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, ColumnGroup, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('Column Edge Cases', () => {
     const gridsManager = new TestGridsManager({
@@ -379,6 +385,24 @@ describe('Column Edge Cases', () => {
     });
 
     describe('column events', () => {
+        test('displayedColumnsChanged fires on setColumnDefs', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }],
+            });
+
+            const listener = vitest.fn();
+            api.addEventListener('displayedColumnsChanged', listener);
+
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
+            await waitFor(() => expect(listener).toHaveBeenCalled());
+            api.removeEventListener('displayedColumnsChanged', listener);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
         test('columnEverythingChanged fires on setColumnDefs', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],

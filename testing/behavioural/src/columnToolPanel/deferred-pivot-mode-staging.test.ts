@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import { DragSourceType, getGridElement } from 'ag-grid-community';
+import { DragSourceType, enableDevValidations, getGridElement } from 'ag-grid-community';
 import type { AgColumn } from 'ag-grid-community';
 
 import {
@@ -25,6 +25,11 @@ import {
     rowData,
     setupDeferredPivotModeSuite,
 } from './deferredPivotModeHarness';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('deferred column tool panel pivot mode - staging changes and committing them', () => {
     setupDeferredPivotModeSuite();
@@ -383,6 +388,33 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         // Turning pivot off applies state in a single batch — exactly one `columnEverythingChanged`.
         expect(everythingChangedCount).toBe(1);
         expect(gridApi.isPivotMode()).toBe(false);
+    });
+
+    test('commit raises displayedColumnsChanged and each granular pivot event once', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        // `displayedColumnsChanged` also fires for internal refreshes, so only its presence is asserted.
+        const raised: Record<string, number> = {
+            displayedColumnsChanged: 0,
+            columnPivotModeChanged: 0,
+            columnPivotChanged: 0,
+        };
+        for (const type of Object.keys(raised) as (keyof typeof raised & string)[]) {
+            gridApi.addEventListener(type as 'displayedColumnsChanged', () => {
+                raised[type]++;
+            });
+        }
+
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        commitChanges(toolPanel);
+
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any duplicate event to arrive; polling would pass on the first event and never catch it
+        await asyncSetTimeout(1);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(raised.displayedColumnsChanged).toBeGreaterThan(0);
+        expect(raised.columnPivotModeChanged).toBe(1);
+        expect(raised.columnPivotChanged).toBe(1);
     });
 
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {

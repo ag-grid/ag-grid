@@ -23,6 +23,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         if (typeof userListener !== 'function') {
             return; // ignoring non functions for compatibility
         }
+        this.beans.validation?.validateEventListener(eventType);
         const listener = this.wrapSvc?.wrap(eventType, userListener) ?? userListener;
 
         const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
