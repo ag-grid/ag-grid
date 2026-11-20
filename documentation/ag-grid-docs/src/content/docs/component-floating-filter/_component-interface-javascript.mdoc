@@ -32,5 +32,5 @@ interface FloatingFilterDisplayComp {
 
 ### Custom Floating Filter Parameters
 
-The `init(params)` / `refresh(params)` methods take a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: a custom value with one of these names is ignored with a console warning.
+The `init(params)` / `refresh(params)` methods take a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these will be additionally added to the params object, overriding items of the same name. Items the grid supplies as objects, such as `column`, `colDef`, `node`, `data`, `api` and `context`, are reserved: when the grid supplies one, a custom value with the same name is ignored with a console warning. Use a different name for your own values, or `colDef.context` for per-column data.
 {% /if %}
