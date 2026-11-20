@@ -8,6 +8,8 @@ import type { ErrorId, ErrorMap, GetErrorParams, MissingModuleErrors } from './e
 
 const MAX_URL_LENGTH = 2000;
 const MIN_PARAM_LENGTH = 100;
+/** Stands in for a param that cannot be turned into text. */
+const UNFORMATTABLE_VALUE = '[unformattable value]';
 const VERSION_PARAM_NAME = '_version_';
 
 let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
@@ -478,7 +480,7 @@ function stringifyValue(value: any) {
         return typeof value === 'symbol' ? value.toString() : value;
     } catch {
         // e.g. a bigint, which JSON cannot serialise, or an object whose `toString` throws
-        return Object.prototype.toString.call(value);
+        return UNFORMATTABLE_VALUE;
     }
 }
 
