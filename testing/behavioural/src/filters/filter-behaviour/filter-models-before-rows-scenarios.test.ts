@@ -30,7 +30,7 @@ import { MultiFilterModule, NewFiltersToolPanelModule, SetFilterModule } from 'a
 import {
     AGE_LT_20,
     BASE_COLS,
-    ONCE_PER_PAGE_WARNING,
+    FILTER_HANDLERS_FALSE_DEPRECATION,
     ROWS,
     RecordingFilter,
     timeline,
@@ -239,7 +239,7 @@ describe.each([false, true])(
             const warnings: string[] = [];
             vi.spyOn(console, 'warn').mockImplementation((...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ').slice(0, 60);
-                if (code !== ONCE_PER_PAGE_WARNING) {
+                if (code !== FILTER_HANDLERS_FALSE_DEPRECATION) {
                     warnings.push(`${timeline.phase}:${code}`);
                 }
             });
@@ -672,7 +672,7 @@ describe.each([false, true])(
             const warnings: string[] = [];
             const report = (...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ');
-                if (code !== ONCE_PER_PAGE_WARNING) {
+                if (code !== FILTER_HANDLERS_FALSE_DEPRECATION) {
                     warnings.push(code);
                 }
             };
