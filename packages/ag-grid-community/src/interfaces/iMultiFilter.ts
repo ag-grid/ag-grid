@@ -12,7 +12,10 @@ import type {
     IFloatingFilterType,
 } from './iFilter';
 
-/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
+/**
+ * Interface contract for the public aspects of the ProvidedFilter implementation(s).
+ * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.getColumnFilterModel` and `api.setColumnFilterModel`) instead of the filter instance methods. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+ */
 export interface IMultiFilter extends IProvidedFilter {
     readonly filterType: 'multi';
 
@@ -83,10 +86,16 @@ export interface IMultiFilterModel {
 }
 
 export interface IMultiFilterComp {
-    /** Returns `true` if the filter is currently active, otherwise `false`. */
+    /**
+     * Returns `true` if the filter is currently active, otherwise `false`.
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.getColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+     */
     isFilterActive(): boolean;
 
-    /** Returns a model representing the current state of the filter, or `null` if the filter is not active. */
+    /**
+     * Returns a model representing the current state of the filter, or `null` if the filter is not active.
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.getColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+     */
     getModel(): ProvidedFilterModel | null;
 
     /**
@@ -97,6 +106,8 @@ export interface IMultiFilterComp {
      * you need to wait for these changes to be applied before performing any further actions by
      * waiting on the returned grid promise, e.g.
      * `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.setColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
      */
     setModel(model: IMultiFilterModel | null): void | AgPromise<void>;
 

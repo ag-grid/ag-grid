@@ -27,7 +27,14 @@ import {
 } from 'ag-grid-community';
 import { MultiFilterModule, NewFiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { AGE_LT_20, BASE_COLS, ROWS, RecordingFilter, timeline } from './filterModelsBeforeRowsHarness';
+import {
+    AGE_LT_20,
+    BASE_COLS,
+    ONCE_PER_PAGE_WARNING,
+    ROWS,
+    RecordingFilter,
+    timeline,
+} from './filterModelsBeforeRowsHarness';
 
 interface Scenario {
     name: string;
@@ -232,7 +239,9 @@ describe.each([false, true])(
             const warnings: string[] = [];
             vi.spyOn(console, 'warn').mockImplementation((...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ').slice(0, 60);
-                warnings.push(`${timeline.phase}:${code}`);
+                if (code !== ONCE_PER_PAGE_WARNING) {
+                    warnings.push(`${timeline.phase}:${code}`);
+                }
             });
             vi.spyOn(console, 'error').mockImplementation((...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ').slice(0, 60);
@@ -661,7 +670,12 @@ describe.each([false, true])(
             timeline.phase = 'before';
             timeline.customSetModelSeen = [];
             const warnings: string[] = [];
-            const report = (...args: any[]) => warnings.push(/#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' '));
+            const report = (...args: any[]) => {
+                const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ');
+                if (code !== ONCE_PER_PAGE_WARNING) {
+                    warnings.push(code);
+                }
+            };
             const warn = vi.spyOn(console, 'warn').mockImplementation(report);
             const error = vi.spyOn(console, 'error').mockImplementation(report);
             const api: GridApi = gridsManager.createGrid(withRows ? 'withRows' : 'withoutRows', {

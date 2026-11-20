@@ -2,10 +2,14 @@ import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // The slider floating filter is only implemented for the React, Angular and Vue frameworks.
-    test.eachFramework('Grid renders the olympic medal data', async ({ agIdFor }) => {
-        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
-        await expect(agIdFor.cell('0', 'gold')).toContainText('8');
-    });
+    test.eachFramework(
+        'Grid renders the olympic medal data',
+        async ({ agIdFor }) => {
+            await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+            await expect(agIdFor.cell('0', 'gold')).toContainText('8');
+        },
+        { allowedConsoleMessages: ['warning #348'] }
+    );
 
     test.eachFramework(
         'Slider floating filter applies a greater-than filter',
@@ -24,6 +28,7 @@ test.agExample(import.meta, () => {
             await expect(page.locator('.ag-row')).toHaveCount(1);
             await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
             await expect(agIdFor.cell('0', 'gold')).toContainText('8');
-        }
+        },
+        { allowedConsoleMessages: ['warning #348'] }
     );
 });

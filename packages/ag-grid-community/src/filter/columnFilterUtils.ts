@@ -19,6 +19,7 @@ import type {
     IFilterParams,
 } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
+import { _legacyFilterMethods } from './legacyFilterMode';
 
 export const FILTER_HANDLER_MAP = {
     agSetColumnFilter: 'agSetColumnFilterHandler',
@@ -115,7 +116,7 @@ export function _isFilterCompActive(beans: BeanCollection, filter: IFilter | nul
         beans.log.warn(67);
         return false;
     }
-    return filter.isFilterActive();
+    return _legacyFilterMethods(filter).isFilterActive();
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

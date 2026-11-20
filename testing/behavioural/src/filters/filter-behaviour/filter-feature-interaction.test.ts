@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     GridColumns,
     GridRows,
@@ -14,6 +15,7 @@ import {
     NumberFilterModule,
     PaginationModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { MultiFilterModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -335,6 +337,7 @@ describe('Filter + feature interaction', () => {
     });
 
     test("filter + tree data: a Multi Filter's Set child lists the rows its sibling shows, a match's relatives included", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         const listed: Record<string, string[]> = {};
         for (const enableFilterHandlers of [false, true]) {
             for (const excludeChildrenWhenTreeDataFiltering of [false, true]) {

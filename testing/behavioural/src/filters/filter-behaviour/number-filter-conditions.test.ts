@@ -41,6 +41,7 @@ describe('Number Filter — conditions coverage', () => {
     test.each([false, true])(
         'with enableFilterHandlers %s, an open filter given a model naming an option it lacks shows no model, as it applies none',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
@@ -895,6 +896,7 @@ describe('Number Filter — conditions coverage', () => {
     ])(
         'a floating filter rebuilt for a new allowedCharPattern carries what was being typed (handlers: %s)',
         async (enableFilterHandlers, expected) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const columnDefs = (allowedCharPattern?: string) => [
                 {
                     field: 'val',

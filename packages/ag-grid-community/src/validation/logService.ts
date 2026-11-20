@@ -2,7 +2,14 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ErrorId, LogArgs } from './errorMessages/errorText';
-import { _deprecatedForGrid, _errorForGrid, _errorToThrowForGrid, _warnForGrid } from './logging';
+import {
+    _deprecatedForGrid,
+    _deprecatedOncePerPageForGrid,
+    _errorForGrid,
+    _errorToThrowForGrid,
+    _warnForGrid,
+    _warnOncePerPageForGrid,
+} from './logging';
 
 /**
  * Grid-scoped façade over the free logging functions. Because a bean intrinsically knows its own grid,
@@ -27,6 +34,16 @@ export class LogService extends BeanStub implements NamedBean {
 
     public override deprecated<TId extends ErrorId>(...args: LogArgs<TId>): void {
         _deprecatedForGrid(this.gridId, args[0], args[1] as any);
+    }
+
+    /** Logs the warning once per page, rather than once per distinct message text. */
+    public warnOncePerPage<TId extends ErrorId>(...args: LogArgs<TId>): void {
+        _warnOncePerPageForGrid(this.gridId, args[0], args[1] as any);
+    }
+
+    /** Logs the deprecation once per page, rather than once per distinct message text. */
+    public deprecatedOncePerPage<TId extends ErrorId>(...args: LogArgs<TId>): void {
+        _deprecatedOncePerPageForGrid(this.gridId, args[0], args[1] as any);
     }
 
     public override error<TId extends ErrorId>(...args: LogArgs<TId>): void {

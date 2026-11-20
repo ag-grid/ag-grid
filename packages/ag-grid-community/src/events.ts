@@ -201,6 +201,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
         columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
+        filterModifiedListened: AgEvent<'filterModifiedListened'>;
     }
 >;
 
@@ -440,6 +441,7 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
     columns: Column[];
 }
 
+/** @deprecated v37 Use `FilterUiChangedEvent` and `FloatingFilterUiChangedEvent` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
 export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterModified',
     TData,

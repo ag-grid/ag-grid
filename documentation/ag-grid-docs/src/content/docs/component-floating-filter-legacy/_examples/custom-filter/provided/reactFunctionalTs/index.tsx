@@ -10,7 +10,7 @@ import NumberFilterComponent from './numberFilterComponent';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({ suppress: [348] });
 }
 
 const modules = [CustomFilterModule, ClientSideRowModelModule];
@@ -64,6 +64,7 @@ const GridExample = () => {
                     <AgGridReact<IOlympicData>
                         rowData={data}
                         loading={loading}
+                        enableFilterHandlers={false}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                     />

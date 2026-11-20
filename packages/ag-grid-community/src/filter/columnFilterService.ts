@@ -71,6 +71,7 @@ import type {
     IFloatingFilterParentCallback,
 } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
+import { _legacyFilterMethods, _warnLegacyFilterMode } from './legacyFilterMode';
 import {
     STATEFUL_UI_FILTER_HANDLERS,
     _createPairedFilterHandler,
@@ -204,6 +205,39 @@ const getAuthorHandler = (
     return typeof filter === 'string' ? filter : undefined;
 };
 
+const GRID_FILTER_NAMES = new Set<unknown>([...Object.keys(FILTER_HANDLER_MAP), 'agSelectableColumnFilter']);
+
+const FILTER_NAMES_WITH_CHILDREN = new Set<unknown>(['agMultiColumnFilter', 'agSelectableColumnFilter']);
+
+type IsRegisteredFilter = (name: string) => boolean;
+
+/** Whether `filter` builds an author's filter component, which runs in legacy filter mode. */
+const isAuthorFilter = (filter: unknown, isRegistered: IsRegisteredFilter): boolean => {
+    if (isColumnFilterComp(filter)) {
+        return !filter.handler && !filter.doesFilterPass && isAuthorFilter(filter.component, isRegistered);
+    }
+    if (typeof filter === 'string') {
+        // a name nothing is registered under builds the default filter
+        return !GRID_FILTER_NAMES.has(filter) && isRegistered(filter);
+    }
+    return !!filter && filter !== true;
+};
+
+/** Whether a definition, or a child of its Multi or Selectable Filter given as an object, builds an author's filter. */
+const hasAuthorFilter = (filterDef: IFilterDef, isRegistered: IsRegisteredFilter): boolean => {
+    const filter = filterDef.filter;
+    if (isAuthorFilter(filter, isRegistered)) {
+        return true;
+    }
+    const name = isColumnFilterComp(filter) ? filter.component : filter;
+    const filterParams = filterDef.filterParams;
+    if (!FILTER_NAMES_WITH_CHILDREN.has(name) || typeof filterParams === 'function') {
+        return false;
+    }
+    const children: IFilterDef[] | undefined = filterParams?.filters;
+    return !!children?.some((child) => hasAuthorFilter(child, isRegistered));
+};
+
 type QueuedModelUpdate =
     | { model: FilterModel | null; source: FilterChangedEventSourceType; resolve?: undefined }
     | { key: string | AgColumn; model: any; resolve: () => void };
@@ -269,9 +303,14 @@ export class ColumnFilterService
                 this.beans.setFilterSvc?.createPreservingFilters();
                 this.processFilterModelUpdateQueue();
             },
+            newColumnsLoaded: this.warnIfAuthorFilters.bind(this),
+            filterModifiedListened: this.warnFilterModifiedListened.bind(this),
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
+        const warnIfFilterModifiedHandler = this.warnIfFilterModifiedHandler.bind(this);
+        this.addManagedPropertyListener('onFilterModified', warnIfFilterModifiedHandler);
+        warnIfFilterModifiedHandler();
 
         const gos = this.gos;
         const initialFilterModel = {
@@ -483,7 +522,7 @@ export class ColumnFilterService
                 return null;
             }
 
-            return filter.getModel();
+            return _legacyFilterMethods(filter).getModel();
         }
         // filter still being created. return initial state if it exists and hasn't been applied yet
         return _getFilterModel(this.initialModel, colId);
@@ -640,7 +679,7 @@ export class ColumnFilterService
                     continue;
                 }
 
-                if (!comp.doesFilterPass({ node, data: targetedData })) {
+                if (!_legacyFilterMethods(comp).doesFilterPass({ node, data: targetedData })) {
                     return false;
                 }
             }
@@ -1110,7 +1149,7 @@ export class ColumnFilterService
             }
         }
         if (!filterHandler) {
-            return this.getMissingHandlerFunc(column, enableFilterHandlers);
+            return this.getMissingHandlerFunc(column, enableFilterHandlers, filter);
         }
         // pairing wraps the author's logic in a new function, so the logic itself is compared
         const handlerGenerator = doesFilterPass ?? handlerName ?? filterHandler;
@@ -1134,9 +1173,13 @@ export class ColumnFilterService
     /** No handler without filter handlers; with them, a dummy, as server-side or a custom filter missing its logic. */
     private getMissingHandlerFunc(
         column: AgColumn,
-        enableFilterHandlers: boolean | undefined
+        enableFilterHandlers: boolean | undefined,
+        filter: unknown
     ): HandlerFunc | undefined {
         if (!enableFilterHandlers) {
+            if (isAuthorFilter(filter, this.isRegisteredFilter)) {
+                _warnLegacyFilterMode(this.beans, 343);
+            }
             return undefined;
         }
         if (_isClientSideRowModel(this.gos)) {
@@ -1244,6 +1287,41 @@ export class ColumnFilterService
         });
     }
 
+    /** As the registry finds a filter by name, without reporting a missing one. */
+    private readonly isRegisteredFilter: IsRegisteredFilter = (name) => {
+        const components = this.gos.get('components');
+        return (
+            components?.[name] != null ||
+            this.beans.frameworkOverrides.frameworkComponent(name, components, 'filter') != null
+        );
+    };
+
+    private warnIfAuthorFilters(): void {
+        const beans = this.beans;
+        if (beans.gos.exists('enableFilterHandlers')) {
+            return;
+        }
+        const columns = beans.colModel.colDefList;
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            if (hasAuthorFilter(columns[i].colDef, this.isRegisteredFilter)) {
+                _warnLegacyFilterMode(beans, 343);
+                return;
+            }
+        }
+    }
+
+    private warnIfFilterModifiedHandler(): void {
+        if (!this.gos.exists('onFilterModified')) {
+            return;
+        }
+        this.warnFilterModifiedListened();
+    }
+
+    /** Called when the application listens to `filterModified`. */
+    public warnFilterModifiedListened(): void {
+        _warnLegacyFilterMode(this.beans, 345);
+    }
+
     private onColumnsChanged(): void {
         const columns: AgColumn[] = [];
         const disposals: AgPromise<boolean>[] = [];
@@ -1341,7 +1419,7 @@ export class ColumnFilterService
             displayParams.source = 'init';
         }
 
-        return _getFloatingFilterCompDetails(userCompFactory, colDef, params, defaultFloatingFilterType);
+        return _getFloatingFilterCompDetails(beans, colDef, params, defaultFloatingFilterType);
     }
 
     public getCurrentFloatingFilterParentModel(column: AgColumn): any {
@@ -1867,7 +1945,7 @@ export class ColumnFilterService
             applied();
             return;
         }
-        const modelApplied: unknown = filter.setModel(newModel);
+        const modelApplied: unknown = _legacyFilterMethods(filter).setModel(newModel);
         if (modelApplied != null && _isPromise(modelApplied)) {
             void modelApplied.then(() => applied());
         } else {

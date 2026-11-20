@@ -1,9 +1,9 @@
 import type {
+    FilterWrapperParams,
     GridApi,
     GridOptions,
     IMultiFilter,
     IMultiFilterParams,
-    ITextFilterParams,
     SetFilterUi,
 } from 'ag-grid-community';
 import {
@@ -47,15 +47,13 @@ const gridOptions: GridOptions<IOlympicData> = {
                 filters: [
                     {
                         filter: 'agTextColumnFilter',
-                        filterParams: {
-                            buttons: ['apply', 'clear'],
-                        } as ITextFilterParams,
                     },
                     {
                         filter: 'agSetColumnFilter',
                     },
                 ],
-            } as IMultiFilterParams,
+                buttons: ['apply', 'clear'],
+            } as IMultiFilterParams & FilterWrapperParams,
         },
     ],
     defaultColDef: {
@@ -64,6 +62,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressHeaderMenuButton: true,
         suppressHeaderContextMenu: true,
     },
+    enableFilterHandlers: true,
 };
 
 function getSetMiniFilter() {

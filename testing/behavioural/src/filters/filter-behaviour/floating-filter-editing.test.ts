@@ -1,5 +1,6 @@
 import { fireEvent } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     FloatingFilterHarness,
@@ -18,6 +19,7 @@ import {
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -506,6 +508,10 @@ describe('Floating filter editing', () => {
     });
 
     describe.each([false, true])('set (enableFilterHandlers: %s)', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         test('read-only floating filter shows the selection summary and clears', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,

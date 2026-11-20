@@ -12,7 +12,7 @@ import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_t
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({ suppress: [348] });
 }
 
 ModuleRegistry.registerModules([TextFilterModule, ClientSideRowModelModule, NumberFilterModule]);
@@ -64,6 +64,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    enableFilterHandlers: false,
     defaultColDef: {
         flex: 1,
         minWidth: 100,

@@ -37,9 +37,11 @@ The example below demonstrates using the different buttons. It also demonstrates
 Note the following about filter events:
 
 - `onFilterOpened` is called when the filter is opened.
-- `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
+- `onFilterUiChanged` is called when the filter UI changes regardless of whether the Apply button is present. It replaces `onFilterModified`, which is deprecated and does not fire when `enableFilterHandlers = true`.
 - `onFilterChanged` is called only after a new filter is applied.
-- Looking at the console, it can be noted when a filter is changed, the result of `getModel()` and `getModelFromUi()` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied).
+- Looking at the console, it can be noted when a filter is changed, the results of `api.getColumnFilterModel(column)` and `api.getColumnFilterModel(column, true)` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied). The second replaces the deprecated `getModelFromUi()`.
+
+See [Migrating to Filter Handlers](./component-filter/#filter-modified-event) for moving from `onFilterModified` and `getModelFromUi()`.
 
 {% gridExampleRunner title="Buttons and Filter Events" name="buttons-and-filter-events"  exampleHeight=560 /%}
 

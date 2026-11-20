@@ -1922,6 +1922,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
     });
 
     test("a selectable filter's multi filter hands the grid's text getter to a child using the default filter, a text filter, with and without filter handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [true, false]) {
             const api: GridApi = await gridsManager.createGridAndWait(`grid-${enableFilterHandlers}`, {
                 enableFilterHandlers,

@@ -12,7 +12,7 @@ import { YearFilter } from './yearFilter_typescript';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({ suppress: [348] });
 }
 
 ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule]);
@@ -31,6 +31,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    enableFilterHandlers: false,
     defaultColDef: {
         flex: 1,
         minWidth: 100,

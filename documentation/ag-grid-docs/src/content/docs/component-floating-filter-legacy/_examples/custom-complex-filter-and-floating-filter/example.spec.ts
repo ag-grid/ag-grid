@@ -1,11 +1,15 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.typescript('Grid renders the olympic medal data', async ({ agIdFor }) => {
-        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
-        await expect(agIdFor.cell('0', 'gold')).toContainText('8');
-        await expect(agIdFor.cell('0', 'total')).toContainText('8');
-    });
+    test.typescript(
+        'Grid renders the olympic medal data',
+        async ({ agIdFor }) => {
+            await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+            await expect(agIdFor.cell('0', 'gold')).toContainText('8');
+            await expect(agIdFor.cell('0', 'total')).toContainText('8');
+        },
+        { allowedConsoleMessages: ['warning #348'] }
+    );
 
     test.typescript(
         'jQuery slider floating filter drives the custom greater-than filter',
@@ -21,6 +25,7 @@ test.agExample(import.meta, () => {
             await expect(page.locator('.ag-row')).toHaveCount(1);
             await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
             await expect(agIdFor.cell('0', 'gold')).toContainText('8');
-        }
+        },
+        { allowedConsoleMessages: ['warning #348'] }
     );
 });

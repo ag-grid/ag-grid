@@ -146,7 +146,9 @@ Similar to [Applying Provided Filters](./filter-applying/), the Multi Filter can
 
 To configure buttons for the Multi Filter, first enable the grid option `enableFilterHandlers`. Note that if you have custom filter components, these will need to have been written to [Support Filter Handlers](./component-filter/#implementing-a-filter-component).
 
-Note that when `enableFilterHandlers = true`, buttons can only be set against the parent Multi Filter parameters; they cannot be set against the individual child filters.
+Note that when `enableFilterHandlers = true`, buttons can only be set against the parent Multi Filter parameters; they cannot be set against the individual child filters. Buttons set against a child filter are ignored.
+
+Without `enableFilterHandlers`, buttons can be set against the child filters, and `getModel()`, `setModel()`, `isFilterActive()`, `doesFilterPass()`, `applyModel()` and `getModelFromUi()` can be called on the Multi Filter instance. This legacy filter mode is deprecated in AG Grid 37, and the grid logs a warning when these are used. With `enableFilterHandlers = true`, the Multi Filter instance does not have these methods; use the grid's filter model API instead, such as `api.getColumnFilterModel()` and `api.setColumnFilterModel()`. See [Migrating to Filter Handlers](./component-filter/#multi-filter).
 
 The following options can be specified on the `filterParams`:
 
