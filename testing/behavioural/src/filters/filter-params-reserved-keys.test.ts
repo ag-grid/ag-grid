@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ColumnFilterHarness,
     TestGridsManager,
@@ -9,6 +10,7 @@ import type { ColDef, GridApi, GridOptions, ICellRendererParams, IFilterComp, IF
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
+    TextEditorModule,
     TextFilterModule,
     enableDevValidations,
     setupAgTestIds,
@@ -45,7 +47,7 @@ const athlete = (colDef: ColDef): ColDef => ({ field: 'athlete', flex: 1, minWid
 /** AG-19297: a user `*Params` key that clashes with a grid-supplied param must not write into the grid's live object. */
 describe('filterParams keys that clash with grid-supplied params', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CustomFilterModule, TextFilterModule, MultiFilterModule],
+        modules: [ClientSideRowModelModule, CustomFilterModule, TextEditorModule, TextFilterModule, MultiFilterModule],
     });
 
     beforeAll(() => {
@@ -180,6 +182,15 @@ describe('filterParams keys that clash with grid-supplied params', () => {
 
         expect(context).toEqual({ tenant: 'grid' });
         expect(PassThroughFilter.lastParams!.context).toBe(context);
+    });
+
+    test('a clashing cellEditorParams key does not change the live column', async () => {
+        const api = await createGrid({ editable: true, cellEditorParams: { column: { minWidth: '6rem' } } });
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'athlete' });
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+        expect(api.getColumn('athlete')!.getMinWidth()).toBe(96);
     });
 
     test('a filterParams "context" still reaches the filter when the grid has no context', async () => {
