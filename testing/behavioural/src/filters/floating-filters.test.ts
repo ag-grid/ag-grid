@@ -3,8 +3,10 @@ import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
+    ColGroupDef,
     FilterHandler,
     FloatingFilterDisplayParams,
+    GridApi,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
@@ -567,4 +569,99 @@ describe('Floating Filters', () => {
             expect(api.getDisplayedRowCount()).toBe(1);
         }
     );
+
+    describe('headerClass on floating filter cells', () => {
+        const createGrid = (columnDefs: (ColDef | ColGroupDef)[]) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs,
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [{ x: 'x1', y: 'y1' }],
+            });
+
+        const cells = (api: GridApi, colId: string) => {
+            const root = getGridElement(api)! as HTMLElement;
+            return {
+                header: root.querySelector<HTMLElement>(`.ag-header-cell:not(.ag-floating-filter)[col-id="${colId}"]`)!,
+                floatingFilter: root.querySelector<HTMLElement>(`.ag-floating-filter[col-id="${colId}"]`)!,
+            };
+        };
+
+        const userClasses = (element: HTMLElement) =>
+            Array.from(element.classList).filter((name) => /^(a|b|c|hdr|ff|grp)$/.test(name));
+
+        test('a string headerClass applies to the header and the floating filter', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: 'a' }]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header)).toEqual(['a']);
+            expect(userClasses(floatingFilter)).toEqual(['a']);
+        });
+
+        test('an array headerClass applies every class to the header and the floating filter', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: ['a', 'b'] }]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header).sort()).toEqual(['a', 'b']);
+            expect(userClasses(floatingFilter).sort()).toEqual(['a', 'b']);
+        });
+
+        test('a headerClass callback receives floatingFilter and can target each cell', async () => {
+            const seen = new Set<boolean | undefined>();
+            const api = await createGrid([
+                {
+                    field: 'x',
+                    headerClass: (params) => {
+                        seen.add(params.floatingFilter);
+                        return params.floatingFilter ? 'ff' : 'hdr';
+                    },
+                },
+            ]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header)).toEqual(['hdr']);
+            expect(userClasses(floatingFilter)).toEqual(['ff']);
+            expect(seen).toEqual(new Set([true, false]));
+        });
+
+        test('updating headerClass through columnDefs updates the floating filter classes', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: 'a' }]);
+
+            api.setGridOption('columnDefs', [{ field: 'x', headerClass: 'b' }]);
+            await waitFor(() => expect(userClasses(cells(api, 'x').floatingFilter)).toEqual(['b']));
+            expect(userClasses(cells(api, 'x').header)).toEqual(['b']);
+
+            api.setGridOption('columnDefs', [{ field: 'x' }]);
+            await waitFor(() => expect(userClasses(cells(api, 'x').floatingFilter)).toEqual([]));
+            expect(userClasses(cells(api, 'x').header)).toEqual([]);
+        });
+
+        test('a column group headerClass applies to the group header only', async () => {
+            const groupCalls: (boolean | undefined)[] = [];
+            const api = await createGrid([
+                {
+                    groupId: 'g',
+                    headerClass: (params) => {
+                        groupCalls.push(params.floatingFilter);
+                        return 'grp';
+                    },
+                    children: [{ field: 'x' }, { field: 'y' }],
+                },
+            ]);
+            const root = getGridElement(api)! as HTMLElement;
+
+            expect(userClasses(root.querySelector<HTMLElement>('.ag-header-group-cell')!)).toEqual(['grp']);
+            expect(groupCalls.length).toBeGreaterThan(0);
+            expect(groupCalls.every((floatingFilter) => floatingFilter === false)).toBe(true);
+            expect(userClasses(cells(api, 'x').floatingFilter)).toEqual([]);
+            expect(userClasses(cells(api, 'y').floatingFilter)).toEqual([]);
+        });
+
+        test('updating headerStyle through columnDefs updates the floating filter style', async () => {
+            const api = await createGrid([{ field: 'x', headerStyle: { '--ff-test': 'one' } }]);
+            expect(cells(api, 'x').floatingFilter.style.getPropertyValue('--ff-test')).toBe('one');
+
+            api.setGridOption('columnDefs', [{ field: 'x', headerStyle: { '--ff-test': 'two' } }]);
+            await waitFor(() => expect(cells(api, 'x').floatingFilter.style.getPropertyValue('--ff-test')).toBe('two'));
+        });
+    });
 });

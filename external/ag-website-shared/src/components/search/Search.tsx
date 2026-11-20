@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import styles from './Search.module.scss';
 import SearchModal from './SearchModal';
+import { primeOnScreenKeyboard } from './primeOnScreenKeyboard';
 
 /**
  * grid-packages/ag-grid-docs/documentation
@@ -50,13 +51,20 @@ const Search = () => {
     const setModalOpenFnc = (open) => () => {
         setOpen(open);
     };
+
+    const onSearchBoxClick = () => {
+        // The modal's input mounts once InstantSearch has started, a render too late for iOS
+        primeOnScreenKeyboard('Search documentation');
+        setOpen(true);
+    };
+
     return (
         <>
             <div
                 role="button"
                 tabIndex={0}
                 className={styles.headerSearchBox}
-                onClick={setModalOpenFnc(true)}
+                onClick={onSearchBoxClick}
                 onKeyPress={onPseudoInputKeyDown}
                 aria-label="Open search with Enter or Space, or use the Command K (Control K on Windows and Linux) shortcut while anywhere else in the page."
             >
