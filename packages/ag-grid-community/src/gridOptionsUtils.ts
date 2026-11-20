@@ -291,14 +291,6 @@ export function _getGroupAggFiltering(
     return undefined;
 }
 
-/**
- * Manual row pinning is supported only with the Client-Side Row Model.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _getEnableRowPinning(gos: GridOptionsService): GridOptions['enableRowPinning'] {
-    return _isClientSideRowModel(gos) ? gos.get('enableRowPinning') : undefined;
-}
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTotalRow'] {
     return gos.get('grandTotalRow');

@@ -27,7 +27,6 @@ import {
     BeanStub,
     _addGridCommonParams,
     _attemptToRestoreCellFocus,
-    _getEnableRowPinning,
     _getGrandTotalRow,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -157,7 +156,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         // if user clicks a cell
         if (_exists(node)) {
-            const enableRowPinning = _getEnableRowPinning(gos);
+            const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
             if (enableRowPinning) {
                 const isGroupTotalRow = node.level > -1 && node.footer;

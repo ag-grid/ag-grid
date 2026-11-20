@@ -221,7 +221,6 @@ export {
     _getEnableColumnSelection,
     _getFillHandle,
     _getGrandTotalPinnedFloat,
-    _getEnableRowPinning,
     _getGrandTotalRow,
     _getGridOption,
     _getGroupAggFiltering,

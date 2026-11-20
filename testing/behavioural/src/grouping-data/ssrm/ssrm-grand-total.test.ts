@@ -970,7 +970,7 @@ describe('SSRM grand total row', () => {
         });
     });
 
-    test('a row pinning state naming the grand total pins nothing, with or without rows', async () => {
+    test('a row pinning state naming the grand total pins nothing and is not saved, with or without rows', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [309] }); // `enableRowPinning` is client-side only
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         let rows: RowData[] = flatRows;
@@ -994,6 +994,7 @@ describe('SSRM grand total row', () => {
         api.setState({ rowPinning: { top: [], bottom: [GRAND_TOTAL_ROW_ID] } });
         await asyncSetTimeout(0);
         expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
 
         rows = [];
         api.refreshServerSide({ purge: true });
@@ -1001,7 +1002,7 @@ describe('SSRM grand total row', () => {
         await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined());
         api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
         await asyncSetTimeout(0);
-        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
 
         rows = flatRows;
         api.refreshServerSide({ purge: true });
