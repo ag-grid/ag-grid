@@ -25,6 +25,11 @@ import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../../tooltip/legacyTooltipTestUtils';
 
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
+
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
         modules: [

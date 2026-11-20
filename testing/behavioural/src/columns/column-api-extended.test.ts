@@ -10,6 +10,11 @@ import {
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
+
 describe('Column API — extended coverage', () => {
     const gridsManager = new TestGridsManager({
         modules: [

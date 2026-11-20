@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import { DragSourceType, getGridElement } from 'ag-grid-community';
+import { DragSourceType, enableDevValidations, getGridElement } from 'ag-grid-community';
 import type { AgColumn } from 'ag-grid-community';
 
 import {
@@ -25,6 +25,11 @@ import {
     rowData,
     setupDeferredPivotModeSuite,
 } from './deferredPivotModeHarness';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('deferred column tool panel pivot mode - staging changes and committing them', () => {
     setupDeferredPivotModeSuite();

@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { ALL_SEVERITIES, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type {
@@ -10,7 +10,7 @@ import type {
     ColDef,
     GridState,
 } from 'ag-grid-community';
-import { GridStateModule, ModuleRegistry } from 'ag-grid-community';
+import { GridStateModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -25,6 +25,11 @@ import {
     showColumnMenu,
     updateCalculatedColumnDef,
 } from './calculatedColumnsHarness';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('calculated columns - custom dialog validation', () => {
     setupCalculatedColumnsSuite();
