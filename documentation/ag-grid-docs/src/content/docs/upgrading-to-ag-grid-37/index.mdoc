@@ -111,9 +111,7 @@ The following deprecated APIs have now been removed.
 - `childIndex` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
 - `isFullWidthCell()` - removed, check `rowNode.detail`, then the `isFullWidthRow` grid option callback instead.
 
-The removed properties were set before the `postSortRows` callback ran, so inside the callback they still gave each row's position before any reordering. `params.nodes` is the same array as `childrenAfterSort`, so once the callback reorders it the expressions above return the new positions. If the callback needs the original positions, record them from `params.nodes` before reordering it.
-
-In the Server-Side Row Model only `firstChild` was ever set; `lastChild` and `childIndex` were not populated there. `firstChild` marked the row at index 0 of its store, which is not necessarily the first loaded row when blocks have not been loaded yet. There is no direct replacement for it: the Server-Side Row Model does not populate `childrenAfterSort`, so the replacements above do not apply, and the store index is not exposed on the row node. Listen to the `modelUpdated` event to know when to re-check row positions.
+In the Server-Side Row Model only `firstChild` was ever set, and it has no direct replacement; listen to the `modelUpdated` event to re-check row positions.
 
 ### Interfaces and Types
 
