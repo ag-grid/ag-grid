@@ -318,6 +318,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         _mergeDeep(params, allowedParams);
     }
 
+    /** Once per grid: the logger only dedupes the console line, and this runs for every cell renderer. */
     private warnIgnoredParam(propName: string, key: string): void {
         const warned = (this.warnedIgnoredParams ??= new Set());
         const id = `${propName}.${key}`;
