@@ -17,6 +17,7 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _addGridCommonParams,
+    _getEnableRowPinning,
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
@@ -699,7 +700,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.gridBodyCtrl.updateRowCount();
 
             if (!onlyBody) {
-                this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
+                this.refreshPinnedRowComps(_getEnableRowPinning(gos) ? recycleRows : undefined);
             }
 
             this.dispatchDisplayedRowsChanged();
