@@ -1076,10 +1076,7 @@ export class SetFilter<V = string>
         }
     }
 
-    public getModelAsString(
-        model: SetFilterModel | null,
-        source?: 'floating' | 'floatingTooltip' | 'filterToolPanel'
-    ): string {
+    public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
         return this.handler.getModelAsString(model, source);
     }
 

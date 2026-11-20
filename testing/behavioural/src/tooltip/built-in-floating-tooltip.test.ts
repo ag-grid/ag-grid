@@ -39,12 +39,18 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         vi.restoreAllMocks();
     });
 
-    test.each([false, true])('reuses custom group filter summaries (browser=%s)', async (enableBrowserTooltips) => {
+    test.each<[boolean, string | undefined]>([
+        [false, undefined],
+        [true, undefined],
+        [false, 'set'],
+        [true, 'set'],
+    ])('reuses custom group summaries (browser=%s, type=%s)', async (enableBrowserTooltips, filterType) => {
         const getModelAsString = vi.fn((model: string | null, source?: 'floating' | 'filterToolPanel') => {
             const summaries = { floating: model ?? '', filterToolPanel: `Summary: ${model}` };
             return summaries[source ?? 'floating'];
         });
         class CustomFilter {
+            public readonly filterType = filterType;
             private model: string | null = null;
             public getGui(): HTMLElement {
                 return document.createElement('div');
@@ -74,7 +80,7 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
                         filter: enableFilterHandlers
                             ? {
                                   component: CustomFilter,
-                                  handler: () => ({ doesFilterPass: () => true, getModelAsString }),
+                                  handler: () => ({ filterType, doesFilterPass: () => true, getModelAsString }),
                               }
                             : CustomFilter,
                     },
@@ -85,7 +91,7 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
                 enableBrowserTooltips,
                 tooltipShowDelay: 0,
             },
-            { modules: [CustomFilterModule, GroupFilterModule, RowGroupingModule] }
+            { modules: [CustomFilterModule, GroupFilterModule, RowGroupingModule, SetFilterModule] }
         );
         const summary = 'A long custom group filter summary';
         await api.setColumnFilterModel('country', summary);

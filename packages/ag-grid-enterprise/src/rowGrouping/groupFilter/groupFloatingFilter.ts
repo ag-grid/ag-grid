@@ -221,11 +221,8 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             } else {
                 const model = column ? colFilter.getModelForColumn(column) : null;
                 const summary = model == null ? '' : (filterOrHandler.getModelAsString?.(model) ?? '');
-                const isSetFilter = 'filterType' in filterOrHandler && filterOrHandler.filterType === 'set';
                 this.getTooltipValue = () =>
-                    isSetFilter && model != null
-                        ? (filterOrHandler.getModelAsString?.(model, 'floatingTooltip') ?? '')
-                        : summary;
+                    this.beans.setFilterSvc?.getFloatingFilterTooltip(filterOrHandler, model) ?? summary;
                 eFloatingFilterText.setValue(summary);
                 eFloatingFilterText.setDisplayed(true);
             }

@@ -95,7 +95,8 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
         const updateText = (filterOrHandler?: Pick<FilterHandler, 'getModelAsString'>) => {
-            this.getTooltipValue = () => filterOrHandler?.getModelAsString?.(parentModel, 'floatingTooltip') ?? '';
+            this.getTooltipValue = () =>
+                this.beans.setFilterSvc?.getFloatingFilterTooltip(filterOrHandler, parentModel) ?? '';
             this.eFloatingFilterText.setValue(filterOrHandler?.getModelAsString?.(parentModel) ?? '');
             this.refreshValueTooltip?.();
         };
