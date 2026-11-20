@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
+    GRAND_TOTAL_ROW_ID,
     InfiniteRowModelModule,
     ValidationModule,
     enableDevValidations,
@@ -153,6 +154,19 @@ describe('Auto-Generate Column Defs with the Server-Side Row Model', () => {
                     ?.map((col) => col.getColId())
                     .sort()
             ).toEqual(['2020_age', '2021_age']);
+        });
+        test('ignores a grand total row sent first in the root rows', async () => {
+            const { datasource } = createDatasource((params) =>
+                params.success({ rowData: [{ id: GRAND_TOTAL_ROW_ID, age: 55 }, ...rows], rowCount: 2 })
+            );
+            const api = await createGrid({ autoGenerateColumnDefs: true, grandTotalRow: 'bottom' }, datasource);
+
+            await new GridColumns(api, 'generated from the data rows').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
         });
     });
 
@@ -411,5 +425,13 @@ describe('Auto-Generate Column Defs row model validation', () => {
             expect.stringContaining('`autoGenerateColumnDefs` is not supported with the `infinite` row model'),
             expect.any(String)
         );
+    });
+
+    test('changing the option at runtime keeps the Infinite Row Model columns', () => {
+        const api = gridsManager.createGrid('myGrid', { rowModelType: 'infinite', columnDefs: [{ field: 'name' }] });
+
+        api.setGridOption('autoGenerateColumnDefs', true);
+
+        expect(api.getColumns()?.map((col) => col.getColId())).toEqual(['name']);
     });
 });

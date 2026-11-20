@@ -972,7 +972,11 @@ export class LazyCache extends BeanStub {
 
         // Last, as generated columns can reset the root store (and destroy this cache) when they add row grouping
         if (isRootStore) {
-            this.beans.autoGenColsSvc?.onServerSideRootRowsLoaded(response.rowData);
+            const { rowData } = response;
+            // a grand total row sent inline holds aggregates only, so it must not shape the generated columns
+            this.beans.autoGenColsSvc?.onServerSideRootRowsLoaded(
+                skippedRowCount ? rowData.filter((data) => this.getRowId(data) !== grandTotalId) : rowData
+            );
         }
     }
 
