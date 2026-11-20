@@ -64,7 +64,7 @@ In the example above, rows with the **Locked** box ticked cannot be dragged. Not
 - **Drag Entire Row** enables `rowDragEntireRow`. Locked rows then cannot be dragged from any cell.
 - Other rows can still be dropped above or below a locked row.
 
-The `data` property of the params is `undefined` for group and footer rows, so use `node` to decide for those rows.
+The `data` property of the params is `undefined` for group and footer rows without data, so use `node` to decide for those rows. Tree data parents backed by a record have both `node.group` and `data`.
 
 ### Interaction with the rowDrag Column Property
 
