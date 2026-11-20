@@ -93,6 +93,28 @@ describe('Row Numbers Cell Selection', () => {
         `);
     });
 
+    test('row number header keeps its classes and follows cellSelection', async () => {
+        const [api] = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: true,
+        });
+        const header = () =>
+            getGridElement(api)!.querySelector<HTMLElement>(`.ag-header-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`)!;
+
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
+        expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(true);
+
+        api.setGridOption('cellSelection', false);
+        await waitFor(() => expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(false));
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
+
+        api.setGridOption('cellSelection', true);
+        await waitFor(() => expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(true));
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
+    });
+
     test('click row number selects row cells, clears existing range', async () => {
         const [api] = await createGrid({
             columnDefs,

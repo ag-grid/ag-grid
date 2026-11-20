@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule, getGridElement } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 const rowNumberRefreshBufferMs = 25;
@@ -903,5 +903,44 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:"absolute-col-self-$A13" row-number:"14" y:22 x:150 value:22
             └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"15" value:-5
         `);
+    });
+
+    test('a formula follows the column definitions adding, then removing, a column without formulas it references', async () => {
+        const api = gridsManager.createGrid('formulas-reference-added-later', {
+            rowData: [{ id: 'r1', a: 5, b: 7, out: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))' }],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'a' }, { field: 'out', allowFormula: true }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        const out = () => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'out' });
+        const withoutB = out();
+        expect(withoutB).toMatch(/^#/);
+
+        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(out()).toBe(12);
+
+        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(out()).toEqual(withoutB);
+    });
+
+    test('the column letters in the headers follow a column the column definitions insert first', async () => {
+        const api = gridsManager.createGrid('formulas-letters-column-inserted', {
+            rowData: [{ id: 'r1', a: 5, b: 7, out: '=REF(COLUMN("a"),ROW("r1"))' }],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'a' }, { field: 'out', allowFormula: true }],
+        });
+        const letters = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id] .ag-header-col-ref'), (ref) => {
+                return `${ref.closest('.ag-header-cell')!.getAttribute('col-id')} ${ref.textContent}`;
+            });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(letters()).toEqual(['ag-Grid-RowNumbersColumn ', 'a A', 'out B']);
+
+        api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'a' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        expect(letters()).toEqual(['ag-Grid-RowNumbersColumn ', 'b A', 'a B', 'out C']);
     });
 });

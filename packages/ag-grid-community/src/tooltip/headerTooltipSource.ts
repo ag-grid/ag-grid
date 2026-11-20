@@ -7,7 +7,7 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { TooltipCallbackParams } from './tooltipComponent';
+import type { HeaderTooltipCallbackParams } from './tooltipComponent';
 import type { TooltipFeature, TooltipSource } from './tooltipFeature';
 import { _getHeaderTooltipComponentDefinition, _isShowTooltipWhenTruncated } from './tooltipFeature';
 import { _resolveHeaderTooltipValue } from './tooltipValueUtils';
@@ -31,49 +31,39 @@ interface HeaderTooltipSourceParams {
 
 function createHeaderTooltipSource(params: HeaderTooltipSourceParams): TooltipSource {
     const { beans, eGui, location, column, getColDef, getComponentTooltip, getDisplayName } = params;
-    let latestDisplayName: string | null | undefined;
     const isOverflowing = _isElementOverflowingCallback(
         () => eGui.querySelector(params.overflowElementSelector) as HTMLElement | undefined
     );
 
-    const getCallbackParams = () => {
-        const displayName = getDisplayName();
-        const colDef = getColDef();
-        latestDisplayName = displayName;
-        return _addGridCommonParams<TooltipCallbackParams>(beans.gos, {
-            location,
-            colDef,
-            column,
-            value: displayName,
-            valueFormatted: displayName,
-        });
-    };
-
     return {
         getGui: () => eGui,
-        getTooltipComponentDefinition: () => {
+        getTooltip: () => {
+            const displayName = getDisplayName();
             const colDef = getColDef() ?? undefined;
-            return getComponentTooltip().value != null ? colDef : _getHeaderTooltipComponentDefinition(colDef);
+            const { value } = getComponentTooltip();
+            const sourceParams = {
+                colDef,
+                column,
+                value: displayName,
+                valueFormatted: displayName,
+            };
+            const callbackParams = _addGridCommonParams<HeaderTooltipCallbackParams>(beans.gos, {
+                ...sourceParams,
+                location,
+            });
+            return {
+                value: _resolveHeaderTooltipValue(colDef, callbackParams, value),
+                componentDefinition: value != null ? colDef : _getHeaderTooltipComponentDefinition(colDef),
+                params: sourceParams,
+            };
         },
         getLocation: () => location,
-        getTooltipValue: () => {
-            const { value } = getComponentTooltip();
-            return _resolveHeaderTooltipValue(getColDef(), getCallbackParams(), value);
-        },
         shouldDisplayTooltip: () => {
             const componentShouldDisplay = getComponentTooltip().shouldDisplay;
             if (componentShouldDisplay) {
                 return componentShouldDisplay();
             }
             return !_isShowTooltipWhenTruncated(beans.gos) || params.hasCustomHeader() || isOverflowing();
-        },
-        getAdditionalParams: () => {
-            const colDef = getColDef();
-            return {
-                column,
-                ...(colDef ? { colDef } : {}),
-                valueFormatted: latestDisplayName,
-            };
         },
     };
 }

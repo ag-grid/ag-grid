@@ -1,3 +1,5 @@
+import { onFileEnd } from '../fileScope';
+
 let installed = false;
 const revealed: Element[] = [];
 
@@ -12,7 +14,9 @@ export function installFocusScroll(): () => void {
     }
     installed = true;
     const proto = HTMLElement.prototype;
-    const { focus, scrollIntoView } = proto;
+    const focus = proto.focus;
+    const ownFocus = Object.getOwnPropertyDescriptor(proto, 'focus');
+    const ownScrollIntoView = Object.getOwnPropertyDescriptor(proto, 'scrollIntoView');
     proto.focus = function (this: HTMLElement, options?: FocusOptions) {
         const wasFocused = document.activeElement === this;
         focus.call(this, options);
@@ -23,12 +27,19 @@ export function installFocusScroll(): () => void {
     proto.scrollIntoView = function (this: HTMLElement) {
         reveal(this);
     };
-    return () => {
-        proto.focus = focus;
-        proto.scrollIntoView = scrollIntoView;
+    let uninstalled = false;
+    const uninstall = () => {
+        if (uninstalled) {
+            return;
+        }
+        uninstalled = true;
+        restoreOwnProperty(proto, 'focus', ownFocus);
+        restoreOwnProperty(proto, 'scrollIntoView', ownScrollIntoView);
         revealed.length = 0;
         installed = false;
     };
+    onFileEnd(uninstall);
+    return uninstall;
 }
 
 /** The elements a browser would have scrolled into view on the page since {@link installFocusScroll}, oldest first. */
@@ -51,5 +62,14 @@ function reveal(element: HTMLElement): void {
         viewport.scrollLeft = left;
     } else if (right > scrollLeft + width) {
         viewport.scrollLeft = right - width;
+    }
+}
+
+/** Puts back the own property found before the patch, or removes the patch so the inherited one shows again. */
+function restoreOwnProperty(target: object, key: string, descriptor: PropertyDescriptor | undefined): void {
+    if (descriptor) {
+        Object.defineProperty(target, key, descriptor);
+    } else {
+        Reflect.deleteProperty(target, key);
     }
 }

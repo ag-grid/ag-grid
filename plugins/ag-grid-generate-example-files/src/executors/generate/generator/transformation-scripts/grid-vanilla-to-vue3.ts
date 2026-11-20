@@ -2,15 +2,16 @@ import type { ExampleConfig, ParsedBindings } from '../types';
 import { getTemplate } from './grid-vanilla-to-vue-common';
 import {
     addBindingImports,
-    addGenericInterfaceImport,
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
     getEnableAGTestIdLogic,
+    getFetchedDataType,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
+    getTypeImports,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
@@ -18,12 +19,21 @@ import {
     replaceGridReadyRowData,
     wrapTearDownExample,
 } from './parser-utils';
-import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
+import {
+    getComponentName,
+    getImport,
+    toComponentInstanceTypes,
+    toConst,
+    toGridApiRef,
+    toInput,
+    toMemberWithType,
+    toOutput,
+} from './vue-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
-function getOnGridReadyCode(bindings: ParsedBindings): string {
+function getOnGridReadyCode(bindings: ParsedBindings, rowDataType: string): string {
     const { onGridReady, data } = bindings;
     const additionalLines = [];
 
@@ -37,7 +47,7 @@ function getOnGridReadyCode(bindings: ParsedBindings): string {
         const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
 
         additionalLines.push(`
-            const updateData = (data) => ${setRowDataBlock};
+            const updateData = (data: ${getFetchedDataType(data, rowDataType)}) => ${setRowDataBlock};
             
             fetch(${url})
                 .then(resp => resp.json())
@@ -54,20 +64,18 @@ function getOnGridReadyCode(bindings: ParsedBindings): string {
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll('gridApi', 'gridApi.value');
-
 function getAllMethods(bindings: ParsedBindings): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
         .filter((event) => event.name != 'onGridReady')
         .map((event) => event.handler)
-        .map(replaceApiThisReference)
+        .map(toGridApiRef)
         .map(convertFunctionToConstPropertyTs);
 
     const externalEventHandlers = bindings.externalEventHandlers
         .map((event) => event.body)
-        .map(replaceApiThisReference)
+        .map(toGridApiRef)
         .map(convertFunctionToConstPropertyTs);
-    const instanceMethods = bindings.instanceMethods.map(replaceApiThisReference).map(convertFunctionToConstPropertyTs);
+    const instanceMethods = bindings.instanceMethods.map(toGridApiRef).map(convertFunctionToConstPropertyTs);
 
     const utilFunctions = bindings.utils;
 
@@ -118,7 +126,7 @@ function getPropertyBindings(
     }
 
     if (!propertyAssignments.find((item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0)) {
-        propertyAssignments.push(`const rowData = ref<${rowDataType}[]>(null);`);
+        propertyAssignments.push(`const rowData = ref<${rowDataType}[] | null>(null);`);
     }
 
     if (bindings.data && bindings.data.callback.indexOf("gridApi.setGridOption('rowData',") >= 0) {
@@ -137,20 +145,16 @@ function getModuleImports(
     componentFileNames: string[],
     allStylesheets: string[]
 ): string[] {
-    const { properties } = bindings;
+    const { properties, eventHandlers } = bindings;
 
     const imports = [
         "import { createApp, defineComponent, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
-    const propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces([...properties, ...eventHandlers]);
     const bImports = [...(bindings.imports || []).filter((entry) => !entry.module.includes('./'))];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
-    });
+    bImports.push(...getTypeImports([...propertyInterfaces, 'GridReadyEvent', 'GridApi']));
 
     addLicenseManager(imports, exampleConfig);
 
@@ -188,8 +192,6 @@ function getImports(
 
     imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
 
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
-
     imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
@@ -209,13 +211,14 @@ export function vanillaToVue3(
     const { typeDeclares, interfaces } = bindings;
 
     const vueComponents = new Set(bindings.components.map((component) => `${component.name}:${component.value}`));
-    componentFileNames
-        .map((componentFileName) => getComponentName(componentFileName, 'Vue', ''))
-        .forEach(vueComponents.add, vueComponents);
+    const componentNames = componentFileNames.map((componentFileName) =>
+        getComponentName(componentFileName, 'Vue', '')
+    );
+    componentNames.forEach(vueComponents.add, vueComponents);
 
     const rowDataType = bindings.tData || 'any';
 
-    const onGridReady = getOnGridReadyCode(bindings);
+    const onGridReady = getOnGridReadyCode(bindings, rowDataType);
     const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions, functionNames] =
         getAllMethods(bindings);
@@ -232,7 +235,7 @@ export function vanillaToVue3(
         );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
-        return handleRowGenericInterface(
+        const generatedOutput = handleRowGenericInterface(
             `
 ${imports.join('\n')}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
@@ -277,6 +280,7 @@ ${wrapTearDownExample('(window as any).tearDownExample = () => app.unmount();')}
 `,
             bindings.tData
         );
+        return toComponentInstanceTypes(generatedOutput, componentNames);
     };
 }
 

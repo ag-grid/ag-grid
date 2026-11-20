@@ -108,7 +108,10 @@ describe('paginationPageSize combobox aria-activedescendant (WCAG 4.1.2)', () =>
             expect(getActiveOptionText(combobox)).toBe(expected);
         }
 
-        fireEvent.mouseOver(options.find((option) => option.textContent?.trim() === '20')!);
+        // Hover is paused after keyboard navigation and resumes on the first genuine pointer move.
+        const option20 = options.find((option) => option.textContent?.trim() === '20')!;
+        fireEvent.mouseMove(option20, { clientX: 10, clientY: 10 });
+        fireEvent.mouseMove(option20, { clientX: 11, clientY: 10 });
         expect(getActiveOptionText(combobox)).toBe('20');
 
         fireEvent.mouseLeave(document.querySelector<HTMLElement>('.ag-select-list')!);

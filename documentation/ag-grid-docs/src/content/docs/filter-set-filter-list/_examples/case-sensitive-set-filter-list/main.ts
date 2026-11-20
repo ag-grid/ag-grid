@@ -52,6 +52,16 @@ const gridOptions: GridOptions = {
                 cellRenderer: colourCellRenderer,
             } as ISetFilterParams,
         },
+        {
+            headerName: 'Case Sensitive Search',
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitive: true,
+                miniFilterCaseSensitive: true,
+                cellRenderer: colourCellRenderer,
+            } as ISetFilterParams,
+        },
     ],
     defaultColDef: {
         flex: 1,

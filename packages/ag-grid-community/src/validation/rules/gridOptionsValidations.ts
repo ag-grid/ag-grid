@@ -1,3 +1,5 @@
+import { _TOOLTIP_POSITIONS, _isTooltipPosition } from 'ag-stack';
+
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
@@ -11,6 +13,7 @@ import type {
     Validations,
 } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
+import { validateAccentedSort } from './accentedSortValidation';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -53,17 +56,12 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '32.2',
         message: 'Use `rowSelection.groupSelects = "filteredDescendants"` instead.',
     },
-    isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
+    isRowSelectable: { version: '32.2', message: 'Use `rowSelection.isRowSelectable` instead.' },
     suppressCopySingleCellRanges: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
     onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
     onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
-
-    suppressBrowserResizeObserver: {
-        version: '32.2',
-        message: "The grid always uses the browser's ResizeObserver, this grid option has no effect.",
-    },
 
     onColumnEverythingChanged: {
         version: '32.2',
@@ -611,12 +609,68 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         serverSideSortAllLevels: {
             supportedRowModels: ['serverSide'],
         },
+        accentedSort: {
+            validate: ({ accentedSort }) => validateAccentedSort('accentedSort', accentedSort),
+        },
         stickyRowsMaxViewportRatio: {
             validate({ stickyRowsMaxViewportRatio: ratio }) {
                 if (ratio == null || (typeof ratio === 'number' && ratio >= 0 && ratio <= 1)) {
                     return null;
                 }
                 return 'stickyRowsMaxViewportRatio: value should be a number between 0 and 1';
+            },
+        },
+        tooltipTrigger: {
+            validate: ({ tooltipTrigger }) => {
+                const allowed = ['hover', 'focus', 'hoverOrFocus'];
+                return tooltipTrigger != null && !allowed.includes(tooltipTrigger)
+                    ? _createValidationWarning(320, { property: 'tooltipTrigger', allowed, value: tooltipTrigger })
+                    : null;
+            },
+        },
+        tooltipInteraction: {
+            validate: ({ tooltipInteraction }) => {
+                const actualType = typeof tooltipInteraction;
+                return tooltipInteraction == null || actualType === 'boolean' || actualType === 'function'
+                    ? null
+                    : _createValidationWarning(314, {
+                          key: 'tooltipInteraction',
+                          expectedType: 'boolean or function',
+                          actualType,
+                          value: tooltipInteraction,
+                      });
+            },
+        },
+        tooltipPosition: {
+            validate: ({ tooltipPosition }) => {
+                if (
+                    tooltipPosition == null ||
+                    typeof tooltipPosition === 'function' ||
+                    _isTooltipPosition(tooltipPosition)
+                ) {
+                    return null;
+                }
+                return _createValidationWarning(320, {
+                    property: 'tooltipPosition',
+                    allowed: _TOOLTIP_POSITIONS,
+                    value: tooltipPosition,
+                });
+            },
+        },
+        tooltipAnchor: {
+            validate: ({ tooltipAnchor }) => {
+                const allowed = ['target', 'pointer'];
+                return tooltipAnchor != null && !allowed.includes(tooltipAnchor)
+                    ? _createValidationWarning(320, { property: 'tooltipAnchor', allowed, value: tooltipAnchor })
+                    : null;
+            },
+        },
+        tooltipOffset: {
+            validate: ({ tooltipOffset }) => {
+                if (tooltipOffset != null && !Number.isFinite(tooltipOffset)) {
+                    return 'tooltipOffset: value should be a finite number';
+                }
+                return toConstrainedNum('tooltipOffset', tooltipOffset, 0);
             },
         },
         tooltipHideDelay: {

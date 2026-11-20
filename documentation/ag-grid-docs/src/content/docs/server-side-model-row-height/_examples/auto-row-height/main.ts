@@ -1,9 +1,10 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, RowAutoHeightModule, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -54,7 +55,7 @@ const gridOptions: GridOptions = {
         const data = getData();
 
         // setup the fake server with entire dataset
-        const fakeServer = new FakeServer(data);
+        const fakeServer = FakeServer(data);
 
         // create datasource with a reference to the fake server
         const datasource = getServerSideDatasource(fakeServer);

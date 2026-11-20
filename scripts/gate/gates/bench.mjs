@@ -15,10 +15,8 @@ export default {
     script: 'benches.sh',
     helpCommand: ['vitest', 'bench', '--help'],
     failRe: /^( FAIL|\s+×)/,
-    // `vitest bench` reports a table rather than test counts; these are the lines worth echoing back. The
-    // profiles line is in there because --profile --async is exactly the case where the terminal has nothing
-    // else to go on.
-    summaryRe: /^ *(BENCH|Duration|Bench Files|CPU profiles written)/,
+    // The lines worth echoing back; the profiles one because --profile --async leaves the terminal nothing else.
+    summaryRe: /^ *(Test Files|Tests|Duration|CPU profiles written)/,
 
     // `--bench-compare [args...]` is a thin pass-through to the bench-compare.mjs tool, handled before
     // anything else reads argv so its sub-commands and flags (base/test/compare/all/backup, --runs, --filter,
@@ -74,7 +72,8 @@ export default {
         }
         return {
             command: bin('vitest'),
-            args: ['bench', ...(state.endless ? [] : ['--run']), ...state.forward],
+            // `vitest bench` leaves Vite's mode at `test`; the behavioural config builds the browser project for this one.
+            args: ['bench', '--mode', 'benchmark', ...(state.endless ? [] : ['--run']), ...state.forward],
             cwd: path.join(rootDir, 'testing/behavioural'),
         };
     },

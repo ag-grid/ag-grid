@@ -1,6 +1,61 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - jest@30.5.2 > @jest/core@30.5.2 > @jest/reporters@30.5.2 > @jest/transform@30.5.2 > jest-haste-map@30.5.1 > @parcel/watcher@2.6.0 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.275Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.572Z
+  SNYK-JS-UNDICI-22370261:
+    - jest@30.5.2 > @jest/core@30.5.2 > @jest/reporters@30.5.2 > @jest/transform@30.5.2 > jest-haste-map@30.5.1 > @parcel/watcher@2.6.0 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.188Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.571Z
+  SNYK-JS-UNDICI-22291127:
+    - jest@30.5.2 > @jest/core@30.5.2 > @jest/reporters@30.5.2 > @jest/transform@30.5.2 > jest-haste-map@30.5.1 > @parcel/watcher@2.6.0 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:21.007Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.568Z
+  SNYK-JS-UNDICI-22291066:
+    - jest@30.5.2 > @jest/core@30.5.2 > @jest/reporters@30.5.2 > @jest/transform@30.5.2 > jest-haste-map@30.5.1 > @parcel/watcher@2.6.0 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.555Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.561Z
+  SNYK-JS-UNDICI-22290988:
+    - jest@30.5.2 > @jest/core@30.5.2 > @jest/reporters@30.5.2 > @jest/transform@30.5.2 > jest-haste-map@30.5.1 > @parcel/watcher@2.6.0 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.134Z
+    - ag-grid-angular@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:27:48.560Z
   SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
     - 'ag-grid-angular@* > *':
         reason: >-

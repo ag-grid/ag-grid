@@ -69,7 +69,7 @@ const VueExample = defineComponent({
 
         const gridApi = shallowRef<GridApi | null>(null);
 
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
         const isVisible = ref(true);
 
         onBeforeMount(() => {
@@ -83,7 +83,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const checkbox = document.querySelector('#pinFirstColumnOnLoad');
+            const checkbox = document.querySelector<HTMLInputElement>('#pinFirstColumnOnLoad');
             const shouldPinFirstColumn = checkbox && checkbox.checked;
 
             if (shouldPinFirstColumn) {

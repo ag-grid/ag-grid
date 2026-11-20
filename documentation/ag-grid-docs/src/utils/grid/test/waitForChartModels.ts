@@ -1,8 +1,8 @@
-import { expect } from 'playwright/test';
+import { type Page, expect } from 'playwright/test';
 
 import type { ChartModel } from 'ag-grid-community';
 
-import type { AsyncGridApi } from './remoteGridapi';
+import { gridApiHandle } from './gridApiHandle';
 
 /**
  * Read the grid's chart models once `count` of them exist.
@@ -12,10 +12,11 @@ import type { AsyncGridApi } from './remoteGridapi';
  * paints, so a single `getChartModels()` read can land before the chart has been created and see
  * an empty array. Retrying the read rides that gap out.
  */
-export async function waitForChartModels(gridApi: AsyncGridApi, count: number = 1): Promise<ChartModel[]> {
+export async function waitForChartModels(page: Page, count: number = 1): Promise<ChartModel[]> {
+    const api = await gridApiHandle(page);
     let models: ChartModel[] = [];
     await expect(async () => {
-        models = (await gridApi.getChartModels()) ?? [];
+        models = (await api.evaluate((api) => api.getChartModels())) ?? [];
         expect(models).toHaveLength(count);
     }).toPass();
     return models;

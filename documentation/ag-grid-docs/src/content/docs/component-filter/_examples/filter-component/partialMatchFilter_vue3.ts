@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<FilterDisplayParams<any, any, string>>,
+            required: true,
+        },
+    },
     template: `
       <div class="partial-match-filter">
         <div>Partial Match Filter</div>
@@ -9,16 +20,16 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null,
+            filterText: null as string | null,
         };
     },
     methods: {
-        updateFilter(event) {
-            const value = event?.target?.value;
+        updateFilter(event: Event) {
+            const value = (event?.target as HTMLInputElement | null)?.value;
             this.params.onModelChange(value == null || value === '' ? null : value);
         },
 
-        refresh(newParams): boolean {
+        refresh(newParams: FilterDisplayParams<any, any, string>): boolean {
             const currentValue = this.filterText;
             const newValue = newParams.model ?? '';
             if (newValue !== currentValue) {
@@ -27,18 +38,18 @@ export default {
             return true;
         },
 
-        afterGuiAttached(params) {
+        afterGuiAttached(params?: IAfterGuiAttachedParams) {
             if (!params || !params.suppressFocus) {
                 // focus the input element for keyboard navigation
-                this.$refs.eFilterText.focus();
+                (this.$refs.eFilterText as HTMLInputElement).focus();
             }
         },
 
-        componentMethod(message) {
+        componentMethod(message: string) {
             console.log(`Alert from PartialMatchFilterComponent ${message}`);
         },
     },
     mounted: function () {
         this.refresh(this.params);
     },
-};
+});

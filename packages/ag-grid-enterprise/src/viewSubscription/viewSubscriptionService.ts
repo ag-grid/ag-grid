@@ -2,6 +2,7 @@ import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
 
 import {
     BeanStub,
+    GRAND_TOTAL_ROW_ID,
     _addGridCommonParams,
     _getRowIdCallback,
     _isClientSideRowModel,
@@ -10,7 +11,6 @@ import {
 } from 'ag-grid-community';
 import type {
     BodyScrollEvent,
-    DisplayedRowsChangedEvent,
     NamedBean,
     PaginationChangedEvent,
     RowNode,
@@ -34,6 +34,8 @@ interface ActiveSubscription {
     timer: ReturnType<typeof setTimeout> | undefined;
     /** The view at the last flush or scroll. */
     view: ViewEnds;
+    /** Set once a failed `subscribeRows` call has scheduled a retry, so a handler that keeps throwing is retried once. */
+    retried: boolean;
 }
 
 interface ViewEnds {
@@ -57,6 +59,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** The page visibility listener and the viewport observer exist only while a subscription is wanted. */
     private removeVisibilityListener: (() => null) | undefined;
     private stopObserving: (() => void) | undefined;
+    /**
+     * The last handlers set. One `updateGridOptions` call can remove `viewSubscription` and change another option,
+     * whose listener may run first and find the option gone, so the rows are unsubscribed through these.
+     */
+    private lastOptions: ViewSubscriptionOptions | undefined;
 
     public postConstruct(): void {
         const markDirty = () => this.schedule();
@@ -66,12 +73,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             gridReady: () => this.refresh(),
             modelUpdated: markDirty,
             viewportChanged: markScrolled,
-            // A partial redraw can change whether a row is full width, without a model or viewport change.
-            displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
-                if (!event.afterScroll) {
-                    markDirty();
-                }
-            },
             // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
             bodyHeightChanged: markViewMoved,
             // Fired after every model update too, so only a new page moves the view.
@@ -93,9 +94,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
         this.addManagedPropertyListener('viewSubscriptionActive', () => this.refresh());
-        // Row IDs are read from the row nodes, so a new callback for the same rows changes nothing.
-        // Only adding a missing `getRowId` or removing it acts, as frameworks can pass a new function on every render.
-        this.addManagedPropertyListener('getRowId', () => this.refresh());
         this.addManagedPropertyListener('domLayout', markViewMoved);
         this.beans.ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
             this.eViewport = gridBodyCtrl.eGridViewport;
@@ -139,20 +137,21 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     /** Only turning the subscription on or off acts here. The handlers and `debounceMs` are read each time they are used. */
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
+        const lastOptions = options ?? previousOptions ?? this.lastOptions;
+        this.lastOptions = options;
         const wanted =
             !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
         this.setWatching(wanted);
         if (!options || !wanted || this.isPaused(options)) {
             // Once the option is removed, the rows are unsubscribed through the handlers that were set before.
-            this.stop(options ?? previousOptions);
+            this.stop(lastOptions);
         } else if (!this.sub) {
             this.start(options);
         }
     }
 
     private canSubscribe(): boolean {
-        const { gos } = this;
-        if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
+        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
             return false;
         }
         if (!_getRowIdCallback(this.beans)) {
@@ -163,12 +162,20 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private start(options: ViewSubscriptionOptions): void {
-        const sub: ActiveSubscription = { rows: new Map(), stopped: false, timer: undefined, view: this.getViewEnds() };
+        const sub: ActiveSubscription = {
+            rows: new Map(),
+            stopped: false,
+            timer: undefined,
+            view: this.getViewEnds(),
+            retried: false,
+        };
         this.sub = sub;
 
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
-        this.callSubscribeRows(sub, rows, options);
+        if (rows.length) {
+            this.callSubscribeRows(sub, rows, options);
+        }
     }
 
     /** Unsubscribes every subscribed row. Cleared first, so a handler that turns the subscription back on starts afresh. */
@@ -301,37 +308,56 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         rows: ViewRow[],
         options: ViewSubscriptionOptions | undefined
     ): void {
+        // Read before the call, as the handler owns the array and can change it.
+        const ids = rows.map((row) => row.id);
         try {
             options?.subscribeRows(rows, this.createParams());
+            sub.retried = false;
         } catch (e) {
-            for (const row of rows) {
-                sub.rows.delete(row.id);
+            for (const id of ids) {
+                sub.rows.delete(id);
+            }
+            if (!sub.retried) {
+                // Try the rows in view once more, as no other change may come to subscribe them.
+                sub.retried = true;
+                this.schedule();
             }
             throw e;
         }
     }
 
     private getRange(): [number, number] {
-        const { rowRenderer, rowModel } = this.beans;
-        let first = rowRenderer.firstRenderedRow;
-        let last = rowRenderer.lastRenderedRow;
-        const top = rowRenderer.firstVisibleVPixel;
-        const bottom = rowRenderer.lastVisibleVPixel;
+        const { rowRenderer, rowModel, ctrlsSvc } = this.beans;
+        const first = rowRenderer.firstRenderedRow;
+        const last = rowRenderer.lastRenderedRow;
+        let top = rowRenderer.firstVisibleVPixel;
+        let bottom = rowRenderer.lastVisibleVPixel;
         if (top == null || bottom == null) {
             return [first, last];
         }
-        if (bottom <= top) {
-            return [0, -1];
+        // Sticky rows cover the rows behind them, and are added on their own.
+        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
+        top += gridBodyCtrl?.stickyTopHeight ?? 0;
+        bottom -= gridBodyCtrl?.stickyBottomHeight ?? 0;
+        // Only rendered rows can be in view, so they are scanned instead of looking up the pixels in the whole cache.
+        let firstInView = -1;
+        let lastInView = -1;
+        for (let i = first; i <= last; ++i) {
+            const row = rowModel.getRow(i);
+            const rowTop = row?.rowTop;
+            if (rowTop == null || rowTop + (row!.rowHeight ?? 0) <= top) {
+                continue;
+            }
+            // Scroll positions and row heights can be fractional, so a row starting at the bottom edge is not in view.
+            if (rowTop >= bottom) {
+                break;
+            }
+            if (firstInView < 0) {
+                firstInView = i;
+            }
+            lastInView = i;
         }
-        first = Math.max(first, rowModel.getRowIndexAtPixel(top));
-        // Scroll positions and row heights can be fractional, so check where the row at the bottom edge starts.
-        let lastInView = rowModel.getRowIndexAtPixel(bottom);
-        const rowTop = rowModel.getRow(lastInView)?.rowTop;
-        if (lastInView > first && rowTop != null && rowTop >= bottom) {
-            lastInView--;
-        }
-        last = Math.min(last, lastInView);
-        return [first, last];
+        return firstInView < 0 ? [0, -1] : [firstInView, lastInView];
     }
 
     /**
@@ -346,7 +372,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         }
         const [first, last] = this.getRange();
         const { rowModel, pinnedRowModel, rowRenderer } = this.beans;
-        const addIfSubscribable = (node: RowNode | undefined) => {
+        const addIfSubscribable = (row: RowNode | undefined) => {
+            // A group total row shows its group's values, so it keeps its group subscribed.
+            const node = row?.footer && row.id !== GRAND_TOTAL_ROW_ID ? row.sibling : row;
             const id = node?.id;
             if (node && id != null && !inView.has(id) && this.isSubscribable(node)) {
                 inView.set(id, node);
@@ -403,19 +431,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         return ref;
     }
 
-    /**
-     * Every client-side tree data row has a route. Server-side tree data keeps the key of a row that loses its children,
-     * so there only expandable rows get a route.
-     */
+    /** Server-side tree data keeps the key of a row that loses its children, so only expandable tree rows get a route. */
     private getRefRoute(node: RowNode, type: ViewRowRef['type']): string[] | undefined {
         if (type === 'group') {
-            return node.getRoute() ?? [];
+            return node.id === GRAND_TOTAL_ROW_ID ? [] : (node.getRoute() ?? []);
         }
-        const hasRoute = type === 'tree' && (_isClientSideRowModel(this.gos) || this.isGroup(node));
-        return hasRoute ? node.getRoute() : undefined;
+        return type === 'tree' && this.isGroup(node) ? node.getRoute() : undefined;
     }
 
     private getRowType(node: RowNode): ViewRowRef['type'] {
+        // The grand total row is a group row with an empty route: the totals of the whole grid.
+        if (node.id === GRAND_TOTAL_ROW_ID) {
+            return 'group';
+        }
         if (this.gos.get('treeData')) {
             return 'tree';
         }
@@ -442,11 +470,18 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private isSubscribable(node: RowNode): boolean {
-        // Level -1 is the root row, shown in pivot mode without row groups. It holds totals, like the grand total row.
-        if (node.level === -1 || node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
-            return false;
+        if (node.id === GRAND_TOTAL_ROW_ID) {
+            // Pinned, the grand total is shown by a pinned copy and found through its `pinnedSibling`.
+            return node.rowPinned == null && !node.destroyed;
         }
-        const isFullWidthRow = this.gos.getCallback('isFullWidthRow');
-        return !isFullWidthRow?.({ rowNode: node });
+        // Level -1 is the root row, shown in pivot mode without row groups. It holds totals.
+        return !(
+            node.level === -1 ||
+            node.stub ||
+            node.failedLoad ||
+            node.detail ||
+            node.footer ||
+            node.rowPinned != null
+        );
     }
 }

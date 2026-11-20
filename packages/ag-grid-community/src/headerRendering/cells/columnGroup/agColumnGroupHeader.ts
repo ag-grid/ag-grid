@@ -60,22 +60,23 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     eGridHeader: HTMLElement;
 }
 
-export interface IHeaderGroup {
+export interface IHeaderGroup<TData = any, TContext = any> {
     /**
      * Optional: update the component in place instead of recreating it (e.g. when the group header name
      * is edited). Return `true` if the update was handled, `false` to have the grid recreate the component.
      */
-    refresh?(params: IHeaderGroupParams): boolean;
+    refresh?(params: IHeaderGroupParams<TData, TContext>): boolean;
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
+export interface IHeaderGroupComp<TData = any, TContext = any>
+    extends IHeaderGroup<TData, TContext>, IComponent<IHeaderGroupParams<TData, TContext>> {}
 
 export interface IInnerHeaderGroupComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderGroupParams<TData, TContext>> = IHeaderGroupParams<TData, TContext>,
 >
-    extends IComponent<TParams>, IHeaderGroup {}
+    extends IComponent<TParams>, IHeaderGroup<TData, TContext> {}
 
 const HeaderGroupCompElement: ElementParams = {
     tag: 'div',

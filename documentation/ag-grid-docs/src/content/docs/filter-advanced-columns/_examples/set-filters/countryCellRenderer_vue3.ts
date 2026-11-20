@@ -1,6 +1,17 @@
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
 import { COUNTRY_CODES } from './countryCodes';
 
-export default {
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `<div v-html="value"></div>`,
     data() {
         return {
@@ -14,4 +25,4 @@ export default {
             : '';
         this.value = `${flag}${this.params.value ?? ''}`;
     },
-};
+});

@@ -12,10 +12,13 @@ interface ViewportRowRefBase {
     level: number;
 }
 
-/** A group row, created by row grouping or pivoting, or loaded as a group by the Server-Side Row Model. */
+/**
+ * A group row, created by row grouping or pivoting, or loaded as a group by the Server-Side Row Model,
+ * or the grand total row, which has the ID `GRAND_TOTAL_ROW_ID` and an empty `route`.
+ */
 export interface ViewGroupRowRef extends ViewportRowRefBase {
     type: 'group';
-    /** The keys from the top level down to and including this row. */
+    /** The keys from the top level down to and including this row. Empty for the grand total row. */
     route: string[];
 }
 

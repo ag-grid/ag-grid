@@ -2,7 +2,8 @@ import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { NumberFilterModule } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 /**
  * Characterisation tests (golden-master) pinning the CURRENT sort/filter refresh-scope
@@ -45,7 +46,8 @@ function createGroupedGridOptions(requests: Request[], overrides: Partial<GridOp
         ],
         autoGroupColumnDef: { field: 'athlete' },
         rowModelType: 'serverSide',
-        cacheBlockSize: 500000,
+        // One block holds every store (at most 3 rows); the grid walks every index of a block on each load.
+        cacheBlockSize: 100,
         getRowId: (p) => {
             const { country, sport, athlete } = p.data;
             if (athlete) {
@@ -118,7 +120,7 @@ function routes(requests: Request[]): string[] {
 
 describe('SSRM sort/filter refresh-scope characterisation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [AllEnterpriseModule],
+        modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, RowGroupingModule, NumberFilterModule],
     });
 
     afterEach(() => {

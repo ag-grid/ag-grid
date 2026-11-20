@@ -1,6 +1,5 @@
 import { waitFor } from '@testing-library/dom';
 import {
-    ALL_SEVERITIES,
     TestGridsManager,
     installMockResizeObserver,
     mockGridLayout,
@@ -17,7 +16,7 @@ import type {
     IServerSideGetRowsParams,
     ViewSubscriptionOptions,
 } from 'ag-grid-community';
-import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -35,6 +34,7 @@ describe('SSRM viewSubscription', () => {
             ViewSubscriptionModule,
             ScrollApiModule,
             RowGroupingModule,
+            PinnedRowModule,
         ],
     });
 
@@ -97,7 +97,7 @@ describe('SSRM viewSubscription', () => {
         });
     });
 
-    test('the grid makes the first call with no rows when it is ready, before anything loads, then loaded rows arrive', async () => {
+    test('the grid makes no call when it is ready, before anything loads, then loaded rows arrive', async () => {
         const recorder = createRecorder();
         gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'value' }],
@@ -111,10 +111,23 @@ describe('SSRM viewSubscription', () => {
             viewSubscription: recorder.handlers,
         });
 
-        expect(recorder.calls).toEqual([{ type: 'subscribe', ids: [] }]);
+        expect(recorder.calls).toEqual([]);
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
         expect(recorder.batches('subscribe')).toEqual([range(0, 5)]);
+        expect(recorder.violations).toEqual([]);
+    });
+
+    test('full width rows in view are subscribed like other rows', async () => {
+        const api = await createFlatGrid({
+            isFullWidthRow: ({ rowNode }) => Number(rowNode.id) % 2 === 0,
+            fullWidthCellRenderer: () => 'full width',
+        });
+        const recorder = createRecorder();
+
+        subscribe(api, recorder);
+
+        expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
         expect(recorder.violations).toEqual([]);
     });
 
@@ -581,6 +594,116 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
+    test('rows in view are subscribed again after a subscribeRows call that throws', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('a subscribeRows handler that throws on an empty array does not stop createGrid returning the api', async () => {
+        const subscribed: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: createFlatDatasource([{ id: '0', value: 0 }]),
+            viewSubscription: {
+                subscribeRows: (rows) => {
+                    if (!rows.length) {
+                        throw new Error('subscribe failed');
+                    }
+                    subscribed.push(...rows.map((row) => row.id));
+                },
+                unsubscribeRows: () => {},
+                debounceMs: 0,
+            },
+        });
+
+        expect(api).toBeDefined();
+        await waitFor(() => expect(subscribed).toEqual(['0']));
+    });
+
+    test('a subscribeRows handler that keeps throwing is retried once', async () => {
+        const api = await createFlatGrid();
+        let calls = 0;
+        vi.useFakeTimers();
+        try {
+            // Turning the option on calls the handler synchronously, which throws and schedules the one retry.
+            expect(() =>
+                api.setGridOption('viewSubscription', {
+                    subscribeRows: () => {
+                        calls++;
+                        throw new Error('subscribe failed');
+                    },
+                    unsubscribeRows: () => {},
+                    debounceMs: 10,
+                })
+            ).toThrow('subscribe failed');
+            expect(calls).toBe(1);
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+            expect(calls).toBe(2);
+
+            await vi.advanceTimersByTimeAsync(100);
+            expect(calls).toBe(2);
+        } finally {
+            vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
+    test('rows a throwing subscribeRows handler removed from its array are retried', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        let fail = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                if (fail) {
+                    fail = false;
+                    rows.splice(0);
+                    throw new Error('subscribe failed');
+                }
+                recorder.handlers.subscribeRows(rows, params);
+            },
+            unsubscribeRows: recorder.handlers.unsubscribeRows,
+            debounceMs: 10,
+        });
+        vi.useFakeTimers();
+        try {
+            fail = true;
+            api.ensureIndexVisible(50, 'top');
+            await expect(vi.advanceTimersByTimeAsync(10)).rejects.toThrow('subscribe failed');
+
+            await vi.advanceTimersByTimeAsync(10);
+            expect(recorder.ids()).toEqual(range(50, 55));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('debounceMs still calls the handlers while data updates keep arriving', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
@@ -626,53 +749,17 @@ describe('SSRM viewSubscription', () => {
     });
 
     describe('lifecycle', () => {
-        describe('getRowId', () => {
-            // getRowId is an initial property (warning 22), and the grid warns while it is missing (warning 188).
-            beforeEach(() => {
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [22, 188] });
-            });
+        test('removing viewSubscription with another option in one update unsubscribes every row', async () => {
+            const recorder = createRecorder();
+            const api = await createFlatGrid();
+            subscribe(api, recorder);
 
-            afterEach(() => {
-                enableDevValidations({ throwOn: ALL_SEVERITIES });
-            });
+            // viewSubscriptionActive's listener runs before viewSubscription's, and finds the option already removed.
+            api.updateGridOptions({ viewSubscriptionActive: false, viewSubscription: undefined });
 
-            /** Updates `getRowId` the way a framework wrapper does, as it is not a managed grid option. */
-            function setGetRowId(api: GridApi, getRowId: GridOptions['getRowId']) {
-                api.updateGridOptions({ getRowId } as GridOptions);
-            }
-
-            test('providing getRowId after the grid is created subscribes the rows in view', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid({ viewSubscription: recorder.handlers, getRowId: undefined });
-                expect(recorder.calls).toEqual([]);
-
-                setGetRowId(api, (params) => params.data.id);
-
-                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
-            });
-
-            test('a new getRowId callback makes no call', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid();
-                subscribe(api, recorder);
-
-                setGetRowId(api, (params) => params.data.id);
-                await nextAnimationFrame();
-
-                expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
-            });
-
-            test('removing getRowId unsubscribes every row', async () => {
-                const recorder = createRecorder();
-                const api = await createFlatGrid();
-                subscribe(api, recorder);
-
-                setGetRowId(api, undefined);
-
-                expect(recorder.subscribed.size).toBe(0);
-                expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
-                expect(recorder.violations).toEqual([]);
-            });
+            expect(recorder.subscribed.size).toBe(0);
+            expect(recorder.calls.at(-1)).toEqual({ type: 'unsubscribe', ids: range(0, 5) });
+            expect(recorder.violations).toEqual([]);
         });
 
         describe('pauseWhenHidden', () => {
@@ -1065,6 +1152,24 @@ describe('SSRM viewSubscription', () => {
             });
         }
 
+        test('a row covered by a sticky group row is not subscribed', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+
+            // Scrolling to the top of Spain-3 leaves room for Spain's sticky row, which covers Spain-2.
+            api.ensureIndexVisible(api.getRowNode('Spain/Spain-3')!.rowIndex!, 'top');
+
+            await waitFor(() => expect(recorder.ids()).not.toContain('Ireland'));
+            expect(recorder.ids()).toContain('Spain');
+            expect(recorder.ids()).toContain('Spain/Spain-3');
+            expect(recorder.ids()).not.toContain('Spain/Spain-2');
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('group rows carry their route; leaf rows carry only parentKeys', async () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
@@ -1232,7 +1337,7 @@ describe('SSRM viewSubscription', () => {
             });
         });
 
-        test('group total rows and the grand total row are left out', async () => {
+        test('group total rows are not passed to the handlers', async () => {
             const api = createGroupedGrid({ groupTotalRow: 'bottom', grandTotalRow: 'top' });
             await waitForNoLoadingRows(api);
             api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
@@ -1246,7 +1351,137 @@ describe('SSRM viewSubscription', () => {
             await waitFor(() => expect(recorder.ids()).toContain('Spain/Spain-9'));
             const subscribed = recorder.batches('subscribe').flat();
             expect(subscribed).toContain('Spain');
-            expect(subscribed.filter((id) => id.startsWith('rowGroupFooter_'))).toEqual([]);
+            expect(subscribed.filter((id) => id.startsWith('rowGroupFooter_') && id !== GRAND_TOTAL_ROW_ID)).toEqual(
+                []
+            );
+        });
+
+        test('a group row stays subscribed while its total row is in view after the group row scrolls out', async () => {
+            // Without sticky group rows, Spain's group row leaves the view while its total row is still shown.
+            const api = createGroupedGrid({ groupTotalRow: 'bottom', suppressGroupRowsSticky: true });
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.ids()).toContain('Spain');
+
+            const spainTotalRow = api.getRowNode('Spain')!.sibling!;
+            api.ensureIndexVisible(spainTotalRow.rowIndex!, 'bottom');
+
+            await waitFor(() => expect(recorder.ids()).toContain('Spain/Spain-9'));
+            expect(recorder.ids()).not.toContain('Ireland');
+            expect(recorder.ids()).toContain('Spain');
+            expect(recorder.violations).toEqual([]);
+        });
+    });
+
+    describe('grand total row', () => {
+        async function createGrandTotalGrid(
+            grandTotalRow: GridOptions['grandTotalRow'],
+            options: GridOptions = {}
+        ): Promise<GridApi> {
+            const rows = Array.from({ length: 1000 }, (_, i) => ({ id: String(i), value: i }));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'value' }],
+                rowModelType: 'serverSide',
+                cacheBlockSize: 100,
+                rowBuffer: 5,
+                suppressRowVirtualisation: false,
+                grandTotalRow,
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const { startRow = 0, endRow = 0 } = params.request;
+                        params.success({
+                            rowData: rows.slice(startRow, endRow),
+                            rowCount: rows.length,
+                            grandTotalData: { id: GRAND_TOTAL_ROW_ID, value: -1 },
+                        });
+                    },
+                },
+                ...options,
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            return api;
+        }
+
+        test('a grand total row that does not stick is subscribed only while it is in view', async () => {
+            const api = await createGrandTotalGrid('bottom', { suppressStickyTotalRow: 'grand' });
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false);
+
+            api.ensureIndexVisible(api.getDisplayedRowCount() - 1, 'bottom');
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true));
+            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)).toEqual({
+                type: 'group',
+                id: GRAND_TOTAL_ROW_ID,
+                parentKeys: [],
+                route: [],
+                level: api.getRowNode(GRAND_TOTAL_ROW_ID)!.level,
+                data: { id: GRAND_TOTAL_ROW_ID, value: -1 },
+            });
+
+            api.ensureIndexVisible(0, 'top');
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false));
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a grand total row at the top stays subscribed while it sticks over the rows scrolled under it', async () => {
+            const api = await createGrandTotalGrid('top');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.ensureIndexVisible(500, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('500'));
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a pinned grand total row stays subscribed wherever the grid is scrolled', async () => {
+            const api = await createGrandTotalGrid('pinnedBottom');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.get(GRAND_TOTAL_ROW_ID)?.type).toBe('group');
+
+            api.ensureIndexVisible(500, 'top');
+
+            await waitFor(() => expect(recorder.ids()).toContain('500'));
+            await waitForNoLoadingRows(api);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a transaction applies streamed totals to the subscribed grand total row', async () => {
+            const api = await createGrandTotalGrid('pinnedTop');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ROW_ID, value: 999 }] });
+
+            const pinned = api.getPinnedTopRow(0)!;
+            expect(pinned.data).toEqual({ id: GRAND_TOTAL_ROW_ID, value: 999 });
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('removing the grand total row unsubscribes it', async () => {
+            const api = await createGrandTotalGrid('pinnedBottom');
+            const recorder = createRecorder();
+            subscribe(api, recorder);
+            expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(true);
+
+            api.setGridOption('grandTotalRow', undefined);
+
+            await waitFor(() => expect(recorder.subscribed.has(GRAND_TOTAL_ROW_ID)).toBe(false));
+            expect(recorder.batches('unsubscribe')).toEqual([[GRAND_TOTAL_ROW_ID]]);
+            expect(recorder.violations).toEqual([]);
         });
     });
 });

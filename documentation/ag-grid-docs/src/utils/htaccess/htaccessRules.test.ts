@@ -2434,7 +2434,7 @@ describe('htaccessRules', () => {
             ['/studio/files/ag-studio/dist/umd/ag-studio.min.js', 'text/javascript', ['no-cache']],
             ['/charts/dev/ag-charts-community/dist/umd/ag-charts-community.js', 'text/javascript', ['no-cache']],
             ['/charts/dev/resolved-interfaces.json', 'application/json', ['no-cache']],
-            ['/example-runner/example-runner.js', 'text/javascript', ['no-cache']],
+            ['/example-runner/example-runner.mjs', 'text/javascript', ['no-cache']],
             ['/charts/example-runner/charts-angular-boilerplate/main.ts', 'application/typescript', ['no-cache']],
             [
                 '/examples/column-definitions/column-definition-update/angular/app.component.ts',

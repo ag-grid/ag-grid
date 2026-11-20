@@ -1,8 +1,10 @@
 import { createApp, defineComponent, onMounted, ref } from 'vue';
+import type { PropType } from 'vue';
 
 import type {
     CellValueChangedEvent,
     ColDef,
+    ICellRendererParams,
     RowSelectionOptions,
     SelectionChangedEvent,
     ValueFormatterParams,
@@ -29,7 +31,13 @@ interface IRow {
     successful: boolean;
 }
 
-const CompanyLogoRenderer = {
+const CompanyLogoRenderer = defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams<IRow, string>>,
+            required: true,
+        },
+    },
     template: `
     <span style="display: flex; height: 100%; width: 100%; align-items: center;">
       <img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
@@ -38,15 +46,21 @@ const CompanyLogoRenderer = {
     `,
     setup(props) {
         const cellValue = props.params.value;
-        const cellValueLowerCase = cellValue.toLowerCase();
+        const cellValueLowerCase = cellValue?.toLowerCase();
         return {
             cellValue,
             cellValueLowerCase,
         };
     },
-};
+});
 
-const MissionResultRenderer = {
+const MissionResultRenderer = defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams<IRow, boolean>>,
+            required: true,
+        },
+    },
     template: `
     <span style="display: flex; justify-content: center; height: 100%; align-items: center;">
       <img
@@ -62,7 +76,7 @@ const MissionResultRenderer = {
             cellValue,
         };
     },
-};
+});
 
 // Define the component configuration
 const App = defineComponent({
@@ -101,7 +115,7 @@ const App = defineComponent({
             rowData.value = await fetchData();
         });
 
-        const dateFormatter = (params) => {
+        const dateFormatter = (params: ValueFormatterParams) => {
             return new Date(params.value).toLocaleDateString('en-us', {
                 weekday: 'long',
                 year: 'numeric',

@@ -1,6 +1,6 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragOverTo, expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
-import { GROUP_AUTO_COLUMN_ID, GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
+import { GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
     test.describe(() => {
@@ -8,24 +8,26 @@ test.agExample(import.meta, () => {
             agModules: ['RowGroupingModule', 'SideBarModule'],
         });
 
-        test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+        test.eachFramework('Example', async ({ agIdFor, page }) => {
+            const api = await gridApiHandle(page, '1');
 
-            await remoteApi.setGridOption('columnDefs', [
-                { field: 'athlete' },
-                { field: 'country', rowGroup: true },
-                { field: 'sport' },
-                {
-                    field: 'date',
-                    enablePivot: true,
-                    groupHierarchy: ['year', 'month'],
-                },
-                { field: 'total', aggFunc: 'sum' },
-            ]);
-            await remoteApi.setGridOption('sideBar', 'columns');
+            await api.evaluate((api) =>
+                api.setGridOption('columnDefs', [
+                    { field: 'athlete' },
+                    { field: 'country', rowGroup: true },
+                    { field: 'sport' },
+                    {
+                        field: 'date',
+                        enablePivot: true,
+                        groupHierarchy: ['year', 'month'],
+                    },
+                    { field: 'total', aggFunc: 'sum' },
+                ])
+            );
+            await api.evaluate((api) => api.setGridOption('sideBar', 'columns'));
 
             // TODO: This call is only necessary because we currently do not reset state in `PivotColSvc` when column definitions change
-            await remoteApi.setPivotColumns([]);
+            await api.evaluate((api) => api.setPivotColumns([]));
 
             await expect(
                 agIdFor.columnDropArea('toolbar', 'Column Labels').locator('.ag-column-drop-cell')
@@ -74,20 +76,22 @@ test.agExample(import.meta, () => {
             await expect(agIdFor.columnSelectListItemCheckbox('Date (Year) Column')).toBeChecked();
         });
 
-        test.eachFramework('Example with pivotIndex', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+        test.eachFramework('Example with pivotIndex', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page, '1');
 
-            await remoteApi.setGridOption('columnDefs', [
-                { field: 'athlete' },
-                { field: 'country', rowGroup: true },
-                { field: 'sport' },
-                {
-                    field: 'date',
-                    pivotIndex: 0,
-                    groupHierarchy: ['year', 'month'],
-                },
-                { field: 'total', aggFunc: 'sum' },
-            ]);
+            await api.evaluate((api) =>
+                api.setGridOption('columnDefs', [
+                    { field: 'athlete' },
+                    { field: 'country', rowGroup: true },
+                    { field: 'sport' },
+                    {
+                        field: 'date',
+                        pivotIndex: 0,
+                        groupHierarchy: ['year', 'month'],
+                    },
+                    { field: 'total', aggFunc: 'sum' },
+                ])
+            );
 
             const headerGroupCell = agIdFor.headerGroupCell(
                 `pivotGroup_${vcolPrefix}-date-year-${vcolPrefix}-date-month-date_2000_0`

@@ -115,6 +115,18 @@ describe('Column identity & id allocation', () => {
             ]);
             expect(colIds(api)).toEqual(['a_b', 'b', 'x', ...takenIds().map((def) => def.colId), 'a', 'x_']);
         });
+
+        test('a column whose field changes gets a new column, not the old field’s', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'a' }] });
+            const colA = api.getColumn('a')!;
+            api.applyColumnState({ state: [{ colId: 'a', width: 333 }] });
+
+            api.setGridOption('columnDefs', [{ field: 'b' }]);
+
+            expect(colIds(api)).toEqual(['b']);
+            expect(api.getColumn('b')).not.toBe(colA);
+            expect(api.getColumn('b')!.getActualWidth()).toBe(200);
+        });
     });
 
     describe('recreated columns without colId or field', () => {
@@ -162,6 +174,20 @@ describe('Column identity & id allocation', () => {
                 ['undefined 200 -', 'P 111 asc', 'Q 150 desc'],
             ],
             [
+                'columns keep their width and sort when every header is renamed and a column with a field is added',
+                recreated('Total', 'Country'),
+                sorted('0'),
+                [{ field: 'id', headerName: 'Id' }, ...recreated('Gesamt', 'Land')],
+                ['Id 200 -', 'Gesamt 111 asc', 'Land 200 -'],
+            ],
+            [
+                'columns keep their width and sort when every header is renamed and a column with a field is removed',
+                [{ field: 'id', headerName: 'Id' }, ...recreated('Total', 'Country')],
+                sorted('1'),
+                recreated('Gesamt', 'Land'),
+                ['Gesamt 200 -', 'Land 111 asc'],
+            ],
+            [
                 'a column that gains a field does not keep the width and sort it had without one',
                 recreated('A'),
                 sorted('0'),
@@ -176,21 +202,21 @@ describe('Column identity & id allocation', () => {
                 ['A 200 -'],
             ],
             [
-                'columns without a headerName are matched by position when the column count is unchanged',
+                'columns without a headerName are matched to each other in order when the column count is unchanged',
                 [{}, {}],
                 sorted('1'),
                 [{}, {}],
                 ['undefined 200 -', 'undefined 111 asc'],
             ],
             [
-                'columns without a headerName keep their width and sort by position when a column after them is removed',
+                'columns without a headerName keep their width and sort, matched in order, when a column after them is removed',
                 [{}, {}],
                 sorted('0'),
                 [{}],
                 ['undefined 111 asc'],
             ],
             [
-                'columns without a headerName keep their width and sort by position when a column is added after them',
+                'columns without a headerName keep their width and sort, matched in order, when a column is added after them',
                 [{}, {}],
                 sorted('1'),
                 [{}, {}, {}],
@@ -282,6 +308,34 @@ describe('Column identity & id allocation', () => {
                 expect(shown(api)).toEqual(['A 200 -', 'B2 111 asc', 'C2 200 -', 'Z 200 -']);
             }
         );
+
+        test('a colId a group declares, then a field, keeps each column its state when the definitions are set again', () => {
+            const warned = expectWarning273();
+            const defs = (): (ColDef | ColGroupDef)[] => [
+                { groupId: 'g', headerName: 'G', children: [{ field: 'x', headerName: 'X' }] },
+                { field: 'g', headerName: 'F' },
+                { colId: 'g', headerName: 'C' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs() });
+            const before = api.getColumns()!.map((col) => col.getColId());
+            api.applyColumnState({ state: before.map((colId, i) => ({ colId, width: 101 + i })) });
+
+            api.setGridOption('columnDefs', defs());
+
+            expect({ before, after: shown(api) }).toEqual({ before, after: ['X 101 -', 'F 102 -', 'C 103 -'] });
+            warned();
+        });
+
+        test('a renamed column after one matched by its headerName in a renamed group takes the state at its position', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'G', children: recreated('A') }, ...recreated('B')],
+            });
+            api.applyColumnState({ state: sorted(api.getColumns()![1].getColId()) });
+
+            api.setGridOption('columnDefs', [{ headerName: 'H', children: recreated('A') }, ...recreated('C')]);
+
+            expect(shown(api)).toEqual(['A 200 -', 'C 111 asc']);
+        });
 
         test('a colDef object used once more than before takes, for the extra use, the width and sort of the removed column at its position', () => {
             const a: ColDef = { headerName: 'A' };
@@ -400,6 +454,19 @@ describe('Column identity & id allocation', () => {
     });
 
     describe('duplicate keys', () => {
+        test('columns given generated ids are not pinned edges', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'p', pinned: 'left' }, { field: 'a' }, { field: 'a' }, { headerName: 'N' }],
+            });
+
+            expect(['p', 'a', 'a_1', '0'].map((colId) => api.getColumn(colId)!.isLastLeftPinned())).toEqual([
+                true,
+                false,
+                false,
+                false,
+            ]);
+        });
+
         test('duplicate explicit groupId gets a "_1" suffix', () => {
             // Asserts warning #273 (duplicate groupId suffixed).
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
@@ -465,11 +532,14 @@ describe('Column identity & id allocation', () => {
                 columnDefs: [{ groupId: 'x', children: [{ field: 'a' }] }, { colId: 'x' }],
             });
             expect(colIds(api)).toEqual(['a', 'x_1']);
+            const suffixed = api.getColumn('x_1');
+            api.applyColumnState({ state: [{ colId: 'x_1', width: 333 }] });
             warn.mockClear();
 
             api.setGridOption('columnDefs', [{ field: 'a' }, { colId: 'x' }]);
 
             expect(colIds(api)).toEqual(['a', 'x']);
+            expect([api.getColumn('x') === suffixed, api.getColumn('x')!.getActualWidth()]).toEqual([false, 200]);
             expect(warn).not.toHaveBeenCalled();
         });
 

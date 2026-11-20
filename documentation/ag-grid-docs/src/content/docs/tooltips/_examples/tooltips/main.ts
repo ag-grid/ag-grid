@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -14,35 +14,14 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 
-const columnDefs: (ColDef | ColGroupDef)[] = [
+const columnDefs: ColDef[] = [
+    { field: 'athlete', tooltip: true },
     {
-        headerName: 'Athlete',
-        field: 'athlete',
-        // here the Athlete column will tooltip the Country value
-        tooltip: ({ data }) => data?.country,
-        headerTooltip: 'Tooltip for Athlete Column Header',
+        field: 'total',
+        valueFormatter: ({ value }: ValueFormatterParams) => `${value} medals`,
+        tooltip: true,
     },
-    {
-        field: 'age',
-        tooltip: 'Create any fixed message, e.g. This is the Athlete’s Age ',
-        headerTooltip: 'Tooltip for Age Column Header',
-    },
-    {
-        field: 'year',
-        tooltip: (p) => 'This is a dynamic tooltip using the value of ' + p.value,
-        headerTooltip: 'Tooltip for Year Column Header',
-    },
-    {
-        headerName: 'Hover For Tooltip',
-        headerTooltip: 'Column Groups can have Tooltips also',
-        children: [
-            {
-                field: 'sport',
-                tooltip: 'Tooltip text about Sport should go here',
-                headerTooltip: 'Tooltip for Sport Column Header',
-            },
-        ],
-    },
+    { field: 'age', tooltip: 'Age at the time of the event' },
 ];
 
 let gridApi: GridApi<IOlympicData>;

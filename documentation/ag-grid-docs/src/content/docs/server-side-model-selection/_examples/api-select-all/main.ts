@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { GridApi, GridOptions, IServerSideDatasource, IServerSideSelectionState } from 'ag-grid-community';
 import {
     ModuleRegistry,
@@ -12,8 +14,6 @@ import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
+            const fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

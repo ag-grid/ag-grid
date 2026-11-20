@@ -1,9 +1,20 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     data() {
         return {
-            isGroup: null,
-            paddingLeft: null,
-            rotation: null,
+            isGroup: undefined as boolean | undefined,
+            paddingLeft: null as string | null,
+            rotation: null as string | null,
         };
     },
     template: `
@@ -31,7 +42,4 @@ export default {
         this.paddingLeft = `${this.params.node.level * 15}px`;
         this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
     },
-    beforeDestroy() {
-        window.removeEventListener('click', this.onClick);
-    },
-};
+});

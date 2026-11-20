@@ -11,7 +11,6 @@ export default (props: CustomCellRendererProps) => {
             {code && (
                 <img
                     className="flag"
-                    border="0"
                     width="15"
                     height="10"
                     src={`https://flags.fmcdn.net/data/flags/mini/${code}.png`}

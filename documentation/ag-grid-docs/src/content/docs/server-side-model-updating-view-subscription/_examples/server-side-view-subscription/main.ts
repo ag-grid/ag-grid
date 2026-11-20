@@ -5,7 +5,13 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    HighlightChangesModule,
+    ModuleRegistry,
+    RowApiModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import {
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
@@ -24,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     HighlightChangesModule,
+    RowApiModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     TreeDataModule,
@@ -31,8 +38,8 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi<PortfolioRow>;
-// the parent keys of each subscribed row, which are the route to the store that holds it
-const subscribed = new Map<string, string[]>();
+// the subscribed rows, by id
+const subscribed = new Set<string>();
 // getRows requests waiting for their reply, by request id
 const pendingRequests = new Map<number, IServerSideGetRowsParams<PortfolioRow>>();
 let nextRequestId = 0;
@@ -57,7 +64,7 @@ const gridOptions: GridOptions<PortfolioRow> = {
     viewSubscription: {
         // the server streams the price and value of a stock row, and the total value of a region or sector row
         subscribeRows: (rows) => {
-            rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
+            rows.forEach((row) => subscribed.add(row.id));
             socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
             recordSubscribed(rows.length, subscribed.size);
         },
@@ -105,11 +112,12 @@ function onServerMessage(api: GridApi<PortfolioRow>, message: ServerMessage) {
     }
 
     let updates = 0;
-    // rows unsubscribed while an update was on its way are no longer in the map, so are skipped
+    // an update can arrive after its row was unsubscribed, so apply it while the row is still in the grid
     for (const row of message.rows) {
-        const route = subscribed.get(row.id);
-        if (route) {
-            api.applyServerSideTransactionAsync({ route, update: [row] });
+        const node = api.getRowNode(row.id);
+        if (node) {
+            // the route to the store that holds the row is its parent's route
+            api.applyServerSideTransactionAsync({ route: node.parent?.getRoute() ?? [], update: [row] });
             updates++;
         }
     }

@@ -4,6 +4,7 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    GridApi,
     GridReadyEvent,
     ModuleRegistry,
     enableDevValidations,
@@ -49,10 +50,10 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
-            activeMatchNum: undefined,
-            findSearchValue: undefined,
+            goTo: undefined as number | undefined,
+            gridApi: undefined as GridApi | undefined,
+            activeMatchNum: undefined as string | undefined,
+            findSearchValue: undefined as string | undefined,
         };
     },
     methods: {
@@ -62,17 +63,17 @@ const VueExample = defineComponent({
             console.log('findChanged', event);
         },
         next() {
-            this.gridApi.findNext();
+            this.gridApi!.findNext();
         },
         previous() {
-            this.gridApi.findPrevious();
+            this.gridApi!.findPrevious();
         },
         goToFind() {
             const num = Number(this.goTo);
             if (isNaN(num) || num < 0) {
                 return;
             }
-            this.gridApi.findGoTo(num);
+            this.gridApi!.findGoTo(num);
         },
         onInput(event: Event) {
             this.findSearchValue = (event.target as HTMLInputElement).value;
@@ -109,7 +110,7 @@ const VueExample = defineComponent({
             { field: 'silver', minWidth: 100 },
             { field: 'bronze', minWidth: 100 },
         ]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             columnDefs,

@@ -250,8 +250,8 @@ export class AgContextMenuService<
                 menuItemCallbacks.preserveRangesWhile(this.beans, () => {
                     onMenuClose?.();
                     this.destroyBean(menu);
-                    afterMenuDestroyed?.();
                     onVisibleChanged?.(false, e === undefined ? 'api' : 'ui');
+                    afterMenuDestroyed?.();
                 });
             },
             click: mouseEvent,
@@ -308,6 +308,7 @@ export class AgContextMenuService<
 
     public override destroy(): void {
         this.destroyLoadingSpinner?.();
+        this.hideActiveMenu();
         super.destroy();
     }
 }

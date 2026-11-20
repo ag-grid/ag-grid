@@ -2,8 +2,11 @@ import {
     DARK_INTEGRATED_END,
     DARK_INTEGRATED_START,
     extractDevValidationsArgs,
+    getFetchedDataType,
+    getFetchedRowType,
     getIntegratedDarkModeCode,
     getIntegratedDarkModeInitialChartThemesCode,
+    getTypeImports,
     getVanillaDevValidationsPreamble,
     removeModuleRegistration,
 } from './parser-utils';
@@ -139,5 +142,46 @@ describe('dev validations guard', () => {
 
     it('returns empty args when there is no guard', () => {
         expect(extractDevValidationsArgs('const x = 1;')).toBe('');
+    });
+});
+
+describe('getTypeImports', () => {
+    it('imports grid types from ag-grid-community and chart types from ag-charts-community', () => {
+        expect(getTypeImports(['ColDef', 'AgChartThemeOverrides', 'GridApi'])).toEqual([
+            { module: "'ag-grid-community'", isNamespaced: false, imports: ['ColDef', 'GridApi'] },
+            { module: "'ag-charts-community'", isNamespaced: false, imports: ['AgChartThemeOverrides'] },
+        ]);
+    });
+});
+
+describe('getFetchedRowType', () => {
+    const data = { url: "'rows.json'", callback: '' };
+
+    it("uses the grid's row type when the callback declares no data type", () => {
+        expect(getFetchedRowType(data, 'IOlympicData')).toBe('IOlympicData');
+    });
+
+    it.each(['IAccount[]', 'Array<IAccount>'])('uses the element type of the declared array %s', (dataType) => {
+        expect(getFetchedRowType({ ...data, dataType }, 'IOlympicData')).toBe('IAccount');
+    });
+
+    it('keeps any when the callback declares any', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'any' }, 'IOlympicData')).toBe('any');
+    });
+
+    it('has no row type when the callback declares a named type, such as an alias, so it is fetched explicitly', () => {
+        expect(getFetchedRowType({ ...data, dataType: 'Rows' }, 'IOlympicData')).toBeUndefined();
+    });
+});
+
+describe('getFetchedDataType', () => {
+    const data = { url: "'rows.json'", callback: '' };
+
+    it("uses an array of the grid's rows when the callback declares no data type", () => {
+        expect(getFetchedDataType(data, 'IOlympicData')).toBe('IOlympicData[]');
+    });
+
+    it('keeps the type the callback declares in full', () => {
+        expect(getFetchedDataType({ ...data, dataType: 'IAccountResponse' }, 'IOlympicData')).toBe('IAccountResponse');
     });
 });

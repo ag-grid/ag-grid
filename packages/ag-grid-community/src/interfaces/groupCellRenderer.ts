@@ -24,7 +24,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
     /** The value getter for the total row text. Can be a function or expression. */
-    totalValueGetter?: string | TotalValueGetterFunc;
+    totalValueGetter?: string | TotalValueGetterFunc<TData, TValue>;
     /** If `true`, count is not displayed beside the name. */
     suppressCount?: boolean;
     /**

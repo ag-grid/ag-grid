@@ -32,7 +32,7 @@ const columnsToolPanel: ToolPanelDef = {
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
     toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
-    parent: document.querySelector('#popup .content'),
+    parent: document.querySelector<HTMLElement>('#popup .content'),
 };
 const filtersToolPanel: ToolPanelDef = {
     id: 'filters',
@@ -58,13 +58,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function closePopup() {
-    const drawer = document.getElementById('popup');
+    const drawer = document.getElementById('popup')!;
     drawer.classList.toggle('active', false);
     gridApi.closeToolPanel();
 }
 
 function closeDrawer() {
-    const drawer = document.getElementById('drawer');
+    const drawer = document.getElementById('drawer')!;
     drawer.classList.toggle('active', false);
     gridApi.closeToolPanel();
 }
@@ -80,7 +80,7 @@ function openDrawer() {
     closePopup();
     const drawer = document.getElementById('drawer')!;
     drawer.classList.toggle('active', true);
-    gridApi.openToolPanel(filtersToolPanel.id, drawer.querySelector('.content'));
+    gridApi.openToolPanel(filtersToolPanel.id, drawer.querySelector<HTMLElement>('.content'));
 }
 
 // setup the grid after the page has finished loading

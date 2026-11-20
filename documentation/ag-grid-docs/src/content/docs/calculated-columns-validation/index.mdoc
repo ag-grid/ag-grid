@@ -120,6 +120,8 @@ In the example, edit Sales Bonus and enter a title longer than 30 characters or 
 
 Editing the title or type revalidates the expression too, even when the expression is unchanged. Opening an editable live dialog rechecks expression rejections, even without edits.
 
+With `tooltipTrigger: 'focus'` or `'hoverOrFocus'`, new or changed errors also show a tooltip while the field remains focused. Press `Escape` to dismiss it without closing the dialog; unchanged errors do not reopen it until the field is focused again.
+
 {% note %}
 This is a dialog guard, not a security boundary: `columnDefs` and Grid State restores do not run the callback. Rejections restored from Grid State remain blocked.
 {% /note %}

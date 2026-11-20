@@ -1,3 +1,5 @@
+import type { StringComparator } from 'ag-stack';
+
 import type { SortComparatorFn } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { SortDirection, SortType } from './iSort';
@@ -15,4 +17,6 @@ export interface SortOption {
     descending: boolean;
     /** `type === 'absolute'`, precomputed to avoid a per-comparison string compare. Filled by `_resolveSortOptions`. */
     absolute: boolean;
+    /** Compares strings for the column's effective `accentedSort`, `undefined` when it is off. Filled by `_resolveSortOptions`. */
+    stringComparator: StringComparator | undefined;
 }

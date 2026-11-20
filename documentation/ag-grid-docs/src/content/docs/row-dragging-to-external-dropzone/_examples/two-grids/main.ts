@@ -4,6 +4,7 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
+    RowDragEndEvent,
     RowDropZoneParams,
 } from 'ag-grid-community';
 import {
@@ -32,6 +33,13 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
 ]);
 
+interface IColorRow {
+    id: number;
+    color: string;
+    value1: number;
+    value2: number;
+}
+
 let rowIdSequence = 100;
 
 const leftColumnDefs: ColDef[] = [
@@ -47,8 +55,8 @@ const rightColumnDefs: ColDef[] = [
     { field: 'value1' },
     { field: 'value2' },
 ];
-let leftApi: GridApi;
-const leftGridOptions: GridOptions = {
+let leftApi: GridApi<IColorRow>;
+const leftGridOptions: GridOptions<IColorRow> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -59,7 +67,7 @@ const leftGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params: GetRowIdParams<IColorRow>) => {
         return String(params.data.id);
     },
     rowData: createLeftRowData(),
@@ -71,8 +79,8 @@ const leftGridOptions: GridOptions = {
         addGridDropZone(params, 'Right');
     },
 };
-let rightApi: GridApi;
-const rightGridOptions: GridOptions = {
+let rightApi: GridApi<IColorRow>;
+const rightGridOptions: GridOptions<IColorRow> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -83,7 +91,7 @@ const rightGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params: GetRowIdParams<IColorRow>) => {
         return String(params.data.id);
     },
     rowData: [],
@@ -102,7 +110,7 @@ function createLeftRowData() {
     });
 }
 
-function createDataItem(color: string) {
+function createDataItem(color: string): IColorRow {
     return {
         id: rowIdSequence++,
         color: color,
@@ -111,7 +119,7 @@ function createDataItem(color: string) {
     };
 }
 
-function addRecordToGrid(side: string, data: any) {
+function addRecordToGrid(side: string, data: IColorRow | undefined) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) {
         return;
@@ -119,7 +127,7 @@ function addRecordToGrid(side: string, data: any) {
 
     let api = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        rowAlreadyInGrid = !!api!.getRowNode(data.id),
+        rowAlreadyInGrid = !!api!.getRowNode(String(data.id)),
         transaction;
 
     if (rowAlreadyInGrid) {
@@ -143,7 +151,7 @@ function onFactoryButtonClick(e: any) {
     addRecordToGrid(side, data);
 }
 
-function binDrop(data: any) {
+function binDrop(data: IColorRow | undefined) {
     // if data missing or data has no id, do nothing
     if (!data || data.id == null) {
         return;
@@ -154,7 +162,7 @@ function binDrop(data: any) {
     };
 
     [leftApi, rightApi].forEach((api) => {
-        const rowsInGrid = !!api!.getRowNode(data.id);
+        const rowsInGrid = !!api!.getRowNode(String(data.id));
 
         if (rowsInGrid) {
             api!.applyTransaction(transaction);
@@ -177,7 +185,7 @@ function addBinZone(params: GridReadyEvent) {
                 eBin.style.removeProperty('color');
                 icon.style.transform = 'scale(1)';
             },
-            onDragStop: (dragStopParams) => {
+            onDragStop: (dragStopParams: RowDragEndEvent<IColorRow>) => {
                 binDrop(dragStopParams.node.data);
                 eBin.style.removeProperty('color');
                 icon.style.transform = 'scale(1)';
@@ -193,7 +201,7 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
             getContainer: () => {
                 return grid;
             },
-            onDragStop: (params) => {
+            onDragStop: (params: RowDragEndEvent<IColorRow>) => {
                 addRecordToGrid(side.toLowerCase(), params.node.data);
             },
         };

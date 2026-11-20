@@ -32,7 +32,9 @@ const GridExample = () => {
     const apiFor = (grid: 'a' | 'b') => (grid === 'a' ? gridA : gridB).current!.api;
 
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
-    const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).setGridOption('tooltipInteraction', true);
+    const triggerWarning = (grid: 'a' | 'b') =>
+        // @ts-expect-error deliberately updates an initial-only option
+        apiFor(grid).setGridOption('tooltipInteraction', true);
 
     // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
     // on a client-side grid emits error #200, attributed to that grid, and no-ops without affecting layout.

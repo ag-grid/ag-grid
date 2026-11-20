@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Text child filter uses the startsWith default option', async ({ page, agIdFor }) => {
+    test.eachFramework('Text child filter uses the startsWith default option', async ({ agIdFor }) => {
         const filterButton = agIdFor.headerFilterButton('athlete');
         await expect(filterButton).toBeVisible();
         await filterButton.click();

@@ -5,7 +5,13 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { HighlightChangesModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    HighlightChangesModule,
+    ModuleRegistry,
+    RowApiModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, ViewSubscriptionModule } from 'ag-grid-enterprise';
 
 import { recordSubscribed, recordUnsubscribed, recordUpdates } from './counters';
@@ -19,6 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([
     HighlightChangesModule,
+    RowApiModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     ViewSubscriptionModule,
@@ -91,8 +98,8 @@ function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
         return;
     }
 
-    // ignore updates that were already on their way when their rows were unsubscribed
-    const update = message.rows.filter((row) => subscribed.has(row.id));
+    // an update can arrive after its row was unsubscribed, so apply it while the row is still in the grid
+    const update = message.rows.filter((row) => api.getRowNode(row.id));
     if (update.length) {
         api.applyServerSideTransactionAsync({ update });
     }

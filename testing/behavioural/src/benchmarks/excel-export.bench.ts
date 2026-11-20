@@ -1,4 +1,4 @@
-import { bench, suite, vi } from 'vitest';
+import { suite, vi } from 'vitest';
 
 import type { CellClassRules, ColDef, ColGroupDef, ExcelExportParams, GridApi } from 'ag-grid-community';
 import { CellStyleModule, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
@@ -6,7 +6,7 @@ import { ExcelExportModule } from 'ag-grid-enterprise';
 
 import { excelStyles } from '../../../../documentation/ag-grid-docs/src/components/example-grid/config/excelStyles';
 import { createRowItem, months } from '../../../../documentation/ag-grid-docs/src/components/example-grid/data';
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const imageData =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVZsAAAAASUVORK5CYII=';
@@ -100,7 +100,7 @@ suite('Excel export (demo data and styles)', () => {
                     : function exportWorkbook() {
                           output = variant === 'csv' ? api.getDataAsCsv() : api.getDataAsExcel(params);
                       },
-                benchDefaults({
+                {
                     setup: async () => {
                         await gridsManager.reset();
                         const rowData = Array.from({ length: rowCount }, (_, row) => createRowItem(row, 22, 9, 22));
@@ -129,7 +129,7 @@ suite('Excel export (demo data and styles)', () => {
                         vi.restoreAllMocks();
                         gridsManager.destroyAll();
                     },
-                })
+                }
             );
         }
     }

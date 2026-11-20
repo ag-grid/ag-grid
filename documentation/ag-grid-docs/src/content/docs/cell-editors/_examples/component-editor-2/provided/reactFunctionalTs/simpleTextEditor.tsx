@@ -7,7 +7,7 @@ export interface MySimpleInterface extends ICellEditor {
     myCustomFunction(): { rowIndex: number; colId: string };
 }
 
-export default ({ value, onValueChange, eventKey, rowIndex, column }: CustomCellEditorProps, ref) => {
+export default ({ value, onValueChange, eventKey, rowIndex, column }: CustomCellEditorProps) => {
     const updateValue = (val: string) => {
         onValueChange(val === '' ? null : val);
     };

@@ -4,7 +4,6 @@ import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 
 const COUNTRY_PREFIX = 'row-group-country-';
 // groupDisplayType 'multipleColumns' gives each group level its own (sortable) column.
-const COUNTRY_COL_ID = `${GROUP_AUTO_COLUMN_ID}-country`;
 const YEAR_COL_ID = `${GROUP_AUTO_COLUMN_ID}-year`;
 
 // Reads the rendered top-level (country) group rows in visual order, returning their ids.

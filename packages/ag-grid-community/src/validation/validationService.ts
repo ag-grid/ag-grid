@@ -8,8 +8,10 @@ import type { BeanCollection, DynamicBeanName, UserComponentName } from '../cont
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
+import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
 import { provideValidationServiceLogger } from './logging';
@@ -119,6 +121,34 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Warns once per colId in an applied Advanced Filter model that the filter cannot apply. */
+    public checkAdvancedFilterModel(
+        model: AdvancedFilterModel | null,
+        isColumnOffered: (colId: string) => boolean
+    ): void {
+        if (!model) {
+            return;
+        }
+        const colIds = new Set<string>();
+        this.collectAdvancedFilterColIds(model, colIds);
+        colIds.forEach((colId) => {
+            if (!isColumnOffered(colId)) {
+                this.warn(this.beans.colModel.getNonPivotColById(colId) ? 342 : 341, { colId });
+            }
+        });
+    }
+
+    private collectAdvancedFilterColIds(model: AdvancedFilterModel, colIds: Set<string>): void {
+        if (model.filterType !== 'join') {
+            colIds.add(model.colId);
+            return;
+        }
+        const conditions = model.conditions;
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            this.collectAdvancedFilterColIds(conditions[i], colIds);
+        }
+    }
+
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
             this.warn(10, { eventType });
@@ -134,7 +164,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             // directly referencing icon
             return;
         }
-        this.warn(134, { iconName });
+        this.warn(134, { iconName, suggestions: suggestIconNames(iconName) });
     }
 
     public isProvidedUserComp(compName: string): boolean {
@@ -302,3 +332,23 @@ const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
     'lastChildChanged',
     'childIndexChanged',
 ]);
+
+function suggestIconNames(iconName: string): string[] {
+    const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    if (ICON_VALUES[hyphenatedName as IconValue]) {
+        return [hyphenatedName];
+    }
+    const cssSuggestions = _fuzzySuggestions({
+        inputValue: hyphenatedName,
+        allSuggestions: Object.keys(ICON_VALUES),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    const gridSuggestions = _fuzzySuggestions({
+        inputValue: iconName,
+        allSuggestions: Object.keys(ICON_NAME_TO_VALUE),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    return [...gridSuggestions, ...cssSuggestions].slice(0, 3);
+}

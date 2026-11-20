@@ -1255,8 +1255,7 @@ describe('Auto row height', () => {
 
     // Without a ResizeObserver nothing watches a cell, but each is still measured once as it is rendered.
     test('a grid with no ResizeObserver still measures each cell once', async () => {
-        const original = window.ResizeObserver;
-        Object.defineProperty(window, 'ResizeObserver', { value: undefined, configurable: true, writable: true });
+        vi.stubGlobal('ResizeObserver', undefined);
         try {
             cellHeights.set('*:b', 90);
             const api = gridsManager.createGrid('myGrid', {
@@ -1266,7 +1265,7 @@ describe('Auto row height', () => {
 
             await waitFor(() => expect([0, 1, 2].map((i) => rowHeight(api, i))).toEqual([90, 90, 90]));
         } finally {
-            Object.defineProperty(window, 'ResizeObserver', { value: original, configurable: true, writable: true });
+            vi.unstubAllGlobals();
         }
     });
 

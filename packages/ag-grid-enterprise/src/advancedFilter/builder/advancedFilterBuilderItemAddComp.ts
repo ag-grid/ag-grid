@@ -77,9 +77,10 @@ export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBu
         this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => eAddButton.getGui(),
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
+                getTooltip: () => ({
+                    value: this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
+                }),
             })
         );
 

@@ -13,7 +13,13 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
 import { onTestFinished, vi } from 'vitest';
 
-import type { GetDetailRowDataParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    FullWidthNotesDataSource,
+    GetDetailRowDataParams,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -22,7 +28,7 @@ import {
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MasterDetailModule, NotesModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
@@ -516,6 +522,78 @@ describe('ag-grid master detail', () => {
         api.setColumnsVisible(['v'], false);
         await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
+        expect(details.length).toBe(built);
+    });
+
+    test('a detail row kept while collapsed is shown again with its notes indicator on the sections as they are now', async () => {
+        const details: HTMLElement[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                details.push(this.eGui);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        // a note for the left section of the detail row only
+        const notesDataSource: FullWidthNotesDataSource = {
+            supportsFullWidthRows: true,
+            getNote: (params) =>
+                params.location === 'fullWidthRow' && params.rowNode.detail && params.pinned === 'left'
+                    ? { text: 'left section note' }
+                    : undefined,
+            setNote: () => {},
+        };
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'l', width: 100 },
+                    { field: 'v', width: 200 },
+                ],
+                rowData: [{ id: '1', l: 'x', v: 'y' }],
+                getRowId: (params) => params.data.id,
+                masterDetail: true,
+                isRowMaster: () => true,
+                detailCellRenderer: Detail,
+                keepDetailRows: true,
+                embedFullWidthRows: true,
+                notesDataSource,
+            },
+            { modules: [NotesModule] }
+        );
+        // the indicator sits on the container inside each section
+        const noted = () =>
+            ['ag-grid-pinned-left-cells', 'ag-grid-scrolling-cells', 'ag-grid-pinned-right-cells'].map(
+                (section) => !!getGridElement(api)!.querySelector(`.ag-full-width-row .${section} .ag-has-cell-notes`)
+            );
+        const master = api.getRowNode('1')!;
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+
+        await setExpanded(true);
+        const built = details.length;
+        // no left section yet, so nothing carries the indicator
+        expect(noted().includes(true)).toBe(false);
+
+        await setExpanded(false);
+        api.setColumnsPinned(['l'], 'left');
+        await setExpanded(true);
+        expect(noted()).toEqual([true, false, false]);
+        // the kept row is shown again, not built anew
+        expect(details.length).toBe(built);
+        expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
+
+        await setExpanded(false);
+        api.setColumnsPinned(['l'], null);
+        await setExpanded(true);
+        expect(noted().includes(true)).toBe(false);
         expect(details.length).toBe(built);
     });
 

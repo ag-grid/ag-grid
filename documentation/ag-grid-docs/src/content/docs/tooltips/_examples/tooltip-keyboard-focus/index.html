@@ -1,0 +1,34 @@
+<div class="example-wrapper">
+    <div class="example-controls">
+        <label>
+            Position
+            <select id="position" onchange="onPositionChanged()">
+                <option value="default">Source default</option>
+                <option value="top">top</option>
+                <option value="top-start">top-start</option>
+                <option value="top-end">top-end</option>
+                <option value="bottom">bottom</option>
+                <option value="bottom-start">bottom-start</option>
+                <option value="bottom-end">bottom-end</option>
+                <option value="left">left</option>
+                <option value="left-start">left-start</option>
+                <option value="left-end">left-end</option>
+                <option value="right">right</option>
+                <option value="right-start">right-start</option>
+                <option value="right-end">right-end</option>
+            </select>
+        </label>
+        <label>
+            Anchor
+            <select id="anchor" onchange="onAnchorChanged()">
+                <option value="target">target</option>
+                <option value="pointer">pointer</option>
+            </select>
+        </label>
+        <label>
+            Offset
+            <input id="offset" type="number" min="0" value="6" onchange="onOffsetChanged()" />
+        </label>
+    </div>
+    <div id="myGrid"></div>
+</div>

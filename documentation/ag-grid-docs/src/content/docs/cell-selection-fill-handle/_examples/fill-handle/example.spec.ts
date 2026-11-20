@@ -1,4 +1,4 @@
-import { dragFillHandleOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragFillHandleOverTo, expect, gridApiHandle, gridEventLog, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.describe('Fill Handle', () => {
@@ -20,30 +20,33 @@ test.agExample(import.meta, () => {
             await expect(target).toHaveText('Natalie Coughlin');
         });
 
-        test.vanilla('Drag Doubleclick', async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
+        test.vanilla('Drag Doubleclick', async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page, '1');
 
-            await remoteApi.updateGridOptions({
-                columnDefs: [
-                    {
-                        field: 'athlete',
-                        editable: true,
+            await api.evaluate((api) =>
+                api.updateGridOptions({
+                    columnDefs: [
+                        {
+                            field: 'athlete',
+                            editable: true,
+                        },
+                    ],
+                    cellSelection: {
+                        handle: {
+                            mode: 'fill',
+                        },
                     },
-                ],
-                cellSelection: {
-                    handle: {
-                        mode: 'fill',
-                    },
-                },
-                rowData: [
-                    { athlete: 'Natalie Coughlin' },
-                    { athlete: 'Aleksey Nemov' },
-                    { athlete: 'Alicia Coutts' },
-                    { athlete: 'Missy Franklin' },
-                ],
-            });
+                    rowData: [
+                        { athlete: 'Natalie Coughlin' },
+                        { athlete: 'Aleksey Nemov' },
+                        { athlete: 'Alicia Coutts' },
+                        { athlete: 'Missy Franklin' },
+                    ],
+                })
+            );
 
-            await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
+            const log = await gridEventLog(page, '1');
+            await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
 
             const cells = [0, 1, 2, 3].map((i) => agIdFor.cell(`${i}`, 'athlete'));
             const [source, target] = cells;
@@ -66,10 +69,8 @@ test.agExample(import.meta, () => {
             await expect(cells[2]).toHaveText('Natalie Coughlin');
             await expect(cells[3]).toHaveText('Aleksey Nemov');
 
-            const eventLog = await remoteGrid.waitForEventlog(250);
-
-            expect(eventLog.length).toBe(2);
-            expect(eventLog).toEqual([
+            await expect.poll(async () => (await log.entries()).length).toBe(2);
+            expect(await log.entries()).toEqual([
                 [
                     'cellValueChanged',
                     {

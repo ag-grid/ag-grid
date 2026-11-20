@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, SimplePRNG, benchDefaults, rebuildRows } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, bench, rebuildRows } from './bench-utils';
 
 suite('treeData with getDataPath', () => {
     const gridsManager = new BenchGridsManager({
@@ -15,7 +15,7 @@ suite('treeData with getDataPath', () => {
     const rowData = buildRandomTreeDataPath(15000);
     const rowData1 = buildUpdatedRowData(rowData);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('G', {
@@ -28,7 +28,7 @@ suite('treeData with getDataPath', () => {
                 getRowId: ({ data }: { data: { id: string } }) => data.id,
             });
         },
-    });
+    };
 
     bench(
         'build from scratch ' + rowData.length + ' rows',

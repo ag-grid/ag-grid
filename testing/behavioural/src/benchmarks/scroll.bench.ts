@@ -1,9 +1,9 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
 
-import { BenchGridsManager, benchDefaults, scrollStep, sweep } from './bench-utils';
+import { BenchGridsManager, bench, scrollStep, sweep } from './bench-utils';
 
 const modules = [ClientSideRowModelModule, ColumnApiModule, ScrollApiModule];
 
@@ -63,7 +63,6 @@ suite('scroll — horizontal and vertical virtualisation', () => {
                 act(api, viewport, iter++);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;
@@ -127,6 +126,15 @@ suite('scroll — horizontal and vertical virtualisation', () => {
     benchScroll(
         'vertical scroll 10k rows (small steps)',
         { columnDefs: cols20(), rowData: rows10k() },
+        (api, viewport, i) => {
+            scrollStep(viewport, 0, 1000 + sweep(i) * 42);
+            api.flushAllAnimationFrames();
+        }
+    );
+
+    benchScroll(
+        'vertical scroll 10k rows (small steps, ensureDomOrder)',
+        { columnDefs: cols20(), rowData: rows10k(), ensureDomOrder: true },
         (api, viewport, i) => {
             scrollStep(viewport, 0, 1000 + sweep(i) * 42);
             api.flushAllAnimationFrames();

@@ -54,7 +54,7 @@ const VueExample = defineComponent({
                 'dark-red'
             );
 
-        function setDarkMode(enabled) {
+        function setDarkMode(enabled: boolean) {
             document.body.dataset.agThemeMode = enabled ? 'dark-red' : 'light-red';
         }
         setDarkMode(false);

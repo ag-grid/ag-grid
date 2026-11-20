@@ -91,8 +91,11 @@ test.agExample(import.meta, () => {
 
             await subscriptionCheckbox.uncheck();
             await expect(count).toHaveText('0');
-            // no rows are subscribed, so the updates sent count starts again
-            await expect(page.locator('#updatesSent')).toHaveText('0');
+            // updates already on their way still reach rows in the grid, then no more arrive
+            await page.waitForTimeout(500);
+            const updatesAfterUnsubscribe = await page.locator('#updatesSent').textContent();
+            await page.waitForTimeout(1000);
+            await expect(page.locator('#updatesSent')).toHaveText(updatesAfterUnsubscribe!);
             await expect(streamed).toHaveText('0');
 
             await subscriptionCheckbox.check();

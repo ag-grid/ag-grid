@@ -466,6 +466,18 @@ export class SetFilterHandler<TValue = string>
 
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
+        const { colModel } = this.beans;
+        let accentedSortVersion = colModel.accentedSortVersion;
+        this.addManagedPropertyListener('accentedSort', () => {
+            // the column model counts real changes only, so an equal value from a framework re-render keeps the order
+            const version = colModel.accentedSortVersion;
+            const { colDef, column } = this.params;
+            if (version === accentedSortVersion || colDef.accentedSort !== undefined) {
+                return;
+            }
+            accentedSortVersion = version;
+            this.beans.colFilter?.filterParamsChanged(column.getColId());
+        });
 
         const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({

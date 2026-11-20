@@ -94,7 +94,7 @@ function navigateToNextHeader(params: NavigateToNextHeaderParams): HeaderPositio
     return processedNextHeader;
 }
 
-function tabToNextHeader(params: TabToNextHeaderParams): HeaderPosition | null {
+function tabToNextHeader(params: TabToNextHeaderParams): HeaderPosition {
     return moveHeaderFocusUpDown(params.previousHeaderPosition!, params.headerRowCount, params.backwards);
 }
 
@@ -140,7 +140,7 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
     };
 }
 
-function tabToNextCell(params: TabToNextCellParams): CellPosition | null {
+function tabToNextCell(params: TabToNextCellParams): CellPosition {
     const previousCell = params.previousCellPosition;
     const renderedRowCount = params.api!.getDisplayedRowCount();
     const lastRowIndex = previousCell.rowIndex;

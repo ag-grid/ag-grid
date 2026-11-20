@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderParams, SortDirection } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderParams & { menuIcon: string }>,
+            required: true,
+        },
+    },
     template: `
       <div>
       <div v-if="params.enableFilterButton" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
@@ -16,9 +27,9 @@ export default {
     `,
     data: function () {
         return {
-            ascSort: null,
-            descSort: null,
-            noSort: null,
+            ascSort: null as string | null,
+            descSort: null as string | null,
+            noSort: null as string | null,
         };
     },
     beforeMount() {},
@@ -28,7 +39,7 @@ export default {
     },
     methods: {
         onMenuClicked() {
-            this.params.showColumnMenu(this.$refs.menuButton);
+            this.params.showColumnMenu(this.$refs.menuButton as HTMLElement);
         },
 
         onSortChanged() {
@@ -43,8 +54,8 @@ export default {
             }
         },
 
-        onSortRequested(order, event) {
+        onSortRequested(order: SortDirection, event: MouseEvent) {
             this.params.setSort(order, event.shiftKey);
         },
     },
-};
+});

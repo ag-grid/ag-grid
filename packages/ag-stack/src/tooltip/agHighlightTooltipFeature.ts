@@ -5,10 +5,9 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { ICommonSource } from '../interfaces/iEvent';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { TooltipCtrl } from '../interfaces/iTooltip';
+import type { TooltipCtrl, TooltipDetails } from '../interfaces/iTooltip';
 import { AgTooltipFeature } from './agTooltipFeature';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
-import { TooltipTrigger } from './baseTooltipStateManager';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type HighlightTooltipEventType = 'itemHighlighted';
@@ -25,7 +24,7 @@ export class AgHighlightTooltipFeature<
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TTooltipParams extends BaseTooltipParams<TLocation>,
-    TTooltipCtrlParams,
+    TTooltipCtrlParams extends TooltipDetails<TLocation>,
     TLocation extends string,
 > extends AgTooltipFeature<
     TBeanCollection,
@@ -37,8 +36,6 @@ export class AgHighlightTooltipFeature<
     TTooltipCtrlParams,
     TLocation
 > {
-    private tooltipMode: TooltipTrigger;
-
     constructor(
         ctrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
         private readonly highlightTracker: IEventEmitter<HighlightTooltipEventType>,
@@ -50,32 +47,11 @@ export class AgHighlightTooltipFeature<
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.wireHighlightListeners();
-    }
-
-    private wireHighlightListeners(): void {
-        this.addManagedPropertyListener('tooltipTrigger', ({ currentValue }) => {
-            this.setTooltipMode(currentValue);
-        });
-
-        this.setTooltipMode(this.gos.get('tooltipTrigger'));
         this.highlightTracker.addEventListener('itemHighlighted', this.onHighlight);
     }
 
     private onHighlight(event: HighlightTooltipEvent): void {
-        if (this.tooltipMode !== TooltipTrigger.FOCUS) {
-            return;
-        }
-
-        if (event.highlighted) {
-            this.attemptToShowTooltip();
-        } else {
-            this.attemptToHideTooltip();
-        }
-    }
-
-    private setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
-        this.tooltipMode = tooltipTriggerMode === 'focus' ? TooltipTrigger.FOCUS : TooltipTrigger.HOVER;
+        this.setTooltipFocused(event.highlighted);
     }
 
     public override destroy() {

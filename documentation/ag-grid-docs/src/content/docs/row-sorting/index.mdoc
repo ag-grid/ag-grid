@@ -170,9 +170,66 @@ By default, sorting is not locale-specific and strings are compared using their 
 Locale-specific sort is slower than default sort which may be noticeable when sorting a large number of rows.
 {% /note %}
 
-Toggle the buttons in the following example to see the difference between default sorting and locale-aware sorting. Note that with locale-aware sorting, the order is `a à b c` instead of the default Unicode order of `a b c à`.
+To sort using a specific locale, or to change how strings are compared, set `accentedSort` to an object. Its `locales` and `options` are passed to [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator), so any locale tag and collator option it supports can be used, for example `sensitivity`, `caseFirst`, `numeric` or `ignorePunctuation`.
+
+{% apiDocumentation source="grid-options/properties.json" section="sort" names=["accentedSort"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // sort using Swedish rules, and compare digits by their numeric value
+    accentedSort: { locales: 'sv', options: { numeric: true } },
+};
+```
+
+Locale-specific sort only applies when both values are strings. Other values, such as numbers and dates, and a string compared with a non-string, are sorted as they are by default.
+
+Toggle the buttons in the following example to see the difference between default sorting and locale-aware sorting. Note that:
+
+- With locale-aware sorting (`accentedSort: true`), the browser's locale is used. In most locales, such as English, the order is `a à ä b c z`.
+- With Swedish sorting (`accentedSort: { locales: 'sv' }`), `ä` is a separate letter of the alphabet, so the order is `a à b c z ä`.
+- With default sorting, the order is the Unicode order of `a b c z à ä`.
 
 {% gridExampleRunner title="Locale Aware Sort" name="locale-aware-sort" exampleHeight=300 /%}
+
+### Case-insensitive Sort
+
+By default, strings are sorted by their Unicode code points, so all uppercase letters sort before lowercase letters, for example `AZ` before `aa`. To sort strings without regard to case, as spreadsheet applications do, set the collator `sensitivity` option to `'accent'`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    accentedSort: { options: { sensitivity: 'accent' } },
+};
+```
+
+Values that differ only in case, such as `AA`, `aa` and `Aa`, are then treated as equal, so they keep their original order. Accented letters are still treated as different from unaccented ones, so `à` sorts after `a`. To also ignore accents, use `sensitivity: 'base'`.
+
+Toggle the buttons in the following example to compare case-insensitive sorting with the default sort. Note that with case-insensitive sorting, `aa` sorts before `AZ`, and `AA`, `aa` and `Aa` stay in the order of the row data.
+
+{% gridExampleRunner title="Case-insensitive Sort" name="case-insensitive-sort" exampleHeight=300 /%}
+
+### Column Locale-specific Sort
+
+To configure locale-specific sort for a single column, set `accentedSort` on the column definition. It takes the same values as the grid option and, when set, overrides the grid option for that column. Set it to `false` to turn locale-specific sort off for that column. To apply it to all columns, set it on the `defaultColDef`.
+
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["accentedSort"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    accentedSort: true,
+    columnDefs: [
+        // sorted using German rules
+        { field: 'city', accentedSort: { locales: 'de' } },
+        // sorted using Unicode order
+        { field: 'code', accentedSort: false },
+        // uses the grid option
+        { field: 'country' },
+    ],
+};
+```
+
+`accentedSort` is not used when a column has a `comparator`.
+
+The values in the [Set Filter](./filter-set/) list are sorted using the column's `accentedSort` too, unless a `comparator` is provided in the filter parameters or on the column.
 
 ## Post-Sort
 

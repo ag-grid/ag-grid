@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // Sales Dashboard #1 creates three cross-filter charts on firstDataRendered:
@@ -8,11 +8,11 @@ test.agExample(import.meta, () => {
     // Cross-filter interactions are only pixel-addressable on the chart canvas, so this
     // asserts chart creation/types (observable via getChartModels + canvases) and the
     // documented grid setup.
-    test.eachFramework('creates the three documented cross-filter charts', async ({ page, remoteGrid }) => {
+    test.eachFramework('creates the three documented cross-filter charts', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const api = remoteGrid(page);
+        const api = await gridApiHandle(page);
 
         // Each createCrossFilterChart call renders an AG Charts canvas into its container.
         await expect(page.locator('#columnChart canvas').first()).toBeVisible();
@@ -20,7 +20,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('#barChart canvas').first()).toBeVisible();
 
         // Three charts exist with the documented types.
-        const models = (await api.getChartModels()) as any[];
+        const models = (await api.evaluate((api) => api.getChartModels())) ?? [];
         expect(models).toHaveLength(3);
         const chartTypes = models.map((m) => m.chartType).sort();
         expect(chartTypes).toEqual(['bar', 'column', 'pie']);
@@ -33,6 +33,6 @@ test.agExample(import.meta, () => {
         await expect(page.getByTestId('ag-header-cell:colId=quarter')).toContainText('Quarter');
 
         // No grid filter is active on load.
-        expect(await api.getFilterModel()).toEqual({});
+        expect(await api.evaluate((api) => api.getFilterModel())).toEqual({});
     });
 });

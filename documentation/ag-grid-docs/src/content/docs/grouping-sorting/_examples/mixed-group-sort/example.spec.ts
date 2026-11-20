@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
@@ -6,7 +7,7 @@ const COUNTRY_PREFIX = 'row-group-country-';
 
 // Reads the currently-rendered top-level (country) group rows in visual order,
 // returning each row id and the text shown in the given group column cell.
-async function readTopGroups(page: any, colId: string) {
+async function readTopGroups(page: Page, colId: string) {
     return await page.evaluate(
         ({ colId, prefix }: { colId: string; prefix: string }) => {
             const seen = new Set<string>();
@@ -32,7 +33,7 @@ async function readTopGroups(page: any, colId: string) {
 }
 
 // Reads the year subgroup rows under a given country group, in visual order.
-async function readYearGroups(page: any, parentId: string) {
+async function readYearGroups(page: Page, parentId: string) {
     return await page.evaluate(
         ({ parentPrefix }: { parentPrefix: string }) => {
             const seen = new Set<string>();

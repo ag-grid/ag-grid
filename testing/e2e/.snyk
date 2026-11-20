@@ -2,6 +2,36 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-UNDICI-22392401:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.595Z
+    SNYK-JS-UNDICI-22370261:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.594Z
+    SNYK-JS-UNDICI-22291127:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.593Z
+    SNYK-JS-UNDICI-22291066:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.591Z
+    SNYK-JS-UNDICI-22290988:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.591Z
     SNYK-JS-PICOMATCH-21248802:
         - 'ag-grid-enterprise@0.0.0-use.local > canvas@3.2.3 > node-addon-api@7.1.1 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
               reason: >-

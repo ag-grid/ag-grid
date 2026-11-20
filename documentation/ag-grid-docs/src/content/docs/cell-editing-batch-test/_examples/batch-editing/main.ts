@@ -291,11 +291,11 @@ const gridOptions: GridOptions = {
         console.log('Cell value changed');
         getCellsEditing(event.api);
     },
-    onBodyScroll(_event: BodyScrollEvent) {
-        decorated && decorateCells();
+    onBodyScroll(event: BodyScrollEvent) {
+        decorated && decorateCells(event.api);
     },
-    onModelUpdated(_event: ModelUpdatedEvent) {
-        decorated && decorateCells();
+    onModelUpdated(event: ModelUpdatedEvent) {
+        decorated && decorateCells(event.api);
     },
     onCellClicked: (event: CellClickedEvent) => {
         getCellsEditing(event.api);
@@ -309,15 +309,15 @@ const gridOptions: GridOptions = {
 };
 
 let decorated = false;
-function decorateCells() {
+function decorateCells(api: GridApi) {
     if (!node) {
         return;
     }
     const beans = (node as any)['beans'] as BeanCollection;
 
-    const positions = gridApi!.getEditingCells();
+    const positions = api.getEditingCells();
 
-    gridApi.redrawRows();
+    api.redrawRows();
 
     decorated = true;
 
@@ -327,7 +327,7 @@ function decorateCells() {
             return null;
         }
 
-        const cellCtrl: CellCtrl | undefined = rowCtrl.getCellCtrl(gridApi.getColumn(position.colId) as AgColumn);
+        const cellCtrl: CellCtrl | undefined = rowCtrl.getCellCtrl(api.getColumn(position.colId) as AgColumn);
 
         if (!cellCtrl) {
             return;
@@ -354,9 +354,9 @@ function decorateCells() {
     });
 }
 
-function clearDecorations() {
+function clearDecorations(api: GridApi) {
     decorated = false;
-    gridApi.redrawRows();
+    api.redrawRows();
 }
 
 function trim(str?: any) {
@@ -364,7 +364,7 @@ function trim(str?: any) {
         return str;
     }
     const len = Math.min(15, str.length);
-    return str.substring?.(0, len) + (str.length > len ? '...' : '') ?? str;
+    return str.substring?.(0, len) + (str.length > len ? '...' : '');
 }
 
 function commitBatchEdit() {
@@ -466,7 +466,7 @@ function createChart() {
     });
 }
 
-function setEditType(editType: EditStrategyType) {
+function setEditType(editType?: EditStrategyType) {
     console.log('Setting edit type to:', editType);
     gridApi!.updateGridOptions({
         editType,

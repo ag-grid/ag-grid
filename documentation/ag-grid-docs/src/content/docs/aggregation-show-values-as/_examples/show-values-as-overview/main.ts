@@ -67,7 +67,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     isGroupOpenByDefault: (params) => {
         const route = params.rowNode.getRoute();
         const destPath = ['United States', '2008'];
-        return route.every((item, idx) => destPath[idx] === item);
+        return route?.every((item, idx) => destPath[idx] === item) ?? false;
     },
     suppressAggFuncInHeader: true,
 };

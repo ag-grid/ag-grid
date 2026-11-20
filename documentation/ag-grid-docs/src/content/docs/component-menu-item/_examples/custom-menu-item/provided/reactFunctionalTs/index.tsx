@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GetContextMenuItemsParams, GetMainMenuItemsParams } from 'ag-grid-community';
+import type { ColDef, GetContextMenuItems, GetMainMenuItems } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -52,7 +52,7 @@ const GridExample = () => {
 
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
-    const getMainMenuItems = useCallback((params: GetMainMenuItemsParams) => {
+    const getMainMenuItems = useCallback<GetMainMenuItems>((params) => {
         return [
             ...params.defaultItems,
             'separator',
@@ -74,7 +74,7 @@ const GridExample = () => {
         ];
     }, []);
 
-    const getContextMenuItems = useCallback((params: GetContextMenuItemsParams) => {
+    const getContextMenuItems = useCallback<GetContextMenuItems>((params) => {
         return [
             ...(params.defaultItems || []),
             'separator',

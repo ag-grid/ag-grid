@@ -1,6 +1,7 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
+    AccentedSortOptions,
     AlignedGrid,
     AlwaysPassFilter,
     AutoGenerateColumnDefsOptions,
@@ -119,6 +120,10 @@ import type {
     TabToNextHeader,
     Theme,
     Toolbar,
+    TooltipCallbackParams,
+    TooltipContentParams,
+    TooltipPosition,
+    TooltipPositionCallback,
     TreeDataDisplayType,
     UseGroupTotalRow,
     ViewSubscriptionOptions
@@ -309,14 +314,43 @@ export interface Props<TData> {
          */
     enableBrowserTooltips?: boolean,
     /** The trigger that will cause tooltips to show and hide.
-         *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
-         *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+         * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
+         *  - `hover` - The tooltip will show/hide when its element is hovered.
+         *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
+         *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+         * Source-specific show delays take precedence in all modes.
          * @default 'hover'
          * @initial
          * @agModule `TooltipModule`
          */
-    tooltipTrigger?: 'hover' | 'focus',
-    /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus',
+    /** Preferred tooltip placement. Flips or shifts to stay within the available space.
+         * Return `undefined` from the callback to use the default placement, `top-start`.
+         * Does not apply to browser tooltips.
+         * @agModule `TooltipModule`
+         */
+    tooltipPosition?: TooltipPosition | TooltipPositionCallback<TData>,
+    /** Anchor for hover tooltips. Focus tooltips always use the target; mouse tracking uses the pointer.
+         * Does not apply to browser tooltips.
+         * @default 'target'
+         * @agModule `TooltipModule`
+         */
+    tooltipAnchor?: 'target' | 'pointer',
+    /** Distance in pixels between the tooltip and its anchor, along the placement axis.
+         * Does not apply to browser tooltips.
+         * @default 6
+         * @agModule `TooltipModule`
+         */
+    tooltipOffset?: number,
+    /** Provides a plain-text accessible description, available on focus before the visual tooltip appears.
+         * Use this for custom tooltips whose resolved `params.value` is structured data.
+         * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
+         * @agModule `TooltipModule`
+         */
+    getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined,
+    /** The delay in milliseconds before a tooltip shows on hover or focus.
+         * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+         * Pointer switching uses `tooltipSwitchShowDelay` instead.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @default 2000
          * @agModule `TooltipModule`
@@ -329,9 +363,9 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipSwitchShowDelay?: number,
-    /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-         *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
-         * @default 10000
+    /** An optional timeout in milliseconds after a tooltip appears. By default there is no timed hide.
+         * A timeout does not close an interactive tooltip while keyboard focus is inside it.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
          * @agModule `TooltipModule`
          */
     tooltipHideDelay?: number,
@@ -348,13 +382,15 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipShowMode?: 'standard' | 'whenTruncated',
-    /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
-         * tooltip itself it being hovered or has focus.
+    /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
+         * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+         * A callback receives the source parameters and decides separately each time a tooltip opens.
+         * Does not apply to browser tooltips.
          * @default false
          * @initial
          * @agModule `TooltipModule`
          */
-    tooltipInteraction?: boolean,
+    tooltipInteraction?: boolean | ((params: TooltipCallbackParams<TData>) => boolean),
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).
          */
     popupParent?: HTMLElement | null,
@@ -865,11 +901,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressFocusAfterRefresh?: boolean,
-    /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-         * @default false
-         * @initial
-         */
-    suppressBrowserResizeObserver?: boolean,
     /** Disables change detection.
          * @default false
          */
@@ -1463,12 +1494,13 @@ export interface Props<TData> {
          * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
          * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
          * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
-         * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+         * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
+         * Requires `getRowId`. Supported by the Server-Side Row Model.
          * @agModule `ViewSubscriptionModule`
          */
     viewSubscription?: ViewSubscriptionOptions<TData>,
     /** Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
-         * them configured, for example while the grid is hidden. Set back to `true` to subscribe to the rows in view again.
+         * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
          * @default true
          * @agModule `ViewSubscriptionModule`
          */
@@ -1709,10 +1741,15 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
          */
     suppressClearOnFillReduction?: boolean,
-    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+    /** Set to `true` to sort strings using locale-specific rules, so accented characters are taken into account. If this feature is turned on the sort will be slower.
+         *
+         * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+         * Only applies when both values are strings. Also orders the values in the Set Filter list.
+         *
+         * Can be overridden per column with `colDef.accentedSort`.
          * @default false
          */
-    accentedSort?: boolean,
+    accentedSort?: boolean | AccentedSortOptions,
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
          * @default false
          */
@@ -2229,6 +2266,10 @@ export function getProps() {
         suppressMenuHide: undefined,
         enableBrowserTooltips: undefined,
         tooltipTrigger: undefined,
+        tooltipPosition: undefined,
+        tooltipAnchor: undefined,
+        tooltipOffset: undefined,
+        getTooltipAriaDescription: undefined,
         tooltipShowDelay: undefined,
         tooltipSwitchShowDelay: undefined,
         tooltipHideDelay: undefined,
@@ -2342,7 +2383,6 @@ export function getProps() {
         enableCellExpressions: undefined,
         suppressTouch: undefined,
         suppressFocusAfterRefresh: undefined,
-        suppressBrowserResizeObserver: undefined,
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
