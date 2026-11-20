@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { dismissValidationOverlay, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -13,6 +13,7 @@ test.agExample(import.meta, () => {
     test.eachFramework(
         'Read-only floating filter reflects the custom filter model',
         async ({ agIdFor, page }) => {
+            await dismissValidationOverlay(page);
             // Open the custom filter via the floating filter button and set a greater-than value.
             await agIdFor.floatingFilterButton('gold').click();
             await page.getByPlaceholder('Number of medals...').fill('7');

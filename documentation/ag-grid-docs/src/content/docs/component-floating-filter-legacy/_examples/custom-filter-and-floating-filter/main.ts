@@ -14,7 +14,7 @@ import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_t
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations({ suppress: [348] });
+    enableDevValidations();
 }
 
 ModuleRegistry.registerModules([NumberFilterModule, ClientSideRowModelModule, TextFilterModule, CustomFilterModule]);

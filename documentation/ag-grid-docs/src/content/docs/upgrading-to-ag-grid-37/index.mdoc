@@ -171,20 +171,20 @@ When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of th
 
 Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filters and `enableFilterHandlers` unset will now throw where the legacy feature is first used: usually when the grid is created, or for Multi Filter buttons and methods, when the filter is created or the method is called.
 
-| Deprecated                                                                                | Replacement                                                                                         |
-| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `enableFilterHandlers: false` (legacy filter mode)                                        | `enableFilterHandlers: true`                                                                        |
-| `onFilterModified` / `filterModified` event                                               | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
-| `IFilterComp`                                                                             | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
-| `IFilterType`                                                                             | `ColumnFilter`                                                                                      |
-| `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                           | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
-| `IFilterParams.filterChangedCallback`                                                     | `FilterDisplayParams.onModelChange`                                                                 |
-| `IFilterParams.filterModifiedCallback`                                                    | `FilterDisplayParams.onUiChange`                                                                    |
-| `IFloatingFilterParams.parentFilterInstance`, `IFloatingFilterParentCallback`             | `FloatingFilterDisplayParams.model` and `onModelChange`                                             |
-| `IFloatingFilterParams.currentParentModel`                                                | `FloatingFilterDisplayParams.model`                                                                 |
-| `onFloatingFilterChanged()` on filter instances                                           | `onModelChange` in a `FloatingFilterDisplayComp`                                                    |
-| `applyModel()`, `getModelFromUi()` on filter instances                                    | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
-| `IMultiFilter` and its `getModel`, `setModel`, `isFilterActive`, `doesFilterPass` methods | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
+| Deprecated                                                                                  | Replacement                                                                                         |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `enableFilterHandlers: false` (legacy filter mode)                                          | `enableFilterHandlers: true`                                                                        |
+| `onFilterModified` / `filterModified` event                                                 | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
+| `IFilterComp`                                                                               | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
+| `IFilterType`                                                                               | `ColumnFilter`                                                                                      |
+| `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                             | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
+| `IFilterParams.filterChangedCallback`                                                       | `FilterDisplayParams.onModelChange`                                                                 |
+| `IFilterParams.filterModifiedCallback`                                                      | `FilterDisplayParams.onUiChange`                                                                    |
+| `IFloatingFilterParams.parentFilterInstance`, `IFloatingFilterParentCallback`               | `FloatingFilterDisplayParams.model` and `onModelChange`                                             |
+| `IFloatingFilterParams.currentParentModel`                                                  | `FloatingFilterDisplayParams.model`                                                                 |
+| `onFloatingFilterChanged()` on filter instances                                             | `onModelChange` in a `FloatingFilterDisplayComp`                                                    |
+| `applyModel()`, `getModelFromUi()` on filter instances                                      | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
+| The `getModel`, `setModel`, `isFilterActive` and `doesFilterPass` methods of `IMultiFilter` | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
 
 {% if isFramework("react") %}
 

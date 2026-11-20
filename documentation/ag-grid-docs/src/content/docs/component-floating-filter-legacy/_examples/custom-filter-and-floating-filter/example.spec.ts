@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { dismissValidationOverlay, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -18,6 +18,7 @@ test.agExample(import.meta, () => {
                 'AG-17785: React custom floating filter emits #286'
             );
 
+            await dismissValidationOverlay(page);
             // Only the two Michael Phelps rows have total > 7 in the dataset.
             await agIdFor.floatingFilter('total').locator('input').fill('7');
 

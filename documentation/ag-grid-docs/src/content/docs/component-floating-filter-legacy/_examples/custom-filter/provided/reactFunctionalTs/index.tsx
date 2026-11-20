@@ -10,7 +10,7 @@ import NumberFilterComponent from './numberFilterComponent';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations({ suppress: [348] });
+    enableDevValidations();
 }
 
 const modules = [CustomFilterModule, ClientSideRowModelModule];

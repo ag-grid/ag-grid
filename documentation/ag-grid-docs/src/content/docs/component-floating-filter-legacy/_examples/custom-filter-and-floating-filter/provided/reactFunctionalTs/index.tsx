@@ -17,7 +17,7 @@ import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations({ suppress: [348] });
+    enableDevValidations();
 }
 
 const modules = [TextFilterModule, CustomFilterModule, NumberFilterModule, ClientSideRowModelModule];

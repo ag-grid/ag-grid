@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { dismissValidationOverlay, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.typescript(
@@ -17,6 +17,7 @@ test.agExample(import.meta, () => {
             // The gold slider has max 7. Move the handle to 7 with the keyboard so only
             // rows with gold > 7 remain (Michael Phelps, 2008 - the sole row in the dataset).
             const handle = agIdFor.floatingFilter('gold').locator('.ui-slider-handle');
+            await dismissValidationOverlay(page);
             await handle.focus();
             for (let i = 0; i < 7; i++) {
                 await page.keyboard.press('ArrowRight');

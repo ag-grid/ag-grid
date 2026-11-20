@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { dismissValidationOverlay, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -10,6 +10,7 @@ test.agExample(import.meta, () => {
             // Michael Phelps appears at data indices 0, 1 and 2 (years 2008, 2004, 2012).
             await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 
+            await dismissValidationOverlay(page);
             // Open the custom Athlete filter and confirm its bespoke UI is shown.
             await agIdFor.headerFilterButton('athlete').click();
             await expect(page.locator('.person-filter')).toBeVisible();
@@ -40,6 +41,7 @@ test.agExample(import.meta, () => {
             // Before filtering the first row is Michael Phelps in 2008.
             await expect(agIdFor.cell('0', 'year')).toContainText('2008');
 
+            await dismissValidationOverlay(page);
             // Open the custom Year filter and confirm its preset-option UI is shown.
             await agIdFor.headerFilterButton('year').click();
             await expect(page.locator('.year-filter')).toBeVisible();
