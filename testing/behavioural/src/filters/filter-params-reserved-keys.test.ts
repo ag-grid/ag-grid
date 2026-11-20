@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     TestGridsManager,
     installFilterLayoutMock,
@@ -19,6 +20,9 @@ import { MultiFilterModule } from 'ag-grid-enterprise';
 
 /** The "grid-supplied param is ignored" warning. */
 const RESERVED_PARAM_WARNING_ID = 343;
+
+const isReservedParamWarning = (args: unknown[]) =>
+    args.some((arg) => String(arg).includes(`#${RESERVED_PARAM_WARNING_ID}`));
 
 class PassThroughFilter implements IFilterComp {
     public static lastParams: IFilterParams | undefined;
@@ -58,19 +62,21 @@ describe('filterParams keys that clash with grid-supplied params', () => {
 
     beforeEach(() => {
         PassThroughFilter.lastParams = undefined;
-        // Every clash raises the warning, which the behavioural setup would otherwise throw.
-        enableDevValidations({ throwOn: [] });
-        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        // Every clash raises the warning, which the behavioural setup would otherwise throw; any other diagnostic still does.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [RESERVED_PARAM_WARNING_ID] });
+        const warn = console.warn;
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+            if (!isReservedParamWarning(args)) {
+                warn(...args);
+            }
+        });
     });
     afterEach(() => {
         vi.restoreAllMocks();
         gridsManager.reset();
     });
 
-    const reservedParamWarnings = () =>
-        warnSpy.mock.calls.filter((args: unknown[]) =>
-            args.some((arg) => String(arg).includes(`#${RESERVED_PARAM_WARNING_ID}`))
-        );
+    const reservedParamWarnings = () => warnSpy.mock.calls.filter(isReservedParamWarning);
 
     const createGrid = (athleteColDef: ColDef, options?: Partial<GridOptions>): Promise<GridApi> =>
         gridsManager.createGridAndWait('grid1', {
@@ -162,6 +168,83 @@ describe('filterParams keys that clash with grid-supplied params', () => {
 
         expect(api.getColumn('athlete')!.getMinWidth()).toBe(96);
         expect(api.getDisplayedRowAtIndex(0)!.data).toEqual({ athlete: 'Michael Phelps', country: 'United States' });
+    });
+
+    test('a cellRendererParams "value" does not write into an object-valued cell', async () => {
+        const medals = { gold: 1 };
+        let rendererValue: unknown;
+        await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'medals',
+                    cellDataType: false,
+                    cellRenderer: (params: ICellRendererParams) => {
+                        rendererValue = params.value;
+                        return '';
+                    },
+                    cellRendererParams: { value: { gold: 99 } },
+                },
+            ],
+            rowData: [{ medals }],
+        });
+
+        expect(medals).toEqual({ gold: 1 });
+        expect(rendererValue).toBe(medals);
+    });
+
+    test('a primitive cellRendererParams "value" still overrides the cell value', async () => {
+        let rendererValue: unknown;
+        await createGrid({
+            cellRenderer: (params: ICellRendererParams) => {
+                rendererValue = params.value;
+                return '';
+            },
+            cellRendererParams: { value: 'custom' },
+        });
+
+        expect(rendererValue).toBe('custom');
+        expect(reservedParamWarnings()).toHaveLength(0);
+    });
+
+    test('cellRendererSelector params are checked against the grid-supplied params, not the merged ones', async () => {
+        let rendererContext: unknown;
+        const api = await createGrid({
+            cellRendererSelector: () => ({
+                component: (params: ICellRendererParams) => {
+                    rendererContext = params.context;
+                    return '';
+                },
+                params: { column: { minWidth: '6rem' }, context: { tenant: 'selector' } },
+            }),
+            cellRendererParams: { context: { tenant: 'params' } },
+        });
+
+        expect(api.getColumn('athlete')!.getMinWidth()).toBe(96);
+        expect(rendererContext).toEqual({ tenant: 'selector' });
+    });
+
+    test('a filterParams "model" does not replace the null model the grid supplies', async () => {
+        let displayModel: unknown = 'not initialised';
+        class DisplayComp {
+            private readonly gui = document.createElement('div');
+            public init(params: { model: unknown }): void {
+                displayModel = params.model;
+            }
+            public getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+        const api = await createGrid(
+            {
+                filter: { component: DisplayComp, doesFilterPass: () => true },
+                filterParams: { model: { filterType: 'custom' } },
+            },
+            { enableFilterHandlers: true }
+        );
+
+        await ColumnFilterHarness.open(api, 'athlete');
+
+        expect(displayModel).toBeNull();
     });
 
     test('a clashing headerComponentParams key does not change the live column', async () => {
