@@ -106,19 +106,12 @@ The following deprecated APIs have now been removed.
 
 ### Row Node
 
-- `firstChild` - removed, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
-- `lastChild` - removed, use `rowNode.parent?.childrenAfterSort?.at(-1) === rowNode` instead.
-- `childIndex` - removed, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
+- `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+- `lastChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.at(-1) === rowNode` instead.
+- `childIndex` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
 - `isFullWidthCell()` - removed, check `rowNode.detail`, then the `isFullWidthRow` grid option callback instead.
 
-The Server-Side Row Model does not populate `childrenAfterSort`, so there is no row node equivalent for `firstChild`, `lastChild` and `childIndex` there. Listen to the `modelUpdated` event instead.
-
-### Column
-
-- `getRight()` - removed, use `column.getLeft() + column.getActualWidth()` instead.
-- `isHovered()` - removed, use `api.isColumnHovered(column)` instead.
-- `getInstanceId()`, `isFieldContainsDots()`, `isTooltipFieldContainsDots()`, `isGreaterThanMax()`, `isAnyFunctionActive()` and `isAnyFunctionAllowed()` - removed from the `Column` interface, they were deprecated in v32 as internal methods and have no replacement.
-- `ColumnGroup.getPartId()` and `ProvidedColumnGroup.getInstanceId()` - removed, they were deprecated in v32 as internal methods and have no replacement.
+In the Server-Side Row Model only `firstChild` was ever set; `lastChild` and `childIndex` were not populated there. The Server-Side Row Model does not populate `childrenAfterSort`, so the replacements above do not apply. Listen to the `modelUpdated` event instead.
 
 ### Interfaces and Types
 
@@ -132,7 +125,7 @@ The Server-Side Row Model does not populate `childrenAfterSort`, so there is no 
 
 ### Events
 
-- Row node events `firstChildChanged`, `lastChildChanged` and `childIndexChanged` - removed, listen to the grid's `modelUpdated` event and read `rowNode.parent.childrenAfterSort` instead.
+- Row node events `firstChildChanged`, `lastChildChanged` and `childIndexChanged` - removed. With the Client-Side Row Model, listen to the grid's `modelUpdated` event and read `rowNode.parent.childrenAfterSort` instead. The Server-Side Row Model only ever dispatched `firstChildChanged`; listen to the `modelUpdated` event instead.
 
 ### Modules
 
