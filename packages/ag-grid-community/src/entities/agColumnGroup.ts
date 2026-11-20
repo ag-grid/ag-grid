@@ -210,7 +210,7 @@ export class AgColumnGroup<TValue = any>
     }
 
     public getPartId(): number {
-        this.warn(349);
+        this.deprecated(349);
         return this.partId;
     }
 

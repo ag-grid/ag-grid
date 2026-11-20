@@ -283,7 +283,7 @@ export class AgColumn<TValue = any>
     }
 
     public getInstanceId(): ColumnInstanceId {
-        this.warn(343);
+        this.deprecated(343);
         return this.instanceId;
     }
 
@@ -460,7 +460,7 @@ export class AgColumn<TValue = any>
     }
 
     public isFieldContainsDots(): boolean {
-        this.warn(344);
+        this.deprecated(344);
         return this.fieldPath !== null;
     }
 
@@ -473,7 +473,7 @@ export class AgColumn<TValue = any>
     }
 
     public isTooltipFieldContainsDots(): boolean {
-        this.warn(345);
+        this.deprecated(345);
         return this.hasTooltipFieldDots();
     }
 
@@ -665,24 +665,24 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
-        this.warn(350);
+        this.deprecated(350);
         return this.getSort() === 'asc';
     }
 
     /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
-        this.warn(351);
+        this.deprecated(351);
         return this.getSort() === 'desc';
     }
     /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        this.warn(352);
+        this.deprecated(352);
         return !this.getSort();
     }
 
     /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        this.warn(353);
+        this.deprecated(353);
         return this.getSort() != null;
     }
 
@@ -715,7 +715,7 @@ export class AgColumn<TValue = any>
     }
 
     public getRight(): number {
-        this.warn(354);
+        this.deprecated(354);
         // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
         return this.left! + this.actualWidth;
     }
@@ -949,7 +949,7 @@ export class AgColumn<TValue = any>
     }
 
     public isGreaterThanMax(width: number): boolean {
-        this.warn(346);
+        this.deprecated(346);
         return width > this.maxWidth;
     }
 
@@ -974,12 +974,12 @@ export class AgColumn<TValue = any>
     }
 
     public isAnyFunctionActive(): boolean {
-        this.warn(347);
+        this.deprecated(347);
         return this.isFunctionActive();
     }
 
     public isAnyFunctionAllowed(): boolean {
-        this.warn(348);
+        this.deprecated(348);
         return this.isFunctionAllowed();
     }
 
