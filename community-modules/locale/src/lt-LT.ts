@@ -846,6 +846,15 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelMaximize: 'Padidinti',
 
     ariaLabelRestore: 'Atkurti',
+    ariaLabelMoveAndResize: 'Perkelti ir keisti dydį',
+    ariaLabelNarrower: 'Siauresnis',
+    ariaLabelWider: 'Platesnis',
+    ariaLabelShorter: 'Žemesnis',
+    ariaLabelTaller: 'Aukštesnis',
+    ariaDialogMoveInstructions:
+        'Rodyklių klavišais perkeliamas dialogo langas. Spauskite Enter, kad baigtumėte, arba Esc, kad atšauktumėte.',
+    ariaDialogMoveResizeInstructions:
+        'Rodyklių klavišais perkeliamas dialogo langas, o su Shift ir rodyklių klavišais keičiamas jo dydis. Spauskite Enter, kad baigtumėte, arba Esc, kad atšauktumėte.',
     ariaLabelColorPickerSpectrum: 'Sodrumas ir ryškumas',
     ariaValueColorPickerSpectrum: 'Sodrumas ${variable} %, ryškumas ${variable} %',
     ariaLabelColorPickerHue: 'Atspalvis',

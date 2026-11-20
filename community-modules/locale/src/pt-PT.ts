@@ -828,6 +828,15 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaLabelClose: 'Fechar',
     ariaLabelMaximize: 'Maximizar',
     ariaLabelRestore: 'Restaurar',
+    ariaLabelMoveAndResize: 'Mover e redimensionar',
+    ariaLabelNarrower: 'Mais estreito',
+    ariaLabelWider: 'Mais largo',
+    ariaLabelShorter: 'Mais baixo',
+    ariaLabelTaller: 'Mais alto',
+    ariaDialogMoveInstructions:
+        'As teclas de seta movem a caixa de diálogo. Pressione Enter para concluir ou Esc para cancelar.',
+    ariaDialogMoveResizeInstructions:
+        'As teclas de seta movem a caixa de diálogo e, com Shift, redimensionam-na. Pressione Enter para concluir ou Esc para cancelar.',
     ariaLabelColorPickerSpectrum: 'Saturação e brilho',
     ariaValueColorPickerSpectrum: 'Saturação ${variable}%, brilho ${variable}%',
     ariaLabelColorPickerHue: 'Matiz',

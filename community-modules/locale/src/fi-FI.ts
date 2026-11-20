@@ -828,6 +828,15 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaLabelClose: 'Sulje',
     ariaLabelMaximize: 'Suurenna',
     ariaLabelRestore: 'Palauta',
+    ariaLabelMoveAndResize: 'Siirrä ja muuta kokoa',
+    ariaLabelNarrower: 'Kapeampi',
+    ariaLabelWider: 'Leveämpi',
+    ariaLabelShorter: 'Matalampi',
+    ariaLabelTaller: 'Korkeampi',
+    ariaDialogMoveInstructions:
+        'Nuolinäppäimet siirtävät valintaikkunaa. Paina Enteriä lopettaaksesi tai Esc-näppäintä peruuttaaksesi.',
+    ariaDialogMoveResizeInstructions:
+        'Nuolinäppäimet siirtävät valintaikkunaa, ja Vaihto-näppäimen kanssa ne muuttavat sen kokoa. Paina Enteriä lopettaaksesi tai Esc-näppäintä peruuttaaksesi.',
     ariaLabelColorPickerSpectrum: 'Kylläisyys ja kirkkaus',
     ariaValueColorPickerSpectrum: 'Kylläisyys ${variable} %, kirkkaus ${variable} %',
     ariaLabelColorPickerHue: 'Sävy',

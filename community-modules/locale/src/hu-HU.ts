@@ -832,6 +832,15 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaLabelClose: 'Bezárás',
     ariaLabelMaximize: 'Teljes méret',
     ariaLabelRestore: 'Előző méret',
+    ariaLabelMoveAndResize: 'Mozgatás és átméretezés',
+    ariaLabelNarrower: 'Keskenyebb',
+    ariaLabelWider: 'Szélesebb',
+    ariaLabelShorter: 'Alacsonyabb',
+    ariaLabelTaller: 'Magasabb',
+    ariaDialogMoveInstructions:
+        'A nyílbillentyűk mozgatják a párbeszédpanelt. A befejezéshez nyomja meg az Entert, a megszakításhoz az Esc billentyűt.',
+    ariaDialogMoveResizeInstructions:
+        'A nyílbillentyűk mozgatják a párbeszédpanelt, a Shift billentyűvel együtt pedig átméretezik. A befejezéshez nyomja meg az Entert, a megszakításhoz az Esc billentyűt.',
     ariaLabelColorPickerSpectrum: 'Telítettség és fényerő',
     ariaValueColorPickerSpectrum: 'Telítettség ${variable}%, fényerő ${variable}%',
     ariaLabelColorPickerHue: 'Színárnyalat',

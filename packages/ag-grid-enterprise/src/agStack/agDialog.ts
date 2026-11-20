@@ -16,6 +16,7 @@ import {
     _setDisplayed,
 } from 'ag-stack';
 
+import { AgDialogMoveResizeFeature } from './agDialogMoveResizeFeature';
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
 
@@ -80,6 +81,8 @@ export class AgDialog<
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
+    private moveResizeFeature:
+        AgDialogMoveResizeFeature<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> | undefined;
 
     private readonly lastPosition = {
         x: 0,
@@ -138,6 +141,19 @@ export class AgDialog<
         }
         if (resizable) {
             this.setResizable(resizable);
+        }
+        if ((movable || resizable) && !this.config.hideTitleBar) {
+            this.moveResizeFeature = this.createManagedBean(
+                new AgDialogMoveResizeFeature<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>(
+                    {
+                        eDialog: eGui,
+                        eTitleBar: this.eTitleBar,
+                        eTitleBarButtons: this.eTitleBarButtons,
+                        positionableFeature: this.positionableFeature,
+                        onStart: () => this.setMaximized(false),
+                    }
+                )
+            );
         }
 
         if (!modal) {
@@ -235,10 +251,12 @@ export class AgDialog<
 
     public setResizable(resizable: boolean | ResizableStructure) {
         this.positionableFeature.setResizable(resizable);
+        this.moveResizeFeature?.refreshAvailability();
     }
 
     public setMovable(movable: boolean) {
         this.positionableFeature.setMovable(movable, this.eTitleBar);
+        this.moveResizeFeature?.refreshAvailability();
     }
 
     public setMaximizable(maximizable: boolean) {

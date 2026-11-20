@@ -18,7 +18,7 @@ describe('chart Advanced Settings dialog', () => {
     afterAll(() => canvasPolyfill.reset());
     afterEach(() => gridsManager.reset());
 
-    test('Tab cycles between the settings and the Close button without leaving the dialog; Enter on Close closes it', async () => {
+    test('Tab cycles through the settings and the title bar buttons without leaving the dialog; Enter on Close closes it', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 { field: 'country', chartDataType: 'category' },
@@ -46,6 +46,7 @@ describe('chart Advanced Settings dialog', () => {
             return el!;
         });
         const dialog = settings.closest<HTMLElement>('.ag-dialog')!;
+        const moveAndResizeButton = within(dialog).getByRole('button', { name: 'Move and Resize' });
         const closeButton = within(dialog).getByRole('button', { name: 'Close' });
 
         for (let i = 0; i < 10 && settings.contains(document.activeElement); ++i) {
@@ -54,7 +55,11 @@ describe('chart Advanced Settings dialog', () => {
         expect(closeButton).toHaveFocus();
 
         await user.tab({ shift: true });
+        expect(moveAndResizeButton).toHaveFocus();
+        await user.tab({ shift: true });
         expect(settings).toContainElement(document.activeElement as HTMLElement);
+        await user.tab();
+        expect(moveAndResizeButton).toHaveFocus();
         await user.tab();
         expect(closeButton).toHaveFocus();
         await user.tab();

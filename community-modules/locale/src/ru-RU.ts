@@ -845,6 +845,15 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelMaximize: 'Развернуть',
 
     ariaLabelRestore: 'Восстановить',
+    ariaLabelMoveAndResize: 'Переместить и изменить размер',
+    ariaLabelNarrower: 'Уменьшить ширину',
+    ariaLabelWider: 'Увеличить ширину',
+    ariaLabelShorter: 'Уменьшить высоту',
+    ariaLabelTaller: 'Увеличить высоту',
+    ariaDialogMoveInstructions:
+        'Клавиши со стрелками перемещают диалоговое окно. Нажмите Enter, чтобы завершить, или Esc, чтобы отменить.',
+    ariaDialogMoveResizeInstructions:
+        'Клавиши со стрелками перемещают диалоговое окно, а вместе с Shift изменяют его размер. Нажмите Enter, чтобы завершить, или Esc, чтобы отменить.',
     ariaLabelColorPickerSpectrum: 'Насыщенность и яркость',
     ariaValueColorPickerSpectrum: 'Насыщенность ${variable}%, яркость ${variable}%',
     ariaLabelColorPickerHue: 'Оттенок',

@@ -823,6 +823,15 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelClose: 'بند کریں',
     ariaLabelMaximize: 'بڑا کریں',
     ariaLabelRestore: 'بحال کریں',
+    ariaLabelMoveAndResize: 'منتقل کریں اور سائز تبدیل کریں',
+    ariaLabelNarrower: 'کم چوڑا',
+    ariaLabelWider: 'زیادہ چوڑا',
+    ariaLabelShorter: 'کم اونچا',
+    ariaLabelTaller: 'زیادہ اونچا',
+    ariaDialogMoveInstructions:
+        'تیر والی کلیدیں ڈائیلاگ کو منتقل کرتی ہیں۔ ختم کرنے کے لیے Enter یا منسوخ کرنے کے لیے Esc دبائیں۔',
+    ariaDialogMoveResizeInstructions:
+        'تیر والی کلیدیں ڈائیلاگ کو منتقل کرتی ہیں، اور Shift کے ساتھ تیر والی کلیدیں اس کا سائز تبدیل کرتی ہیں۔ ختم کرنے کے لیے Enter یا منسوخ کرنے کے لیے Esc دبائیں۔',
     ariaLabelColorPickerSpectrum: 'سیچوریشن اور چمک',
     ariaValueColorPickerSpectrum: 'سیچوریشن ${variable}%، چمک ${variable}%',
     ariaLabelColorPickerHue: 'رنگت',

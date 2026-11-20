@@ -230,6 +230,63 @@ export class AgPositionableFeature<
         return this.position;
     }
 
+    public isMovable(): boolean {
+        return this.movable;
+    }
+
+    /** The smallest height the element can be resized to. */
+    public getMinHeight(): number {
+        return this.minHeight ?? 0;
+    }
+
+    /** Moves the element by a step, as dragging it would, kept within its popup parent. */
+    public moveBy(x: number, y: number): void {
+        if (!this.positioned) {
+            this.initialisePosition();
+        }
+        const { position } = this;
+        this.offsetElement(position.x + x, position.y + y);
+    }
+
+    /** Resizes the element from its right and bottom edges, within its minimum size and the space available. */
+    public resizeBy(width: number, height: number): void {
+        if (!this.positioned) {
+            this.initialisePosition();
+        }
+        if (width) {
+            this.setWidth(this.getWidth()! + width);
+        }
+        if (height) {
+            this.setHeight(this.getHeight()! + height);
+        }
+        this.dispatchLocalEvent({ type: 'resize' });
+    }
+
+    /** Whether `moveBy` would move the element, found by trying the step and putting it back. */
+    public canMoveBy(x: number, y: number): boolean {
+        const { x: startX, y: startY } = this.position;
+        this.moveBy(x, y);
+        const moved = this.position.x !== startX || this.position.y !== startY;
+        this.offsetElement(startX, startY);
+        return moved;
+    }
+
+    /** Whether `resizeBy` would change the element's size, found by trying the step and putting it back. */
+    public canResizeBy(width: number, height: number): boolean {
+        const startWidth = this.getWidth()!;
+        const startHeight = this.getHeight()!;
+        if (width) {
+            this.setWidth(startWidth + width);
+        }
+        if (height) {
+            this.setHeight(startHeight + height);
+        }
+        const resized = this.getWidth() !== startWidth || this.getHeight() !== startHeight;
+        this.setWidth(startWidth);
+        this.setHeight(startHeight);
+        return resized;
+    }
+
     public setMovable(movable: boolean, moveElement: HTMLElement) {
         if (!this.config.popup || movable === this.movable) {
             return;

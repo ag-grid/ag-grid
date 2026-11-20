@@ -841,6 +841,14 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelMaximize: 'ขยายใหญ่สุด',
 
     ariaLabelRestore: 'คืนค่า',
+    ariaLabelMoveAndResize: 'ย้ายและปรับขนาด',
+    ariaLabelNarrower: 'แคบลง',
+    ariaLabelWider: 'กว้างขึ้น',
+    ariaLabelShorter: 'เตี้ยลง',
+    ariaLabelTaller: 'สูงขึ้น',
+    ariaDialogMoveInstructions: 'ปุ่มลูกศรใช้ย้ายกล่องโต้ตอบ กด Enter เพื่อเสร็จสิ้น หรือกด Esc เพื่อยกเลิก',
+    ariaDialogMoveResizeInstructions:
+        'ปุ่มลูกศรใช้ย้ายกล่องโต้ตอบ และกด Shift ร่วมกับปุ่มลูกศรเพื่อปรับขนาด กด Enter เพื่อเสร็จสิ้น หรือกด Esc เพื่อยกเลิก',
     ariaLabelColorPickerSpectrum: 'ความอิ่มตัวและความสว่าง',
     ariaValueColorPickerSpectrum: 'ความอิ่มตัว ${variable}%, ความสว่าง ${variable}%',
     ariaLabelColorPickerHue: 'เฉดสี',
