@@ -1,7 +1,7 @@
 import { Collapsible } from '@ag-website-shared/components/collapsible/Collapsible';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './LandingPageFAQ.module.scss';
@@ -23,14 +23,22 @@ interface Props {
 }
 
 const FAQItem: FunctionComponent<FAQItemProps> = ({ itemData, isOpen, onClick, analyticsEventName }) => {
+    const answerId = useId();
+
     return (
         <div className={classnames(styles.questionContainer, `plausible-event-name=${analyticsEventName}`)}>
-            <div className={styles.titleContainer} onClick={onClick}>
+            <button
+                type="button"
+                className={classnames('button-style-none', styles.titleContainer)}
+                aria-expanded={isOpen}
+                aria-controls={answerId}
+                onClick={onClick}
+            >
                 <span className={styles.question}>{itemData.question}</span>
                 <Icon svgClasses={classnames(styles.expandIcon, { [styles.iconDown]: isOpen })} name={'chevronRight'} />
-            </div>
+            </button>
 
-            <Collapsible isOpen={isOpen}>
+            <Collapsible id={answerId} isOpen={isOpen} ariaHidden={!isOpen}>
                 <div className={styles.answerContainer} dangerouslySetInnerHTML={{ __html: itemData.answerHtml }} />
             </Collapsible>
         </div>
