@@ -16,7 +16,14 @@ import type {
     RowNode,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetColumnState } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _getEnableRowPinning,
+    _getRowNode,
+    _normalizeSortType,
+    _resetColumnState,
+} from 'ag-grid-community';
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -175,7 +182,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pinRowSubMenu': {
-                    const enableRowPinning = gos.get('enableRowPinning');
+                    const enableRowPinning = _getEnableRowPinning(gos);
                     const subMenu: string[] = [];
                     const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
 
@@ -191,7 +198,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         subMenu.push('pinBottom');
                     }
 
-                    return pinnedRowModel?.isManual()
+                    return enableRowPinning && pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinRow', 'Pin Row'),
                               icon: _createIconNoSpan('rowPin', beans, column),

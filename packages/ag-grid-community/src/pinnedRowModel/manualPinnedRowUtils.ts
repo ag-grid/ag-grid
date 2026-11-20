@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';
+import { _getGrandTotalRow } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export class PinnedRows {
@@ -131,13 +131,7 @@ const _isDisplayedAfterFilterCSRM = (node: RowNode): boolean => {
 
 /** Expect to be passed the source node, not the pinned node */
 export const _shouldHidePinnedRows = (beans: BeanCollection, node: RowNode): boolean => {
-    const { gos, rowModel, filterManager } = beans;
-
-    if (_isServerSideRowModel(gos, rowModel)) {
-        // For SSRM the best we can do for now is check if the node is in the cache.
-        // This will let us display the node when a group is collapsed.
-        return !rowModel.getRowNode(node.id!);
-    }
+    const { gos, filterManager } = beans;
 
     if (gos.get('pivotMode') && !node.group) {
         return true;

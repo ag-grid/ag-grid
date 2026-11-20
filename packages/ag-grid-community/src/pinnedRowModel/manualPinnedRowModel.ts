@@ -6,6 +6,7 @@ import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entiti
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import {
     _addRowHeightChangedListener,
+    _getEnableRowPinning,
     _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getRowHeightForNode,
@@ -35,7 +36,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
             const sources: RowNode[] = [];
-            if (isRowPinned && gos.get('enableRowPinning')) {
+            if (isRowPinned && _getEnableRowPinning(gos)) {
                 beans.rowModel.forEachNode((node) => this.pinLoaded(node, isRowPinned(node), sources), true);
             }
             this.dispatchPinningChanged(sources);
