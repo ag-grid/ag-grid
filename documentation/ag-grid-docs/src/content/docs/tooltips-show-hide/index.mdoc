@@ -4,6 +4,8 @@ title: "Showing & Hiding Tooltips"
 
 By default, tooltips show after 2 seconds and have no timed hide. They stay open while their element or the tooltip is hovered, or their element has focus in a focus-enabled mode. Press `Escape` to dismiss them.
 
+## Show and Hide Delay
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     tooltipShowDelay: 0,
@@ -25,7 +27,7 @@ const gridOptions = {
 Setting delays will have no effect if using Browser Tooltips as Browser Tooltips are controlled by the browser and not the grid.
 {% /note %}
 
-## Keyboard Focus
+## Tooltip Trigger
 
 `tooltipTrigger` controls what shows configured tooltips, including cells, headers, menu items and tool panel items:
 
@@ -36,21 +38,22 @@ Setting delays will have no effect if using Browser Tooltips as Browser Tooltips
 ```{% frameworkTransform=true %}
 const gridOptions = {
     tooltipTrigger: 'hoverOrFocus',
-    tooltipShowDelay: 500,
-    defaultColDef: {
-        tooltip: true,
-        headerTooltip: true,
-    },
 };
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipTrigger", "getTooltipAriaDescription"] /%}
+{% gridExampleRunner title="Tooltip Trigger" name="tooltip-trigger" exampleHeight=200 /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipTrigger"] /%}
 
 Built-in control tooltips ignore `tooltipTrigger`. Non-focusable header icons and resize handles do not show their hints on header focus. See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for keyboard actions, including resizing.
 
 Existing accessible names are preserved; identical tooltip text is not repeated as a description. In combined mode, the most recently hovered or focused element owns the tooltip; moving away does not restore an earlier element's tooltip.
 
+### Screen Readers
+
 Tooltip text is available to screen readers immediately on focus, before the visual delay. For custom tooltips with structured values, return plain text from `getTooltipAriaDescription`: `undefined` uses the resolved textual value, `null` or `''` omits the focus description.
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["getTooltipAriaDescription"] /%}
 
 ## Interactive Tooltips
 
@@ -68,13 +71,9 @@ const gridOptions = {
 }
 ```
 
+The Age and Year tooltips below are plain text. The Athlete tooltip is a [Custom Tooltip Component](./component-tooltip/) with its own controls: its Submit button updates the hovered row's Athlete cell, then closes the tooltip by calling `hideTooltipCallback()`.
+
 {% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
-
-### Custom Content
-
-A [Custom Tooltip Component](./component-tooltip/) can contain its own controls. Below, the tooltip's Submit button updates the hovered row's Athlete cell, then closes the tooltip by calling `hideTooltipCallback()`.
-
-{% gridExampleRunner title="Custom Tooltip Interaction" name="custom-tooltip-interaction" /%}
 
 ## Touch Devices
 

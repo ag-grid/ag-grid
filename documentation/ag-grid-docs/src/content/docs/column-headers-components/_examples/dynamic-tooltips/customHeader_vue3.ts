@@ -15,7 +15,7 @@ export default defineComponent({
     <div v-if="params.enableFilterButton" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
       <i class="fa" :class="params.menuIcon"></i>
     </div>
-    <div ref="label" class="customHeaderLabel">{{ params.displayName }}</div>
+    <div class="customHeaderLabel">{{ params.displayName }}</div>
     <div v-if="params.enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort" class="customSortDownLabel">
       <i class="fa fa-long-arrow-alt-down"></i></div>
     <div v-if="params.enableSorting" @click="onSortRequested('desc', $event)" :class="descSort" class="customSortUpLabel">
@@ -36,13 +36,10 @@ export default defineComponent({
     mounted() {
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
-        this.params.setTooltip(this.params.displayName, () => {
-            const label = this.$refs.label as HTMLElement | undefined;
-            if (!label) {
-                return false;
-            }
-            return label.scrollWidth > label.clientWidth;
-        });
+        this.params.setTooltip(
+            'Click the cross to remove the sort',
+            () => this.params.column.getSortDef()?.direction != null
+        );
     },
     methods: {
         onMenuClicked() {

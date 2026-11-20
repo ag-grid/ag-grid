@@ -60,11 +60,15 @@ test.agExample(import.meta, () => {
 
         // At the leaf level autoGroupColumnDef.tooltip applies instead of the inherited
         // group tooltip.
+        const athlete = (await page.locator('.ag-row-level-2 .ag-cell[col-id="athlete"]').first().innerText()).trim();
+        expect(athlete).not.toBe('');
+
         await autoGroupCellAtLevel(page, 2).hover();
 
         const tooltip = page.locator('.ag-tooltip');
         await expect(tooltip).toBeVisible();
-        await expect(tooltip).toContainText('Athlete:');
+        await expect(tooltip).toHaveText(`Athlete: ${athlete}`);
+        await expect(tooltip).not.toContainText('undefined');
     });
 
     test.eachFramework(

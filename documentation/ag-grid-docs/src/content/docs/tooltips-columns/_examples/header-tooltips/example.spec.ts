@@ -17,6 +17,10 @@ test.agExample(import.meta, () => {
         await agIdFor.headerCell('country').hover();
         await expect(tooltip).toHaveText('Country of Origin');
 
+        // A callback receives the displayed header name as value.
+        await agIdFor.headerCell('sport').hover();
+        await expect(tooltip).toHaveText('Column: Sport');
+
         // Column groups accept headerTooltip too.
         await page.locator('.ag-header-group-cell', { hasText: 'Results' }).hover();
         await expect(tooltip).toHaveText('Medals won at the event');

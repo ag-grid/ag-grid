@@ -2358,14 +2358,14 @@
         "tooltipTrigger": {
             "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
             "more": {
-                "name": "Keyboard Focus",
-                "url": "./tooltips-show-hide/#keyboard-focus"
+                "name": "Tooltip Trigger",
+                "url": "./tooltips-show-hide/#tooltip-trigger"
             }
         },
         "getTooltipAriaDescription": {
             "more": {
-                "name": "Keyboard Focus",
-                "url": "./tooltips-show-hide/#keyboard-focus"
+                "name": "Screen Readers",
+                "url": "./tooltips-show-hide/#screen-readers"
             }
         },
         "tooltipInteraction": {

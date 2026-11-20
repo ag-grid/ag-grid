@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, TooltipCallbackParams } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, HeaderTooltipCallbackParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -14,20 +14,17 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 
-const columnDefs: ColDef[] = [
+const columnDefs: (ColDef | ColGroupDef)[] = [
+    { field: 'athlete', headerTooltip: "The athlete's full name" },
+    { field: 'country', headerName: 'Country of Origin', headerTooltip: true },
+    { field: 'sport', headerTooltip: ({ value }: HeaderTooltipCallbackParams) => `Column: ${value}` },
     {
-        field: 'athlete',
-        // the tooltip shows another field of the same row
-        tooltip: ({ data }: TooltipCallbackParams) => data?.country,
-    },
-    { field: 'country' },
-    {
-        field: 'year',
-        tooltip: ({ value }: TooltipCallbackParams) => `Games held in ${value}`,
-    },
-    {
-        field: 'sport',
-        headerTooltip: ({ value }: TooltipCallbackParams) => `Column: ${value}`,
+        headerName: 'Results',
+        headerTooltip: 'Medals won at the event',
+        children: [
+            { field: 'gold', headerTooltip: 'Gold medals won' },
+            { field: 'total', headerTooltip: 'Total medals won' },
+        ],
     },
 ];
 

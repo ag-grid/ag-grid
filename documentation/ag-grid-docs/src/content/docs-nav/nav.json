@@ -1272,8 +1272,8 @@
                             "children": [
                                 {
                                     "type": "item",
-                                    "title": "Built-in Control Tooltips",
-                                    "path": "tooltips-built-in"
+                                    "title": "Column Tooltips",
+                                    "path": "tooltips-columns"
                                 },
                                 {
                                     "type": "item",
@@ -1289,6 +1289,11 @@
                                     "type": "item",
                                     "title": "Custom Tooltip Component",
                                     "path": "component-tooltip"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Built-in Control Tooltips",
+                                    "path": "tooltips-built-in"
                                 }
                             ]
                         },

@@ -14,14 +14,13 @@ test.agExample(import.meta, () => {
         await expect(tooltip).toBeVisible();
         await expect(tooltip).toHaveText(athlete);
 
-        // With a valueFormatter, tooltip: true shows the formatted value.
-        const total = (await agIdFor.cell('0', 'total').innerText()).trim();
-        expect(total).toMatch(/medals$/);
-        await agIdFor.cell('0', 'total').hover();
-        await expect(tooltip).toHaveText(total);
-
         // A string shows fixed text.
-        await agIdFor.cell('0', 'age').hover();
-        await expect(tooltip).toHaveText('Age at the time of the event');
+        await agIdFor.cell('0', 'country').hover();
+        await expect(tooltip).toHaveText('The country the athlete represents');
+
+        // A callback generates the content.
+        const year = (await agIdFor.cell('0', 'year').innerText()).trim();
+        await agIdFor.cell('0', 'year').hover();
+        await expect(tooltip).toHaveText(`Games held in ${year}`);
     });
 });

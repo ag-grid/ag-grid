@@ -12,7 +12,7 @@ export default defineComponent({
     },
     template: `
         <div class="ag-header-group-cell-label">
-            <div ref="label" class="customHeaderLabel">{{params.displayName}}</div>
+            <div class="customHeaderLabel">{{params.displayName}}</div>
             <div class="customExpandButton" :class="{expanded : groupExpanded, collapsed : !groupExpanded}" v-on:click="expandOrCollapse"><i class="fa fa-arrow-right"></i></div>
         </div>
     `,
@@ -26,13 +26,10 @@ export default defineComponent({
         this.params.columnGroup
             .getProvidedColumnGroup()
             .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
-        this.params.setTooltip(this.params.displayName, () => {
-            const label = this.$refs.label as HTMLElement | undefined;
-            if (!label) {
-                return false;
-            }
-            return label.scrollWidth > label.clientWidth;
-        });
+        this.params.setTooltip(
+            'Expand the group to show more columns',
+            () => !this.params.columnGroup.getProvidedColumnGroup().isExpanded()
+        );
         this.syncExpandButtons();
     },
     methods: {

@@ -4,6 +4,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Pagination focus renders custom control params', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
+        await page.getByLabel('Use custom component', { exact: true }).check();
 
         const nextPage = page.getByRole('button', { name: 'Next Page', exact: true });
         const tooltip = page.locator('[role="tooltip"]:not(.ag-tooltip-hiding)');
@@ -20,6 +21,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Sidebar focus uses its configured tooltip rather than its label', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
+        await page.getByLabel('Use custom component', { exact: true }).check();
 
         const columnsTab = page.getByRole('tab', { name: 'Columns', exact: true });
         await columnsTab.focus();
@@ -36,6 +38,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Nested header controls replace the enclosing header tooltip', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
+        await page.getByLabel('Use custom component', { exact: true }).check();
 
         const header = agIdFor.headerCell('athlete');
         const tooltip = page.locator('[role="tooltip"]:not(.ag-tooltip-hiding)');
@@ -48,15 +51,24 @@ test.agExample(import.meta, () => {
         await expect(tooltip).toHaveCount(1);
     });
 
-    test.eachFramework('Custom rendering can be replaced with the default component', async ({ page }) => {
+    test.eachFramework('Custom rendering replaces the default component when enabled', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await page.getByLabel('Use custom component', { exact: true }).uncheck();
-        await page.getByRole('button', { name: 'Next Page', exact: true }).focus();
+        const nextPage = page.getByRole('button', { name: 'Next Page', exact: true });
         const tooltip = page.locator('[role="tooltip"]:not(.ag-tooltip-hiding)');
+        await expect(page.getByLabel('Use custom component', { exact: true })).not.toBeChecked();
+        await nextPage.focus();
         await expect(tooltip).toHaveText('Next Page');
         await expect(page.locator('.control-tooltip')).toHaveCount(0);
+
+        await page.keyboard.press('Escape');
+        await expect(tooltip).toHaveCount(0);
+
+        await page.getByLabel('Use custom component', { exact: true }).check();
+        await nextPage.focus();
+        await expect(tooltip).toContainText('pagination / nextPage');
+        await expect(page.locator('.control-tooltip')).toHaveCount(1);
     });
 
     test.eachFramework(
@@ -79,7 +91,7 @@ test.agExample(import.meta, () => {
 
             await page.getByLabel('Suppress built-in tooltips', { exact: true }).uncheck();
             await nextPage.focus();
-            await expect(tooltip).toContainText('pagination / nextPage');
+            await expect(tooltip).toContainText('Next Page');
         }
     );
 });

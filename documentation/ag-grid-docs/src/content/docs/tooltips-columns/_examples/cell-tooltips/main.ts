@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, TooltipCallbackParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -16,12 +16,8 @@ ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', tooltip: true },
-    {
-        field: 'total',
-        valueFormatter: ({ value }: ValueFormatterParams) => `${value} medals`,
-        tooltip: true,
-    },
-    { field: 'age', tooltip: 'Age at the time of the event' },
+    { field: 'country', tooltip: 'The country the athlete represents' },
+    { field: 'year', tooltip: ({ value }: TooltipCallbackParams) => `Games held in ${value}` },
 ];
 
 let gridApi: GridApi<IOlympicData>;

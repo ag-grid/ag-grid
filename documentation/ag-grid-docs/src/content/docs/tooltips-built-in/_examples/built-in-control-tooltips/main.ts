@@ -49,7 +49,6 @@ const gridOptions: GridOptions = {
     sideBar: { toolPanels: ['columns'] },
     suppressMenuHide: true,
     components: { customBuiltInTooltip: CustomBuiltInTooltip },
-    builtInTooltipComponent: 'customBuiltInTooltip',
     builtInTooltipComponentParams: { heading: 'Grid control' },
 };
 

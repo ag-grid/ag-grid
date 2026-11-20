@@ -2,41 +2,32 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    RowApiModule,
     TooltipModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+
+import { CustomTooltip } from './customTooltip_typescript';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule, RowApiModule]);
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Athlete',
         field: 'athlete',
-        tooltipComponentParams: { color: '#55AA77' },
-        tooltip: ({ data }) => data?.country,
-        headerTooltip: 'Tooltip for Athlete Column Header',
+        minWidth: 150,
+        tooltip: true,
+        tooltipComponent: CustomTooltip,
+        tooltipComponentParams: { type: 'success' },
     },
-    {
-        field: 'age',
-        tooltip: 'Create any fixed message, e.g. This is the Athlete’s Age ',
-        headerTooltip: 'Tooltip for Age Column Header',
-    },
-    {
-        field: 'year',
-        tooltip: (p) => 'This is a dynamic tooltip using the value of ' + p.value,
-        headerTooltip: 'Tooltip for Year Column Header',
-    },
-    {
-        field: 'sport',
-        tooltip: 'Tooltip text about Sport should go here',
-        headerTooltip: 'Tooltip for Sport Column Header',
-    },
+    { field: 'age', minWidth: 130, tooltip: 'Create any fixed message, e.g. This is the Athlete’s Age' },
+    { field: 'year', tooltip: ({ value }) => `This is a dynamic tooltip using the value of ${value}` },
+    { field: 'sport' },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -46,8 +37,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    tooltipShowDelay: 500,
+
     tooltipInteraction: true,
+    tooltipShowDelay: 500,
+    // set rowData to null or undefined to show loading panel by default
+    rowData: null,
     columnDefs: columnDefs,
 };
 

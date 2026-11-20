@@ -2,122 +2,35 @@
 title: "Tooltips"
 ---
 
-Tooltips display additional information for cells and column headers on hover, keyboard focus or touch.
+Tooltips display additional information for cells, column headers and the grid's own controls on hover, keyboard focus or touch.
 
-Use `tooltip: true` for the common case where the tooltip should match the displayed cell value: `valueFormatted` when present, otherwise `value`, whatever their source — a [Value Getter](./value-getters/), [Aggregation](./aggregation/) or a [Calculated Column](./calculated-columns/). A string value shows fixed text instead.
+The example below combines cell and header tooltips using fixed text, callbacks and a custom component on Total Medals, alongside the built-in tooltips on the pagination, column menu and side bar, all shown on hover or keyboard focus.
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'athlete', tooltip: true },
-        { field: 'country', tooltip: 'The country the athlete represents' },
-    ],
-};
-```
+{% gridExampleRunner title="Tooltips" name="tooltips-demo" /%}
 
-{% gridExampleRunner title="Cell Tooltips" name="tooltips" /%}
+## Column Tooltips
 
-{% apiDocumentation source="column-properties/properties.json" section="tooltips" names=["tooltip"] /%}
+Set what cell and header tooltips show using fixed text, the cell value or a callback. [Column Tooltips](./tooltips-columns/) also covers blank values, truncated text and row groups.
 
-`tooltip: false` disables cell tooltip content supplied by `tooltip`, `tooltipField` or `tooltipValueGetter`. Tooltips registered at runtime with [`setTooltip`](#dynamic-tooltips) and grid-owned validation or formula error tooltips remain available.
+## Showing & Hiding
 
-The grid's own controls show [Built-in Control Tooltips](./tooltips-built-in/). For tooltip behaviour and customisation, see:
+Control when tooltips appear with [Show and Hide Delay](./tooltips-show-hide/) and the [Tooltip Trigger](./tooltips-show-hide/#tooltip-trigger), which selects hover, keyboard focus or both. [Interactive Tooltips](./tooltips-show-hide/#interactive-tooltips) let users select text or use controls inside a tooltip, and [Touch Devices](./tooltips-show-hide/#touch-devices) show tooltips on long press.
 
-- [Show and Hide Delay](./tooltips-show-hide/) {% #show-and-hide-delay %}
-- [Keyboard Focus](./tooltips-show-hide/#keyboard-focus) {% #keyboard-focus %}
-- [Positioning](./tooltips-positioning/) {% #positioning %}
-- [Arrows](./tooltips-positioning/#arrows) {% #arrows %}
-- [Custom Component](./component-tooltip/) {% #custom-component %}
-- [Interactive Tooltips](./tooltips-show-hide/#interactive-tooltips) {% #interactive-tooltips %}
-- [Mouse Tracking](./tooltips-positioning/#mouse-tracking) {% #mouse-tracking %}
-- [Touch Devices](./tooltips-show-hide/#touch-devices) {% #touch-devices %}
+## Positioning
 
-## Header Tooltips
+Choose where tooltips appear with [Positioning](./tooltips-positioning/), including [Arrows](./tooltips-positioning/#arrows) and [Mouse Tracking](./tooltips-positioning/#mouse-tracking).
 
-`headerTooltip` accepts the same value forms. With `headerTooltip: true`, the displayed header name is used. Column groups accept `headerTooltip` too.
+## Custom Tooltip Component
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'athlete', headerTooltip: true },
-        { field: 'age', headerTooltip: 'The athlete\'s age at the time of the games' },
-    ],
-};
-```
+Supply a [Custom Tooltip Component](./component-tooltip/) to change what a tooltip contains and how it looks.
 
-{% gridExampleRunner title="Header Tooltips" name="header-tooltips" /%}
+## Built-in Control Tooltips
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerTooltip"] /%}
+The grid's own controls, such as pagination, the column menu and the side bar, show [Built-in Control Tooltips](./tooltips-built-in/), which can be suppressed or customised.
 
-## Tooltip Callback
+## Opting Out of Grid Tooltips {% #browser-tooltip %}
 
-Pass a callback to `tooltip` or `headerTooltip` to generate content dynamically. Cell callbacks receive `TooltipCallbackParams`, with the underlying cell value and row data; header callbacks receive `HeaderTooltipCallbackParams`, where `value` is the displayed header name. `valueFormatted` contains the formatted source value when available.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'athlete', tooltip: (params) => params.data.country },
-    ],
-};
-```
-
-{% gridExampleRunner title="Tooltip Callback" name="tooltip-callback" /%}
-
-{% expandingSection headerText="TooltipCallbackParams" %}
-{% interfaceDocumentation interfaceName="TooltipCallbackParams" /%}
-{% /expandingSection %}
-
-## Blank Values
-
-Tooltips are not shown for the missing values `undefined`, `null` and `''` (empty string). To display a tooltip for a missing value, use a callback that returns non-empty content.
-
-{% gridExampleRunner title="Blank Values" name="blank-values" /%}
-
-## Tooltips for Truncated Text
-
-Set `tooltipShowMode: 'whenTruncated'` to show tooltips only when the hovered or focused text is truncated. Built-in control tooltips do not require truncated text, except floating-filter value previews, which show only when truncated.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    tooltipShowMode: 'whenTruncated',
-};
-```
-
-{% gridExampleRunner title="Tooltips" name="tooltip-show-mode" /%}
-
-{% note %}
-`tooltipShowMode = 'whenTruncated'` has no effect when using Browser Tooltips, as Browser Tooltips are controlled by the browser and not the grid.
-{% /note %}
-
-## Dynamic Tooltips
-
-Custom cell renderers and header components can register tooltip content at runtime with the `setTooltip` method on their params. `tooltip: false` and `headerTooltip: false` do not disable these. See [Cell Components](./component-cell-renderer/#dynamic-tooltips), [Header Components](./column-headers-components/#dynamic-tooltips) and [Column Groups](./column-groups/#dynamic-tooltips).
-
-## Row Groups
-
-When a column is grouped, the generated group column inherits `tooltip`, `tooltipComponent` and `tooltipComponentParams` from the underlying column's [Column Definition](./column-definitions/), consistent with how `valueFormatter` is inherited. Cell tooltip properties set on `autoGroupColumnDef` apply to leaf rows only; `headerTooltip` still applies to the group column header.
-
-{% gridExampleRunner title="Row Group Tooltip" name="rowgroups-tooltip" /%}
-
-### Grouped Column Headers
-
-With `groupDisplayType: 'multipleColumns'`, each generated group column header inherits the `headerTooltip` from its underlying column `colDef`.
-
-{% gridExampleRunner title="Grouped Column Header Tooltip" name="rowgroups-header-tooltip" /%}
-
-### Full Width Group Rows
-
-With `groupDisplayType: 'groupRows'`, full-width group rows inherit their tooltips from the underlying column `colDef`.
-
-{% gridExampleRunner title="Full Width Group Row Tooltip" name="rowgroups-fullwidth-tooltip" /%}
-
-### Aggregated Cells
-
-When a group row displays an aggregated value in a data column, hovering that cell shows a tooltip for the aggregated value, not the underlying row data.
-
-## Browser Tooltip
-
-Set `enableBrowserTooltips: true` to use the browser's native tooltips instead of the grid's Tooltip Component. Custom components, delays, positioning and the immediate-focus behaviour do not apply; built-in controls fall back to native `title` hints.
+Set `enableBrowserTooltips: true` to use the browser's native tooltips instead of the grid's. Custom components, delays, positioning and the immediate-focus behaviour do not apply, and built-in controls fall back to native `title` hints.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -125,4 +38,4 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Default Browser Tooltip" name="default-tooltip" /%}
+{% gridExampleRunner title="Default Browser Tooltip" name="default-tooltip" exampleHeight=250 /%}

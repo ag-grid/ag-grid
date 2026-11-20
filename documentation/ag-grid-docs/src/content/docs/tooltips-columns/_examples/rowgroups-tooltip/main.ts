@@ -58,7 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         headerTooltip: 'Group',
         minWidth: 190,
         // applies to leaf rows only; group rows inherit from their colDef
-        tooltip: (params) => `Athlete: ${params.value}`,
+        tooltip: ({ data }) => `Athlete: ${data?.athlete}`,
     },
     defaultColDef: {
         flex: 1,
