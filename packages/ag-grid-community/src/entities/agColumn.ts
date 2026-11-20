@@ -282,6 +282,10 @@ export class AgColumn<TValue = any>
         this.beans.rowSpanSvc?.deregister(this);
     }
 
+    public getInstanceId(): ColumnInstanceId {
+        return this.instanceId;
+    }
+
     private initState(): void {
         const { beans, colDef } = this;
         const { sortSvc, pinnedCols, colFlex } = beans;
@@ -452,6 +456,10 @@ export class AgColumn<TValue = any>
     public isFilterAllowed(): boolean {
         // filter defined (string, class or true) is allowed; false/null/undefined is not.
         return !!this.colDef.filter;
+    }
+
+    public isFieldContainsDots(): boolean {
+        return this.fieldPath !== null;
     }
 
     public isTooltipEnabled(): boolean {
@@ -695,6 +703,11 @@ export class AgColumn<TValue = any>
         return this.left;
     }
 
+    public getRight(): number {
+        // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
+        return this.left! + this.actualWidth;
+    }
+
     public isFilterActive(): boolean {
         return (this.colFlags & COL_FLAG_FILTER_ACTIVE) !== 0;
     }
@@ -708,6 +721,12 @@ export class AgColumn<TValue = any>
         const flags = this.colFlags;
         this.colFlags = flags & ~COL_FLAG_FILTER_REDEFINED;
         return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
+    }
+
+    /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
+    public isHovered(): boolean {
+        this.warn(261);
+        return !!this.beans.colHover?.isHovered(this);
     }
 
     public isFirstRightPinned(): boolean {
@@ -915,6 +934,10 @@ export class AgColumn<TValue = any>
             this.colFlags = flags ^ COL_FLAG_REPORTED_FIRST_RIGHT_PINNED;
             this.dispatchColEvent('firstRightPinnedChanged', source);
         }
+    }
+
+    public isGreaterThanMax(width: number): boolean {
+        return width > this.maxWidth;
     }
 
     public getMinWidth(): number {

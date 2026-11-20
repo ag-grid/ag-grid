@@ -54,6 +54,10 @@ export class AgProvidedColumnGroup
         this.expanded = !!colGroupDef?.openByDefault;
     }
 
+    public getInstanceId(): ColumnInstanceId {
+        return this.instanceId;
+    }
+
     public getOriginalParent(): AgProvidedColumnGroup | null {
         return this.originalParent;
     }

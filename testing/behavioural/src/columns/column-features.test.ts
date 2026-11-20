@@ -1723,14 +1723,22 @@ describe('Column Features', () => {
             expect(a.isResizable()).toBe(true);
             expect(a.isSortable()).toBe(true);
             expect(a.getMinWidth()).toBe(75);
+            expect(a.isGreaterThanMax(150)).toBe(false);
+            expect(a.isGreaterThanMax(250)).toBe(true);
             expect(b.isResizable()).toBe(false);
             expect(b.isSortable()).toBe(false);
+
+            // Field-dot flags
+            expect(a.isFieldContainsDots()).toBe(true);
+            expect(b.isFieldContainsDots()).toBe(false);
 
             // Tooltip flags
             expect(a.isTooltipEnabled()).toBe(true);
             expect(b.isTooltipEnabled()).toBe(true);
             expect(c.isTooltipEnabled()).toBe(true);
             expect(d.isTooltipEnabled()).toBe(false);
+            expect(a.isTooltipFieldContainsDots()).toBe(true);
+            expect(c.isTooltipFieldContainsDots()).toBe(false);
 
             // Per-row callback-driven flags
             expect(a.isDndSource(node)).toBe(true);
@@ -1787,12 +1795,14 @@ describe('Column Features', () => {
             expect(allCol.isValueActive()).toBe(false);
             expect(allCol.isPivotActive()).toBe(false);
             expect(allCol.isRowGroupActive()).toBe(false);
+            expect(allCol.isAnyFunctionActive()).toBe(false);
 
             // Allowed flags from colDef.
             expect(allCol.isAllowValue()).toBe(false);
             expect(allCol.isAllowRowGroup()).toBe(false);
             expect(allCol.isAllowPivot()).toBe(false);
             expect(allCol.isAllowFormula()).toBe(false);
+            expect(allCol.isAnyFunctionAllowed()).toBe(false);
 
             // Fill / paste / nav / edit guards — no selection/edit/nav modules wired.
             expect(allCol.isSuppressFillHandle()).toBe(true);
