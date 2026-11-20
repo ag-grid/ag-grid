@@ -78,7 +78,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     createChartContainer: true,
     getLocaleText: true,
     getRowId: true,
-    reactiveCustomComponents: true,
     renderingMode: true,
     columnMenu: true,
     suppressSetFilterByDefault: true,

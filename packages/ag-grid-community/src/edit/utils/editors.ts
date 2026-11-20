@@ -147,7 +147,7 @@ export function _setupEditor(
     }
 ): void {
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const { editModelSvc, gos, userCompFactory } = beans;
+    const { editModelSvc, userCompFactory } = beans;
 
     const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();
@@ -200,7 +200,7 @@ export function _setupEditor(
 
     cellCtrl.editCompDetails = compDetails;
     beans.editSvc?.invalidateEditorsValidation(); // a new editor may bring validation with it
-    comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
+    comp?.setEditDetails(compDetails, popup, popupLocation);
     rowCtrl?.refreshRow({ suppressFlash: true });
     cellCtrl.refreshNoteState();
 
