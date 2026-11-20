@@ -200,6 +200,39 @@ test.describe('moving and resizing dialogs without dragging', () => {
         expect(smallest.width).toBeLessThan(start.width);
     });
 
+    test('a dialog wider than the grid keeps its size when the mode starts, and moves without shrinking', async ({
+        page,
+    }) => {
+        const { grid, withApi } = await mountGrid(page, {
+            enterprise: true,
+            width: 400,
+            height: 800,
+            options: () => ({
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                rowData: [{ athlete: 'Michael Phelps', age: 23 }],
+                enableAdvancedFilter: true,
+            }),
+        });
+        await withApi((api) => api.showAdvancedFilterBuilder());
+        const dialog = grid.locator('.ag-dialog');
+        await settle(page);
+        const start = await rectOf(dialog);
+        // the builder's minimum width is more than the grid's
+        expect(start.width).toBeGreaterThan((await rectOf(grid)).width);
+        await dialog.getByRole('button', { name: 'Move and Resize' }).focus();
+        await page.keyboard.press('Enter');
+
+        expect(await rectOf(dialog)).toEqual(start);
+        await expect(dialog.getByRole('button', { name: 'Wider' })).toHaveAttribute('aria-disabled', 'true');
+        await expect(dialog.getByRole('button', { name: 'Narrower' })).toHaveAttribute('aria-disabled', 'false');
+        await expect(dialog.getByRole('button', { name: 'Move Right' })).toHaveAttribute('aria-disabled', 'true');
+
+        await page.keyboard.press('ArrowDown');
+        expect(await rectOf(grid.locator('.ag-dialog-ghost-outline'))).toEqual({ ...start, y: start.y + 10 });
+        await page.keyboard.press('Enter');
+        expect(await rectOf(dialog)).toEqual({ ...start, y: start.y + 10 });
+    });
+
     test('a dialog that only moves offers no resizing, and Escape cancels the move without closing it', async ({
         page,
     }) => {

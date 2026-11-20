@@ -320,11 +320,16 @@ export class AgDialogMoveResizeFeature<
         if (!ghost || !(resize ? positionableFeature.isResizable() : positionableFeature.isMovable())) {
             return null;
         }
-        return this.fitDialogRect(
+        const next = this.fitDialogRect(
             resize
                 ? { ...ghost, width: ghost.width + x, height: ghost.height + y }
                 : { ...ghost, x: ghost.x + x, y: ghost.y + y }
         );
+        // a dialog bigger than the grid can only shrink to fit, which isn't what Wider or Taller says
+        if (resize && ((x > 0 && next.width < ghost.width) || (y > 0 && next.height < ghost.height))) {
+            return null;
+        }
+        return next;
     }
 
     /**
@@ -332,10 +337,14 @@ export class AgDialogMoveResizeFeature<
      * be. Found by trying it on the dialog and putting the dialog back before the browser draws it.
      */
     private fitDialogRect(rect: DialogRect): DialogRect {
-        const current = this.getDialogRect();
+        const { eDialog, positionableFeature } = this.params;
+        const { x, y } = positionableFeature.getPosition();
+        const style = eDialog.style.cssText;
         this.setDialogRect(rect);
         const fitted = this.getDialogRect();
-        this.setDialogRect(current);
+        // put back the dialog's own styles, as sizing it again would clamp a dialog bigger than the grid
+        eDialog.style.cssText = style;
+        positionableFeature.offsetElement(x, y);
         return fitted;
     }
 
@@ -349,9 +358,14 @@ export class AgDialogMoveResizeFeature<
         const { positionableFeature } = this.params;
         // move first, so the new size fits, then move again in case the old size held the dialog off
         positionableFeature.offsetElement(x, y);
+        // only the sides that change, as setting a size clamps it to the space available
         if (positionableFeature.isResizable()) {
-            positionableFeature.setWidth(width);
-            positionableFeature.setHeight(height);
+            if (width !== positionableFeature.getWidth()) {
+                positionableFeature.setWidth(width);
+            }
+            if (height !== positionableFeature.getHeight()) {
+                positionableFeature.setHeight(height);
+            }
         }
         positionableFeature.offsetElement(x, y);
     }
