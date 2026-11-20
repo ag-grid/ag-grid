@@ -1673,7 +1673,7 @@ describe('Column Features', () => {
             await new GridColumns(api, `deprecated Column methods setup`).checkColumns(`
                 CENTER
                 └─┬ GROUP
-                  └── a width:200
+                  └── a "A" width:200
             `);
 
             const col = api.getColumn('a')!;
