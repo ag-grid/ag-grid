@@ -3040,6 +3040,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RedirectMatch 301 "^/react/overview(/.*)?" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/(react|angular|vue|javascript)/(.*)" "https://www.ag-grid.com/charts/$1/$2"
     Redirect 301 /eula/AG-Grid-Enterprise-License-Latest.html /eula/commercial/
+    Redirect 301 /eula/ag-grid-enterprise-license-latest.html /eula/commercial/
     Redirect 301 /eula/AG-Grid-Community-License.html /eula/community/
     Redirect 301 /eula/AG-Grid-Enterprise-License-v12.0.html /eula/commercial/
     Redirect 301 /eula/AG-Grid-Enterprise-License-v13.0.html /eula/commercial/
@@ -3056,6 +3057,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /pricing/ /license-pricing/
     Redirect 301 /javascript-data-grid/row-grouping/ /javascript-data-grid/grouping/
     Redirect 301 /react-data-grid/row-grouping/ /react-data-grid/grouping/
+    Redirect 301 /angular-data-grid/row-grouping/ /angular-data-grid/grouping/
+    Redirect 301 /vue-data-grid/row-grouping/ /vue-data-grid/grouping/
 
 </IfModule>
 
