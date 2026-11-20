@@ -67,7 +67,9 @@ describe('filterParams keys that clash with grid-supplied params', () => {
     });
 
     const reservedParamWarnings = () =>
-        warnSpy.mock.calls.filter((args) => args.some((arg) => String(arg).includes(`#${RESERVED_PARAM_WARNING_ID}`)));
+        warnSpy.mock.calls.filter((args: unknown[]) =>
+            args.some((arg) => String(arg).includes(`#${RESERVED_PARAM_WARNING_ID}`))
+        );
 
     const createGrid = (athleteColDef: ColDef, options?: Partial<GridOptions>): Promise<GridApi> =>
         gridsManager.createGridAndWait('grid1', {
