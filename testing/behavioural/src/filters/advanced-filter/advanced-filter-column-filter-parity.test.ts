@@ -1,6 +1,8 @@
 import {
+    ALL_SEVERITIES,
     AdvancedFilterHarness,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -24,6 +26,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import {
@@ -832,6 +835,7 @@ describe('Advanced Filter matches the column filter', () => {
 
         // A component named through `components` owns its `filterParams` exactly as one supplied directly does.
         test('a custom filter component registered by name keeps its own `filterParams`', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
             const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
                 columnDefs: [
                     { field: 'id' },
@@ -1521,6 +1525,7 @@ describe('Advanced Filter matches the column filter', () => {
         // `comparator` is the Date Filter's key; a custom component's `filterParams` are its own, and the
         // ordinary `(a, b)` sort shape is the inverse of `IDateComparatorFunc`, so reading it flips every option.
         test('a custom filter component column ignores its own `comparator`', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
             const columnDefs = timedDefs({ comparator: (a: any, b: any) => (a > b ? 1 : -1) }, MinimalFilter);
 
             expect(

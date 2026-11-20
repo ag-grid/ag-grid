@@ -857,6 +857,8 @@ export interface GridOptions<TData = any> {
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -2928,6 +2930,7 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
      * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**

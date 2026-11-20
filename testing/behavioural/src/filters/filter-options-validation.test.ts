@@ -136,6 +136,9 @@ describe('Column filter — a model saved for another filter type', () => {
         ],
     });
 
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+    });
     afterEach(() => gridsManager.reset());
 
     const rowData: MixedRow[] = [

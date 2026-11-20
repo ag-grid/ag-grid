@@ -1,6 +1,7 @@
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -342,6 +343,7 @@ describe('filter models held before rows load are not lost before they apply', (
     test.each([false, true])(
         'with enableFilterHandlers %s, removing a built filter before rows load tells it at once, and a model set for it is kept for the column coming back',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const events: string[] = [];
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: BASE_COLS,
@@ -368,6 +370,7 @@ describe('filter models held before rows load are not lost before they apply', (
     );
 
     test('setColumnFilterModel before rows load resolves once they load and its custom filter has taken the model', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let finishSetModel: () => void = () => {};
         class SlowSetModelFilter extends RecordingFilter {
             public override setModel(model: any): Promise<void> {
@@ -397,6 +400,7 @@ describe('filter models held before rows load are not lost before they apply', (
     });
 
     test('a model set before rows load on a custom filter whose init finishes after they do filters them, told once', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let finishInit: () => void = () => {};
         class SlowInitFilter extends RecordingFilter {
             public override init(params: IFilterParams): Promise<void> {

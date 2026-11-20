@@ -4,6 +4,7 @@ import {
     ColumnFilterHarness,
     FilterDom,
     GridRows,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -307,6 +308,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test('a model set before the rows arrive and cleared after is not what the rebuilt filter starts with', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = gridsManager.createGrid('grid1', {
             columnDefs: [
                 {
@@ -332,6 +334,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("without filter handlers, a Multi Filter instance's own model methods set, read and test its column's model", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
@@ -422,7 +425,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     test.each([false, true])(
         "with enableFilterHandlers %s, a Multi Filter child's deprecated doesFilterPass tests rows by the child's model, also once the filter is destroyed",
         async (enableFilterHandlers) => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283, 348] });
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const api: GridApi = await gridsManager.createGridAndWait('grid1', {
@@ -463,6 +466,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     test.each([false, true])(
         'with enableFilterHandlers %s, an open Multi Filter whose Number child is given an option it lacks shows no model, as it applies none',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: [
@@ -494,6 +498,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     );
 
     describe('a model its children cannot apply', () => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const bob = { filterType: 'text', type: 'equals', filter: 'bob' };
         const underTwenty = { filterType: 'number', type: 'lessThan', filter: 20 };
         // the default children: a Text Filter, then a Set Filter
@@ -864,6 +872,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     describe.each([false, true])('display styles, with enableFilterHandlers %s', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const displayStyleCols: ColDef[] = [
             {
                 field: 'name',
@@ -1135,6 +1147,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a child with an empty filter value getter reads through the Multi Filter's, with and without filter handlers or an object data type", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [true, false]) {
             for (const cellDataType of ['text', 'object']) {
                 const api: GridApi = await gridsManager.createGridAndWait(
@@ -1262,6 +1275,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a values callback, a Multi Filter child's or a Set Filter's own, is not called again when unchanged column definitions are set back, with or without filter handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             const calls = { multi: 0, set: 0 };
             const values = (colId: keyof typeof calls) => (params: { success: (values: string[]) => void }) => {
@@ -1308,6 +1322,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a child filter component with its own filter value getter reads another column as that column's value", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let childParams: IFilterParams | undefined;
         class ProbeFilter implements IFilterComp {
             public init(params: IFilterParams): void {
@@ -1353,7 +1368,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         'with enableFilterHandlers %s, a child filter component without isFilterActive filters nothing, is reported, and never throws',
         async (enableFilterHandlers) => {
             // with filter handlers, a custom child also reports the column's missing handler (#277)
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: enableFilterHandlers ? [67, 277] : [67] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: enableFilterHandlers ? [67, 277] : [67, 348] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
                 private model: string | null = null;
@@ -1410,6 +1425,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     );
 
     test('without filter handlers, an active child filter component filters the rows and reports its model', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class NameFilter implements IFilterComp {
             private model: string | null = null;
             public init(): void {}
@@ -1457,6 +1473,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     describe.each([false, true])('filterParams.filters changed (enableFilterHandlers: %s)', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const TEXT_CHILD = { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 1 } };
 
         const colDefsWith = (filters: object[], extra?: object) => [

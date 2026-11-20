@@ -326,12 +326,6 @@
                 "url": "./filter-api/#filter-events"
             }
         },
-        "filterModified": {
-            "more": {
-                "name": "Filter Events",
-                "url": "./filter-api/#filter-events"
-            }
-        },
         "filterUiChanged": {
             "more": {
                 "name": "Filter Events",

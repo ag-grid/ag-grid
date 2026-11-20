@@ -1,5 +1,12 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout, fireGridPointerDown, polyfillOffsetParent } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    LEGACY_FILTER_WARNING_IDS,
+    TestGridsManager,
+    asyncSetTimeout,
+    fireGridPointerDown,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IDoesFilterPassParams, IFilterComp } from 'ag-grid-community';
 import {
@@ -7,6 +14,7 @@ import {
     CustomFilterModule,
     TextEditorModule,
     TextFilterModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
@@ -236,6 +244,10 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
     describe("a custom filter's own floating element with the class", () => {
         let floatingParent: HTMLElement;
         let floating: HTMLElement | undefined;
+
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        });
 
         class FilterWithFloatingElement implements IFilterComp {
             private readonly eGui = document.createElement('div');

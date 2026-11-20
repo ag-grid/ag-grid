@@ -62,6 +62,7 @@ export interface IHeaderAngularComp<TData = any, TContext = any>
 export interface IInnerHeaderAngularComp<TData = any, TContext = any>
     extends AgFrameworkComponent<IHeaderParams<TData, TContext>>, IHeader<TData, TContext> {}
 
+/** @deprecated v37 Use `enableFilterHandlers` and `IFloatingFilterDisplayAngularComp` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
 export interface IFloatingFilterAngularComp<P = any, TData = any, TContext = any>
     extends AgFrameworkComponent<IFloatingFilterParams<P, TData, TContext>>, IFloatingFilter<P> {}
 
@@ -76,6 +77,7 @@ export interface IDateAngularComp<TData = any, TContext = any>
 export interface IDragAndDropImageAngularComponent<TData = any, TContext = any>
     extends AgFrameworkComponent<IDragAndDropImageParams<TData, TContext>>, IDragAndDropImage {}
 
+/** @deprecated v37 Use `enableFilterHandlers` and `IFilterDisplayAngularComp` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
 export interface IFilterAngularComp<TData = any, TContext = any>
     extends AgFrameworkComponent<IFilterParams<TData, TContext>>, IFilter {}
 

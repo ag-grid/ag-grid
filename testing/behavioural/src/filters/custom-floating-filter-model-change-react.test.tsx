@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS } from 'ag-test-utils';
 import React, { useCallback } from 'react';
 import type { MockInstance } from 'vitest';
 
@@ -9,6 +10,7 @@ import {
     ModuleRegistry,
     RowApiModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact, useGridFilter } from 'ag-grid-react';
@@ -55,6 +57,10 @@ const emitted286 = (warnSpy: MockInstance<typeof console.warn>) =>
 describe('Custom floating filter onModelChange (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, TextFilterModule, CustomFilterModule, RowApiModule]);
+    });
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
     });
 
     afterEach(() => {
