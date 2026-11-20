@@ -14,7 +14,7 @@
             "modifiers": ["animated-hero"],
             "heading": "The Quickest JS Gantt Chart",
             "body_html": "<p>Bryntum Gantt is a speed-tuned, fully tailorable Gantt chart suite for your <a href=\"/products/gantt/\">JavaScript</a>, <a href=\"/products/react-gantt-chart/\">React</a>, <a href=\"/products/angular-gantt-chart/\">Angular</a> and <a href=\"/products/vue-gantt-chart/\">Vue</a> apps.</p>",
-            "body_text": "Bryntum Gantt is a speed-tuned, fully tailorable Gantt chart suite for your JavaScript , React , Angular and Vue apps.",
+            "body_text": "Bryntum Gantt is a speed-tuned, fully tailorable Gantt chart suite for your JavaScript, React, Angular and Vue apps.",
             "ctas": [
                 {
                     "text": "Browse Examples",
@@ -57,7 +57,7 @@
             "eyebrow": "Real-World Ready",
             "heading": "Built for Real-World Projects",
             "body_html": "<p>Bryntum Gantt is built to tame real-world complexity and streamline project planning via smart, intuitive tools:</p> <ul class=\"two-columns\"> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Track the pace of progress with an </span><a href=\"https://bryntum.com/products/gantt/examples/s-curve/\"><span style=\"font-weight: 400;\">S-curve</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Compare task durations across </span><a href=\"https://bryntum.com/products/gantt/examples/planned-percent-done/\"><span style=\"font-weight: 400;\">baselines and chart completion percentages</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Surface </span><a href=\"https://bryntum.com/products/gantt/examples/criticalpaths/\"><span style=\"font-weight: 400;\">critical path</span></a><span style=\"font-weight: 400;\">s to speed up project delivery.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/gantt/examples/conflicts/\"><span style=\"font-weight: 400;\">Settle</span></a><span style=\"font-weight: 400;\"> or </span><a href=\"https://bryntum.com/products/gantt/examples/postponed-conflicts/\"><span style=\"font-weight: 400;\">defer</span></a><span style=\"font-weight: 400;\"> scheduling conflicts to keep your plan intact.</span></li> </ul> <p>S-curves, baselines and critical paths come with Gantt Enterprise.</p>",
-            "body_text": "Bryntum Gantt is built to tame real-world complexity and streamline project planning via smart, intuitive tools: Track the pace of progress with an S-curve . Compare task durations across baselines and chart completion percentages . Surface critical path s to speed up project delivery. Settle or defer scheduling conflicts to keep your plan intact. S-curves, baselines and critical paths come with Gantt Enterprise.",
+            "body_text": "Bryntum Gantt is built to tame real-world complexity and streamline project planning via smart, intuitive tools: Track the pace of progress with an S-curve. Compare task durations across baselines and chart completion percentages. Surface critical path s to speed up project delivery. Settle or defer scheduling conflicts to keep your plan intact. S-curves, baselines and critical paths come with Gantt Enterprise.",
             "links": [
                 {
                     "text": "S-curve",
@@ -107,7 +107,13 @@
             "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt engine briskly handles asynchronous scheduling across any number of tasks, taking dependencies, constraints and scheduling modes into account.</span></p> <p><span style=\"font-weight: 400;\">Designed independently of the DOM, it can also run server-side on Node.js.</span></p> <h6 style=\"margin-top: 1em;\">Animated Redraws</h6> <p><span style=\"font-weight: 400;\">Moving a task kicks off a smooth animation that reveals how dependent tasks shift in response.</span></p>",
             "body_text": "The JavaScript Gantt engine briskly handles asynchronous scheduling across any number of tasks, taking dependencies, constraints and scheduling modes into account. Designed independently of the DOM, it can also run server-side on Node.js. Animated Redraws Moving a task kicks off a smooth animation that reveals how dependent tasks shift in response.",
             "links": [],
-            "ctas": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/gantt/examples/highlight-time-spans/",
+                    "title": "Open demo"
+                }
+            ],
             "media": [
                 {
                     "kind": "video",
@@ -123,7 +129,7 @@
             "eyebrow": "Task Editing",
             "heading": "Tailorable Task Editor and Menu",
             "body_html": "<p><span style=\"font-weight: 400;\">The built-in </span><a href=\"https://bryntum.com/products/gantt/examples/taskeditor/\"><span style=\"font-weight: 400;\">task editor</span></a><span style=\"font-weight: 400;\"> is designed to be extended and shaped freely in the JS Gantt chart. Make it fit your workflow exactly:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\"> Adjust which fields are visible</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Bring your own custom tabs</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/gantt/examples/taskmenu/\"><span style=\"font-weight: 400;\">Tweak</span></a><span style=\"font-weight: 400;\"> or </span><a href=\"https://bryntum.com/products/gantt/examples/custom-taskmenu/\"><span style=\"font-weight: 400;\">swap out</span></a><span style=\"font-weight: 400;\"> the right-click task menu.</span></li> <li><span style=\"font-weight: 400;\">Tailor the </span><a href=\"https://bryntum.com/products/gantt/examples/resourceassignment/\"><span style=\"font-weight: 400;\">resource picker</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
-            "body_text": "The built-in task editor is designed to be extended and shaped freely in the JS Gantt chart. Make it fit your workflow exactly: Adjust which fields are visible Bring your own custom tabs Tweak or swap out the right-click task menu. Tailor the resource picker .",
+            "body_text": "The built-in task editor is designed to be extended and shaped freely in the JS Gantt chart. Make it fit your workflow exactly: Adjust which fields are visible Bring your own custom tabs Tweak or swap out the right-click task menu. Tailor the resource picker.",
             "links": [
                 {
                     "text": "task editor",
@@ -206,7 +212,7 @@
             "eyebrow": "Customisation",
             "heading": "Fully Flexible Tailoring",
             "body_html": "<p><span style=\"font-weight: 400;\">Shape the JavaScript Gantt chart to match your project’s look, feel and workflow:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Pick </span><a href=\"https://bryntum.com/products/gantt/examples/theme/\"><span style=\"font-weight: 400;\">a built-in theme</span></a><span style=\"font-weight: 400;\">, or </span><a href=\"https://bryntum.com/products/gantt/examples/custom-theme/\"><span style=\"font-weight: 400;\">roll your own</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Tailor taskbar </span><a href=\"https://bryntum.com/products/gantt/examples/taskstyles/\"><span style=\"font-weight: 400;\">styles</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/custom-rendering/\"><span style=\"font-weight: 400;\">content</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/custom-taskbar/\"><span style=\"font-weight: 400;\">labels</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Add richly styled </span><a href=\"https://bryntum.com/products/gantt/examples/tooltips/\"><span style=\"font-weight: 400;\">custom tooltips</span></a><span style=\"font-weight: 400;\">.</span></li> <li class=\"p1\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/resourceassignment/\"><span style=\"font-weight: 400;\">bespoke assignment picker</span></a><span style=\"font-weight: 400;\"> for fast task delegation.</span></li> </ul>",
-            "body_text": "Shape the JavaScript Gantt chart to match your project’s look, feel and workflow: Pick a built-in theme , or roll your own . Tailor taskbar styles , content and labels . Add richly styled custom tooltips . Drop in a bespoke assignment picker for fast task delegation.",
+            "body_text": "Shape the JavaScript Gantt chart to match your project’s look, feel and workflow: Pick a built-in theme, or roll your own. Tailor taskbar styles, content and labels. Add richly styled custom tooltips. Drop in a bespoke assignment picker for fast task delegation.",
             "links": [
                 {
                     "text": "a built-in theme",
@@ -279,7 +285,7 @@
             "eyebrow": "Integrations",
             "heading": "Integrations and Export Options",
             "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-scheduler/\"><span style=\"font-weight: 400;\">Scheduler</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul> <p>Excel, Microsoft Project, PDF, PNG and print exports come with Gantt Enterprise. Sharing data between Gantt and Scheduler needs the Enterprise tier of both.</p>",
-            "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart . Push Gantt data to Microsoft Excel or to Microsoft Project , print it , or share it as PDF, PNG and ICS . Pair Gantt with other Bryntum components such as Scheduler and Task Board . Excel, Microsoft Project, PDF, PNG and print exports come with Gantt Enterprise. Sharing data between Gantt and Scheduler needs the Enterprise tier of both.",
+            "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart. Push Gantt data to Microsoft Excel or to Microsoft Project, print it, or share it as PDF, PNG and ICS. Pair Gantt with other Bryntum components such as Scheduler and Task Board. Excel, Microsoft Project, PDF, PNG and print exports come with Gantt Enterprise. Sharing data between Gantt and Scheduler needs the Enterprise tier of both.",
             "links": [
                 {
                     "text": "PERT chart",
@@ -427,7 +433,7 @@
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Gantt straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
-            "body_text": "Pull Bryntum Gantt straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "body_text": "Pull Bryntum Gantt straight from npm. No sign-in or auth needed. Install the trial, configure it, and you’re ready to build.",
             "links": [],
             "ctas": [
                 {
@@ -448,7 +454,7 @@
             "type": "columns-lib",
             "modifiers": [],
             "eyebrow": "Examples Gallery",
-            "heading": "Further Examples",
+            "heading": "More Demos to Try",
             "items": [
                 {
                     "heading": "Portfolio planning",

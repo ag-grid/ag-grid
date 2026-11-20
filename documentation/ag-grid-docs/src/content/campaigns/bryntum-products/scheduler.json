@@ -14,7 +14,7 @@
             "modifiers": ["animated-hero"],
             "heading": "The Scheduling Component With Every Feature",
             "body_html": "<p>Bryntum Scheduler is a contemporary, high-throughput UI component that drops cleanly into every major JavaScript framework, including <a href=\"/products/react-scheduler/\">React</a>, <a href=\"/products/angular-scheduler/\">Angular</a> and <a href=\"/products/vue-scheduler/\">Vue</a>.</p>",
-            "body_text": "Bryntum Scheduler is a contemporary, high-throughput UI component that drops cleanly into every major JavaScript framework, including React , Angular and Vue .",
+            "body_text": "Bryntum Scheduler is a contemporary, high-throughput UI component that drops cleanly into every major JavaScript framework, including React, Angular and Vue.",
             "ctas": [
                 {
                     "text": "Browse Examples",
@@ -57,7 +57,7 @@
             "eyebrow": "Feature Set",
             "heading": "Feature-Packed",
             "body_html": "<p>Built on <a href=\"/products/grid\">Bryntum Grid</a>, Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports:</p> <ul> <li>Drag-and-drop event resizing</li> <li>A handy event editor and keyboard navigation</li> <li><a href=\"/products/scheduler/examples/export/\">PDF, PNG,</a> <a href=\"/products/scheduler/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/scheduler/examples/exporttoics/\">ICS</a> and <a href=\"/products/scheduler/examples/print/\">print</a> data exports</li> <li><a href=\"/products/scheduler/examples/responsive/\">Responsive layout</a></li> <li><a href=\"/products/scheduler/examples/dragfromgrid/\">Drag-and-drop event assignment</a></li> </ul> <p>PDF, PNG, Excel and print exports come with Scheduler Enterprise.</p>",
-            "body_text": "Built on Bryntum Grid , Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports: Drag-and-drop event resizing A handy event editor and keyboard navigation PDF, PNG, Excel , ICS and print data exports Responsive layout Drag-and-drop event assignment PDF, PNG, Excel and print exports come with Scheduler Enterprise.",
+            "body_text": "Built on Bryntum Grid, Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports: Drag-and-drop event resizing A handy event editor and keyboard navigation PDF, PNG, Excel, ICS and print data exports Responsive layout Drag-and-drop event assignment PDF, PNG, Excel and print exports come with Scheduler Enterprise.",
             "links": [
                 {
                     "text": "Bryntum Grid",
@@ -111,7 +111,7 @@
             "type": "live-demo",
             "modifiers": [],
             "eyebrow": "Live Demo",
-            "heading": "Try a live demo",
+            "heading": "Try the live Scheduler",
             "body_text": "Pick tasks from the unplanned grid and drop them straight onto a resource.",
             "demo_src": null,
             "media": []
@@ -123,7 +123,7 @@
             "eyebrow": "Performance",
             "heading": "Tuned for Performance",
             "body_html": "<p>The Scheduler blends these techniques to keep load times short and scrolling buttery smooth:</p> <ul> <li>Virtual rendering</li> <li>A lean DOM footprint</li> <li>Heavy element reuse</li> </ul> <p>Bryntum Scheduler keeps that excellent performance at scale and with extras, <a href=\"/products/scheduler/examples/paged/\">such as pagination</a>.</p>",
-            "body_text": "The Scheduler blends these techniques to keep load times short and scrolling buttery smooth: Virtual rendering A lean DOM footprint Heavy element reuse Bryntum Scheduler keeps that excellent performance at scale and with extras, such as pagination .",
+            "body_text": "The Scheduler blends these techniques to keep load times short and scrolling buttery smooth: Virtual rendering A lean DOM footprint Heavy element reuse Bryntum Scheduler keeps that excellent performance at scale and with extras, such as pagination.",
             "links": [
                 {
                     "text": "such as pagination",
@@ -381,8 +381,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
-            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Scheduler app.</li> <li class=\"li1\">Collect input with date pickers, colour pickers, day selectors and radio buttons.</li> <li class=\"li1\">Present data with menus, button groups, tags and line charts.</li> </ul> <p>Charts come with Scheduler Enterprise.</p>",
-            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Scheduler app. Collect input with date pickers, colour pickers, day selectors and radio buttons. Present data with menus, button groups, tags and line charts. Charts come with Scheduler Enterprise.",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Scheduler app.</li> <li class=\"li1\">Collect input with date pickers, colour pickers, day selectors and radio buttons.</li> <li class=\"li1\">Present data with button groups, tags and line charts.</li> </ul> <p>Charts come with Scheduler Enterprise.</p>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Scheduler app. Collect input with date pickers, colour pickers, day selectors and radio buttons. Present data with button groups, tags and line charts. Charts come with Scheduler Enterprise.",
             "links": [
                 {
                     "text": "broad set of UI elements",
@@ -468,7 +468,7 @@
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Scheduler straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
-            "body_text": "Pull Bryntum Scheduler straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "body_text": "Pull Bryntum Scheduler straight from npm. No sign-in or auth needed. Install the trial, configure it, and you’re ready to build.",
             "links": [],
             "ctas": [
                 {
@@ -489,7 +489,7 @@
             "type": "columns-lib",
             "modifiers": [],
             "eyebrow": "Examples Gallery",
-            "heading": "Further Examples",
+            "heading": "More Demos to Try",
             "items": [
                 {
                     "heading": "Tree summary",

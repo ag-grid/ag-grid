@@ -14,7 +14,7 @@
             "modifiers": ["animated-hero"],
             "heading": "The Complete JavaScript Calendar Toolkit",
             "body_html": "<p>The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into <a href=\"https://bryntum.com/products/react-calendar/\"><span class=\"s1\">React</span></a>, <a href=\"https://bryntum.com/products/angular-calendar\"><span class=\"s1\">Angular</span></a> and <a href=\"https://bryntum.com/products/vue-calendar/\"><span class=\"s1\">Vue</span></a> apps.</p>",
-            "body_text": "The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into React , Angular and Vue apps.",
+            "body_text": "The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into React, Angular and Vue apps.",
             "ctas": [
                 {
                     "text": "Browse Examples",
@@ -84,7 +84,7 @@
             "eyebrow": "Feature Set",
             "heading": "Capable and Flexible",
             "body_html": "<p class=\"p1\">Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get:</p> <ul> <li>Snappy performance, even on <a href=\"/products/calendar/examples/megadataset/\">huge datasets</a>.</li> <li>One-click exports to <a href=\"/products/calendar/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/calendar/examples/exporttoics/\">ICS</a> and <a href=\"/products/calendar/examples/print/\">print</a> formats.</li> <li>Tunable date and time settings: <a href=\"/products/calendar/examples/shifted/\">begin days at 6 PM</a> or slice time into six-minute <a href=\"/products/calendar/examples/day-time-ticks/\">intervals</a>.</li> </ul> <p>Excel export and print come with Calendar Enterprise.</p>",
-            "body_text": "Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get: Snappy performance, even on huge datasets . One-click exports to Excel , ICS and print formats. Tunable date and time settings: begin days at 6 PM or slice time into six-minute intervals . Excel export and print come with Calendar Enterprise.",
+            "body_text": "Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get: Snappy performance, even on huge datasets. One-click exports to Excel, ICS and print formats. Tunable date and time settings: begin days at 6 PM or slice time into six-minute intervals. Excel export and print come with Calendar Enterprise.",
             "links": [
                 {
                     "text": "huge datasets",
@@ -200,7 +200,7 @@
         {
             "id": "block_7f8a8ef5340328b7601457cdd648ee6d",
             "type": "text-mini-demo",
-            "eyebrow": "Try It Live",
+            "eyebrow": "Live Demo",
             "heading": "Try the live Calendar",
             "body_html": "<p>From the {{tier.core}} tier up, the calendar handles recurring events. Repeat events on any cadence you need – daily, weekly, monthly or yearly.</p>",
             "body_text": "Try the live Calendar  From the {{tier.core}} tier up, the calendar handles recurring events. Repeat events on any cadence you need – daily, weekly, monthly or yearly.",
@@ -215,7 +215,7 @@
             "eyebrow": "More Than Events on a Calendar",
             "heading": "A Calendar Built for Serious Planning",
             "body_html": "<p class=\"p1\">The Bryntum Calendar packs distinctive features that boost your team’s productivity:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/travel-time/\">Show travel time</a> for grounded, real-world planning.</li> <li class=\"li1\">Monitor workload via the <a href=\"/products/calendar/examples/resource-time-capacity/\">capacity tick renderer</a>.</li> <li>Jump between <a href=\"/products/calendar/examples/resource-modes/\">linked resource calendars</a>.</li> </ul> <p>Travel time and the resource capacity view come with Calendar Enterprise.</p>",
-            "body_text": "The Bryntum Calendar packs distinctive features that boost your team’s productivity: Show travel time for grounded, real-world planning. Monitor workload via the capacity tick renderer . Jump between linked resource calendars . Travel time and the resource capacity view come with Calendar Enterprise.",
+            "body_text": "The Bryntum Calendar packs distinctive features that boost your team’s productivity: Show travel time for grounded, real-world planning. Monitor workload via the capacity tick renderer. Jump between linked resource calendars. Travel time and the resource capacity view come with Calendar Enterprise.",
             "links": [
                 {
                     "text": "Show travel time",
@@ -255,7 +255,7 @@
             "eyebrow": "Customisation",
             "heading": "Fully Tailorable",
             "body_html": "<p>The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste.</p> <ul class=\"ul1\"> <li>Pick a built-in theme or <a href=\"/products/calendar/examples/custom-theme/\">roll your own</a>.</li> <li class=\"li1\">Adjust the rendering of <a href=\"/products/calendar/examples/custom-rendering/\">events, headings and more</a>.</li> <li class=\"li1\">Reflow the UI for <a href=\"/products/calendar/examples/month-agenda/\">mobile devices</a> with layouts that respond to any <a href=\"/products/calendar/examples/responsive/\">screen size</a>.</li> <li class=\"li1\">Drop links and buttons into <a href=\"/products/calendar/examples/tooltips/\">tailored tooltips</a>.</li> <li class=\"li1\">Customise the <a href=\"/products/calendar/examples/eventedit/\">event editor</a>, <a href=\"/products/calendar/examples/custom-menus/\">context menu</a> and <a href=\"/products/calendar/examples/sidebar-customization/\">sidebar</a>.</li> </ul>",
-            "body_text": "The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste. Pick a built-in theme or roll your own . Adjust the rendering of events, headings and more . Reflow the UI for mobile devices with layouts that respond to any screen size . Drop links and buttons into tailored tooltips . Customise the event editor , context menu and sidebar .",
+            "body_text": "The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste. Pick a built-in theme or roll your own. Adjust the rendering of events, headings and more. Reflow the UI for mobile devices with layouts that respond to any screen size. Drop links and buttons into tailored tooltips. Customise the event editor, context menu and sidebar.",
             "links": [
                 {
                     "text": "roll your own",
@@ -314,8 +314,8 @@
             "modifiers": ["image", "reverse", "added-shadow"],
             "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
-            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/calendar/examples/kitchen-sink/\">broad set of UI components</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in ready-made <strong>menus, toggles, sliders, charts and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Collect input with date range pickers, colour pickers, multi-select combos and checkboxes.</li> <li class=\"li1\">Present data with tabs, button groups, tags and line charts.</li> </ul> <p>Charts come with Calendar Enterprise.</p>",
-            "body_text": "Pick from a broad set of UI components that quickly give your app a polished, professional feel: Drop in ready-made menus, toggles, sliders, charts and more alongside the Bryntum Calendar. Collect input with date range pickers, colour pickers, multi-select combos and checkboxes. Present data with tabs, button groups, tags and line charts. Charts come with Calendar Enterprise.",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/calendar/examples/kitchen-sink/\">broad set of UI components</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in ready-made <strong>menus, toggles, sliders and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Collect input with date range pickers, colour pickers, multi-select combos and checkboxes.</li> <li class=\"li1\">Present data with tabs, button groups, tags and line charts.</li> </ul> <p>Charts come with Calendar Enterprise.</p>",
+            "body_text": "Pick from a broad set of UI components that quickly give your app a polished, professional feel: Drop in ready-made menus, toggles, sliders and more alongside the Bryntum Calendar. Collect input with date range pickers, colour pickers, multi-select combos and checkboxes. Present data with tabs, button groups, tags and line charts. Charts come with Calendar Enterprise.",
             "links": [
                 {
                     "text": "broad set of UI components",
@@ -402,7 +402,7 @@
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Calendar straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
-            "body_text": "Pull Bryntum Calendar straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "body_text": "Pull Bryntum Calendar straight from npm. No sign-in or auth needed. Install the trial, configure it, and you’re ready to build.",
             "links": [],
             "ctas": [
                 {
