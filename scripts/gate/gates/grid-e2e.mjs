@@ -5,7 +5,7 @@ import path from 'node:path';
 import { NONE, VALUE, captureUsage, isCI } from '../args.mjs';
 
 const ALL_BROWSERS = ['chromium', 'firefox', 'webkit'];
-const UMD_PROJECTS = 'ag-grid-community,ag-grid-enterprise';
+const UMD_PROJECTS = 'ag-grid-community,ag-grid-enterprise,ag-grid-react';
 
 /**
  * `--project=x` and `--project x y`, the two spellings Playwright accepts, in the forwarded arguments. The second
@@ -73,16 +73,20 @@ export default {
 
     // In `beforeRun` rather than `plan`, so the build and download land in the run log and a failure is closed
     // through `finish`. The specs load the UMD bundles from each package's dist, so they are built first; Nx
-    // serves an unchanged build from its cache.
+    // serves an unchanged build from its cache. ag-grid-vue3 has no `build:umd`: its UMD bundle comes from `build`.
     async beforeRun({ bin, rootDir, runLog, state }) {
         if (!state.noBuild) {
             process.env.NX_DAEMON = 'false';
-            const built = await runLog.exec(bin('nx'), ['run-many', '-t', 'build:umd', '-p', UMD_PROJECTS], {
-                cwd: rootDir,
-            });
-            if (built !== 0) {
-                runLog.echo('grid-e2e.sh: building the UMD bundles failed, so there is nothing to test against.');
-                return built;
+            const builds = [
+                ['run-many', '-t', 'build:umd', '-p', UMD_PROJECTS],
+                ['run', 'ag-grid-vue3:build'],
+            ];
+            for (const args of builds) {
+                const built = await runLog.exec(bin('nx'), args, { cwd: rootDir });
+                if (built !== 0) {
+                    runLog.echo('grid-e2e.sh: building the UMD bundles failed, so there is nothing to test against.');
+                    return built;
+                }
             }
         }
         // CI installs the browsers in its own bounded, cached step (scripts/ci/install-playwright.sh).
@@ -115,8 +119,8 @@ Runs the real-browser Playwright specs in testing/e2e directly, bypassing Nx for
 a grid from its own configuration in the page, community or enterprise, so no docs site or dev server is needed.
 Defaults to chromium only. Any unrecognised arguments are forwarded directly to playwright test.
 
-Before the tests it builds the UMD bundles of ag-grid-community and ag-grid-enterprise (cached by Nx when
-unchanged) and, outside CI, installs the browsers it is about to use.
+Before the tests it builds the UMD bundles of ag-grid-community, ag-grid-enterprise, ag-grid-react and
+ag-grid-vue3 (cached by Nx when unchanged) and, outside CI, installs the browsers it is about to use.
 
 Options:
   --all-browsers          Run all browsers (chromium, firefox, webkit)

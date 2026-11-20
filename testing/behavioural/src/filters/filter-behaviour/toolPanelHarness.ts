@@ -223,18 +223,16 @@ export class ToolPanelHarness {
     }
 
     /**
-     * Types into the column-list search box and waits past the 300ms debounce. The search result can
-     * legitimately be "nothing changed" (e.g. clearing a search that matched everything), so there is
-     * no positive signal to poll for here — callers assert the resulting title list themselves.
+     * Types into the column-list search box and waits past its debounce (0ms under `FAST_TEST_TIMINGS`); a
+     * search may change nothing, so there is no signal to poll: callers assert the resulting titles.
      */
     public async search(text: string): Promise<this> {
         setNativeInputValue(this.searchInput(), text);
-        // eslint-disable-next-line no-restricted-syntax -- waits for the 300ms search debounce in agFiltersToolPanelHeader.ts
-        await asyncSetTimeout(350);
+        await asyncSetTimeout(0);
         return this;
     }
 
-    /** Types into the column-list search, leaving its 300ms debounce still pending. */
+    /** Types into the column-list search, leaving its debounce still pending. */
     public startSearch(text: string): this {
         setNativeInputValue(this.searchInput(), text);
         return this;

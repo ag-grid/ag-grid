@@ -1,4 +1,4 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { AgColumn, ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import {
@@ -11,7 +11,7 @@ import {
     TooltipModule,
 } from 'ag-grid-community';
 
-import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, bench } from './bench-utils';
 
 suite('getValue profiling', () => {
     const rowCount = 2000;
@@ -50,7 +50,7 @@ suite('getValue profiling', () => {
     let lastCol!: AgColumn;
     // A grid per bench, built in setup: one built at import renders rows before every bench, and the JIT
     // feedback that leaves in the value path is the rendering code's, not the bench's.
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('G', { columnDefs, rowData, getRowId: ({ data }) => data.id });
@@ -58,7 +58,7 @@ suite('getValue profiling', () => {
             api.forEachNode((n) => rowNodes.push(n));
             lastCol = api.getColumn(lastField)! as AgColumn;
         },
-    });
+    };
 
     // Each loop accumulates the read value into `sink` (returned) so V8 can't dead-code-eliminate the
     // getDataValue call — otherwise the bench would measure nothing and look impossibly fast. A call reads
@@ -163,16 +163,15 @@ suite('getValue profiling (all columns per row)', () => {
 
     let nodes: IRowNode[] = [];
     let cols: AgColumn[] = [];
-    const options = (columnDefs: ColDef[]) =>
-        benchDefaults({
-            setup: async () => {
-                await gridsManager.reset();
-                const api = gridsManager.createGrid('V', { columnDefs, rowData, getRowId: ({ data }) => data.id });
-                nodes = [];
-                api.forEachNode((n) => nodes.push(n));
-                cols = api.getColumns()! as AgColumn[];
-            },
-        });
+    const options = (columnDefs: ColDef[]) => ({
+        setup: async () => {
+            await gridsManager.reset();
+            const api = gridsManager.createGrid('V', { columnDefs, rowData, getRowId: ({ data }) => data.id });
+            nodes = [];
+            api.forEachNode((n) => nodes.push(n));
+            cols = api.getColumns()! as AgColumn[];
+        },
+    });
     // Two literals, not one shared fn: closures from one site share their feedback, so the varied loop would
     // inherit the uniform one's shapes and the control would stop isolating them.
     bench(
@@ -246,7 +245,7 @@ suite('getValue profiling (valueGetter columns)', () => {
             }
             return sink as any;
         },
-        benchDefaults({
+        {
             setup: async () => {
                 await gridsManager.reset();
                 const api = gridsManager.createGrid('VG', { columnDefs, rowData, getRowId: ({ data }) => data.id });
@@ -254,6 +253,6 @@ suite('getValue profiling (valueGetter columns)', () => {
                 api.forEachNode((n) => nodes.push(n));
                 cols = api.getColumns()! as AgColumn[];
             },
-        })
+        }
     );
 });

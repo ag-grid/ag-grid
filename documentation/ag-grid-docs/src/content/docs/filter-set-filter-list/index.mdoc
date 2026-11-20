@@ -292,7 +292,7 @@ const gridOptions = {
 ```
 
 {% note %}
-The `caseSensitive` option also affects [Mini-Filter](./filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](./filter-set-api/#enabling-case-sensitivity) behaviours.
+The `caseSensitive` option also affects [API](./filter-set-api/#enabling-case-sensitivity) behaviours. [Mini Filter](./filter-set-mini-filter/#enabling-case-sensitive-searches) searches still ignore case unless `miniFilterCaseSensitive` is also enabled.
 {% /note %}
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:
@@ -300,6 +300,8 @@ The following example demonstrates the difference in behaviour between `caseSens
 - The case insensitive column's Filter List has seven distinct values with unique colours.
     - Typing `black` into the Mini Filter will match `Black`.
 - The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
+    - Typing `black` into the Mini Filter will list `Black`, `black` and `BLACK`, as the search ignores case.
+- The case sensitive search column also sets `miniFilterCaseSensitive: true`, and has the same 21 distinct values.
     - Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
 {% gridExampleRunner title="Enabling SetFilter Case-Sensitivity" name="case-sensitive-set-filter-list"  exampleHeight=720 /%}

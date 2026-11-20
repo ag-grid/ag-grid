@@ -1,7 +1,7 @@
 import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { ColGroupDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -21,6 +21,65 @@ describe('ag-grid validation warnings', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleWarnSpy.mockRestore();
+    });
+
+    test.each(['hover', 'focus', 'hoverOrFocus', 'hoverAnddFocus'])(
+        'validates tooltipTrigger: %s',
+        (tooltipTrigger) => {
+            const options: GridOptions = { columnDefs: [], rowData: [] };
+            Object.assign(options, { tooltipTrigger });
+            gridsManager.createGrid('tooltip-trigger', options);
+
+            if (tooltipTrigger === 'hoverAnddFocus') {
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining('warning #320'),
+                    expect.stringContaining('tooltipTrigger'),
+                    expect.any(String)
+                );
+            } else {
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+            }
+        }
+    );
+
+    test.each([
+        ['tooltipPosition', 'above', 320],
+        ['tooltipAnchor', 'mouse', 320],
+        ['tooltipOffset', -1, 317],
+        ['tooltipInteraction', 'true', 314],
+    ] as const)('validates %s: %s', (property, value, warning) => {
+        gridsManager.createGrid('tooltip-placement', { columnDefs: [], rowData: [], [property]: value });
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.stringContaining(`warning #${warning}`),
+            expect.stringContaining(property),
+            expect.any(String)
+        );
+    });
+
+    test.each([NaN, Infinity, -Infinity])('rejects a non-finite tooltipOffset: %s', (tooltipOffset) => {
+        gridsManager.createGrid('tooltip-offset', { columnDefs: [], rowData: [], tooltipOffset });
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.stringContaining('tooltipOffset: value should be a finite number'),
+            expect.any(String)
+        );
+    });
+
+    test.each([true, false, () => true, () => false])('accepts tooltipInteraction: %s', (tooltipInteraction) => {
+        gridsManager.createGrid('tooltip-interaction', { columnDefs: [], rowData: [], tooltipInteraction });
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    test('accepts tooltip placement values and callbacks', () => {
+        const api = gridsManager.createGrid('tooltip-placement', {
+            columnDefs: [],
+            rowData: [],
+            tooltipPosition: 'left-end',
+            tooltipAnchor: 'pointer',
+            tooltipOffset: 0,
+        });
+        api.setGridOption('tooltipPosition', () => undefined);
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 
     test('validates loadingRows rowCount and accepts runtime configuration updates', () => {
@@ -82,6 +141,24 @@ describe('ag-grid validation warnings', () => {
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #307'),
                 expect.stringContaining('Invalid `colDef` property `notAColProp`'),
+                expect.any(String)
+            );
+        });
+
+        test('warns for unknown column group definition properties', () => {
+            const group: ColGroupDef = Object.assign(
+                { groupId: 'g', children: [{ field: 'a' }] },
+                { notAGroupProp: true }
+            );
+            gridsManager.createGrid('myGrid', {
+                defaultColDef: { cellDataType: false },
+                columnDefs: [group],
+                rowData: [{ a: 1 }],
+            });
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #307'),
+                expect.stringContaining('property `notAGroupProp`'),
                 expect.any(String)
             );
         });

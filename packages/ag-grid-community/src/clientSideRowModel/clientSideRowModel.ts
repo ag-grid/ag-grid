@@ -1,5 +1,3 @@
-import { _debounce } from 'ag-stack';
-
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -892,7 +890,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const closeRange = (rowNode: RowNode): boolean => {
             finished = true;
 
-            // if the final node was a group node, and groups select their descendants
+            // if the final node was a group node, and we're doing groupSelectsChildren
             // make the exception to select all of it's descendants too
             if (groupsSelectChildren && rowNode.group) {
                 addAllLeafs(result, rowNode);
@@ -1406,14 +1404,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.stages = null;
         this.stagesRefreshProps.clear();
         clearTimeout(this.asyncTransactionsTimer);
-    }
-
-    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
-    /**
-     * @deprecated v33.1
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 }
 

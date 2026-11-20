@@ -12,21 +12,27 @@ export interface ITooltipFeature {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface TooltipCtrl<TLocation extends string, TParams> {
-    getTooltipValue?(): any;
+export interface TooltipDetails<TLocation extends string> {
+    value?: any;
+    location?: TLocation;
+    params?: object;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface TooltipCtrl<TLocation extends string, TDetails extends TooltipDetails<TLocation>> {
+    getTooltip?(): TDetails;
     getGui(): HTMLElement;
+    /** The accessible owner when keyboard focus is managed outside the tooltip source. */
+    getAriaElement?(): HTMLElement;
     getLocation?(): TLocation | 'UNKNOWN';
 
     getTooltipShowDelayOverride?(): number;
     getTooltipSwitchShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
-    shouldDisplayTooltip?(): boolean;
+    shouldDisplayTooltip?(tooltip: TDetails): boolean;
     /**
      * Only needed for components that move focus on hover, such as menu items, to suppress hover-driven focus tooltips.
      * Checked synchronously on focusin, before scheduling tooltip display.
      */
     shouldDisplayTooltipOnFocus?(): boolean;
-
-    /** Additional params to be passed to the tooltip */
-    getAdditionalParams?(): TParams;
 }

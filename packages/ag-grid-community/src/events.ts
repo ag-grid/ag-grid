@@ -362,6 +362,8 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 /**
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
+ * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
+ * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -378,6 +380,8 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
 export type SelectionEventSourceType =
     | 'api'
     | 'apiSelectAll'
+    | 'apiSelectAllFiltered'
+    | 'apiSelectAllCurrentPage'
     | 'checkboxSelected'
     | 'rowClicked'
     | 'rowDataChanged'
@@ -909,8 +913,6 @@ export interface ChartCreatedEvent<TData = any, TContext = any> extends AgGlobal
     /** Id of the created chart. This can later be used to reference the chart via api methods. */
     chartId: string;
 }
-/** @deprecated v32 Use ChartCreatedEvent instead */
-export interface ChartCreated<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> {}
 
 export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartRangeSelectionChanged',
@@ -924,11 +926,6 @@ export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any> ex
     /** New cellRange selected. */
     cellRange: CellRangeParams;
 }
-/** @deprecated v32 Use ChartRangeSelectionChangedEvent instead */
-export interface ChartRangeSelectionChanged<TData = any, TContext = any> extends ChartRangeSelectionChangedEvent<
-    TData,
-    TContext
-> {}
 
 export interface ChartOptionsChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartOptionsChanged',
@@ -944,8 +941,6 @@ export interface ChartOptionsChangedEvent<TData = any, TContext = any> extends A
     /** Chart options.  */
     chartOptions: AgChartThemeOverrides;
 }
-/** @deprecated v32 Use ChartOptionsChangedEvent instead */
-export interface ChartOptionsChanged<TData = any, TContext = any> extends ChartOptionsChangedEvent<TData, TContext> {}
 
 export interface ChartDestroyedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'chartDestroyed',
@@ -955,9 +950,6 @@ export interface ChartDestroyedEvent<TData = any, TContext = any> extends AgGlob
     /** Id of the effected chart. */
     chartId: string;
 }
-
-/** @deprecated v32 Use ChartDestroyedEvent instead */
-export interface ChartDestroyed<TData = any, TContext = any> extends ChartDestroyedEvent<TData, TContext> {}
 
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'columnGroupOpened',
@@ -1079,13 +1071,6 @@ export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
     fromBelow: boolean;
 }
 
-/**
- * @deprecated v32 Please use `ExpandOrCollapseAllEvent` instead.
- */
-export interface ExpandCollapseAllEvent<TData = any, TContext = any> extends ExpandOrCollapseAllEvent<
-    TData,
-    TContext
-> {}
 export interface ExpandOrCollapseAllEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'expandOrCollapseAll',
     TData,
@@ -1605,11 +1590,6 @@ export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any> exte
      */
     results: (RowNodeTransaction<TData> | ServerSideTransactionResult<TData>)[];
 }
-/** @deprecated v32 Use AsyncTransactionsFlushedEvent */
-export interface AsyncTransactionsFlushed<TData = any, TContext = any> extends AsyncTransactionsFlushedEvent<
-    TData,
-    TContext
-> {}
 
 export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'storeRefreshed',

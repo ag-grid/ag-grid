@@ -15,15 +15,15 @@ class Environment extends BaseEnvironment<any, any, any, any, any> {
 }
 
 describe('BaseEnvironment instance tagging', () => {
-    test('claims an element only when its nearest tagged ancestor is this instance', () => {
+    test.each([false, true])('claims only its nearest tagged ancestor (shadow root: %s)', (shadow) => {
         const outer = new Environment();
         const inner = new Environment();
         const outerRoot = document.createElement('div');
         const innerRoot = document.createElement('div');
         const outerChild = document.createElement('span');
         const innerChild = document.createElement('span');
-        outerRoot.append(outerChild, innerRoot);
-        innerRoot.append(innerChild);
+        (shadow ? outerRoot.attachShadow({ mode: 'open' }) : outerRoot).append(outerChild, innerRoot);
+        (shadow ? innerRoot.attachShadow({ mode: 'open' }) : innerRoot).append(innerChild);
 
         outer.setInstanceDomData(outerRoot);
         inner.setInstanceDomData(innerRoot);

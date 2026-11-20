@@ -25,6 +25,7 @@ export interface TestGridManagerOptions {
 
     includeDefaultModules?: boolean;
 
+    /** Resets and installs `mockGridLayout` (default on, off with `benchmark`); the behavioural setup installs it anyway. */
     mockGridLayout?: boolean;
 
     /** When true, uses production-like grid defaults (virtualization on, ensureDomOrder off). Implies mockGridLayout: false. */

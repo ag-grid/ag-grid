@@ -3,11 +3,9 @@ import { ensureGridReady, expect, test, waitForChartModels, waitForGridContent }
 test.agExample(import.meta, () => {
     // The example demonstrates a time-axis combination chart: rain as grouped columns and
     // pressure/temp as lines, all plotted against a time axis built from the `date` column.
-    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Example', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
-
-        const gridApi = remoteGrid(page);
 
         // Grid renders the documented columns with the ISO date formatter and numeric series.
         await expect(agIdFor.cell('0', 'date')).toContainText('2021-01-01');
@@ -17,7 +15,7 @@ test.agExample(import.meta, () => {
 
         // A combination chart is created over the date + rain + pressure + temp range, with the
         // date column (chartDataType: 'time') providing the time axis.
-        const models = await waitForChartModels(gridApi);
+        const models = await waitForChartModels(page);
         expect(models[0].chartType).toBe('customCombo');
 
         // Rain is a grouped column while pressure and temp are lines.

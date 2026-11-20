@@ -99,14 +99,16 @@ export class AgListItem<
     }
 
     private createTooltip(): void {
-        const tooltipCtrl = {
-            getTooltipValue: () => this.label,
+        const tooltipCtrl: TooltipCtrl<'listItem', { value: string }> = {
+            getTooltip: () => ({
+                value: this.label,
+                params: { value: this.value, valueFormatted: this.label },
+            }),
             getGui: () => this.getGui(),
-            getTooltipComponentDefinition: () => undefined,
             getLocation: () => 'listItem',
             // only show tooltips for items where the text cannot be fully displayed
             shouldDisplayTooltip: () => _isHorizontalScrollShowing(this.eText),
-        } as TooltipCtrl<'listItem', any>;
+        };
 
         const tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
@@ -141,8 +143,9 @@ export class AgListItem<
             return;
         }
 
-        this.addGuiEventListener('mouseover', () => {
-            parentComponent.highlightItem(this);
+        // Not `mouseover`: that also fires when the list opens or scrolls under a still pointer.
+        this.addGuiEventListener('mousemove', (e: MouseEvent) => {
+            parentComponent.onItemMouseMove(this, e);
         });
 
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {

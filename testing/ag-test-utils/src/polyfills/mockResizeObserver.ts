@@ -1,5 +1,6 @@
 // happy-dom's `ResizeObserver` drops the callback and never delivers, so every container-resize path in
 // the grid is observed and then never runs. This records the registrations and lets a test fire them.
+import { onFileEnd } from '../fileScope';
 
 type Registration = {
     readonly callback: ResizeObserverCallback;
@@ -47,12 +48,19 @@ export function installMockResizeObserver(): () => void {
     registrations.length = 0;
     installed = true;
 
-    return () => {
+    let uninstalled = false;
+    const uninstall = () => {
+        if (uninstalled) {
+            return;
+        }
+        uninstalled = true;
         window.ResizeObserver = originalImpl!;
         originalImpl = undefined;
         registrations.length = 0;
         installed = false;
     };
+    onFileEnd(uninstall);
+    return uninstall;
 }
 
 /** The grid throttles these callbacks to an animation frame, so poll the assertion rather than reading it

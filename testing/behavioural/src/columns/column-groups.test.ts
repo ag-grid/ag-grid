@@ -1339,6 +1339,22 @@ describe('Column Groups', () => {
             expect(calls).toEqual([true]);
         });
 
+        test('a listener on a provided group the column definitions keep still hears it open', () => {
+            const columnDefs = (): (ColDef | ColGroupDef)[] => [
+                { groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: columnDefs() });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+
+            api.setGridOption('columnDefs', columnDefs());
+            expect(api.getProvidedColumnGroup('g')).toBe(providedGroup);
+            api.setColumnGroupOpened('g', true);
+
+            expect(calls).toEqual([true]);
+        });
+
         test('expand a closed group via setColumnGroupOpened', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {
@@ -2293,6 +2309,106 @@ describe('Column Groups', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 a:1 b:2
             `);
+        });
+    });
+
+    describe('groups and padding across columnDefs updates', () => {
+        const ancestors = (api: GridApi, colId: string) => {
+            const found: { groupId: string; padding: boolean }[] = [];
+            for (let group = api.getColumn(colId)!.getOriginalParent(); group; group = group.getOriginalParent()) {
+                found.push({ groupId: group.getGroupId(), padding: group.isPadding() });
+            }
+            return found;
+        };
+
+        test('a group the column definitions keep under a new parent group reports its new level', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }] }],
+            });
+            const group = api.getProvidedColumnGroup('g')!;
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'p', children: [{ groupId: 'g', children: [{ colId: 'a' }] }] },
+            ]);
+
+            expect(api.getProvidedColumnGroup('g')).toBe(group);
+            expect(group.getLevel()).toBe(1);
+        });
+
+        test('a column beside a group sits under as many padding groups as the tree is deep after the tree deepens', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'x' }] }, { colId: 'a' }],
+            });
+            expect(ancestors(api, 'a').map((group) => group.padding)).toEqual([true]);
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'p', children: [{ groupId: 'g', children: [{ colId: 'x' }] }] },
+                { colId: 'a' },
+            ]);
+
+            expect(ancestors(api, 'a').map((group) => group.padding)).toEqual([true, true]);
+        });
+
+        test('columns from two padding groups moved into one group share one padding group holding both', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { groupId: 'k', children: [{ colId: 'b' }] },
+                    { groupId: 'g', children: [{ groupId: 'h', children: [{ colId: 'x' }] }] },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [
+                { groupId: 'k', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { groupId: 'g', children: [{ groupId: 'h', children: [{ colId: 'x' }] }] },
+            ]);
+
+            const parentOf = (colId: string) => api.getColumn(colId)!.getOriginalParent()!;
+            expect({
+                same: parentOf('a') === parentOf('b'),
+                children: parentOf('b')
+                    .getChildren()
+                    .map((child) => (child.isColumn ? child.getColId() : child.getGroupId())),
+                ancestors: ancestors(api, 'b'),
+            }).toEqual({
+                same: true,
+                children: ['a', 'b'],
+                ancestors: [
+                    { groupId: parentOf('b').getGroupId(), padding: true },
+                    { groupId: 'k', padding: false },
+                ],
+            });
+        });
+
+        test('a column taken out of a removed group gets a padding group, not the removed group', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'g', children: [{ colId: 'a' }] },
+                    { groupId: 'h', children: [{ colId: 'b' }] },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [{ groupId: 'h', children: [{ colId: 'b' }] }, { colId: 'a' }]);
+
+            const [parent] = ancestors(api, 'a');
+            expect(parent.padding).toBe(true);
+            expect(parent.groupId).not.toBe('g');
+        });
+
+        test('the column group state keeps a padding group the column definitions keep', () => {
+            const columnDefs = (): (ColDef | ColGroupDef)[] => [
+                { groupId: 'g', children: [{ colId: 'x' }] },
+                { colId: 'a' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: columnDefs() });
+            const before = api.getColumnGroupState().map((state) => state.groupId);
+            const [padding] = ancestors(api, 'a');
+            expect(before).toContain(padding.groupId);
+
+            api.setGridOption('columnDefs', columnDefs());
+
+            expect(ancestors(api, 'a')[0].groupId).toBe(padding.groupId);
+            expect(api.getColumnGroupState().map((state) => state.groupId)).toEqual(before);
         });
     });
 });

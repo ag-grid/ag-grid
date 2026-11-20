@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.spec.json",
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "tsBuildInfoFile": "../../node_modules/.cache/tsc-editor/behavioural.tsbuildinfo"
   },

@@ -58,6 +58,66 @@ describe('Column Mutations - order restoration', () => {
             `);
         });
 
+        test('maintainColumnOrder keeps the place of a column without colId or field loaded with headerName null and set again without one after columnDefs []', () => {
+            const loadedFromJson: ColDef = JSON.parse('{ "headerName": null }');
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'b' }, { field: 'c' }, loadedFromJson],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 0);
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'c' }, {}]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['0', 'b', 'c']);
+        });
+
+        test('maintainColumnOrder keeps the places of renamed columns matched by position', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'A' }, { headerName: 'B' }, { headerName: 'C' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ headerName: 'A2' }, { headerName: 'B2' }, { headerName: 'C2' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName)).toEqual(['B2', 'C2', 'A2']);
+        });
+
+        test('maintainColumnOrder gives a colId the place of the column it takes from a colDef object, whose new column is placed as new', () => {
+            const a: ColDef = { headerName: 'A' };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [a, { field: 'b' }, { field: 'c' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['0'], 2);
+
+            api.setGridOption('columnDefs', [{ colId: '0', headerName: 'K' }, a, { field: 'b' }, { field: 'c' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName ?? col.getColId())).toEqual([
+                'b',
+                'c',
+                'K',
+                'A',
+            ]);
+        });
+
+        test('maintainColumnOrder keeps the places of a colId’s repeats and places a new repeat as new', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId repeats
+            const defs = (): ColDef[] => [
+                { colId: 'p', headerName: 'A' },
+                { colId: 'p', headerName: 'B' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs(), maintainColumnOrder: true });
+            api.moveColumns(['p_1'], 0);
+
+            api.setGridOption('columnDefs', [...defs(), { colId: 'p', headerName: 'N' }]);
+
+            expect(api.getAllGridColumns().map((col) => col.getColDef().headerName)).toEqual(['B', 'A', 'N']);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
         test('maintainColumnOrder keeps a column’s moved place when it is removed and added back in pivot mode', () => {
             const pivotDefs = [
                 { field: 'country', pivot: true },
@@ -280,6 +340,19 @@ describe('Column Mutations - order restoration', () => {
                 });
                 gridsManager.reset();
             }
+        });
+
+        test('maintainColumnOrder places a column removed and added back after the one column left, as a new column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['b'], 0);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }]);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
         });
 
         test('maintainColumnOrder keeps the moved place of a recreated column without colId or field when its group has another headerName', () => {
@@ -1196,65 +1269,69 @@ describe('Column Mutations - order restoration', () => {
             expect(api.getAllGridColumns()[0].getColId()).toBe('ag-Grid-RowNumbersColumn');
         });
 
-        test('column instances are CURRENT after a colDef rebuild (no stale-instance leak)', async () => {
-            // Latest's restoreColOrder held lastOrder as AgColumn[]; if cols were rebuilt with
-            // new instances under the same colId, the filter retained the OLD AgColumn instances
-            // and Map<AgColumn, idx> lookups missed the new ones — leaking stale instances into
-            // cols.list. Branch stores lastOrder as string[] and resolves through colsById, so
-            // every entry in cols.list is the current instance.
+        test('a column given a new colDef under the same colId keeps its instance, listed once with the new header', async () => {
             const api = gridsManager.createGrid('staleCheck', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
                 maintainColumnOrder: true,
             });
-            await new GridColumns(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) setup`
-            ).checkColumns(`
+            await new GridColumns(api, 'a column given a new colDef under the same colId setup').checkColumns(`
                 CENTER
                 ├── a width:200
                 └── b width:200
             `);
-            await new GridRows(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) setup`
-            ).check(`
+            await new GridRows(api, 'a column given a new colDef under the same colId setup').check(`
                 ROOT id:ROOT_NODE_ID
             `);
-
             const before = api.getColumn('a')!;
 
-            // Replace with a different ColDef object for 'a' — same colId, new colDef ref.
-            // The internal AgColumn may be reused or rebuilt depending on the key strategy.
             api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
-            await new GridColumns(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) after setGridOption columnDefs`
-            ).checkColumns(`
+
+            await new GridColumns(api, 'a column given a new colDef under the same colId').checkColumns(`
                 CENTER
                 ├── a "A!" width:200
                 └── b width:200
             `);
-            await new GridRows(
-                api,
-                `column instances are CURRENT after a colDef rebuild (no stale-instance leak) after setGridOption columnDefs`
-            ).check(`
+            await new GridRows(api, 'a column given a new colDef under the same colId').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect({
+                kept: api.getColumn('a') === before,
+                listed: api
+                    .getAllGridColumns()
+                    .filter((col) => col.getColId() === 'a')
+                    .map((col) => col === before),
+                headerName: before.getColDef().headerName,
+            }).toEqual({ kept: true, listed: [true], headerName: 'A!' });
+        });
+
+        test('a restored order holds the columns a rebuild recreated, not the destroyed ones', async () => {
+            const api = gridsManager.createGrid('staleCheck', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                maintainColumnOrder: true,
+            });
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated setup').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            api.moveColumns(['b'], 0);
+            const before = api.getColumn('a')!;
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'b' }]);
+            await new GridColumns(api, 'a restored order holds the columns a rebuild recreated').checkColumns(`
+                CENTER
+                ├── b width:200
+                └── a "A!" width:200
+            `);
+            await new GridRows(api, 'a restored order holds the columns a rebuild recreated').check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
             const after = api.getColumn('a')!;
             const allCols = api.getAllGridColumns();
-
-            // The column 'a' resolves to a live AgColumn (whichever instance the rewrite chose
-            // to keep) and that same instance appears in the displayed cols list.
-            expect(after).toBeTruthy();
-            expect(allCols).toContain(after);
-            // Header reflects the new colDef even on the (possibly-reused) instance.
-            expect(after.getColDef().headerName).toBe('A!');
-            // Sanity: instance reference is reused or rebuilt cleanly; either way it's not the
-            // stale 'before' instance unless it survived the rebuild.
-            if (before !== after) {
-                expect(allCols).not.toContain(before);
-            }
+            expect(after).not.toBe(before);
+            expect(allCols[1]).toBe(after);
+            expect(allCols[0]).toBe(api.getColumn('b'));
+            expect(allCols).not.toContain(before);
         });
     });
 

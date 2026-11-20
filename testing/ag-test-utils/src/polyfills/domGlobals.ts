@@ -1,8 +1,15 @@
+let installed = false;
+
 /**
  * The platform as tests and grid code expect it: constructors happy-dom implements but never puts on `window`,
- * recovered from live instances, and its wrong `ShadowRoot.activeElement` and `Event.composedPath` corrected.
+ * recovered from live instances, and its wrong `ShadowRoot.activeElement` and `Event.composedPath` corrected,
+ * once per worker and never removed.
  */
 export function polyfillDomGlobals(): void {
+    if (installed) {
+        return;
+    }
+    installed = true;
     const global = globalThis as Record<string, unknown>;
     if (typeof global.DOMTokenList === 'undefined') {
         global.DOMTokenList = Object.getPrototypeOf(document.createElement('div').classList).constructor;

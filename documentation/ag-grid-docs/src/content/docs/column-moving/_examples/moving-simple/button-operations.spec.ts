@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Column Moving Button Operations', async ({ page, agIdFor }) => {
+    test.eachFramework('Column Moving Button Operations', async ({ page }) => {
         // Set a consistent viewport size
         await page.setViewportSize({ width: 1200, height: 800 });
 

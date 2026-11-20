@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }));
             unbalancedData.sort((a: IOlympicData, b: IOlympicData) => (a.country === '' ? -1 : 1));
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(unbalancedData);
+            const fakeServer = FakeServer(unbalancedData);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

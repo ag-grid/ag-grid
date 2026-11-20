@@ -1,6 +1,17 @@
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+
 let id = 1;
 
-export default {
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<FilterDisplayParams<any, any, true>>,
+            required: true,
+        },
+    },
     template: `
         <div class="year-filter">
             <div>Select Year Range</div>
@@ -23,7 +34,7 @@ export default {
             this.params.onModelChange(this.year === '2010' || null);
         },
 
-        refresh(newParams): boolean {
+        refresh(newParams: FilterDisplayParams<any, any, true>): boolean {
             const currentValue = this.year === '2010' || null;
             const newValue = newParams.model;
             if (newValue !== currentValue) {
@@ -32,14 +43,14 @@ export default {
             return true;
         },
 
-        afterGuiAttached(params) {
+        afterGuiAttached(params?: IAfterGuiAttachedParams) {
             if (!params || !params.suppressFocus) {
                 // focus the input element for keyboard navigation
-                this.$refs.rbAllYears.focus();
+                (this.$refs.rbAllYears as HTMLInputElement).focus();
             }
         },
     },
     mounted: function () {
         this.refresh(this.params);
     },
-};
+});

@@ -2,7 +2,7 @@
 // Every export must be a top-level function that depends only on its arguments and other helpers here.
 
 // Throws for a column the data doesn't hold, so only known column names reach the query text.
-export function checkColumn(knownColumns, colId) {
+export function checkColumn(knownColumns: Set<string>, colId: string) {
     if (!knownColumns.has(colId)) {
         throw new Error('Unknown column: ' + colId);
     }
@@ -10,15 +10,20 @@ export function checkColumn(knownColumns, colId) {
 }
 
 // Combines the conditions of a two-condition filter with its operator, mapping each with `mapper`.
-export function combineConditionsSql(mapper, key, item, params) {
-    if (item.operator) {
+export function combineConditionsSql<TModel>(
+    mapper: (key: string, item: TModel, params: unknown[]) => string,
+    key: string,
+    item: TModel & { operator?: string; conditions?: TModel[] },
+    params: unknown[]
+) {
+    if (item.operator && item.conditions) {
         const conditions = item.conditions.map((condition) => mapper(key, condition, params));
         return '(' + conditions.join(item.operator === 'OR' ? ' OR ' : ' AND ') + ')';
     }
     return mapper(key, item, params);
 }
 
-export function textFilterSql(key, item, params) {
+export function textFilterSql(key: string, item: { type?: string | null; filter?: string | null }, params: unknown[]) {
     switch (item.type) {
         case 'equals':
             params.push(String(item.filter));
@@ -44,10 +49,15 @@ export function textFilterSql(key, item, params) {
             return key + ' IS NOT NULL and ' + key + " != ''";
         default:
             console.log('unknown text filter type: ' + item.type);
+            return '';
     }
 }
 
-export function numberFilterSql(key, item, params) {
+export function numberFilterSql(
+    key: string,
+    item: { type?: string | null; filter?: number | null; filterTo?: number | null },
+    params: unknown[]
+) {
     switch (item.type) {
         case 'equals':
             params.push(item.filter);
@@ -76,16 +86,17 @@ export function numberFilterSql(key, item, params) {
             return key + ' IS NOT NULL';
         default:
             console.log('unknown number filter type: ' + item.type);
+            return '';
     }
 }
 
-export function setFilterSql(key, item, params) {
+export function setFilterSql(key: string, item: { values: (string | null)[] }, params: unknown[]) {
     // blanks arrive as `null`; bind '' instead, as AlaSQL never matches null in an IN list
     params.push(...item.values.map((value) => value ?? ''));
     return key + ' IN (' + item.values.map(() => '?').join(', ') + ')';
 }
 
-export function orderBySql(sortModel, knownColumns) {
+export function orderBySql(sortModel: { colId: string; sort: string }[], knownColumns: Set<string>) {
     // sorting on a column the data doesn't hold (e.g. the auto group column) has no effect
     const sorts = sortModel
         .filter((s) => knownColumns.has(s.colId))
@@ -95,7 +106,7 @@ export function orderBySql(sortModel, knownColumns) {
     return ' ORDER BY ' + sorts.join(', ');
 }
 
-export function limitSql(request) {
+export function limitSql(request: { startRow?: number; endRow?: number }) {
     if (request.endRow == undefined || request.startRow == undefined) {
         return '';
     }

@@ -86,7 +86,7 @@ export abstract class BaseEnvironment<
             if (instanceId != null) {
                 return instanceId === this.instanceId;
             }
-            pointer = pointer.parentElement;
+            pointer = pointer.parentElement ?? (pointer.getRootNode() as ShadowRoot).host ?? null;
         }
         return false;
     }

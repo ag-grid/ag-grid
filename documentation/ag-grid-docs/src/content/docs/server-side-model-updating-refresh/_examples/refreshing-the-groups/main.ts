@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             allData = dataWithId;
 
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(allData);
+            const fakeServer = FakeServer(allData);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

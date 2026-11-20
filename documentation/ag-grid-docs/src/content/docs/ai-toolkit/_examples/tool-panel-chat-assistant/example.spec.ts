@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Chat assistant tool panel is open by default', async ({ agIdFor, page }) => {
@@ -42,36 +42,40 @@ test.agExample(import.meta, () => {
         expect(after).not.toBe(before);
     });
 
-    test.vanilla('Structured schema snapshot', async ({ page, remoteGrid }) => {
+    test.vanilla('Structured schema snapshot', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        const schema = await gridApi.getStructuredSchema();
+        const api = await gridApiHandle(page);
+        const schema = await api.evaluate((api) => api.getStructuredSchema());
 
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('structured-schema.json');
     });
 
-    test.vanilla('Schema after columns removed', async ({ page, remoteGrid }) => {
+    test.vanilla('Schema after columns removed', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        await gridApi.setGridOption('columnDefs', [
-            { field: 'country', filter: 'agSetColumnFilter' },
-            { field: 'amount', filter: 'agNumberColumnFilter' },
-        ]);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'amount', filter: 'agNumberColumnFilter' },
+            ])
+        );
 
-        const schema = await gridApi.getStructuredSchema();
+        const schema = await api.evaluate((api) => api.getStructuredSchema());
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-columns-removed.json');
     });
 
-    test.vanilla('Schema with exclude parameter', async ({ page, remoteGrid }) => {
+    test.vanilla('Schema with exclude parameter', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        const schema = await gridApi.getStructuredSchema({ exclude: ['pivot', 'rowGroup', 'aggregation'] });
+        const api = await gridApiHandle(page);
+        const schema = await api.evaluate((api) =>
+            api.getStructuredSchema({ exclude: ['pivot', 'rowGroup', 'aggregation'] })
+        );
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-exclude-pivot-rowgroup-agg.json');
     });
 });

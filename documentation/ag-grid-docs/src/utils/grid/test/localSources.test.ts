@@ -103,7 +103,7 @@ describe('routeSiteThroughMemo', () => {
         const match = (await registerMemo()).matches;
 
         expect(match(`${BASE_URL}files/ag-grid-community/dist/package/main.esm.mjs`)).toBe(true);
-        expect(match(`${BASE_URL}example-runner/example-runner.js`)).toBe(true);
+        expect(match(`${BASE_URL}example-runner/example-runner.mjs`)).toBe(true);
         expect(match(`${BASE_URL}fonts/pdf-export/IBMPlexSansJP-Bold.ttf`)).toBe(true);
         expect(match('https://grid-staging.ag-grid.com/fonts/pdf-export/IBMPlexSansJP-Bold.ttf')).toBe(false);
         expect(match('https://grid-staging.ag-grid.com/example-assets/olympic-winners.json')).toBe(true);

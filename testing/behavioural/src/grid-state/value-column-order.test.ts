@@ -104,6 +104,35 @@ describe('Value Column Order (valueIndex)', () => {
         await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
+    test('value columns keep their order through a columnDefs update that sets their aggFunc again', async () => {
+        const defs = () => [
+            { field: 'gold', aggFunc: 'sum' },
+            { field: 'silver', aggFunc: 'sum' },
+        ];
+        const api = await gridsManager.createGridAndWait('myGrid', { columnDefs: defs(), rowData });
+        api.setValueColumns(['silver', 'gold']);
+
+        api.setGridOption('columnDefs', defs());
+
+        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+    });
+
+    test('changing a value column’s aggFunc alone raises columnValueChanged for it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+            ],
+            rowData,
+        });
+        const changed: string[][] = [];
+        api.addEventListener('columnValueChanged', (e) => changed.push((e.columns ?? []).map((c) => c.getColId())));
+
+        api.setColumnAggFunc('gold', 'avg');
+
+        await waitFor(() => expect(changed).toEqual([['gold']]));
+    });
+
     test('a state item with valueIndex but no aggFunc activates and orders the value column', async () => {
         // Awaiting first render pins the "no value columns" check to a defined point: polling for an
         // empty array would pass vacuously before the grid has processed the columns at all.

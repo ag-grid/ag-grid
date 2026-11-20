@@ -1,7 +1,23 @@
 import { defineConfig } from 'vitest/config';
+import type { TestSpecification } from 'vitest/node';
+import { BaseSequencer } from 'vitest/node';
 
 import { resultJsonFile, vitestReporters } from './testing/shared/vitest/shared';
 import projects from './vitest.workspace';
+
+/**
+ * Vitest queues files project by project, in name order, so the few `behavioural-isolated` files, each loading the
+ * grid afresh, would wait for every `behavioural` file and run as the tail; queued first, they run beside the rest.
+ */
+class IsolatedFirstSequencer extends BaseSequencer {
+    public override async sort(files: TestSpecification[]): Promise<TestSpecification[]> {
+        const sorted = await super.sort(files);
+        const isolatedFirst = sorted.filter((spec) => spec.project.name === 'behavioural-isolated');
+        return isolatedFirst.length
+            ? [...isolatedFirst, ...sorted.filter((spec) => !isolatedFirst.includes(spec))]
+            : sorted;
+    }
+}
 
 // Vitest adds one `unhandledRejection` listener to `process` per project pool; a full run has
 // enough projects to trip Node's default 10-listener cap and print a spurious MaxListenersExceededWarning.
@@ -20,7 +36,7 @@ export default defineConfig({
         watch: false,
         // Runner-global, and the only place it counts: vitest builds each worker's `sequence` wholly from
         // the root config, so the projects' own copy applies to a standalone `nx test <project>` run alone.
-        sequence: { setupFiles: 'list' },
+        sequence: { setupFiles: 'list', sequencer: IsolatedFirstSequencer },
         reporters: vitestReporters(),
         outputFile: {
             junit: 'reports/workspace.xml',

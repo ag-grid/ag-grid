@@ -1,30 +1,26 @@
-import { expect, test } from '@utils/grid/test-utils';
-import type { AsyncGridApi, EventLog } from '@utils/grid/test/remoteGridapi';
+import { expect, gridApiHandle, test } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
     test.use({ agModules: ['SetFilterModule'] });
 
-    test.eachFramework('Example Click Filter List Item', async ({ page, agIdFor, remoteGrid, agFramework }) => {
+    test.eachFramework('Example Click Filter List Item', async ({ page, agIdFor, agFramework }) => {
         test.skip(agFramework === 'vanilla', 'Vanilla does not have Enterprise in this example');
 
-        const miniFilterSearch = await setupTest(remoteGrid, page, agIdFor);
+        const miniFilterSearch = await setupTest(page, agIdFor);
 
         await performTest(agIdFor, page, miniFilterSearch);
     });
 
-    test.eachFramework(
-        'Example Click Filter List Item after filtering',
-        async ({ page, agIdFor, remoteGrid, agFramework }) => {
-            test.skip(agFramework === 'vanilla', 'Vanilla does not have Enterprise in this example');
+    test.eachFramework('Example Click Filter List Item after filtering', async ({ page, agIdFor, agFramework }) => {
+        test.skip(agFramework === 'vanilla', 'Vanilla does not have Enterprise in this example');
 
-            const miniFilterSearch = await setupTest(remoteGrid, page, agIdFor);
+        const miniFilterSearch = await setupTest(page, agIdFor);
 
-            await miniFilterSearch.fill('arm');
+        await miniFilterSearch.fill('arm');
 
-            await performTest(agIdFor, page, miniFilterSearch);
-        }
-    );
+        await performTest(agIdFor, page, miniFilterSearch);
+    });
 });
 async function performTest(agIdFor: any, page: Page, miniFilterSearch: any) {
     const armstrongOption = agIdFor.setFilterInstanceItem({ source: 'column-filter' }, 'Aaron Armstrong');
@@ -60,28 +56,23 @@ async function performTest(agIdFor: any, page: Page, miniFilterSearch: any) {
     await expect(allGridCells).toHaveCount(26);
 }
 
-async function setupTest(
-    remoteGrid: ((page: Page, gridId?: string) => AsyncGridApi) & {
-        eventLog: EventLog;
-        waitForEventlog: (timeoutMs: number) => Promise<EventLog>;
-    },
-    page: Page,
-    agIdFor: any
-) {
-    const remoteApi = remoteGrid(page, '1');
-    remoteApi.setGridOption('columnDefs', [
-        {
-            field: 'athlete',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                showTooltips: true,
-                buttons: ['clear', 'apply'],
-                defaultToNothingSelected: true,
-                convertValuesToStrings: true,
-                closeOnApply: true,
+async function setupTest(page: Page, agIdFor: any) {
+    const api = await gridApiHandle(page, '1');
+    await api.evaluate((api) =>
+        api.setGridOption('columnDefs', [
+            {
+                field: 'athlete',
+                filter: 'agSetColumnFilter',
+                filterParams: {
+                    showTooltips: true,
+                    buttons: ['clear', 'apply'],
+                    defaultToNothingSelected: true,
+                    convertValuesToStrings: true,
+                    closeOnApply: true,
+                },
             },
-        },
-    ]);
+        ])
+    );
 
     const colFilterIcon = agIdFor.headerFilterButton('athlete');
     await colFilterIcon.click();

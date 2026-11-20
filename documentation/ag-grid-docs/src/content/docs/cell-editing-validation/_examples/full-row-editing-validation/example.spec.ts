@@ -9,7 +9,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', '0')).toContainText('24.98');
     });
 
-    test.eachFramework('full row edit recomputes the BMI on commit', async ({ agIdFor, page }) => {
+    test.eachFramework('full row edit recomputes the BMI on commit', async ({ agIdFor }) => {
         // Double-clicking any cell opens editors across the whole row (editType: 'fullRow').
         await agIdFor.cell('0', 'weight').dblclick();
 
@@ -23,7 +23,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', '0')).toContainText('29.38');
     });
 
-    test.eachFramework('block mode keeps the row open when the BMI is invalid', async ({ agIdFor, page }) => {
+    test.eachFramework('block mode keeps the row open when the BMI is invalid', async ({ agIdFor }) => {
         await agIdFor.cell('0', 'weight').dblclick();
 
         const weightInput = agIdFor.cell('0', 'weight').locator('input');
@@ -142,7 +142,7 @@ test.agExample(import.meta, () => {
         }
     );
 
-    test.eachFramework('Tab still moves between editors while the row is blocked', async ({ agIdFor, page }) => {
+    test.eachFramework('Tab still moves between editors while the row is blocked', async ({ agIdFor }) => {
         // Documented claim: "Full Row Editing still allows navigation between editors in the same row."
         await agIdFor.cell('0', 'weight').dblclick();
 

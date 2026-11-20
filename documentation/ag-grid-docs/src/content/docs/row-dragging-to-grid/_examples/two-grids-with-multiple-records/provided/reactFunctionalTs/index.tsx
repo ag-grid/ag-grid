@@ -168,6 +168,9 @@ const GridExample = () => {
             return;
         }
         const dropZoneParams = rightApi.getRowDropZoneParams({ onDragStop });
+        if (!dropZoneParams) {
+            return;
+        }
 
         leftApi.removeRowDropZone(dropZoneParams);
         leftApi.addRowDropZone(dropZoneParams);

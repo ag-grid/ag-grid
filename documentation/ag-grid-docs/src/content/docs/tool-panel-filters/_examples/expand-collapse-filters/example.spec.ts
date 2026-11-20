@@ -2,7 +2,7 @@ import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page, agIdFor }) => {
+    test.eachFramework('Example', async ({ page }) => {
         await ensureGridReady(page);
 
         const panel = page.locator('.ag-filter-toolpanel');

@@ -66,6 +66,13 @@ export abstract class BasePopupService<
 
     protected popupList: AgPopup[] = [];
 
+    public override destroy(): void {
+        for (const popup of this.popupList.slice()) {
+            popup.hideFunc({ forceHide: true });
+        }
+        super.destroy();
+    }
+
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
 
@@ -300,8 +307,9 @@ export abstract class BasePopupService<
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
-            let { x, y } = updatePosition!();
-
+            if (fromResizeObserver && !ePopup.isConnected) {
+                return;
+            }
             if (
                 fromResizeObserver &&
                 ePopup.clientWidth === lastSize.width &&
@@ -310,8 +318,11 @@ export abstract class BasePopupService<
                 return;
             }
 
-            lastSize.width = ePopup.clientWidth;
-            lastSize.height = ePopup.clientHeight;
+            let { x, y } = updatePosition!();
+            if (!skipObserver) {
+                lastSize.width = ePopup.clientWidth;
+                lastSize.height = ePopup.clientHeight;
+            }
 
             if (nudgeX) {
                 x += nudgeX;
@@ -425,6 +436,7 @@ export abstract class BasePopupService<
         }
 
         const wrapperEl = _createAgElement({ tag: 'div', cls: 'ag-popup' });
+        this.beans.environment.setInstanceDomData(wrapperEl);
         wrapperEl.appendChild(eChild);
         const disconnect = _initStyledRoot(this.beans.environment, this.getPopupParent(), wrapperEl);
 
@@ -487,6 +499,10 @@ export abstract class BasePopupService<
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
+            // Once only, forced or not: the client can have different paths, each one wanting to close.
+            if (popupHidden) {
+                return;
+            }
             const eventSourceToIgnore =
                 typeof params.eventSourceToIgnore === 'function'
                     ? params.eventSourceToIgnore()
@@ -503,10 +519,7 @@ export abstract class BasePopupService<
                     (!!eventSourceToIgnore &&
                         isSourceDismissalEvent &&
                         !!pointerEvent &&
-                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)) ||
-                    // this method should only be called once. the client can have different
-                    // paths, each one wanting to close, so this method may be called multiple times.
-                    popupHidden)
+                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)))
             ) {
                 return;
             }
@@ -536,6 +549,9 @@ export abstract class BasePopupService<
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(() => {
+            if (popupHidden) {
+                return;
+            }
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }

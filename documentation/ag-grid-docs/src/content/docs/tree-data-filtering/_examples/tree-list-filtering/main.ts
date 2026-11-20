@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, KeyCreatorParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
             treeList: true,
-            keyCreator: (params) => (params.value ? params.value.join('#') : null),
+            keyCreator: (params: KeyCreatorParams) => (params.value ? params.value.join('#') : null),
         },
     },
     treeData: true,

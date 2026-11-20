@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
       <div role="gridcell">
       <form>
@@ -33,25 +44,24 @@ export default {
     mounted() {
         this.firstRecord = this.params.data.callRecords[0];
 
-        this.eParentEl = this.params.eParentOfValue;
-        this.eParentEl.addEventListener('focus', this.onParentElFocus);
+        this.params.eParentOfValue.addEventListener('focus', this.onParentElFocus);
     },
     unmounted() {
-        this.eParentEl.removeEventListener('focus', this.onParentElFocus);
+        this.params.eParentOfValue.removeEventListener('focus', this.onParentElFocus);
     },
     methods: {
         // called when the cell is refreshed
         refresh() {
             return false;
         },
-        onParentElFocus(event) {
-            const currentEl = event.target;
-            const previousEl = event.relatedTarget;
+        onParentElFocus(event: FocusEvent) {
+            const currentEl = event.target as HTMLElement;
+            const previousEl = event.relatedTarget as HTMLElement | null;
             const previousRowEl = findRowForEl(previousEl);
-            const currentRow = currentEl && parseInt(currentEl.getAttribute('row-index'), 10);
-            const previousRow = previousRowEl && parseInt(previousRowEl.getAttribute('row-index'), 10);
+            const currentRow = currentEl && parseInt(currentEl.getAttribute('row-index')!, 10);
+            const previousRow = previousRowEl && parseInt(previousRowEl.getAttribute('row-index')!, 10);
 
-            const inputs = Array.from(currentEl.querySelectorAll('input')).filter((el) => {
+            const inputs = Array.from<HTMLInputElement>(currentEl.querySelectorAll('input')).filter((el) => {
                 if (el.checkVisibility) {
                     return el.checkVisibility({
                         checkOpacity: true,
@@ -72,9 +82,9 @@ export default {
             }
         },
     },
-};
+});
 
-function findRowForEl(el) {
+function findRowForEl(el: HTMLElement | null): HTMLElement | null {
     let rowEl = el;
     while (rowEl) {
         rowEl = rowEl.parentElement;

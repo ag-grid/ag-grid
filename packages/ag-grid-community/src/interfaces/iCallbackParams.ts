@@ -1,4 +1,4 @@
-import type { TooltipLocation } from '../tooltip/tooltipComponent';
+import type { TooltipLocation, TooltipPosition } from '../tooltip/tooltipComponent';
 import type { BrandedType } from './brandedType';
 import type { EditingCellPosition } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
@@ -86,6 +86,8 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
     rowNode?: IRowNode<TData> | null;
     /** Tooltip location when `type` is `'tooltip'`. */
     tooltipLocation?: TooltipLocation;
+    /** Resolved tooltip placement after collision handling, before this callback makes any adjustments. */
+    tooltipPosition?: TooltipPosition;
     /** The popup we are showing */
     ePopup: HTMLElement;
     /**
@@ -258,10 +260,6 @@ export interface ServerSideGroupLevelParams {
      */
     cacheBlockSize?: number;
 }
-
-/**
- * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
 export type GetServerSideGroupLevelParams<TData = any, TContext = any> = (
     params: GetServerSideGroupLevelParamsParams<TData, TContext>

@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
                         color: 'white',
                         fontSize: 10,
                         fontWeight: 'bold',
-                        formatter: (params: AgChartLabelFormatterParams) => {
+                        formatter: (params: AgChartLabelFormatterParams<any>) => {
                             return `${params.value}%`;
                         },
                     },

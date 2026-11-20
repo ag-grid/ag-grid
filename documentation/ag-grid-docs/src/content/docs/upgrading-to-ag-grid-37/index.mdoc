@@ -41,25 +41,36 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
 
-### Row Selection
+### Tooltip Positioning
 
-Selection checkboxes now require `rowSelection` to be set to an options object.
+Grid tooltips now default to target anchoring, `top-start` placement, and an arrow. For pointer-style tooltips without arrows:
 
-- `colDef.checkboxSelection` has been removed. Use `rowSelection.checkboxes` instead.
-- `colDef.showDisabledCheckboxes` has been removed. Use `rowSelection.hideDisabledCheckboxes` instead, noting that its meaning is inverted.
-- `colDef.headerCheckboxSelection` has been removed. Use `rowSelection.headerCheckbox` instead.
-- `colDef.headerCheckboxSelectionFilteredOnly` and `colDef.headerCheckboxSelectionCurrentPageOnly` have been removed. Use `rowSelection.selectAll: 'filtered'` or `rowSelection.selectAll: 'currentPage'` instead.
-- The Group Cell Renderer `cellRendererParams.checkbox` has been removed. Use `rowSelection.checkboxes` together with `rowSelection.checkboxLocation` instead.
-- `api.selectAllFiltered()` and `api.deselectAllFiltered()` have been removed. Use `api.selectAll('filtered')` and `api.deselectAll('filtered')` instead.
-- `api.selectAllOnCurrentPage()` and `api.deselectAllOnCurrentPage()` have been removed. Use `api.selectAll('currentPage')` and `api.deselectAll('currentPage')` instead.
-- `SelectionEventSourceType` no longer includes `'apiSelectAllFiltered'` or `'apiSelectAllCurrentPage'`.
-- The `HeaderCheckboxSelectionCallback`, `HeaderCheckboxSelectionCallbackParams`, `GroupCheckboxSelectionCallback` and `GroupCheckboxSelectionCallbackParams` types have been removed. `CheckboxSelectionCallback` is still available for use with `rowSelection.checkboxes`.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipAnchor: 'pointer',
+    tooltipPosition: 'bottom-start',
+    tooltipOffset: 6,
+    theme: themeQuartz.withParams({ tooltipArrowSize: 0 }),
+};
+```
+
+This does not reproduce the exact previous appearance. Focus tooltips always anchor to the target; `tooltipMouseTrack: true` implies pointer anchoring for hover tooltips. Native browser tooltips are unchanged. See [Tooltip Positioning](./tooltips/#positioning).
 
 ## Behaviour Changes
+
+### Tooltips
+
+- `tooltipTrigger: 'focus'` now uses the same show-delay rules as hover. Set `tooltipShowDelay: 0` for immediate display, except for filter Apply-button validation and Advanced Filter validation tooltips, which override it with 1 second. Pointer switching uses `tooltipSwitchShowDelay` instead (200 ms by default). Screen-reader descriptions remain available immediately on focus.
+- Tooltips no longer hide after 10 seconds by default. Set `tooltipHideDelay: 10000` to restore the timeout.
+- All tooltips now accept the pointer and remain open while hovered. `tooltipInteraction` is only needed for focusable custom content; use `true` or a callback to select individual sources.
+- `Escape` dismisses an open tooltip without also cancelling editing or closing its source menu.
+- The default trigger remains `'hover'`. Use `'hoverOrFocus'` to support both mouse and keyboard users. Focus descriptions are available before the visual tooltip appears; use `getTooltipAriaDescription` for structured custom values.
+- TypeScript: header tooltip callbacks (including `headerTooltipValueGetter`) use `HeaderTooltipCallbackParams`, whose `value` is a displayed header name, not the column's cell value. `tooltipValueGetter` uses `TooltipCallbackParams`; `getTooltipAriaDescription` uses `TooltipContentParams`. These callback params no longer expose `hideTooltipCallback`, which remains available to tooltip components through `ITooltipParams`.
 
 ### Filtering
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
+- With `caseSensitive: true`, the Set Filter Mini Filter search now ignores case. Values that differ only by case are still filtered separately, and listed separately except in a Tree List. Set `miniFilterCaseSensitive: true` to restore the case-sensitive search. See [Enabling Case-Sensitive Searches](./filter-set-mini-filter/#enabling-case-sensitive-searches).
 
 ### Column Headers
 
@@ -75,6 +86,10 @@ Selection checkboxes now require `rowSelection` to be set to an options object.
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
 
+### Server-Side Row Model
+
+- When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).
+
 {% if isFramework("react") %}
 
 ### Grid Options
@@ -89,6 +104,10 @@ The following deprecated APIs have now been removed.
 
 {% expandingSection headerText="Removed Deprecated APIs" %}
 
+### Grid API
+
+- `getInfiniteRowCount()` - removed, use `getDisplayedRowCount()` instead.
+
 ### Grid Options
 
 - `groupRemoveSingleChildren` - removed, use `groupHideParentOfSingleChild: true` instead.
@@ -98,20 +117,7 @@ The following deprecated APIs have now been removed.
 - `sortingOrder` - removed, use `defaultColDef.sortingOrder` instead.
 - `unSortIcon` - removed, use `defaultColDef.unSortIcon` instead.
 - `suppressPropertyNamesCheck` - removed, put custom data in `context` instead.
-- `rowMultiSelectWithClick` - removed, use `rowSelection.enableSelectionWithoutKeys` instead.
-- `suppressRowDeselection` - removed, use `rowSelection.enableClickSelection` instead (for example `enableClickSelection: 'enableSelection'`).
-- `suppressRowClickSelection` - removed, use `rowSelection.enableClickSelection` instead.
-- `groupSelectsChildren` - removed, use `rowSelection.groupSelects: 'descendants'` instead.
-- `groupSelectsFiltered` - removed, use `rowSelection.groupSelects: 'filteredDescendants'` instead.
-- `isRowSelectable` - removed as a grid option, use `rowSelection.isRowSelectable` instead.
-- `suppressCopyRowsToClipboard` - removed, use `rowSelection.copySelectedRows` instead.
-- `suppressCopySingleCellRanges` - removed, use `rowSelection.copySelectedRows` instead.
-- `rowSelection: 'single'` and `rowSelection: 'multiple'` - removed, use the `rowSelection` object with `mode: 'singleRow'` or `mode: 'multiRow'` instead.
-    - The object form has different defaults (for example, checkboxes are shown and click selection is disabled). To keep the previous behaviour, use:
-        - `'multiple'` - `{ mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true, copySelectedRows: true }`
-        - `'single'` - `{ mode: 'singleRow', checkboxes: false, enableClickSelection: true, copySelectedRows: true }`
-    - In `singleRow` mode, `api.selectAll()` and its filtered and current page variants do nothing, and log a warning.
-    - String values passed at runtime (for example from JavaScript) now disable row selection. When `ValidationModule` is registered, a validation message is reported.
+- `suppressBrowserResizeObserver` - removed, it had no effect as the grid always uses the browser's `ResizeObserver`.
 
 ### Column Definitions
 
@@ -122,17 +128,22 @@ The following deprecated APIs have now been removed.
 
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
 - `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
+- `ChartCreated`, `ChartRangeSelectionChanged`, `ChartOptionsChanged`, `ChartDestroyed` and `AsyncTransactionsFlushed` - removed, use `ChartCreatedEvent`, `ChartRangeSelectionChangedEvent`, `ChartOptionsChangedEvent`, `ChartDestroyedEvent` and `AsyncTransactionsFlushedEvent` instead.
+- `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
+- `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
+- `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
 
 ### Modules
 
 - `GridChartsModule` - removed, please use `IntegratedChartsModule` instead.
+- `ModuleRegistry.register(module)` - removed, use `ModuleRegistry.registerModules([module])` instead.
 
 ### Icons
 
 The following icon keys have been removed. Setting them in the `icons` grid option or `colDef.icons` now has no effect.
 
 - `smallDown` - removed, use:
-    - `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
+    - `advancedFilterBuilderSelectOpen` for Advanced Filter Builder dropdown.
     - `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
     - `richSelectOpen` for Rich Select cell editor.
 - `smallLeft` - removed, use:

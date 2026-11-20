@@ -244,6 +244,7 @@ export type EnterpriseModuleName =
     | 'Toolbar'
     | 'TreeData'
     | 'ViewportRowModel'
+    | 'ViewSubscription'
     | 'Formula'
     | 'Notes'
     | 'RowGroupingEdit';
@@ -337,6 +338,7 @@ export type AgModuleName =
     | 'ToolbarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
+    | 'ViewSubscriptionModule'
     | 'FormulaModule'
     | 'NotesModule';
 

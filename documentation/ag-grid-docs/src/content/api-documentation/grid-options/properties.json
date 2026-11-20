@@ -1806,6 +1806,18 @@
                 "name": "Row IDs",
                 "url": "./row-ids/"
             }
+        },
+        "viewSubscription": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
+        },
+        "viewSubscriptionActive": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
         }
     },
     "clientRowModel": {
@@ -2296,6 +2308,24 @@
                 "url": "./tooltips/#show-and-hide-delay"
             }
         },
+        "tooltipPosition": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipAnchor": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipOffset": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
         "tooltipMouseTrack": {
             "more": {
                 "name": "Mouse Tracking",
@@ -2303,7 +2333,18 @@
             }
         },
         "tooltipShowMode": {},
-        "tooltipTrigger": {},
+        "tooltipTrigger": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
+        "getTooltipAriaDescription": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
         "tooltipInteraction": {
             "more": {
                 "name": "Interactive Tooltips",

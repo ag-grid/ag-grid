@@ -1,6 +1,6 @@
 import { createApp, defineComponent, onBeforeMount, ref, shallowRef } from 'vue';
 
-import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, RowGroupingDisplayType } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -54,8 +54,8 @@ const VueExample = defineComponent({
                 innerRenderer: 'CustomMedalCellRenderer',
             },
         });
-        const groupDisplayType = ref(null);
-        const rowData = ref(null);
+        const groupDisplayType = ref<RowGroupingDisplayType | null>(null);
+        const rowData = ref<any[] | null>(null);
 
         onBeforeMount(() => {
             groupDisplayType.value = 'singleColumn';
@@ -64,7 +64,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => (rowData.value = data);
+            const updateData = (data: any[]) => (rowData.value = data);
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())

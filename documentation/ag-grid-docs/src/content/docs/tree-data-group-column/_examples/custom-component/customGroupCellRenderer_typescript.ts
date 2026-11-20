@@ -1,4 +1,4 @@
-import type { ICellRendererComp, ICellRendererParams, IRowNode, RowEvent } from 'ag-grid-community';
+import type { ExpandedChangedEvent, ICellRendererComp, ICellRendererParams, IRowNode } from 'ag-grid-community';
 
 export class CustomGroupCellRenderer implements ICellRendererComp {
     eGui: HTMLElement | undefined;
@@ -11,7 +11,7 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
         this.node!.setExpanded(!this.node!.expanded);
     };
 
-    onExpandedChanged = (params: RowEvent) => {
+    onExpandedChanged = (params: ExpandedChangedEvent) => {
         this.eGroupStatus!.setAttribute(
             'style',
             `cursor: pointer;transform: ${params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)'};display: inline-block`

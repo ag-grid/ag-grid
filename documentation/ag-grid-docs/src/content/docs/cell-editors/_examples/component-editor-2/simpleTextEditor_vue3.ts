@@ -1,18 +1,27 @@
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
 
-export default {
+import type { ICellEditorParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
     data() {
         return {
-            value: null,
+            value: null as string | null,
         };
     },
     methods: {
-        getValue() {
+        getValue(): string | null {
             return this.value;
         },
 
-        getInitialValue() {
+        getInitialValue(): string {
             let startValue = this.params.value;
 
             const eventKey = this.params.eventKey;
@@ -36,7 +45,7 @@ export default {
     },
     mounted() {
         nextTick(() => {
-            this.$refs.input.focus();
+            (this.$refs.input as HTMLInputElement).focus();
         });
     },
-};
+});

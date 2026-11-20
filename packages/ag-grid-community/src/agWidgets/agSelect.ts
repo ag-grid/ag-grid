@@ -8,11 +8,13 @@ import type {
     IPropertiesService,
     ITooltipFeature,
     TooltipCtrl,
+    TooltipDetails,
 } from 'ag-stack';
 import {
     KeyCode,
     _addManagedElementListeners,
     _isElementOverflowingCallback,
+    _isEventFromPrintableCharacter,
     _setAriaActiveDescendant,
     _setAriaLabelledBy,
     _setAriaReadOnly,
@@ -109,9 +111,14 @@ export class AgSelect<
                 {
                     shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
                     getGui: () => this.getGui(),
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'select',
-                } as TooltipCtrl<string, any>
+                    getTooltip: () => ({
+                        params: {
+                            value: this.listComponent?.getValue(),
+                            valueFormatted: this.listComponent?.getDisplayValue(),
+                        },
+                    }),
+                } satisfies TooltipCtrl<'select', TooltipDetails<'select'>>
             )
         );
         super.postConstruct();
@@ -200,6 +207,7 @@ export class AgSelect<
 
     protected override beforeHidePicker(): void {
         this.listComponent?.hideItemTooltip();
+        this.listComponent?.resetInputTracking();
         _setAriaActiveDescendant(this.getAriaElement(), null);
         super.beforeHidePicker();
     }
@@ -261,11 +269,31 @@ export class AgSelect<
             case KeyCode.SPACE:
                 if (this.isPickerDisplayed) {
                     e.preventDefault();
+                    if (_isEventFromPrintableCharacter(e) && this.listComponent?.hasActiveTypeAhead()) {
+                        this.typeCharacter(key);
+                    }
                 } else {
                     super.onKeyDown(e);
                 }
                 break;
+            default:
+                if (_isEventFromPrintableCharacter(e)) {
+                    e.preventDefault();
+                    this.typeCharacter(key);
+                }
+                break;
         }
+    }
+
+    public typeCharacter(char: string): void {
+        if (this.readOnly || this.isDisabled()) {
+            return;
+        }
+        // The list ignores highlights on hidden items, so it must be open first.
+        if (!this.isPickerDisplayed) {
+            this.showPicker();
+        }
+        this.listComponent?.typeCharacter(char);
     }
 
     public override showPicker() {

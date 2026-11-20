@@ -61,6 +61,14 @@ export function _isKeyboardMode(): boolean {
     return keyboardModeActive;
 }
 
+/**
+ * Returns keyboard mode to a fresh page's state: for a test runner that keeps one module graph across files.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _resetKeyboardMode(): void {
+    keyboardModeActive = false;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _findFocusableElements(
     rootNode: HTMLElement,

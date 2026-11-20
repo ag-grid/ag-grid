@@ -1,8 +1,17 @@
-import type { FindPart } from 'ag-grid-community';
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FindPart, ICellRendererParams } from 'ag-grid-community';
 
 import { getLatinText } from './data';
 
-export default {
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
       <div class="full-width-panel" v-on:wheel.stop="">
           <div class="full-width-flag">
@@ -37,19 +46,19 @@ export default {
     `,
     data: function () {
         return {
-            imgSrc: null,
-            textParts: [],
+            imgSrc: null as string | null,
+            textParts: [] as FindPart[][],
         };
     },
     beforeMount() {
         this.updateDisplay(this.params);
     },
     methods: {
-        refresh(params) {
+        refresh(params: ICellRendererParams): boolean {
             this.updateDisplay(params);
             return true;
         },
-        updateDisplay(params) {
+        updateDisplay(params: ICellRendererParams): void {
             this.imgSrc = `https://www.ag-grid.com/example-assets/large-flags/${this.params.node.data.code}.png`;
             const { api, node } = params;
             const paragraphs = ['Sample Text in a Paragraph', ...getLatinText()];
@@ -68,4 +77,4 @@ export default {
             this.textParts = textParts;
         },
     },
-};
+});

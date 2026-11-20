@@ -85,16 +85,17 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
-export interface IHeader {
+export interface IHeader<TData = any, TContext = any> {
     /** Get the header to refresh. Gets called whenever Column Defs are updated. */
-    refresh(params: IHeaderParams): boolean;
+    refresh(params: IHeaderParams<TData, TContext>): boolean;
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
+export interface IHeaderComp<TData = any, TContext = any>
+    extends IHeader<TData, TContext>, IComponent<IHeaderParams<TData, TContext>> {}
 
 export interface IInnerHeaderComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderParams<TData, TContext>> = IHeaderParams<TData, TContext>,
 >
-    extends IComponent<TParams>, IHeader {}
+    extends IComponent<TParams>, IHeader<TData, TContext> {}

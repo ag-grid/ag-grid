@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IFilterParams>,
+            required: true,
+        },
+    },
     template: `
         <div class="year-filter">
             <div>Select Year Range</div>
@@ -20,7 +31,7 @@ export default {
             this.params.filterChangedCallback();
         },
 
-        doesFilterPass(params) {
+        doesFilterPass(params: IDoesFilterPassParams) {
             return params.data.year >= 2010;
         },
 
@@ -34,4 +45,4 @@ export default {
 
         setModel() {},
     },
-};
+});

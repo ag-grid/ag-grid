@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
     getRowId: (params: GetRowIdParams) => `${params.data.tradeId}`,
     onGridReady: (params: GridReadyEvent) => {
         // setup the fake server
-        const server = new FakeServer(data);
+        const server = FakeServer(data);
 
         // create datasource with a reference to the fake server
         const datasource = getServerSideDatasource(server);

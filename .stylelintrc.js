@@ -89,6 +89,7 @@ module.exports = {
                             '--ag-row-highlight-level',
                             '--ag-horizontal-size',
                             '--ag-pinned-row-border-width',
+                            '--ag-tooltip-arrow-offset',
                         ],
                     },
                 ],

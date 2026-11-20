@@ -161,6 +161,10 @@ const gridOptions = {
 
 However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
 
+### Tooltips
+
+For tooltip information to be available from the keyboard, use `tooltipTrigger: 'focus'` or, preferably, `'hoverOrFocus'`. Tooltip text is exposed through `aria-describedby` immediately on focus, independently of the visual delay. For structured custom content, provide `getTooltipAriaDescription`. See [Keyboard Focus](./tooltips/#keyboard-focus).
+
 ## Example of Grid Customised for Accessibility
 
 The example below presents a simple grid layout with the following properties enabled:

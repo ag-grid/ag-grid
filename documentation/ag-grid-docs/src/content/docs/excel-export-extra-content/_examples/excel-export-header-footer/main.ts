@@ -1,4 +1,10 @@
-import type { ExcelExportParams, ExcelHeaderFooterContent, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    ExcelExportParams,
+    ExcelHeaderFooter,
+    ExcelHeaderFooterContent,
+    GridApi,
+    GridOptions,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ExcelHeaderFooterConfig,
@@ -93,25 +99,20 @@ const getParams: () => ExcelExportParams | undefined = () => {
     const header = getValues('header');
     const footer = getValues('footer');
 
-    if (!header && !footer) {
+    let all: ExcelHeaderFooter;
+    if (header && footer) {
+        all = { header: [header], footer: [footer] };
+    } else if (header) {
+        all = { header: [header] };
+    } else if (footer) {
+        all = { footer: [footer] };
+    } else {
         return undefined;
     }
 
-    const obj: ExcelExportParams = {
-        headerFooterConfig: {
-            all: {},
-        },
+    return {
+        headerFooterConfig: { all },
     };
-
-    if (header) {
-        obj.headerFooterConfig!.all!.header = [header];
-    }
-
-    if (footer) {
-        obj.headerFooterConfig!.all!.footer = [footer];
-    }
-
-    return obj;
 };
 
 function onBtExport() {

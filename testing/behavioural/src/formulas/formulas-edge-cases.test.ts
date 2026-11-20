@@ -12,8 +12,11 @@ import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module, Row
 import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
+// The row-number refresh debounce is 0ms under FAST_TEST_TIMINGS and armed during the grid call, so one
+// macrotask outlasts it.
+const flushRowNumbers = () => asyncSetTimeout(0);
+
 describe('ag-grid formulas edge cases', () => {
-    const rowNumberRefreshBufferMs = 25;
     const gridRowsOpts = { useFormatter: false } as const;
 
     const gridsManager = new TestGridsManager({
@@ -51,7 +54,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'div by zero via expression', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -65,7 +68,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', value: '=NOSUCHFUNC(1,2)' }],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'unknown function', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -78,7 +81,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', value: '=REF(COLUMN("value"),ROW("nope"))' }],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'missing row ref', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -91,7 +94,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', a: 1, value: '=REF(COLUMN("nosuch"),ROW("r1"))' }],
             columnDefs: [{ field: 'a' }, { field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'missing column ref', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -107,7 +110,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'absolute row out of bounds', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -128,7 +131,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'bare range in scalar context', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -143,7 +146,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', value: '=1+' }],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'trailing operator parses as error', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -161,7 +164,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'initial sum', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -172,7 +175,7 @@ describe('ag-grid formulas edge cases', () => {
         `);
 
         applyTransactionChecked(api, { update: [{ id: 'b', value: 200 }] });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'middle row updated', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -193,10 +196,10 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         applyTransactionChecked(api, { remove: [{ id: 'c' }] });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'end removed', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -217,7 +220,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'full range', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -229,7 +232,7 @@ describe('ag-grid formulas edge cases', () => {
         `);
 
         applyTransactionChecked(api, { remove: [{ id: 'v2' }, { id: 'v3' }] });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'after removing v2 and v3', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -245,7 +248,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData,
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'out' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'all visible', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -253,7 +256,7 @@ describe('ag-grid formulas edge cases', () => {
         `);
 
         api.setColumnsVisible(['a'], false);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'a hidden', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -262,7 +265,7 @@ describe('ag-grid formulas edge cases', () => {
 
         api.setColumnsVisible(['a'], true);
         applyTransactionChecked(api, { update: [{ id: 'r1', a: 7, b: 3, out: rowData[0].out }] });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'a shown again after update', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -275,7 +278,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', a: 4, b: 5, out: '=REF(COLUMN("a"),ROW("r1"))*REF(COLUMN("b"),ROW("r1"))' }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'out' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'unpinned', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -283,7 +286,7 @@ describe('ag-grid formulas edge cases', () => {
         `);
 
         api.applyColumnState({ state: [{ colId: 'a', pinned: 'left' }] });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'a pinned left', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -303,7 +306,7 @@ describe('ag-grid formulas edge cases', () => {
                 },
             },
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'custom plain error', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -327,7 +330,7 @@ describe('ag-grid formulas edge cases', () => {
                 },
             },
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'custom arity error', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -343,7 +346,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'mutual cycle', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -357,7 +360,7 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', value: '=REF(COLUMN("value"),ROW("r1"))+1' }],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'self cycle', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -374,7 +377,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             columnDefs: [{ field: 'value' }],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'initial', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -388,7 +391,7 @@ describe('ag-grid formulas edge cases', () => {
             add: [{ id: 'a', value: 99 }],
             addIndex: 2,
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'after remove+add same id', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -420,7 +423,7 @@ describe('ag-grid formulas edge cases', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" a:10 b:20 out:30
         `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'out' });
@@ -471,7 +474,7 @@ describe('ag-grid formulas edge cases', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" a:3 b:4 out:0
         `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'out' });
@@ -485,7 +488,7 @@ describe('ag-grid formulas edge cases', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await editingStopped;
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const stored = api.getRowNode('r1')?.data?.out as string;
         expect(typeof stored).toBe('string');
@@ -521,7 +524,7 @@ describe('ag-grid formulas edge cases', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" out:2
         `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'out' });
@@ -533,7 +536,7 @@ describe('ag-grid formulas edge cases', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await editingStopped;
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         expect(api.getRowNode('r1')?.data?.out).toBe('=1+');
         await new GridRows(api, `committing invalid formula text preserves the raw input unchanged final state`).check(
@@ -567,7 +570,7 @@ describe('ag-grid formulas edge cases', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:r1 row-number:"1" a:2 b:3 out:5
             `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const before = api.getRowNode('r1')?.data?.out;
 
@@ -581,7 +584,7 @@ describe('ag-grid formulas edge cases', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(true);
         await editingStopped;
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         expect(api.getRowNode('r1')?.data?.out).toBe(before);
         const rowNode = api.getRowNode('r1')!;
@@ -625,7 +628,7 @@ describe('ag-grid formulas edge cases', () => {
                 └── LEAF id:r2 row-number:"2" a:10 b:20 c:30 x:null
             `
         );
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const commitAndRead = async (input: string): Promise<string> => {
             const started = waitForEvent('cellEditingStarted', api);
@@ -636,7 +639,7 @@ describe('ag-grid formulas edge cases', () => {
             const stopped = waitForEvent('cellEditingStopped', api);
             api.stopEditing(false);
             await stopped;
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
             return api.getRowNode('r1')?.data?.x as string;
         };
 
@@ -726,7 +729,7 @@ describe('ag-grid formulas edge cases', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" a:1 b:2 out:3
         `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const roundTrip = async (): Promise<string> => {
             const started = waitForEvent('cellEditingStarted', api);
@@ -735,7 +738,7 @@ describe('ag-grid formulas edge cases', () => {
             const stopped = waitForEvent('cellEditingStopped', api);
             api.stopEditing(false); // commit unchanged - exercises normalise twice
             await stopped;
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
             return api.getRowNode('r1')?.data?.out as string;
         };
 
@@ -777,7 +780,7 @@ describe('ag-grid formulas edge cases', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" a:5 b:10 out:15
         `);
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const rowNode = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(15);
@@ -790,15 +793,15 @@ describe('ag-grid formulas edge cases', () => {
         const stopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await stopped;
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(50);
 
         api.undoCellEditing();
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(15);
 
         api.redoCellEditing();
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(50);
         await new GridRows(api, `undoing a formula edit reverts to the previous formula and value final state`).check(
             `
@@ -836,7 +839,7 @@ describe('ag-grid formulas edge cases', () => {
             columnDefs: [{ field: 'a' }, { field: 'out' }],
             formulaDataSource: dataSource,
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'datasource-sourced formulas', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -867,7 +870,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             formulaDataSource: dataSource,
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         const columnsQueried = new Set(getFormula.mock.calls.map(([p]) => p.column.getColId()));
         expect(columnsQueried.has('a')).toBe(true);
@@ -891,7 +894,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             formulaDataSource: dataSource,
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'formula reads raw value from non-formula column', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -930,7 +933,7 @@ describe('ag-grid formulas edge cases', () => {
             ],
             formulaDataSource: dataSource,
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'shared plain-value reference', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -950,7 +953,7 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'textCol' }, // no allowFormula — the `=` prefix must NOT be interpreted
             ],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'non-formula column preserves "=" prefix', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -967,7 +970,7 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'out', allowFormula: true },
             ],
         });
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        await flushRowNumbers();
 
         await new GridRows(api, 'REF reads raw string from non-formula column', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -1006,7 +1009,7 @@ describe('ag-grid formulas edge cases', () => {
                 [k('r1', 'out')]: '=1+2',
                 [k('r2', 'out')]: '=10+20',
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'initial formulas', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1018,7 +1021,7 @@ describe('ag-grid formulas edge cases', () => {
             store.set(k('r1', 'out'), '=100+1');
             store.set(k('r2', 'out'), '=200+2');
             expect(api.refreshFormulas()).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after refreshFormulas()', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1036,14 +1039,14 @@ describe('ag-grid formulas edge cases', () => {
                 [k('r1', 'out')]: '=1+2',
                 [k('r2', 'out')]: '=10+20',
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             getFormula.mockClear();
             store.set(k('r1', 'out'), '=100+1');
             store.set(k('r2', 'out'), '=200+2'); // updated but NOT invalidated
             const r1 = api.getRowNode('r1')!;
             expect(api.refreshFormulas(r1)).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'only r1 refreshed', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1061,13 +1064,13 @@ describe('ag-grid formulas edge cases', () => {
                 [k('r1', 'out')]: '=1+2',
                 [k('r2', 'out')]: '=10+20',
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             getFormula.mockClear();
             store.set(k('r1', 'out'), '=100+1');
             store.set(k('r2', 'out'), '=200+2');
             expect(api.refreshFormulas('r2')).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'only r2 refreshed', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1085,13 +1088,13 @@ describe('ag-grid formulas edge cases', () => {
                 [k('r1', 'out')]: '=1+2',
                 [k('r2', 'out')]: '=10+20',
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             getFormula.mockClear();
             store.set(k('r1', 'out'), '=100+1');
             store.set(k('r2', 'out'), '=200+2');
             expect(api.refreshFormulas('does-not-exist')).toBe(false);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'unknown id: no rows refreshed', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1115,7 +1118,7 @@ describe('ag-grid formulas edge cases', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:r1 value:1
             `);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             const r1 = api.getRowNode('r1')!;
             expect(api.refreshFormulas(r1)).toBe(false);
@@ -1144,7 +1147,7 @@ describe('ag-grid formulas edge cases', () => {
                 isRowPinned: () => 'top',
                 formulaDataSource: { getFormula, setFormula: vi.fn() },
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             // Initial: plain=2, getFormula returns "=2+2" → out=4 on both sides.
             await new GridRows(api, 'initial', gridRowsOpts).check(`
@@ -1155,7 +1158,7 @@ describe('ag-grid formulas edge cases', () => {
 
             const r1 = api.getRowNode('r1')!;
             r1.setDataValue('plain', 10);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after body edit — pinned matches body', gridRowsOpts).check(`
                 PINNED_TOP id:t-top-r1 row-number:"1" plain:10 out:12
@@ -1173,7 +1176,7 @@ describe('ag-grid formulas edge cases', () => {
                 ],
                 columnDefs: [{ field: 'plain' }, { field: 'out', allowFormula: true }],
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'initial: b.out reads a.plain', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1183,7 +1186,7 @@ describe('ag-grid formulas edge cases', () => {
 
             const a = api.getRowNode('a')!;
             a.setDataValue('plain', 20);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after a.plain edit: b.out refreshed', gridRowsOpts).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1225,14 +1228,14 @@ describe('ag-grid formulas edge cases', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:r1 row-number:"1" plain:2 out:4
             `);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             // Clear the spy after initial render populates both caches.
             getFormula.mockClear();
 
             const r1 = api.getRowNode('r1')!;
             r1.setDataValue('plain', 10);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             // After the edit: cache for body and pinned each cleared once (by the first event),
             // then re-populated once each by the repaint. With the old always-bump handler the
@@ -1264,7 +1267,7 @@ describe('ag-grid formulas edge cases', () => {
                 isRowPinned: () => 'top',
                 formulaDataSource: { getFormula, setFormula: vi.fn() },
             });
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'initial: body and pinned both cached', gridRowsOpts).check(`
                 PINNED_TOP id:t-top-r1 row-number:"1" out:3
@@ -1275,7 +1278,7 @@ describe('ag-grid formulas edge cases', () => {
             store.set('r1:out', '=100+1');
             const pinnedRow = api.getPinnedTopRow(0) as RowNode;
             expect(api.refreshFormulas(pinnedRow)).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after refresh via pinned node', gridRowsOpts).check(`
                 PINNED_TOP id:t-top-r1 row-number:"1" out:101
@@ -1285,7 +1288,7 @@ describe('ag-grid formulas edge cases', () => {
 
             store.set('r1:out', '=999-1');
             expect(api.refreshFormulas('r1')).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after refresh via body id', gridRowsOpts).check(`
                 PINNED_TOP id:t-top-r1 row-number:"1" out:998
@@ -1295,7 +1298,7 @@ describe('ag-grid formulas edge cases', () => {
 
             store.set('r1:out', '=42+0');
             expect(api.refreshFormulas(pinnedRow.id!)).toBe(true);
-            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            await flushRowNumbers();
 
             await new GridRows(api, 'after refresh via pinned id string', gridRowsOpts).check(`
                 PINNED_TOP id:t-top-r1 row-number:"1" out:42

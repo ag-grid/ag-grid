@@ -1,7 +1,6 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    const usGroupId = 'row-group-country-United States';
     const usFooterId = 'rowGroupFooter_row-group-country-United States';
 
     test.eachFramework('Group total row shows subtotals at the bottom of each group', async ({ agIdFor }) => {

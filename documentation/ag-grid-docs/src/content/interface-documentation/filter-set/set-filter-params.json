@@ -65,6 +65,12 @@
                 "url": "./filter-set-filter-list/#filter-value-tooltips"
             }
         },
+        "miniFilterCaseSensitive": {
+            "more": {
+                "name": "Enabling Case-Sensitive Searches",
+                "url": "./filter-set-mini-filter/#enabling-case-sensitive-searches"
+            }
+        },
         "suppressMiniFilter": {
             "more": {
                 "name": "Hiding the Mini Filter",

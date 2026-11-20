@@ -1114,31 +1114,39 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyCells(cellSelection?: GridOptions['cellSelection'], rowSelection?: GridOptions['rowSelection']) {
-        const { rangeSvc, selectionSvc } = this.beans;
+        const { rangeSvc, selectionSvc, gos } = this.beans;
         if (!rangeSvc || rangeSvc.isEmpty()) {
             return false;
         }
 
         if (cellSelection) {
-            const shouldCopyRowsInstead = rowSelection?.copySelectedRows && !selectionSvc?.isEmpty();
+            // If `cellSelection` is defined, user is using the new cell selection API, so we only copy
+            // cells by default.
+            const shouldCopyRowsInstead =
+                typeof rowSelection === 'object' && rowSelection.copySelectedRows && !selectionSvc?.isEmpty();
             return !shouldCopyRowsInstead;
+        } else {
+            // If user is using the deprecated API, we preserve the previous behaviour
+            const suppressCopySingleCellRanges = gos.get('suppressCopySingleCellRanges');
+            const shouldSkip = !rangeSvc.isMoreThanOneCell() && suppressCopySingleCellRanges;
+            return !shouldSkip;
         }
-
-        return true;
     }
 
     private shouldCopyRows(rowSelection?: GridOptions['rowSelection']) {
-        const { selectionSvc } = this.beans;
+        const { selectionSvc, gos } = this.beans;
         if (selectionSvc?.isEmpty() ?? true) {
             return false;
         }
 
-        // a selection can outlive `rowSelection` being unset (SSRM), and those rows are still copied
-        if (rowSelection === undefined) {
-            return true;
+        if (rowSelection && typeof rowSelection !== 'string') {
+            // If `rowSelection` is defined as an object, user is using the new selection API, so we determine
+            // behaviour based on `copySelectedRows`
+            return rowSelection.copySelectedRows ?? false;
+        } else {
+            // If user is using the deprecated API, we preserve the previous behaviour
+            return !gos.get('suppressCopyRowsToClipboard');
         }
-
-        return rowSelection.copySelectedRows ?? false;
     }
 
     public copiesRangeOrSelectedRows(): boolean {

@@ -1,28 +1,37 @@
 import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellEditorParams } from 'ag-grid-community';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
 
 export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
     data() {
         return {
-            value: null,
+            value: null as string | null,
         };
     },
     methods: {
-        getValue() {
+        getValue(): string | null {
             return this.value;
         },
 
-        myCustomFunction() {
+        myCustomFunction(): { rowIndex: number; colId: string } {
             return {
                 rowIndex: this.params.rowIndex,
                 colId: this.params.column.getId(),
             };
         },
 
-        getInitialValue() {
+        getInitialValue(): string {
             let startValue = this.params.value;
 
             const eventKey = this.params.eventKey;
@@ -46,7 +55,7 @@ export default defineComponent({
     },
     mounted() {
         nextTick(() => {
-            this.$refs.input.focus();
+            (this.$refs.input as HTMLInputElement).focus();
         });
     },
 });

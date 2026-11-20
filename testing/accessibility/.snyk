@@ -1,6 +1,61 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+    SNYK-JS-UNDICI-22392401:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.550Z
+        - ag-grid-angular@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.538Z
+    SNYK-JS-UNDICI-22370261:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.547Z
+        - ag-grid-angular@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.532Z
+    SNYK-JS-UNDICI-22291127:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.546Z
+        - ag-grid-angular@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.527Z
+    SNYK-JS-UNDICI-22291066:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.544Z
+        - ag-grid-angular@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.525Z
+    SNYK-JS-UNDICI-22290988:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.542Z
+        - ag-grid-angular@* > *:
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-11-16T10:27:48.524Z
     SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
         - 'ag-grid-angular@* > *':
               reason: >-

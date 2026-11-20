@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
+            const fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

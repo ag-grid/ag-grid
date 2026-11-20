@@ -1,8 +1,12 @@
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
+    PinnedRowModule,
     RowApiModule,
     ScrollApiModule,
     TextEditorModule,
@@ -22,7 +26,14 @@ interface OrderRow {
 
 describe('ensureDomOrder', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowApiModule, ScrollApiModule, TextEditorModule],
+        modules: [
+            ClientSideRowModelApiModule,
+            ClientSideRowModelModule,
+            PinnedRowModule,
+            RowApiModule,
+            ScrollApiModule,
+            TextEditorModule,
+        ],
     });
 
     afterEach(() => {
@@ -62,6 +73,145 @@ describe('ensureDomOrder', () => {
         expect(getDisplayedRowIds(api)).toEqual(['r3', 'r1', 'r2']);
         expect(getScrollableRowIds(api)).toEqual(['r1', 'r2', 'r3']);
     });
+
+    // A row moved in the DOM loses the pointer's hover without a pointerleave, so kept rows must not move.
+    describe('with row virtualisation', () => {
+        beforeAll(() => {
+            // the viewport reports no height otherwise, so only the row buffer is rendered
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        const rowKinds: Record<string, GridOptions<OrderRow>> = {
+            plain: {},
+            'pinned rows': {
+                pinnedTopRowData: [{ id: 'top', value: -1 }],
+                pinnedBottomRowData: [{ id: 'bottom', value: -2 }],
+            },
+            'full width rows': {
+                isFullWidthRow: (params) => params.rowNode.data!.value! % 3 === 0,
+                fullWidthCellRenderer: () => 'full width',
+            },
+        };
+
+        describe.each(Object.keys(rowKinds))('%s', (rowKind) => {
+            test.each([
+                ['down', true],
+                ['up', true],
+                ['down', false],
+                ['up', false],
+            ] as const)(
+                'scrolling %s leaves the rows it keeps in place (ensureDomOrder %s)',
+                async (direction, ensureDomOrder) => {
+                    const api = createGrid(gridsManager, ensureDomOrder, {
+                        columnDefs: [{ field: 'value' }],
+                        rowData: Array.from({ length: 200 }, (_, i) => ({ id: `r${i}`, value: i })),
+                        suppressRowVirtualisation: false,
+                        rowBuffer: 0,
+                        ...rowKinds[rowKind],
+                    });
+                    await asyncSetTimeout(0);
+                    if (direction === 'up') {
+                        api.ensureIndexVisible(150, 'top');
+                        await waitFor(() => expect(getScrollableRowIds(api)).toContain('r150'));
+                    }
+
+                    const root = TestGridsManager.getHTMLElement(api)!;
+                    const rowsBefore = getRowsById(root);
+                    const removedRows = new Set<Node>();
+                    const collectRemoved = (records: MutationRecord[]) => {
+                        for (const record of records) {
+                            for (const node of record.removedNodes) {
+                                removedRows.add(node);
+                            }
+                        }
+                    };
+                    const observer = new MutationObserver(collectRemoved);
+                    observer.observe(root, { childList: true, subtree: true });
+
+                    if (direction === 'down') {
+                        api.ensureIndexVisible(5, 'top');
+                        await waitFor(() => expect(getScrollableRowIds(api)).not.toContain('r0'));
+                    } else {
+                        api.ensureIndexVisible(145, 'top');
+                        await waitFor(() => expect(getScrollableRowIds(api)).toContain('r145'));
+                    }
+                    collectRemoved(observer.takeRecords());
+                    observer.disconnect();
+
+                    const rowsAfter = getRowsById(root);
+                    const keptIds = Array.from(rowsBefore.keys()).filter((id) => rowsAfter.has(id));
+                    const keptBodyRows = keptIds.filter((id) => id.startsWith('r')).map((id) => rowsBefore.get(id)!);
+                    expect(keptBodyRows.length).toBeGreaterThan(0);
+                    expect(keptIds.length).toBeLessThan(rowsBefore.size);
+                    if (rowKind === 'full width rows') {
+                        expect(keptBodyRows.some((row) => row.classList.contains('ag-full-width-row'))).toBe(true);
+                    }
+                    const movedOrRecreated = keptIds.filter(
+                        (id) => rowsAfter.get(id) !== rowsBefore.get(id) || removedRows.has(rowsBefore.get(id)!)
+                    );
+                    expect(movedOrRecreated).toEqual([]);
+                    if (rowKind === 'pinned rows') {
+                        expect(keptIds).toEqual(expect.arrayContaining(['top', 'bottom']));
+                    }
+                    if (ensureDomOrder) {
+                        const rowIds = getScrollableRowIds(api);
+                        expect(rowIds).toEqual([...rowIds].sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))));
+                    }
+                }
+            );
+        });
+    });
+
+    test.each([true, false])(
+        'a transaction removing and adding rows leaves the rows it keeps in place (ensureDomOrder %s)',
+        async (ensureDomOrder) => {
+            const api = createGrid(gridsManager, ensureDomOrder, {
+                columnDefs: [{ field: 'value' }],
+                rowData: Array.from({ length: 10 }, (_, i) => ({ id: `r${i}`, value: i })),
+            });
+            await asyncSetTimeout(0);
+
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const rowsBefore = getRowsById(root);
+            const removedRows = new Set<Node>();
+            const observer = new MutationObserver((records) => {
+                for (const record of records) {
+                    for (const node of record.removedNodes) {
+                        removedRows.add(node);
+                    }
+                }
+            });
+            observer.observe(root, { childList: true, subtree: true });
+
+            api.applyTransaction({
+                remove: [{ id: 'r2' }, { id: 'r3' }],
+                add: [{ id: 'n1', value: 100 }],
+                addIndex: 4,
+            });
+            await asyncSetTimeout(0);
+            for (const record of observer.takeRecords()) {
+                for (const node of record.removedNodes) {
+                    removedRows.add(node);
+                }
+            }
+            observer.disconnect();
+
+            const rowsAfter = getRowsById(root);
+            const keptIds = Array.from(rowsBefore.keys()).filter((id) => rowsAfter.has(id));
+            expect(keptIds).toEqual(['r0', 'r1', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9']);
+            const movedOrRecreated = keptIds.filter(
+                (id) => rowsAfter.get(id) !== rowsBefore.get(id) || removedRows.has(rowsBefore.get(id)!)
+            );
+            expect(movedOrRecreated).toEqual([]);
+            if (ensureDomOrder) {
+                expect(getScrollableRowIds(api)).toEqual(getDisplayedRowIds(api));
+            }
+        }
+    );
 
     test('keeps cell DOM order aligned with displayed order when enabled', async () => {
         const api = createCellOrderGrid(gridsManager, true);
@@ -353,15 +503,23 @@ function getDisplayedRowIds(api: GridApi<OrderRow>): string[] {
     return ids;
 }
 
-function getScrollableRowIds(api: GridApi<OrderRow>): string[] {
+function getScrollableRows(api: GridApi<OrderRow>): HTMLElement[] {
     const root = TestGridsManager.getHTMLElement(api);
     if (!root) {
         return [];
     }
 
-    return Array.from(root.querySelectorAll<HTMLElement>('.ag-grid-scrolling-container > .ag-row[row-id]')).map(
-        (row) => row.getAttribute('row-id') ?? ''
+    return Array.from(root.querySelectorAll<HTMLElement>('.ag-grid-scrolling-container > .ag-row[row-id]'));
+}
+
+function getRowsById(root: HTMLElement): Map<string, HTMLElement> {
+    return new Map(
+        Array.from(root.querySelectorAll<HTMLElement>('.ag-row[row-id]'), (row) => [row.getAttribute('row-id')!, row])
     );
+}
+
+function getScrollableRowIds(api: GridApi<OrderRow>): string[] {
+    return getScrollableRows(api).map((row) => row.getAttribute('row-id') ?? '');
 }
 
 function getCellOrder(api: GridApi<OrderRow>, rowId: string): { left: string[]; center: string[]; right: string[] } {

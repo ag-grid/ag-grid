@@ -6,6 +6,7 @@ export default [
     'packages/ag-grid-enterprise',
     'community-modules/locale',
     'testing/behavioural',
+    'testing/behavioural/vitest.isolated.config.ts',
     'documentation/ag-grid-docs',
     'external/ag-website-shared',
 ];

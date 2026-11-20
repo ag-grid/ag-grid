@@ -304,9 +304,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected override resetPlaceholder(): void {
-        const globalTranslate = this.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
-        const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
+        const ariaLabel = this.translateColumnLabel('filterValue');
 
         this.forEachInput((element) => {
             element.setInputPlaceholder(placeholder);
