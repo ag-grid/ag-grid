@@ -197,9 +197,11 @@ Migrate each component type as follows:
     - Pass any other callbacks to the `useGridFloatingFilter` hook.
 - **Menu Items** - pass the callbacks to the `useGridMenuItem` hook, see [Menu Item Callbacks](./component-menu-item/#menu-item-callbacks).
 - **Status Bar Panels** - `api.getStatusPanel()` returns a wrapper. Use the `getInstance` helper to get the React component, see [Accessing Instances](./status-bar/#accessing-instances).
-- **Tool Panels** - `api.getToolPanelInstance()` returns a wrapper. Use the `getInstance` helper to get the React component, see [Tool Panel Component](./component-tool-panel/) and [Tool Panel API](./tool-panel/#api).
-
-`forwardRef` and `useImperativeHandle` can still expose your own methods for access through `getInstance`, but not grid callbacks.
+- **Tool Panels** - see [Tool Panel Component](./component-tool-panel/).
+    - `getState` is no longer used. The component receives the `state` prop with the latest state. Call the `onStateChange` prop when the state changes.
+    - `refresh` is no longer used. The component is re-rendered with the updated props.
+    - `api.getToolPanelInstance()` returns a wrapper. Use the `getInstance` helper to get the React component, see [Tool Panel API](./tool-panel/#api).
+      `forwardRef` and `useImperativeHandle` can still expose your own methods for access through `getInstance`, but not grid callbacks.
 
 Class components cannot use the hooks. Instead, set the custom component context and register the callbacks with `setMethods` when the component mounts. This is the same for all component types. For example, for a filter:
 
