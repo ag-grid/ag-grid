@@ -56,8 +56,9 @@ export const AI_CRAWLERS = [
 
 // Crawlers the edge WAF blocks on every path (its `block-listed-user-agents` rule, in ag-devops'
 // terraform/waf/web-acl.tf). They get `Disallow: /` so robots.txt and the edge agree (SE-78).
-// Keep this list in step with that rule.
-export const BLOCKED_CRAWLERS = ['Bytespider', 'YisouSpider', 'ShapBot'];
+// Keep this list in step with that rule. 'HubSpot Crawler' is the agent name HubSpot documents (third-party
+// HubSpot portals crawling the site; AG has no HubSpot account), and the WAF matches it as one token.
+export const BLOCKED_CRAWLERS = ['Bytespider', 'YisouSpider', 'ShapBot', 'HubSpot Crawler'];
 
 // Public example pages we actively want AI to crawl and train on. Internal `/debug/` example
 // fixtures (e.g. /charts/debug/docs-example-files) are dev/build artefacts, not real example
