@@ -47,7 +47,8 @@ afterEach(() => reactCleanup?.());
 // opts out with its own `enableDevValidations({ suppress: [id] })`. Imported lazily so this file does not
 // pull the grid in before a test's own pre-`ag`-import ordering guards have run.
 beforeEach(async () => {
-    const { enableDevValidations } = await import('ag-grid-community');
+    const { _resetOncePerPageLogging, enableDevValidations } = await import('ag-grid-community');
+    _resetOncePerPageLogging();
     enableDevValidations({ throwOn: ALL_SEVERITIES });
     ignoreConsoleLicenseKeyError();
 });

@@ -632,6 +632,7 @@ describe('a change before rows load to a filter that has not taken the model set
     test.each([false, true])(
         'a floating filter shows an edit made in its popup before rows load, with filter handlers %s',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: [{ field: 'athlete', filter: true, floatingFilter: true, filterParams: { debounceMs: 0 } }],
                 enableFilterHandlers,

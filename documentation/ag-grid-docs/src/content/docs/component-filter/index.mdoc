@@ -346,7 +346,7 @@ The example below illustrates how a custom filter component can be accessed and 
 
 Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable new features such as the [New Filters Tool Panel](./tool-panel-filters-new/).
 
-Legacy filter mode, which applies when `enableFilterHandlers` is not set, is deprecated in AG Grid 37. In AG Grid 38 `enableFilterHandlers` defaults to `true`, which changes the behaviour of legacy custom filters, custom floating filters, `filterModified` listeners, and Multi Filters that use buttons or the legacy Multi Filter methods.
+Legacy filter mode, which applies when `enableFilterHandlers` is not set or is `false`, is deprecated in AG Grid 37. In AG Grid 38 `enableFilterHandlers` defaults to `true`, which changes the behaviour of legacy custom filters, custom floating filters, `filterModified` listeners, and Multi Filters that use buttons or the legacy Multi Filter methods.
 
 From AG Grid 37 the grid logs a warning for each of these cases when `enableFilterHandlers` is not set, in production as well as in development. Each warning links to this section.
 

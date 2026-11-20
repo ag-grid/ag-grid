@@ -1287,27 +1287,28 @@ export class ColumnFilterService
         });
     }
 
-    /** As the registry finds a filter by name, without reporting a missing one. */
-    private readonly isRegisteredFilter: IsRegisteredFilter = (name) => {
-        const components = this.gos.get('components');
-        return (
-            components?.[name] != null ||
-            this.beans.frameworkOverrides.frameworkComponent(name, components, 'filter') != null
-        );
-    };
+    private readonly isRegisteredFilter: IsRegisteredFilter = (name) =>
+        this.beans.registry.isUserComponent('filter', name);
 
     private warnIfAuthorFilters(): void {
         const beans = this.beans;
         if (beans.gos.exists('enableFilterHandlers')) {
             return;
         }
-        const columns = beans.colModel.colDefList;
+        const { colDefList, colsList } = beans.colModel;
+        // `colsList` adds the service columns, but holds pivot result columns instead of `colDefList` when pivoting
+        if (this.hasAuthorFilterIn(colDefList) || this.hasAuthorFilterIn(colsList)) {
+            _warnLegacyFilterMode(beans, 343);
+        }
+    }
+
+    private hasAuthorFilterIn(columns: AgColumn[]): boolean {
         for (let i = 0, len = columns.length; i < len; ++i) {
             if (hasAuthorFilter(columns[i].colDef, this.isRegisteredFilter)) {
-                _warnLegacyFilterMode(beans, 343);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     private warnIfFilterModifiedHandler(): void {

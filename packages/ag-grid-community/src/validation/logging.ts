@@ -389,6 +389,14 @@ function claimOncePerPage(id: ErrorId): boolean {
 }
 
 /**
+ * Forgets which once-per-page diagnostics were logged, for a test runner that treats each test as a fresh page.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _resetOncePerPageLogging(): void {
+    loggedOncePerPageIds.clear();
+}
+
+/**
  * Returns diagnostics to a fresh page's state (no logger, capture, buffered reports or framework doc link):
  * for a test runner that keeps one module graph across files.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
@@ -399,7 +407,7 @@ export function _resetValidationLogging(): void {
     bootstrapPanelRenderer = null;
     baseDocLink = DEFAULT_DOC_LINK;
     _resetMissingModuleReports();
-    loggedOncePerPageIds.clear();
+    _resetOncePerPageLogging();
     diagnosticListeners.clear();
     bufferedDiagnostics.length = 0;
 }

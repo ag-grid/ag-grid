@@ -468,6 +468,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetOncePerPageLogging,
     _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,

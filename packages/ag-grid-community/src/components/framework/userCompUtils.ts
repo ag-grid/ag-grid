@@ -315,7 +315,7 @@ export function _getFloatingFilterCompDetails(
     params: IFloatingFilterParams<any>,
     defaultFloatingFilter: string
 ): UserCompDetails<IFloatingFilterComp> | undefined {
-    if (_isAuthorFloatingFilter(def.floatingFilterComponent)) {
+    if (_isAuthorFloatingFilter(beans, def.floatingFilterComponent)) {
         _warnLegacyFilterMode(beans, 344);
     }
     return beans.userCompFactory.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);

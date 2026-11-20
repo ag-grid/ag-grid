@@ -20,7 +20,7 @@ import {
     _resetValidationLogging,
     enableDevValidations,
 } from 'ag-grid-community';
-import { MultiFilterModule, ServerSideRowModelModule, SetFilterModule } from 'ag-grid-enterprise';
+import { MultiFilterModule, RowGroupingModule, ServerSideRowModelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 const legacyInit = vi.fn();
 
@@ -69,6 +69,7 @@ describe('legacy filter mode warnings', () => {
             NumberFilterModule,
             SetFilterModule,
             MultiFilterModule,
+            RowGroupingModule,
         ],
     });
 
@@ -130,6 +131,29 @@ describe('legacy filter mode warnings', () => {
             createGrid({
                 components: { legacyFilter: LegacyFilter },
                 columnDefs: [{ field: 'name', filter: 'legacyFilter' }],
+            });
+
+            expect(count(343)).toBe(1);
+        });
+
+        test('an object-form Multi Filter child is reported when the columns are set', () => {
+            createGrid({
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: { filters: [{ filter: LegacyFilter }] },
+                    },
+                ],
+            });
+
+            expect(count(343)).toBe(1);
+        });
+
+        test('an auto group column filter is reported when the columns are set', () => {
+            createGrid({
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'name' }],
+                autoGroupColumnDef: { field: 'name', filter: LegacyFilter },
             });
 
             expect(count(343)).toBe(1);
@@ -236,6 +260,15 @@ describe('legacy filter mode warnings', () => {
     describe('filterModified (345)', () => {
         test('an `onFilterModified` option is reported', () => {
             createGrid({ columnDefs: [{ field: 'name' }], onFilterModified: () => {} });
+
+            expect(count(345)).toBe(1);
+        });
+
+        test('an `onFilterModified` option set after creation is reported', () => {
+            const api = createGrid({ columnDefs: [{ field: 'name' }] });
+            expect(count(345)).toBe(0);
+
+            api.setGridOption('onFilterModified', () => {});
 
             expect(count(345)).toBe(1);
         });

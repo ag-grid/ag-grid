@@ -1972,6 +1972,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
     });
 
     test("a selectable filter's multi filter chosen in the state hands its getter to a set child without filter handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         type Person = { data: (typeof PEOPLE_ROWS)[number] };
         const byWinner = ({ data }: Person) => data.winner.name;
         const byLoser = ({ data }: Person) => data.loser.name;
@@ -2224,6 +2225,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
     });
 
     test("an object column's multi filter with a child using the default filter, a text filter, filters by formatted text, as built and read back, with and without filter handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         const filterBob = async (api: GridApi) => {
             await api.setColumnFilterModel('person', {
                 filterType: 'multi',

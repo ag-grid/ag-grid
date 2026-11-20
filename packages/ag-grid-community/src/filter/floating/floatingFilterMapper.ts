@@ -1,5 +1,7 @@
 import { _getOwn } from 'ag-stack';
 
+import type { BeanCollection } from '../../context/context';
+
 const FLOATING_FILTER_TYPES: { [filter: string]: string } = {
     agSetColumnFilter: 'agSetColumnFloatingFilter',
     agMultiColumnFilter: 'agMultiColumnFloatingFilter',
@@ -23,7 +25,12 @@ const GRID_FLOATING_FILTER_NAMES = new Set<unknown>([
 ]);
 
 /** Whether a `floatingFilterComponent` is the author's rather than one of the grid's floating filters. */
-export const _isAuthorFloatingFilter = (floatingFilterComponent: unknown): boolean =>
-    !!floatingFilterComponent &&
-    floatingFilterComponent !== true &&
-    !GRID_FLOATING_FILTER_NAMES.has(floatingFilterComponent);
+export const _isAuthorFloatingFilter = (beans: BeanCollection, floatingFilterComponent: unknown): boolean => {
+    if (typeof floatingFilterComponent === 'string') {
+        return (
+            !GRID_FLOATING_FILTER_NAMES.has(floatingFilterComponent) &&
+            beans.registry.isUserComponent('floatingFilterComponent', floatingFilterComponent)
+        );
+    }
+    return !!floatingFilterComponent && floatingFilterComponent !== true;
+};
