@@ -1,8 +1,8 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }));
             unbalancedData.sort((a: IOlympicData, b: IOlympicData) => (a.country === '' ? -1 : 1));
             // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(unbalancedData);
+            const fakeServer = FakeServer(unbalancedData);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

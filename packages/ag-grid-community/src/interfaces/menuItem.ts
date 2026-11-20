@@ -6,6 +6,8 @@ import type { AgGridCommon } from './iCommon';
 export interface MenuItemLeafDef<TData = any, TContext = any> {
     /** Name of the menu item. */
     name: string;
+    /** Accessible name announced by screen readers in place of the item's visible `name` and `shortcut`. */
+    ariaLabel?: string;
     /** Set to `true` to display the menu item as disabled. */
     disabled?: boolean;
     /**

@@ -5,7 +5,7 @@ const { EOL } = require('os');
 const ts = require('typescript');
 const { _getCallbackForEvent, _PUBLIC_EVENTS } = require('ag-grid-community');
 const { getFormatterForTS } = require('./../../scripts/formatAST');
-const { _GET_ALL_GRID_OPTIONS } = require('ag-grid-community');
+const { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS } = require('ag-grid-community');
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 const prettier = require('prettier');
 
@@ -64,6 +64,7 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     const skippableEvents = ['gridPreDestroyed'];
     const skippableEventTypes = ['GridPreDestroyedEvent'];
     let propsToWrite = [];
+    let acceptedAttributeTypes = '';
     const typeKeysOrder = Object.keys(typeLookup);
 
     for (const property of _GET_ALL_GRID_OPTIONS()) {
@@ -80,13 +81,26 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
             inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
         }
         const isBoolean = inputType === 'boolean | undefined';
+        let inputOptions = isBoolean ? '{ transform: booleanAttribute }' : '';
+        if (typeName?.trim().startsWith('boolean |') && typeName.includes('=>')) {
+            inputOptions = `{ transform: (value: unknown) => typeof value === 'function' ? value : booleanAttribute(value) }`;
+        }
 
-        line += `    @Input(${isBoolean ? '{ transform: booleanAttribute }' : ''}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
+        line += `    @Input(${inputOptions}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
         const order = typeKeysOrder.findIndex((p) => p === property);
         propsToWrite.push({ order, line });
+
+        if (_BOOLEAN_MIXED_GRID_OPTIONS.includes(property)) {
+            // Lets strict template type checking accept the plain HTML attribute forms coerced by getValueOrCoercedValue.
+            // Static members cannot reference the class type parameters, so TData is widened to any.
+            const acceptedType = inputType.replace(/\bTData\b/g, 'any');
+            const attributeTypes = acceptedType.split(' | ').includes('string') ? '' : ` | '' | 'true' | 'false'`;
+            acceptedAttributeTypes += `    static readonly ngAcceptInputType_${property}: ${acceptedType}${attributeTypes};${EOL}`;
+        }
     }
 
     let result = writeSortedLines(propsToWrite, '');
+    result += acceptedAttributeTypes + EOL;
 
     let eventsToWrite = [];
     const missingEventTypes = [];

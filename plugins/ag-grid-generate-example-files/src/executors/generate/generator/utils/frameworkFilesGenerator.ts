@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
+import { ANGULAR_GENERATED_MAIN_FILE_NAME, EXAMPLE_STYLE_FILE_NAME } from '../constants';
 import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angular';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
@@ -25,6 +25,13 @@ interface FrameworkFiles {
 }
 
 export type TransformEntryFile = (params: { entryFile: string }) => string;
+
+/**
+ * The example's own stylesheets, which generated framework entry files import so they load after
+ * the grid's theme CSS. The shared controls stylesheet is linked from `index.html` instead.
+ */
+const getImportedStylesheets = (styleFiles: FileContents) =>
+    Object.keys(styleFiles).filter((fileName) => fileName !== EXAMPLE_STYLE_FILE_NAME);
 
 type ConfigGenerator = ({
     entryFile,
@@ -168,7 +175,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
-            Object.keys(styleFiles)
+            getImportedStylesheets(styleFiles)
         )();
 
         let indexJsx = convertTsxToJsx(indexTsx);
@@ -206,7 +213,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
-            Object.keys(styleFiles)
+            getImportedStylesheets(styleFiles)
         )();
 
         if (transformEntryFile) {
@@ -243,7 +250,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
-            Object.keys(styleFiles)
+            getImportedStylesheets(styleFiles)
         )();
 
         if (transformEntryFile) {
@@ -281,7 +288,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
-            Object.keys(styleFiles)
+            getImportedStylesheets(styleFiles)
         )();
 
         if (transformEntryFile) {

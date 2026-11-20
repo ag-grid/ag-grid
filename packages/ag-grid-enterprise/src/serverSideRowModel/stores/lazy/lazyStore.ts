@@ -177,12 +177,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
+        let unapplied: any[] | undefined = undefined;
         if (transaction.add?.length) {
             let addIndex = transaction.addIndex;
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            const { inserted, skipped } = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = inserted;
+            unapplied = skipped.length ? skipped : undefined;
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
@@ -209,6 +212,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+            unapplied,
         };
     }
 
@@ -301,10 +305,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.displayIndexStart! <= displayIndex && displayIndex < this.getDisplayIndexEnd()!;
     }
 
-    /**
-     * Whether this store's rows have loaded and are empty, which shows no total row, so a total row option never
-     * adds a row to an empty set. Read off the cache, as `getRowCount()` counts the total row.
-     */
+    /** Whether this store's rows have loaded empty: read off the cache, as `getRowCount()` counts the total row. */
     private areRowsLoadedEmpty(): boolean {
         return this.cache.isLastRowIndexKnown() && this.cache.getRowCount() === 0;
     }
@@ -352,7 +353,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (this.parentRowNode.level === -1) {
             const grandTotalRow = _getGrandTotalRow(this.gos);
             let grandTotalNode = this.getGrandTotalNode();
-            if (grandTotalRow && this.grandTotalData && !this.areRowsLoadedEmpty()) {
+            if (
+                grandTotalRow &&
+                this.grandTotalData &&
+                (!this.areRowsLoadedEmpty() || this.gos.get('alwaysShowGrandTotalRow'))
+            ) {
                 grandTotalNode ??= this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
             } else if (grandTotalNode) {
                 this.destroyGrandTotalRow();

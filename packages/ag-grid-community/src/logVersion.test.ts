@@ -1,6 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { Module } from './interfaces/iModule';
+import { _logVersionIfDebug, _setAgPackageInfo } from './logVersion';
 import { VERSION } from './version';
 
 const enterpriseCore = { moduleName: 'EnterpriseCore', version: '1.2.3' } as Module;
@@ -15,7 +16,6 @@ describe('_logVersionIfDebug', () => {
     let logSpy: MockInstance;
 
     beforeEach(() => {
-        vitest.resetModules();
         logSpy = vitest.spyOn(console, 'log').mockImplementation(() => {});
     });
 
@@ -23,49 +23,36 @@ describe('_logVersionIfDebug', () => {
         logSpy.mockRestore();
     });
 
-    const loadModule = () => import('./logVersion');
-
-    test.each([[undefined], [false]])('logs nothing when debug is %s', async (debug) => {
-        const { _logVersionIfDebug } = await loadModule();
-
+    test.each([[undefined], [false]])('logs nothing when debug is %s', (debug) => {
         _logVersionIfDebug(debug, [newIntegratedCharts(), enterpriseCore]);
 
         expect(logSpy).not.toHaveBeenCalled();
     });
 
-    test('logs the community version alone for a community-only grid', async () => {
-        const { _logVersionIfDebug } = await loadModule();
-
+    test('logs the community version alone for a community-only grid', () => {
         _logVersionIfDebug(true, []);
 
         expect(logSpy).toHaveBeenCalledWith(`AG Grid: Version: ag-grid-community=${VERSION}`);
     });
 
-    test('logs the enterprise package version separately when enterprise is registered', async () => {
-        const { _logVersionIfDebug } = await loadModule();
-
+    test('logs the enterprise package version separately when enterprise is registered', () => {
         _logVersionIfDebug(true, [enterpriseCore]);
 
         expect(logSpy).toHaveBeenCalledWith(`AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3`);
     });
 
-    test.each([['ag-charts-enterprise'], ['ag-charts-community']])(
-        'names the registered package %s',
-        async (packageName) => {
-            const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
-            const integratedCharts = newIntegratedCharts();
-            _setAgPackageInfo(integratedCharts, packageName, '9.9.9');
+    test.each([['ag-charts-enterprise'], ['ag-charts-community']])('names the registered package %s', (packageName) => {
+        const integratedCharts = newIntegratedCharts();
+        _setAgPackageInfo(integratedCharts, packageName, '9.9.9');
 
-            _logVersionIfDebug(true, [enterpriseCore, integratedCharts]);
+        _logVersionIfDebug(true, [enterpriseCore, integratedCharts]);
 
-            expect(logSpy).toHaveBeenCalledWith(
-                `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ${packageName}=9.9.9`
-            );
-        }
-    );
+        expect(logSpy).toHaveBeenCalledWith(
+            `AG Grid: Version: ag-grid-community=${VERSION}, ag-grid-enterprise=1.2.3, ${packageName}=9.9.9`
+        );
+    });
 
-    test('reports AG Studio when its module is registered', async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test('reports AG Studio when its module is registered', () => {
         const studio = newStudio();
         _setAgPackageInfo(studio, 'ag-studio', '2.0.0');
 
@@ -76,8 +63,7 @@ describe('_logVersionIfDebug', () => {
         );
     });
 
-    test('logs the AG Charts version for a sparklines-only grid', async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test('logs the AG Charts version for a sparklines-only grid', () => {
         const sparklines = newSparklines();
         _setAgPackageInfo(sparklines, 'ag-charts-community', '9.9.9');
 
@@ -86,8 +72,7 @@ describe('_logVersionIfDebug', () => {
         expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('ag-charts-community=9.9.9'));
     });
 
-    test('omits the AG Charts clause for a grid that uses no charts modules', async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test('omits the AG Charts clause for a grid that uses no charts modules', () => {
         _setAgPackageInfo(newIntegratedCharts(), 'ag-charts-enterprise', '9.9.9');
 
         _logVersionIfDebug(true, [enterpriseCore]);
@@ -95,16 +80,13 @@ describe('_logVersionIfDebug', () => {
         expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('ag-charts'));
     });
 
-    test('omits the AG Charts clause when no charts version was pushed in', async () => {
-        const { _logVersionIfDebug } = await loadModule();
-
+    test('omits the AG Charts clause when no charts version was pushed in', () => {
         _logVersionIfDebug(true, [enterpriseCore, newIntegratedCharts()]);
 
         expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('ag-charts'));
     });
 
-    test("reports this grid's own charts build when another module was given a different one", async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test("reports this grid's own charts build when another module was given a different one", () => {
         const integratedCharts = newIntegratedCharts();
         _setAgPackageInfo(integratedCharts, 'ag-charts-enterprise', '9.9.9');
         // A second `.with()` call elsewhere in the app, never registered for this grid.
@@ -117,8 +99,7 @@ describe('_logVersionIfDebug', () => {
         );
     });
 
-    test('lists every distinct charts build registered for the grid', async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test('lists every distinct charts build registered for the grid', () => {
         const integratedCharts = newIntegratedCharts();
         const sparklines = newSparklines();
         _setAgPackageInfo(integratedCharts, 'ag-charts-enterprise', '9.9.9');
@@ -132,8 +113,7 @@ describe('_logVersionIfDebug', () => {
         );
     });
 
-    test('de-duplicates the clause when both charts modules share one build', async () => {
-        const { _logVersionIfDebug, _setAgPackageInfo } = await loadModule();
+    test('de-duplicates the clause when both charts modules share one build', () => {
         const integratedCharts = newIntegratedCharts();
         const sparklines = newSparklines();
         _setAgPackageInfo(integratedCharts, 'ag-charts-enterprise', '9.9.9');

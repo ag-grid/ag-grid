@@ -16,6 +16,12 @@ interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     top: number;
 }
 
+interface AgBodyScrollEndEvent extends AgEvent<'bodyScrollEnd'> {
+    direction: ScrollDirection;
+    left: number;
+    top: number;
+}
+
 interface AgBaseDragEvent<
     TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled',
 > extends AgEvent<TEventType> {
@@ -43,12 +49,13 @@ export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
 }
 
 /**
- * Events required by AG Stack
+ * Events required by AG Stack. All are DOM-driven, so the core interfaces do not require them.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
+    bodyScrollEnd: AgBodyScrollEndEvent;
     dragStarted: AgDragStartedEvent;
     dragStopped: AgDragStoppedEvent;
     dragCancelled: AgDragCancelledEvent;

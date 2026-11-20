@@ -1,13 +1,18 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "../../node_modules/.cache/tsc-editor/ag-stack",
+    "types": ["vite/client", "vitest/globals", "node"]
+  },
+  "include": ["src/**/*.ts", "vitest.config.ts"],
+  "exclude": [],
   "references": [
     {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
+      "path": "../../testing/shared/vitest"
     }
   ]
 }

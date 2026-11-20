@@ -1,14 +1,14 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // The example demonstrates Pie / Donut integrated charts. A pie chart is created over the first
 // four rows (period + individual); the Pie/Donut buttons swap the chart type, with the donut also
 // charting an extra series (recurring), which the legend reflects.
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Example', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
+        const api = await gridApiHandle(page);
 
         // Grid renders the documented category + series columns and first row of data.
         await expect(agIdFor.cell('0', 'period')).toContainText('Q1 2021');
@@ -22,7 +22,7 @@ test.agExample(import.meta, () => {
 
         // The chart starts as a pie over the first four periods (single series -> one legend item
         // per category).
-        const initialModels = await gridApi.getChartModels();
+        const initialModels = await api.evaluate((api) => api.getChartModels());
         expect(initialModels).toHaveLength(1);
         expect(initialModels![0].chartType).toBe('pie');
         await expect(legend).toHaveCount(4);
@@ -35,7 +35,7 @@ test.agExample(import.meta, () => {
         await buttons.nth(1).click();
         // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
         await expect(async () => {
-            expect((await gridApi.getChartModels())![0].chartType).toBe('donut');
+            expect((await api.evaluate((api) => api.getChartModels()))![0].chartType).toBe('donut');
         }).toPass({ timeout: 5000 });
         await expect(legend).toHaveCount(8);
         await expect(legend.nth(0)).toContainText('Recurring revenue');
@@ -45,7 +45,7 @@ test.agExample(import.meta, () => {
         await buttons.nth(0).click();
         // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
         await expect(async () => {
-            expect((await gridApi.getChartModels())![0].chartType).toBe('pie');
+            expect((await api.evaluate((api) => api.getChartModels()))![0].chartType).toBe('pie');
         }).toPass({ timeout: 5000 });
     });
 });

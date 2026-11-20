@@ -4,8 +4,8 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     FilterOpenedEvent,
+    HeaderTooltipCallbackParams,
     IconName,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -86,34 +86,32 @@ export class ToolPanelFilterGroupComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => filterGroupComp.getTitleBarGui(),
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(getColDef()),
                 getLocation: () => 'filterToolPanelColumnGroup',
-                getTooltipValue: () => {
+                getTooltip: () => {
                     const colDef = getColDef();
                     const displayName = this.filterGroupName;
-                    return _resolveHeaderTooltipValue(
-                        colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
-                            location: 'filterToolPanelColumnGroup',
+                    const params = {
+                        ...(colDef ? { colDef } : {}),
+                        column: this.callbackColumn,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return {
+                        value: _resolveHeaderTooltipValue(
                             colDef,
-                            column: this.callbackColumn,
-                            value: displayName,
-                            valueFormatted: displayName,
-                        })
-                    );
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                                location: 'filterToolPanelColumnGroup',
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
+                    };
                 },
                 shouldDisplayTooltip: _getShouldDisplayTooltip(
                     gos,
                     () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
                 ),
-                getAdditionalParams: () => {
-                    const colDef = getColDef();
-                    return {
-                        ...(colDef ? { colDef } : {}),
-                        column: this.callbackColumn,
-                        valueFormatted: this.filterGroupName,
-                    };
-                },
             })
         );
 

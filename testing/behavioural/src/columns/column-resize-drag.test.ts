@@ -371,6 +371,37 @@ describe('header resize drag direction', () => {
         expect(widths()).toEqual([120, 80]);
     });
 
+    test('a shift resize, by drag or key, whose next column is not resizable resizes the column alone', async () => {
+        const api = gridsManager.createGrid('resizeShiftNotResizable', {
+            columnDefs: [
+                { colId: 'a', field: 'a', width: 100, resizable: true },
+                { colId: 'b', field: 'b', width: 100, resizable: false },
+                { colId: 'c', field: 'c', width: 100, resizable: true },
+            ],
+            rowData: [{ a: 'a1', b: 'b1', c: 'c1' }],
+        });
+        const bar = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+            '.ag-header-cell[col-id="a"] .ag-header-cell-resize'
+        )!;
+        const widths = () => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
+        const dispatcher = new DragEventDispatcher('mouse');
+
+        await dispatcher.startDrag(bar, 500, 10, { shiftKey: true });
+        await dispatcher.movePointer(bar, 530, 10);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+        expect(widths()).toEqual([130, 100, 100]);
+
+        api.setFocusedHeader('a');
+        const header = document.activeElement!;
+        header.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, shiftKey: true, bubbles: true })
+        );
+        header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+        // the first key step is 2px
+        expect(widths()).toEqual([132, 100, 100]);
+    });
+
     test('a shift-drag where the column, or the one it takes from, has its minWidth above its maxWidth changes neither, and ends reporting both', async () => {
         const noFit = { minWidth: 150, maxWidth: 120 };
         const results: [number[], [string[], boolean][]][] = [];
@@ -1458,6 +1489,39 @@ describe('setColumnWidths', () => {
         ]);
     });
 
+    test("under colResizeDefault 'shift', a named column whose next column is not resizable changes alone", () => {
+        const api = gridsManager.createGrid('apiShiftNotResizable', {
+            columnDefs: [
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100, resizable: false },
+            ],
+            colResizeDefault: 'shift',
+        });
+
+        api.setColumnWidths([{ key: 'a', newWidth: 130 }]);
+
+        expect(['a', 'b'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([130, 100]);
+    });
+
+    test("under colResizeDefault 'shift', a named column that is not resizable still joins a run of named columns, whose next column takes their change", () => {
+        const api = gridsManager.createGrid('apiShiftNamedNotResizable', {
+            columnDefs: [
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100, resizable: false },
+                { colId: 'c', width: 100 },
+            ],
+            colResizeDefault: 'shift',
+        });
+
+        api.setColumnWidths([
+            { key: 'a', newWidth: 110 },
+            { key: 'b', newWidth: 70 },
+        ]);
+
+        // the run of `a` and `b` shrinks by 20px, which `c` takes
+        expect(['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([110, 70, 120]);
+    });
+
     test("under colResizeDefault 'shift', adjacent columns a call names keep their widths, in any order, and the column after them takes their whole change", async () => {
         const api = gridsManager.createGrid('apiShiftAdjacent', {
             columnDefs: ['a', 'b', 'c', 'd'].map((colId) => ({ colId, field: colId, width: 100, minWidth: 10 })),
@@ -1627,5 +1691,58 @@ describe('header auto-size', () => {
         } finally {
             measured.mockRestore();
         }
+    });
+});
+
+describe('group header resize handle', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const groupDefs = (resizable: boolean[]): ColGroupDef[] => [
+        {
+            headerName: 'G',
+            groupId: 'g',
+            children: resizable.map((value, i) => ({ colId: `c${i}`, field: `c${i}`, width: 100, resizable: value })),
+        },
+    ];
+
+    const createGrid = (resizable: boolean[], id = 'groupHandle'): GridApi =>
+        gridsManager.createGrid(id, { columnDefs: groupDefs(resizable), rowData: [{}] });
+
+    const leafWidths = (api: GridApi, count: number): number[] =>
+        Array.from({ length: count }, (_, i) => api.getColumn(`c${i}`)!.getActualWidth());
+
+    const altArrowRightOnGroup = async (api: GridApi): Promise<void> => {
+        api.setFocusedHeader('g');
+        const header = document.activeElement!;
+        header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+        header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+        await asyncSetTimeout(0);
+    };
+
+    test('Alt+ArrowRight on a group made resizable by a columnDefs update resizes its leaves', async () => {
+        const api = createGrid([false, false]);
+        api.setGridOption('columnDefs', groupDefs([true, true]));
+        await asyncSetTimeout(0);
+
+        await altArrowRightOnGroup(api);
+
+        const [a, b] = leafWidths(api, 2);
+        expect({ grew: a > 100 && b > 100 }).toEqual({ grew: true });
+    });
+
+    test('Alt+ArrowRight on a group whose leaves became not resizable by a columnDefs update resizes nothing', async () => {
+        const api = createGrid([true, true]);
+        api.setGridOption('columnDefs', groupDefs([false, false]));
+        await asyncSetTimeout(0);
+
+        await altArrowRightOnGroup(api);
+
+        expect(leafWidths(api, 2)).toEqual([100, 100]);
     });
 });

@@ -37,7 +37,7 @@ test.agExample(import.meta, () => {
             await waitForGridContent(page);
 
             // Turn the value cache ON (first radio); the grid is recreated with the cache enabled.
-            await page.locator('#valueCacheOn').click();
+            await page.locator('label[for="valueCacheOn"]').click();
 
             // Values are still correct when served from the cache.
             await expect(agIdFor.cell('0', 'total')).toContainText('8,112');

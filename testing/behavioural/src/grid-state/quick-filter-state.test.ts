@@ -210,6 +210,19 @@ describe('Grid state - quick filter text', () => {
         await waitFor(() => expect(sources).toEqual(['api']));
     });
 
+    test('reports source gridInitializing when restored from initialState', async () => {
+        const sources: (string | undefined)[] = [];
+        gridMgr.createGrid('quick-filter-state-source-init', {
+            columnDefs,
+            rowData,
+            toolbar,
+            initialState: { quickFilter: { text: 'canada' } },
+            onFilterChanged: ({ source }) => sources.push(source),
+        });
+
+        await waitFor(() => expect(sources).toEqual(['gridInitializing']));
+    });
+
     test('reports source quickFilter when the user types in the toolbar input', async () => {
         const api = gridMgr.createGrid('quick-filter-state-source-user', {
             columnDefs,

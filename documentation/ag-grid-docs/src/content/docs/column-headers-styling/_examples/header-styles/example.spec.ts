@@ -31,6 +31,7 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         await expect(agIdFor.headerCell('sport')).toHaveClass(/sport-header/);
+        await expect(agIdFor.floatingFilter('sport')).toHaveClass(/sport-header/);
     });
 
     test.eachFramework('Medal Details header restyles when the group expands', async ({ agIdFor, page }) => {

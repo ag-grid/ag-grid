@@ -1213,6 +1213,12 @@
                 "url": "./aggregation-total-rows/#enabling-a-grand-total-row"
             }
         },
+        "alwaysShowGrandTotalRow": {
+            "more": {
+                "name": "Showing the Grand Total Row with No Rows",
+                "url": "./aggregation-total-rows/#showing-the-grand-total-row-with-no-rows"
+            }
+        },
         "suppressAggFuncInHeader": {
             "more": {
                 "name": "Omit Function Name from Header",
@@ -1800,6 +1806,18 @@
                 "name": "Row IDs",
                 "url": "./row-ids/"
             }
+        },
+        "viewSubscription": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
+        },
+        "viewSubscriptionActive": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
         }
     },
     "clientRowModel": {
@@ -2025,15 +2043,27 @@
             "displayName": "Scrolling"
         },
         "alwaysShowHorizontalScroll": {
-            "description": "Set to `true` to always show the horizontal scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
+            "more": {
+                "name": "Scrollbar Visibility",
+                "url": "./scrolling/#scrollbar-visibility"
+            }
         },
         "alwaysShowVerticalScroll": {
-            "description": "Set to `true` to always show the vertical scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
+            "more": {
+                "name": "Scrollbar Visibility",
+                "url": "./scrolling/#scrollbar-visibility"
+            }
+        },
+        "scrollGestureMode": {
+            "more": {
+                "name": "Scroll Gestures",
+                "url": "./scrolling/#scroll-gestures"
+            }
         },
         "debounceVerticalScrollbar": {
             "more": {
                 "name": "Debounce Vertical Scroll",
-                "url": "./scrolling-performance/#debounce-vertical-scroll"
+                "url": "./scrolling/#debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {
@@ -2278,6 +2308,24 @@
                 "url": "./tooltips/#show-and-hide-delay"
             }
         },
+        "tooltipPosition": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipAnchor": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
+        "tooltipOffset": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips/#positioning"
+            }
+        },
         "tooltipMouseTrack": {
             "more": {
                 "name": "Mouse Tracking",
@@ -2285,7 +2333,18 @@
             }
         },
         "tooltipShowMode": {},
-        "tooltipTrigger": {},
+        "tooltipTrigger": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
+        "getTooltipAriaDescription": {
+            "more": {
+                "name": "Keyboard Focus",
+                "url": "./tooltips/#keyboard-focus"
+            }
+        },
         "tooltipInteraction": {
             "more": {
                 "name": "Interactive Tooltips",

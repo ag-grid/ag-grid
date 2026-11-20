@@ -310,7 +310,7 @@ export class GridRows<TData = any> {
      *    iterating on a test; commit-blocking convention is that no production test ships with
      *    this value. Type accepts no `false` — every `check` call must opt into either a real
      *    snapshot string, `'empty'`, `true`, or the explicit `'skip-snapshot'` escape.
-     *  - `undefined`: logs an error reminding you to run `./behave.sh --update-grid-rows`.
+     *  - `undefined`: throws, naming `./behave.sh --update-grid-rows`, which fills it in.
      */
     public async check(diagramSnapshot: string | 'empty' | 'skip-snapshot' | true | undefined): Promise<this> {
         await runSnapshotCheck(this.#snapshotTarget(), diagramSnapshot, getSnapshotUpdateMode());

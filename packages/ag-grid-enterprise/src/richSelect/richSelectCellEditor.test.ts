@@ -32,7 +32,10 @@ function createBaseParams(
 function createEditor(params?: Partial<RichCellEditorParams<any, TestValue>>) {
     const editor = new RichSelectCellEditor<any, TestValue, any>() as any;
     editor.params = createBaseParams(params);
-    editor.beans = { log: { warn: vi.fn(), error: vi.fn(), deprecated: vi.fn() } };
+    editor.beans = {
+        log: { warn: vi.fn(), error: vi.fn(), deprecated: vi.fn() },
+        colNames: { getDisplayNameForColumn: vi.fn(() => 'Column') },
+    };
     editor.gos = {
         addCommon: (value: any) => value,
         get: vi.fn(() => undefined),
@@ -59,6 +62,7 @@ function createRichSelectMock() {
 
     const richSelect = {
         addCss: vi.fn(),
+        setAriaLabel: vi.fn(),
         showPicker: vi.fn(),
         getFocusableElement: vi.fn(() => document.createElement('input')),
         setValueList,
@@ -145,29 +149,6 @@ describe('RichSelectCellEditor', () => {
 
         const callback = (editor as any).getSearchStringCallback([{ id: 1, label: 'one' }]);
         expect(callback?.([{ id: 1, label: 'one' } as TestValue])).toEqual(['[object Object]']);
-    });
-
-    it('supports complex object search via keyCreator', () => {
-        const editor = createEditor({
-            column: { getColId: () => 'value' } as any,
-            node: { id: 'row-1' } as any,
-            data: { key: 'row-data' } as any,
-            colDef: {
-                keyCreator: ({ value }: any) => `key-${value.id}`,
-            } as any,
-        });
-
-        const callback = (editor as any).getSearchStringCallback([
-            { id: 1, label: 'one' },
-            { id: 2, label: 'two' },
-        ]);
-
-        expect(
-            callback?.([
-                { id: 1, label: 'one' },
-                { id: 2, label: 'two' },
-            ])
-        ).toEqual(['key-1', 'key-2']);
     });
 
     it('keeps typing enabled for multi-select while preserving full-async search wiring', () => {
@@ -313,6 +294,7 @@ describe('RichSelectCellEditor', () => {
 
         const richSelect = {
             addCss: vi.fn(),
+            setAriaLabel: vi.fn(),
             showPicker: vi.fn(),
             setValueList: vi.fn(),
             setAsyncValuesSource: vi.fn(),

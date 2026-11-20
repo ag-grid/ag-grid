@@ -1,6 +1,7 @@
+import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 
-export const buildColumnVisibilityFeatureSchema = () => {
+export const buildColumnVisibilityFeatureSchema = (): SchemaBuilder => {
     return s
         .object(
             {

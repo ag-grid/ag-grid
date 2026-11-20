@@ -1,22 +1,22 @@
 {
   "name": "ag-behavioural-testing",
-  "version": "36.2.0-beta.20261030.1444",
+  "version": "36.3.0-beta.20261119.1424",
   "private": true,
   "description": "Behavioural unit testing for ag-Grid",
   "dependencies": {
-    "tslib": "^2.8.1"
+    "tslib": "^2.9.1"
   },
   "type": "module",
   "devDependencies": {
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.7",
-    "@types/react": "^18.3.23",
+    "@testing-library/user-event": "^14.6.12",
+    "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
-    "ag-grid-community": "36.2.0-beta.20261030.1444",
-    "ag-grid-enterprise": "36.2.0-beta.20261030.1444",
-    "ag-grid-react": "36.2.0-beta.20261030.1444",
+    "ag-grid-community": "36.3.0-beta.20261119.1424",
+    "ag-grid-enterprise": "36.3.0-beta.20261119.1424",
+    "ag-grid-react": "36.3.0-beta.20261119.1424",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "xlsx": "^0.18.5"

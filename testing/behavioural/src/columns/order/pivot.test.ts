@@ -715,6 +715,47 @@ describe('pivotMode=true', () => {
             }
         );
 
+        test('with enableStrictPivotColumnOrder and a pivotComparator, re-pivoting a column puts its result columns back in comparator order', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (x: string, y: string) => -x.localeCompare(y) },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: true,
+            });
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            const comparatorOrder = [...groupColIds, 'pivot_b_3_c', 'pivot_b_2_c', 'pivot_b_1_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(comparatorOrder);
+            gridApi.moveColumns(['pivot_b_1_c'], 1);
+
+            gridApi.applyColumnState({ state: [{ colId: 'b', pivot: false }] });
+            gridApi.applyColumnState({ state: [{ colId: 'b', pivot: true }] });
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(comparatorOrder);
+        });
+
+        test('a column order moved before enableStrictPivotColumnOrder is turned on is not restored when re-pivoting', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (x: string, y: string) => -x.localeCompare(y) },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            const comparatorOrder = [...groupColIds, 'pivot_b_3_c', 'pivot_b_2_c', 'pivot_b_1_c'];
+            gridApi.moveColumns(['pivot_b_1_c'], 1);
+            gridApi.applyColumnState({ state: [{ colId: 'b', pivot: false }] });
+            gridApi.setGridOption('enableStrictPivotColumnOrder', true);
+
+            gridApi.applyColumnState({ state: [{ colId: 'b', pivot: true }] });
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(comparatorOrder);
+        });
+
         test('runtime pivotComparator change re-sorts columns with enableStrictPivotColumnOrder=true', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { field: 'a', rowGroup: true },

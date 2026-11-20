@@ -8,6 +8,8 @@ import { OpenInPlunkr } from '@ag-website-shared/components/plunkr/components/Op
 import type { FileContents } from '@components/example-generator/types';
 import { isReactInternalFramework } from '@utils/framework';
 
+import { getPlunkrBoilerPlateFiles } from '../utils/plunkrBoilerPlateFiles';
+
 export function ExternalLinks({
     title,
     internalFramework,
@@ -51,6 +53,7 @@ export function ExternalLinks({
                         title={title}
                         files={exampleFiles}
                         htmlUrl={plunkrHtmlUrl}
+                        boilerPlateFiles={getPlunkrBoilerPlateFiles(internalFramework)}
                         packageJson={packageJson!}
                         fileToOpen={initialSelectedFile!}
                         isDev={isDev}

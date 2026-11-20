@@ -25,7 +25,7 @@ export interface BaseDate {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
-export interface IDate extends BaseDate {
+export interface IDate<TData = any, TContext = any> extends BaseDate {
     /** Returns the current date represented by this component */
     getDate(): Date | null;
 
@@ -36,7 +36,7 @@ export interface IDate extends BaseDate {
      * When used in a floating filter, a hook to perform any necessary operations
      * when the column definition is updated.
      */
-    refresh?(params: IDateParams): void;
+    refresh?(params: IDateParams<TData, TContext>): void;
 }
 
 export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -58,4 +58,5 @@ export interface IDateParams<TData = any, TContext = any> extends BaseDateParams
     onDateCleared?: () => void;
 }
 
-export interface IDateComp extends IComponent<IDateParams>, IDate {}
+export interface IDateComp<TData = any, TContext = any>
+    extends IComponent<IDateParams<TData, TContext>>, IDate<TData, TContext> {}

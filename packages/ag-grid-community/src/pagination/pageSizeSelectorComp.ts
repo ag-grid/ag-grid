@@ -1,4 +1,4 @@
-import { _areEqual, _clearElement } from 'ag-stack';
+import { _areEqual, _clearElement, _setAriaDescribedBy } from 'ag-stack';
 
 import type { ListOption } from '../agWidgets/agList';
 import { AgSelect } from '../agWidgets/agSelect';
@@ -7,6 +7,7 @@ import type { PageSizePanelParams } from '../entities/gridOptions';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
+import { _createElement } from '../utils/element';
 import { _toFiniteNumber } from '../utils/number';
 import { Component } from '../widgets/component';
 import type { GridSelect } from '../widgets/gridWidgetTypes';
@@ -134,6 +135,11 @@ export class PageSizeSelectorComp extends Component {
         this.setDisplayed(show);
     }
 
+    private isPanelDisplayed(): boolean {
+        const { gos } = this;
+        return gos.get('pagination') && !gos.get('suppressPaginationPanel');
+    }
+
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
         const paginationPageSizeOption: number = this.pagination.getPageSize();
@@ -143,9 +149,12 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
             const pageSizesSet = this.getPageSizeSelectorOption() !== true;
 
-            this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
-            if (!pageSizesSet) {
-                this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+            // PaginationComp re-runs this when the panel is shown, so the warning is deferred rather than lost.
+            if (this.isPanelDisplayed()) {
+                this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
+                if (!pageSizesSet) {
+                    this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+                }
             }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
@@ -187,6 +196,22 @@ export class PageSizeSelectorComp extends Component {
             .onValueChange(() => this.handlePageSizeItemSelected());
 
         this.appendChild(this.selectPageSizeComp);
+        this.appendPageSizeDescription(this.selectPageSizeComp);
+    }
+
+    /** Tells screen reader users, before they pick a value, that the page size changes the rows shown. */
+    private appendPageSizeDescription(selectComp: GridSelect): void {
+        const description = _createElement({
+            tag: 'span',
+            cls: 'ag-paging-page-size-description ag-hidden',
+            attrs: { id: `ag-${this.getCompId()}-page-size-description` },
+            children: this.getLocaleTextFunc()(
+                'ariaPageSizeSelectorDescription',
+                'Changing the page size updates the rows shown in the grid'
+            ),
+        });
+        this.getGui().appendChild(description);
+        _setAriaDescribedBy(selectComp.getAriaElement(), description.id);
     }
 
     private getPageSizeSelectorValues(): number[] {

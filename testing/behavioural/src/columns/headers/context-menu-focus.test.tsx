@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { asyncSetTimeout, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
+import { asyncSetTimeout, definePropertyForFile, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
 import React from 'react';
 
 import type { GridApi, IHeaderParams } from 'ag-grid-community';
@@ -21,7 +21,7 @@ import { AgGridReact, useGridMenuItem } from 'ag-grid-react';
 
 // happy-dom reports offsetParent as null, which the focus-management utilities read as
 // "not visible"; polyfill it so focusable detection inside the menu works.
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+definePropertyForFile(HTMLElement.prototype, 'offsetParent', {
     configurable: true,
     get() {
         return this.parentNode;
@@ -51,6 +51,7 @@ describe('React menu initial focus with async framework menu items', () => {
                     { name: 'Next item', tooltip: 'Next tooltip' },
                 ]}
                 tooltipTrigger="focus"
+                tooltipShowDelay={0}
                 modules={[ValidationModule, ClientSideRowModelModule, ContextMenuModule, TooltipModule]}
             />
         );

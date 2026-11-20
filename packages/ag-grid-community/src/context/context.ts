@@ -1,10 +1,4 @@
-import type {
-    AgCoreBeanCollection,
-    AgSingletonBeanClass,
-    ClassImp,
-    IAriaAnnouncementService,
-    IContext,
-} from 'ag-stack';
+import type { AgBeanCollection, AgSingletonBeanClass, ClassImp, IAriaAnnouncementService, IContext } from 'ag-stack';
 
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -48,6 +42,7 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
+import type { ScrollGestureService } from '../gridBodyComp/scrollGestureService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -281,7 +276,7 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams, beans: BeanCollection) => TParams;
 
-interface CoreBeanCollection extends AgCoreBeanCollection<
+interface CoreBeanCollection extends AgBeanCollection<
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
@@ -362,6 +357,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     clipboardSvc?: IClipboardService;
     cellNavigation?: CellNavigationService;
     scrollVisibleSvc: ScrollVisibleService;
+    scrollGestureSvc?: ScrollGestureService;
     pinnedCols?: PinnedColumnService;
     expressionSvc?: ExpressionService;
     autoWidthCalc?: AutoWidthCalculator;
@@ -458,6 +454,7 @@ export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
+    | 'viewSubSvc'
     | 'advFilterExpSvc'
     | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'

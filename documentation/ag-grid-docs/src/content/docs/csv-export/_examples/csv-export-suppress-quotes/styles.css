@@ -1,16 +1,9 @@
-label,
-.row {
-    box-sizing: border-box;
-    display: block;
-    padding: 2px 0px;
-}
-
-.row label {
-    display: inline;
-    padding: 0;
-}
-
-button {
-    display: inline-block;
-    font-weight: bold;
+#csvResult {
+    padding: 8px;
+    border: 1px solid var(--button-border);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--main-fg);
+    font-size: 14px;
+    line-height: 1.5;
 }

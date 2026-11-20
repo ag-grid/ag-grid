@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IFilterParams>,
+            required: true,
+        },
+    },
     template: `
       <div style="padding: 4px">
           <div style="font-weight: bold;">Greater than:</div>
@@ -9,7 +20,7 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null,
+            filterText: null as number | string | null,
         };
     },
     watch: {
@@ -18,7 +29,7 @@ export default {
         },
     },
     methods: {
-        isFilterActive() {
+        isFilterActive(): boolean {
             return (
                 this.filterText !== null &&
                 this.filterText !== undefined &&
@@ -27,7 +38,7 @@ export default {
             );
         },
 
-        doesFilterPass(params) {
+        doesFilterPass(params: IDoesFilterPassParams) {
             const value = this.params.getValue(params.node);
 
             if (this.isFilterActive()) {
@@ -36,7 +47,7 @@ export default {
             }
         },
 
-        isNumeric(n) {
+        isNumeric(n: any): boolean {
             return !isNaN(parseFloat(n)) && isFinite(n);
         },
 
@@ -44,12 +55,12 @@ export default {
             return this.isFilterActive() ? Number(this.filterText) : null;
         },
 
-        setModel(model) {
+        setModel(model: number | null) {
             this.filterText = model;
         },
 
-        getModelAsString() {
+        getModelAsString(): string {
             return this.isFilterActive() ? '>' + this.filterText : '';
         },
     },
-};
+});

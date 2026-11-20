@@ -1,8 +1,8 @@
 import type { IOverlayComp, IOverlayParams } from 'ag-grid-community';
 
-export interface StatusOverlayParams extends IOverlayParams {
+export type StatusOverlayParams = IOverlayParams & {
     myCounter?: number;
-}
+};
 
 export class StatusOverlay implements IOverlayComp {
     private eGui: HTMLDivElement;

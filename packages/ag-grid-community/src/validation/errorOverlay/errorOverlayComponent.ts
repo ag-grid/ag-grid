@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
 import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
@@ -62,7 +62,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         const { beans } = this;
         this.setTemplate(ErrorOverlayElement);
 
-        this.addManagedElementListeners(this.eCopy, { click: () => this.copyDiagnostics() });
+        _addManagedElementListeners(this, this.eCopy, { click: () => this.copyDiagnostics() });
 
         const eIcon = _createIconNoSpan('cancel', beans, null);
         if (eIcon) {
@@ -70,7 +70,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
         } else {
             this.eDismiss.textContent = '✕';
         }
-        this.addManagedElementListeners(this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
+        _addManagedElementListeners(this, this.eDismiss, { click: () => beans.errorOverlay?.dismiss() });
 
         this.eVersions.textContent = beans.agVersionsText;
 

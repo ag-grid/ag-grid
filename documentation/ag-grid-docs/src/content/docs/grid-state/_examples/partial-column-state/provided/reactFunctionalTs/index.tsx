@@ -6,10 +6,6 @@ import { enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import type { IOlympicData } from './interfaces';
-import './styles.css';
-import { useFetchJson } from './useFetchJson';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -66,14 +62,14 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div>
-                        <span className="button-group">
+                    <div className="example-controls">
+                        <div className="controls-row">
                             <button onClick={recreateWithNoState}>No State</button>
                             <button onClick={recreateWithColumnOrder}>Column Order (overrides defaults)</button>
                             <button onClick={recreateWithPartialColumnOrder}>
                                 Column Order + partialColumnState (keeps defaults)
                             </button>
-                        </span>
+                        </div>
                     </div>
                     <div style={gridStyle}>
                         {gridVisible && (

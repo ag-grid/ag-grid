@@ -11,20 +11,28 @@ import {
 } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
-import type { GetDetailRowDataParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    FullWidthNotesDataSource,
+    GetDetailRowDataParams,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
+    RenderApiModule,
     RowAutoHeightModule,
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MasterDetailModule, NotesModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RowAutoHeightModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RenderApiModule, RowAutoHeightModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
     let consoleWarnSpy: MockInstance | undefined;
@@ -492,29 +500,100 @@ describe('ag-grid master detail', () => {
                     getGridElement(api)!.querySelector<HTMLElement>(`.ag-full-width-row .${section}`)?.style.width
             );
         const master = api.getRowNode('1')!;
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
 
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '300px', '0px']);
         const built = details.length;
 
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
         api.setColumnWidths([{ key: 'l', newWidth: 150 }]);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '350px', '0px']);
         // the kept row is shown again, not built anew
         expect(details.length).toBe(built);
         expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
 
         // a column refresh lays the hidden row out too
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
         api.setColumnsVisible(['v'], false);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
+        expect(details.length).toBe(built);
+    });
+
+    test('a detail row kept while collapsed is shown again with its notes indicator on the sections as they are now', async () => {
+        const details: HTMLElement[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                details.push(this.eGui);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        // a note for the left section of the detail row only
+        const notesDataSource: FullWidthNotesDataSource = {
+            supportsFullWidthRows: true,
+            getNote: (params) =>
+                params.location === 'fullWidthRow' && params.rowNode.detail && params.pinned === 'left'
+                    ? { text: 'left section note' }
+                    : undefined,
+            setNote: () => {},
+        };
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'l', width: 100 },
+                    { field: 'v', width: 200 },
+                ],
+                rowData: [{ id: '1', l: 'x', v: 'y' }],
+                getRowId: (params) => params.data.id,
+                masterDetail: true,
+                isRowMaster: () => true,
+                detailCellRenderer: Detail,
+                keepDetailRows: true,
+                embedFullWidthRows: true,
+                notesDataSource,
+            },
+            { modules: [NotesModule] }
+        );
+        // the indicator sits on the container inside each section
+        const noted = () =>
+            ['ag-grid-pinned-left-cells', 'ag-grid-scrolling-cells', 'ag-grid-pinned-right-cells'].map(
+                (section) => !!getGridElement(api)!.querySelector(`.ag-full-width-row .${section} .ag-has-cell-notes`)
+            );
+        const master = api.getRowNode('1')!;
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+
+        await setExpanded(true);
+        const built = details.length;
+        // no left section yet, so nothing carries the indicator
+        expect(noted().includes(true)).toBe(false);
+
+        await setExpanded(false);
+        api.setColumnsPinned(['l'], 'left');
+        await setExpanded(true);
+        expect(noted()).toEqual([true, false, false]);
+        // the kept row is shown again, not built anew
+        expect(details.length).toBe(built);
+        expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
+
+        await setExpanded(false);
+        api.setColumnsPinned(['l'], null);
+        await setExpanded(true);
+        expect(noted().includes(true)).toBe(false);
         expect(details.length).toBe(built);
     });
 
@@ -572,17 +651,18 @@ describe('ag-grid master detail', () => {
             },
         });
 
-        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
-        await asyncSetTimeout(0);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
-        await asyncSetTimeout(0);
+        const setExpanded = async (expanded: boolean) => {
+            api.getDisplayedRowAtIndex(0)!.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+
+        await setExpanded(true);
+        await setExpanded(false);
 
         // the new master row takes the old one's generated id
         api.setGridOption('rowData', [{ k: 'new' }]);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
-        await asyncSetTimeout(0);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
+        await setExpanded(false);
 
         await waitFor(() => expect(removedDetails).toEqual(['old']));
     });
@@ -653,25 +733,24 @@ describe('ag-grid master detail', () => {
             onVirtualRowRemoved: (event) => removed.push(event.node.detail ? 'detail' : event.node.id!),
         });
         const master = api.getRowNode('1')!;
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+        await setExpanded(true);
         const detail = api.getDisplayedRowAtIndex(1)!;
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
 
         api.redrawRows({ rowNodes: [detail] });
         await waitFor(() => expect(removed).toEqual(['detail']));
         expect({ fullWidthRows: fullWidthRowCount(), destroyed }).toEqual({ fullWidthRows: 0, destroyed: 1 });
 
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 2 });
 
         // shown again from the cache, then redrawn while shown
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
+        await setExpanded(true);
         expect(built).toBe(2);
         api.redrawRows({ rowNodes: [detail] });
         await waitFor(() => expect(removed).toEqual(['detail', 'detail']));
@@ -681,6 +760,79 @@ describe('ag-grid master detail', () => {
         await waitFor(() => expect(removed).toContain('1'));
         expect(getGridElement(api)!.querySelector('.ag-row[row-id="1"]')).toBeNull();
     });
+
+    test('a detail row collapsed while its detail grid has focus gives focus back to the master focused cell when drawn again, however later', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k', cellRenderer: 'agGroupCellRenderer' }, { field: 'v' }],
+            rowData: [{ k: 'a', v: 'v1', records: [{ x: 'x1' }] }],
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+            },
+        });
+        await vi.advanceTimersByTimeAsync(0);
+        api.setFocusedCell(0, 'v');
+        const master = api.getDisplayedRowAtIndex(0)!;
+        master.setExpanded(true);
+        await vi.advanceTimersByTimeAsync(0);
+        api.getDetailGridInfo('detail_0')!.api!.setFocusedCell(0, 'x');
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement?.textContent).toBe('x1');
+
+        api.setColumnsVisible(['v'], false);
+        master.setExpanded(false);
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(document.activeElement).toBe(document.body);
+
+        api.setColumnsVisible(['v'], true);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement).toBe(getGridElement(api)!.querySelector('.ag-cell[col-id="v"]'));
+    });
+
+    test.each(['', ', after its detail row was redrawn'])(
+        'a master focused cell drawn again leaves focus in the detail grid it moved to%s',
+        async (redrawn) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'k', cellRenderer: 'agGroupCellRenderer' }, { field: 'v' }],
+                rowData: [{ k: 'a', v: 'v1', records: [{ x: 'x1' }] }],
+                masterDetail: true,
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+                },
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            api.setFocusedCell(0, 'v');
+            api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+            await vi.advanceTimersByTimeAsync(0);
+            const detailApi = api.getDetailGridInfo('detail_0')!.api!;
+            detailApi.setFocusedCell(0, 'x');
+            await vi.advanceTimersByTimeAsync(0);
+            if (redrawn) {
+                api.redrawRows({ rowNodes: [api.getDisplayedRowAtIndex(1)!] });
+                await vi.advanceTimersByTimeAsync(0);
+                api.getDetailGridInfo('detail_0')!.api!.setFocusedCell(0, 'x');
+                await vi.advanceTimersByTimeAsync(0);
+            }
+            const detailCell = getGridElement(api)!.querySelector('.ag-details-row .ag-cell[col-id="x"]');
+            expect(document.activeElement).toBe(detailCell);
+
+            api.setColumnsVisible(['v'], false);
+            await vi.advanceTimersByTimeAsync(0);
+            api.setColumnsVisible(['v'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(detailCell);
+        }
+    );
 
     // The detail sizes itself to its grid: working the row heights out again must not put it back to its placeholder.
     describe('an auto-height detail row', () => {

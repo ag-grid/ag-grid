@@ -1,6 +1,7 @@
 import type { IAriaAnnouncementService, VerticalDirection } from 'ag-stack';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _clearElement,
     _debounce,
@@ -127,6 +128,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private selectedValueRenderer?: ICellRendererComp;
     private readonly selectedValueRendererGuard = new ComponentInstanceGuard();
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
+    private valueFormatted: string | undefined;
 
     constructor(config?: RichSelectParams<TValue>) {
         const valueFormatter = resolveRichSelectValueFormatter<TValue>(config?.valueFormatter);
@@ -177,8 +179,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'richSelectValue',
+                getTooltip: () => ({ sourceValues: { value: this.value, valueFormatted: this.valueFormatted } }),
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
             })
         );
@@ -231,11 +233,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
-        this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
-        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
 
         if (!suppressDeselectAll) {
-            this.addManagedElementListeners(this.eDeselect, {
+            _addManagedElementListeners(this, this.eDeselect, {
                 mousedown: this.onDeselectAllMouseDown.bind(this),
                 click: this.onDeselectAllClick.bind(this),
             });
@@ -243,10 +245,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private setupAriaProperties(): void {
-        const { eWrapper, gos } = this;
-
-        eWrapper.tabIndex = gos.get('tabIndex');
-
         const translate = this.getLocaleTextFunc();
         this.ariaDeleteSelection = translate('ariaLabelRichSelectDeleteSelection', 'Press DELETE to deselect item');
         this.ariaDeselectAllItems = translate(
@@ -294,6 +292,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } = config;
 
         const valueFormatted = this.valueFormatter(value);
+        this.valueFormatted = valueFormatted;
         const isTypingMultiSelect = !!(allowTyping && multiSelect);
         const rendererClaim = this.selectedValueRendererGuard.claim();
         this.destroySelectedValueRenderer();

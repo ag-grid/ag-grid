@@ -55,6 +55,23 @@ paginationPanels: [
 ]
 ```
 
+## Pagination Accessibility
+
+The pagination panel is rendered as a `nav` landmark so screen reader users can find it from the landmarks list. Its accessible name defaults to "Grid pagination" and comes from the `ariaPaginationPanelLabel` locale key. Landmark names should be unique, so when a page contains more than one paginated grid, give each grid its own label using [Localisation](./localisation/):
+
+```js
+localeText: {
+    ariaPaginationPanelLabel: 'Orders pagination',
+},
+```
+
+For [Master / Detail](./master-detail/), use a `detailCellRendererParams` callback to provide a distinct `localeText.ariaPaginationPanelLabel` for each detail grid, see [Dynamic Definitions](./master-detail-grids/#dynamic-definitions).
+
+Screen readers also receive the following from the pagination panel:
+
+- The page size selector is described as "Changing the page size updates the rows shown in the grid" (`ariaPageSizeSelectorDescription`). Changing the page size does not move focus.
+- Row range changes are announced as "Showing records 1 to 10 of 50" (`ariaPaginationRowSummary`). When the total row count is unknown, "Showing records 1 to 10, total unknown" (`ariaPaginationRowSummaryUnknownTotal`) is announced instead, or "Loading records from 1" (`ariaPaginationRowSummaryLoading`) while the page is loading. In both cases the page is announced without a total, e.g. "Page 1". The visible row and page summary text is not affected.
+
 ## Number Formats
 
 The numbers within the Paging Toolbar can be formatted in two ways:

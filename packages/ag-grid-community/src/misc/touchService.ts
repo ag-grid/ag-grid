@@ -43,23 +43,15 @@ export class TouchService extends BeanStub implements NamedBean {
     }
 
     public mockRowContextMenu(ctrl: RowContainerEventsFeature): void {
-        // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!_isIOSUserAgent()) {
-            return;
-        }
-
         const listener = (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touchEvent?.target ?? null);
+            const { rowCtrl, cellCtrl } = ctrl.getControlsForEventTarget(touch?.target ?? null);
             this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
         this.mockContextMenu(ctrl, ctrl.element, listener, {
             shouldHandleLongTap: () => this.isBodyContextMenuEnabled(),
-            onLongTapDetected: ({ touchEvent }) => {
-                if (!_isEventFromThisInstance(this.beans, touchEvent)) {
-                    return;
-                }
-                ctrl.confirmPendingTouchDown(touchEvent.target);
-                const { cellCtrl } = ctrl.getControlsForEventTarget(touchEvent.target);
+            onLongTapDetected: ({ touchStart, touchEvent }) => {
+                ctrl.confirmPendingTouchDown(touchStart.target);
+                const { cellCtrl } = ctrl.getControlsForEventTarget(touchStart.target);
                 if (cellCtrl?.column) {
                     cellCtrl.dispatchCellContextMenuEvent(touchEvent);
                 }
@@ -164,16 +156,18 @@ export class TouchService extends BeanStub implements NamedBean {
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void,
         options: TouchListenerOptions
     ): void {
-        // we do NOT want this when not in iPad
-        if (!_isIOSUserAgent()) {
+        if (this.gos.get('suppressTouch')) {
             return;
         }
 
-        const touchListener = new TouchListener(element, options);
+        const touchListener = new TouchListener(element, {
+            ...options,
+            // Preserve iOS's synthetic cell event; elsewhere only claim gestures with an available menu.
+            shouldTrackTouch: (event) =>
+                (_isIOSUserAgent() || options.shouldHandleLongTap?.() !== false) &&
+                _isEventFromThisInstance(this.beans, event),
+        });
         const longTapListener = (event: LongTapEvent) => {
-            if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
-                return;
-            }
             listener(undefined, event.touchStart, event.touchEvent);
         };
 

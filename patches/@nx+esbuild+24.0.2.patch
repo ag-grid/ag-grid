@@ -1,0 +1,30 @@
+diff --git a/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
+index c0f9d8ebe87..12bfe899250 100644
+--- a/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
++++ b/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
+@@ -191,17 +191,17 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
+     return entryPoint;
+ }
+ function getOutExtension(format, options, context) {
+-    const userDefinedExt = options.userDefinedBuildOptions?.outExtension?.['.js'];
++    const userDefExts = options.userDefinedBuildOptions?.outExtension ?? {};
++
+     // Allow users to change the output extensions from default CJS and ESM extensions.
+     // CJS -> .js
+     // ESM -> .mjs
+-    return userDefinedExt === '.js' && format === 'cjs'
+-        ? '.js'
+-        : userDefinedExt === '.mjs' && format === 'esm'
+-            ? '.mjs'
+-            : format === 'esm'
+-                ? ESM_FILE_EXTENSION
+-                : CJS_FILE_EXTENSION;
++    const defaultExt = format === 'cjs' ? CJS_FILE_EXTENSION : format === 'esm' ? ESM_FILE_EXTENSION : '.js';
++    if (userDefExts[defaultExt]) {
++        return userDefExts[defaultExt];
++    }
++
++    return defaultExt;
+ }
+ function getOutfile(format, options, context) {
+     const ext = getOutExtension(format, options, context);

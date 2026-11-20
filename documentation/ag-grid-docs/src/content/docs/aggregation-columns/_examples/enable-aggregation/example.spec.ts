@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Each built-in aggFunc computes the group value', async ({ agIdFor, page }) => {
@@ -19,7 +19,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell(usRowId, 'total_6')).toContainText('1'); // last
     });
 
-    test.eachFramework('Group rows sort by the aggregated sum', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Group rows sort by the aggregated sum', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -28,7 +28,8 @@ test.agExample(import.meta, () => {
         // With animation off, exactly one row occupies row-index 0, so we assert the identity
         // of whichever row is currently at the top rather than tracking the US row — which
         // scrolls out of the virtualised DOM entirely when it sorts to the bottom.
-        await remoteGrid(page).setGridOption('animateRows', false);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('animateRows', false));
 
         const usRowId = 'row-group-country-United States'; // unique max sum (1312)
         const topRow = page.locator('.ag-grid-scrolling-container .ag-row[row-index="0"]');

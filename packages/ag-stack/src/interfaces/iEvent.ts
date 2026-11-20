@@ -1,10 +1,9 @@
 import type { AgEvent } from './agEvent';
-import type { BaseEvents } from './baseEvents';
 
-export type AgEventServiceGlobalListener<
-    TEventType extends keyof TGlobalEvents & string,
-    TGlobalEvents extends BaseEvents,
-> = (eventType: TEventType, event: TGlobalEvents[TEventType] & AgEvent<TEventType>) => void;
+export type AgEventServiceGlobalListener<TEventType extends keyof TGlobalEvents & string, TGlobalEvents> = (
+    eventType: TEventType,
+    event: TGlobalEvents[TEventType] & AgEvent<TEventType>
+) => void;
 
 export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlobalEvents & string> = (
     params: TGlobalEvents[TEventType]
@@ -13,12 +12,25 @@ export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlob
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type WithoutCommon<TCommon, T> = Omit<T, keyof TCommon>;
 
-export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {
+/**
+ * Supplies the common fields every consumer-facing event or params object carries.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface ICommonSource<TCommon> {
+    addCommon<T extends TCommon>(params: WithoutCommon<TCommon, T>): T;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type AgRawEvents<TGlobalEvents, TCommon> = {
     [K in keyof TGlobalEvents]: WithoutCommon<TCommon, TGlobalEvents[K]>;
 }[keyof TGlobalEvents];
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
+/**
+ * The global event service. `TDispatch` is what `dispatchEvent` accepts: a host that adds common fields
+ * narrows it to events without them.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface AgEventService<TGlobalEvents, TDispatch = TGlobalEvents[keyof TGlobalEvents]> {
     readonly eventServiceType: 'global';
     readonly beanName: 'eventSvc';
 
@@ -47,5 +59,5 @@ export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
         async?: boolean
     ): void;
 
-    dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
+    dispatchEvent(event: TDispatch): void;
 }

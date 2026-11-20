@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _last } from './array';
 import { _getTabIndex } from './browser';
 import { _getActiveDomElement, _getDocument } from './document';
@@ -59,6 +59,14 @@ export function _registerKeyboardFocusEvents(beans: UtilBeanCollection): () => v
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isKeyboardMode(): boolean {
     return keyboardModeActive;
+}
+
+/**
+ * Returns keyboard mode to a fresh page's state: for a test runner that keeps one module graph across files.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _resetKeyboardMode(): void {
+    keyboardModeActive = false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

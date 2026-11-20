@@ -8,8 +8,6 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, enableDevV
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -112,33 +110,31 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <div className="example-controls">
-                            <label>
-                                <span>caseSensitive:</span>
-                                <input
-                                    id="caseSensitive"
-                                    type="checkbox"
-                                    onChange={toggleCaseSensitive}
-                                    checked={findOptions.caseSensitive}
-                                />
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label htmlFor="caseSensitive">caseSensitive:</label>
+                            <input
+                                id="caseSensitive"
+                                type="checkbox"
+                                onChange={toggleCaseSensitive}
+                                checked={findOptions.caseSensitive}
+                            />
+                            <label htmlFor="currentPageOnly" className="gap-left">
+                                currentPageOnly:
                             </label>
-                            <label>
-                                <span>currentPageOnly:</span>
-                                <input
-                                    id="currentPageOnly"
-                                    type="checkbox"
-                                    onChange={toggleCurrentPageOnly}
-                                    checked={findOptions.currentPageOnly}
-                                />
+                            <input
+                                id="currentPageOnly"
+                                type="checkbox"
+                                onChange={toggleCurrentPageOnly}
+                                checked={findOptions.currentPageOnly}
+                            />
+                            <label htmlFor="find-goto" className="gap-left">
+                                Go to match:
                             </label>
-                        </div>
-                        <div className="example-controls">
-                            <span>Go to match:</span>
-                            <input type="number" min="1" ref={goToRef} />
+                            <input type="number" id="find-goto" min="1" ref={goToRef} />
                             <button onClick={goToFind}>Go To</button>
                         </div>
-                        <div>{activeMatch}</div>
+                        <div className="controls-row">{activeMatch}</div>
                     </div>
 
                     <div style={gridStyle}>

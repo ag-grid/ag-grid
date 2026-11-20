@@ -21,16 +21,6 @@ td#{$selector-exclude-grid} {
     text-align: left;
 }
 
-table.small-header th {
-    font-weight: var(--text-regular);
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-1;
-}
-
-table.stack {
-    @include stack-table();
-}
-
 thead > tr {
     border-top: none;
     color: var(--color-fg-primary);

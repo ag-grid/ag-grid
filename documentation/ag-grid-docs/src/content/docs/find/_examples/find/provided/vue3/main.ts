@@ -4,14 +4,13 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    GridApi,
     GridReadyEvent,
     ModuleRegistry,
     enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -24,17 +23,15 @@ const VueExample = defineComponent({
     template: `
 <div style="height: 100%">
     <div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" @input="onInput" @keydown="onKeyDown" />
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="find-text-box">Find:</label>
+                <input type="text" id="find-text-box" @input="onInput" @keydown="onKeyDown" />
                 <button @click="previous()">Previous</button>
                 <button @click="next()">Next</button>
                 <span>{{activeMatchNum}}</span>
-            </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input type="number" min="1" v-model="goTo" />
+                <label for="find-goto" class="gap-left">Go to match:</label>
+                <input type="number" id="find-goto" min="1" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
             </div>
         </div>
@@ -53,10 +50,10 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
-            activeMatchNum: undefined,
-            findSearchValue: undefined,
+            goTo: undefined as number | undefined,
+            gridApi: undefined as GridApi | undefined,
+            activeMatchNum: undefined as string | undefined,
+            findSearchValue: undefined as string | undefined,
         };
     },
     methods: {
@@ -66,17 +63,17 @@ const VueExample = defineComponent({
             console.log('findChanged', event);
         },
         next() {
-            this.gridApi.findNext();
+            this.gridApi!.findNext();
         },
         previous() {
-            this.gridApi.findPrevious();
+            this.gridApi!.findPrevious();
         },
         goToFind() {
             const num = Number(this.goTo);
             if (isNaN(num) || num < 0) {
                 return;
             }
-            this.gridApi.findGoTo(num);
+            this.gridApi!.findGoTo(num);
         },
         onInput(event: Event) {
             this.findSearchValue = (event.target as HTMLInputElement).value;
@@ -113,7 +110,7 @@ const VueExample = defineComponent({
             { field: 'silver', minWidth: 100 },
             { field: 'bronze', minWidth: 100 },
         ]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             columnDefs,

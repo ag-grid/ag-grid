@@ -19,8 +19,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
-import { RETURN_URLS } from './constants';
+import { CONTACT_EMAIL, RETURN_URLS } from './constants';
 import { useContactFormMonitoring } from './useContactFormMonitoring';
+import { watchRecaptchaLoad } from './watchRecaptchaLoad';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
@@ -97,6 +98,7 @@ interface Props {
 
 const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
 const RECAPTCHA_READY_PROMISE = 'agRecaptchaReady';
+const RECAPTCHA_LOAD_TIMEOUT_MILLIS = 10_000;
 
 /**
  * Loads reCAPTCHA once per page, in explicit-render mode.
@@ -148,6 +150,7 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
     const [captchaError, setCaptchaError] = useState(false);
+    const [captchaLoadFailed, setCaptchaLoadFailed] = useState(false);
 
     const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
 
@@ -157,7 +160,7 @@ export const ContactForm: FunctionComponent<Props> = ({
         trackCaptchaIncomplete,
         trackSubmit,
         captchaCallbacks,
-        reportCaptchaLoadError,
+        trackCaptchaLoadFailed,
     } = useContactFormMonitoring(formLocation);
 
     const {
@@ -206,13 +209,12 @@ export const ContactForm: FunctionComponent<Props> = ({
             setReturnUrl(urlWithCurrentPath.toString());
         }
 
-        let unmounted = false;
         let captcha: CaptchaTicker | undefined;
 
-        loadRecaptcha()
-            .then(() => {
+        const stopWatchingLoad = watchRecaptchaLoad(loadRecaptcha(), RECAPTCHA_LOAD_TIMEOUT_MILLIS, {
+            onLoad: () => {
                 const container = captchaRef.current;
-                if (unmounted || container == null) {
+                if (container == null) {
                     return;
                 }
                 captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
@@ -223,11 +225,16 @@ export const ContactForm: FunctionComponent<Props> = ({
                     captchaTimestamp.current = ts;
                 });
                 reapplyCaptchaTimestamp.current = captcha.reapply;
-            })
-            .catch(reportCaptchaLoadError);
+                setCaptchaLoadFailed(false);
+            },
+            onFailure: (reason) => {
+                setCaptchaLoadFailed(true);
+                trackCaptchaLoadFailed(reason);
+            },
+        });
 
         return () => {
-            unmounted = true;
+            stopWatchingLoad();
             captcha?.stop();
         };
     }, []);
@@ -445,10 +452,17 @@ export const ContactForm: FunctionComponent<Props> = ({
                 )}
             </div>
 
-            <div className={classnames('input-field', { 'input-error': captchaError })}>
+            <div className={classnames('input-field', { 'input-error': captchaError || captchaLoadFailed })}>
                 <div ref={captchaRef} className="g-recaptcha" />
                 <div className={styles.errorContainer}>
-                    {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
+                    {captchaLoadFailed ? (
+                        <p className="error">
+                            Our reCAPTCHA spam check couldn't load, so this form can't be sent. Please email us at{' '}
+                            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> instead.
+                        </p>
+                    ) : (
+                        captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>
+                    )}
                 </div>
             </div>
             <ProcessingNotice />

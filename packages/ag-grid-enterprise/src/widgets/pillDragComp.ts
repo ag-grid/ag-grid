@@ -1,4 +1,4 @@
-import { RefPlaceholder, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type {
     AgEvent,
@@ -9,11 +9,12 @@ import type {
     DropTarget,
     ElementParams,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     TooltipFeature,
     TooltipLocation,
     TooltipSourceParams,
 } from 'ag-grid-community';
-import { Component, KeyCode, TouchListener, _createIconNoSpan } from 'ag-grid-community';
+import { Component, KeyCode, TouchListener, _addGridCommonParams, _createIconNoSpan } from 'ag-grid-community';
 
 type PillDragCompEvent = 'columnRemove';
 
@@ -41,7 +42,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected abstract getDisplayName(): string;
     protected abstract getAriaDisplayName(): string;
-    protected abstract getTooltip(): string | null | undefined;
+    protected abstract getTooltip(params: HeaderTooltipCallbackParams): string | null | undefined;
     protected abstract createGetDragItem(): () => DragItem<TItem>;
     protected abstract getDragSourceType(): DragSourceType;
     private tooltipFeature?: TooltipFeature;
@@ -74,10 +75,21 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => this.getTooltipComponentDefinition(),
-                getTooltipValue: () => this.getTooltip(),
                 getLocation: () => this.getTooltipLocation(),
-                getAdditionalParams: () => this.getTooltipParams(),
+                getTooltip: () => {
+                    const params = { ...this.getTooltipParams(), value: this.getDisplayName() };
+                    const componentDefinition = this.getTooltipComponentDefinition();
+                    return {
+                        value: this.getTooltip(
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(this.gos, {
+                                location: this.getTooltipLocation(),
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition,
+                    };
+                },
             })
         );
 
@@ -201,7 +213,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => this.onKeyDown(e));
 
-        this.addManagedElementListeners(this.eButton, {
+        _addManagedElementListeners(this, this.eButton, {
             click: (mouseEvent: MouseEvent) => {
                 // Stop first: the pill's own GUI carries a click-to-sort listener, so a listener that throws
                 // must not leak the click up to it.

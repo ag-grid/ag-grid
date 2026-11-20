@@ -1751,6 +1751,27 @@ describe('Column Mutations - applyColumnState', () => {
             expect(api.getAllGridColumns()).toEqual([]);
         });
 
+        test('a column state naming the selection and group columns gives each its own state over the defaultState', () => {
+            const api = gridsManager.createGrid('stateServiceCols', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'b' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'ag-Grid-SelectionColumn', pinned: 'left' },
+                    { colId: 'ag-Grid-AutoColumn', pinned: 'left' },
+                ],
+                defaultState: { pinned: null },
+            });
+
+            expect(
+                ['ag-Grid-SelectionColumn', 'ag-Grid-AutoColumn', 'b'].map(
+                    (id) => `${id}:${api.getColumn(id)!.getPinned()}`
+                )
+            ).toEqual(['ag-Grid-SelectionColumn:left', 'ag-Grid-AutoColumn:left', 'b:null']);
+        });
+
         test('resetColumnState with selection col includes it in the reset order', async () => {
             const api = gridsManager.createGrid('resetSel', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],

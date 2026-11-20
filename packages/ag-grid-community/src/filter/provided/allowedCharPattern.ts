@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { GridInputNumberField, GridInputTextField } from '../../widgets/gridWidgetTypes';
 
@@ -21,7 +23,7 @@ export const installAllowedCharPattern = (
         return; // Not thrown: this runs while the header and the filter panel are built.
     }
 
-    field.addManagedElementListeners(field.getInputElement(), {
+    _addManagedElementListeners(field, field.getInputElement(), {
         beforeinput: (e: InputEvent) => {
             const inputType = e.inputType;
             // A deletion brings nothing in, and a composition cannot be cancelled, so an IME is not held to it.

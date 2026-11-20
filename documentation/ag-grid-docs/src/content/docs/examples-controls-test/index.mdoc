@@ -1,0 +1,92 @@
+---
+title: 'Example Controls'
+---
+
+Example controls guidance and components demo. For internal use only.
+
+When creating examples, you may wish to add example controls. These can be used to show user interactions, code option changes, event code output, or for any other reason.
+
+Below is a very simple guide on how to add controls to your examples, some best practice tips, and a demo of all currently available controls.
+
+### Container elements
+
+To add controls to your example, add the appropriate elements to your example’s `index.html` file.
+
+All example controls should be wrapped in a `div` with an `example-controls` class. Each row of controls should be wrapped in a `div` with the `controls-row` class. Elements outside the `example-controls` will not receive any standard controls styling.
+
+The grid element should sit outside the `example-controls` `div`.
+
+```html
+<div class="style-guide example-controls">
+    <div class="controls-row">
+        <!-- Your example controls elements... -->
+    </div>
+    <div class="controls-row">
+        <!-- A second row of example controls elements.. -->
+    </div>
+</div>
+
+<div id="myGrid"></div>
+```
+
+### Controls layout
+
+The `controls-row` div is a flexbox container. All elements within the `controls-row` div will lay out horizontally with a gap, and be vertically centred. Elements will wrap vertically within the controls row container.
+
+There are four classes you can apply to elements within a controls row to manipulate the row layout. See below for examples of these classes in use.
+
+The classes `gap-left` and `gap-right` can be added to create a gap on either side of the element to group elements within a row. Prefer gap-right for better wrapping within the row.
+
+The classes `push-left` and `push-right` can be added to push an element to the far side of a row. For example, a “Reset” button can be pushed to the far right of the row to separate it from other controls.
+
+### Showing code
+
+If you want to show that a button or input is triggering a code change, you can wrap the relevant content with a `<code>` tag within the element.
+
+```html
+<button onclick="myFunction()">Apply <code>'{ myValue: 30 }'</code></button>
+```
+
+### Showing state
+
+Where a control applies one of several mutually exclusive options, use a button group so the applied option stays visible. A button group is a set of radio inputs styled as a joined row of buttons — each input is immediately followed by its own `label`, and the checked input's label is highlighted.
+
+```html
+<div class="button-group" role="group" aria-label="Rotation">
+    <input type="radio" id="auto" name="rotation" value="auto" checked onchange="rotationChange(event)" />
+    <label for="auto">Auto</label>
+    <input type="radio" id="fixed" name="rotation" value="fixed" onchange="rotationChange(event)" />
+    <label for="fixed">Fixed</label>
+</div>
+```
+
+Prefer a button group over a row of buttons that each apply a different value, and over a `select` where there are few enough options to show them all at once. Radio inputs are keyboard navigable with the arrow keys, and no script is needed to keep the highlight in sync.
+
+A row can hold as many groups as it needs. Give each group its own `name` — inputs sharing a `name` form one set, so a repeated `name` makes two groups behave as one. Only split options across groups when they are separate controls. One set of mutually exclusive options belongs in a single group — split across two, each group shows a selection and implies both apply.
+
+Where one group only applies while another has a particular value, wrap it in a disabled `control-group` fieldset and toggle `disabled` from the handler. The group keeps its own selection while disabled.
+
+For a single option that is either on or off, use a button with `aria-pressed`. Update the attribute when the option changes.
+
+```html
+<button aria-pressed="true" onclick="toggleTooltip(event)">Tooltip</button>
+```
+
+### Additional styles
+
+You should not need to apply any additional styles in an example’s `styles.css` file in order to style your example controls. CSS in `styles.css` should be reserved for code that is relevant to the function of the example.
+
+If you need to use an input or element that’s not covered below, please speak to the website team and we can style new controls.
+
+## Example controls demo
+
+What to test:
+
+- Every control variant (buttons, inputs, selects, code-wrapped buttons) renders with the standard styling.
+- `gap-left`, `gap-right`, `push-left` and `push-right` classes lay out as documented and wrap cleanly at narrow widths.
+- Controls remain vertically centred within their row at all viewport sizes.
+- Button group segments share a single border, the checked segment is highlighted, and the arrow keys move the selection.
+- Two groups in one row hold their selections independently, and a group inside a disabled `control-group` keeps its own.
+- Disabled controls, disabled button group segments and disabled `control-group` fieldsets are all dimmed.
+
+{% gridExampleRunner title="Examples Controls Tester" name="examples-controls-tester" exampleHeight=2600 /%}

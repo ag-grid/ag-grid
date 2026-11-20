@@ -1,5 +1,5 @@
 import type { IComponent } from 'ag-stack';
-import { RefPlaceholder, _exists, _setDisplayed, _toString } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _exists, _setDisplayed, _toString } from 'ag-stack';
 
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -60,22 +60,23 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     eGridHeader: HTMLElement;
 }
 
-export interface IHeaderGroup {
+export interface IHeaderGroup<TData = any, TContext = any> {
     /**
      * Optional: update the component in place instead of recreating it (e.g. when the group header name
      * is edited). Return `true` if the update was handled, `false` to have the grid recreate the component.
      */
-    refresh?(params: IHeaderGroupParams): boolean;
+    refresh?(params: IHeaderGroupParams<TData, TContext>): boolean;
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
+export interface IHeaderGroupComp<TData = any, TContext = any>
+    extends IHeaderGroup<TData, TContext>, IComponent<IHeaderGroupParams<TData, TContext>> {}
 
 export interface IInnerHeaderGroupComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderGroupParams<TData, TContext>> = IHeaderGroupParams<TData, TContext>,
 >
-    extends IComponent<TParams>, IHeaderGroup {}
+    extends IComponent<TParams>, IHeaderGroup<TData, TContext> {}
 
 const HeaderGroupCompElement: ElementParams = {
     tag: 'div',
@@ -204,10 +205,10 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addManagedElementListeners(agClosed, { dblclick: stopPropagationAction });
-        this.addManagedElementListeners(agOpened, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agClosed, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agOpened, { dblclick: stopPropagationAction });
 
-        this.addManagedElementListeners(this.getGui(), { dblclick: expandAction });
+        _addManagedElementListeners(this, this.getGui(), { dblclick: expandAction });
 
         this.updateIconVisibility();
 
@@ -221,7 +222,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
-        this.addManagedElementListeners(eElement, { click: action });
+        _addManagedElementListeners(this, eElement, { click: action });
     }
 
     private updateIconVisibility(): void {

@@ -31,7 +31,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('age')).toHaveCount(1);
     });
 
-    test.eachFramework('Row grouping applies via column defs', async ({ agIdFor, page }) => {
+    test.eachFramework('Row grouping applies via column defs', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

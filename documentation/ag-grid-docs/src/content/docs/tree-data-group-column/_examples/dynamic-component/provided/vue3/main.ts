@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -60,15 +60,15 @@ const VueExample = defineComponent({
                     },
                 },
             ],
-            gridApi: null,
+            gridApi: null as GridApi | null,
             defaultColDef: <ColDef>{
                 flex: 1,
                 minWidth: 120,
             },
-            autoGroupColumnDef: null,
-            groupDefaultExpanded: null,
-            rowData: null,
-            getDataPath: (data) => data.path,
+            autoGroupColumnDef: null as ColDef | null,
+            groupDefaultExpanded: null as number | null,
+            rowData: null as any[] | null,
+            getDataPath: (data: any) => data.path,
         };
     },
     created() {

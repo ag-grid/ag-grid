@@ -1,13 +1,13 @@
 // Rebuilds the chart settings panel's mini chart thumbnails (all default palettes, ~170 thumbnails) by a no-op
 // rangeChartUpdate: the panel resets all its palettes on chartApiUpdate, as it does when it is opened.
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ChartRef, ColDef, GridApi, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules: Module[] = [
     ClientSideRowModelModule,
@@ -45,7 +45,7 @@ suite('chart settings mini charts', () => {
             await chartRef.chart.waitForUpdate();
             await Promise.resolve();
         },
-        benchDefaults({
+        {
             setup: async () => {
                 await gridsManager.reset();
                 api = gridsManager.createGrid(
@@ -74,6 +74,6 @@ suite('chart settings mini charts', () => {
                     throw new Error('updateChart did not rebuild the mini charts');
                 }
             },
-        })
+        }
     );
 });

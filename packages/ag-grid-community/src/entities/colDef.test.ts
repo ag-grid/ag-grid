@@ -1,5 +1,12 @@
 /* eslint-disable sonarjs/no-dead-store */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type {
+    GridOptions,
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
+    ITooltipParams,
+    TooltipContentParams,
+} from '../main';
 import type { ColDef, ColGroupDef, NestedFieldPaths, NestedPath, StringOrNumKeys } from './colDef';
 
 describe('ColDef.field Types', () => {
@@ -286,5 +293,102 @@ describe('ColDef.field Types', () => {
             Extends<OldNestedFieldPaths<AllBaseTypes, string>, NestedFieldPaths<AllBaseTypes, string>>,
             Extends<OldNestedFieldPaths<UnionData>, NestedFieldPaths<UnionData>>,
         ] = [true, true, true, true];
+    });
+});
+
+describe('Tooltip Types', () => {
+    interface RowData {
+        amount: number;
+        label: string;
+    }
+    interface Context {
+        prefix: string;
+    }
+
+    test('header callbacks use display names without changing numeric column metadata', () => {
+        const colDef: ColDef<RowData, number> = {
+            field: 'amount',
+            tooltip: (params) => {
+                const value: number | null | undefined = params.value;
+                // @ts-expect-error Cell source values remain numeric.
+                const text: string | null | undefined = params.value;
+                // @ts-expect-error Content callbacks have no tooltip lifecycle method.
+                const hide = params.hideTooltipCallback;
+                return value;
+            },
+            headerTooltip: (params) => {
+                const value: string | null | undefined = params.value;
+                const column: HeaderTooltipCallbackParams<RowData, number>['column'] = params.column;
+                const definition: HeaderTooltipCallbackParams<RowData, number>['colDef'] = params.colDef;
+                // @ts-expect-error Header display names are not numeric cell values.
+                const numeric: number | null | undefined = params.value;
+                // @ts-expect-error The column still describes numeric cells, not header text.
+                const textColumn: HeaderTooltipCallbackParams<RowData, string>['column'] = params.column;
+                // @ts-expect-error The definition still describes numeric cells, not header text.
+                const textDefinition: HeaderTooltipCallbackParams<RowData, string>['colDef'] = params.colDef;
+                // @ts-expect-error Header callbacks have no tooltip lifecycle method.
+                const hide = params.hideTooltipCallback;
+                return value?.toUpperCase();
+            },
+            headerTooltipValueGetter: (params) => params.value?.toUpperCase(),
+            tooltipValueGetter: (params) => params.value?.toFixed(2),
+        };
+        const groupDef: ColGroupDef<RowData> = {
+            children: [colDef],
+            headerTooltip: (params) => params.value?.toUpperCase(),
+        };
+        const headerTooltip: HeaderTooltipDefinition<RowData, number, Context> = (params) =>
+            params.context.prefix + params.value?.toUpperCase();
+    });
+
+    test('component params preserve three generic positions and allow a distinct resolved payload', () => {
+        const legacyComponent = (params: ITooltipParams<RowData, number, Context>) => {
+            const value: number | null | undefined = params.value;
+            const context: Context = params.context;
+            const hide: (() => void) | undefined = params.hideTooltipCallback;
+            // @ts-expect-error The existing TValue generic still defaults the resolved payload type.
+            const text: string | null | undefined = params.value;
+        };
+        const component = (params: ITooltipParams<RowData, number, Context, { label: string }>) => {
+            const value: { label: string } | null | undefined = params.value;
+            const context: Context = params.context;
+            const column: HeaderTooltipCallbackParams<RowData, number>['column'] = params.column;
+            const definition: HeaderTooltipCallbackParams<RowData, number>['colDef'] = params.colDef;
+            const content: TooltipContentParams<RowData, number, Context, { label: string }> = params;
+            // @ts-expect-error The resolved payload is not the numeric cell value.
+            const numeric: number | null | undefined = params.value;
+            // @ts-expect-error Resolved content alone has no tooltip lifecycle method.
+            const hide = content.hideTooltipCallback;
+            params.hideTooltipCallback?.();
+        };
+    });
+
+    test('selectors receive arbitrary resolved content rather than the column cell value type', () => {
+        const colDef: ColDef<RowData, number> = {
+            tooltip: (params) => ({ label: String(params.value) }),
+            tooltipComponentSelector: (params) => {
+                const text: string = params.value;
+                const structured: { label: string } = params.value;
+                const column: HeaderTooltipCallbackParams<RowData, number>['column'] = params.column;
+                const hide: (() => void) | undefined = params.hideTooltipCallback;
+                // @ts-expect-error Arbitrary tooltip payloads must not erase the column cell value type.
+                const textColumn: HeaderTooltipCallbackParams<RowData, string>['column'] = params.column;
+                return undefined;
+            },
+        };
+    });
+
+    test('accessible descriptions receive resolved content without the hide lifecycle method', () => {
+        const options: GridOptions<RowData> = {
+            getTooltipAriaDescription: (params) => {
+                const content: TooltipContentParams<RowData> = params;
+                const amount: number | undefined = params.data?.amount;
+                // @ts-expect-error Row-data typing is retained for accessible descriptions.
+                const missing = params.data?.missing;
+                // @ts-expect-error Accessible descriptions may be requested before a tooltip exists.
+                const hide = params.hideTooltipCallback;
+                return content.value?.label;
+            },
+        };
     });
 });

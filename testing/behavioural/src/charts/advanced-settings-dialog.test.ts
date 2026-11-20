@@ -65,4 +65,50 @@ describe('chart Advanced Settings dialog', () => {
         await user.keyboard('{Enter}');
         expect(dialog.isConnected).toBe(false);
     });
+
+    test('the Crosshair colour picker trigger is a button that opens a dialog', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', chartDataType: 'category' },
+                { field: 'gold', chartDataType: 'series' },
+            ],
+            rowData: [
+                { country: 'Russia', gold: 3 },
+                { country: 'USA', gold: 4 },
+            ],
+            cellSelection: true,
+            popupParent: document.body,
+        });
+        const chartRef = api.createRangeChart({
+            cellRange: { columns: ['country', 'gold'] },
+            chartType: 'groupedColumn',
+        })!;
+        await chartRef.chart.waitForUpdate();
+        const user = userEvent.setup();
+
+        await user.click(chartRef.chartElement.querySelector<HTMLElement>('.ag-chart-menu-toolbar-button')!);
+        await user.click(await findByText(document.body, 'Advanced Settings'));
+        const settings = await waitFor(() => {
+            const el = document.querySelector<HTMLElement>('.ag-chart-advanced-settings');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+        const crosshairGroup = within(settings).getByText('Crosshair').closest<HTMLElement>('.ag-group')!;
+        const picker = crosshairGroup.querySelector<HTMLElement>('.ag-color-picker')!;
+        const trigger = picker.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
+        const labelText = picker.querySelector<HTMLElement>('.ag-label')!.textContent!.trim();
+
+        expect(trigger).toHaveAttribute('role', 'button');
+        expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+        expect(trigger).toHaveAccessibleName(labelText);
+        expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+        trigger.focus();
+        await user.keyboard('{Enter}');
+        await waitFor(() => expect(document.querySelector('.ag-color-dialog')).not.toBeNull());
+        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+        await user.keyboard('{Escape}');
+        await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+    });
 });

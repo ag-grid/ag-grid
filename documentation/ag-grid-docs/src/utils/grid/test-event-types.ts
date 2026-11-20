@@ -87,13 +87,14 @@ type EventInterfaceMap = {
     readonly expandOrCollapseAll: ValidateEventInterface<'expandOrCollapseAll', AgGridTypes.ExpandOrCollapseAllEvent>;
 };
 
-// Compile-time validation that all mapped keys are valid AgPublicEventType
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ___ValidateAllKeysAreAgPublicEventType = MappedEventKeys extends AgPublicEventType ? true : never;
+type Assert<T extends true> = T;
 
-// Compile-time validation that all keys in EventInterfaceMap match MappedEventKeys
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ___ValidateMapCompleteness = keyof EventInterfaceMap extends MappedEventKeys ? true : never;
+// Fails to compile unless the map's keys are exactly public event types and it covers every key it declares.
+export type EventInterfaceMapChecks = [
+    Assert<MappedEventKeys extends AgPublicEventType ? true : false>,
+    Assert<keyof EventInterfaceMap extends MappedEventKeys ? true : false>,
+    Assert<MappedEventKeys extends keyof EventInterfaceMap ? true : false>,
+];
 
 /**
  * Extract keys for events that have explicit interface mappings

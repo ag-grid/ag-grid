@@ -391,6 +391,16 @@ describe('Filters Tool Panel', () => {
         expect(container?.classList.contains('ag-group-container')).toBe(true);
         expect(container?.querySelector('.ag-filter-toolpanel-instance')).not.toBeNull();
 
+        const groupName = (el: Element | null | undefined) =>
+            document.getElementById(el?.getAttribute('aria-labelledby') ?? '')?.textContent?.trim();
+
+        // The group name comes from the title text alone, so the "Filter Active" icon never joins it.
+        api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'A' } });
+        await asyncSetTimeout(0);
+        expect(panel.isActive('Person')).toBe(true);
+        expect(container?.getAttribute('role')).toBe('group');
+        expect(groupName(container)).toBe('Person');
+
         await panel.collapseGroup('Person');
         expect(titleBar?.getAttribute('aria-expanded')).toBe('false');
 

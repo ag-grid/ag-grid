@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 const WIDE = { width: 1200, height: 600 };
 const NARROW = { width: 400, height: 600 };
@@ -63,13 +63,14 @@ test.agExample(import.meta, () => {
 
     test.eachFramework(
         'hides columns following the displayed order, not the column definition order',
-        async ({ page, remoteGrid }) => {
+        async ({ page }) => {
             await page.setViewportSize(WIDE);
             await ensureGridReady(page);
             await waitForGridContent(page);
 
             // reorder Sport to the front, as a user would by dragging its header
-            await remoteGrid(page).moveColumns(['sport'], 0);
+            const api = await gridApiHandle(page);
+            await api.evaluate((api) => api.moveColumns(['sport'], 0));
 
             const displayedOrder = ['sport', ...DEFINITION_ORDER.filter((colId) => colId !== 'sport')];
             await expectDisplayedPrefixOf(page, displayedOrder, { allVisible: true });

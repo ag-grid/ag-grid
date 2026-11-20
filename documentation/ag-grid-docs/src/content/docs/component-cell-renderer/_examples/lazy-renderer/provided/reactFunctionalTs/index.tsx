@@ -7,10 +7,7 @@ import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-communit
 import type { ColDef } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import { IOlympicData } from './interfaces';
 import { LazyCellLoader } from './lazyCellComp';
-import './styles.css';
-import { useFetchJson } from './useFetchJson';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

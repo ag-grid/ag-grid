@@ -34,7 +34,6 @@ import type { AgChartsExports } from './agChartsExports';
 import type { GridChartParams } from './chartComp/gridChartComp';
 import { GridChartComp } from './chartComp/gridChartComp';
 import { validateCreateParams } from './chartComp/utils/chartParamsValidator';
-import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
 
 export interface CrossFilteringContext {
@@ -55,6 +54,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
     focusDialogOnOpen?: boolean;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class ChartService extends BeanStub implements NamedBean, IChartService {
@@ -267,7 +267,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         }
         params = validationResult === true ? params : validationResult;
 
-        const { chartType, chartContainer } = params;
+        const { chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
         const insideDialog = !(chartContainer ?? createChartContainerFunc);
@@ -275,7 +275,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const gridChartParams: GridChartParams = {
             ...params,
             chartId: this.generateId(),
-            chartType: getCanonicalChartType(chartType),
             insideDialog,
             crossFilteringContext: this.crossFilteringContext,
             crossFilteringResetCallback: () => {

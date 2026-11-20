@@ -2,7 +2,7 @@ import * as JSON5 from 'json5';
 
 import { _GET_ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { _FUNCTION_GRID_OPTIONS } from '../_copiedFromCore/propertyKeys';
-import type { ParsedBindings } from '../types';
+import type { GridOptionsType, ParsedBindings } from '../types';
 import {
     DARK_INTEGRATED_END,
     DARK_INTEGRATED_START,
@@ -26,6 +26,24 @@ function convertStyles(code: string) {
     });
 }
 
+/**
+ * Rewrite HTML attributes to their JSX equivalents; `disabled=""` is falsy in React, so it becomes bare, and
+ * numeric attributes take numbers.
+ */
+function convertAttributes(template: string) {
+    template = template
+        .replace(/(\s(?:rows|cols|size))="(\d+)"/g, '$1={$2}')
+        .replace(/<input (.+?[^=])>/g, '<input $1 />')
+        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
+        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
+        .replace(/(<[^>]*?\s)disabled=""(?=[\s/>])/g, '$1disabled')
+        .replace(/ class=/g, ' className=')
+        .replace(/ for=/g, ' htmlFor=')
+        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
+
+    return convertStyles(template);
+}
+
 export function convertTemplate(template: string) {
     // React events are case sensitive, so need to ensure casing is correct
     const caseSensitiveEvents = {
@@ -40,19 +58,13 @@ export function convertTemplate(template: string) {
         template = template.replace(matcher, `${jsEvent}={() => this.$1($2)}`);
     });
 
-    template = template
-        .replace(/,\s+event([),])/g, '$1')
-        .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
-        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
-        .replace(/ class=/g, ' className=')
-        .replace(/ for=/g, ' htmlFor=')
-        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
-
-    return convertStyles(template);
+    return convertAttributes(template.replace(/,\s+event([),])/g, '$1'));
 }
 
-export function convertFunctionalTemplate(template: string) {
+/**
+ * @param handlersWithParameters handlers that must not be given the DOM event as their first argument
+ */
+export function convertFunctionalTemplate(template: string, handlersWithParameters: string[] = []) {
     // React events are case sensitive, so need to ensure casing is correct
     const caseSensitiveEvents = {
         dragover: 'onDragOver',
@@ -70,27 +82,24 @@ export function convertFunctionalTemplate(template: string) {
             meta = matcher.exec(template);
             if (meta) {
                 // 0 original call, 1 function name, 2 arguments
-                if (meta[2]) {
-                    template = template.replace(matcher, `${jsEvent}={() => $1($2)}`);
+                const [, handler, args] = meta;
+                let jsHandler: string;
+                if (/\bevent\b/.test(args)) {
+                    // Uses the event, e.g. `event.target.value`, so takes React's rather than the global `window.event`
+                    jsHandler = `(event) => ${handler}(${args.replace(/\bevent\.target\b/g, 'event.currentTarget')})`;
+                } else if (args || handlersWithParameters.includes(handler)) {
+                    jsHandler = `() => ${handler}(${args})`;
                 } else {
-                    template = template.replace(matcher, `${jsEvent}={$1}`);
+                    jsHandler = handler;
                 }
+                template = template.replace(matcher, () => `${jsEvent}={${jsHandler}}`);
             }
         } while (meta);
 
         template = template.replace(matcher, `${jsEvent}={() => $1($2)}`);
     });
 
-    template = template
-        .replace(/,\s+event([),])/g, '$1')
-        .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
-        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
-        .replace(/ class=/g, ' className=')
-        .replace(/ for=/g, ' htmlFor=')
-        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
-
-    return convertStyles(template);
+    return convertAttributes(template);
 }
 
 export const getImport = (filename: string) => `import ${toTitleCase(filename.split('.')[0])} from './${filename}';`;
@@ -115,6 +124,16 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
 };
 
 export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._GET_ALL_EVENTS()]);
+
+/**
+ * The type argument for the `useCallback` holding a grid option callback, e.g. `<GetRowIdFunc<TData>>`,
+ * so the callback's parameters keep the types the grid options gave them.
+ */
+export function getCallbackTypeArgument(typings: GridOptionsType | undefined): string {
+    const typeName = typings?.typeName;
+    const isCallbackType = typeName && /^([A-Z]\w*(<[\w, ]+>)?|\(.*\) => [\w<>, ]+)$/.test(typeName);
+    return isCallbackType ? `<${typeName}>` : '';
+}
 
 export function addChartsDarkModeIfRequired(bindings: ParsedBindings, imports: string[], useTypescript: boolean) {
     let darkModeWithGridRef = getIntegratedDarkModeCode(bindings.exampleName, useTypescript, 'gridRef.current?.api');

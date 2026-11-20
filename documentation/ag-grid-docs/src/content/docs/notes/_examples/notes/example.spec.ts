@@ -121,7 +121,7 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape');
     });
 
-    test.eachFramework('Remove Note clears the note and its indicator', async ({ agIdFor, page }) => {
+    test.eachFramework('Remove Note clears the note and its indicator', async ({ agIdFor }) => {
         const notedCell = agIdFor.cell('1', 'athlete');
         await expect(notedCell).toHaveClass(/ag-has-cell-notes/);
 

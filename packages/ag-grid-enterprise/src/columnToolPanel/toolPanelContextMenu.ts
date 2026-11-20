@@ -55,7 +55,8 @@ export class ToolPanelContextMenu extends Component {
         private readonly params: ColumnStateUpdateParams,
         private readonly eventType: ColumnEventType,
         private readonly source: ColumnMenuItemsSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -251,7 +252,7 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getRowGroupColumns(deferMode), rowGroupAllowed);
                 updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(
@@ -259,7 +260,7 @@ export class ToolPanelContextMenu extends Component {
                     rowGroupAllowed
                 );
                 updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
@@ -277,12 +278,12 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: VALUE_TOKEN.icon,
             removeIcon: VALUE_TOKEN.icon,
@@ -300,17 +301,25 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: PIVOT_TOKEN.icon,
             removeIcon: PIVOT_TOKEN.icon,
             mutatesState: true,
         });
+    }
+
+    /** Deferred updates rebuild the list rows, destroying the row this menu restores focus to. */
+    private refreshDeferredUi(): void {
+        refreshDeferredToolPanelUi(this.beans, this.params);
+        if (isDeferredMode(this.params)) {
+            this.refocusIfLost?.(this.parentEl);
+        }
     }
 
     private isColumnValidForScrollIntoView(col: AgColumn): boolean {

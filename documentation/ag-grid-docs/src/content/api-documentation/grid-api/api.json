@@ -833,9 +833,19 @@
         "meta": {
             "displayName": "Scrolling"
         },
-        "ensureIndexVisible": {},
+        "ensureIndexVisible": {
+            "more": {
+                "name": "Scrolling via API",
+                "url": "./scrolling/#scrolling-via-api"
+            }
+        },
         "ensureNodeVisible": {},
-        "ensureColumnVisible": {},
+        "ensureColumnVisible": {
+            "more": {
+                "name": "Scrolling via API",
+                "url": "./scrolling/#scrolling-via-api"
+            }
+        },
         "getHorizontalPixelRange": {},
         "getVerticalPixelRange": {}
     },

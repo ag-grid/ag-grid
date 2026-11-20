@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { RefPlaceholder, _exists, _missing, _parseBigIntOrNull } from 'ag-stack';
+import { RefPlaceholder, _exists, _missing } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -153,8 +153,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
      * - Uses bigint aggregation when bigint values are present and all numeric values are safe integers.
      * - Non-integer or unsafe integer numbers fall back to number aggregation to avoid precision loss.
      * - Avg uses integer division when bigint aggregation is active, discarding the fractional part.
-     * - String values are trimmed; finite numeric strings are aggregated as numbers, while integer strings beyond the
-     *   safe integer range are parsed as bigint.
+     * - String values are counted but never coerced to numbers, so they do not contribute to sum, min, max or avg.
      */
     private onCellSelectionChanged(): void {
         const beans = this.beans;
@@ -272,36 +271,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         // see if value is wrapped, can happen when doing count() or avg() functions
                         if (typeof value === 'object' && 'value' in value) {
                             value = value.value;
-
-                            // ensure that the new value wouldn't have been skipped by the previous check
-                            if (value === '') {
-                                return;
-                            }
-                        }
-
-                        if (typeof value === 'string') {
-                            const trimmedValue = value.trim();
-                            if (trimmedValue === '') {
-                                return;
-                            }
-
-                            const asNumber = Number(trimmedValue);
-                            if (!Number.isFinite(asNumber)) {
-                                return;
-                            }
-                            if (
-                                sum + asNumber >= Number.MAX_SAFE_INTEGER ||
-                                sum + asNumber <= Number.MIN_SAFE_INTEGER ||
-                                asNumber >= Number.MAX_SAFE_INTEGER ||
-                                asNumber <= Number.MIN_SAFE_INTEGER
-                            ) {
-                                value = _parseBigIntOrNull(trimmedValue);
-                                if (value === null) {
-                                    value = asNumber;
-                                }
-                            } else {
-                                value = asNumber;
-                            }
                         }
 
                         if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'bigint') {

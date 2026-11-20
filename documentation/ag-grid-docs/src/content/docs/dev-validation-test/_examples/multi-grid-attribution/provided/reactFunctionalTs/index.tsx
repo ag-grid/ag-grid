@@ -32,7 +32,9 @@ const GridExample = () => {
     const apiFor = (grid: 'a' | 'b') => (grid === 'a' ? gridA : gridB).current!.api;
 
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
-    const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).setGridOption('tooltipInteraction', true);
+    const triggerWarning = (grid: 'a' | 'b') =>
+        // @ts-expect-error deliberately updates an initial-only option
+        apiFor(grid).setGridOption('tooltipInteraction', true);
 
     // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
     // on a client-side grid emits error #200, attributed to that grid, and no-ops without affecting layout.
@@ -58,18 +60,22 @@ const GridExample = () => {
                 <div className="grid-section">
                     <div className="controls">
                         <span className="grid-label">Grid A</span>
-                        <button type="button" onClick={() => triggerWarning('a')}>
-                            Trigger warning
-                        </button>
-                        <button type="button" onClick={() => triggerError('a')}>
-                            Trigger error
-                        </button>
-                        <button type="button" onClick={() => triggerAsyncWarning('a')}>
-                            Trigger async warning
-                        </button>
-                        <button type="button" onClick={() => destroyThenCallApi('a')}>
-                            Destroy grid, then call API
-                        </button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button type="button" onClick={() => triggerWarning('a')}>
+                                    Trigger warning
+                                </button>
+                                <button type="button" onClick={() => triggerError('a')}>
+                                    Trigger error
+                                </button>
+                                <button type="button" onClick={() => triggerAsyncWarning('a')}>
+                                    Trigger async warning
+                                </button>
+                                <button type="button" onClick={() => destroyThenCallApi('a')}>
+                                    Destroy grid, then call API
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="grid">
                         <AgGridReact ref={gridA} columnDefs={columnDefs} rowData={rowData} getRowId={getRowId} />
@@ -79,15 +85,19 @@ const GridExample = () => {
                 <div className="grid-section">
                     <div className="controls">
                         <span className="grid-label">Grid B</span>
-                        <button type="button" onClick={() => triggerWarning('b')}>
-                            Trigger warning
-                        </button>
-                        <button type="button" onClick={() => triggerError('b')}>
-                            Trigger error
-                        </button>
-                        <button type="button" onClick={() => triggerAsyncWarning('b')}>
-                            Trigger async warning
-                        </button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button type="button" onClick={() => triggerWarning('b')}>
+                                    Trigger warning
+                                </button>
+                                <button type="button" onClick={() => triggerError('b')}>
+                                    Trigger error
+                                </button>
+                                <button type="button" onClick={() => triggerAsyncWarning('b')}>
+                                    Trigger async warning
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="grid">
                         <AgGridReact ref={gridB} columnDefs={columnDefs} rowData={rowData} getRowId={getRowId} />

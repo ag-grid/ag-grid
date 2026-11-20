@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -6,17 +6,16 @@ import type {
     DragAndDropIcon,
     DragItem,
     DropTarget,
+    HeaderTooltipCallbackParams,
     SortDef,
     SortDirection,
     SortIndicatorComp,
-    TooltipCallbackParams,
     TooltipLocation,
 } from 'ag-grid-community';
 import {
     Component,
     DragSourceType,
     KeyCode,
-    _addGridCommonParams,
     _createElement,
     _getHeaderTooltipComponentDefinition,
     _resolveHeaderTooltipValue,
@@ -113,18 +112,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.displayName!;
     }
 
-    protected getTooltip(): string | null | undefined {
-        const colDef = this.column.colDef;
-        return _resolveHeaderTooltipValue(
-            colDef,
-            _addGridCommonParams<TooltipCallbackParams>(this.gos, {
-                location: this.getTooltipLocation(),
-                colDef,
-                column: this.column,
-                value: this.displayName,
-                valueFormatted: this.displayName,
-            })
-        );
+    protected getTooltip(params: HeaderTooltipCallbackParams): string | null | undefined {
+        return _resolveHeaderTooltipValue(params.colDef, params);
     }
 
     protected override getTooltipLocation(): TooltipLocation {
@@ -395,7 +384,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+        const [focusoutListener] = _addManagedElementListeners(this, ePopup, {
             focusout: (e: FocusEvent) => {
                 if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
                     addPopupRes.hideFunc();

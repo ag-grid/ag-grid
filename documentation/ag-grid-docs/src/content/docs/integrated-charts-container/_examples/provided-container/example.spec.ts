@@ -1,7 +1,7 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page, remoteGrid, agFramework }) => {
+    test.eachFramework('Example', async ({ page, agFramework }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -14,9 +14,12 @@ test.agExample(import.meta, () => {
 
         // Creating a chart from a range of medal columns triggers the createChartContainer callback,
         // which places the chart into the provided container rather than the default popup window.
-        await remoteGrid(page).createRangeChart({
-            cellRange: { columns: ['gold', 'silver', 'bronze', 'total'] },
-            chartType: 'groupedColumn',
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => {
+            api.createRangeChart({
+                cellRange: { columns: ['gold', 'silver', 'bronze', 'total'] },
+                chartType: 'groupedColumn',
+            });
         });
 
         // The chart is rendered inside the provided container, and not inside a grid popup dialog.

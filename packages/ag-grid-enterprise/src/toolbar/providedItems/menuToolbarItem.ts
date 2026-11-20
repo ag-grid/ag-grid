@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _removeAriaExpanded,
     _setAriaExpanded,
     _setAriaHasPopup,
@@ -48,7 +49,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
             `AG Grid toolbar item: \`agMenuToolbarItem\``
         );
         this.applyParams(params as MenuItemParams);
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             click: () => this.showMenu(),
         });
     }

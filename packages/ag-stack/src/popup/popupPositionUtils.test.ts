@@ -228,7 +228,7 @@ describe('popupPositionUtils', () => {
             const pos = findBestPlacement(cellRect, targetSize, smallParent, ['tl-tr', 'tr-tl'], 10);
             // tl-tr: x=1010, clamped to 680 → 680+320=1000 > 900 → overlaps
             // tr-tl: raw (570, 460), clamped (570, 280) → 570+320=890 < 900 → no overlap
-            expect(pos).toEqual({ x: 570, y: 280 });
+            expect(pos).toEqual({ x: 570, y: 280, alignment: 'tr-tl' });
         });
 
         it('can mirror placements for RTL when requested', () => {

@@ -36,6 +36,7 @@ type TouchListenerState = {
     handledEvents?: Set<TouchListenerEvent>;
     longTapCandidates?: TouchListener[];
     touchStartClaimed?: boolean;
+    contextMenuSuppressed?: boolean;
 };
 
 type TrackedTouchEvent = Event & {
@@ -168,6 +169,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             const touchMove = this.onTouchMove.bind(this);
             const touchEnd = this.onTouchEnd.bind(this);
             const touchCancel = this.onTouchCancel.bind(this);
+            const suppressLateNativeMenu = this.suppressLateNativeMenu.bind(this);
             const contextMenu = this.onContextMenu.bind(this);
             const passiveTrue = { passive: true };
             const passiveFalse = { passive: false };
@@ -177,6 +179,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
                 [doc, 'touchcancel', touchCancel, passiveTrue],
                 // we set passive=false, as we want to prevent default on this event
                 [doc, 'touchend', touchEnd, passiveFalse],
+                [doc, 'contextmenu', suppressLateNativeMenu, { passive: false, capture: true }],
                 [doc, 'contextmenu', contextMenu, passiveFalse]
             );
         }
@@ -244,8 +247,24 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         this.cancel();
     }
 
+    private suppressLateNativeMenu(event: Event): void {
+        if (this.longTapFired && this.touchStart && event.composedPath().includes(this.touchStart.target)) {
+            preventEventDefault(event);
+            event.stopImmediatePropagation();
+        }
+    }
+
     private onContextMenu(event: Event): void {
+        if (!this.touchStart || !event.composedPath().includes(this.touchStart.target)) {
+            return;
+        }
+        const state = getTouchListenerState(event);
+        if (event.defaultPrevented && !state.contextMenuSuppressed) {
+            this.consumeGesture();
+            return;
+        }
         if (this.resolveLongTapTarget() && this.canHandleLongTap()) {
+            state.contextMenuSuppressed = true;
             preventEventDefault(event);
         }
     }
@@ -334,6 +353,12 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             }
         }
         this.lastTapTime = now;
+    }
+
+    private consumeGesture(): void {
+        this.clearLongPress();
+        this.moved = true;
+        this.longTapFired = true;
     }
 
     private cancel(): void {

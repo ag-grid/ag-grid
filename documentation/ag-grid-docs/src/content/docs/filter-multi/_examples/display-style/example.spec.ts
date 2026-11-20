@@ -10,7 +10,7 @@ test.agExample(import.meta, () => {
         await expect(page.getByText('Expand Me for Text Filters', { exact: false })).toBeVisible();
     });
 
-    test.eachFramework('Inline Sport filter filters the rows', async ({ page, agIdFor }) => {
+    test.eachFramework('Inline Sport filter filters the rows', async ({ agIdFor }) => {
         await expect(agIdFor.cell('0', 'sport')).toContainText('Swimming');
 
         const filterButton = agIdFor.headerFilterButton('sport');

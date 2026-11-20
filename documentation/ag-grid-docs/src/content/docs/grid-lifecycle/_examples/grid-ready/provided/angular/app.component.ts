@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -19,17 +18,17 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     imports: [AgGridAngular],
     selector: 'my-app',
     template: `
-        <div class="test-container">
-            <div class="test-header">
-                <div style="margin-bottom: 1rem;">
-                    <input type="checkbox" id="pinFirstColumnOnLoad" />
-                    <label for="pinFirstColumnOnLoad">Pin first column on load</label>
-                </div>
-                <div style="margin-bottom: 1rem;">
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <div>
+                        <input type="checkbox" id="pinFirstColumnOnLoad" />
+                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
+                    </div>
                     <button id="reloadGridButton" (click)="reloadGrid()">Reload Grid</button>
                 </div>
             </div>
-            @if (isVisible) {
+            @if (isVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
                     [columnDefs]="columnDefs"
@@ -41,7 +40,7 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
     `,
 })
 export class AppComponent {
-    public isVisible = true;
+    public isVisible = signal(true);
     private gridApi!: GridApi;
     public columnDefs: ColDef[] = [
         { field: 'name', headerName: 'Athlete', width: 250 },
@@ -55,8 +54,8 @@ export class AppComponent {
     public rowData: any[] | null = getData();
 
     reloadGrid() {
-        this.isVisible = false;
-        setTimeout(() => (this.isVisible = true), 1);
+        this.isVisible.set(false);
+        setTimeout(() => this.isVisible.set(true), 1);
     }
 
     onGridReady(params: GridReadyEvent) {

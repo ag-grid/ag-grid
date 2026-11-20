@@ -6,7 +6,12 @@ const SLACK_USER_KEY_MAP = {
     "Github": "github",
     "Staging notification": "stagingNotification",
     "Git Emails": { key: "gitEmails", extract: extractEmailsFromRichText },
+    "Jira Account ID": "jiraAccountId",
 };
+
+// Read when present but not validated: only the GitHub to JIRA mapping uses it, and it checks for
+// the column itself, so the Slack notifications keep working against a directory without it.
+const OPTIONAL_HEADINGS = new Set(["Jira Account ID"]);
 
 const getDataSourceQueryUrl = (dataSourceId) => `https://api.notion.com/v1/data_sources/${dataSourceId}/query`;
 
@@ -195,7 +200,7 @@ async function queryUserDirectory({
         return { error: "Notion query returned no rows, so the schema cannot be validated. Check the data source has at least one entry." };
     }
 
-    const expectedHeadings = Object.keys(SLACK_USER_KEY_MAP);
+    const expectedHeadings = Object.keys(SLACK_USER_KEY_MAP).filter((h) => !OPTIONAL_HEADINGS.has(h));
     const presentHeadings = Object.keys(allResults[0].properties ?? {});
     const missing = expectedHeadings.filter((h) => !presentHeadings.includes(h));
     if (missing.length > 0) {

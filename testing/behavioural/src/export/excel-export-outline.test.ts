@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
+import type { ExcelExportParams, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -43,6 +43,13 @@ describe('Excel export outlines', () => {
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(count));
     };
 
+    // Ends the multi-sheet export `getSheetDataForExcel` opens, as an application must before exporting again.
+    const getSheetData = (api: GridApi, params?: ExcelExportParams): string => {
+        const sheetXml = api.getSheetDataForExcel(params)!;
+        api.getMultipleSheetsAsExcel({ data: [sheetXml] });
+        return sheetXml;
+    };
+
     // header row, Ireland group, 2 leaves, Spain group, 1 leaf
     const expectedGroupedOutlineLevels = [undefined, undefined, '1', '1', undefined, '1'];
 
@@ -57,7 +64,7 @@ describe('Excel export outlines', () => {
         // groups are collapsed by default, so the leaf rows are never displayed after grouping
         await waitForDisplayedRowCount(api, 2);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         expect(getRowOutlineLevels(sheetXml)).toEqual(expectedGroupedOutlineLevels);
         expect(getSheetFormatPr(sheetXml).outlineLevelRow).toBe('1');
     });
@@ -69,7 +76,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 2);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         expect(getRowOutlineLevels(sheetXml)).toEqual(expectedGroupedOutlineLevels);
         expect(getSheetFormatPr(sheetXml).outlineLevelRow).toBe('1');
     });
@@ -83,7 +90,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 5);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         expect(getRowOutlineLevels(sheetXml)).toEqual(expectedGroupedOutlineLevels);
     });
 
@@ -101,7 +108,7 @@ describe('Excel export outlines', () => {
         // Ireland's group row is hidden as it has a single child
         await waitForDisplayedRowCount(api, 4);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         // header row, Ireland leaf (hidden parent, level 0), Spain group, 2 leaves
         expect(getRowOutlineLevels(sheetXml)).toEqual([undefined, undefined, undefined, '1', '1']);
     });
@@ -124,7 +131,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 1);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         // one <col> per exported column, no extra overlapping records for the collapsible range
         expect(getColOutlines(sheetXml)).toEqual([
             { min: '1', max: '1', outlineLevel: undefined, width: '21' },
@@ -157,7 +164,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 1);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         expect(getColOutlines(sheetXml).map(({ min, outlineLevel }) => [min, outlineLevel])).toEqual([
             ['1', undefined],
             ['2', '1'],
@@ -182,7 +189,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 1);
 
-        const sheetXml = api.getSheetDataForExcel({ suppressColumnOutline: true })!;
+        const sheetXml = getSheetData(api, { suppressColumnOutline: true });
         const cols = getColOutlines(sheetXml);
         expect(cols).toHaveLength(3);
         expect(cols.every((col) => col.outlineLevel === undefined)).toBe(true);
@@ -199,7 +206,7 @@ describe('Excel export outlines', () => {
         });
         await waitForDisplayedRowCount(api, 8);
 
-        const sheetXml = api.getSheetDataForExcel()!;
+        const sheetXml = getSheetData(api);
         // header, Ireland group, 2 leaves, Ireland footer, Spain group, 1 leaf, Spain footer, grand total
         expect(getRowOutlineLevels(sheetXml)).toEqual([
             undefined,
@@ -225,7 +232,7 @@ describe('Excel export outlines', () => {
 
         // group rows are omitted from the export, so their children must not carry
         // outline levels pointing at absent summary rows, even when collapsing
-        const sheetXml = api.getSheetDataForExcel({ rowGroupExpandState: 'collapsed' })!;
+        const sheetXml = getSheetData(api, { rowGroupExpandState: 'collapsed' });
         const rowOutlineLevels = getRowOutlineLevels(sheetXml);
         expect(rowOutlineLevels.length).toBeGreaterThan(1);
         expect(rowOutlineLevels.every((level) => level === undefined)).toBe(true);

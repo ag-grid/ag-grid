@@ -13,9 +13,9 @@ test.agExample(import.meta, () => {
             await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
 
             const dialog = page.locator('.ag-calculated-column-form');
-            await expect(dialog.getByRole('button', { name: 'Columns', exact: true })).toBeVisible();
-            await expect(dialog.getByRole('button', { name: 'Functions', exact: true })).toHaveCount(0);
-            await expect(dialog.getByRole('button', { name: 'Operators', exact: true })).toHaveCount(0);
+            await expect(dialog.getByRole('combobox', { name: 'Columns', exact: true })).toBeVisible();
+            await expect(dialog.locator('button', { hasText: /^Functions$/ })).toBeHidden();
+            await expect(dialog.locator('button', { hasText: /^Operators$/ })).toBeHidden();
 
             await expect(agIdFor.headerCell('profit')).not.toHaveClass(/ag-calculated-column-highlighted/);
             await expect(agIdFor.cell('0', 'profit')).not.toHaveClass(/ag-calculated-column-highlighted/);

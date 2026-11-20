@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, RowApiModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchCooldown, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench, benchCooldown } from './bench-utils';
 
 const ROW_COUNT = 50_000;
 const CHURN = 1_000;
@@ -63,12 +63,10 @@ suite('set filter preservePreviousValues under churn', () => {
     const on = createSetUp(true);
 
     bench(`transaction re-keying ${CHURN} of ${ROW_COUNT} rows: option off`, off.churn, {
-        ...benchDefaults(),
         setup: off.setUp,
     });
 
     bench(`transaction re-keying ${CHURN} of ${ROW_COUNT} rows: option on`, on.churn, {
-        ...benchDefaults(),
         setup: on.setUp,
     });
 });
@@ -108,12 +106,10 @@ suite('set filter preservePreviousValues at grid start', () => {
     };
 
     bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows: option off`, start(false), {
-        ...benchDefaults(),
         setup: () => gridsManager.reset(),
     });
 
     bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows: option on`, start(true), {
-        ...benchDefaults(),
         setup: () => gridsManager.reset(),
     });
 });
@@ -153,12 +149,10 @@ suite('set filter preservePreviousValues, one-row transaction on a wide grid', (
     const on = createSetUp(true);
 
     bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows, one row updated: option off`, off.update, {
-        ...benchDefaults(),
         setup: off.setUp,
     });
 
     bench(`${WIDE_COLUMNS} columns × ${WIDE_ROWS} rows, one row updated: option on`, on.update, {
-        ...benchDefaults(),
         setup: on.setUp,
     });
 });

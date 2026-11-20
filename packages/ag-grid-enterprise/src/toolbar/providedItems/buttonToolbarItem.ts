@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarItemActionParams } from 'ag-grid-community';
 import { Component, _addGridCommonParams } from 'ag-grid-community';
@@ -28,7 +28,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
 
     public init(params: IToolbarItemParams): void {
         this.applyParams(params);
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             click: () => this.invokeAction(),
         });
     }

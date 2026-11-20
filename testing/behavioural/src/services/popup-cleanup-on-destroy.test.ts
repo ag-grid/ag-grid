@@ -1,7 +1,9 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, fireGridPointerDown, openMenuOption } from 'ag-test-utils';
 
 import type { ColDef, GridOptions } from 'ag-grid-community';
-import { ColumnMenuModule } from 'ag-grid-enterprise';
+import { TextFilterModule } from 'ag-grid-community';
+import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 const columnDefs: ColDef[] = [{ field: 'a' }, { field: 'b' }];
 const rowData = [{ a: 1, b: 2 }];
@@ -69,6 +71,122 @@ describe('ag-grid popup cleanup on destroy', () => {
         expect(popupParent.querySelectorAll('.ag-popup').length).toBe(0);
 
         popupParent.remove();
+    });
+
+    test('destroying the grid stops repositioning its open filter popup', async () => {
+        const api = await gridsManager.createGridAndWait(
+            null,
+            { columnDefs: [{ field: 'a', filter: 'agTextColumnFilter' }], rowData },
+            { modules: [TextFilterModule] }
+        );
+        vi.useFakeTimers();
+        try {
+            api.showColumnFilter('a');
+            await vi.advanceTimersByTimeAsync(500);
+            expect(document.querySelectorAll('.ag-popup').length).toBe(1);
+            expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+            api.destroy();
+            await vi.advanceTimersByTimeAsync(1000);
+            expect(vi.getTimerCount()).toBe(0);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test.each([
+        ['a filter popup open after its listeners attach', 'filter', 500],
+        ['the column chooser open in the tick it opened', 'chooser', 0],
+    ] as const)('destroying the grid with %s leaves no listener on the document', async (_case, popup, openFor) => {
+        const live = new Set<unknown>();
+        const add = document.addEventListener.bind(document);
+        const remove = document.removeEventListener.bind(document);
+        vi.spyOn(document, 'addEventListener').mockImplementation((type, listener, options) => {
+            live.add(listener);
+            add(type, listener, options);
+        });
+        vi.spyOn(document, 'removeEventListener').mockImplementation((type, listener, options) => {
+            live.delete(listener);
+            remove(type, listener, options);
+        });
+        const api = await gridsManager.createGridAndWait(
+            null,
+            { columnDefs: [{ field: 'a', filter: 'agTextColumnFilter' }], rowData },
+            { modules: [TextFilterModule] }
+        );
+        vi.useFakeTimers();
+        try {
+            if (popup === 'filter') {
+                api.showColumnFilter('a');
+            } else {
+                api.showColumnChooser();
+            }
+            if (openFor > 0) {
+                await vi.advanceTimersByTimeAsync(openFor);
+            }
+            expect(document.querySelectorAll('.ag-popup').length).toBe(1);
+            api.destroy();
+            await vi.advanceTimersByTimeAsync(1000);
+            expect(live.size).toBe(0);
+        } finally {
+            vi.useRealTimers();
+            vi.restoreAllMocks();
+        }
+    });
+
+    test('destroying the grid with a context menu and its submenu open hides each popup once', async () => {
+        const live = new Set<unknown>();
+        const removals = new Map<string, Map<unknown, number>>();
+        const add = document.addEventListener.bind(document);
+        const remove = document.removeEventListener.bind(document);
+        vi.spyOn(document, 'addEventListener').mockImplementation((type, listener, options) => {
+            live.add(listener);
+            add(type, listener, options);
+        });
+        vi.spyOn(document, 'removeEventListener').mockImplementation((type, listener, options) => {
+            live.delete(listener);
+            const perType = removals.get(type) ?? new Map<unknown, number>();
+            perType.set(listener, (perType.get(listener) ?? 0) + 1);
+            removals.set(type, perType);
+            remove(type, listener, options);
+        });
+        try {
+            const api = await gridsManager.createGridAndWait(
+                null,
+                {
+                    columnDefs,
+                    rowData,
+                    getContextMenuItems: () => [{ name: 'Parent', subMenu: [{ name: 'Child' }] }],
+                },
+                { modules: [ContextMenuModule] }
+            );
+            const cell = document.querySelector<HTMLElement>('[row-index="0"] [col-id="a"]')!;
+            fireGridPointerDown(cell, { button: 2, buttons: 2 });
+            cell.dispatchEvent(
+                new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+            );
+            const parent = (await openMenuOption('Parent')).closest<HTMLElement>('.ag-menu-option')!;
+            parent.click();
+            await waitFor(() => expect(document.querySelectorAll('.ag-menu').length).toBe(2), { timeout: 1000 });
+
+            api.destroy();
+
+            const doubleRemoved: string[] = [];
+            for (const [type, perType] of removals) {
+                for (const count of perType.values()) {
+                    if (count > 1) {
+                        doubleRemoved.push(`${type} x${count}`);
+                    }
+                }
+            }
+            expect({
+                menus: document.querySelectorAll('.ag-menu').length,
+                liveListeners: live.size,
+                doubleRemoved,
+            }).toEqual({ menus: 0, liveListeners: 0, doubleRemoved: [] });
+        } finally {
+            vi.restoreAllMocks();
+        }
     });
 
     test('no duplicate popups after grid remount', () => {

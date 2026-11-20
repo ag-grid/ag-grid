@@ -1,8 +1,9 @@
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
-import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS, agGridVersion } from '@constants';
-import { buildAgentsMd } from '@utils/agentReadinessFiles';
+import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS, SITE_BASE_URL, agGridVersion } from '@constants';
+import { archiveRoot, buildAgentsMd } from '@utils/agentReadinessFiles';
+import { getIsArchive } from '@utils/env';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
 // Served at /AGENTS.md. Generated on every build from the canonical base URL and
@@ -10,13 +11,15 @@ import { type CollectionEntry, getEntry } from 'astro:content';
 export async function GET() {
     const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 
+    const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
     const output = buildAgentsMd({
-        siteRoot: siteRootUrl(metadata.canonicalUrlBase),
+        siteRoot,
         majorVersion: parseVersion(agGridVersion).major,
         // The header's Docs and API links use the default framework, so these links do too.
         gridDocsPrefix: getFrameworkPath(DEFAULT_FRAMEWORK),
         chartsDocsPrefix: DEFAULT_FRAMEWORK,
         includeMarkdownDocs: !DISABLE_MARKDOWN_DOCS,
+        archive: getIsArchive() ? { root: archiveRoot(siteRoot, SITE_BASE_URL), version: agGridVersion } : undefined,
     });
 
     return new Response(output, {

@@ -28,7 +28,7 @@
     top: -2px;
 }
 
-:where(.ag-row-number-header.ag-row-number-selection-enabled) {
+:where(.ag-row-number-header.ag-row-number-selection-enabled:not(.ag-floating-filter)) {
     cursor: cell;
 }
 

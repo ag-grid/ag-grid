@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Registered custom range function aggregates the total column', async ({ agIdFor, page }) => {
@@ -15,7 +15,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('row-group-country-Netherlands', 'total')).toContainText('3');
     });
 
-    test.eachFramework('Group rows can be sorted by the aggregated value', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Group rows can be sorted by the aggregated value', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -24,7 +24,8 @@ test.agExample(import.meta, () => {
         // With animation off, exactly one row occupies row-index 0, so we assert the identity
         // of whichever row is currently at the top rather than tracking the US row — which
         // scrolls out of the virtualised DOM entirely when it sorts to the bottom.
-        await remoteGrid(page).setGridOption('animateRows', false);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('animateRows', false));
 
         // United States has the largest range (7) of any country, so sorting the total column
         // descending must bring its group to the top row.

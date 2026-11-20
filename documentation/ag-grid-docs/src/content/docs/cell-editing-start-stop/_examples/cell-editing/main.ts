@@ -117,7 +117,7 @@ function onBtWhich() {
             'editing cell is: row = ' +
                 cellDef.rowIndex +
                 ', col = ' +
-                cellDef.column.getId() +
+                cellDef.colId +
                 ', floating = ' +
                 cellDef.rowPinned
         );

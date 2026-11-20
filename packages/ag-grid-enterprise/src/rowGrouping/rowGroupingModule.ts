@@ -78,18 +78,6 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [RowGroupPanelBuilder],
     selectors: [AgGridHeaderDropZonesSelector],
-    icons: {
-        menuMoveLeft: 'left',
-        menuMoveRight: 'right',
-        // identifies the pivot drop zone
-        pivotPanel: 'pivot',
-        // "Row groups" drop zone in column tool panel
-        rowGroupPanel: 'group',
-        // separator between column 'pills' when you add multiple columns to the header drop zone
-        panelDelimiter: 'small-right',
-        // version of panelDelimiter used in RTL mode
-        panelDelimiterRtl: 'small-left',
-    },
     dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule, MenuItemModule],
 };
 

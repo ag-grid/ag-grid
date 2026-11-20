@@ -562,11 +562,11 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getPairedMode(): boolean {
-        return this.chartController.getChartProxy().isPaired();
+        return this.chartController.isPaired();
     }
 
     public setPairedMode(paired: boolean): void {
-        this.chartController.getChartProxy().setPaired(paired);
+        this.chartController.setPaired(paired);
     }
 
     private getChartAxes(): Array<ChartAxis> {

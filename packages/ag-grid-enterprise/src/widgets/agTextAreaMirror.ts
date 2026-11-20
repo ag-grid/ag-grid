@@ -1,4 +1,10 @@
-import { RefPlaceholder, _getWindow, _observeResize, _requestAnimationFrame } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _getWindow,
+    _observeResize,
+    _requestAnimationFrame,
+} from 'ag-stack';
 
 import type { GridInputTextArea } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
@@ -52,7 +58,7 @@ export class AgTextAreaMirror extends Component {
         wrapper.classList.add('ag-text-area-mirror-wrapper');
         input.classList.add('ag-text-area-mirror-input');
         wrapper.appendChild(this.getGui());
-        this.addManagedElementListeners(input, {
+        _addManagedElementListeners(this, input, {
             scroll: () => this.syncScroll(),
             focus: () => this.scheduleLayout(),
             blur: () => this.scheduleLayout(),

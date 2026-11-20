@@ -4,7 +4,6 @@ import type { IToolPanelParams } from 'ag-grid-community';
 import type { CustomToolPanelProps } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
-import type { ChatMessage } from './types';
 
 export interface ChatMessage {
     role: 'system' | 'user' | 'assistant';

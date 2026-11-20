@@ -18,13 +18,13 @@
       "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["^build:package", "build:copy-styles", "build:package"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main-umd-styles.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "packages/ag-grid-community/esbuildBuild.cjs",
@@ -47,13 +47,13 @@
       "cache": true
     },
     "build:umd:watch": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["ag-stack:build:package:watch"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main-umd-styles.ts",
         "tsConfig": "{projectRoot}/tsconfig.watch.json",
         "esbuildConfig": "packages/ag-grid-community/esbuildBuild.cjs",
@@ -81,7 +81,7 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
+      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -94,22 +94,19 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/dist/types"],
       "options": {
-        "outputPath": "packages/ag-grid-community/dist/types",
-        "main": "packages/ag-grid-community/src/main.ts",
-        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
-        "compiler": "tsc"
+        "command": "node scripts/package/emit-declarations.mjs {projectRoot}/tsconfig.types.json {projectRoot}/dist/types"
       },
       "configurations": {
         "watch": {
-          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
+          "command": "node scripts/package/emit-declarations.mjs {projectRoot}/tsconfig.types.watch.json {projectRoot}/dist/types"
         },
         "production": {}
       }
     },
     "build:package": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": ["^build:package"],
       "inputs": [
         "{projectRoot}/package.json",
@@ -124,6 +121,7 @@
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
+        "skipTypeCheck": true,
         "outputPath": "{projectRoot}/dist/package",
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
@@ -150,7 +148,7 @@
       }
     },
     "build:package:watch": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "ag-grid-task-autogen:esbuild-staged",
       "dependsOn": [],
       "inputs": [
         "{projectRoot}/package.json",
@@ -165,7 +163,6 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist/package",
-        "deleteOutputPath": false,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.watch.json",
         "skipTypeCheck": true,

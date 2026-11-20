@@ -1,13 +1,32 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
-export function FakeServer(allData) {
+// Request values are bound as `?` parameters, and column names and sort directions are
+// checked against allow-lists of known values.
+import {
+    checkColumn,
+    combineConditionsSql,
+    limitSql,
+    orderBySql,
+    setFilterSql,
+    textFilterSql,
+} from '@example-fake-servers/sql';
+
+import type { FilterModel, IServerSideGetRowsRequest, TextFilterModel } from 'ag-grid-community';
+
+interface SportFilterModel {
+    filterModels: (TextFilterModel | null)[];
+}
+
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
+
     return {
-        getData: function (request) {
+        getData: function (request: IServerSideGetRowsRequest) {
             const results = executeQuery(request);
-            results.forEach((row) => {
+            results.forEach((row: any) => {
                 row.country = {
                     code: row.countryCode,
                     name: row.countryName,
@@ -22,93 +41,85 @@ export function FakeServer(allData) {
                 lastRow: getLastRowIndex(request),
             };
         },
-        getCountries: function (sportFilter) {
+        getCountries: function (sportFilter?: SportFilterModel) {
+            const params: unknown[] = [allData];
             const textFilter = sportFilter?.filterModels[0]
-                ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0])
+                ? ' WHERE ' + textFilterSql('sport', sportFilter.filterModels[0], params)
                 : '';
             const sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
 
-            return alasql(sql, [allData]).map((row) => ({
+            return alasql(sql, params).map((row: any) => ({
                 code: row.countryCode,
                 name: row.countryName,
             }));
         },
-        getSports: function (countries, sportFilter) {
+        getSports: function (countries: string[] | null, sportFilter?: SportFilterModel) {
             console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
 
-            const where = countries ? " WHERE countryCode IN ('" + countries.join("', '") + "')" : '';
+            const params: unknown[] = [allData];
+            const where = countries ? ' WHERE countryCode IN (' + placeholders(countries, params) + ')' : '';
             const operator = countries ? ' AND ' : ' WHERE ';
             const textFilter = sportFilter?.filterModels[0]
-                ? operator + textFilterMapper('sport', sportFilter.filterModels[0])
+                ? operator + textFilterSql('sport', sportFilter.filterModels[0], params)
                 : '';
             const sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
 
-            return alasql(sql, [allData]).map(function (x) {
+            return alasql(sql, params).map(function (x: any) {
                 return x.sport;
             });
         },
     };
 
-    function executeQuery(request) {
-        const sql = buildSql(request);
+    function executeQuery(request: IServerSideGetRowsRequest) {
+        const params: unknown[] = [allData];
+        const sql = buildSql(request, params);
 
-        console.log('[FakeServer] - about to execute query:', sql);
+        console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
 
-        return alasql(sql, [allData]);
+        return alasql(sql, params);
     }
 
-    function buildSql(request) {
-        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
+    function buildSql(request: IServerSideGetRowsRequest, params: unknown[]) {
+        return (
+            'SELECT * FROM ?' +
+            whereSql(request, params) +
+            orderBySql(
+                request.sortModel.map((s) => ({ ...s, colId: mapColumnKey(s.colId) })),
+                knownColumns
+            ) +
+            limitSql(request)
+        );
     }
 
-    function mapColumnKey(columnKey) {
+    function column(colId: string) {
+        return checkColumn(knownColumns, colId);
+    }
+
+    function mapColumnKey(columnKey: string) {
         return columnKey === 'country' ? 'countryCode' : columnKey;
     }
 
-    function textFilterMapper(key, item) {
-        switch (item.type) {
-            case 'equals':
-                return key + " = '" + item.filter + "'";
-            case 'notEqual':
-                return key + "' != '" + item.filter + "'";
-            case 'contains':
-                return key + " LIKE '%" + item.filter + "%'";
-            case 'notContains':
-                return key + " NOT LIKE '%" + item.filter + "%'";
-            case 'startsWith':
-                return key + " LIKE '" + item.filter + "%'";
-            case 'endsWith':
-                return key + " LIKE '%" + item.filter + "'";
-            default:
-                console.log('unknown text filter type: ' + item.type);
-        }
+    function placeholders(values: (string | null)[], params: unknown[]) {
+        // blanks arrive as `null`; bind '' instead, as AlaSQL never matches null in an IN list
+        params.push(...values.map((value) => value ?? ''));
+        return values.map(() => '?').join(', ');
     }
 
-    function createFilterSql(mapper, key, item) {
-        if (item.operator) {
-            const conditions = item.conditions.map((condition) => mapper(key, condition));
-
-            return '(' + conditions.join(' ' + item.operator + ' ') + ')';
-        }
-
-        return mapper(key, item);
-    }
-
-    function whereSql(request) {
-        const whereParts = [];
-        const filterModel = request.filterModel;
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
+        const whereParts: string[] = [];
+        const filterModel = request.filterModel as FilterModel | null;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (columnKey) {
                 const filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
-                    whereParts.push(mapColumnKey(columnKey) + " IN ('" + filter.values.join("', '") + "')");
+                    whereParts.push(setFilterSql(column(mapColumnKey(columnKey)), filter, params));
                     return;
                 }
 
                 if (filter.filterType === 'text') {
-                    whereParts.push(createFilterSql(textFilterMapper, columnKey, filter));
+                    whereParts.push(combineConditionsSql(textFilterSql, column(columnKey), filter, params));
                     return;
                 }
 
@@ -118,10 +129,12 @@ export function FakeServer(allData) {
                             const model = filter.filterModels[fm];
                             switch (model.filterType) {
                                 case 'text':
-                                    whereParts.push(createFilterSql(textFilterMapper, columnKey, model));
+                                    whereParts.push(
+                                        combineConditionsSql(textFilterSql, column(columnKey), model, params)
+                                    );
                                     break;
                                 case 'set':
-                                    whereParts.push(columnKey + " IN ('" + model.values.join("', '") + "')");
+                                    whereParts.push(setFilterSql(column(columnKey), model, params));
                                     break;
                                 default:
                                     console.log('unknown filter type: ' + model.filterType, model);
@@ -143,28 +156,7 @@ export function FakeServer(allData) {
         return '';
     }
 
-    function orderBySql(request) {
-        const sortModel = request.sortModel;
-
-        if (sortModel.length === 0) return '';
-
-        const sorts = sortModel.map(function (s) {
-            return mapColumnKey(s.colId) + ' ' + s.sort.toUpperCase();
-        });
-
-        return ' ORDER BY ' + sorts.join(', ');
-    }
-
-    function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) {
-            return '';
-        }
-        const blockSize = request.endRow - request.startRow;
-
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
-    }
-
-    function getLastRowIndex(request) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }
