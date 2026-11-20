@@ -1667,7 +1667,8 @@ describe('Column Features', () => {
     describe('Column public-interface getters', () => {
         test('reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)', async () => {
             // Retains compatibility coverage for the legacy tooltip-field Column getters.
-            allowLegacyTooltipProperties();
+            // Also allow the deprecation warnings of the deprecated Column methods asserted below.
+            allowLegacyTooltipProperties([344, 345, 346]);
             // Single fixture exercising the bulk of Column public-interface getters that flip from
             // colDef properties. Each assertion is independent — combined to avoid N grid setups.
             const api = gridsManager.createGrid('myGrid', {
@@ -1723,8 +1724,6 @@ describe('Column Features', () => {
             expect(a.isResizable()).toBe(true);
             expect(a.isSortable()).toBe(true);
             expect(a.getMinWidth()).toBe(75);
-            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [344, 345, 346] });
             expect(a.isGreaterThanMax(150)).toBe(false);
             expect(a.isGreaterThanMax(250)).toBe(true);
             expect(b.isResizable()).toBe(false);
