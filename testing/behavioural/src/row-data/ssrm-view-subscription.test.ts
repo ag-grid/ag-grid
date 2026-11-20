@@ -58,10 +58,10 @@ describe('SSRM viewSubscription', () => {
         vi.restoreAllMocks();
     });
 
-    /** Asserts that a handler error was reported as warning #343, and not thrown. */
+    /** Asserts that a handler error was reported as warning #333, and not thrown. */
     function expectHandlerWarning(message: string): void {
         const warned = warnSpy.mock.calls.flat().map(String).join(' ');
-        expect(warned).toContain('warning #343');
+        expect(warned).toContain('warning #333');
         expect(warnSpy.mock.calls.flat().some((arg: unknown) => arg instanceof Error && arg.message === message)).toBe(
             true
         );
@@ -70,7 +70,7 @@ describe('SSRM viewSubscription', () => {
 
     let warnSpy: ReturnType<typeof vi.spyOn>;
     beforeEach(() => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [333] });
         warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     });
 

@@ -300,7 +300,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         try {
             options?.unsubscribeRows(refs, this.createParams());
         } catch (error) {
-            this.warn(343, { handler: 'unsubscribeRows', error });
+            this.warn(333, { callback: 'viewSubscription.unsubscribeRows', error });
         }
     }
 
@@ -327,7 +327,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
                 sub.retried = true;
                 this.schedule();
             }
-            this.warn(343, { handler: 'subscribeRows', error });
+            this.warn(333, { callback: 'viewSubscription.subscribeRows', error });
         }
     }
 

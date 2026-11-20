@@ -955,7 +955,7 @@ export const AG_GRID_ERRORS = {
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
-    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
+    333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
     // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
@@ -973,10 +973,6 @@ export const AG_GRID_ERRORS = {
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
         `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
-    343: ({ handler, error }: { handler: string; error: unknown }) => [
-        `\`viewSubscription.${handler}\` threw, so the grid carried on without it:`,
-        error,
-    ],
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -992,7 +988,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 343;
+export const MAX_ERROR_ID = 342;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
