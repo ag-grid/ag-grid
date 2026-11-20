@@ -44,7 +44,6 @@ class PassThroughFilter implements IFilterComp {
 
 const athlete = (colDef: ColDef): ColDef => ({ field: 'athlete', flex: 1, minWidth: 96, ...colDef });
 
-/** AG-19297: a user `*Params` key that clashes with a grid-supplied param must not write into the grid's live object. */
 describe('filterParams keys that clash with grid-supplied params', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, CustomFilterModule, TextEditorModule, TextFilterModule, MultiFilterModule],
