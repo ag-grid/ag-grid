@@ -101,6 +101,11 @@ export class AgPositionableFeature<
         y: 0,
     };
 
+    private readonly requestedOffset = {
+        x: 0,
+        y: 0,
+    };
+
     private readonly lastSize = {
         width: -1,
         height: -1,
@@ -130,6 +135,7 @@ export class AgPositionableFeature<
     private movable = false;
     private currentResizer: { isTop: boolean; isRight: boolean; isBottom: boolean; isLeft: boolean } | null = null;
     private resizeObserverSubscriber: (() => void) | undefined;
+    private initialPostProcessCallback: (() => void) | undefined;
 
     constructor(
         private readonly element: HTMLElement,
@@ -140,7 +146,12 @@ export class AgPositionableFeature<
     }
 
     public center(postProcessCallback?: () => void) {
-        const { clientHeight, clientWidth } = this.offsetParent;
+        const offsetParent = this.offsetParent;
+        if (!offsetParent) {
+            return;
+        }
+
+        const { clientHeight, clientWidth } = offsetParent;
 
         const x = clientWidth / 2 - this.getWidth()! / 2;
         const y = clientHeight / 2 - this.getHeight()! / 2;
@@ -153,6 +164,8 @@ export class AgPositionableFeature<
             return;
         }
 
+        // internal re-entries (move / resize start, height checks) pass no callback and must not drop the caller's
+        this.initialPostProcessCallback ??= postProcessCallback;
         const { centered, forcePopupParentAsOffsetParent, minWidth, width, minHeight, height, x, y } = this.config;
 
         if (!this.offsetParent) {
@@ -220,6 +233,20 @@ export class AgPositionableFeature<
         }
 
         this.positioned = !!this.offsetParent;
+    }
+
+    /** Sizes and centres an element whose initial position was taken while it had no layout. */
+    public resizeAndCenter(width: number, height: number): void {
+        this.setOffsetParent();
+        if (!this.offsetParent) {
+            return;
+        }
+
+        // positioned must be set first so setWidth / setHeight apply the min size and parent cap
+        this.positioned = true;
+        this.setWidth(width);
+        this.setHeight(height);
+        this.center(this.initialPostProcessCallback);
     }
 
     public isPositioned(): boolean {
@@ -457,11 +484,16 @@ export class AgPositionableFeature<
             return;
         }
 
+        const requestedOffset = this.requestedOffset;
+        requestedOffset.x = x;
+        requestedOffset.y = y;
+
         this.popupSvc?.positionPopup({
             ePopup,
             keepWithinBounds: true,
             skipObserver: this.movable || this.isResizable(),
-            updatePosition: () => ({ x, y }),
+            // an observer left by an earlier call must re-apply the latest offset, not its own
+            updatePosition: () => ({ x: requestedOffset.x, y: requestedOffset.y }),
             postProcessCallback,
         });
 
