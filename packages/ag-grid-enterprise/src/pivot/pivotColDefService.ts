@@ -535,6 +535,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 colDef.calculatedExpression = undefined;
                 colDef.allowFormula = undefined;
             }
+            // `aggValueGetter` applies to aggregated primary columns only, never to pivot result columns.
+            colDef.aggValueGetter = undefined;
         }
 
         colDef.headerName = headerName;

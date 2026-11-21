@@ -765,6 +765,8 @@ export type { RowPosition } from './interfaces/iRowPosition';
 // Column Configuration
 export type {
     AbstractColDef,
+    AggValueGetterFunc,
+    AggValueGetterParams,
     CellClassFunc,
     CellClassParams,
     CellClassRules,
