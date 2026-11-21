@@ -342,7 +342,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'enableAdvancedFilter',
     'masterDetail',
     'treeData',
-    'reactiveCustomComponents',
     'applyQuickFilterBeforePivotOrAgg',
     'suppressServerSideFullWidthLoadingRow',
     'suppressAdvancedFilterEval',

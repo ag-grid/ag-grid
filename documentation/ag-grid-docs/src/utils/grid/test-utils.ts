@@ -132,7 +132,6 @@ const licenseTexts = [
 // TEMPORARY: maybe need a cleaner way of ignoring these warnings for specific tests
 // Errors that we want to exclude from the test based on partial text match
 const excludeErrors = [
-    'AG Grid: Using custom components without `reactiveCustomComponents = true` is deprecated.',
     'ERROR ResizeObserver loop completed with undelivered notifications',
     // This error is thrown when a favicon is not found which is not relevant to the test
     'Failed to load resource: the server responded with a status of 404 ()',

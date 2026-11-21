@@ -14,7 +14,6 @@ import type {
 import { _EmptyBean } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
-import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { agStartTransition, isComponentStateless } from '../utils';
 import { jsxEditValue } from './cellEditorComp';
@@ -353,17 +352,13 @@ const CellComp = ({
                 setDetails();
             },
 
-            setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
+            setEditDetails: (compDetails, popup, popupPosition) => {
                 if (compDetails) {
                     let compProxy = undefined;
                     if (compDetails.componentFromFramework) {
-                        if (reactiveCustomComponents) {
-                            compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
-                                setRenderKey((prev) => prev + 1)
-                            );
-                        } else {
-                            warnReactiveCustomComponents(beans.context.getId());
-                        }
+                        compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
+                            setRenderKey((prev) => prev + 1)
+                        );
                     }
                     // start editing
                     setEditDetails({

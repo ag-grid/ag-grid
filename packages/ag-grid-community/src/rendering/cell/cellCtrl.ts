@@ -89,12 +89,7 @@ export interface ICellComp {
         valueToDisplay: any,
         forceNewCellRendererInstance: boolean
     ): void;
-    setEditDetails(
-        compDetails?: UserCompDetails,
-        popup?: boolean,
-        position?: 'over' | 'under',
-        reactiveCustomComponents?: boolean
-    ): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void;
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
 }
 
