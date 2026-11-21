@@ -844,6 +844,15 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaLabelClose: 'Zatvori',
     ariaLabelMaximize: 'Maksimiziraj',
     ariaLabelRestore: 'Vrati',
+    ariaLabelMoveAndResize: 'Pomakni i promijeni veličinu',
+    ariaLabelNarrower: 'Uži',
+    ariaLabelWider: 'Širi',
+    ariaLabelShorter: 'Niži',
+    ariaLabelTaller: 'Viši',
+    ariaDialogMoveInstructions:
+        'Tipkama sa strelicama pomičete dijaloški okvir. Pritisnite Enter za završetak ili Esc za odustajanje.',
+    ariaDialogMoveResizeInstructions:
+        'Tipkama sa strelicama pomičete dijaloški okvir, a tipkom Shift sa strelicama mijenjate mu veličinu. Pritisnite Enter za završetak ili Esc za odustajanje.',
     ariaLabelColorPickerSpectrum: 'Zasićenost i svjetlina',
     ariaValueColorPickerSpectrum: 'Zasićenost ${variable} %, svjetlina ${variable} %',
     ariaLabelColorPickerHue: 'Nijansa',

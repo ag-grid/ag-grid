@@ -519,6 +519,7 @@
     .ag-header-cell-filter-button,
     .ag-side-button-button,
     .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button,
     .ag-floating-filter-button-button {
         cursor: pointer;
     }
@@ -1517,7 +1518,8 @@
         display: flex;
     }
 
-    .ag-panel-title-bar-button {
+    .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button {
         cursor: pointer;
     }
 
@@ -1530,6 +1532,71 @@
 
     .ag-dialog {
         position: absolute;
+    }
+
+    // Move and Resize mode: the dialog is outlined, the Move and Resize button shows as pressed, and the bar of step
+    // buttons shows. Two classes, to win over the theme files' outline reset on every `ag-` class, which loads after this
+    .ag-dialog.ag-dialog-move-resize-active {
+        outline: 2px solid var(--ag-range-selection-border-color);
+
+        @media (forced-colors: active) {
+            outline-color: Highlight;
+        }
+    }
+
+    .ag-dialog-move-resize-button[aria-pressed='true'] {
+        --ag-icon-font-color: var(--ag-range-selection-border-color);
+        color: var(--ag-range-selection-border-color);
+    }
+
+    // the bar of step buttons under the title bar. The dialog grows to fit it, so it never covers or squeezes the content
+    .ag-dialog-move-resize-bar {
+        display: flex;
+        flex: none;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--ag-grid-size) calc(var(--ag-grid-size) * 2.5);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
+        color: var(--ag-header-foreground-color);
+        border-bottom: var(--ag-borders) var(--ag-border-color);
+    }
+
+    .ag-dialog-step-buttons {
+        display: flex;
+        align-items: center;
+        gap: var(--ag-grid-size);
+    }
+
+    .ag-dialog-step-buttons-label {
+        margin-inline-end: calc(var(--ag-grid-size) * 0.5);
+    }
+
+    .ag-dialog-step-button {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background-color: unset;
+        cursor: pointer;
+    }
+
+    // greyed out, without transparency, when the dialog can't move or resize any further that way
+    .ag-dialog-step-button[aria-disabled='true'] {
+        --ag-icon-font-color: var(--ag-disabled-foreground-color);
+        color: var(--ag-disabled-foreground-color);
+        cursor: default;
+
+        @media (forced-colors: active) {
+            --ag-icon-font-color: GrayText;
+            color: GrayText;
+        }
+    }
+
+    // no hover highlight either, over the themes' icon button hover
+    .ag-dialog-move-resize-bar .ag-dialog-step-button[aria-disabled='true']:hover {
+        color: var(--ag-disabled-foreground-color);
+        background-color: transparent;
+        box-shadow: none;
     }
 
     .ag-resizer {

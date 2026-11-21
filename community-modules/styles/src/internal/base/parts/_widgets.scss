@@ -1008,7 +1008,8 @@
         border-bottom: var(--ag-borders) var(--ag-border-color);
     }
 
-    .ag-panel-title-bar-button {
+    .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button {
         border: 0;
         background-color: unset;
         padding: 0;

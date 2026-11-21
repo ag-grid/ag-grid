@@ -860,6 +860,15 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelMaximize: 'Maksimizuj',
 
     ariaLabelRestore: 'Vrati',
+    ariaLabelMoveAndResize: 'Pomeri i promeni veličinu',
+    ariaLabelNarrower: 'Uži',
+    ariaLabelWider: 'Širi',
+    ariaLabelShorter: 'Niži',
+    ariaLabelTaller: 'Viši',
+    ariaDialogMoveInstructions:
+        'Tasterima sa strelicama pomerate dijalog. Pritisnite ENTER za završetak ili ESC za otkazivanje.',
+    ariaDialogMoveResizeInstructions:
+        'Tasterima sa strelicama pomerate dijalog, a tasterom SHIFT sa strelicama menjate mu veličinu. Pritisnite ENTER za završetak ili ESC za otkazivanje.',
     ariaLabelColorPickerSpectrum: 'Zasićenost i osvetljenost',
     ariaValueColorPickerSpectrum: 'Zasićenost ${variable}%, osvetljenost ${variable}%',
     ariaLabelColorPickerHue: 'Nijansa',

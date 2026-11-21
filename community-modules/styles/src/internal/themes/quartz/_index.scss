@@ -475,6 +475,8 @@
     .ag-header-cell-menu-button,
     .ag-header-cell-filter-button,
     .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button,
+    .ag-dialog-step-button,
     .ag-header-expand-icon,
     .ag-column-group-icons,
     .ag-set-filter-group-icons,
@@ -557,7 +559,8 @@
         opacity: 0.35;
     }
 
-    .ag-panel-title-bar-button {
+    .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button {
         @include ag.theme-rtl(
             (
                 margin-left: calc(var(--ag-grid-size) * 1.5),

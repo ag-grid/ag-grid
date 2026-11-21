@@ -847,6 +847,15 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaLabelClose: 'Κλείσιμο',
     ariaLabelMaximize: 'Μεγιστοποίηση',
     ariaLabelRestore: 'Επαναφορά',
+    ariaLabelMoveAndResize: 'Μετακίνηση και αλλαγή μεγέθους',
+    ariaLabelNarrower: 'Στενότερο',
+    ariaLabelWider: 'Φαρδύτερο',
+    ariaLabelShorter: 'Χαμηλότερο',
+    ariaLabelTaller: 'Ψηλότερο',
+    ariaDialogMoveInstructions:
+        'Τα πλήκτρα βέλους μετακινούν το παράθυρο διαλόγου. Πατήστε Enter για ολοκλήρωση ή Esc για ακύρωση.',
+    ariaDialogMoveResizeInstructions:
+        'Τα πλήκτρα βέλους μετακινούν το παράθυρο διαλόγου, ενώ με το Shift αλλάζουν το μέγεθός του. Πατήστε Enter για ολοκλήρωση ή Esc για ακύρωση.',
     ariaLabelColorPickerSpectrum: 'Κορεσμός και φωτεινότητα',
     ariaValueColorPickerSpectrum: 'Κορεσμός ${variable}%, φωτεινότητα ${variable}%',
     ariaLabelColorPickerHue: 'Απόχρωση',
