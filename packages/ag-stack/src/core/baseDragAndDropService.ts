@@ -90,6 +90,7 @@ export abstract class BaseDragAndDropService<
             dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
+            canStartDrag: dragSource.canStartDrag,
             onDragStart: (mouseEvent: MouseEvent) => this.onDragStart(dragSource, mouseEvent),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this),

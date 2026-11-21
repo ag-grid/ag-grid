@@ -1982,6 +1982,7 @@ describe('Column Features', () => {
         });
 
         test('isColumnFunc invokes function with column params; clamps boolean false', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
             // Function-driven colDef callbacks route through `createColumnFunctionCallbackParams`
             // which is otherwise only reached via internal cell-editable / dnd-source paths.
             let receivedColId: string | undefined;

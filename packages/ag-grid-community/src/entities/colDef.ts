@@ -859,6 +859,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging.
+     * The `Function` form is deprecated since v37: use `isRowDraggable` in `GridOptions` instead.
+     * When `isRowDraggable` is set, the result of the `Function` form is ignored.
      * @default false
      * @agModule `RowDragModule`
      */
@@ -1167,11 +1169,13 @@ export interface CheckboxSelectionCallbackParams<
 export type CheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
     params: CheckboxSelectionCallbackParams<TData, TValue, TContext>
 ) => boolean;
+/** @deprecated v37 Use `IsRowDraggableParams` with `isRowDraggable` in `GridOptions` instead. */
 export interface RowDragCallbackParams<TData = any, TValue = any, TContext = any> extends ColumnFunctionCallbackParams<
     TData,
     TValue,
     TContext
 > {}
+/** @deprecated v37 Use `isRowDraggable` in `GridOptions` instead. */
 export type RowDragCallback<TData = any, TValue = any, TContext = any> = (
     params: RowDragCallbackParams<TData, TValue, TContext>
 ) => boolean;
