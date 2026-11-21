@@ -42,9 +42,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     word-wrap: break-word;
+    white-space: normal;
     padding: $spacing-size-2 0;
-    cursor: pointer;
+    border-radius: var(--radius-sm);
+
+    &:focus-visible {
+        outline: 2px solid var(--color-link);
+        outline-offset: 2px;
+    }
 
     &:hover {
         --title-fg: var(--color-brand-900);

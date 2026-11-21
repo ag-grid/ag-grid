@@ -1,3 +1,4 @@
+import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
 import { TECHNICAL_REVIEWER_KEYS } from '@utils/technicalReviewers';
@@ -590,6 +591,15 @@ const homepage = defineCollection({
     }),
 });
 
+/**
+ * Comparison pages at /compare/ag-grid-vs-{competitor}/. Every competitor claim carries its source
+ * and the date it was checked, and the build fails on a claim that is unsourced or stale (SE-148).
+ */
+const comparePages = defineCollection({
+    loader: glob({ base: './src/content/compare', pattern: '*.json' }),
+    schema: createComparisonPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
 export const collections = {
     docs,
     homepage,
@@ -611,4 +621,5 @@ export const collections = {
     aboutPage,
     contactResults,
     landingPages,
+    comparePages,
 };

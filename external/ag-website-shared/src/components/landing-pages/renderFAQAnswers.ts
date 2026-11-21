@@ -9,12 +9,15 @@ export interface RenderedFAQItem {
     answerHtml: string;
 }
 
+/** Render authored Markdoc to HTML on the server, so Markdoc stays out of the client bundle. */
+export function renderMarkdocHtml(markdocContent: string, framework: Framework): string {
+    const { partialRenderTree } = transformMarkdoc({ framework, markdocContent });
+    return Markdoc.renderers.html(partialRenderTree);
+}
+
 /**
  * Render FAQ answers to inline HTML on the server so Markdoc stays out of the client bundle.
  */
 export function renderFAQAnswers(items: FAQItem[], framework: Framework): RenderedFAQItem[] {
-    return items.map(({ question, answer }) => {
-        const { partialRenderTree } = transformMarkdoc({ framework, markdocContent: answer });
-        return { question, answerHtml: Markdoc.renderers.html(partialRenderTree) };
-    });
+    return items.map(({ question, answer }) => ({ question, answerHtml: renderMarkdocHtml(answer, framework) }));
 }

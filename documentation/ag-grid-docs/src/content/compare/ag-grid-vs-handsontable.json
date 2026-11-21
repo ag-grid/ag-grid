@@ -1,0 +1,593 @@
+{
+    "meta": {
+        "title": "AG Grid vs Handsontable: Features, Pricing and Licensing",
+        "description": "Compare AG Grid and Handsontable feature by feature: framework support, free and paid features, large datasets, pricing and licensing.",
+        "targetTerm": "ag grid vs handsontable"
+    },
+    "analyticsPrefix": "compare-handsontable",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-19",
+    "competitor": {
+        "name": "Handsontable",
+        "slug": "handsontable",
+        "logo": "/images/compare/logos/handsontable.png"
+    },
+    "hero": {
+        "heading": "AG Grid vs Handsontable",
+        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
+    },
+    "shortAnswer": "AG Grid has a free, MIT-licensed Community edition that can be used commercially. Handsontable is a spreadsheet-style data grid whose free licence key covers non-commercial use, and evaluation and development, so commercial production use needs a paid licence. Both support React, Angular, Vue and JavaScript. AG Grid Enterprise includes pivoting, group-by-column row grouping and integrated charts; Handsontable's documentation does not list pivoting or built-in charts, and its nested rows show pre-structured parent and child rows.",
+    "keyFigures": [
+        {
+            "value": "$0",
+            "label": "AG Grid Community for commercial use",
+            "detail": "MIT licence. Handsontable's free key is for non-commercial use."
+        },
+        {
+            "value": "AI",
+            "label": "Natural-language grid control",
+            "detail": "Users query and change the grid in plain language with AG Grid's AI Toolkit."
+        },
+        {
+            "value": "3",
+            "label": "AG Grid features not in Handsontable",
+            "detail": "Pivoting, integrated charts and the AI Toolkit."
+        }
+    ],
+    "features": {
+        "subHeading": "Which features each grid includes, and which plan they are in.",
+        "groups": [
+            {
+                "name": "Platform",
+                "rows": [
+                    {
+                        "feature": "Frameworks",
+                        "docsUrl": "./getting-started/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "React, Angular, Vue and plain JavaScript"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Official wrappers for React, Angular and Vue 3, plus plain JavaScript",
+                            "sourceUrl": "https://handsontable.com/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "TypeScript",
+                        "docsUrl": "./typescript-generics/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Typed row data, cell values and grid context"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Ships TypeScript declarations for its entire public API; needs TypeScript 5.1 or later",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/typescript-types/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Ready-made grid UI",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Renders its own UI"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Renders its own spreadsheet-like UI",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/themes/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Data and performance",
+                "rows": [
+                    {
+                        "feature": "Row virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "On by default; can be turned off with renderAllRows",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-virtualization/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Column virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "On by default; can be turned off with renderAllColumns",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-virtualization/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "dataProvider option for server-side paging, sorting and filtering, with create, update and remove callbacks",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/server-side-data/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Core grid features",
+                "rows": [
+                    {
+                        "feature": "Sorting",
+                        "docsUrl": "./row-sorting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Single and multi-column sorting"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Single-column and multi-column sorting plugins",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/rows-sorting/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Filtering",
+                        "docsUrl": "./filtering/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Text, number, date and quick filters; Set, Multi and Advanced filters in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Filter UI by value or by condition, plus a filtering API",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-filter/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Cell editing",
+                        "docsUrl": "./cell-editing/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in editors and undo/redo"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Built-in editors for each cell type, and custom editors",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/cell-editor/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet-style formulas with built-in and custom functions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "About 400 functions through HyperFormula, licensed separately (free under GPLv3, otherwise commercial) and installed separately since version 18.0",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/formula-calculation/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Column pinning",
+                        "docsUrl": "./column-pinning/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Pin columns left or right"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Freeze columns in the configuration or from the context menu",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-freezing/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "No grouping by column; nested rows display parent-child rows already structured in the data",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-parent-child/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Aggregation",
+                        "docsUrl": "./aggregation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Column summaries: sum, min, max, count, average or a custom function; no row summaries",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-summary/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not in the documentation",
+                            "sourceUrl": "https://handsontable.com/docs/llms-full.txt",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Nested rows to any depth; column filtering and row sorting are not supported with them",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-parent-child/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Master / detail",
+                        "docsUrl": "./master-detail/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "No detail panel; the docs describe nested rows as a master-detail view",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-parent-child/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Integrated charts",
+                        "docsUrl": "./integrated-charts/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in charts; a docs recipe connects selected rows to Chart.js",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/recipes/real-time/chartjs-sync/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Selection and export",
+                "rows": [
+                    {
+                        "feature": "Cell range selection",
+                        "docsUrl": "./cell-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Includes the fill handle"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/selection/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Clipboard",
+                        "docsUrl": "./clipboard/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Copy, cut and paste through the browser clipboard and keyboard shortcuts",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/basic-clipboard/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "CSV export",
+                        "docsUrl": "./csv-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "As a file, blob or string; raw data only",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/export-to-csv/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Excel (.xlsx) export",
+                        "docsUrl": "./excel-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Including styles and formulas"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Since version 17.1; needs the ExcelJS library installed alongside",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/export-to-excel/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Styling, accessibility and support",
+                "rows": [
+                    {
+                        "feature": "Theming",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in themes, the Theming API and the Theme Builder"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Built-in main, horizon and classic themes, each with light and dark modes; Theme API and CSS variables",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/themes/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Accessibility",
+                        "docsUrl": "./accessibility/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "ARIA attributes and keyboard navigation"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/accessibility/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "AI coding tools",
+                        "docsUrl": "./mcp-server/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "detail": "Docs MCP server, Skills for Claude Code and an AI theme builder",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/docs-mcp-server/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No end-user AI features documented",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/docs-mcp-server/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Technical support",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Ticketed support with guaranteed response times; Community support through GitHub"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Each commercial licence includes a Maintenance, Standard or Premium support plan; community support through GitHub, the forum and Slack",
+                            "sourceUrl": "https://handsontable.com/support",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ],
+        "competitor": [
+            {
+                "plan": "Non-commercial",
+                "cost": "conditional",
+                "licence": "Research, private study and evaluation; no commercial production use",
+                "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/software-license/",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Handsontable DataGrid",
+                "cost": "on-request",
+                "licence": "Quoted by sales",
+                "sourceUrl": "https://handsontable.com/faq",
+                "checkedOn": "2026-11-11"
+            }
+        ]
+    },
+    "chooseIf": {
+        "product": [
+            "You need a grid you can use commercially for free.",
+            "You need pivoting, row grouping by column or integrated charts.",
+            "You need server-side data with grouping and aggregation."
+        ],
+        "competitor": [
+            "Your users expect a spreadsheet-style interface for data entry.",
+            "You need spreadsheet formulas (through the HyperFormula library).",
+            "Your project is non-commercial."
+        ]
+    },
+    "faq": [
+        {
+            "question": "Is Handsontable free to use?",
+            "answer": "Handsontable has a free licence key for non-commercial use, such as research, private study and evaluation. Commercial production use needs a paid licence."
+        },
+        {
+            "question": "Does Handsontable support pivot tables?",
+            "answer": "Handsontable's documentation does not list a pivot table feature. AG Grid includes pivoting in AG Grid Enterprise."
+        },
+        {
+            "question": "Is AG Grid free for commercial use?",
+            "answer": "Yes. AG Grid Community is released under the MIT licence, which allows commercial use. AG Grid Enterprise is a paid licence for the advanced features."
+        },
+        {
+            "question": "Does AG Grid support spreadsheet-style formulas?",
+            "answer": "Yes. AG Grid Enterprise includes formulas: users enter spreadsheet-style expressions in cells, and the values update when the data they reference changes. Handsontable provides formulas through HyperFormula, which is licensed and installed separately."
+        },
+        {
+            "question": "What is AG Grid used for?",
+            "answer": "AG Grid is a JavaScript data grid for displaying, editing and analysing tabular data in web applications built with React, Angular, Vue or plain JavaScript. Its features include sorting, filtering, cell editing, virtualisation for large datasets and, in Enterprise, row grouping, pivoting, Excel export and integrated charts."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Handsontable renders its own UI and supports React, Angular, Vue and plain JavaScript.",
+            "sourceUrl": "https://handsontable.com/",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "Handsontable's free licence covers non-commercial use, such as research, private study and evaluation; production use connected with commercial activity needs a commercial licence.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/software-license/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable's commercial licence is priced by the number of end users, with no published price, and is sold as a subscription or perpetual licence through its sales team.",
+            "sourceUrl": "https://handsontable.com/faq",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable has formulas through HyperFormula, with about 400 functions.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/formula-calculation/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "HyperFormula is free under GPLv3 for non-commercial or open-source projects and otherwise needs its own commercial licence, or the Bundle.",
+            "sourceUrl": "https://handsontable.com/docs/hyperformula/guide/licensing.html",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "Handsontable's documentation does not list pivoting or built-in charts.",
+            "sourceUrl": "https://handsontable.com/docs/llms-full.txt",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable nested rows display parent-child rows structured in the data, with no grouping by column.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-parent-child/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable's trial gives full access to every feature for 45 days.",
+            "sourceUrl": "https://handsontable.com/pricing",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable has an AI theme builder for developers.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/ai-theme-builder/",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}
