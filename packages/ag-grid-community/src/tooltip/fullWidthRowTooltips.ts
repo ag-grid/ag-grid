@@ -95,25 +95,28 @@ export class FullWidthRowTooltips extends BeanStub {
         const colDef = isGroupRow ? this.getGroupColDef(rowNode) : undefined;
         this.setupTooltip(
             eGui,
-            () => ({
-                value,
-                componentDefinition: colDef,
-                params: {
-                    colDef,
-                    column: groupCol,
-                    rowIndex: rowNode.rowIndex ?? 0,
-                    node: rowNode,
-                    data: rowNode.data,
-                },
-                sourceValues:
-                    isGroupRow && !this.gos.get('enableBrowserTooltips')
+            () => {
+                const display =
+                    isGroupRow && (!this.gos.get('enableBrowserTooltips') || _isShowTooltipWhenTruncated(this.gos))
                         ? this.beans.valueSvc.getValueForDisplay({
                               node: rowNode,
                               includeValueFormatted: true,
                               from: 'edit',
                           })
-                        : undefined,
-            }),
+                        : undefined;
+                return _resolveTextTooltip(this.gos, {
+                    value,
+                    componentDefinition: colDef,
+                    params: {
+                        colDef,
+                        column: groupCol,
+                        rowIndex: rowNode.rowIndex ?? 0,
+                        node: rowNode,
+                        data: rowNode.data,
+                        ...display,
+                    },
+                });
+            },
             true,
             shouldDisplayTooltip
         );

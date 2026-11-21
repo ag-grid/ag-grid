@@ -135,6 +135,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
     private rendererSetTooltip = false;
+    private rendererTooltipValue?: string;
     private readonly rendererGuard = new ComponentInstanceGuard();
     private rendererClaim?: ComponentInstanceClaim;
     private pendingCellRendererClaim?: ComponentInstanceClaim;
@@ -187,7 +188,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                     if (this.isTree) {
                         params.level = this.depth;
                     }
-                    const tooltip = { params, componentDefinition: colDef, shouldDisplay: this.shouldDisplayTooltip };
+                    const tooltip = {
+                        value: this.rendererTooltipValue,
+                        params,
+                        componentDefinition: colDef,
+                        shouldDisplay: this.shouldDisplayTooltip,
+                    };
                     if (!this.rendererSetTooltip && this.hasDefaultTooltip()) {
                         const value = this.getDefaultTooltipText(this.cellRendererParams?.value, this.formattedValue);
                         // Missing-value information belongs to the tooltip, not its source text.
@@ -200,7 +206,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                             value,
                         };
                     }
-                    return tooltip;
+                    return _resolveTextTooltip(this.gos, tooltip);
                 },
             })
         );
@@ -516,15 +522,17 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                 gos.assertModuleRegistered('Tooltip', 3);
                 if (rendererClaim.isCurrent()) {
                     this.rendererSetTooltip = true;
+                    this.rendererTooltipValue = value;
                     this.shouldDisplayTooltip = shouldDisplayTooltip;
-                    this.tooltipFeature?.setTooltipAndRefresh(value);
+                    this.tooltipFeature?.refreshTooltip();
                 }
             },
         });
         if (resetTooltip) {
             this.rendererSetTooltip = false;
+            this.rendererTooltipValue = undefined;
             this.shouldDisplayTooltip = undefined;
-            this.tooltipFeature?.setTooltipAndRefresh(null);
+            this.tooltipFeature?.refreshTooltip();
         }
     }
 

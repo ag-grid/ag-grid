@@ -809,7 +809,7 @@ describe('Tooltip positioning callbacks', () => {
         );
     });
 
-    test('native renderer tooltips do not format unused group metadata', async () => {
+    test('native renderer tooltips in standard mode do not format unused group metadata', async () => {
         let rendererParams: ICellRendererParams;
         const formatter = vi.fn(({ value }) => `Formatted ${value}`);
         const api = await gridMgr.createGridAndWait('native-group-tooltip', {
@@ -821,6 +821,7 @@ describe('Tooltip positioning callbacks', () => {
                 return document.createElement('span');
             },
             enableBrowserTooltips: true,
+            tooltipShowMode: 'standard',
         });
         formatter.mockClear();
         rendererParams!.setTooltip('Custom native text');

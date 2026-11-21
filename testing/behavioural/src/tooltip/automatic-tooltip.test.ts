@@ -14,6 +14,7 @@ import type {
     ICellRendererParams,
     IHeaderParams,
     SetFilterHandler,
+    ValueFormatterFunc,
 } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -363,6 +364,115 @@ describe('Automatic truncated-text tooltips', () => {
             showTooltips === false ? [] : ['Displayed value']
         );
     });
+
+    test.each([
+        { kind: 'setFilter', native: false, mode: 'whenTruncated' },
+        { kind: 'setFilter', native: true, mode: 'whenTruncated' },
+        { kind: 'fullWidthGroup', native: false, mode: 'whenTruncated' },
+        { kind: 'fullWidthGroup', native: true, mode: 'whenTruncated' },
+        { kind: 'setFilter', native: false, mode: 'standard' },
+        { kind: 'setFilter', native: true, mode: 'standard' },
+        { kind: 'fullWidthGroup', native: false, mode: 'standard' },
+        { kind: 'fullWidthGroup', native: true, mode: 'standard' },
+    ] as const)('classifies renderer-supplied text ($kind, native=$native, $mode)', async ({ kind, native, mode }) => {
+        type RendererParams = Pick<ICellRendererParams, 'value' | 'valueFormatted' | 'setTooltip'>;
+        let rendererParams: RendererParams;
+        const renderer = (params: RendererParams) => {
+            if (params.value === 'Value') {
+                rendererParams = params;
+                params.setTooltip(params.value);
+            }
+            const element = document.createElement('span');
+            element.textContent = params.valueFormatted ?? params.value;
+            return element;
+        };
+        const isSetFilter = kind === 'setFilter';
+        const valueFormatter: ValueFormatterFunc = ({ value }) => `Formatted ${value}`;
+        const { api, grid } = await createGrid({
+            columnDefs: [
+                {
+                    field: 'value',
+                    valueFormatter,
+                    filter: isSetFilter ? 'agSetColumnFilter' : undefined,
+                    filterParams: { cellRenderer: renderer, valueFormatter },
+                    rowGroup: !isSetFilter,
+                    hide: !isSetFilter,
+                },
+                { field: 'other' },
+            ],
+            rowData: [{ value: 'Value' }],
+            groupDisplayType: 'groupRows',
+            groupRowRenderer: renderer,
+            enableBrowserTooltips: native,
+            tooltipShowMode: mode,
+        });
+        let source: HTMLElement;
+        if (isSetFilter) {
+            vi.useRealTimers();
+            api.showColumnFilter('value');
+            source = await waitFor(() => {
+                const item = Array.from(document.querySelectorAll<HTMLElement>('.ag-set-filter-item .ag-label')).find(
+                    (element) => element.textContent === 'Formatted Value'
+                );
+                expect(item).toBeTruthy();
+                return item!.closest<HTMLElement>('.ag-virtual-list-item')!;
+            });
+            vi.useFakeTimers();
+        } else {
+            source = grid.querySelector<HTMLElement>('.ag-full-width-row')!;
+        }
+
+        const expectTooltip = async (expected = '') => {
+            await hover(source);
+            if (native) {
+                expect(source.getAttribute('title') ?? '').toBe(expected);
+            } else {
+                expect(getVisibleTooltips().map((element) => element.textContent)).toEqual(expected ? [expected] : []);
+            }
+            fireEvent.mouseLeave(source);
+            await vi.advanceTimersByTimeAsync(1000);
+        };
+
+        await expectTooltip(mode === 'standard' ? 'Value' : '');
+        rendererParams!.setTooltip(rendererParams!.valueFormatted!);
+        await expectTooltip(mode === 'standard' ? 'Formatted Value' : '');
+        rendererParams!.setTooltip('Value', () => true);
+        await expectTooltip('Value');
+        rendererParams!.setTooltip('Value', () => false);
+        await expectTooltip();
+        rendererParams!.setTooltip('Additional information');
+        await expectTooltip('Additional information');
+        rendererParams!.setTooltip('Additional information', () => false);
+        await expectTooltip();
+    });
+
+    test.each([false, true])(
+        'preserves full-width renderer tooltips without a source value (native=%s)',
+        async (native) => {
+            const position = vi.fn(() => 'top' as const);
+            const { grid } = await createGrid({
+                isFullWidthRow: () => true,
+                fullWidthCellRenderer: (params: ICellRendererParams) => {
+                    params.setTooltip(params.data.value);
+                    const element = document.createElement('span');
+                    element.textContent = params.data.value;
+                    return element;
+                },
+                tooltipPosition: position,
+                enableBrowserTooltips: native,
+            });
+            const source = grid.querySelector<HTMLElement>('.ag-full-width-row')!;
+            await hover(source);
+            if (native) {
+                expect(source).toHaveAttribute('title', 'Displayed value');
+            } else {
+                expect(getVisibleTooltips()[0]).toHaveTextContent('Displayed value');
+                expect(position).toHaveBeenCalledWith(
+                    expect.objectContaining({ value: 'Displayed value', location: 'fullWidthRow' })
+                );
+            }
+        }
+    );
 
     test.each(['header', 'group'] as const)(
         'uses the displayed %s name and refreshes native titles after renaming',
