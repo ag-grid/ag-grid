@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import { _getGrandTotalRow } from '../gridOptionsUtils';
+import { _getEnableRowPinning, _getGrandTotalRow } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -20,7 +20,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         const { gos } = this;
         /** Returns whether it created a model, which starts with the grand total pinned where `grandTotalRow` says. */
         const initialiseRowModel = (): boolean => {
-            const enableRowPinning = gos.get('enableRowPinning');
+            const enableRowPinning = _getEnableRowPinning(gos);
             const grandTotalRow = _getGrandTotalRow(gos);
             const isGrandTotalRowPinned = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
             const useManualPinnedRowModel = !!enableRowPinning || isGrandTotalRowPinned;

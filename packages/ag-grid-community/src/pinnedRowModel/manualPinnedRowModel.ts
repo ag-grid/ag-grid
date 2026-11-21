@@ -6,6 +6,7 @@ import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entiti
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import {
     _addRowHeightChangedListener,
+    _getEnableRowPinning,
     _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getRowHeightForNode,
@@ -35,7 +36,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
             const sources: RowNode[] = [];
-            if (isRowPinned && gos.get('enableRowPinning')) {
+            if (isRowPinned && _getEnableRowPinning(gos)) {
                 beans.rowModel.forEachNode((node) => this.pinLoaded(node, isRowPinned(node), sources), true);
             }
             this.dispatchPinningChanged(sources);
@@ -121,6 +122,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 this.refreshGrandTotalPin(this.takeUserGrandTotalPin(float));
                 return;
             }
+        }
+
+        if (float != null && !_getEnableRowPinning(this.gos)) {
+            return;
         }
 
         // cell-span pinning/unpinning
@@ -227,6 +232,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             grandTotalPinned = 'top';
         }
         this.takeUserGrandTotalPin(grandTotalPinned);
+        if (!_getEnableRowPinning(this.gos)) {
+            topQueued.clear();
+            bottomQueued.clear();
+        }
         // Rows listed in the other container are moved, not detached, so they report one `rowPinned`.
         const sources = this.detachPinnedRows((n) => {
             const id = n.pinnedSibling?.id;
