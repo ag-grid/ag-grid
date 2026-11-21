@@ -405,6 +405,8 @@
     .ag-skeleton-container {
         width: 100%;
         height: 100%;
+        // a wrapped cell value has no definite height to resolve height: 100% against
+        min-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
         align-content: center;
     }
 
