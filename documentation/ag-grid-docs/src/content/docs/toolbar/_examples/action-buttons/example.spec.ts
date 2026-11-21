@@ -31,7 +31,7 @@ test.agExample(import.meta, () => {
             document.querySelector('.ag-root-wrapper')!.after(after);
         });
 
-        await page.locator('.ag-toolbar-button[title="Open Column Chooser"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Open Column Chooser"]').click();
         await expect(page.locator('.ag-dialog')).toBeVisible();
 
         await page.keyboard.press('Tab');
@@ -68,7 +68,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Size Columns to Fit stretches the columns to fill the grid', async ({ page }) => {
         await waitForGridContent(page);
 
-        await page.locator('.ag-toolbar-button[title="Size Columns to Fit"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Size Columns to Fit"]').click();
 
         // sizeColumnsToFit divides the available width between the columns, so their combined
         // width matches the viewport and nothing overflows horizontally.
@@ -84,14 +84,14 @@ test.agExample(import.meta, () => {
         const athleteWidth = async () => (await agIdFor.headerCell('athlete').boundingBox())!.width;
 
         // Start from the fitted widths so the change is unambiguous.
-        await page.locator('.ag-toolbar-button[title="Size Columns to Fit"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Size Columns to Fit"]').click();
         let fittedWidth = 0;
         await expect(async () => {
             fittedWidth = await athleteWidth();
             expect(Math.abs((await totalColumnWidth(page)) - (await availableWidth(page)))).toBeLessThanOrEqual(2);
         }).toPass();
 
-        await page.locator('.ag-toolbar-button[title="Auto-size All Columns"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Auto-size All Columns"]').click();
 
         // autoSizeAllColumns shrinks each column to its content, so the first column's width
         // changes and the columns no longer stretch across the whole viewport.
@@ -104,7 +104,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Sort First Column Ascending sorts by athlete', async ({ agIdFor, page }) => {
         await waitForGridContent(page);
 
-        await page.locator('.ag-toolbar-button[title="Sort First Column Ascending"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Sort First Column Ascending"]').click();
         await waitForRowAnimations(page);
 
         await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'ascending');
@@ -116,13 +116,13 @@ test.agExample(import.meta, () => {
     test.eachFramework('Sort First Column Descending overrides the ascending sort', async ({ agIdFor, page }) => {
         await waitForGridContent(page);
 
-        await page.locator('.ag-toolbar-button[title="Sort First Column Ascending"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Sort First Column Ascending"]').click();
         await waitForRowAnimations(page);
         await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'ascending');
 
         // The second action button applies sort: 'desc' with defaultState: { sort: null }, so it
         // replaces the ascending sort rather than adding to it.
-        await page.locator('.ag-toolbar-button[title="Sort First Column Descending"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Sort First Column Descending"]').click();
         await waitForRowAnimations(page);
         await expect(agIdFor.headerCell('athlete')).toHaveAttribute('aria-sort', 'descending');
 
@@ -135,7 +135,7 @@ test.agExample(import.meta, () => {
 
         await expect(agIdFor.cell('0', 'country')).toContainText('United States');
 
-        await page.locator('.ag-toolbar-button[title="Add Filter"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Add Filter"]').click();
         await waitForRowAnimations(page);
 
         // setFilterModel applies country contains "Canada". Data index 12 (Cindy Klassen) is the
@@ -148,12 +148,12 @@ test.agExample(import.meta, () => {
     test.eachFramework('Clear All Filters restores the full row set', async ({ agIdFor, page }) => {
         await waitForGridContent(page);
 
-        await page.locator('.ag-toolbar-button[title="Add Filter"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Add Filter"]').click();
         await waitForRowAnimations(page);
         await expect(agIdFor.rowNode('0')).not.toBeVisible();
 
         // setFilterModel(null) clears every column filter.
-        await page.locator('.ag-toolbar-button[title="Clear All Filters"]').click();
+        await page.locator('.ag-toolbar-button[aria-label="Clear All Filters"]').click();
         await waitForRowAnimations(page);
 
         await expect(agIdFor.cell('0', 'country')).toContainText('United States');

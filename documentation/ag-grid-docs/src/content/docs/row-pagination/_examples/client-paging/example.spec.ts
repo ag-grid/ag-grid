@@ -24,8 +24,13 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.paginationPanelLastRowOnPage('200')).toBeVisible();
     });
 
-    test.eachFramework('Navigates to last page', async ({ agIdFor }) => {
-        await agIdFor.paginationSummaryPanelButton('last page').click();
+    test.eachFramework('Navigates to last page', async ({ agIdFor, page }) => {
+        // Focusing the button opens its built-in tooltip, which Firefox and WebKit first lay out over
+        // the button: open it before clicking, so the tooltip cannot appear under the pointer mid-click.
+        const lastPage = agIdFor.paginationSummaryPanelButton('last page');
+        await lastPage.focus();
+        await expect(page.locator('.ag-tooltip')).toBeVisible();
+        await lastPage.click();
 
         await expect(agIdFor.paginationSummaryPanelCurrentPage('87')).toBeVisible();
         await expect(agIdFor.paginationPanelFirstRowOnPage('8,601')).toBeVisible();
