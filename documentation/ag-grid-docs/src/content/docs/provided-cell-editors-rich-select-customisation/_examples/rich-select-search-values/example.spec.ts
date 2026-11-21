@@ -1,8 +1,10 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('should display all three search mode column headers', async ({ page }) => {
-        // Verify all three column headers are visible with the expected text
+    test.eachFramework('should display all four search mode column headers', async ({ page }) => {
+        const defaultHeader = page.locator('.ag-header-cell', { hasText: 'Default' });
+        await expect(defaultHeader).toBeVisible();
+
         const fuzzyHeader = page.locator('.ag-header-cell', { hasText: 'Fuzzy Search' });
         await expect(fuzzyHeader).toBeVisible();
 
@@ -14,7 +16,6 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('should open the rich select editor popup with colour options', async ({ agIdFor, page }) => {
-        // Get the first cell in the Fuzzy Search column (col-id 'color')
         const cell = agIdFor.cell('0', 'color').first();
         await expect(cell).toBeVisible();
 
@@ -36,10 +37,36 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework(
+        'should move to the value starting with the typed text in the Default column',
+        async ({ agIdFor, page }) => {
+            const cell = agIdFor.cell('0', 'color').first();
+            const startValue = (await cell.innerText()).trim();
+            await cell.dblclick();
+
+            const popup = page.locator('.ag-rich-select-list').first();
+            await expect(popup).toBeVisible();
+            const highlighted = popup.locator('.ag-rich-select-row-highlighted');
+
+            // No colour starts with Q, so the highlight stays on the cell's value.
+            await page.keyboard.type('q');
+            await expect(highlighted).toHaveText(startValue);
+            await page.keyboard.press('Escape');
+
+            await agIdFor.cell('1', 'color').first().dblclick();
+            await expect(popup).toBeVisible();
+
+            await page.keyboard.type('blan');
+            await expect(highlighted).toHaveText('BlanchedAlmond');
+
+            await page.keyboard.press('Escape');
+        }
+    );
+
+    test.eachFramework(
         'should highlight the closest match when typing in the Fuzzy Search column',
         async ({ agIdFor, page }) => {
-            // Fuzzy search (the default) highlights the best match rather than filtering the list
-            const cell = agIdFor.cell('0', 'color').first();
+            // Fuzzy search highlights the best match rather than filtering the list
+            const cell = agIdFor.cell('0', 'color_1').first();
             await cell.dblclick();
 
             const popup = page.locator('.ag-rich-select-list').first();
@@ -66,7 +93,7 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page }) => {
             // searchType: 'match' matches values that START WITH the search string, so
             // 'goldenrod' matches 'Goldenrod' but not 'DarkGoldenrod' or 'PaleGoldenrod'
-            const cell = agIdFor.cell('0', 'color_1').first();
+            const cell = agIdFor.cell('0', 'color_2').first();
             await cell.dblclick();
 
             const popup = page.locator('.ag-rich-select-list').first();
@@ -85,7 +112,7 @@ test.agExample(import.meta, () => {
             // A second cell in the same column, rather than reopening the first one: re-editing a
             // cell reinstates the editor without reopening its list, which is not what is under
             // test here.
-            const otherCell = agIdFor.cell('1', 'color_1').first();
+            const otherCell = agIdFor.cell('1', 'color_2').first();
             await otherCell.dblclick();
             await expect(popup).toBeVisible();
 
@@ -102,7 +129,7 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page }) => {
             // searchType: 'matchAny' matches values CONTAINING the search string, so a
             // mid-string fragment such as 'oldenrod' still finds a match
-            const cell = agIdFor.cell('0', 'color_2').first();
+            const cell = agIdFor.cell('0', 'color_3').first();
             await cell.dblclick();
 
             const popup = page.locator('.ag-rich-select-list').first();

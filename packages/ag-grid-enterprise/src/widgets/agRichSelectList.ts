@@ -357,6 +357,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         return this.currentList?.[this.lastRowHovered];
     }
 
+    public getHighlightedIndex(): number {
+        return this.lastRowHovered;
+    }
+
     public highlightIndex(index: number, preventUnnecessaryScroll?: boolean): void {
         if (!this.currentList) {
             return;

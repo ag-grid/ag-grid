@@ -1,5 +1,6 @@
 import type { IAriaAnnouncementService, VerticalDirection } from 'ag-stack';
 import {
+    AgTypeAhead,
     RefPlaceholder,
     _addManagedElementListeners,
     _addOrRemoveAttribute,
@@ -107,6 +108,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private searchStrings?: string[];
     private searchString = '';
+    private readonly typeAhead: AgTypeAhead;
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[] | undefined;
@@ -167,6 +169,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (valueList != null) {
             this.setValueList({ valueList, isInitial: true });
         }
+
+        this.typeAhead = new AgTypeAhead(this.config.searchDebounceDelay);
 
         const { searchDebounceDelay = ON_SEARCH_CALLBACK_DEBOUNCE_DELAY } = this.config;
         if (onSearch) {
@@ -570,6 +574,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected override beforeHidePicker(): void {
         super.beforeHidePicker();
         this.listComponent?.cancelStateAnnouncement();
+        this.typeAhead.reset();
     }
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
@@ -714,6 +719,42 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         searchKey.preventDefault();
 
         this.searchTextFromCharacter(key);
+    }
+
+    public isTypeAheadSearch(): boolean {
+        const { allowTyping, searchType, filterList } = this.config;
+        return (
+            !allowTyping &&
+            searchType == null &&
+            !filterList &&
+            !this.onSearchCallbackDebounced &&
+            !this.hasPagedAsyncSource
+        );
+    }
+
+    public typeAheadCharacter(char: string): void {
+        const { listComponent, searchStrings } = this;
+        if (!listComponent || !searchStrings) {
+            return;
+        }
+        const matchIdx = this.typeAhead.type(
+            char,
+            searchStrings.length,
+            (idx) => searchStrings[idx],
+            listComponent.getHighlightedIndex()
+        );
+        if (matchIdx == null || matchIdx === -1) {
+            return;
+        }
+        listComponent.highlightIndex(matchIdx);
+    }
+
+    private typeAheadFromKeyboardEvent(e: KeyboardEvent): void {
+        if (!_isEventFromPrintableCharacter(e)) {
+            return;
+        }
+        e.preventDefault();
+        this.typeAheadCharacter(e.key);
     }
 
     private searchTextFromCharacter(char: string): void {
@@ -1273,6 +1314,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (lastItemHovered !== undefined) {
                 listComponent.toggleListItemSelection(lastItemHovered);
             }
+        } else if (!multiSelect && this.typeAhead.isActive() && this.isTypeAheadSearch()) {
+            this.typeAheadFromKeyboardEvent(e);
         }
     }
 
@@ -1289,7 +1332,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private handleSearchWithoutTyping(e: KeyboardEvent): void {
-        if (!this.config.allowTyping) {
+        if (this.config.allowTyping) {
+            return;
+        }
+        if (this.isTypeAheadSearch()) {
+            this.typeAheadFromKeyboardEvent(e);
+        } else {
             // this allows searching even without the input field, this is for historical reasons
             this.buildSearchStringFromKeyboardEvent(e);
         }

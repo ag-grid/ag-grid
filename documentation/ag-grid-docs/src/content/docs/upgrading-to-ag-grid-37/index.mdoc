@@ -78,6 +78,10 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 - `headerClass` classes are now also added to the column's floating filter cell, and the `headerClass` callback receives `params.floatingFilter` (`true` for floating filter cells, `false` for column and column group header cells). To keep header-only styling, return classes only when `params.floatingFilter` is `false`, or narrow selectors with `.ag-header-cell:not(.ag-floating-filter)`.
 - A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
 
+### Cell Editing
+
+- When `allowTyping` is not enabled and no `searchType` is set, typing in the [Rich Select Cell Editor](./provided-cell-editors-rich-select-customisation/#search-values) and the Advanced Filter Builder dropdowns now moves to the first value that starts with the typed text, instead of the closest fuzzy match. To keep the previous behaviour, set `searchType: 'fuzzy'`.
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
