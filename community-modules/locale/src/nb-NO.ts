@@ -878,6 +878,8 @@ export const AG_GRID_LOCALE_NB_NO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonneliste',
     ariaFilterPanelList: 'Filterliste',
+    ariaToolPanelWiden: 'Gjør panelet bredere',
+    ariaToolPanelNarrow: 'Gjør panelet smalere',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Legg til filterfelt',

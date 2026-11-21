@@ -886,6 +886,8 @@ export const AG_GRID_LOCALE_HU_HU = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Oszloplista',
     ariaFilterPanelList: 'Szűrőlista',
+    ariaToolPanelWiden: 'Panel szélesítése',
+    ariaToolPanelNarrow: 'Panel keskenyítése',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',

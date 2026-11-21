@@ -14,6 +14,8 @@ export interface ISideBar {
     refresh(): void;
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
+    /** Whether the side bar is drawn to the left of the grid, which `position: 'right'` is with `enableRtl`. */
+    isDrawnOnLeft(): boolean;
     isToolPanelShowing(): boolean;
     openToolPanel(
         key: string,

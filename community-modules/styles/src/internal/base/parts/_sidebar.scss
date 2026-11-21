@@ -38,6 +38,114 @@
         flex-grow: 1;
     }
 
+    .ag-tool-panel-resizer {
+        display: contents;
+    }
+
+    // a panel in an external parent fills it, so there is nothing to resize
+    .ag-tool-panel-external .ag-tool-panel-resizer {
+        display: none;
+    }
+
+    .ag-tool-panel-horizontal-resize {
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        // the highlight: a 7px band centred on the border line
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0 19px;
+        }
+    }
+
+    // the whole border highlights while it is hovered, focused or in use. Mixing in the foreground colour keeps
+    // the accent's hue but holds 3:1 contrast against the backgrounds either side, in dark themes too
+    .ag-tool-panel-horizontal-resize:hover::after,
+    .ag-tool-panel-horizontal-resize:focus-visible::after,
+    .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize::after,
+    .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize::after {
+        background-color: color-mix(in srgb, var(--ag-range-selection-border-color) 60%, var(--ag-foreground-color));
+
+        @media (forced-colors: active) {
+            forced-color-adjust: none;
+            background-color: Highlight;
+        }
+    }
+
+    // shown only after a click or tap on the border; keyboard users resize with the arrow keys instead
+    .ag-tool-panel-resize-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ag-grid-size);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        visibility: hidden;
+        z-index: 4;
+    }
+
+    .ag-tool-panel-resizer-active .ag-tool-panel-resize-buttons {
+        visibility: visible;
+    }
+
+    // next to the click area, over the grid, so they never cover the border or its highlight
+    .ag-side-bar-left .ag-tool-panel-resize-buttons {
+        @include ag.unthemed-rtl(
+            (
+                right: calc(-23px - var(--ag-grid-size) - 44px),
+            )
+        );
+    }
+
+    .ag-side-bar-right .ag-tool-panel-resize-buttons {
+        @include ag.unthemed-rtl(
+            (
+                left: calc(-23px - var(--ag-grid-size) - 44px),
+            )
+        );
+    }
+
+    .ag-tool-panel-resize-button {
+        @include ag.inherit-text-styles();
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        margin: 0;
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-background-color);
+        border: solid 1px var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        cursor: pointer;
+
+        // the disabled background can be semi-transparent, so it goes over the opaque one: nothing under the button shows
+        // through. The icon colours itself from --ag-icon-font-color, so an inherited color alone would not reach the arrow
+        &[aria-disabled='true'] {
+            --ag-icon-font-color: var(--ag-disabled-foreground-color);
+            cursor: default;
+            color: var(--ag-disabled-foreground-color);
+            background-image: linear-gradient(
+                var(--ag-input-disabled-background-color),
+                var(--ag-input-disabled-background-color)
+            );
+
+            // forced colours replace the disabled colours, so it would look enabled
+            @media (forced-colors: active) {
+                --ag-icon-font-color: GrayText;
+                color: GrayText;
+                border-color: GrayText;
+            }
+        }
+    }
+
+    @include ag.keyboard-focus((ag-tool-panel-resize-button), 2px);
+
     .ag-side-buttons {
         padding-top: calc(var(--ag-grid-size) * 4);
         width: calc(var(--ag-icon-size) + 4px);

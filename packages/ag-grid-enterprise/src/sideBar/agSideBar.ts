@@ -1,7 +1,7 @@
 import {
     RefPlaceholder,
     _findNextFocusableElement,
-    _focusInto,
+    _focusIntoTabbableFirst,
     _getActiveDomElement,
     _isVisible,
     _removeFromParent,
@@ -99,8 +99,17 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;
         const backwards = e.shiftKey;
+        // Tab follows the drawn order: the buttons come before the open panel on the left, and after it on the right
+        const buttonsAfterPanel = !this.isDrawnOnLeft();
 
-        if (!openPanel) {
+        if (sideBarGui.contains(activeElement)) {
+            if (openPanel && backwards === buttonsAfterPanel) {
+                if (_focusIntoTabbableFirst(openPanel, backwards)) {
+                    e.preventDefault();
+                }
+                return;
+            }
+
             if (_focusNextGridCoreContainer(beans, backwards, 'force')) {
                 e.preventDefault();
                 return true;
@@ -111,27 +120,20 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
             return false;
         }
 
-        if (sideBarGui.contains(activeElement)) {
-            if (_focusInto(openPanel, backwards)) {
-                e.preventDefault();
-            }
-            return;
-        }
-
-        // only handle backwards focus to target the sideBar buttons
-        if (!backwards) {
+        // only handle focus leaving the panel for the sideBar buttons
+        if (!openPanel || backwards === buttonsAfterPanel) {
             return;
         }
 
         let nextEl: HTMLElement | null = null;
 
         if (openPanel.contains(activeElement)) {
-            nextEl = _findNextFocusableElement({ beans, rootNode: openPanel, backwards: true });
+            nextEl = _findNextFocusableElement({ beans, rootNode: openPanel, backwards });
             // leave navigation to the browser when the next element doesn't require managed focus.
             if (nextEl && nextEl.tabIndex >= 0) {
                 return;
             }
-        } else if (isTargetUnderManagedComponent(openPanel, target)) {
+        } else if (backwards && isTargetUnderManagedComponent(openPanel, target)) {
             nextEl = findFocusableElementBeforeTabGuard(openPanel, target);
         }
 
@@ -258,6 +260,14 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
 
         this.toggleCss('ag-side-bar-left', isLeft);
         this.toggleCss('ag-side-bar-right', !isLeft);
+        // in the Tab order the buttons sit where they are drawn: before the tool panels on the left, after on the right.
+        // Moving a focused element blurs it, so only move them when they are on the wrong side
+        const eGui = this.getGui();
+        const eButtons = this.sideBarButtons.getGui();
+        const drawnOnLeft = this.isDrawnOnLeft();
+        if ((drawnOnLeft ? eGui.firstElementChild : eGui.lastElementChild) !== eButtons) {
+            eGui.insertAdjacentElement(drawnOnLeft ? 'afterbegin' : 'beforeend', eButtons);
+        }
 
         for (const wrapper of this.toolPanelWrappers) {
             wrapper.setResizerSizerSide(resizerSide);
@@ -266,6 +276,10 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         this.dispatchSideBarUpdated();
 
         return this;
+    }
+
+    public isDrawnOnLeft(): boolean {
+        return (this.position === 'left') !== this.gos.get('enableRtl');
     }
 
     public override setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean }): void {
@@ -365,13 +379,20 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         wrapper: ToolPanelWrapper,
         externalParent: HTMLElement | null | undefined
     ): void {
-        const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
-        if (correctParent !== this.getGui()) {
+        const eGui = this.getGui();
+        const correctParent = externalParent ?? wrapper.getDefParent() ?? eGui;
+        if (correctParent !== eGui) {
             wrapper.ensureStyledRoot();
             correctParent.classList.add('ag-tool-panel-external');
         }
         const wrapperGui = wrapper.getGui();
-        if (wrapperGui.parentElement !== correctParent) {
+        if (wrapperGui.parentElement === correctParent) {
+            return;
+        }
+        if (correctParent === eGui && !this.isDrawnOnLeft()) {
+            // on the right the buttons stay after the tool panels, where they are drawn
+            this.sideBarButtons.getGui().before(wrapperGui);
+        } else {
             correctParent.appendChild(wrapperGui);
         }
     }

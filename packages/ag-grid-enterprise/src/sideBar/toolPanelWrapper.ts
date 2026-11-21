@@ -55,12 +55,15 @@ export class ToolPanelWrapper extends Component {
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
-
         eGui.setAttribute('id', `ag-${this.getCompId()}`);
 
-        resizeBar.elementToResize = eGui;
-        this.appendChild(resizeBar);
+        this.resizeBar = this.createManagedBean(new AgHorizontalResize(eGui));
+        this.appendChild(this.resizeBar);
+    }
+
+    public override setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean }): void {
+        super.setDisplayed(displayed, options);
+        this.resizeBar.onPanelDisplayedChanged(displayed);
     }
 
     public ensureStyledRoot(): void {
@@ -91,7 +94,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public setToolPanelDef(toolPanelDef: ToolPanelDef, params: IToolPanelParams): boolean {
-        const { id, minWidth, maxWidth, width, parent } = toolPanelDef;
+        const { id, minWidth, maxWidth, width, parent, labelKey, labelDefault } = toolPanelDef;
 
         this.toolPanelId = id;
         this.defParent = parent ?? null;
@@ -111,13 +114,8 @@ export class ToolPanelWrapper extends Component {
         componentPromise.then(this.setToolPanelComponent.bind(this));
 
         const resizeBar = this.resizeBar;
-        if (minWidth != null) {
-            resizeBar.minWidth = minWidth;
-        }
-
-        if (maxWidth != null) {
-            resizeBar.maxWidth = maxWidth;
-        }
+        resizeBar.setLabel(this.getLocaleTextFunc()(labelKey, labelDefault));
+        resizeBar.setWidthLimits(minWidth, maxWidth);
 
         return true;
     }
@@ -141,7 +139,14 @@ export class ToolPanelWrapper extends Component {
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
 
-        this.resizeBar.inverted = inverted;
+        const { resizeBar, eContent } = this;
+        resizeBar.setInverted(inverted);
+        // in the Tab order the border sits where it is drawn: after the content when on its right edge, before it when
+        // on its left. Moving a focused element blurs it, so only move it when it is on the wrong side
+        const eResizer = resizeBar.getGui();
+        if ((inverted ? eContent.nextElementSibling : eContent.previousElementSibling) !== eResizer) {
+            eContent.insertAdjacentElement(inverted ? 'afterend' : 'beforebegin', eResizer);
+        }
     }
 
     public refresh(): void {
