@@ -844,6 +844,15 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelClose: 'Luk',
     ariaLabelMaximize: 'Maksimer',
     ariaLabelRestore: 'Gendan',
+    ariaLabelMoveAndResize: 'Flyt og tilpas størrelse',
+    ariaLabelNarrower: 'Smallere',
+    ariaLabelWider: 'Bredere',
+    ariaLabelShorter: 'Lavere',
+    ariaLabelTaller: 'Højere',
+    ariaDialogMoveInstructions:
+        'Piletasterne flytter dialogboksen. Tryk på Enter for at afslutte eller Esc for at annullere.',
+    ariaDialogMoveResizeInstructions:
+        'Piletasterne flytter dialogboksen, og Skift med piletasterne ændrer dens størrelse. Tryk på Enter for at afslutte eller Esc for at annullere.',
     ariaLabelColorPickerSpectrum: 'Mætning og lysstyrke',
     ariaValueColorPickerSpectrum: 'Mætning ${variable}%, lysstyrke ${variable}%',
     ariaLabelColorPickerHue: 'Nuance',

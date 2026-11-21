@@ -863,6 +863,15 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelMaximize: 'Maksimalkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelMoveAndResize: 'Pindahkan dan Ubah Ukuran',
+    ariaLabelNarrower: 'Lebih Sempit',
+    ariaLabelWider: 'Lebih Lebar',
+    ariaLabelShorter: 'Lebih Pendek',
+    ariaLabelTaller: 'Lebih Tinggi',
+    ariaDialogMoveInstructions:
+        'Tombol panah memindahkan dialog. Tekan Enter untuk menyelesaikan atau Esc untuk membatalkan.',
+    ariaDialogMoveResizeInstructions:
+        'Tombol panah memindahkan dialog, dan Shift dengan tombol panah mengubah ukurannya. Tekan Enter untuk menyelesaikan atau Esc untuk membatalkan.',
     ariaLabelColorPickerSpectrum: 'Saturasi dan Kecerahan',
     ariaValueColorPickerSpectrum: 'Saturasi ${variable}%, Kecerahan ${variable}%',
     ariaLabelColorPickerHue: 'Rona',

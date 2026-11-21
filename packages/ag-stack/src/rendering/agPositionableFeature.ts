@@ -73,7 +73,8 @@ interface MappedResizer {
     element: HTMLElement;
     dragSource?: DragListenerParams;
 }
-type PositionableFeatureEvent = 'resize';
+/** `dragStart` and `dragEnd` bracket moving or resizing the element by dragging it. */
+type PositionableFeatureEvent = 'resize' | 'dragStart' | 'dragEnd';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgPositionableFeature<
@@ -228,6 +229,10 @@ export class AgPositionableFeature<
 
     public getPosition(): { x: number; y: number } {
         return this.position;
+    }
+
+    public isMovable(): boolean {
+        return this.movable;
     }
 
     public setMovable(movable: boolean, moveElement: HTMLElement) {
@@ -668,6 +673,7 @@ export class AgPositionableFeature<
 
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
+        this.dispatchLocalEvent({ type: 'dragStart' });
     }
 
     private getSiblings(): HTMLElement[] | null {
@@ -836,6 +842,7 @@ export class AgPositionableFeature<
         this.resizerMap![side].element.classList.remove('ag-active');
 
         this.dispatchLocalEvent({ type: 'resize' });
+        this.dispatchLocalEvent({ type: 'dragEnd' });
     }
 
     private refreshSize() {
@@ -863,6 +870,7 @@ export class AgPositionableFeature<
 
         this.element.classList.add('ag-moving');
         this.updateDragStartPosition(e.clientX, e.clientY);
+        this.dispatchLocalEvent({ type: 'dragStart' });
     }
 
     private onMove(e: MouseEvent) {
@@ -892,6 +900,7 @@ export class AgPositionableFeature<
         this.isMoving = false;
         this.boundaryEl = null;
         this.element.classList.remove('ag-moving');
+        this.dispatchLocalEvent({ type: 'dragEnd' });
     }
 
     private setOffsetParent() {

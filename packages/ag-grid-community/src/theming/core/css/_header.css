@@ -42,6 +42,8 @@
 .ag-header-cell-menu-button,
 .ag-header-cell-filter-button,
 .ag-panel-title-bar-button,
+.ag-dialog-title-bar-button,
+.ag-dialog-step-button,
 .ag-floating-filter-button-button,
 :where(.ag-header-cell-sortable) .ag-header-cell-label,
 :where(.ag-header-group-cell-selectable) .ag-header-cell-comp-wrapper,
