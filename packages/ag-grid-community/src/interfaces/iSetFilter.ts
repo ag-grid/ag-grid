@@ -217,10 +217,9 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      */
     keyCreator?: (params: KeyCreatorParams<TData>) => string;
     /**
-     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
-     * untruncated value.
-     *
-     * @default false
+     * When unset, automatically shows truncated grid-rendered values according to `tooltipShowMode`.
+     * Set to `true` to configure value tooltips explicitly, including a column's `tooltipComponent`.
+     * Set to `false` to disable default item tooltips. Renderer-supplied tooltips are unaffected.
      */
     showTooltips?: boolean;
     /**

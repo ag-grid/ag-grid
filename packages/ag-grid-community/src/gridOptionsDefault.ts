@@ -20,7 +20,7 @@ export const GRID_OPTION_DEFAULTS = {
     noteShowDelay: 180,
     noteHideDelay: 220,
     tooltipMouseTrack: false,
-    tooltipShowMode: 'standard',
+    tooltipShowMode: 'whenTruncated',
     tooltipInteraction: false,
     copyHeadersToClipboard: false,
     copyGroupHeadersToClipboard: false,

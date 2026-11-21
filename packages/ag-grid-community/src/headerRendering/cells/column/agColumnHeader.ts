@@ -115,6 +115,10 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
     private mouseListener?: HeaderCellMouseListenerFeature;
 
+    public getTooltipTextElement(): HTMLElement | undefined {
+        return this.innerHeaderComponent || this.isLoadingInnerComponent ? undefined : this.eText;
+    }
+
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
         this.params = params;

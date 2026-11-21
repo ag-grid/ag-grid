@@ -418,8 +418,8 @@ export {
 export {
     _getCellTooltipComponentDefinition,
     _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
+    _resolveTextTooltip,
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
@@ -431,6 +431,7 @@ export {
     _resolveCellTooltipValue,
     _resolveGroupTooltipValue,
     _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     type LegacyTooltipFieldResolution,
 } from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';

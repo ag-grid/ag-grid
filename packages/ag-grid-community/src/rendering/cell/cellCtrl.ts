@@ -143,7 +143,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private notesFeature: INotesFeature | undefined = undefined;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
-    private hasActiveRenderer = false;
+    private hasConfiguredRenderer = false;
 
     public cellPosition: CellPosition;
 
@@ -375,10 +375,9 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
 
-    // Unlike config-based isCellRenderer(), this reflects whether the last render actually produced a
-    // renderer: a cellRendererSelector returning undefined renders plain text yet isCellRenderer() is true.
-    public hasActiveCellRenderer(): boolean {
-        return this.hasActiveRenderer;
+    // Tracks the resolved renderer, excluding the grid's plain-text/Find fallback.
+    public hasConfiguredCellRenderer(): boolean {
+        return this.hasConfiguredRenderer;
     }
     public getValueToDisplay(): any {
         return this.valueFormatted ?? this.value;
@@ -436,6 +435,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }
         }
+        this.hasConfiguredRenderer = compDetails != null;
         if (!compDetails && !isLoading && beans.findSvc?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
@@ -457,7 +457,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             }
         }
 
-        this.hasActiveRenderer = compDetails != null;
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
         this.customRowDragComp?.refreshVisibility();

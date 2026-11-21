@@ -1,28 +1,18 @@
 import type { AgTooltipFeature, TooltipCtrl, TooltipDetails } from 'ag-stack';
-import { _isElementOverflowingCallback } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { RowNode } from '../entities/rowNode';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { ITooltipParams, TooltipLocation } from './tooltipComponent';
+import type { ITooltipParams, TooltipCallbackParams, TooltipLocation } from './tooltipComponent';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface TooltipSourceParams {
-    column?: AgColumn | AgColumnGroup | AgProvidedColumnGroup;
-    colDef?: ColDef | ColGroupDef;
-    rowIndex?: number;
-    node?: RowNode;
-    data?: any;
-    value?: any;
-    valueFormatted?: string | null;
-}
+export type TooltipSourceParams = Pick<
+    TooltipCallbackParams,
+    'column' | 'colDef' | 'rowIndex' | 'node' | 'data' | 'value' | 'valueFormatted'
+>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ResolvedTooltip extends TooltipDetails<TooltipLocation> {
@@ -30,10 +20,40 @@ export interface ResolvedTooltip extends TooltipDetails<TooltipLocation> {
     sourceValues?: Pick<TooltipSourceParams, 'value' | 'valueFormatted'>;
     componentDefinition?: ColDef | ColGroupDef;
     shouldDisplay?: () => boolean;
+    automatic?: boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface TooltipSource extends TooltipCtrl<TooltipLocation, ResolvedTooltip> {}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _resolveTextTooltip(gos: GridOptionsService, tooltip: ResolvedTooltip): ResolvedTooltip {
+    const whenTruncated = _isShowTooltipWhenTruncated(gos);
+    if (tooltip.automatic) {
+        tooltip.value = whenTruncated ? (tooltip.params?.valueFormatted ?? tooltip.params?.value) : undefined;
+        tooltip.componentDefinition = undefined;
+    }
+    const value = tooltip.value;
+    const { value: rawValue, valueFormatted } = tooltip.params ?? {};
+    const isText = typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+    const repeatsText =
+        isText &&
+        ((rawValue != null && String(value) === String(rawValue)) ||
+            (valueFormatted != null && String(value) === valueFormatted));
+    tooltip.requiresTruncation = whenTruncated && !!(tooltip.automatic || repeatsText);
+    return tooltip;
+}
+
+export function shouldDisplayTextTooltip(tooltip: ResolvedTooltip, getElement: () => HTMLElement | undefined): boolean {
+    if (tooltip.shouldDisplay) {
+        return tooltip.shouldDisplay();
+    }
+    if (!tooltip.requiresTruncation) {
+        return true;
+    }
+    const element = getElement();
+    return !!element && (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight);
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getCellTooltipComponentDefinition(colDef: ColDef | undefined): ColDef | undefined {
@@ -50,14 +70,6 @@ export function _getHeaderTooltipComponentDefinition(
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isShowTooltipWhenTruncated(gos: GridOptionsService): boolean {
     return gos.get('tooltipShowMode') === 'whenTruncated';
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getShouldDisplayTooltip(
-    gos: GridOptionsService,
-    getElement: () => HTMLElement | undefined
-): (() => boolean) | undefined {
-    return _isShowTooltipWhenTruncated(gos) ? _isElementOverflowingCallback(getElement) : undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -408,7 +408,7 @@ The following example demonstrates different default states. Note the following:
 
 ## Filter Value Tooltips
 
-Set filter values that are too long to be displayed are truncated by default with ellipses. To allow users to see the full filter value, tooltips can be enabled as shown below:
+With `TooltipModule`, truncated Set Filter items automatically show their full label. Set `showTooltips: false` to disable these previews, or `true` to configure them explicitly:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -424,12 +424,12 @@ const gridOptions = {
 }
 ```
 
-The default tooltip component will be used unless a [Custom Tooltip Component](./component-tooltip/) is provided.
+Automatic previews use the default tooltip or `builtInTooltipComponent`. Explicit `showTooltips: true` uses the column's [Custom Tooltip Component](./component-tooltip/) when provided. Both follow `tooltipShowMode`.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 
 - Filter values are automatically truncated with ellipses when the values are too long.
-- **Col A** does not have Set Filter Tooltips enabled.
+- **Col A** disables Set Filter tooltips with `showTooltips: false`.
 - **Col B** has Set Filter Tooltips enabled via `filterParams.showTooltips=true`.
 - **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 

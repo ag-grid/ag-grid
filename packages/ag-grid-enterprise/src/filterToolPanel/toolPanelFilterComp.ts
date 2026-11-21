@@ -1,7 +1,21 @@
 import { RefPlaceholder, _clearElement, _setAriaExpanded, _setAriaLabel, _setAriaRole, _setDisplayed } from 'ag-stack';
 
-import type { AgColumn, ElementParams, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
-import { Component, FilterComp, KeyCode, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ElementParams,
+    FilterOpenedEvent,
+    IFilterComp,
+    IconName,
+    TooltipFeature,
+} from 'ag-grid-community';
+import {
+    Component,
+    FilterComp,
+    KeyCode,
+    _createElement,
+    _createIconNoSpan,
+    _resolveHeaderTooltip,
+} from 'ag-grid-community';
 
 type ToolPanelFilterCompEvent = 'filterChanged';
 
@@ -41,6 +55,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
     private filterComp?: FilterComp;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(
         private readonly hideHeader: boolean,
@@ -84,6 +99,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
             eFilterToolPanelHeader.removeAttribute('tabindex');
         } else {
             eFilterToolPanelHeader.setAttribute('tabindex', '0');
+            this.setupTooltip();
         }
 
         this.addManagedListeners(column, { filterChanged: this.onFilterChanged.bind(this) });
@@ -92,6 +108,31 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private refreshFilterName(): void {
         // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
         this.eFilterName.innerText = this.getColumnFilterName() || '';
+        this.tooltipFeature?.refreshTooltip();
+    }
+
+    private setupTooltip(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.beans.tooltipSvc?.createTooltip({
+                getGui: () => this.eFilterToolPanelHeader,
+                getTextElement: () => this.eFilterName,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () => {
+                    const displayName = this.getColumnFilterName();
+                    return _resolveHeaderTooltip(
+                        this.gos,
+                        this.gos.addCommon({
+                            location: 'filterToolPanelColumnGroup',
+                            column: this.column,
+                            colDef: this.column.colDef,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
+            })
+        );
+        this.addManagedEventListeners({ newColumnsLoaded: () => this.tooltipFeature?.refreshTooltip() });
     }
 
     private onKeyDown(e: KeyboardEvent): void {

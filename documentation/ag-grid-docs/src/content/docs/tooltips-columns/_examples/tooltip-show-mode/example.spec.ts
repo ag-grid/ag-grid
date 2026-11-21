@@ -1,14 +1,14 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('whenTruncated shows tooltips only for truncated content', async ({ agIdFor, page }) => {
+    test.eachFramework('default tooltips show only for truncated content', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         const tooltip = page.locator('.ag-tooltip');
 
         // Positive: the Country column is only 100px wide, so its "Country of Athlete"
-        // header is truncated and a tooltip is shown under tooltipShowMode='whenTruncated'.
+        // header is truncated and a tooltip is shown without any tooltip configuration.
         await agIdFor.headerCell('country').hover();
         await expect(tooltip).toBeVisible();
         await expect(tooltip).toContainText('Country of Athlete');

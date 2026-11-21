@@ -52,6 +52,7 @@ describe('Tooltip touch ownership', () => {
             }
         }
         const api = await grids.createGridAndWait('shadow-renderer-tooltip', {
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true, cellRenderer: ShadowRenderer }],
             rowData: [{ value: 'Cell tooltip' }],
             suppressContextMenu: true,
@@ -162,6 +163,7 @@ describe('Tooltip touch ownership', () => {
         'a tap suppresses compatibility hover only for its source (shadow root: %s)',
         async (shadow) => {
             const api = await grids.createGridAndWait('tap-compatibility', {
+                tooltipShowMode: 'standard',
                 columnDefs: [
                     {
                         field: 'value',
