@@ -277,6 +277,10 @@ test.agExample(import.meta, () => {
         // Clicking Next Page left focus inside the grid, which takes the tab guards out of the tab
         // order — park focus where recreating leaves it so both snapshots agree.
         await recreateButton(page).focus();
+        // The pointer is still over Next Page, whose built-in tooltip a recreated grid does not show:
+        // move it off the grid and let the tooltip close before taking the snapshot.
+        await page.mouse.move(0, 0);
+        await expect(page.locator('.ag-tooltip')).toHaveCount(0);
 
         const before = await captureSettledGrid(page);
         expect(before).not.toBeNull();
