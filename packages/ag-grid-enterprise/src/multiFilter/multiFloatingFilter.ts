@@ -18,7 +18,6 @@ import {
     Component,
     _getDefaultFloatingFilterType,
     _getFloatingFilterCompDetails,
-    _mergeDeep,
     _resolveFilter,
 } from 'ag-grid-community';
 
@@ -168,7 +167,11 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 reactiveParams.getHandler = () => (getHandler() as MultiFilterHandler).getChildDisplayHandler(index)!;
             }
             const child = _resolveFilter(beans, column, filterDefs[index], DEFAULT_CHILD_FILTER);
-            _mergeDeep(floatingFilterParams.filterParams, resolveFilterParams(beans, column, child.def));
+            beans.userCompFactory.mergeUserParams(
+                floatingFilterParams.filterParams,
+                resolveFilterParams(beans, column, child.def),
+                'filterParams'
+            );
 
             const compDetails = this.getCompDetails(child, floatingFilterParams);
             if (compDetails) {
