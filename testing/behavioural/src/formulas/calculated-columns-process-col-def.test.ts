@@ -45,7 +45,7 @@ import {
     cellValue,
     clickDialogButton,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     propertiesOf,
     selectDataType,
     setExpression,
@@ -178,7 +178,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         const lastState = () => processColDef.mock.calls.at(-1)![0].expressionValidation;
 
         setExpression('[a] +');
@@ -234,7 +234,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
             api.showColumnMenu(calcId);
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
+            await waitFor(() => getCalculatedColumnDialog());
             setExpression('[a] * 2');
             await waitFor(() => expect(cellValue(api, calcId)).toBe(20));
             expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true });
@@ -374,9 +374,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         // The dialog shows references by header name.
-        expect(getDialog().querySelector('textarea')!.value).toBe('[A] * 2');
+        expect(getCalculatedColumnDialog().querySelector('textarea')!.value).toBe('[A] * 2');
     });
 
     test('callback changes to headerName, cellDataType, calculatedExpression and columnGroupShow apply', async () => {
@@ -484,8 +484,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         for (const multiplier of [3, 4, 5]) {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
-            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
+            await waitFor(() => getCalculatedColumnDialog());
+            expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
             setExpression(`[a] * ${multiplier}`);
             clickDialogButton('Apply');
             await waitFor(() => expect(cellValue(api, 'calc')).toBe(10 * multiplier));
@@ -508,9 +508,10 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         const openEditDialog = async () => {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
+            await waitFor(() => getCalculatedColumnDialog());
         };
-        const shownDataType = () => getDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
+        const shownDataType = () =>
+            getCalculatedColumnDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
 
         await openEditDialog();
         expect(shownDataType()).toBe('Number');
@@ -687,8 +688,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
-        const dialog = within(getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
+        const dialog = within(getCalculatedColumnDialog());
         expect(dialog.getByRole<HTMLButtonElement>('button', { name: 'Apply' }).disabled).toBe(false);
         expect(dialog.queryByRole('button', { name: /^(Columns|Functions|Operators)$/ })).toBeNull();
     });
@@ -783,7 +784,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         // A no-op deferred Apply.
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         clickDialogButton('Apply');
         await asyncSetTimeout(0);
 
@@ -810,7 +811,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[a] * 3');
         clickDialogButton('Apply');
         await waitFor(() =>
@@ -842,7 +843,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Margin');
         clickDialogButton('Apply');
 
@@ -970,7 +971,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Doubled');
         clickDialogButton('Apply');
 
@@ -1142,16 +1143,19 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         test('sourceColumn is null in every call when one option update switches pivot mode on and changes columnTypes (pivotMode first)', async () => {
             const processColDef = vi.fn<ProcessColDef>();
-            const api = createPivotGrid(`pcd-source-auto-pivot-on-pivotMode`, processColDef);
+            const api = createPivotGrid('pcd-source-auto-pivot-on', processColDef);
             await waitForColumn(api, 'ag-Grid-AutoColumn');
-            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            await asyncSetTimeout(0);
             processColDef.mockClear();
-            const types = { columnTypes: { t: { width: 90 } } };
-            const mode = { pivotMode: true };
 
-            api.updateGridOptions({ ...mode, ...types });
+            api.updateGridOptions({ pivotMode: true, columnTypes: { t: { width: 90 } } });
+            await asyncSetTimeout(0);
 
             expect(api.isPivotMode()).toBe(true);
+            expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+            expect(api.getColumn('a')!.getActualWidth()).toBe(90);
+            expect(api.getColumn(calcId)).not.toBeNull();
             expect(processColDef).toHaveBeenCalled();
             for (const [params] of processColDef.mock.calls) {
                 expect(params.sourceColumn).toBeNull();
@@ -1160,19 +1164,21 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         test('sourceColumn is the auto group column in every call when one option update switches pivot mode off and changes columnTypes (pivotMode first)', async () => {
             const processColDef = vi.fn<ProcessColDef>();
-            const api = createPivotGrid(`pcd-source-auto-pivot-off-pivotMode`, processColDef);
+            const api = createPivotGrid('pcd-source-auto-pivot-off', processColDef);
             await waitForColumn(api, 'ag-Grid-AutoColumn');
-            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
             api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
             processColDef.mockClear();
-            const types = { columnTypes: { t: { width: 90 } } };
-            const mode = { pivotMode: false };
 
-            api.updateGridOptions({ ...mode, ...types });
+            api.updateGridOptions({ pivotMode: false, columnTypes: { t: { width: 90 } } });
+            await asyncSetTimeout(0);
 
             const autoColumn = api.getColumn('ag-Grid-AutoColumn');
             expect(api.isPivotMode()).toBe(false);
             expect(autoColumn).not.toBeNull();
+            expect(api.getColumn('a')!.getActualWidth()).toBe(90);
+            expect(api.getColumn(calcId)).not.toBeNull();
             expect(processColDef).toHaveBeenCalled();
             for (const [params] of processColDef.mock.calls) {
                 expect(params.sourceColumn).toBe(autoColumn);
@@ -1327,8 +1333,10 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         );
     });
 
-    describe('sourceColumn of a column added from the auto group column of a group hierarchy level', () => {
+    describe('sourceColumn of a column added from the auto column of a group hierarchy level', () => {
         const HIERARCHY_YEAR = 'ag-Grid-HierarchyColumn-date-year';
+        // multipleColumns names an auto group column after the column it groups by.
+        const AUTO_YEAR = `ag-Grid-AutoColumn-${HIERARCHY_YEAR}`;
 
         function autoColumnIds(api: GridApi): string[] {
             return api
@@ -1337,7 +1345,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
                 .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
         }
 
-        test('is null once a column rebuild removes the hierarchy level behind the auto group column (multipleColumns)', async () => {
+        test('is null after a column rebuild removes the hierarchy level behind the auto group column (multipleColumns)', async () => {
             const processColDef = vi.fn<ProcessColDef>();
             const api = createGrid('pcd-source-hierarchy-level-removed', {
                 rowData: [{ id: 'r1', g: 'x', date: new Date(2020, 0, 1) }],
@@ -1348,14 +1356,15 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             });
             await waitForColumn(api, HIERARCHY_YEAR);
             api.setRowGroupColumns([HIERARCHY_YEAR]);
-            await waitFor(() => expect(autoColumnIds(api)).toHaveLength(1));
-            const autoColId = autoColumnIds(api)[0];
-            const calcId = await addViaDialog(api, autoColId, '[g]');
+            await waitFor(() => expect(autoColumnIds(api)).toEqual([AUTO_YEAR]));
+            const calcId = await addViaDialog(api, AUTO_YEAR, '[g]');
+            await asyncSetTimeout(0);
             processColDef.mockClear();
 
             api.setGridOption('columnTypes', { t: { groupHierarchy: ['month'] } });
+            await asyncSetTimeout(0);
 
-            expect(api.getColumn(autoColId)).toBeNull();
+            expect(autoColumnIds(api)).toEqual([]);
             expect(api.getColumn(calcId)).not.toBeNull();
             expect(processColDef).toHaveBeenCalled();
             for (const [params] of processColDef.mock.calls) {
@@ -1476,14 +1485,14 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getColumn(yId)).not.toBeNull();
     });
 
-    describe('sourceColumn and expressionValidation of a calculated column in a rebuild that ungroups the only row group column', () => {
+    describe('sourceColumn and expressionValidation when a rebuild ungroups the column behind the auto group column', () => {
         const GROUPED_BY_TYPE: Partial<GridOptions> = {
             rowData: ROW_DATA,
             columnDefs: [{ field: 'g', type: 't', hide: true }, { field: 'a' }, { field: 'b' }],
             columnTypes: { t: { rowGroup: true } },
         };
 
-        test('sourceColumn of a column added from the auto group column is null once the rebuild ungroups g', async () => {
+        test('sourceColumn is null when a rebuild ungroups g and the callback groups nothing', async () => {
             const processColDef = vi.fn<ProcessColDef>();
             const api = createGrid('pcd-source-auto-nothing-grouped', {
                 ...GROUPED_BY_TYPE,
@@ -1491,9 +1500,11 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             });
             await waitForColumn(api, 'ag-Grid-AutoColumn');
             const addedId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+            await asyncSetTimeout(0);
             processColDef.mockClear();
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });
+            await asyncSetTimeout(0);
 
             const callsForAdded = processColDef.mock.calls.filter(([params]) => params.colDef.colId === addedId);
             expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
@@ -1512,9 +1523,16 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             });
             await waitForColumn(api, 'z');
             await waitForColumn(api, 'ag-Grid-AutoColumn');
+            await asyncSetTimeout(0);
+            const restoreCallsForZ = processColDef.mock.calls.filter(([params]) => params.colDef.colId === 'z');
+            expect(restoreCallsForZ.length).toBeGreaterThan(0);
+            for (const [params] of restoreCallsForZ) {
+                expect(params.expressionValidation).toEqual({ valid: true });
+            }
             processColDef.mockClear();
 
             api.setGridOption('columnTypes', { t: { rowGroup: false } });
+            await asyncSetTimeout(0);
 
             const callsForZ = processColDef.mock.calls.filter(([params]) => params.colDef.colId === 'z');
             expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
@@ -1612,8 +1630,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
-        expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
+        expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
     });
 });

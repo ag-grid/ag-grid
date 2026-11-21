@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout, runToIdle } from 'ag-test-utils';
 
 import type {
     AgColumn,
@@ -10,6 +10,7 @@ import type {
     ColumnGroup,
     ColumnStateUpdatedEvent,
     GridApi,
+    GridOptions,
     ICellRendererParams,
     IColumnStateUpdateStrategy,
     IHeaderComp,
@@ -1996,12 +1997,13 @@ describe('the rows a column update refreshes', () => {
         await asyncSetTimeout(0);
         const refreshes = countRefreshes(api);
 
-        api.setGridOption('columnDefs', [
-            { field: 'country', rowGroup: true, hide: true },
-            { field: 'sport' },
-            { field: 'gold', sort: 'desc' },
-        ]);
-        await asyncSetTimeout(0);
+        await runToIdle(() =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport' },
+                { field: 'gold', sort: 'desc' },
+            ])
+        );
 
         expect(refreshes()).toBe(1);
         await new GridRows(api, 'grouped and sorted').check(`
@@ -2060,11 +2062,12 @@ describe('the rows a column update refreshes', () => {
         let filterChanges = 0;
         api.addEventListener('filterChanged', () => ++filterChanges);
 
-        api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }]);
         // releasing the removed column's filter does not refresh the rows a second time
-        await waitFor(() => expect(filterChanges).toBe(1));
+        await runToIdle(() =>
+            api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }])
+        );
 
-        expect(refreshes()).toBe(1);
+        expect({ filterChanges, refreshes: refreshes() }).toEqual({ filterChanges: 1, refreshes: 1 });
         await new GridRows(api, 'filter released and grouped').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -2073,6 +2076,199 @@ describe('the rows a column update refreshes', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF hidden id:3 country:"France" gold:2
         `);
+    });
+
+    const pivotRowData = [
+        { country: 'Ireland', year: '2000', gold: 1 },
+        { country: 'Ireland', year: '2004', gold: 3 },
+        { country: 'Ireland', year: '2008', gold: 2 },
+        { country: 'France', year: '2012', gold: 5 },
+        { country: 'France', year: '2000', gold: 4 },
+    ];
+    const pivotColumnDefs = (year: ColDef): ColDef[] => [
+        { field: 'country', rowGroup: true },
+        year,
+        { field: 'gold', aggFunc: 'sum' },
+    ];
+    const pivotYears = (columns: readonly Column[] | null | undefined) =>
+        columns!.map((column) => column.getColDef().pivotKeys![0]);
+    const displayedPivotYears = (api: GridApi) => {
+        const pivotIds = new Set(api.getPivotResultColumns()!.map((column) => column.getColId()));
+        return pivotYears(api.getAllDisplayedColumns().filter((column) => pivotIds.has(column.getColId())));
+    };
+
+    /** Runs `update` on a pivot grid and returns the order of the pivot result columns and what its events said. */
+    async function reversePivotSort(update: (api: GridApi) => void) {
+        const api = gridsManager.createGrid('pivotSort', {
+            columnDefs: pivotColumnDefs({ field: 'year', pivot: true }),
+            rowData: pivotRowData,
+            pivotMode: true,
+        });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
+        expect(displayedPivotYears(api)).toEqual(['2000', '2004', '2008', '2012']);
+        const order: string[] = [];
+        let moved: string[] = [];
+        api.addEventListener('modelUpdated', () => order.push('modelUpdated'));
+        api.addEventListener('columnMoved', (event) => {
+            order.push('columnMoved');
+            moved = pivotYears(event.columns).sort();
+        });
+
+        await runToIdle(() => update(api));
+
+        return { order, moved, displayed: displayedPivotYears(api) };
+    }
+
+    test('applyColumnState reversing the pivot sort reverses the pivot result columns, telling which moved after the rows refresh', async () => {
+        const { order, moved, displayed } = await reversePivotSort((api) =>
+            api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] })
+        );
+
+        expect({ order, moved, displayed }).toEqual({
+            order: ['modelUpdated', 'columnMoved'],
+            moved: ['2000', '2004', '2008', '2012'],
+            displayed: ['2012', '2008', '2004', '2000'],
+        });
+    });
+
+    test('a columnDefs update reversing the pivot sort reverses the pivot result columns, refreshing the rows once', async () => {
+        const { order, displayed } = await reversePivotSort((api) =>
+            api.setGridOption('columnDefs', pivotColumnDefs({ field: 'year', pivot: true, pivotSort: 'desc' }))
+        );
+
+        expect({ refreshes: order.filter((type) => type === 'modelUpdated').length, displayed }).toEqual({
+            refreshes: 1,
+            displayed: ['2012', '2008', '2004', '2000'],
+        });
+    });
+
+    const columnEvents = [
+        'columnMoved',
+        'columnsReset',
+        'columnPivotChanged',
+        'pivotMaxColumnsExceeded',
+        'columnGroupOpened',
+        'columnHeaderNameChanged',
+        'sortChanged',
+        'columnVisible',
+        'columnPinned',
+        'columnResized',
+        'columnRowGroupChanged',
+        'columnValueChanged',
+        'columnPivotModeChanged',
+        'columnEverythingChanged',
+        'newColumnsLoaded',
+        'gridColumnsChanged',
+        'displayedColumnsChanged',
+        'virtualColumnsChanged',
+    ] as const;
+
+    test('resetting the column state reorders the pivot result columns back to ascending, raising columnMoved then columnsReset, the last column event of the reset', async () => {
+        const api = gridsManager.createGrid('pivotSortReset', {
+            columnDefs: pivotColumnDefs({ field: 'year', pivot: true }),
+            rowData: pivotRowData,
+            pivotMode: true,
+        });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await waitFor(() => expect(displayedPivotYears(api)).toEqual(['2012', '2008', '2004', '2000']));
+        await asyncSetTimeout(0);
+        const refreshes = countRefreshes(api);
+        const heard: string[] = [];
+        for (const type of columnEvents) {
+            api.addEventListener(type, () => heard.push(type));
+        }
+
+        await runToIdle(() => api.resetColumnState());
+
+        expect(displayedPivotYears(api)).toEqual(['2000', '2004', '2008', '2012']);
+        expect(heard.filter((type) => type === 'columnMoved' || type === 'columnsReset')).toEqual([
+            'columnMoved',
+            'columnsReset',
+        ]);
+        expect(heard[heard.length - 1]).toBe('columnsReset');
+        expect(refreshes()).toBe(1);
+    });
+
+    test('a pivot column added while a filter is present refreshes the rows once, keeping the rendered rows', async () => {
+        const api = gridsManager.createGrid('pivotWithFilter', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, filter: 'agTextColumnFilter' },
+                { field: 'year', pivot: true },
+                { field: 'sport' },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            rowData: pivotRowData.map((row) => ({ ...row, sport: 'Rowing' })),
+            pivotMode: true,
+        });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(4));
+        let removedRows = 0;
+        api.addEventListener('virtualRowRemoved', () => ++removedRows);
+        api.setFilterModel({ country: { filterType: 'text', type: 'contains', filter: 'Ire' } });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+        expect(Object.keys(api.getFilterModel())).toEqual(['country']);
+        await asyncSetTimeout(0);
+        // The filter removing France's row shows the listener hears a removed row.
+        expect(removedRows).toBe(1);
+        removedRows = 0;
+        const rowElements = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-id="row-group-country-Ireland"]'));
+        const irelandRows = rowElements();
+        expect(irelandRows.length).toBeGreaterThan(0);
+        const pivotKeys = () => api.getPivotResultColumns()!.map((column) => column.getColDef().pivotKeys!);
+        // The Ireland rows' years: the France-only 2012 leaves with the filter.
+        expect(pivotKeys()).toEqual([['2000'], ['2004'], ['2008']]);
+        const refreshes: (boolean | undefined)[] = [];
+        api.addEventListener('modelUpdated', (event) => refreshes.push(event.keepRenderedRows));
+
+        await runToIdle(() => api.addPivotColumns(['sport']));
+
+        expect({
+            refreshes,
+            removedRows,
+            keptRowElements: rowElements().map((element, i) => element === irelandRows[i]),
+            displayed: [api.getDisplayedRowAtIndex(0)?.key, api.getDisplayedRowCount()],
+            pivots: api.getPivotColumns().map((column) => column.getColId()),
+            pivotKeys: pivotKeys(),
+        }).toEqual({
+            refreshes: [true],
+            removedRows: 0,
+            keptRowElements: irelandRows.map(() => true),
+            displayed: ['Ireland', 1],
+            pivots: ['year', 'sport'],
+            // Pivot groups are expandable by default with several pivot columns: each has its collapsed column.
+            pivotKeys: [['2000', 'Rowing'], ['2000'], ['2004', 'Rowing'], ['2004'], ['2008', 'Rowing'], ['2008']],
+        });
+    });
+
+    test('onSortChanged after the row data was changed out of band sorts the displayed rows by the current sort, refreshing them once', async () => {
+        const data = [
+            { id: '1', gold: 1 },
+            { id: '2', gold: 2 },
+            { id: '3', gold: 3 },
+            { id: '4', gold: 4 },
+        ];
+        const api = gridsManager.createGrid('outOfBandSort', {
+            columnDefs: [{ field: 'gold', sort: 'asc' }],
+            rowData: data,
+            getRowId: ({ data }) => data.id,
+        });
+        await asyncSetTimeout(0);
+        const displayedIds = () =>
+            Array.from({ length: api.getDisplayedRowCount() }, (_, i) => api.getDisplayedRowAtIndex(i)!.id);
+        expect(displayedIds()).toEqual(['1', '2', '3', '4']);
+        const refreshes = countRefreshes(api);
+        let sortChanges = 0;
+        api.addEventListener('sortChanged', () => ++sortChanges);
+
+        data[0].gold = 9;
+        await runToIdle(() => api.onSortChanged());
+
+        expect({ sortChanges, refreshes: refreshes(), displayed: displayedIds() }).toEqual({
+            sortChanges: 1,
+            refreshes: 1,
+            displayed: ['2', '3', '4', '1'],
+        });
     });
 });
 
@@ -2189,4 +2385,337 @@ describe('the column animations a column call leaves on', () => {
             countryLeft: '350px',
         });
     });
+
+    test('a call made while a column move is still sliding does not cut the slide short when it changes nothing', async () => {
+        // How long a move slides on a fake clock, timer to timer, with a no-op call landing at `callAtMs` or none.
+        const slide = async (callAtMs: number | null) => {
+            const api = await createLockedGrid();
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+            try {
+                const start = Date.now();
+                api.moveColumns(['sport'], 1);
+                let movingAtCall: boolean | null = null;
+                if (callAtMs !== null) {
+                    await vi.advanceTimersByTimeAsync(callAtMs);
+                    movingAtCall = moving(api);
+                    api.applyColumnState({ state: api.getColumnState() });
+                }
+                for (let timers = 0; moving(api) && timers < 10; ++timers) {
+                    await vi.advanceTimersToNextTimerAsync();
+                }
+                return { order: order(api), movingAtCall, slideEnded: !moving(api), elapsedMs: Date.now() - start };
+            } finally {
+                vi.useRealTimers();
+                gridsManager.reset();
+            }
+        };
+
+        const uninterrupted = await slide(null);
+        const callAtMs = Math.floor(uninterrupted.elapsedMs / 2);
+        const withCall = await slide(callAtMs);
+
+        expect({ uninterrupted, withCall }).toEqual({
+            uninterrupted: {
+                order: 'year,sport,athlete,country',
+                movingAtCall: null,
+                slideEnded: true,
+                elapsedMs: uninterrupted.elapsedMs,
+            },
+            withCall: {
+                order: 'year,sport,athlete,country',
+                movingAtCall: true,
+                slideEnded: true,
+                elapsedMs: uninterrupted.elapsedMs,
+            },
+        });
+        expect(callAtMs).toBeGreaterThan(0);
+    });
+
+    const createAnimatedGrid = async (columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }]) => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            defaultColDef: { width: 300 },
+            animateColumnResizing: true,
+            rowData: [{}],
+        });
+        await waitFor(() => expect(moving(api)).toBe(false));
+        return api;
+    };
+
+    test('trading width between two columns at an unchanged total animates the column that moved', async () => {
+        const api = await createAnimatedGrid([{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }]);
+        expect({ resizeAnimating: resizeAnimating(api), bLeft: cellLeft(api, 'b'), cLeft: cellLeft(api, 'c') }).toEqual(
+            {
+                resizeAnimating: false,
+                bLeft: '300px',
+                cLeft: '600px',
+            }
+        );
+
+        api.applyColumnState({
+            state: [
+                { colId: 'a', width: 400 },
+                { colId: 'b', width: 200 },
+            ],
+        });
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getActualWidth())).toEqual([400, 200, 300]);
+        expect({ resizeAnimating: resizeAnimating(api), bLeft: cellLeft(api, 'b'), cLeft: cellLeft(api, 'c') }).toEqual(
+            {
+                resizeAnimating: true,
+                bLeft: '400px',
+                cLeft: '600px',
+            }
+        );
+        await waitFor(() => expect(resizeAnimating(api)).toBe(false));
+    });
+
+    test('a fit whose column limits trade width at the total the columns already fill animates the column that moved', async () => {
+        // sizeColumnsToFit(params) fits the grid's width, which the layout mock sets to 1000
+        const api = await createAnimatedGrid([
+            { colId: 'a', width: 600 },
+            { colId: 'b', width: 400 },
+        ]);
+        expect({ resizeAnimating: resizeAnimating(api), bLeft: cellLeft(api, 'b') }).toEqual({
+            resizeAnimating: false,
+            bLeft: '600px',
+        });
+
+        api.sizeColumnsToFit({ columnLimits: [{ key: 'a', maxWidth: 500 }] });
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getActualWidth())).toEqual([500, 500]);
+        expect({ resizeAnimating: resizeAnimating(api), bLeft: cellLeft(api, 'b') }).toEqual({
+            resizeAnimating: true,
+            bLeft: '500px',
+        });
+        await waitFor(() => expect(resizeAnimating(api)).toBe(false));
+    });
+});
+
+describe('the column events of an updateGridOptions call changing column options', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [
+        { a: 'x', b: 'p', c: 1 },
+        { a: 'x', b: 'q', c: 2 },
+        { a: 'y', b: 'p', c: 3 },
+    ];
+
+    const createGroupedGrid = (options: GridOptions = {}) =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true, hide: true },
+                { field: 'b', rowGroup: true, hide: true },
+                { field: 'c', aggFunc: 'sum' },
+            ],
+            rowData,
+            ...options,
+        });
+
+    const settle = async () => {
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+    };
+
+    const displayedIds = (api: GridApi) => api.getAllDisplayedColumns().map((column) => column.getColId());
+
+    const autoGroupColumns = (api: GridApi) =>
+        api.getAllGridColumns().filter((column) => column.getColId().startsWith('ag-Grid-AutoColumn'));
+
+    test('one update changing defaultColDef and autoGroupColumnDef gives the auto group column its own header and width and every other column the default width', async () => {
+        const api = createGroupedGrid();
+        await settle();
+
+        api.updateGridOptions({
+            defaultColDef: { width: 140 },
+            autoGroupColumnDef: { headerName: 'E', width: 222 },
+        });
+        await settle();
+
+        const autoGroups = autoGroupColumns(api);
+        expect(autoGroups.map((column) => api.getDisplayNameForColumn(column, 'header'))).toEqual(['E']);
+        expect(autoGroups.map((column) => column.getActualWidth())).toEqual([222]);
+        expect(
+            api
+                .getAllGridColumns()
+                .filter((column) => !autoGroups.includes(column))
+                .map((column) => `${column.getColId()}:${column.getActualWidth()}`)
+        ).toEqual(['a:140', 'b:140', 'c:140']);
+    });
+
+    test('one update changing rowData and autoGroupColumnDef raises the new-data modelUpdated before columnEverythingChanged, ending with the new groups and header', async () => {
+        const api = createGroupedGrid();
+        await settle();
+        // Listeners run after the update call returns: the event order and the end state are what a user observes.
+        const heard: string[] = [];
+        api.addEventListener('modelUpdated', (event) =>
+            heard.push(event.newData ? 'modelUpdated:newData' : 'modelUpdated')
+        );
+        api.addEventListener('columnEverythingChanged', () => heard.push('columnEverythingChanged'));
+
+        api.updateGridOptions({
+            rowData: [
+                { a: 'z', b: 'r', c: 5 },
+                { a: 'w', b: 's', c: 6 },
+            ],
+            autoGroupColumnDef: { headerName: 'F' },
+        });
+        await settle();
+
+        const topGroupKeys: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.level === 0) {
+                topGroupKeys.push(String(node.key));
+            }
+        });
+        const newDataRefresh = heard.indexOf('modelUpdated:newData');
+        expect({
+            header: autoGroupColumns(api).map((column) => api.getDisplayNameForColumn(column, 'header')),
+            topGroupKeys,
+            newDataRefreshFirst: newDataRefresh >= 0 && newDataRefresh < heard.indexOf('columnEverythingChanged'),
+        }).toEqual({ header: ['F'], topGroupKeys: ['z', 'w'], newDataRefreshFirst: true });
+    });
+
+    test.each([
+        { mode: 'multiRow' as const, off: { mode: 'multiRow' as const, checkboxes: false, headerCheckbox: false } },
+        { mode: 'singleRow' as const, off: { mode: 'singleRow' as const, checkboxes: false } },
+    ])(
+        'rowSelection in $mode mode turning its checkboxes on, off and on in three calls shows, removes and shows the selection column',
+        async ({ mode, off }) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData,
+                rowSelection: off,
+            });
+            await settle();
+            expect(displayedIds(api)).toEqual(['a', 'b']);
+
+            api.updateGridOptions({ rowSelection: { mode, checkboxes: true } });
+            await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+
+            api.updateGridOptions({ rowSelection: off });
+            await settle();
+            expect(displayedIds(api)).toEqual(['a', 'b']);
+
+            api.updateGridOptions({ rowSelection: { mode, checkboxes: true } });
+            await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-SelectionColumn', 'a', 'b']);
+        }
+    );
+
+    test('calculatedColumns enabled, disabled and enabled in three calls shows, removes and shows the calculated column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'c' }],
+            rowData,
+            calculatedColumns: false,
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'double',
+                        created: true,
+                        properties: [{ property: 'calculatedExpression', value: '[c] * 2' }],
+                    },
+                ],
+            },
+        });
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c']);
+        // Row 0 has c = 1, so its double is 2.
+        const firstDouble = () => {
+            const rowNode = api.getRowNode('0');
+            return rowNode && api.getCellValue({ rowNode, colKey: 'double' });
+        };
+
+        api.setGridOption('calculatedColumns', true);
+        await settle();
+        expect({ ids: displayedIds(api), double: firstDouble() }).toEqual({ ids: ['a', 'c', 'double'], double: 2 });
+
+        api.setGridOption('calculatedColumns', false);
+        await settle();
+        expect(displayedIds(api)).toEqual(['a', 'c']);
+
+        api.setGridOption('calculatedColumns', true);
+        await settle();
+        expect({ ids: displayedIds(api), double: firstDouble() }).toEqual({ ids: ['a', 'c', 'double'], double: 2 });
+    });
+
+    // d is neither grouped nor aggregated, so pivot mode hides it.
+    test.each<{
+        option: keyof GridOptions;
+        update: GridOptions;
+        ids: string[];
+        autoHeader: string | undefined;
+        changesDisplayedColumns: boolean;
+    }>([
+        {
+            option: 'groupDisplayType',
+            update: { groupDisplayType: 'multipleColumns' },
+            ids: ['ag-Grid-AutoColumn-a', 'ag-Grid-AutoColumn-b', 'c', 'd'],
+            autoHeader: undefined,
+            changesDisplayedColumns: true,
+        },
+        {
+            option: 'autoGroupColumnDef',
+            update: { autoGroupColumnDef: { headerName: 'G' } },
+            ids: ['ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'G',
+            changesDisplayedColumns: false,
+        },
+        {
+            option: 'rowNumbers',
+            update: { rowNumbers: true },
+            ids: ['ag-Grid-RowNumbersColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'Group',
+            changesDisplayedColumns: true,
+        },
+        {
+            option: 'rowSelection',
+            update: { rowSelection: { mode: 'multiRow' } },
+            ids: ['ag-Grid-SelectionColumn', 'ag-Grid-AutoColumn', 'c', 'd'],
+            autoHeader: 'Group',
+            changesDisplayedColumns: true,
+        },
+        {
+            option: 'pivotMode',
+            update: { pivotMode: true },
+            ids: ['ag-Grid-AutoColumn', 'c'],
+            autoHeader: 'Group',
+            changesDisplayedColumns: true,
+        },
+    ])(
+        'one update changing only $option raises at most one displayed columns change, and one when the displayed columns change',
+        async ({ option, update, ids, autoHeader, changesDisplayedColumns }) => {
+            const api = createGroupedGrid({
+                columnDefs: [
+                    { field: 'a', rowGroup: true, hide: true },
+                    { field: 'b', rowGroup: true, hide: true },
+                    { field: 'c', aggFunc: 'sum' },
+                    { field: 'd' },
+                ],
+            });
+            await settle();
+            expect(displayedIds(api)).toEqual(['ag-Grid-AutoColumn', 'c', 'd']);
+            let displayedColumnsChanged = 0;
+            api.addEventListener('displayedColumnsChanged', () => ++displayedColumnsChanged);
+
+            await runToIdle(() => api.updateGridOptions(update));
+
+            const auto = api.getColumn('ag-Grid-AutoColumn');
+            expect({
+                option: api.getGridOption(option),
+                ids: displayedIds(api),
+                autoHeader: auto ? api.getDisplayNameForColumn(auto, 'header') : undefined,
+            }).toEqual({ option: update[option], ids, autoHeader });
+            if (changesDisplayedColumns) {
+                expect(displayedColumnsChanged).toBe(1);
+            } else {
+                expect(displayedColumnsChanged).toBeLessThanOrEqual(1);
+            }
+        }
+    );
 });

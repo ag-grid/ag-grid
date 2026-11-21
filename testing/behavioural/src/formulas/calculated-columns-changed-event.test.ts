@@ -1,4 +1,4 @@
-import { getByRole, waitFor } from '@testing-library/dom';
+import { waitFor } from '@testing-library/dom';
 import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
@@ -8,10 +8,10 @@ import { _processOnChange } from 'ag-grid-community';
 import {
     clickDialogButton,
     createGrid,
-    getCalculatedColumnDialog,
     openEditDialogViaMenu,
     selectDataType,
     setExpression,
+    setTitle,
     setupCalculatedColumnsSuite,
     showColumnMenu,
 } from './calculatedColumnsHarness';
@@ -24,12 +24,6 @@ const profit: ColDef = {
 };
 const columnDefs: ColDef[] = [{ field: 'revenue' }, { field: 'cost' }, profit];
 const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
-
-function setTitle(value: string): void {
-    const input = getByRole(getCalculatedColumnDialog(), 'textbox', { name: 'Title' }) as HTMLInputElement;
-    input.value = value;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-}
 
 function closeDialog(): void {
     document.querySelector<HTMLButtonElement>('.ag-dialog .ag-panel-title-bar-button')!.click();

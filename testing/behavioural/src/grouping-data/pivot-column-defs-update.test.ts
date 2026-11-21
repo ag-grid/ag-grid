@@ -986,7 +986,7 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
-    test('one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group (pivotDefaultExpanded first)', () => {
+    test('one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group (pivotDefaultExpanded first)', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -997,16 +997,21 @@ describe('pivot column identity across columnDefs updates', () => {
             pivotDefaultExpanded: 0,
             rowData: olympicLikeRows,
         });
-        api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
-
-        expect(pivotGroups(api)).toEqual([
+        const allOpen = [
             { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
             { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: true, expandable: false },
             { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: true, expandable: false },
             { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
             { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
             { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
-        ]);
+        ];
+
+        api.updateGridOptions({ pivotDefaultExpanded: -1, pivotMode: true });
+
+        expect(api.isPivotMode()).toBe(true);
+        expect(pivotGroups(api)).toEqual(allOpen);
+        await asyncSetTimeout(0);
+        expect(pivotGroups(api)).toEqual(allOpen);
     });
 
     test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {

@@ -5,7 +5,7 @@
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { CalculatedUserColumnState, ColDef, GridApi, GridStateKey } from 'ag-grid-community';
+import type { CalculatedUserColumnState, ColDef, Column, GridApi, GridStateKey } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -907,6 +907,83 @@ describe('Column Mutations', () => {
                 'ag-Grid-HierarchyColumn-date-year',
                 'sport',
             ]);
+        });
+    });
+
+    describe('row group, pivot and value columns when columns are rebuilt without setting column definitions', () => {
+        const year = 'ag-Grid-HierarchyColumn-date-year';
+        const rowData = [{ sport: 'Rowing', country: 'UK', m: 2, n: 1, date: new Date(2020, 5, 15) }];
+
+        const rebuild = (api: GridApi) => {
+            const others = Object.keys(api.getState()).filter((key): key is GridStateKey => key !== 'userColumns');
+            api.setState(
+                { userColumns: [{ colId: 'n', properties: [{ property: 'headerName', value: 'N' }] }] },
+                others
+            );
+        };
+        const ids = (cols: Column[]) => cols.map((col) => col.getColId());
+        const headerTexts = (api: GridApi) =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell-text'), (el) => el.textContent);
+
+        test('a rebuild keeps a level the user grouped alone under a source that is not grouped', async () => {
+            const api = gridsManager.createGrid('levelGrouped', {
+                columnDefs: [
+                    { field: 'date', rowGroup: false, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport' },
+                    { field: 'n' },
+                ],
+                rowData,
+            });
+            api.setRowGroupColumns([year]);
+            const before = ids(api.getRowGroupColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
+
+            rebuild(api);
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
+            await asyncSetTimeout(0);
+
+            expect({
+                before,
+                after: ids(api.getRowGroupColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+                headers: ['Group', 'Date', 'Sport', 'N'],
+            });
+        });
+
+        test('a rebuild keeps a level the user pivoted alone under a source that is not pivoted', async () => {
+            const api = gridsManager.createGrid('levelPivoted', {
+                columnDefs: [
+                    { field: 'date', pivot: false, enablePivot: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', rowGroup: true },
+                    { field: 'n', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData,
+            });
+            api.setPivotColumns([year]);
+            const before = ids(api.getPivotColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
+
+            rebuild(api);
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
+            await asyncSetTimeout(0);
+
+            expect({
+                before,
+                after: ids(api.getPivotColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+                headers: ['Group', 'sum(N)'],
+            });
         });
     });
 

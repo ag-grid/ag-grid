@@ -6,11 +6,10 @@ import {
     asyncSetTimeout,
     installMockResizeObserver,
     mockGridLayout,
-    nextAnimationFrame,
     polyfillOffsetParent,
     triggerResizeObservers,
 } from 'ag-test-utils';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, GridStateModule } from 'ag-grid-community';
@@ -1267,6 +1266,7 @@ describe('Column Flex with animateColumnResizing', () => {
         { colId: 'c' },
     ];
     const isAnimating = (api: GridApi) => api.getGridElement()!.querySelector('.ag-animate-autosize') !== null;
+    const ONE_FRAME_MS = 16;
 
     test.each<[string, (api: GridApi) => void]>([
         ['setColumnsVisible', (api) => api.setColumnsVisible(['c'], false)],
@@ -1333,11 +1333,16 @@ describe('Column Flex with animateColumnResizing', () => {
         try {
             restoreOffsetParent = polyfillOffsetParent();
             uninstallResizeObserver = installMockResizeObserver();
+            // sampled inside the width animation, which a loaded machine's real clock can outlast
+            vi.useFakeTimers({
+                toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'],
+            });
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 defaultColDef: { flex: 1 },
                 animateColumnResizing: true,
             });
+            await vi.runAllTimersAsync();
 
             api.setColumnsVisible(['c'], false);
             expect(api.getColumn('a')!.getActualWidth()).toBe(1000);
@@ -1345,15 +1350,56 @@ describe('Column Flex with animateColumnResizing', () => {
 
             // one that leaves the centre width as it was keeps the animation
             triggerResizeObservers();
-            await nextAnimationFrame();
+            await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
             expect(isAnimating(api)).toBe(true);
 
             mockGridLayout.gridWidth = 1200;
             triggerResizeObservers();
+            await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
 
-            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(1200));
-            expect(isAnimating(api)).toBe(false);
+            expect({ width: api.getColumn('a')!.getActualWidth(), animating: isAnimating(api) }).toEqual({
+                width: 1200,
+                animating: false,
+            });
         } finally {
+            vi.useRealTimers();
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
+    });
+
+    test('a viewport resize that unpins the pinned columns it has no room for applies at once, ending a running width animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            // sampled inside the width animation, which a loaded machine's real clock can outlast
+            vi.useFakeTimers({
+                toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'],
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 600, pinned: 'left' }, { colId: 'b', width: 100 }, { colId: 'c' }],
+                animateColumnResizing: true,
+            });
+            await vi.runAllTimersAsync();
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+
+            api.applyColumnState({ state: [{ colId: 'b', width: 300 }] });
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 500;
+            triggerResizeObservers();
+            await vi.advanceTimersByTimeAsync(ONE_FRAME_MS);
+
+            expect({ pinned: api.getColumn('a')!.getPinned(), animating: isAnimating(api) }).toEqual({
+                pinned: null,
+                animating: false,
+            });
+        } finally {
+            vi.useRealTimers();
             mockGridLayout.gridWidth = originalGridWidth;
             uninstallResizeObserver?.();
             restoreOffsetParent?.();

@@ -10,7 +10,7 @@ import {
     createGrid,
     editViaDialog,
     entryOf,
-    getDialog,
+    getCalculatedColumnDialog,
     order,
     propertiesOf,
     setExpression,
@@ -38,7 +38,7 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         source.destroy();
         api.showColumnMenu(colId);
         await clickMenuOption('Edit Calculated Column');
-        expect(getDialog().querySelector('textarea')!.value).toBe('[Salary] * 0.1');
+        expect(getCalculatedColumnDialog().querySelector('textarea')!.value).toBe('[Salary] * 0.1');
         clickDialogButton('Apply');
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
         expect(api.getColumn(colId)!.getColDef().calculatedExpression).toBe('[salary] * 0.1');
@@ -227,7 +227,7 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         // Reopen the column menu and edit the expression live (default apply mode).
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 3');
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3'));
         clickDialogButton('Apply');

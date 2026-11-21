@@ -3,6 +3,7 @@ import { TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 const scrollbarWidth = 15;
 const initialRowCount = 11;
@@ -127,5 +128,91 @@ describe('Scrollbar visibility', () => {
                 ])
             );
         });
+    });
+});
+
+describe('Horizontal scrollbar while columns slide', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    let originalGridWidth: number;
+    let originalNativeScrollbarWidth: number;
+
+    beforeAll(() => {
+        originalGridWidth = mockGridLayout.gridWidth;
+        originalNativeScrollbarWidth = mockGridLayout.nativeScrollbarWidth;
+        mockGridLayout.gridWidth = 600;
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.nativeScrollbarWidth = scrollbarWidth;
+    });
+
+    afterAll(() => {
+        mockGridLayout.gridWidth = originalGridWidth;
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.nativeScrollbarWidth = originalNativeScrollbarWidth;
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.useRealTimers();
+    });
+
+    // The suite's fast timings: a frame is 16ms and the scrollbar shows 25ms after the layout overflows.
+    const NEXT_FRAME_MS = 16;
+    const SETTLED_MS = 200;
+
+    const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
+
+    const createOverflowingGrid = (suppressColumnMoveAnimation: boolean) =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 200 },
+                { field: 'b', width: 200 },
+                { field: 'c', width: 200 },
+                { field: 'd', width: 200 },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            scrollbarWidth,
+            suppressColumnMoveAnimation,
+        });
+
+    test('goes on the next frame when columns leave an overflowing layout without a slide', async () => {
+        vi.useFakeTimers();
+        const api = createOverflowingGrid(true);
+        await vi.advanceTimersByTimeAsync(SETTLED_MS);
+        expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
+
+        api.setColumnsVisible(['a', 'b'], false);
+        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
+
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            height: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], height: '0px' });
+    });
+
+    test('stays while columns slide out of an overflowing layout, and goes once the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = createOverflowingGrid(false);
+        await vi.advanceTimersByTimeAsync(SETTLED_MS);
+        expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
+        const sliding = () => document.querySelector('.ag-column-moving') !== null;
+
+        api.setColumnsVisible(['a', 'b'], false);
+        // Read at every timer while the slide runs, the last one just before the timer that ends it.
+        const heightsWhileSliding: string[] = [];
+        for (let timers = 0; sliding() && timers < 10; ++timers) {
+            heightsWhileSliding.push(horizontalScrollbarHeight());
+            await vi.advanceTimersToNextTimerAsync();
+        }
+        const slideEnded = !sliding();
+        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
+
+        // The two columns left (400px) fit the 600px viewport: the scrollbar is kept for the slide.
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            slideEnded,
+            whileSliding:
+                heightsWhileSliding.length > 0 && heightsWhileSliding.every((h) => h === `${scrollbarWidth}px`),
+            afterSlide: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], slideEnded: true, whileSliding: true, afterSlide: '0px' });
     });
 });

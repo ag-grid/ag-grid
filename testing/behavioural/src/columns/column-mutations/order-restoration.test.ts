@@ -5,7 +5,7 @@
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, Column, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -1333,6 +1333,51 @@ describe('Column Mutations - order restoration', () => {
             expect(allCols[0]).toBe(api.getColumn('b'));
             expect(allCols).not.toContain(before);
         });
+
+        test('column instances are current after a colDef rebuild (no stale-instance leak)', async () => {
+            const api = gridsManager.createGrid('staleCheck', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+            await new GridRows(api, 'column instances are current after a colDef rebuild setup').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            const aBefore = api.getColumn('a')!;
+            const bBefore = api.getColumn('b')!;
+
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'A!' }, { colId: 'c' }]);
+
+            await new GridColumns(api, 'column instances are current after a colDef rebuild').checkColumns(`
+                CENTER
+                ├── a "A!" width:200
+                └── c width:200
+            `);
+            await new GridRows(api, 'column instances are current after a colDef rebuild').check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            const c = api.getColumn('c');
+            const instance = (col: Column) => {
+                if (col === aBefore) {
+                    return 'a kept';
+                }
+                if (col === bBefore) {
+                    return 'b destroyed';
+                }
+                return col === c ? 'c new' : `${col.getColId()} other`;
+            };
+            expect({
+                grid: api.getAllGridColumns().map(instance),
+                displayed: api.getAllDisplayedColumns().map(instance),
+                byId: [api.getColumn('a'), c].map((col) => col && instance(col)),
+                removed: api.getColumn('b'),
+                headerName: aBefore.getColDef().headerName,
+            }).toEqual({
+                grid: ['a kept', 'c new'],
+                displayed: ['a kept', 'c new'],
+                byId: ['a kept', 'c new'],
+                removed: null,
+                headerName: 'A!',
+            });
+        });
     });
 
     describe('lastOrder per pivot mode (maintainColumnOrder)', () => {
@@ -1593,6 +1638,81 @@ describe('Column Mutations - order restoration', () => {
                   │ └── b2 width:200
                   └── c width:200
             `);
+        });
+    });
+
+    describe('column order across option updates without maintainColumnOrder', () => {
+        const displayedIds = (api: GridApi) => api.getAllDisplayedColumns().map((c) => c.getColId());
+
+        const buildColumnDefs = (): (ColDef | ColGroupDef)[] => [
+            {
+                headerName: 'G',
+                groupId: 'g',
+                children: [{ colId: 'a', field: 'a' }, { colId: 'b' }],
+            },
+            { colId: 'c' },
+            { colId: 'd' },
+        ];
+
+        const createMovedGrid = (id: string) => {
+            const api = gridsManager.createGrid(id, {
+                columnDefs: buildColumnDefs(),
+                rowData: [{ a: 'v' }],
+            });
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+            api.moveColumns(['c'], 0);
+            expect(displayedIds(api)).toEqual(['c', 'a', 'b', 'd']);
+            return api;
+        };
+
+        test('setting new columnDefs resets the user order to the definitions order', () => {
+            const api = createMovedGrid('columnDefsReset');
+
+            api.setGridOption('columnDefs', buildColumnDefs());
+
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+        });
+
+        test('a defaults change resets the user order to the definitions order', () => {
+            const api = createMovedGrid('defaultsReset');
+
+            api.setGridOption('defaultColDef', { width: 120 });
+
+            expect({
+                order: displayedIds(api),
+                widths: displayedIds(api).map((id) => api.getColumn(id)!.getActualWidth()),
+            }).toEqual({ order: ['a', 'b', 'c', 'd'], widths: [120, 120, 120, 120] });
+        });
+
+        test('a defaults change resets a strict pivot column order the user changed', () => {
+            const api = gridsManager.createGrid('strictPivot', {
+                columnDefs: [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', pivot: true },
+                    { field: 'c', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { a: '1', b: '1', c: 3 },
+                    { a: '1', b: '2', c: 3 },
+                    { a: '2', b: '3', c: 3 },
+                ],
+                pivotMode: true,
+                enableStrictPivotColumnOrder: true,
+            });
+            const auto = 'ag-Grid-AutoColumn';
+
+            expect(displayedIds(api)).toEqual([auto, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c']);
+
+            api.moveColumns(['pivot_b_1_c'], 2);
+            expect(displayedIds(api)).toEqual([auto, 'pivot_b_2_c', 'pivot_b_1_c', 'pivot_b_3_c']);
+
+            api.setGridOption('defaultColDef', { width: 120 });
+
+            // Pivot result widths left out: a defaults change does not reach existing pivot result columns.
+            expect({ order: displayedIds(api), c: api.getColumn('c')!.getActualWidth() }).toEqual({
+                order: [auto, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'],
+                c: 120,
+            });
         });
     });
 });
