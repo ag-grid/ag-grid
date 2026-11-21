@@ -38,6 +38,139 @@
         flex-grow: 1;
     }
 
+    .ag-tool-panel-resizer {
+        display: contents;
+    }
+
+    // a panel in an external parent fills it, so there is nothing to resize
+    .ag-tool-panel-external .ag-tool-panel-resizer {
+        display: none;
+    }
+
+    .ag-tool-panel-horizontal-resize {
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        // the line: 2px, over the 1px border, which is the middle pixel of the 5px area, and the panel's first pixel
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+    }
+
+    .ag-side-bar-left .ag-tool-panel-horizontal-resize::after {
+        @include ag.unthemed-rtl(
+            (
+                left: 1px,
+                right: 2px,
+            )
+        );
+    }
+
+    .ag-side-bar-right .ag-tool-panel-horizontal-resize::after {
+        @include ag.unthemed-rtl(
+            (
+                left: 2px,
+                right: 1px,
+            )
+        );
+    }
+
+    .ag-tool-panel-horizontal-resize:hover,
+    .ag-tool-panel-horizontal-resize:focus-visible,
+    .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize,
+    .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize {
+        z-index: 3;
+    }
+
+    // the whole border highlights while it is hovered, focused or in use
+    .ag-tool-panel-horizontal-resize:hover::after,
+    .ag-tool-panel-horizontal-resize:focus-visible::after,
+    .ag-tool-panel-resizer-active .ag-tool-panel-horizontal-resize::after,
+    .ag-tool-panel-resizer-dragging .ag-tool-panel-horizontal-resize::after {
+        background-color: var(--ag-side-bar-resize-line-color);
+
+        @media (forced-colors: active) {
+            forced-color-adjust: none;
+            background-color: Highlight;
+        }
+    }
+
+    // shown only after a click or tap on the border; keyboard users resize with the arrow keys instead
+    .ag-tool-panel-resize-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ag-grid-size);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        visibility: hidden;
+        z-index: 4;
+    }
+
+    .ag-tool-panel-resizer-active .ag-tool-panel-resize-buttons {
+        visibility: visible;
+    }
+
+    // centred on the border
+    .ag-side-bar-left .ag-tool-panel-resize-buttons {
+        @include ag.unthemed-rtl(
+            (
+                right: calc(var(--ag-side-bar-resize-button-size) / -2),
+            )
+        );
+    }
+
+    .ag-side-bar-right .ag-tool-panel-resize-buttons {
+        @include ag.unthemed-rtl(
+            (
+                left: calc(var(--ag-side-bar-resize-button-size) / -2),
+            )
+        );
+    }
+
+    .ag-tool-panel-resize-button {
+        @include ag.inherit-text-styles();
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--ag-side-bar-resize-button-size);
+        height: var(--ag-side-bar-resize-button-size);
+        padding: 0;
+        margin: 0;
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-background-color);
+        border: solid 1px var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        cursor: pointer;
+
+        // the disabled background can be semi-transparent, so it goes over the opaque one: nothing under the button shows
+        // through. The icon colours itself from --ag-icon-font-color, so an inherited color alone would not reach the arrow
+        &[aria-disabled='true'] {
+            --ag-icon-font-color: var(--ag-disabled-foreground-color);
+            cursor: default;
+            color: var(--ag-disabled-foreground-color);
+            background-image: linear-gradient(
+                var(--ag-input-disabled-background-color),
+                var(--ag-input-disabled-background-color)
+            );
+
+            // forced colours replace the disabled colours, so it would look enabled
+            @media (forced-colors: active) {
+                --ag-icon-font-color: GrayText;
+                color: GrayText;
+                border-color: GrayText;
+            }
+        }
+    }
+
+    @include ag.keyboard-focus((ag-tool-panel-resize-button), 2px);
+
     .ag-side-buttons {
         padding-top: calc(var(--ag-grid-size) * 4);
         width: calc(var(--ag-icon-size) + 4px);

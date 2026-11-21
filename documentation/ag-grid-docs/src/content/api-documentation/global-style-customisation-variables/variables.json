@@ -477,6 +477,14 @@
             "description": "Width of the sidebar that contains the columns and filters tool panels",
             "type": "CSS length (e.g. `0` or `4px`)"
         },
+        "--ag-side-bar-resize-button-size": {
+            "description": "Width and height of the Widen and Narrow buttons shown when a tool panel's resize border is clicked or tapped",
+            "type": "CSS length (e.g. `0` or `4px`)"
+        },
+        "--ag-side-bar-resize-line-color": {
+            "description": "Color of the line along a tool panel's resize border while it is hovered, focused or being resized. Defaults to the color of a focused input's border",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-font-family": {
             "description": "Font family used for all text",
             "type": "CSS font-family value (e.g. `'Gill Sans', sans-serif`)"

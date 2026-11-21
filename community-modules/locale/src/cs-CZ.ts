@@ -878,6 +878,8 @@ export const AG_GRID_LOCALE_CS_CZ = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Seznam sloupců',
     ariaFilterPanelList: 'Seznam filtrů',
+    ariaToolPanelWiden: 'Rozšířit panel',
+    ariaToolPanelNarrow: 'Zúžit panel',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Přidat filtr',

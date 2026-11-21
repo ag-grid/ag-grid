@@ -576,6 +576,17 @@ export interface CoreParams extends SharedThemeParams {
     sideBarPanelAnimationDuration: DurationValue;
 
     /**
+     * Width and height of the Widen and Narrow buttons shown when a tool panel's resize border is clicked or tapped
+     */
+    sideBarResizeButtonSize: LengthValue;
+
+    /**
+     * Color of the line along a tool panel's resize border while it is hovered, focused or being resized. Defaults to
+     * the color of a focused input's border
+     */
+    sideBarResizeLineColor: ColorValue;
+
+    /**
      * Borders between the grid and side panels including the column and filter tool bars, and chart settings
      */
     sidePanelBorder: BorderValue;
@@ -893,6 +904,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     sidePanelBorder: true,
     sideBarPanelWidth: 250,
     sideBarPanelAnimationDuration: 0,
+    sideBarResizeButtonSize: 24,
+    sideBarResizeLineColor: accentColor,
     sideBarBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },

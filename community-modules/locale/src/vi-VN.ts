@@ -878,6 +878,8 @@ export const AG_GRID_LOCALE_VI_VN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Danh sách Cột',
     ariaFilterPanelList: 'Danh sách Bộ lọc',
+    ariaToolPanelWiden: 'Tăng chiều rộng bảng điều khiển',
+    ariaToolPanelNarrow: 'Giảm chiều rộng bảng điều khiển',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',

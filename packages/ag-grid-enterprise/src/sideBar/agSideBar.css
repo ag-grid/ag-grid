@@ -45,6 +45,15 @@
     white-space: nowrap;
 }
 
+.ag-tool-panel-resizer {
+    display: contents;
+}
+
+/* a panel in an external parent fills it, so there is nothing to resize */
+:where(.ag-tool-panel-external) .ag-tool-panel-resizer {
+    display: none;
+}
+
 .ag-tool-panel-horizontal-resize {
     cursor: ew-resize;
     height: 100%;
@@ -54,10 +63,64 @@
     z-index: 1;
 }
 
+/* shown only after a click or tap on the border; keyboard users resize with the arrow keys instead */
+.ag-tool-panel-resize-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-spacing);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    visibility: hidden;
+    z-index: 4;
+}
+
+:where(.ag-tool-panel-resizer-active) .ag-tool-panel-resize-buttons {
+    visibility: visible;
+}
+
+.ag-tool-panel-resize-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ag-side-bar-resize-button-size);
+    height: var(--ag-side-bar-resize-button-size);
+    padding: 0;
+    color: var(--ag-foreground-color);
+    background-color: var(--ag-background-color);
+    border: solid 1px var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    cursor: pointer;
+}
+
+/* the disabled background can be semi-transparent, so it goes over the opaque one: nothing under the button shows
+   through. The icon colours itself from --ag-icon-color, so an inherited color alone would not reach the arrow */
+.ag-tool-panel-resize-button:where([aria-disabled='true']) {
+    --ag-icon-color: var(--ag-button-disabled-text-color);
+
+    cursor: default;
+    color: var(--ag-button-disabled-text-color);
+    background-image: linear-gradient(
+        var(--ag-button-disabled-background-color),
+        var(--ag-button-disabled-background-color)
+    );
+
+    /* forced colours replace the disabled colours, so it would look enabled */
+    @media (forced-colors: active) {
+        --ag-icon-color: GrayText;
+
+        color: GrayText;
+        border-color: GrayText;
+    }
+}
+
+.ag-tool-panel-resize-button:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+}
+
 .ag-side-bar {
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
     background-color: var(--ag-side-bar-background-color);
 }
 
@@ -69,9 +132,57 @@
     left: -3px;
 }
 
+/* centred on the border */
+:where(.ag-side-bar-left) .ag-tool-panel-resize-buttons {
+    right: calc(var(--ag-side-bar-resize-button-size) / -2);
+}
+
+:where(.ag-side-bar-right) .ag-tool-panel-resize-buttons {
+    left: calc(var(--ag-side-bar-resize-button-size) / -2);
+}
+
+/* raised while highlighted, as the grid header and its resize handles cover the half over the grid */
+.ag-tool-panel-horizontal-resize:where(:hover, :focus-visible),
+:where(.ag-tool-panel-resizer-active, .ag-tool-panel-resizer-dragging) .ag-tool-panel-horizontal-resize {
+    z-index: 3;
+}
+
+.ag-tool-panel-horizontal-resize:focus {
+    outline: var(--ag-internal-accessible-no-outline, revert);
+    box-shadow: none;
+}
+
+/* the line: 2px, over the 1px border, which is the middle pixel of the 5px area, and the panel's first pixel */
+.ag-tool-panel-horizontal-resize::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+:where(.ag-side-bar-left) .ag-tool-panel-horizontal-resize::after {
+    left: 1px;
+    right: 2px;
+}
+
+:where(.ag-side-bar-right) .ag-tool-panel-horizontal-resize::after {
+    left: 2px;
+    right: 1px;
+}
+
+/* the whole border highlights while it is hovered, focused or in use */
+.ag-tool-panel-horizontal-resize:where(:hover, :focus-visible)::after,
+:where(.ag-tool-panel-resizer-active, .ag-tool-panel-resizer-dragging) .ag-tool-panel-horizontal-resize::after {
+    background-color: var(--ag-side-bar-resize-line-color);
+
+    @media (forced-colors: active) {
+        forced-color-adjust: none;
+        background-color: Highlight;
+    }
+}
+
 .ag-side-bar-left {
     order: -1;
-    flex-direction: row;
 }
 
 .ag-side-buttons {
