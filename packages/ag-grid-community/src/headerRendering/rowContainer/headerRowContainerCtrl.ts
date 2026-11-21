@@ -189,7 +189,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.restoreFocusOnHeader(focusSvc, focusedHeaderPosition);
 
-        if (oldCtrls.length !== allCtrls.length) {
+        // Re-size the header when the row types change, not only their count (e.g. [column, filter] -> [group, column])
+        if (oldCtrls.length !== allCtrls.length || oldCtrls.some((ctrl, i) => ctrl.type !== allCtrls[i].type)) {
             this.beans.eventSvc.dispatchEvent({
                 type: 'headerRowsChanged',
             });
