@@ -172,6 +172,7 @@ export const GRID_OPTION_DEFAULTS = {
     accentedSort: false,
     suppressMultiSort: false,
     alwaysMultiSort: false,
+    multiSortIndexStyle: 'inline',
     suppressMaintainUnsortedOrder: false,
     suppressRowHoverHighlight: false,
     suppressRowTransform: false,

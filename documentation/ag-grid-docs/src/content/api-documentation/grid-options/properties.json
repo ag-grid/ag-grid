@@ -2155,6 +2155,12 @@
                 "url": "./row-sorting/#multi-column-sorting"
             }
         },
+        "multiSortIndexStyle": {
+            "more": {
+                "name": "Sort Index Style",
+                "url": "./row-sorting/#sort-index-style"
+            }
+        },
         "suppressMaintainUnsortedOrder": {
             "more": {
                 "name": "Comparison to Transaction Updates",

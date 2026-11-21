@@ -284,6 +284,21 @@ export interface CoreParams extends SharedThemeParams {
     headerColumnResizeHandleWidth: LengthValue;
 
     /**
+     * Font size of the multi-sort index when the `multiSortIndexStyle` grid option is `'inline'`.
+     */
+    headerSortIndexInlineFontSize: LengthValue;
+
+    /**
+     * Font size of the multi-sort index when the `multiSortIndexStyle` grid option is `'superscript'`.
+     */
+    headerSortIndexSuperscriptFontSize: LengthValue;
+
+    /**
+     * Font size of the multi-sort index when the `multiSortIndexStyle` grid option is `'subscript'`.
+     */
+    headerSortIndexSubscriptFontSize: LengthValue;
+
+    /**
      * Font family of text in grid cells
      */
     cellFontFamily: FontFamilyValue;
@@ -985,6 +1000,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     headerColumnResizeHandleColor: {
         ref: 'borderColor',
     },
+    headerSortIndexInlineFontSize: { ref: 'headerFontSize' },
+    headerSortIndexSuperscriptFontSize: { calc: 'headerFontSize * 0.75' },
+    headerSortIndexSubscriptFontSize: { calc: 'headerFontSize * 0.75' },
     iconButtonColor: { ref: 'iconColor' },
     iconButtonBackgroundColor: 'transparent',
     iconButtonBackgroundSpread: 4,

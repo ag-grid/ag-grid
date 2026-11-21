@@ -95,6 +95,18 @@ You can suppress the multi sorting behaviour by enabling the `suppressMultiSort`
 the `alwaysMultiSort` option.
 {% /note %}
 
+### Sort Index Style
+
+Each sorted column shows its position in the sort order next to the sort icon, on the side away from the header text. Set `multiSortIndexStyle` to choose how the number is shown:
+
+- `'inline'` (default): The same size as the header text.
+- `'superscript'`: Smaller, raised to the top of the sort icon.
+- `'subscript'`: Smaller, lowered to the bottom of the sort icon.
+
+Change the font size of each style with the `headerSortIndexInlineFontSize`, `headerSortIndexSuperscriptFontSize` and `headerSortIndexSubscriptFontSize` [theme parameters](./theming-parameters/).
+
+{% gridExampleRunner title="Sort Index Style" name="sort-index-style" /%}
+
 ## Sorting Animation
 
 By default rows will animate after sorting. If you wish to suppress this animation set the grid property `animateRows=false`.

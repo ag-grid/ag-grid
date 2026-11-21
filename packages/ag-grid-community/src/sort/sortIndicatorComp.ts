@@ -22,15 +22,17 @@ const SortIndicatorElement: ElementParams = {
     tag: 'span',
     cls: 'ag-sort-indicator-container',
     children: [
-        makeIconParams('Order', 'order'),
         makeIconParams('Asc', 'ascending-icon'),
         makeIconParams('Desc', 'descending-icon'),
         makeIconParams('Mixed', 'mixed-icon'),
         makeIconParams('AbsoluteAsc', 'absolute-ascending-icon'),
         makeIconParams('AbsoluteDesc', 'absolute-descending-icon'),
         makeIconParams('None', 'none-icon'),
+        makeIconParams('Order', 'order'),
     ],
 };
+
+const SORT_ORDER_STYLES = ['inline', 'superscript', 'subscript'] as const;
 
 export class SortIndicatorComp extends Component {
     // Elements might by undefined when the user provides a custom template
@@ -105,6 +107,7 @@ export class SortIndicatorComp extends Component {
             columnRowGroupChanged: sortUpdated,
         });
 
+        this.setupSortOrderStyle();
         this.onSortChanged();
         this.setupSortTooltips(tooltipLocation);
     }
@@ -136,6 +139,24 @@ export class SortIndicatorComp extends Component {
                 this.sortTooltips ??= [];
                 this.sortTooltips.push(tooltip);
             }
+        }
+    }
+
+    private setupSortOrderStyle(): void {
+        if (this.suppressOrder || !this.eSortOrder) {
+            return;
+        }
+
+        this.updateSortOrderStyle();
+        this.addManagedPropertyListener('multiSortIndexStyle', this.updateSortOrderStyle.bind(this));
+    }
+
+    private updateSortOrderStyle(): void {
+        const eSortOrder = this.eSortOrder!;
+        const style = this.gos.get('multiSortIndexStyle');
+        for (let i = 0, len = SORT_ORDER_STYLES.length; i < len; ++i) {
+            const option = SORT_ORDER_STYLES[i];
+            eSortOrder.classList.toggle(`ag-sort-order-${option}`, option === style);
         }
     }
 
