@@ -287,6 +287,7 @@ export class AgColumn<TValue = any>
     }
 
     public getInstanceId(): ColumnInstanceId {
+        this.deprecated(343);
         return this.instanceId;
     }
 
@@ -464,6 +465,7 @@ export class AgColumn<TValue = any>
     }
 
     public isFieldContainsDots(): boolean {
+        this.deprecated(344);
         return this.fieldPath !== null;
     }
 
@@ -476,6 +478,11 @@ export class AgColumn<TValue = any>
     }
 
     public isTooltipFieldContainsDots(): boolean {
+        this.deprecated(345);
+        return this.hasTooltipFieldDots();
+    }
+
+    public hasTooltipFieldDots(): boolean {
         return (this.colFlags & COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS) !== 0;
     }
 
@@ -661,22 +668,26 @@ export class AgColumn<TValue = any>
         return this.colDef.sortable ?? true;
     }
 
-    /** @deprecated v32 use col.getSort() === 'asc */
+    /** @deprecated v32 use col.getSort() === 'asc' */
     public isSortAscending(): boolean {
+        this.deprecated(350);
         return this.getSort() === 'asc';
     }
 
-    /** @deprecated v32 use col.getSort() === 'desc */
+    /** @deprecated v32 use col.getSort() === 'desc' */
     public isSortDescending(): boolean {
+        this.deprecated(351);
         return this.getSort() === 'desc';
     }
-    /** @deprecated v32 use col.getSort() === undefined */
+    /** @deprecated v32 use !col.getSort() */
     public isSortNone(): boolean {
+        this.deprecated(352);
         return !this.getSort();
     }
 
-    /** @deprecated v32 use col.getSort() !== undefined */
+    /** @deprecated v32 use col.getSort() != null */
     public isSorting(): boolean {
+        this.deprecated(353);
         return this.getSort() != null;
     }
 
@@ -709,6 +720,7 @@ export class AgColumn<TValue = any>
     }
 
     public getRight(): number {
+        this.deprecated(354);
         // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
         return this.left! + this.actualWidth;
     }
@@ -942,6 +954,7 @@ export class AgColumn<TValue = any>
     }
 
     public isGreaterThanMax(width: number): boolean {
+        this.deprecated(346);
         return width > this.maxWidth;
     }
 
@@ -966,10 +979,22 @@ export class AgColumn<TValue = any>
     }
 
     public isAnyFunctionActive(): boolean {
-        return this.pivotActive || this.rowGroupActive || this.aggregationActive;
+        this.deprecated(347);
+        return this.isFunctionActive();
     }
 
     public isAnyFunctionAllowed(): boolean {
+        this.deprecated(348);
+        return this.isFunctionAllowed();
+    }
+
+    /** Whether row grouping, pivoting or aggregation is active on the column. */
+    public isFunctionActive(): boolean {
+        return this.pivotActive || this.rowGroupActive || this.aggregationActive;
+    }
+
+    /** Whether row grouping, pivoting or aggregation is enabled on the column. */
+    public isFunctionAllowed(): boolean {
         const colDef = this.colDef;
         return colDef.enablePivot === true || colDef.enableRowGroup === true || colDef.enableValue === true;
     }

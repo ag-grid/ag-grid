@@ -505,7 +505,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         for (const col of this.columnGroup.getLeafColumns()) {
             if (pivotMode) {
-                if (col.isAnyFunctionAllowed()) {
+                if (col.isFunctionAllowed()) {
                     colsThatCanAction++;
                 }
             } else if (!col.colDef.lockVisible) {

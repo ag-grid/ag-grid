@@ -571,6 +571,14 @@ export function _warnWithoutAttribution<
     logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true);
 }
 
+export function _deprecatedWithoutAttribution<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'deprecation', true);
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _errorWithoutAttribution<
     TId extends ErrorId,

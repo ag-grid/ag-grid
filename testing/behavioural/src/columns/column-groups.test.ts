@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 
 describe('Column Groups', () => {
     const gridsManager = new TestGridsManager({
@@ -1869,6 +1869,8 @@ describe('Column Groups', () => {
             const provided = api.getProvidedColumnGroup('g1')!;
             expect(provided).toBeTruthy();
             expect(provided.getId()).toBe('g1');
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343] });
             expect(typeof provided.getInstanceId()).toBe('number');
             expect(provided.getChildren().map((c: any) => c.getColId?.() ?? c.getGroupId?.())).toEqual(['a', 'b']);
 
@@ -1904,6 +1906,8 @@ describe('Column Groups', () => {
             const g = api.getColumnGroup('g1')!;
             expect(g).toBeTruthy();
             // partId is assigned per displayed instance — a number
+            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [349] });
             expect(typeof g.getPartId()).toBe('number');
             // group has displayed children → not empty
             expect(g.isEmptyGroup()).toBe(false);

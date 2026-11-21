@@ -391,7 +391,7 @@ export class ToolPanelColumnComp extends Component {
             //  a) gui is not allowed make any changes
             const functionsReadOnly = this.gos.get('functionsReadOnly');
             //  b) column is not allow any functions on it
-            const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
+            const noFunctionsAllowed = !this.column.isFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
             canBeDragged = canBeToggled;
         } else {

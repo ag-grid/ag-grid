@@ -9,7 +9,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { getErrorLink, getValidationDocLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -255,8 +255,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation \`${key}\`` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for \`${variable?.cssName}\`. This usually means that the grid has been initialised before styles have been loaded. The default value of \`${variable?.defaultValue}\` will be used and updated when styles load.` as const,
-    10: ({ eventType }: { eventType: RowNodeEventType }) =>
-        `As of v33, the \`${eventType}\` event is deprecated. Use the global \`modelUpdated\` event to determine when row children have changed.`,
+    // 10: retired (deprecated row node event warning)
     11: () => 'No gridOptions provided to `createGrid`' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -350,8 +349,7 @@ export const AG_GRID_ERRORS = {
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
-    61: () =>
-        'since version v32.2.0, `rowNode.isFullWidthCell()` has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    // 61: retired (deprecated rowNode.isFullWidthCell warning)
     62: ({ colId }: { colId: string }) => `\`setFilterModel()\` - no column found for colId: ${colId}` as const,
     63: ({ colId }: { colId: string }) =>
         `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
@@ -973,6 +971,26 @@ export const AG_GRID_ERRORS = {
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
         `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+    343: () => '`getInstanceId()` on a column or column group is deprecated and will be removed in v38.' as const,
+    344: () => '`column.isFieldContainsDots()` is deprecated and will be removed in v38.' as const,
+    345: () => '`column.isTooltipFieldContainsDots()` is deprecated and will be removed in v38.' as const,
+    346: () =>
+        '`column.isGreaterThanMax()` is deprecated and will be removed in v38. Compare the width with `column.getMaxWidth()` instead.' as const,
+    347: () =>
+        '`column.isAnyFunctionActive()` is deprecated and will be removed in v38. Use `column.isRowGroupActive()`, `column.isPivotActive()` and `column.isValueActive()` instead.' as const,
+    348: () =>
+        '`column.isAnyFunctionAllowed()` is deprecated and will be removed in v38. Check `enableRowGroup`, `enablePivot` and `enableValue` on `column.getColDef()` instead.' as const,
+    349: () => '`columnGroup.getPartId()` is deprecated and will be removed in v38.' as const,
+    350: () =>
+        "`column.isSortAscending()` is deprecated and will be removed in v38. Use `column.getSort() === 'asc'` instead." as const,
+    351: () =>
+        "`column.isSortDescending()` is deprecated and will be removed in v38. Use `column.getSort() === 'desc'` instead." as const,
+    352: () =>
+        '`column.isSortNone()` is deprecated and will be removed in v38. Use `!column.getSort()` instead.' as const,
+    353: () =>
+        '`column.isSorting()` is deprecated and will be removed in v38. Use `column.getSort() != null` instead.' as const,
+    354: () =>
+        '`column.getRight()` is deprecated and will be removed in v38. Use `(column.getLeft() ?? 0) + column.getActualWidth()` instead.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -988,7 +1006,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 342;
+export const MAX_ERROR_ID = 354;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
