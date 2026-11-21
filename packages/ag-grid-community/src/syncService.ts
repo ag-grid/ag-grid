@@ -17,7 +17,7 @@ export class SyncService extends BeanStub implements NamedBean {
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
         this.beans.ctrlsSvc.whenReady(this, () => {
-            const columnDefs = this.gos.get('columnDefs');
+            const columnDefs = this.gos.get('columnDefs') ?? this.beans.autoGenColsSvc?.getInitialColumnDefs();
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
             } else {
