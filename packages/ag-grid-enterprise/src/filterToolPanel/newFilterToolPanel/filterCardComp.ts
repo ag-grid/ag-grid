@@ -9,8 +9,8 @@ import {
     _setDisplayed,
 } from 'ag-stack';
 
-import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState } from 'ag-grid-community';
-import { Component, _createIcon } from 'ag-grid-community';
+import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState, TooltipFeature } from 'ag-grid-community';
+import { Component, _createIcon, _resolveHeaderTooltip } from 'ag-grid-community';
 
 import { FilterDetailComp } from './filterDetailComp';
 import { translateForFilterPanel } from './filterPanelUtils';
@@ -67,6 +67,7 @@ export class FilterCardComp extends Component {
     private state?: FilterPanelFilterState;
     private summaryComp?: FilterSummaryComp;
     private detailComp?: FilterDetailComp;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(private readonly id: string) {
         super(FilterCardElement);
@@ -86,6 +87,24 @@ export class FilterCardComp extends Component {
         });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         eEditing.appendChild(_createIcon('filterCardEditing', beans, null));
+        this.tooltipFeature = this.createOptionalManagedBean(
+            beans.tooltipSvc?.createTooltip({
+                getGui: () => eExpand,
+                getTextElement: () => this.eTitle,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () =>
+                    _resolveHeaderTooltip(
+                        this.gos,
+                        this.gos.addCommon({
+                            location: 'filterToolPanelColumnGroup',
+                            column: this.state?.column,
+                            colDef: this.state?.column?.colDef,
+                            value: this.state?.name,
+                            valueFormatted: this.state?.name,
+                        })
+                    ),
+            })
+        );
     }
 
     public refresh(newState: FilterPanelFilterState): void {
@@ -94,6 +113,7 @@ export class FilterCardComp extends Component {
         const { name, expanded, isEditing } = newState;
 
         this.eTitle.textContent = name;
+        this.tooltipFeature?.refreshTooltip();
 
         _setDisplayed(eEditing, isEditing);
 

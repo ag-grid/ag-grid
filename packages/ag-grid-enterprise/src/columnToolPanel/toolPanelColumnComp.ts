@@ -27,10 +27,8 @@ import {
     TouchListener,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
 import { _isContextMenuKey } from '../widgets/menuPopupUtils';
@@ -134,19 +132,15 @@ export class ToolPanelColumnComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'columnToolPanelColumn',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumn',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getTextElement: () => (this.labelRendererFeature?.hasRenderer() ? undefined : eLabel),
             })
         );
 

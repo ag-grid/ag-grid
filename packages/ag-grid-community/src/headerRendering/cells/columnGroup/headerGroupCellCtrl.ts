@@ -22,7 +22,7 @@ import { createHeaderMenuSource } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
+import type { AgColumnGroupHeader, IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -61,6 +61,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 > {
     private expandable: boolean;
     private displayName: string | null;
+    private userCompDetails: UserCompDetails | undefined;
     private tooltipFeature: TooltipFeature | undefined;
     /** Tooltip supplied by a custom header component via `setTooltip`. */
     private componentTooltip: ComponentTooltip = {};
@@ -141,6 +142,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addDestroyFunc(() => {
             this.headerCompGuard.invalidate();
             this.clearComponentTooltip();
+            this.userCompDetails = undefined;
             this.clearComponent();
         });
     }
@@ -313,6 +315,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         if (compDetails) {
             // Adopting a new component supersedes every earlier claim; a kept component's claims stay live.
             this.headerCompGuard.supersede();
+            this.userCompDetails = compDetails;
             this.comp.setUserCompDetails(compDetails);
         }
     }
@@ -358,6 +361,20 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column.getProvidedColumnGroup(),
         });
+    }
+
+    public getTooltipTextElement(): HTMLElement | undefined {
+        const headerComp = this.comp?.getUserCompInstance();
+        const compDetails = this.userCompDetails;
+        if (
+            !compDetails ||
+            compDetails.componentFromFramework ||
+            compDetails.componentClass !== headerComp?.constructor ||
+            compDetails.params.innerHeaderGroupComponent
+        ) {
+            return undefined;
+        }
+        return (headerComp as AgColumnGroupHeader).getTooltipTextElement?.();
     }
 
     private setupTooltip(): void {

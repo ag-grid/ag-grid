@@ -1,7 +1,9 @@
 import type { AgColumn } from '../entities/agColumn';
+import type { ColDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
+import type { IRowNode } from './iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IAutoColService {
@@ -10,6 +12,8 @@ export interface IAutoColService {
 
     /** Sync internal cols against current row-group state. */
     refreshCols(source: ColumnEventType): AgColumn[] | null;
+
+    getTooltipColDef(column: AgColumn, node: IRowNode): ColDef;
 
     updateColumns(event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void;
 }

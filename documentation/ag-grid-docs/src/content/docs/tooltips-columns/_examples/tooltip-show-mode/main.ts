@@ -17,19 +17,15 @@ ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
 const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         field: 'athlete',
-        tooltip: true,
         width: 130,
     },
     {
         field: 'country',
-        tooltip: true,
         headerName: 'Country of Athlete',
-        headerTooltip: 'Country of Athlete',
         width: 100,
     },
     {
         field: 'sport',
-        tooltip: true,
     },
 ];
 
@@ -38,7 +34,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     tooltipShowDelay: 500,
-    tooltipShowMode: 'whenTruncated',
 };
 
 // setup the grid after the page has finished loading

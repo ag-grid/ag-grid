@@ -164,9 +164,10 @@ export interface ITooltipComp<TData = any, TValue = any, TContext = any> extends
 > {}
 
 export interface IBuiltInTooltipParams<TData = any, TContext = any> extends TooltipCommonParams<TData, any, TContext> {
-    /** The localised tooltip text. */
+    /** The tooltip text, localised for built-in control hints. */
     text: string;
-    control: BuiltInTooltipControl;
+    /** The built-in control, or undefined for an automatic truncated-text tooltip. */
+    control?: BuiltInTooltipControl;
     /** Hides the tooltip without moving focus. */
     hideTooltipCallback: () => void;
 }

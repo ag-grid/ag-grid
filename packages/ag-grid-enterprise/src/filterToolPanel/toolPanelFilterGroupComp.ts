@@ -12,10 +12,8 @@ import {
     Component,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _isHeaderNameChangeForGroup,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -96,22 +94,16 @@ export class ToolPanelFilterGroupComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'filterToolPanelColumnGroup',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'filterToolPanelColumnGroup',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(
-                    gos,
-                    () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
-                ),
+                getTextElement: () =>
+                    filterGroupComp.getGui().querySelector<HTMLElement>('.ag-group-title') ?? undefined,
             })
         );
 

@@ -8,7 +8,7 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { TooltipCallbackParams } from './tooltipComponent';
 import type { ResolvedTooltip, TooltipFeature, TooltipSource } from './tooltipFeature';
-import { _getCellTooltipComponentDefinition } from './tooltipFeature';
+import { _getCellTooltipComponentDefinition, _isShowTooltipWhenTruncated, _resolveTextTooltip } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveGroupTooltipValue } from './tooltipValueUtils';
 
 interface RowTooltip {
@@ -127,18 +127,16 @@ export class FullWidthRowTooltips extends BeanStub {
         const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
         const { gos } = this;
 
-        const colDef = this.getGroupColDef(rowNode);
-        if (!colDef) {
+        const colDef = this.getGroupColDef(rowNode) ?? {};
+        if (colDef.tooltip === false) {
             this.clearTooltip(eGui);
             return;
         }
 
         const hasTooltipValue = _isCellTooltipConfigured(colDef);
         const hasLegacyComponentOnlyTooltip =
-            colDef.tooltip !== false &&
-            !hasTooltipValue &&
-            !!(colDef.tooltipComponent || colDef.tooltipComponentSelector);
-        if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip) {
+            !hasTooltipValue && !!(colDef.tooltipComponent || colDef.tooltipComponentSelector);
+        if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip && !_isShowTooltipWhenTruncated(gos)) {
             this.clearTooltip(eGui);
             return;
         }
@@ -188,12 +186,13 @@ export class FullWidthRowTooltips extends BeanStub {
                         };
                     });
                 }
-                return {
+                return _resolveTextTooltip(gos, {
                     value: tooltipValue,
+                    automatic: !hasTooltipValue && !hasLegacyComponentOnlyTooltip,
                     params,
                     sourceValues: display,
                     componentDefinition: _getCellTooltipComponentDefinition(colDef),
-                };
+                });
             },
             false
         );
@@ -221,9 +220,22 @@ export class FullWidthRowTooltips extends BeanStub {
 
         const source: TooltipSource = {
             getGui: () => eGui,
-            getTooltip,
+            getTooltip: () => ({ ...getTooltip(), shouldDisplay: shouldDisplayTooltip }),
             getLocation: () => 'fullWidthRow',
-            shouldDisplayTooltip,
+            getTextElement: () => {
+                const renderer = this.gos.get('groupRowRenderer');
+                if (
+                    this.rowCtrl.getRowType() !== 'FullWidthGroup' ||
+                    (renderer && renderer !== 'agGroupCellRenderer')
+                ) {
+                    return undefined;
+                }
+                return (
+                    eGui.querySelector<HTMLElement>(
+                        '.ag-cell-wrapper.ag-group-default-inner-renderer > .ag-group-value'
+                    ) ?? undefined
+                );
+            },
         };
         const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);
         if (feature) {
