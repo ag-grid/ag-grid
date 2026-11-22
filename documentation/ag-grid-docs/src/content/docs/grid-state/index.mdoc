@@ -144,7 +144,7 @@ In the example below the column definitions pin Country, hide Year and sum Gold 
 
 ### Column and Group Ids
 
-Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. A column that provides neither `colId` nor `field` is given a positional ID. If the column definitions are reordered between saving and restoring, column state could be restored to the wrong column.
+Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. A column that provides neither `colId` nor `field` is given an ID, when the grid is created, from its position among the columns that have neither and the groups without a `groupId`. If those columns or groups are added, removed or reordered between saving and restoring, column state could be restored to the wrong column. A column kept when `columnDefs` are updated keeps its ID, so after an update the IDs can differ from those a new grid gives the same definitions.
 
 {%note %}
 For best results ensure columns and groups have unique `field` or explicit `colId` and groups have an explicit `groupId`.

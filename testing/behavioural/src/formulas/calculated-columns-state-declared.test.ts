@@ -409,6 +409,26 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         expect(Object.keys(propertiesOf(api.getState(), 'declared')!)).toEqual(['headerName']);
     });
 
+    test('an override keyed by field keeps the declared column and its width', async () => {
+        const api = createGrid('state-override-field-keyed', {
+            rowData: STATIC_ROW_DATA,
+            columnDefs: staticColumnDefs(),
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'b', 'declared']));
+        const colB = api.getColumn('b');
+        api.applyColumnState({ state: [{ colId: 'b', width: 111 }] });
+
+        api.setState({
+            ...api.getState(),
+            userColumns: [{ colId: 'b', properties: [{ property: 'headerName', value: 'Renamed' }] }],
+        });
+
+        await waitFor(() => expect(api.getColumn('b')!.getColDef().headerName).toBe('Renamed'));
+        expect(order(api)).toEqual(['a', 'b', 'declared']);
+        expect(api.getColumn('b')).toBe(colB);
+        expect(api.getColumn('b')!.getActualWidth()).toBe(111);
+    });
+
     test('a created entry only applies the properties the dialog can produce', async () => {
         const api = createGrid('state-created-unowned-properties', {
             rowData: STATIC_ROW_DATA,

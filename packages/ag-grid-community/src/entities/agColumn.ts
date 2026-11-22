@@ -235,6 +235,8 @@ export class AgColumn<TValue = any>
      *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
      *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
     public anchoredToColId: string | undefined = undefined;
+    /** The column a group or hierarchy column was generated for; reused, and kept in a saved order, only for it. */
+    public derivedFromCol: AgColumn | null = null;
 
     /** `COL_FLAG_*` bits; outside this file, read and written through the methods naming them. */
     public colFlags: number = 0;

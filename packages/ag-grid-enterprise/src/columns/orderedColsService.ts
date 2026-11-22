@@ -151,14 +151,30 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         }
     }
 
-    /** Fold hierarchy ordering in front of the state-index sort; else fall back to the base index sort. */
+    /** A hierarchy col sorts with its active source col, before it; the source's state index orders them all, then
+     *  the first position of each source's cols. */
     protected override sortPendingCols(cols: AgColumn[]): boolean {
         const hierarchy = this.getActiveHierarchyCols();
-        if (hierarchy) {
-            cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? this.compareByStateIndex(a, b));
-            return true;
+        if (!hierarchy) {
+            return super.sortPendingCols(cols);
         }
-        return super.sortPendingCols(cols);
+        const { activeColSet, compareByStateIndex } = this;
+        const firstPosition = new Map<AgColumn, number>();
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const source = sortSource(cols[i], activeColSet);
+            if (!firstPosition.has(source)) {
+                firstPosition.set(source, i);
+            }
+        }
+        cols.sort((a, b) => {
+            const sourceA = sortSource(a, activeColSet);
+            const sourceB = sortSource(b, activeColSet);
+            if (sourceA === sourceB) {
+                return hierarchy.compareVirtualColumns(a, b) ?? 0;
+            }
+            return compareByStateIndex(sourceA, sourceB) || firstPosition.get(sourceA)! - firstPosition.get(sourceB)!;
+        });
+        return true;
     }
 
     /** Stamps synthetic `indexProp` onto `incoming`/`accumulator` so a `cellDataType`-inferred rowGroup/pivot
@@ -248,6 +264,12 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
             }
         }
     }
+}
+
+/** The col a pending col sorts with: a hierarchy col's source col when active, else the col itself. */
+function sortSource(col: AgColumn, activeCols: ReadonlySet<AgColumn>): AgColumn {
+    const source = col.colKind === 'hierarchy' ? col.derivedFromCol : null;
+    return source !== null && activeCols.has(source) ? source : col;
 }
 
 function decideExtractCol(value: boolean | null | undefined, index: number | null | undefined): boolean | undefined {
