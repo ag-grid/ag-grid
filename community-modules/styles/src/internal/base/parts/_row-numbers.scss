@@ -14,7 +14,7 @@
         background-image: linear-gradient(var(--ag-row-header-hover-color), var(--ag-row-header-hover-color));
     }
 
-    .ag-row-number-header.ag-row-number-selection-enabled {
+    .ag-row-number-header.ag-row-number-selection-enabled:not(.ag-floating-filter) {
         cursor: cell;
     }
 

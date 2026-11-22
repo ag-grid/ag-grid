@@ -24,6 +24,14 @@ export class DndSourceComp extends Component {
             e.stopPropagation();
         });
         this.addDragSource();
+        this.addTooltip({
+            control: 'rowDrag',
+            getLocation: () => 'cell',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.column, node: this.rowNode, data: this.rowNode.data },
+            }),
+        });
         this.checkVisibility();
     }
 

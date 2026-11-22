@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_UR_PK = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'صفحے پر جائیں',
+    tooltipFilter: 'فلٹر',
+    tooltipSortedAscending: 'صعودی ترتیب میں مرتب ہے',
+    tooltipSortedDescending: 'نزولی ترتیب میں مرتب ہے',
+    tooltipExpandGroup: 'گروپ کو پھیلائیں',
+    tooltipCollapseGroup: 'گروپ کو سمیٹیں',
+    tooltipSelectAllRows: 'تمام قطاریں منتخب کریں',
+    tooltipDeselectAllRows: 'تمام قطاروں کا انتخاب ختم کریں',
+    tooltipSelectRow: 'قطار منتخب کریں',
+    tooltipDeselectRow: 'قطار کا انتخاب ختم کریں',
+    tooltipResizeColumn: 'کالم کا سائز بدلیں',
+    tooltipDragToMove: 'منتقل کرنے کے لیے گھسیٹیں',
+    tooltipTurnOnPivotMode: 'پیویٹ موڈ چالو کریں',
+    tooltipTurnOffPivotMode: 'پیویٹ موڈ بند کریں',
+    columnsToolPanelTooltip: 'کالمز کی ترتیبات بدلیں',
+    filtersToolPanelTooltip: 'فلٹرز کی ترتیبات بدلیں',
+
     // Set Filter
     selectAll: '(سب منتخب کریں)',
     selectAllSearchResults: '(تمام تلاش کے نتائج منتخب کریں)',

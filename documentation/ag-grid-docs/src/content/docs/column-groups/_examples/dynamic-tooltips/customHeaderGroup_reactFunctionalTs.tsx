@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { CustomHeaderGroupProps } from 'ag-grid-react';
 
 export default (props: CustomHeaderGroupProps) => {
     const [expandState, setExpandState] = useState('collapsed');
-    const refLabel = useRef<HTMLDivElement>(null);
 
     const expandOrCollapse = () => {
         const currentState = props.columnGroup.getProvidedColumnGroup().isExpanded();
@@ -25,17 +24,15 @@ export default (props: CustomHeaderGroupProps) => {
     }, []);
 
     useEffect(() => {
-        if (!refLabel.current) {
-            return;
-        }
-        props.setTooltip(props.displayName, () => refLabel.current!.scrollWidth > refLabel.current!.clientWidth);
-    }, [refLabel]);
+        props.setTooltip(
+            'Expand the group to show more columns',
+            () => !props.columnGroup.getProvidedColumnGroup().isExpanded()
+        );
+    }, []);
 
     return (
         <div className="ag-header-group-cell-label">
-            <div ref={refLabel} className="customHeaderLabel">
-                {props.displayName}
-            </div>
+            <div className="customHeaderLabel">{props.displayName}</div>
             <div className={`customExpandButton ${expandState}`} onClick={() => expandOrCollapse()}>
                 <i className="fa fa-arrow-right"></i>
             </div>

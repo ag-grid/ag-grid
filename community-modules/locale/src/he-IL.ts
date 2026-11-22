@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_HE_IL = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'עבור לעמוד',
+    tooltipFilter: 'סנן',
+    tooltipSortedAscending: 'ממוין בסדר עולה',
+    tooltipSortedDescending: 'ממוין בסדר יורד',
+    tooltipExpandGroup: 'הרחב קבוצה',
+    tooltipCollapseGroup: 'כווץ קבוצה',
+    tooltipSelectAllRows: 'בחר את כל השורות',
+    tooltipDeselectAllRows: 'בטל את בחירת כל השורות',
+    tooltipSelectRow: 'בחר שורה',
+    tooltipDeselectRow: 'בטל בחירת שורה',
+    tooltipResizeColumn: 'שנה את גודל העמודה',
+    tooltipDragToMove: 'גרור כדי להזיז',
+    tooltipTurnOnPivotMode: 'הפעל מצב טבלת ציר',
+    tooltipTurnOffPivotMode: 'כבה מצב טבלת ציר',
+    columnsToolPanelTooltip: 'הגדר עמודות',
+    filtersToolPanelTooltip: 'הגדר מסננים',
+
     // Set Filter
     selectAll: '(בחר הכל)',
     selectAllSearchResults: '(בחר את כל תוצאות החיפוש)',

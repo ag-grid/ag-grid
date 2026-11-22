@@ -955,7 +955,7 @@ export const AG_GRID_ERRORS = {
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
-    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
+    333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
     // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,

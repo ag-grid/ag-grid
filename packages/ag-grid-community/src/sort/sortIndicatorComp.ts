@@ -1,9 +1,11 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import { _getDisplaySortForColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { SortDef } from '../interfaces/iSort';
+import type { TooltipLocation } from '../tooltip/tooltipComponent';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
@@ -42,6 +44,8 @@ export class SortIndicatorComp extends Component {
     private column: AgColumn;
     private suppressOrder: boolean;
     private getSortDefOverride?: () => SortDef | null | undefined;
+    private sortTooltips?: ITooltipFeature[];
+    private tooltipIcon?: HTMLElement;
 
     constructor(skipTemplate?: boolean) {
         super();
@@ -72,7 +76,8 @@ export class SortIndicatorComp extends Component {
     public setupSort(
         column: AgColumn,
         suppressOrder: boolean = false,
-        getSortDefOverride?: () => SortDef | null | undefined
+        getSortDefOverride?: () => SortDef | null | undefined,
+        tooltipLocation: TooltipLocation = 'header'
     ): void {
         this.column = column;
         this.suppressOrder = suppressOrder;
@@ -101,6 +106,37 @@ export class SortIndicatorComp extends Component {
         });
 
         this.onSortChanged();
+        this.setupSortTooltips(tooltipLocation);
+    }
+
+    private setupSortTooltips(location: TooltipLocation): void {
+        const eGui = this.getGui();
+        const elements = eGui ? [eGui] : [this.eSortAsc, this.eSortDesc, this.eSortAbsoluteAsc, this.eSortAbsoluteDesc];
+        for (const element of elements) {
+            if (!element) {
+                continue;
+            }
+            const tooltip = this.addTooltip({
+                control: 'sort',
+                getGui: () => element,
+                getLocation: () => location,
+                getTooltip: () => {
+                    const icon = this.tooltipIcon;
+                    let value: string | undefined;
+                    if (icon && (element === eGui || element === icon)) {
+                        const ascending = icon === this.eSortAsc || icon === this.eSortAbsoluteAsc;
+                        value = ascending
+                            ? this.getLocaleTextFunc()('tooltipSortedAscending', 'Sorted ascending')
+                            : this.getLocaleTextFunc()('tooltipSortedDescending', 'Sorted descending');
+                    }
+                    return { value, params: { column: this.column } };
+                },
+            });
+            if (tooltip) {
+                this.sortTooltips ??= [];
+                this.sortTooltips.push(tooltip);
+            }
+        }
     }
 
     private addInIcon(iconName: IconName, eParent: HTMLElement | undefined, column: AgColumn): void {
@@ -149,6 +185,20 @@ export class SortIndicatorComp extends Component {
 
         if (eSortAbsoluteDesc) {
             _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort, { skipAriaHidden: true });
+        }
+
+        let tooltipIcon: HTMLElement | undefined;
+        if (isAscending) {
+            tooltipIcon = isAbsoluteSort ? eSortAbsoluteAsc : eSortAsc;
+        } else if (isDescending) {
+            tooltipIcon = isAbsoluteSort ? eSortAbsoluteDesc : eSortDesc;
+        }
+        if (this.tooltipIcon !== tooltipIcon) {
+            this.tooltipIcon = tooltipIcon;
+            for (const tooltip of this.sortTooltips ?? []) {
+                tooltip.attemptToHideTooltip();
+                tooltip.refreshTooltip();
+            }
         }
     }
 

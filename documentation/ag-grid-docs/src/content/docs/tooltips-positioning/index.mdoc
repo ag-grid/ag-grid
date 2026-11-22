@@ -1,0 +1,65 @@
+---
+title: "Tooltip Positioning"
+---
+
+Tooltips appear above the cell or header they describe. Use `tooltipPosition`, `tooltipAnchor` and `tooltipOffset` to change where they are placed.
+
+## Position, Anchor and Offset
+
+By default, tooltips are anchored to their target element (`tooltipAnchor: 'target'`) at `top-start`. [Built-in control tooltips](./tooltips-built-in/) default to centred `top` placement and always use the target, even with pointer anchoring or mouse tracking enabled.
+
+- `tooltipPosition` accepts `top`, `bottom`, `left` or `right`, each optionally suffixed with `-start` or `-end`. Start/end alignment follows text direction for top/bottom placements and means top/bottom for left/right placements.
+- `tooltipAnchor: 'pointer'` anchors ordinary hover tooltips to the pointer. Focus and built-in control tooltips always use the target element.
+- `tooltipOffset` is the distance in pixels from the tooltip border (not the arrow tip) to the target or pointer. It defaults to `6`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipPosition: 'bottom',
+    tooltipAnchor: 'pointer',
+    tooltipOffset: 10,
+};
+```
+
+Change the controls below, then hover a cell or header, or focus it and navigate with the arrow keys. Press <kbd>Esc</kbd> to dismiss the tooltip without moving focus.
+
+{% gridExampleRunner title="Tooltip Positioning and Focus" name="tooltip-keyboard-focus" /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipPosition", "tooltipAnchor", "tooltipOffset"] /%}
+
+If the preferred side has insufficient space, the grid tries the opposite side, then uses whichever has more room, shifting the tooltip to stay within the viewport and `popupParent`. If neither side fits, clamping can overlap the target; use a larger `popupParent`, such as `document.body`, if more space is needed.
+
+## Per-Source Placement
+
+For per-source placement, provide a callback. `TooltipPositionParams` extends `TooltipCallbackParams` with `trigger` (`'hover'` or `'focus'`). Returning `undefined` uses the source's default placement.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipPosition: (params) => params.trigger === 'focus' ? 'bottom-start' : undefined,
+};
+```
+
+Use `postProcessPopup`'s `tooltipPosition` to inspect the resolved placement.
+
+## Arrows
+
+Built-in tooltips use their background and border for the arrow, including validation colours. Set the theme parameter `tooltipArrowSize` (default `5`) to `0` to hide it:
+
+```js
+const myTheme = themeQuartz.withParams({ tooltipArrowSize: 0 });
+```
+
+Centred placements point at the target's centre. Start/end placements point 12px inside that edge, or at the centre for small targets. Built-in arrows stay clear of the tooltip's rounded corners.
+
+[Custom column tooltips](./component-tooltip/) draw their own arrows. [Custom built-in control tooltips](./tooltips-built-in/#custom-component) retain the grid's arrow and styling.
+
+## Mouse Tracking
+
+Set `tooltipMouseTrack: true` to anchor ordinary hover tooltips to the pointer and follow it as it moves, regardless of `tooltipAnchor`. Focus and built-in control tooltips remain anchored to their target. Pointer tracking updates, including `postProcessPopup` calls, are batched once per animation frame.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipMouseTrack: true,
+};
+```
+
+{% gridExampleRunner title="Tooltip Mouse Tracking" name="tooltip-mouse-tracking" /%}

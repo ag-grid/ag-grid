@@ -16,26 +16,61 @@ export type TooltipLocation =
     | 'cellFormula'
     | 'columnToolPanelColumn'
     | 'columnToolPanelColumnGroup'
+    | 'dialog'
     | 'filterToolPanelColumnGroup'
     | 'filter'
+    | 'floatingFilter'
     | 'fullWidthRow'
     | 'fullRowEditor'
     | 'header'
     | 'headerGroup'
+    | 'input'
     | 'listItem'
     | 'menu'
+    | 'pagination'
     | 'pivotColumnsList'
     | 'rowGroupColumnsList'
     | 'richSelectListItem'
     | 'richSelectValue'
     | 'select'
     | 'setFilterValue'
+    | 'sideBar'
+    | 'toolbar'
     | 'valueColumnsList'
     | 'UNKNOWN';
+
+export type BuiltInTooltipControl =
+    | 'firstPage'
+    | 'previousPage'
+    | 'nextPage'
+    | 'lastPage'
+    | 'pageNumber'
+    | 'columnMenu'
+    | 'filter'
+    | 'sort'
+    | 'groupExpand'
+    | 'selectAll'
+    | 'selectRow'
+    | 'resizeColumn'
+    | 'rowDrag'
+    | 'floatingFilterValue'
+    | 'pivotMode'
+    | 'remove'
+    | 'drag'
+    | 'close'
+    | 'maximize'
+    | 'findPrevious'
+    | 'findNext'
+    | 'clear'
+    | 'toolbarAction'
+    | 'toolbarMenu'
+    | 'toolPanel';
 
 interface TooltipCommonParams<TData, TValue, TContext> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', or 'menu'. */
     location: TooltipLocation;
+    /** The built-in control showing the tooltip. Unset for ordinary cell, header and other configured tooltips. */
+    control?: BuiltInTooltipControl;
     /** The formatted source value, when available. */
     valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */
@@ -126,4 +161,16 @@ export interface ITooltipParams<
 
 export interface ITooltipComp<TData = any, TValue = any, TContext = any> extends IComponent<
     ITooltipParams<TData, TValue, TContext>
+> {}
+
+export interface IBuiltInTooltipParams<TData = any, TContext = any> extends TooltipCommonParams<TData, any, TContext> {
+    /** The localised tooltip text. */
+    text: string;
+    control: BuiltInTooltipControl;
+    /** Hides the tooltip without moving focus. */
+    hideTooltipCallback: () => void;
+}
+
+export interface IBuiltInTooltipComp<TData = any, TContext = any> extends IComponent<
+    IBuiltInTooltipParams<TData, TContext>
 > {}

@@ -47,6 +47,125 @@ test('the default tooltip accepts the pointer across the gap and dismisses on Es
     await expect(page.getByRole('button', { name: 'Outside' })).toBeFocused();
 });
 
+test('resumes hover tooltips after wheel scrolling virtualised rows', async ({ page }) => {
+    const { cell, withApi } = await mountGrid(page, {
+        height: 240,
+        options: () => ({
+            columnDefs: [{ field: 'value', tooltip: true }],
+            rowData: Array.from({ length: 200 }, (_, i) => ({ value: `Row ${i}` })),
+            rowBuffer: 0,
+            tooltipTrigger: 'hoverOrFocus',
+            tooltipShowDelay: 200,
+            context: { scrollEnds: 0 },
+            onBodyScrollEnd: ({ context }) => context.scrollEnds++,
+        }),
+    });
+    const source = cell(0, 'value');
+    const box = (await source.boundingBox())!;
+    const point = { x: box.x + 80, y: box.y + box.height / 2 };
+    await page.mouse.move(point.x, point.y);
+    await expect(page.getByRole('tooltip')).toHaveText('Row 0');
+
+    await page.mouse.wheel(0, 10);
+    await expect.poll(() => withApi((api) => api.getGridOption('context').scrollEnds)).toBe(1);
+    await expect(page.getByRole('tooltip')).toHaveText('Row 0');
+
+    await page.mouse.wheel(0, 1200);
+    await expect.poll(() => withApi((api) => api.getGridOption('context').scrollEnds)).toBe(2);
+    await expect(source).toHaveCount(0);
+    const hoveredText = await page.evaluate(
+        ({ x, y }) => document.elementFromPoint(x, y)?.closest('.ag-cell')?.textContent,
+        point
+    );
+    expect(hoveredText).toMatch(/^Row \d+$/);
+    await expect(page.getByRole('tooltip')).toHaveText(hoveredText!);
+
+    await page.keyboard.press('Escape');
+    // Past both the scroll-end debounce and show delay: Escape must not rearm the tooltip.
+    await page.waitForTimeout(500);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+});
+
+test('a tooltip recreated after scrolling closes when the pointer leaves its source', async ({ page }) => {
+    const { cell, withApi } = await mountGrid(page, {
+        width: 400,
+        height: 400,
+        options: () => ({
+            columnDefs: [{ field: 'value', tooltip: true, width: 200 }],
+            rowData: Array.from({ length: 100 }, (_, i) => ({ value: `Row ${i}` })),
+            tooltipPosition: 'right',
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 500,
+        }),
+    });
+    await withApi((api) => api.setGridOption('popupParent', document.querySelector<HTMLElement>('.ag-grid-viewport')));
+    const source = cell(3, 'value');
+    const tooltip = page.getByRole('tooltip');
+    await source.hover();
+    await expect(tooltip).toHaveText('Row 3');
+    await tooltip.hover();
+
+    // Hosting the popup in the viewport lets wheel input over it scroll the grid.
+    await page.mouse.wheel(0, 5);
+    await expect.poll(() => withApi((api) => api.getVerticalPixelRange().top)).toBeGreaterThan(0);
+    await expect(tooltip).toHaveCount(0);
+    await source.hover();
+    await expect(tooltip).toHaveText('Row 3');
+
+    await page.mouse.move(500, 350);
+    await expect(tooltip).toHaveCount(0);
+});
+
+for (const action of ['Escape', 'leave', 'remove', 'focus', 'tap away'] as const) {
+    test(`cancels the cached scroll hover on ${action}`, async ({ page }) => {
+        const { cell, withApi } = await mountGrid(page, {
+            height: 240,
+            options: () => ({
+                columnDefs: [{ field: 'value', tooltip: true }],
+                rowData: Array.from({ length: 200 }, (_, i) => ({ value: `Row ${i}` })),
+                rowBuffer: 0,
+                tooltipTrigger: 'hoverOrFocus',
+                tooltipShowDelay: 200,
+                context: { scrollEnds: 0 },
+                onBodyScrollEnd: ({ context }) => context.scrollEnds++,
+            }),
+        });
+        await cell(0, 'value').hover();
+        await expect(page.getByRole('tooltip')).toHaveText('Row 0');
+        if (action === 'remove') {
+            await withApi((api) => {
+                const removeRows = () => {
+                    api.removeEventListener('bodyScroll', removeRows);
+                    api.setGridOption('rowData', []);
+                };
+                api.addEventListener('bodyScroll', removeRows);
+            });
+        }
+        await page.mouse.wheel(0, 10);
+        // The wheel suspends the visible tooltip; apply the cancellation while the scroll retry is still pending.
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
+        if (action === 'Escape') {
+            await page.keyboard.press('Escape');
+        } else if (action === 'leave') {
+            await page.mouse.move(790, 590);
+        } else if (action === 'focus') {
+            await cell(2, 'value').focus();
+        } else if (action === 'tap away') {
+            await dispatchTouch(page.locator('body'), 'touchstart');
+            await dispatchTouch(page.locator('body'), 'touchend');
+        }
+        await expect.poll(() => withApi((api) => api.getGridOption('context').scrollEnds)).toBeGreaterThan(0);
+        // Wait beyond the show delay to catch an unwanted retry from the cached hover.
+        await page.waitForTimeout(500);
+        if (action === 'focus') {
+            await expect(cell(2, 'value')).toBeFocused();
+            await expect(page.getByRole('tooltip')).toHaveText('Row 2');
+        } else {
+            await expect(page.getByRole('tooltip')).toHaveCount(0);
+        }
+    });
+}
+
 test('focus tooltips describe cells and headers without changing their accessible names', async ({ page }) => {
     const { cell, headerCell } = await mountGrid(page, {
         options: () => ({

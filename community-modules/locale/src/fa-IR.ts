@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_FA_IR = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'رفتن به صفحه',
+    tooltipFilter: 'فیلتر کردن',
+    tooltipSortedAscending: 'مرتب‌شده به ترتیب صعودی',
+    tooltipSortedDescending: 'مرتب‌شده به ترتیب نزولی',
+    tooltipExpandGroup: 'باز کردن گروه',
+    tooltipCollapseGroup: 'جمع کردن گروه',
+    tooltipSelectAllRows: 'انتخاب همه ردیف‌ها',
+    tooltipDeselectAllRows: 'لغو انتخاب همه ردیف‌ها',
+    tooltipSelectRow: 'انتخاب ردیف',
+    tooltipDeselectRow: 'لغو انتخاب ردیف',
+    tooltipResizeColumn: 'تغییر اندازه ستون',
+    tooltipDragToMove: 'برای جابه‌جایی بکشید',
+    tooltipTurnOnPivotMode: 'فعال کردن حالت محوری',
+    tooltipTurnOffPivotMode: 'غیرفعال کردن حالت محوری',
+    columnsToolPanelTooltip: 'پیکربندی ستون‌ها',
+    filtersToolPanelTooltip: 'پیکربندی فیلترها',
+
     // Set Filter
     selectAll: '(انتخاب همه)',
     selectAllSearchResults: '(انتخاب همه نتایج جستجو)',

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_NL_NL = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Naar pagina gaan',
+    tooltipFilter: 'Filteren',
+    tooltipSortedAscending: 'Oplopend gesorteerd',
+    tooltipSortedDescending: 'Aflopend gesorteerd',
+    tooltipExpandGroup: 'Groep uitvouwen',
+    tooltipCollapseGroup: 'Groep samenvouwen',
+    tooltipSelectAllRows: 'Alle rijen selecteren',
+    tooltipDeselectAllRows: 'Alle rijen deselecteren',
+    tooltipSelectRow: 'Rij selecteren',
+    tooltipDeselectRow: 'Rij deselecteren',
+    tooltipResizeColumn: 'Kolomgrootte wijzigen',
+    tooltipDragToMove: 'Slepen om te verplaatsen',
+    tooltipTurnOnPivotMode: 'Draaitabelmodus inschakelen',
+    tooltipTurnOffPivotMode: 'Draaitabelmodus uitschakelen',
+    columnsToolPanelTooltip: 'Kolommen instellen',
+    filtersToolPanelTooltip: 'Filters instellen',
+
     // Set Filter
     selectAll: '(Alles selecteren)',
     selectAllSearchResults: '(Alle zoekresultaten selecteren)',

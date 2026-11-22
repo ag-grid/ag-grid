@@ -50,6 +50,18 @@ export class AgTooltipFeature<
 
     public postConstruct() {
         this.refreshTooltip();
+        if (this.ctrl.control) {
+            this.addManagedPropertyListeners(['suppressBuiltInTooltips', 'enableBrowserTooltips'], () =>
+                this.refreshTooltip()
+            );
+            this.addManagedListeners(this.ctrl.getGui(), {
+                mouseenter: () => {
+                    if (this.browserTooltips) {
+                        this.refreshTooltip();
+                    }
+                },
+            });
+        }
     }
 
     /**
@@ -74,8 +86,13 @@ export class AgTooltipFeature<
         }
     }
 
-    private readonly getLatestTooltip = (): TTooltipCtrlParams =>
-        ({ value: this.tooltip, ...this.ctrl.getTooltip?.() }) as TTooltipCtrlParams;
+    private readonly getLatestTooltip = (): TTooltipCtrlParams => {
+        const tooltip = { value: this.tooltip, ...this.ctrl.getTooltip?.() } as TTooltipCtrlParams;
+        if (this.ctrl.control) {
+            tooltip.params = { ...tooltip.params, control: this.ctrl.control };
+        }
+        return tooltip;
+    };
 
     private createTooltipFeatureIfNeeded(): void {
         if (this.tooltipManager == null) {
@@ -121,13 +138,21 @@ export class AgTooltipFeature<
     public refreshTooltip(clearWithEmptyString?: boolean): void {
         this.browserTooltips = this.beans.gos.get('enableBrowserTooltips')!;
 
+        if (this.ctrl.control && this.gos.get('suppressBuiltInTooltips')) {
+            this.setBrowserTooltip(null);
+            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+            return;
+        }
+
         // a tooltip on screen renders the value, component and params it was shown with; this refresh
         // means any of them may have moved on, and none can be updated in place, so take it down
         const tooltipManager = this.tooltipManager;
         tooltipManager?.refreshTooltip();
 
         if (this.browserTooltips) {
-            this.setBrowserTooltip(this.getLatestTooltip().value);
+            const tooltip = this.getLatestTooltip();
+            const hidden = this.ctrl.control && this.ctrl.shouldDisplayTooltip?.(tooltip) === false;
+            this.setBrowserTooltip(hidden ? null : tooltip.value);
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         } else {
             this.setBrowserTooltip(clearWithEmptyString ? '' : null, clearWithEmptyString);

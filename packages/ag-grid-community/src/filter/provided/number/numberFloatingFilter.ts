@@ -88,7 +88,11 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 
     public getInputText(): string {
-        return this.getActiveInputElement().getInputElement().value;
+        return this.getInputElement().value;
+    }
+
+    public getInputElement(): HTMLInputElement {
+        return this.getActiveInputElement().getInputElement();
     }
 
     public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {

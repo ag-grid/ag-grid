@@ -14,6 +14,7 @@ export interface BaseCoreProperties {
     styleNonce?: string;
     enableBrowserTooltips?: boolean;
     tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
+    suppressBuiltInTooltips?: boolean;
     tooltipShowDelay?: number;
     tooltipSwitchShowDelay?: number;
     tooltipHideDelay?: number;

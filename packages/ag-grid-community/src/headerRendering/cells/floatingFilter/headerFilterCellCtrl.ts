@@ -3,6 +3,7 @@ import {
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
+    _getAriaLabel,
     _isElementChildOfClass,
     _setAriaLabel,
 } from 'ag-stack';
@@ -18,13 +19,13 @@ import { translateColumnFilterLabel } from '../../../filter/filterAriaLabels';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
-import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
+import type { TooltipSource } from '../../../tooltip/tooltipFeature';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getFloatingFilterMenuAnchor } from '../../headerUtils';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { _refreshCssClasses } from '../cssClassApplier';
+import { _getHeaderClassesFromColDef, _refreshCssClasses } from '../cssClassApplier';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
@@ -72,7 +73,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupActive();
 
         this.refreshHeaderStyles();
-        this.setupCalculatedColumnCssClasses();
+        this.refreshHeaderClasses();
         comp.toggleCss('ag-row-number-floating-filter', isRowNumberCol(this.column));
         this.setupPosition();
         this.setupHover(compBean);
@@ -91,6 +92,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             columnPinned: ({ columns }) => {
                 if (columns?.includes(this.column)) {
                     this.refreshHeaderStyles();
+                    this.refreshHeaderClasses();
                 }
             },
             filterSwitched: ({ column }) => {
@@ -111,6 +113,20 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     protected resizeHeader(): void {
         // empty abstract method
+    }
+
+    public getFilterButtonTooltip(): TooltipSource {
+        const eButton = this.eButtonShowMainFilter;
+        return {
+            control: 'filter',
+            getGui: () => eButton,
+            getTooltipAccessibleName: () => _getAriaLabel(eButton),
+            getLocation: () => 'floatingFilter',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Filter'),
+                params: { column: this.column },
+            }),
+        };
     }
 
     protected override moveHeader(): void {
@@ -316,12 +332,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private setupCalculatedColumnCssClasses(): void {
-        this.refreshCalculatedColumnCssClasses();
-    }
-
-    private refreshCalculatedColumnCssClasses(): void {
-        const classes = _getCalculatedColumnCssClasses(this.column, this.beans.calculatedColsSvc);
+    private refreshHeaderClasses(): void {
+        const { column, beans } = this;
+        const classes = _getHeaderClassesFromColDef(column.colDef, beans, column, null, true);
 
         this.userHeaderClasses = _refreshCssClasses(this.comp, this.userHeaderClasses, classes);
     }
@@ -439,7 +452,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private onColDefChanged(compBean: BeanStub): void {
         const wasActive = this.active;
         this.setupActive();
-        this.refreshCalculatedColumnCssClasses();
+        this.refreshHeaderStyles();
+        this.refreshHeaderClasses();
         const becomeActive = !wasActive && this.active;
         if (wasActive && !this.active) {
             this.destroySyncListener();

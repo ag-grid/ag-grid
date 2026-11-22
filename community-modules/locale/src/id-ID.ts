@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_ID_ID = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Buka halaman',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Diurutkan menaik',
+    tooltipSortedDescending: 'Diurutkan menurun',
+    tooltipExpandGroup: 'Perluas grup',
+    tooltipCollapseGroup: 'Ciutkan grup',
+    tooltipSelectAllRows: 'Pilih semua baris',
+    tooltipDeselectAllRows: 'Batalkan pilihan semua baris',
+    tooltipSelectRow: 'Pilih baris',
+    tooltipDeselectRow: 'Batalkan pilihan baris',
+    tooltipResizeColumn: 'Ubah ukuran kolom',
+    tooltipDragToMove: 'Seret untuk memindahkan',
+    tooltipTurnOnPivotMode: 'Aktifkan mode pivot',
+    tooltipTurnOffPivotMode: 'Nonaktifkan mode pivot',
+    columnsToolPanelTooltip: 'Konfigurasi kolom',
+    filtersToolPanelTooltip: 'Konfigurasi filter',
+
     // Set Filter
     selectAll: '(Pilih Semua)',
     selectAllSearchResults: '(Pilih Semua Hasil Pencarian)',

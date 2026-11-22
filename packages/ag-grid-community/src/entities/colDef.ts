@@ -69,9 +69,15 @@ export interface AbstractColDef<TData = any, TValue = any> {
      */
     headerTooltipValueGetter?: HeaderTooltipValueGetterFunc<TData, TValue>;
 
-    /** An object of CSS values / or function returning an object of CSS values for a particular header. */
+    /**
+     * An object of CSS values / or function returning an object of CSS values for a particular header.
+     * Also applied to the column's floating filter cell; use `params.floatingFilter` in the callback to tell them apart.
+     */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
-    /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
+    /**
+     * CSS class to use for the header cell. Can be a string, array of strings, or function.
+     * Also applied to the column's floating filter cell; use `params.floatingFilter` in the callback to tell them apart.
+     */
     headerClass?: HeaderClass<TData, TValue>;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
     suppressHeaderKeyboardEvent?: SuppressHeaderKeyboardEventFunc<TData, TValue>;
@@ -99,7 +105,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /**
      * Provide your own tooltip component for the column.
-     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
      * When the column is grouped, group rows in the generated group column inherit this component.
      * @agModule `TooltipModule`
      */

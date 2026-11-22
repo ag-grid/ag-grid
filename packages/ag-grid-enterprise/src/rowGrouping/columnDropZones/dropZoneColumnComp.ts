@@ -266,7 +266,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         progress: (column: AgColumn, event: MouseEvent | KeyboardEvent) => void
     ): void {
         const { column, eSortIndicator } = this;
-        eSortIndicator.setupSort(column, true, override);
+        eSortIndicator.setupSort(column, true, override, this.getTooltipLocation());
 
         const performSort = (event: MouseEvent | KeyboardEvent) => {
             event.preventDefault();

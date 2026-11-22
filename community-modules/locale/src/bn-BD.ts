@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_BN_BD = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'পৃষ্ঠায় যান',
+    tooltipFilter: 'ফিল্টার করুন',
+    tooltipSortedAscending: 'আরোহী ক্রমে সাজানো',
+    tooltipSortedDescending: 'অবরোহী ক্রমে সাজানো',
+    tooltipExpandGroup: 'গ্রুপ প্রসারিত করুন',
+    tooltipCollapseGroup: 'গ্রুপ সংকুচিত করুন',
+    tooltipSelectAllRows: 'সব সারি নির্বাচন করুন',
+    tooltipDeselectAllRows: 'সব সারির নির্বাচন বাতিল করুন',
+    tooltipSelectRow: 'সারি নির্বাচন করুন',
+    tooltipDeselectRow: 'সারির নির্বাচন বাতিল করুন',
+    tooltipResizeColumn: 'কলামের আকার পরিবর্তন করুন',
+    tooltipDragToMove: 'সরানোর জন্য টেনে নিন',
+    tooltipTurnOnPivotMode: 'পিভট মোড চালু করুন',
+    tooltipTurnOffPivotMode: 'পিভট মোড বন্ধ করুন',
+    columnsToolPanelTooltip: 'কলাম কনফিগার করুন',
+    filtersToolPanelTooltip: 'ফিল্টার কনফিগার করুন',
+
     // Set Filter
     selectAll: '(সব নির্বাচন করুন)',
     selectAllSearchResults: '(সব অনুসন্ধান ফলাফল নির্বাচন করুন)',

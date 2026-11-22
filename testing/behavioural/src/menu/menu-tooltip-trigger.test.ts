@@ -183,6 +183,7 @@ describe('menu tooltip triggers', () => {
                 rowData: [{ value: 'Cell' }],
                 columnMenu: menu === 'legacy column' ? 'legacy' : 'new',
                 tooltipTrigger: 'focus',
+                tooltipShowDelay: 0,
                 getContextMenuItems: getMenuItems,
                 getColumnMenuItems: getMenuItems,
             });

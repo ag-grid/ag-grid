@@ -36,6 +36,10 @@ export interface ToolPanelDef {
     labelKey: string;
     /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
     labelDefault: string;
+    /** The localisation key for the tooltip displayed on the tab button. */
+    tooltipKey?: string;
+    /** The default tooltip when `tooltipKey` is omitted or has no translation. */
+    tooltipDefault?: string;
     /**
      * The min width of the tool panel.
      * @default 100

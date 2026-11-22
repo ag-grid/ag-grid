@@ -338,7 +338,10 @@ export class SetFilterHandler<TValue = string>
         return formattedValue ?? _toStringOrNull(value) ?? translateForSetFilter(this, 'blanks');
     }
 
-    public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
+    public getModelAsString(
+        model: SetFilterModel | null,
+        source?: 'floating' | 'floatingTooltip' | 'filterToolPanel'
+    ): string {
         const { values } = model ?? {};
 
         const forToolPanel = source === 'filterToolPanel';
@@ -350,7 +353,8 @@ export class SetFilterHandler<TValue = string>
         const displayedKeys = this.valueModel.getDisplayableKeys(values);
         const numValues = displayedKeys.length;
 
-        const numToDisplay = forToolPanel ? 3 : 10;
+        const floatingLimit = source === 'floatingTooltip' ? numValues : 10;
+        const numToDisplay = forToolPanel ? 3 : floatingLimit;
 
         const formattedValues = displayedKeys.slice(0, numToDisplay).map((key) => this.getFormattedValue(key));
 
@@ -363,7 +367,7 @@ export class SetFilterHandler<TValue = string>
             }
         }
 
-        return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
+        return `(${numValues}) ${formattedValues.join(',')}${numValues > numToDisplay ? ',...' : ''}`;
     }
 
     public onAnyFilterChanged(): void {

@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_RU_RU = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Перейти на страницу',
+    tooltipFilter: 'Фильтр',
+    tooltipSortedAscending: 'Отсортировано по возрастанию',
+    tooltipSortedDescending: 'Отсортировано по убыванию',
+    tooltipExpandGroup: 'Развернуть группу',
+    tooltipCollapseGroup: 'Свернуть группу',
+    tooltipSelectAllRows: 'Выбрать все строки',
+    tooltipDeselectAllRows: 'Снять выделение со всех строк',
+    tooltipSelectRow: 'Выбрать строку',
+    tooltipDeselectRow: 'Снять выделение со строки',
+    tooltipResizeColumn: 'Изменить размер столбца',
+    tooltipDragToMove: 'Перетащите для перемещения',
+    tooltipTurnOnPivotMode: 'Включить режим сводной таблицы',
+    tooltipTurnOffPivotMode: 'Выключить режим сводной таблицы',
+    columnsToolPanelTooltip: 'Настроить столбцы',
+    filtersToolPanelTooltip: 'Настроить фильтры',
+
     // Set Filter
     selectAll: '(Выбрать все)',
     selectAllSearchResults: '(Выбрать все результаты поиска)',

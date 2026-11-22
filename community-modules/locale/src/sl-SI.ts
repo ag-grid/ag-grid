@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_SL_SI = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Pojdi na stran',
+    tooltipFilter: 'Filter',
+    tooltipSortedAscending: 'Razvrščeno naraščajoče',
+    tooltipSortedDescending: 'Razvrščeno padajoče',
+    tooltipExpandGroup: 'Razširi skupino',
+    tooltipCollapseGroup: 'Strni skupino',
+    tooltipSelectAllRows: 'Izberi vse vrstice',
+    tooltipDeselectAllRows: 'Prekliči izbor vseh vrstic',
+    tooltipSelectRow: 'Izberi vrstico',
+    tooltipDeselectRow: 'Prekliči izbor vrstice',
+    tooltipResizeColumn: 'Spremeni velikost stolpca',
+    tooltipDragToMove: 'Povleci za premik',
+    tooltipTurnOnPivotMode: 'Vklopi način vrtilne tabele',
+    tooltipTurnOffPivotMode: 'Izklopi način vrtilne tabele',
+    columnsToolPanelTooltip: 'Nastavi stolpce',
+    filtersToolPanelTooltip: 'Nastavi filtre',
+
     // Set Filter
     selectAll: '(Izberi vse)',
     selectAllSearchResults: '(Izberi vse rezultate iskanja)',

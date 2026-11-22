@@ -196,6 +196,7 @@ describe('Tooltip positioning callbacks', () => {
             columnDefs: [{ field: 'value', filter: true }],
             rowData: [{ value: 7 }],
             enableAdvancedFilter: true,
+            tooltipShowDelay: 0,
             tooltipPosition: position,
         });
         const builder = await AdvancedFilterBuilderHarness.open(api);
@@ -207,7 +208,9 @@ describe('Tooltip positioning callbacks', () => {
 
         vi.useFakeTimers();
         apply.dispatchEvent(new MouseEvent('mouseenter'));
-        await vi.advanceTimersByTimeAsync(1000);
+        await vi.advanceTimersByTimeAsync(999);
+        expect(getVisibleTooltips()).toHaveLength(0);
+        await vi.advanceTimersByTimeAsync(1);
 
         expect(getVisibleTooltips()).toHaveLength(1);
         expect(getVisibleTooltips()[0]).toHaveTextContent('Not all conditions are complete.');
@@ -699,6 +702,7 @@ describe('Tooltip positioning callbacks', () => {
             columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
             rowData: [{ value: 7 }],
             tooltipTrigger: 'focus',
+            tooltipShowDelay: 0,
             postProcessPopup,
         });
         vi.useFakeTimers();
@@ -719,6 +723,7 @@ describe('Tooltip positioning callbacks', () => {
             columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
             rowData: [{ value: 7 }],
             tooltipTrigger: 'focus',
+            tooltipShowDelay: 0,
         });
         const source = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
         source.focus();
@@ -743,6 +748,7 @@ describe('Tooltip positioning callbacks', () => {
                 columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],
                 rowData: [{ value: 7 }],
                 tooltipTrigger: 'focus',
+                tooltipShowDelay: 0,
                 postProcessPopup,
             });
             const source = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;

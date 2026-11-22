@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_HU_HU = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Ugrás az oldalra',
+    tooltipFilter: 'Szűrés',
+    tooltipSortedAscending: 'Növekvő sorrendbe rendezve',
+    tooltipSortedDescending: 'Csökkenő sorrendbe rendezve',
+    tooltipExpandGroup: 'Csoport kibontása',
+    tooltipCollapseGroup: 'Csoport összecsukása',
+    tooltipSelectAllRows: 'Összes sor kijelölése',
+    tooltipDeselectAllRows: 'Összes sor kijelölésének megszüntetése',
+    tooltipSelectRow: 'Sor kijelölése',
+    tooltipDeselectRow: 'Sor kijelölésének megszüntetése',
+    tooltipResizeColumn: 'Oszlop átméretezése',
+    tooltipDragToMove: 'Húzza az áthelyezéshez',
+    tooltipTurnOnPivotMode: 'Kimutatási mód bekapcsolása',
+    tooltipTurnOffPivotMode: 'Kimutatási mód kikapcsolása',
+    columnsToolPanelTooltip: 'Oszlopok beállítása',
+    filtersToolPanelTooltip: 'Szűrők beállítása',
+
     // Set Filter
     selectAll: '(Mindet kiválaszt)',
     selectAllSearchResults: '(Összes keresési találat kiválasztása)',

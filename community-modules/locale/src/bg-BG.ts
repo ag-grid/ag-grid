@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_BG_BG = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'Отидете на страница',
+    tooltipFilter: 'Филтър',
+    tooltipSortedAscending: 'Сортирано във възходящ ред',
+    tooltipSortedDescending: 'Сортирано в низходящ ред',
+    tooltipExpandGroup: 'Разгънете групата',
+    tooltipCollapseGroup: 'Свийте групата',
+    tooltipSelectAllRows: 'Изберете всички редове',
+    tooltipDeselectAllRows: 'Премахнете избора на всички редове',
+    tooltipSelectRow: 'Изберете реда',
+    tooltipDeselectRow: 'Премахнете избора на реда',
+    tooltipResizeColumn: 'Променете размера на колоната',
+    tooltipDragToMove: 'Плъзнете за преместване',
+    tooltipTurnOnPivotMode: 'Включете режима на обобщена таблица',
+    tooltipTurnOffPivotMode: 'Изключете режима на обобщена таблица',
+    columnsToolPanelTooltip: 'Настройте колоните',
+    filtersToolPanelTooltip: 'Настройте филтрите',
+
     // Set Filter
     selectAll: '(Избери Всички)',
     selectAllSearchResults: '(Избери Всички Резултати от Търсенето)',
