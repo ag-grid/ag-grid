@@ -227,7 +227,7 @@ describe('Row Selection Grid Options', () => {
                     await waitFor(() => expect(sources).toEqual(['selectableChanged', 'apiSelectAll']));
                 });
 
-                test('after select all, a row an edit makes un-selectable is deselected', async () => {
+                test('after select all, a row an edit makes un-selectable shows unselected and the selection state is unchanged', async () => {
                     const api = (await createSportsGrid((node) => node.data.sport !== 'football')).api;
                     api.selectAll();
                     const selectionState = api.getServerSideSelectionState();

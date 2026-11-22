@@ -62,10 +62,10 @@ export abstract class BaseSelectionService extends BeanStub {
 
         const rowModel = beans.rowModel;
         this.addManagedEventListeners({
-            cellValueChanged: (e) => this.updateEditedRowSelectable(e.node as RowNode),
+            cellValueChanged: (e) => this.updateDataChangedRowSelectable(e.node as RowNode),
             rowNodeDataChanged: (e) => {
                 if (!rowModel.refreshingData) {
-                    this.updateEditedRowSelectable(e.node);
+                    this.updateDataChangedRowSelectable(e.node);
                 }
             },
         });
@@ -191,7 +191,7 @@ export abstract class BaseSelectionService extends BeanStub {
         return selectable;
     }
 
-    protected updateEditedRowSelectable(rowNode: RowNode): void {
+    protected updateDataChangedRowSelectable(rowNode: RowNode): void {
         this.updateRowSelectable(rowNode);
     }
 

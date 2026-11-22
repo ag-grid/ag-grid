@@ -3456,6 +3456,8 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     hideDisabledCheckboxes?: boolean;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row non-selectable.
+     * The grand total row (`footer` is `true`) is passed too, except to the Client-Side Row Model with `groupSelects`
+     * set to `'descendants'` or `'filteredDescendants'`. With the Client-Side Row Model it has no `data`.
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**

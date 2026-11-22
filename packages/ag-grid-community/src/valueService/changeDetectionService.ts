@@ -49,7 +49,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
      */
     public beginDeferred(): void {
         if (this.deferredDepth === 0) {
-            this.beans.selectionSvc?.beginSelectionBatch(); // the edited rows are asked once they are aggregated
+            this.beans.selectionSvc?.beginSelectionBatch(); // the changed rows are asked once they are aggregated
         }
         this.deferredDepth++;
     }
@@ -78,7 +78,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
                 this.csrm?.doAggregate(path);
             }
         } finally {
-            selectionSvc?.endSelectionBatch(); // asks the edited rows, before their cells refresh
+            selectionSvc?.endSelectionBatch(); // asks the changed rows, before their cells refresh
         }
 
         // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).

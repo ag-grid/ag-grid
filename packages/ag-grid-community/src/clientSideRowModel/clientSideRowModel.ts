@@ -749,6 +749,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // Ensure the root node is always visited by pipeline stages even for empty transactions.
         changedPath?.addRow(rootNode);
+        const rootHadGrandTotalRow = !!rootNode?.sibling;
+        const rootWasDisplayed = !!rootNode?.displayed;
 
         // Run grouping first if needed — sets this.hierarchical and may create changedPath.
         if (params.step === 'group') {
@@ -787,6 +789,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         /* eslint-enable no-fallthrough */
 
         this.setRowTopAndRowIndex();
+        if (rootNode && (rootHadGrandTotalRow !== !!rootNode.sibling || rootWasDisplayed !== rootNode.displayed)) {
+            beans.selectionSvc?.updateRootSelection?.(rootNode); // known only once the rows are positioned
+        }
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
     }

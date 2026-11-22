@@ -40,8 +40,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     // Selection batch: while depth > 0, `selectionChanged` is coalesced into one pending event (carrying
     // the first source seen) and flushed when the outermost batch ends.
     private pendingSelectionSource: SelectionEventSourceType | null = null;
-    /** Rows edited inside the batch, asked once when it ends, after the edit's aggregation. */
-    private editedRows: Set<RowNode> | null = null;
+    /** Rows whose data changed inside the batch, asked once when it ends, after their aggregation. */
+    private dataChangedRows: Set<RowNode> | null = null;
 
     public override postConstruct(): void {
         super.postConstruct();
@@ -173,7 +173,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
+            // under descendants the root's selection is rolled up from its rows, never set
+            const skipThisNode =
+                (this.groupSelectsFiltered && node.group && !gos.get('treeData')) ||
+                (this.groupSelectsDescendants && node.level === -1);
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
@@ -315,6 +318,23 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return this.rollUpGroupSelection(source, changedPath, event, false);
     }
 
+    public updateRootSelection(rootNode: RowNode): void {
+        this.updateRowSelectable(rootNode);
+        if (!this.groupSelectsDescendants) {
+            return;
+        }
+        const selected = this.calculateRootSelection(rootNode);
+        this.selectRowNode(rootNode, selected === null ? false : selected, undefined, 'rowGroupChanged');
+    }
+
+    /** The root shows its rows' selection while a row stands for it: its grand total row, or itself in pivot mode. */
+    private calculateRootSelection(rootNode: RowNode): boolean | undefined | null {
+        const standsAsRow = !!rootNode.sibling || rootNode.displayed;
+        return standsAsRow && rootNode.childrenAfterGroup?.length
+            ? this.calculateSelectedFromChildren(rootNode)
+            : false;
+    }
+
     /**
      * @param regrouped true when the hierarchy may have changed since the last roll-up. Only then can a tree
      * row have turned from a leaf into a group or back, so only then are the children of each group checked.
@@ -363,18 +383,18 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     }
                 }
             }
-            if (rowNode !== rootNode) {
-                // Groups under descendants are computed, never stored, so a leaf promoted to a group leaves the map.
-                const id = rowNode.id!;
-                if (regrouped && selectedNodes.get(id) === rowNode) {
-                    selectedNodes.delete(id);
-                    selectionChanged = true;
-                }
-                const selected = this.calculateSelectedFromChildren(rowNode);
-                selectionChanged =
-                    this.selectRowNode(rowNode, selected === null ? false : selected, event, source) ||
-                    selectionChanged;
+            // Groups under descendants are computed, never stored, so a leaf promoted to a group leaves the map.
+            const id = rowNode.id!;
+            if (regrouped && selectedNodes.get(id) === rowNode) {
+                selectedNodes.delete(id);
+                selectionChanged = true;
             }
+            const selected =
+                rowNode === rootNode
+                    ? this.calculateRootSelection(rootNode)
+                    : this.calculateSelectedFromChildren(rowNode);
+            selectionChanged =
+                this.selectRowNode(rowNode, selected === null ? false : selected, event, source) || selectionChanged;
         };
 
         _forEachChangedGroupDepthFirst(rootNode, csrm.hierarchical, changedPath, nodeCallback);
@@ -757,16 +777,16 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     /** The row is asked when its batch ends, after aggregation; a write outside any batch is a batch of its own. */
-    protected override updateEditedRowSelectable(rowNode: RowNode): void {
+    protected override updateDataChangedRowSelectable(rowNode: RowNode): void {
         if (!this.isRowSelectable || (rowNode.rowPinned && rowNode.pinnedSibling)) {
             return; // nothing to ask; a pinned copy's write sends its source row an event of its own
         }
-        let editedRows = this.editedRows;
-        if (!editedRows) {
-            editedRows = new Set();
-            this.editedRows = editedRows;
+        let dataChangedRows = this.dataChangedRows;
+        if (!dataChangedRows) {
+            dataChangedRows = new Set();
+            this.dataChangedRows = dataChangedRows;
         }
-        editedRows.add(rowNode.primaryRow);
+        dataChangedRows.add(rowNode.primaryRow);
         if (this.selectionBatchDepth === 0) {
             ++this.selectionBatchDepth;
             this.endSelectionBatch();
@@ -875,10 +895,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
         const rowModel = this.beans.rowModel;
-        const editedRows = this.editedRows;
+        const dataChangedRows = this.dataChangedRows;
         // inside the caller's selection batch: the refresh, change detection's flush, or a paste
         _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (node) => {
-            editedRows?.delete(node);
+            dataChangedRows?.delete(node);
             this.recomputeSelectable(node);
         });
     }
@@ -989,24 +1009,24 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    /** Closes the batch, in a `finally`; the outermost close asks the edited rows, then emits one `selectionChanged`. */
+    /** Closes the batch, in a `finally`; the outermost asks the changed rows, then emits one `selectionChanged`. */
     public endSelectionBatch(): void {
         try {
-            let editedRows = this.selectionBatchDepth === 1 ? this.editedRows : null;
-            // rows a listener edits while these are asked go to a new set, asked by the next iteration
-            while (editedRows) {
-                this.editedRows = null;
+            let dataChangedRows = this.selectionBatchDepth === 1 ? this.dataChangedRows : null;
+            // rows a listener changes while these are asked go to a new set, asked by the next iteration
+            while (dataChangedRows) {
+                this.dataChangedRows = null;
                 if (this.isRolledUpFromChildren()) {
-                    this.rollUpEditedRows(editedRows);
+                    this.rollUpDataChangedRows(dataChangedRows);
                 } else {
-                    for (const node of editedRows) {
+                    for (const node of dataChangedRows) {
                         if (node.destroyed) {
                             continue;
                         }
                         this.recomputeSelectable(node);
                     }
                 }
-                editedRows = this.editedRows;
+                dataChangedRows = this.dataChangedRows;
             }
         } finally {
             if (--this.selectionBatchDepth === 0) {
@@ -1015,12 +1035,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    /** Asks each edited row, then rolls up the selectable and selected state of the groups above those that flipped. */
-    private rollUpEditedRows(editedRows: Set<RowNode>): void {
+    /** Asks each changed row, then rolls up the selectable and selected state of the groups above the flipped ones. */
+    private rollUpDataChangedRows(dataChangedRows: Set<RowNode>): void {
         const { changedPathFactory, rowModel } = this.beans;
         let flipped = false;
         let flippedPath: ChangedPath | undefined; // no factory without ChangedPathModule, where the root is the only group
-        for (const node of editedRows) {
+        for (const node of dataChangedRows) {
             const wasSelectable = node.selectable;
             if (!node.destroyed && this.recomputeSelectable(node) !== wasSelectable) {
                 if (!flipped) {

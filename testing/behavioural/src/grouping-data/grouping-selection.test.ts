@@ -7,16 +7,18 @@ import type { IRowNode, RowSelectedEvent } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
+    CsvExportModule,
     GRAND_TOTAL_ROW_ID,
     GROUP_TOTAL_ROW_ID_PREFIX,
     PinnedRowModule,
+    ROOT_NODE_ID,
     RowSelectionModule,
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
 import { FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridActions, pressSpaceKey } from '../selection/utils';
+import { GridActions, pressAKey, pressSpaceKey } from '../selection/utils';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({
@@ -25,6 +27,7 @@ describe('ag-grid grouping selection', () => {
             TextFilterModule,
             RowSelectionModule,
             ClientSideRowModelModule,
+            CsvExportModule,
             RowGroupingModule,
             PivotModule,
             PinnedRowModule,
@@ -618,37 +621,371 @@ describe('ag-grid grouping selection', () => {
         expect(irelandTotal.isSelected()).toBe(true);
     });
 
-    test('the grand total row keeps its own selection when a descendant is deselected', async () => {
-        const rowData = cachedJSONObjects.array([
-            { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
-            { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
-        ]);
-
-        const api = gridsManager.createGrid('myGrid', {
+    function createGrandTotalSelectionGrid(
+        groupSelects: 'self' | 'descendants' | 'filteredDescendants',
+        grandTotalRow: 'bottom' | undefined
+    ) {
+        return gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
+                { field: 'athlete', filter: 'agTextColumnFilter' },
                 { field: 'gold', aggFunc: 'sum' },
             ],
             animateRows: false,
             groupDefaultExpanded: -1,
-            grandTotalRow: 'bottom',
-            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
-            rowData,
+            grandTotalRow,
+            rowSelection: { mode: 'multiRow', groupSelects },
+            rowData: cachedJSONObjects.array([
+                { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+                { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+                { id: '3', country: 'Italy', athlete: 'Mario Rossi', gold: 3 },
+            ]),
             getRowId: (params) => params.data.id,
         });
+    }
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s the grand total row shows whether all, some or none of its rows are selected',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, 'bottom');
+            const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+            const rows = ['1', '2', '3'].map((id) => api.getRowNode(id)!);
+            const states: unknown[] = [];
+            const record = (step: string) => states.push([step, grandTotal.isSelected()]);
+
+            api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+            record('grand total selected');
+            api.setNodesSelected({ nodes: [rows[1]], newValue: false, source: 'api' });
+            record('a row deselected');
+            api.deselectAll();
+            record('deselect all');
+            api.setNodesSelected({ nodes: rows, newValue: true, source: 'api' });
+            record('every row selected');
+            api.setNodesSelected({ nodes: [grandTotal], newValue: false, source: 'api' });
+            record('grand total deselected');
+
+            expect(states).toEqual([
+                ['grand total selected', true],
+                ['a row deselected', undefined],
+                ['deselect all', false],
+                ['every row selected', true],
+                ['grand total deselected', false],
+            ]);
+            assertSelectedRowsById([], api);
+        }
+    );
+
+    test('with groupSelects filteredDescendants and a filter, the grand total row selects the rows it shows and is partly selected', () => {
+        const api = createGrandTotalSelectionGrid('filteredDescendants', 'bottom');
+        api.setFilterModel({ athlete: { type: 'notEqual', filter: 'Mario Rossi' } });
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+
+        api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1', '2']);
+        expect(grandTotal.isSelected()).toBeUndefined();
+    });
+
+    test('a grand total row switched on with every row selected under groupSelects descendants shows them selected', () => {
+        const api = createGrandTotalSelectionGrid('descendants', undefined);
+        api.selectAll();
+
+        api.setGridOption('grandTotalRow', 'bottom');
 
         const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
-        grandTotal.setSelected(true);
-        expect(api.getRowNode('1')!.isSelected()).toBe(true);
         expect(grandTotal.isSelected()).toBe(true);
-
-        // the root is excluded from the recompute from children, so its own selection stands
-        api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: false, source: 'api' });
-        expect(api.getRowNode('row-group-country-Ireland')!.isSelected()).toBeUndefined();
-        expect(grandTotal.isSelected()).toBe(true);
-        assertSelectedRowsById(['1'], api);
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['1', '2', '3']);
     });
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s the root node is unselected while there is no grand total row, and shows its rows once one is switched on',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, 'bottom');
+            const rootNode = api.getRowNode(ROOT_NODE_ID)!;
+            const states: unknown[] = [];
+            const record = (step: string) =>
+                states.push([step, rootNode.isSelected(), api.getSelectedNodes().map((node) => node.id)]);
+
+            api.selectAll();
+            record('select all');
+            api.setGridOption('grandTotalRow', undefined);
+            record('grand total row switched off');
+            api.deselectAll();
+            record('deselect all');
+            api.selectAll();
+            record('select all without a grand total row');
+            api.setGridOption('grandTotalRow', 'bottom');
+            record('grand total row switched on');
+
+            expect(states).toEqual([
+                ['select all', true, ['1', '2', '3']],
+                ['grand total row switched off', false, ['1', '2', '3']],
+                ['deselect all', false, []],
+                ['select all without a grand total row', false, ['1', '2', '3']],
+                ['grand total row switched on', true, ['1', '2', '3']],
+            ]);
+            expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(true);
+        }
+    );
+
+    test('with groupSelects self the root node stays selected when the grand total row is switched off', () => {
+        const api = createGrandTotalSelectionGrid('self', 'bottom');
+        const rootNode = api.getRowNode(ROOT_NODE_ID)!;
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        const states: unknown[] = [];
+        const record = (step: string) =>
+            states.push([step, rootNode.isSelected(), api.getSelectedNodes().map((node) => node === rootNode)]);
+
+        api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+        record('grand total row selected');
+        api.setGridOption('grandTotalRow', undefined);
+        record('grand total row switched off');
+
+        expect(states).toEqual([
+            ['grand total row selected', true, [true]],
+            ['grand total row switched off', true, [true]],
+        ]);
+    });
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s a grand total row switched on while isRowSelectable rejects every row shows unselected',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, undefined);
+            api.setGridOption('rowSelection', { mode: 'multiRow', groupSelects, isRowSelectable: () => false });
+
+            api.setGridOption('grandTotalRow', 'bottom');
+
+            expect({
+                root: api.getRowNode(ROOT_NODE_ID)!.isSelected(),
+                grandTotal: api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected(),
+            }).toStrictEqual({ root: false, grandTotal: false });
+        }
+    );
+
+    test('with groupSelects descendants the root row shown in pivot mode keeps its selection when the grand total row gives way to it', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country' }, { field: 'gold', aggFunc: 'sum' }],
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData: cachedJSONObjects.array([
+                { id: '1', country: 'Ireland', gold: 1 },
+                { id: '2', country: 'Italy', gold: 2 },
+            ]),
+            getRowId: (params) => params.data.id,
+        });
+        api.setGridOption('pivotMode', true);
+        const root = api.getRowNode(ROOT_NODE_ID)!;
+        const states: unknown[] = [];
+        const record = (step: string) => states.push([step, root.isSelected(), api.getSelectedNodes().length]);
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        record('root row selected');
+        api.setGridOption('pivotMode', false);
+        record('pivot mode off');
+        api.setGridOption('pivotMode', true);
+        record('pivot mode on again');
+
+        expect(api.getDisplayedRowAtIndex(0)?.id).toBe(ROOT_NODE_ID);
+        expect(states).toEqual([
+            ['root row selected', true, 2],
+            ['pivot mode off', true, 2],
+            ['pivot mode on again', true, 2],
+        ]);
+    });
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s the grand total row of a grid emptied of its rows shows unselected',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, 'bottom');
+            api.setGridOption('alwaysShowGrandTotalRow', true);
+            const root = api.getRowNode(ROOT_NODE_ID)!;
+            const states: unknown[] = [];
+            const record = (step: string) =>
+                states.push([
+                    step,
+                    root.isSelected(),
+                    api.getRowNode(GRAND_TOTAL_ROW_ID)?.isSelected(),
+                    api.getSelectedNodes().map((node) => node.id),
+                ]);
+            const rows = () => [
+                { id: '1', country: 'Ireland', athlete: 'John Smith', gold: 1 },
+                { id: '2', country: 'Ireland', athlete: 'Jane Doe', gold: 2 },
+                { id: '3', country: 'Italy', athlete: 'Mario Rossi', gold: 3 },
+            ];
+
+            api.selectAll();
+            record('select all');
+            api.applyTransaction({ remove: rows() });
+            record('every row removed');
+            api.setGridOption('rowData', rows());
+            api.selectAll();
+            record('rows loaded again and selected');
+            api.setGridOption('rowData', []);
+            record('rows emptied');
+
+            expect(states).toEqual([
+                ['select all', true, true, ['1', '2', '3']],
+                ['every row removed', false, false, []],
+                ['rows loaded again and selected', true, true, ['1', '2', '3']],
+                ['rows emptied', false, false, []],
+            ]);
+        }
+    );
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s the root node selected through the API without a grand total row reads unselected',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, undefined);
+            const root = api.getRowNode(ROOT_NODE_ID)!;
+            const states: unknown[] = [];
+            const record = (step: string) =>
+                states.push([step, root.isSelected(), api.getSelectedNodes().map((node) => node.id)]);
+
+            api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+            record('root node selected');
+            api.deselectAll();
+            record('deselect all');
+
+            expect(states).toEqual([
+                ['root node selected', false, ['1', '2', '3']],
+                ['deselect all', false, []],
+            ]);
+        }
+    );
+
+    test('with groupSelects descendants the root node selected through the API raises rowSelected only for a selection it shows', async () => {
+        const selectRootAndListen = async (grandTotalRow: 'bottom' | undefined) => {
+            const api = createGrandTotalSelectionGrid('descendants', grandTotalRow);
+            const rootStates: boolean[] = [];
+            const rowIds: (string | undefined)[] = [];
+            api.addEventListener('rowSelected', (event) => {
+                rowIds.push(event.node.id);
+                if (event.node.id === ROOT_NODE_ID) {
+                    rootStates.push(event.node.isSelected()!);
+                }
+            });
+
+            api.setNodesSelected({ nodes: [api.getRowNode(ROOT_NODE_ID)!], newValue: true, source: 'api' });
+
+            // the rows under the root are selected with it: their events are the positive signal that the events landed
+            await waitFor(() => expect(rowIds).toEqual(expect.arrayContaining(['1', '2', '3'])), { timeout: 1000 });
+            gridsManager.reset();
+            return rootStates;
+        };
+
+        const withoutGrandTotalRow = await selectRootAndListen(undefined);
+        const withGrandTotalRow = await selectRootAndListen('bottom');
+
+        expect({ withoutGrandTotalRow, withGrandTotalRow }).toEqual({
+            withoutGrandTotalRow: [],
+            withGrandTotalRow: [true],
+        });
+    });
+
+    test('with groupSelects descendants the root row shown in pivot mode shows whether all, some or none of its rows are selected', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country' }, { field: 'gold', aggFunc: 'sum' }],
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData: cachedJSONObjects.array([
+                { id: '1', country: 'Ireland', gold: 1 },
+                { id: '2', country: 'Italy', gold: 2 },
+            ]),
+            getRowId: (params) => params.data.id,
+        });
+        api.setGridOption('pivotMode', true);
+        const root = api.getRowNode(ROOT_NODE_ID)!;
+        const states: unknown[] = [];
+        const record = (step: string) =>
+            states.push([step, root.isSelected(), api.getSelectedNodes().map((node) => node.id)]);
+
+        api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+        record('root row selected');
+        api.deselectAll();
+        record('deselect all');
+        api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true, source: 'api' });
+        record('one row selected');
+
+        expect(api.getDisplayedRowAtIndex(0)?.id).toBe(ROOT_NODE_ID);
+        expect(states).toEqual([
+            ['root row selected', true, ['1', '2']],
+            ['deselect all', false, []],
+            ['one row selected', undefined, ['1']],
+        ]);
+    });
+
+    test('with groupSelects descendants and no grand total row the root node shows its rows only while pivot mode shows it as a row', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country' }, { field: 'gold', aggFunc: 'sum' }],
+            grandTotalRow: undefined,
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowData: cachedJSONObjects.array([
+                { id: '1', country: 'Ireland', gold: 1 },
+                { id: '2', country: 'Italy', gold: 2 },
+            ]),
+            getRowId: (params) => params.data.id,
+        });
+        const states: unknown[] = [];
+        const record = (step: string) =>
+            states.push([
+                step,
+                api.getRowNode(ROOT_NODE_ID)!.isSelected(),
+                api.getSelectedNodes().map((node) => node.id),
+            ]);
+
+        api.selectAll();
+        record('all rows selected, pivot mode off');
+        api.setGridOption('pivotMode', true);
+        record('pivot mode on');
+        const rowAtTop = api.getDisplayedRowAtIndex(0)?.id;
+        api.setGridOption('pivotMode', false);
+        record('pivot mode off again');
+
+        expect(rowAtTop).toBe(ROOT_NODE_ID);
+        expect(states).toEqual([
+            ['all rows selected, pivot mode off', false, ['1', '2']],
+            ['pivot mode on', true, ['1', '2']],
+            ['pivot mode off again', false, ['1', '2']],
+        ]);
+    });
+
+    test.each(['descendants', 'filteredDescendants'] as const)(
+        'with groupSelects %s an export of the selected rows has the grand total line only while every row is selected',
+        (groupSelects) => {
+            const api = createGrandTotalSelectionGrid(groupSelects, 'bottom');
+            const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+            const exported = (step: string) => [step, api.getDataAsCsv({ onlySelected: true })?.split('\r\n')];
+            const states: unknown[] = [];
+
+            api.setNodesSelected({ nodes: [grandTotal], newValue: true, source: 'api' });
+            states.push(exported('grand total selected'));
+            api.deselectAll();
+            states.push(exported('deselect all'));
+            api.setNodesSelected({
+                nodes: [api.getRowNode('1')!, api.getRowNode('3')!],
+                newValue: true,
+                source: 'api',
+            });
+            states.push(exported('some rows selected'));
+
+            const header = '"Group","Athlete","sum(Gold)"';
+            expect(states).toEqual([
+                [
+                    'grand total selected',
+                    [
+                        header,
+                        '" -> Ireland","","3"',
+                        '"","John Smith","1"',
+                        '"","Jane Doe","2"',
+                        '" -> Italy","","3"',
+                        '"","Mario Rossi","3"',
+                        '"Total ","","6"',
+                    ],
+                ],
+                ['deselect all', [header]],
+                ['some rows selected', [header, '"","John Smith","1"', '" -> Italy","","3"', '"","Mario Rossi","3"']],
+            ]);
+        }
+    );
 
     test('deselecting the grand total row clears every descendant with it', async () => {
         const rowData = cachedJSONObjects.array([
@@ -756,6 +1093,17 @@ describe('ag-grid grouping selection', () => {
 
         expect(grandTotal.isSelected()).toBe(false);
         assertSelectedRowsById(['1'], api);
+    });
+
+    test('Ctrl+A on flat data selects the rows, not the grand total row', () => {
+        const api = createGrandTotalGrid(undefined, 'bottom');
+        const grandTotal = api.getRowNode(GRAND_TOTAL_ROW_ID)!;
+        expect(grandTotal.selectable).toBe(true);
+
+        pressAKey(new GridActions(api).getCellByPosition(0, 'athlete')!, { ctrlKey: true });
+
+        assertSelectedRowsById(['1', '2'], api);
+        expect(grandTotal.isSelected()).toBe(false);
     });
 
     test('a group total row follows a new isRowSelectable through its group', () => {

@@ -20,7 +20,7 @@ import {
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import { MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 interface Person {
     athlete: string;
@@ -49,6 +49,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             TextFilterModule,
             NumberFilterModule,
             SetFilterModule,
+            MultiFilterModule,
             ExternalFilterModule,
             GridStateModule,
             ClientSideRowModelModule,
@@ -284,6 +285,161 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
 
         api.removeEventListener('filterChanged', listener);
     });
+
+    test.each([
+        {
+            name: 'a text model without its filterType',
+            model: { athlete: { type: 'contains', filter: 'Ryan' } },
+            applied: { athlete: { type: 'contains', filter: 'Ryan', filterType: 'text' } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model without its filterType',
+            model: { country: { values: ['Russia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model naming a value no row has',
+            model: { country: { filterType: 'set', values: ['Russia', 'Narnia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a text model without its filterType, with filter handlers',
+            enableFilterHandlers: true,
+            model: { athlete: { type: 'contains', filter: 'Ryan' } },
+            applied: { athlete: { type: 'contains', filter: 'Ryan', filterType: 'text' } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model without its filterType, with filter handlers',
+            enableFilterHandlers: true,
+            model: { country: { values: ['Russia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model naming a value no row has, with filter handlers',
+            enableFilterHandlers: true,
+            model: { country: { filterType: 'set', values: ['Russia', 'Narnia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a multi model without its filterType, with filter handlers',
+            enableFilterHandlers: true,
+            model: { age: { filterModels: [{ type: 'greaterThan', filter: 24 }] } },
+            applied: {
+                age: {
+                    filterType: 'multi',
+                    filterModels: [{ type: 'greaterThan', filter: 24, filterType: 'number' }, null],
+                },
+            },
+            displayed: 2,
+        },
+    ])(
+        'setFilterModel with $name filters the rows once, as the completed model would, and not again for the same model',
+        async ({ enableFilterHandlers, model, applied, displayed }) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: 'agTextColumnFilter' },
+                    { field: 'age', filter: 'agMultiColumnFilter' },
+                    { field: 'country', filter: 'agSetColumnFilter' },
+                ],
+                enableFilterHandlers,
+                rowData: PEOPLE,
+            });
+            const events: string[] = [];
+            api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+            api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+            api.setFilterModel(model);
+            await asyncSetTimeout(0);
+
+            expect({ events: [...events], model: api.getFilterModel(), displayed: api.getDisplayedRowCount() }).toEqual(
+                {
+                    events: ['filterChanged api', 'modelUpdated'],
+                    model: applied,
+                    displayed,
+                }
+            );
+
+            events.length = 0;
+            api.setFilterModel(model);
+            await asyncSetTimeout(0);
+            expect({ step: 'again', events }).toEqual({ step: 'again', events: [] });
+        }
+    );
+
+    test.each([false, true])(
+        'setFilterModel with a condition its filter lacks filters again only to clear an applied model (enableFilterHandlers: %s)',
+        async (enableFilterHandlers) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: threeFilterCols,
+                enableFilterHandlers,
+                rowData: PEOPLE,
+            });
+            const events: string[] = [];
+            api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+            api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+            const lacking = { athlete: { filterType: 'text', type: 'noSuchOption', filter: 'Ryan' } };
+
+            api.setFilterModel(lacking);
+            await asyncSetTimeout(0);
+            expect({ step: 'unfiltered', events, model: api.getFilterModel() }).toEqual({
+                step: 'unfiltered',
+                events: [],
+                model: {},
+            });
+
+            api.setFilterModel({ athlete: { filterType: 'text', type: 'contains', filter: 'Ryan' } });
+            await asyncSetTimeout(0);
+            events.length = 0;
+            api.setFilterModel(lacking);
+            await asyncSetTimeout(0);
+            expect({
+                step: 'filtered',
+                events,
+                model: api.getFilterModel(),
+                displayed: api.getDisplayedRowCount(),
+            }).toEqual({
+                step: 'filtered',
+                events: ['filterChanged api', 'modelUpdated'],
+                model: {},
+                displayed: PEOPLE.length,
+            });
+        }
+    );
+
+    test.each([false, true])(
+        'setState with a filter model its filter completes filters the rows as the completed model does (enableFilterHandlers: %s)',
+        async (enableFilterHandlers) => {
+            const restore = async (filterModel: object) => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    columnDefs: threeFilterCols,
+                    enableFilterHandlers,
+                    rowData: PEOPLE,
+                });
+                const events: string[] = [];
+                api.addEventListener('filterChanged', (e: FilterChangedEvent) =>
+                    events.push(`filterChanged ${e.source}`)
+                );
+                api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+                api.setState({ filter: { filterModel } });
+                await asyncSetTimeout(0);
+                const restored = { events, model: api.getFilterModel(), displayed: api.getDisplayedRowCount() };
+                gridsManager.reset();
+                return restored;
+            };
+
+            const completed = await restore({ athlete: { type: 'contains', filter: 'Ryan' } });
+            const complete = await restore({ athlete: { filterType: 'text', type: 'contains', filter: 'Ryan' } });
+
+            expect(completed).toEqual(complete);
+            expect(complete.events.filter((event) => event.startsWith('filterChanged'))).toEqual(['filterChanged api']);
+        }
+    );
 
     test('external filter alone filters rows and reports through isAnyFilterPresent', async () => {
         let maxAge = 20;

@@ -35,13 +35,14 @@ When using `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'
 
 ## Selecting Total Rows
 
-A [Total Row](./aggregation-total-rows/) has no selection of its own. Selecting a group total row selects its group, and selecting the grand total row selects the root node. This applies to clicks, the keyboard and the API:
+A [Total Row](./aggregation-total-rows/) is a row node (`footer` is `true`) with no selection of its own. Selecting a group total row selects its group, and selecting the grand total row selects the root node, the parent of the top-level rows. This applies to clicks, the keyboard and the API:
 
 - The grid's `rowSelected` event is raised for the group node or the root node, never for the total row. The root node has `level` `-1`.
 - A total row's `isSelected()` returns the selection of its group or of the root node.
 - `api.setNodesSelected` accepts a total row and selects or deselects its group or the root node.
 - With `groupSelects: 'self'`, `api.getSelectedNodes()` returns the group node or the root node. `api.getSelectedRows()` returns only the selected nodes that have `data`, and the root node has none, so selecting the grand total row adds no row to it.
-- With `groupSelects` set to `'descendants'` or `'filteredDescendants'`, selecting a group total row also selects the group's descendants, and selecting the grand total row selects every row. With the Client-Side Row Model, `api.getSelectedNodes()` then returns the selected rows without their groups or the root node; the Server-Side Row Model does not support it in these modes.
+- With `groupSelects` set to `'descendants'` or `'filteredDescendants'`, selecting a group total row also selects the group's descendants, and selecting the grand total row selects every row, or with `'filteredDescendants'` every row that passes the filter. With the Client-Side Row Model, the grand total row then shows whether all, some or none of its rows are selected, as a group does, and `api.getSelectedNodes()` returns the selected rows without their groups or the root node; the Server-Side Row Model does not support `api.getSelectedNodes()` in these modes.
+- An export of the selected rows (`onlySelected`) includes a total row while it shows as selected, as it includes a selected group row.
 - With the [Server-Side Row Model](./server-side-model-selection/), `api.getServerSideSelectionState()` names the root node `ROOT_NODE_ID`.
 
 A group total row can be selected when its group can. `isRowSelectable` is called with the grand total row itself (`footer` is `true`), and its result decides whether the root node can be selected. With the Client-Side Row Model and `groupSelects` set to `'descendants'` or `'filteredDescendants'`, it is not called with the grand total row, which can be selected when any of its rows can, as groups are. With the Server-Side Row Model and `groupSelects: 'descendants'`, a group for which it returns `false` still shows the selection of its rows, and a rejected group or grand total row can be deselected through the API.

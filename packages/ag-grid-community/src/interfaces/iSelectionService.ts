@@ -31,9 +31,15 @@ export interface ISelectionService {
     flushPendingSelectionChanged?(): void;
     /** Asks the row again, removes the selection it holds itself if `isRowSelectable` rejects it, and shows the row's selection. Server-side only. */
     refreshRowSelection?(rowNode: RowNode): void;
-    /** Opens a batch: the outermost `endSelectionBatch` emits one `selectionChanged`, client-side after asking the rows edited in it. */
+    /**
+     * Opens a batch: the outermost `endSelectionBatch` emits one `selectionChanged`, client-side after asking the
+     * rows changed in it.
+     */
     beginSelectionBatch(): void;
     endSelectionBatch(): void;
+    /** Once the root's grand total row or pivot root row came or went: asks its selectability again and, with
+     *  groupSelects descendants, rolls it up. */
+    updateRootSelection?(rootNode: RowNode): void;
     /** Should only be called if groupSelects = 'descendants' or 'filteredDescendants' in CSRM */
     updateGroupsFromChildrenSelections?(
         source: SelectionEventSourceType,

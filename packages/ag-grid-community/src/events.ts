@@ -368,7 +368,7 @@ export interface PinnedRowsChangedEvent<TData = any, TContext = any> extends AgG
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `rowGroupChanged` - grouping changed which updated the selection
- * - `selectableChanged`- selectable status of row has changed when `rowSelection.groupSelects` is `'descendants'` or `'filteredDescendants'`
+ * - `selectableChanged`- selectable status of row has changed
  * - `spaceKey` - space key pressed on row
  * - `keyboardSelectAll` - select all via keyboard shortcut (CTRL+A)
  * - `uiSelectAll` - select all in header clicked
