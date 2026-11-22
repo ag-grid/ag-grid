@@ -1,4 +1,4 @@
-import type { AgTooltipFeature, TooltipCtrl } from 'ag-stack';
+import type { AgTooltipFeature, TooltipCtrl, TooltipDetails } from 'ag-stack';
 import { _isElementOverflowingCallback } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
@@ -20,14 +20,20 @@ export interface TooltipSourceParams {
     rowIndex?: number;
     node?: RowNode;
     data?: any;
+    value?: any;
     valueFormatted?: string | null;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface TooltipSource extends TooltipCtrl<TooltipLocation, TooltipSourceParams> {
-    /** The current definition used to select a custom component, or `undefined` for the default component. */
-    getTooltipComponentDefinition(): ColDef | ColGroupDef | undefined;
+export interface ResolvedTooltip extends TooltipDetails<TooltipLocation> {
+    params?: TooltipSourceParams;
+    sourceValues?: Pick<TooltipSourceParams, 'value' | 'valueFormatted'>;
+    componentDefinition?: ColDef | ColGroupDef;
+    shouldDisplay?: () => boolean;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface TooltipSource extends TooltipCtrl<TooltipLocation, ResolvedTooltip> {}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getCellTooltipComponentDefinition(colDef: ColDef | undefined): ColDef | undefined {
@@ -62,6 +68,6 @@ export type TooltipFeature = AgTooltipFeature<
     AgGridCommon<any, any>,
     GridOptionsService,
     ITooltipParams,
-    TooltipSourceParams,
+    ResolvedTooltip,
     TooltipLocation
 >;

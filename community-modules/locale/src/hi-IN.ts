@@ -9,6 +9,24 @@
  */
 
 export const AG_GRID_LOCALE_HI_IN = {
+    // Built-in Control Tooltips
+    tooltipGoToPage: 'पृष्ठ पर जाएँ',
+    tooltipFilter: 'फ़िल्टर',
+    tooltipSortedAscending: 'आरोही क्रम में सॉर्ट किया गया',
+    tooltipSortedDescending: 'अवरोही क्रम में सॉर्ट किया गया',
+    tooltipExpandGroup: 'समूह फैलाएँ',
+    tooltipCollapseGroup: 'समूह समेटें',
+    tooltipSelectAllRows: 'सभी पंक्तियाँ चुनें',
+    tooltipDeselectAllRows: 'सभी पंक्तियों का चयन हटाएँ',
+    tooltipSelectRow: 'पंक्ति चुनें',
+    tooltipDeselectRow: 'पंक्ति का चयन हटाएँ',
+    tooltipResizeColumn: 'कॉलम का आकार बदलें',
+    tooltipDragToMove: 'स्थान बदलने के लिए खींचें',
+    tooltipTurnOnPivotMode: 'पिवट मोड चालू करें',
+    tooltipTurnOffPivotMode: 'पिवट मोड बंद करें',
+    columnsToolPanelTooltip: 'कॉलम कॉन्फ़िगर करें',
+    filtersToolPanelTooltip: 'फ़िल्टर कॉन्फ़िगर करें',
+
     // Set Filter
     selectAll: '(सभी चुनें)',
     selectAllSearchResults: '(सभी खोज परिणाम चुनें)',
@@ -174,6 +192,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     advancedFilterCancel: 'रद्द करें',
     advancedFilterClear: 'साफ़ करें',
     advancedFilterBuilder: 'बिल्डर',
+    advancedFilterPlaceholder: 'उन्नत फ़िल्टर',
     advancedFilterValidationMissingColumn: 'कॉलम गायब है',
     advancedFilterValidationMissingOption: 'विकल्प गायब है',
     advancedFilterValidationMissingValue: 'मान गायब है',
@@ -751,18 +770,25 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaCalculatedColumn: 'गणना किया गया कॉलम',
     ariaColumnShowValuesAs: 'मान इस रूप में दिखा रहा है',
     ariaColumnSelectAll: 'सभी कॉलम दृश्यता टॉगल करें',
+    ariaColumnSelectExpandAll: 'सभी कॉलम समूहों को विस्तृत या संक्षिप्त करें',
     ariaDateFilterInput: 'दिनांक फ़िल्टर इनपुट',
     ariaDefaultListName: 'सूची',
     ariaFilterColumnsInput: 'फ़िल्टर कॉलम इनपुट',
     ariaFilterFromValue: 'से मान फ़िल्टर करें',
+    ariaFilterFromValueForColumn: '${variable} को मान से फ़िल्टर करें',
     ariaFilterInput: 'फ़िल्टर इनपुट',
+    ariaFilterInputForColumn: '${variable} का फ़िल्टर इनपुट',
     ariaLabelInputClear: 'साफ़ करें',
     ariaFilterList: 'फ़िल्टर सूची',
     ariaFilterToValue: 'तक मान फ़िल्टर करें',
+    ariaFilterToValueForColumn: '${variable} को मान तक फ़िल्टर करें',
     ariaFilterValue: 'फ़िल्टर मान',
+    ariaFilterValueForColumn: '${variable} का फ़िल्टर मान',
     ariaNotInCurrentData: 'वर्तमान डेटा में नहीं',
     ariaFilterMenuOpen: 'फ़िल्टर मेनू खोलें',
+    ariaFilterMenuOpenForColumn: '${variable} का फ़िल्टर मेनू खोलें',
     ariaFilteringOperator: 'फ़िल्टरिंग ऑपरेटर',
+    ariaFilteringOperatorForColumn: '${variable} का फ़िल्टरिंग ऑपरेटर',
     ariaHidden: 'छिपा हुआ',
     ariaIndeterminate: 'अनिश्चित',
     ariaInputEditor: 'इनपुट संपादक',
@@ -782,6 +808,8 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaRowSelect: 'इस रो को चुनने के लिए SPACE दबाएं',
     ariaRowSelectionDisabled: 'इस रो के लिए रो चयन अक्षम है',
     ariaSearch: 'खोजें',
+    ariaFindActiveMatch: 'मिलान ${variable} / ${variable}, ${variable}, पंक्ति ${variable}',
+    ariaFindActiveMatchRow: 'मिलान ${variable} / ${variable}, पंक्ति ${variable}',
     ariaSortPriority: 'क्रमबद्ध करने की प्राथमिकता ${count} में से ${priority}',
     ariaSortableColumn: 'क्रमबद्ध करने के लिए ENTER दबाएं',
     ariaSortableColumnWithCellSelection: 'क्रमबद्ध करने के लिए ALT ENTER दबाएं',
@@ -791,6 +819,12 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaVisible: 'दृश्यमान',
     ariaSearchFilterValues: 'फ़िल्टर मान खोजें',
     ariaPageSizeSelectorLabel: 'पेज आकार',
+    ariaPageSizeSelectorDescription: 'पेज आकार बदलने से ग्रिड में दिखाई गई रो अपडेट हो जाती हैं',
+    ariaPaginationRowSummary: '${variable} से ${variable} तक के रिकॉर्ड दिखाए जा रहे हैं, कुल ${variable}',
+    ariaPaginationRowSummaryUnknownTotal:
+        '${variable} से ${variable} तक के रिकॉर्ड दिखाए जा रहे हैं, कुल संख्या अज्ञात',
+    ariaPaginationRowSummaryLoading: '${variable} से रिकॉर्ड लोड हो रहे हैं',
+    ariaPaginationPanelLabel: 'ग्रिड पेजिनेशन',
     ariaChartMenuClose: 'चार्ट संपादन मेनू बंद करें',
     ariaChartSelected: 'चयनित',
     ariaChartSeriesChartType: '${variable} चार्ट प्रकार',
@@ -837,10 +871,12 @@ export const AG_GRID_LOCALE_HI_IN = {
 
     ariaLabelColumnMenu: 'कॉलम मेनू',
     ariaLabelColumnFilter: 'कॉलम फ़िल्टर',
+    ariaLabelColumnFilterForColumn: '${variable} कॉलम फ़िल्टर',
 
     ariaLabelSelectField: 'फ़ील्ड चुनें',
 
     // Cell Editor
+    ariaLabelCellEditor: 'सेल संपादक',
     ariaValidationErrorPrefix: 'सेल संपादक सत्यापन',
     ariaFullRowValidationError: 'पूर्ण रो सत्यापन: ${variable}',
     ariaFullRowEditValidationFailed: 'रो संपादन पूर्ण नहीं किया जा सकता। ${variable}',
@@ -873,6 +909,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',
     ariaLabelFilterCardDelete: 'फ़िल्टर हटाएं',
     ariaLabelFilterCardHasEdits: 'संपादन हैं',
+    ariaLabelFilterCardType: 'फ़िल्टर प्रकार',
     ariaHasNote: 'इस सेल में एक नोट है।',
 
     // Number Format (Status Bar, Pagination Panel)

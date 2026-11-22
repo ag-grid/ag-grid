@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type {
@@ -83,7 +83,7 @@ ModuleRegistry.registerModules([
             [defaultColDef]="defaultColDef"
             [autoGroupColumnDef]="autoGroupColumnDef"
             [rowSelection]="rowSelection"
-            [rowData]="rowData"
+            [rowData]="rowData()"
             (gridReady)="onGridReady($event)"
         />
     </div>`,
@@ -177,7 +177,7 @@ export class AppComponent {
         headerCheckbox: false,
         groupSelects: 'descendants',
     };
-    public rowData!: any[];
+    public rowData = signal<any[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -207,7 +207,7 @@ export class AppComponent {
         this.gridApi = params.api;
 
         this.http.get<any[]>('https://www.ag-grid.com/example-assets/monthly-sales.json').subscribe((data) => {
-            this.rowData = data;
+            this.rowData.set(data);
         });
     }
 }

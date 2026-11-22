@@ -1,4 +1,4 @@
-import { RefPlaceholder, _setAriaExpanded } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _setAriaExpanded, _setAriaLabel } from 'ag-stack';
 
 import type { ElementParams, IconName, ToolPanelDef } from 'ag-grid-community';
 import { Component, _createIconNoSpan } from 'ag-grid-community';
@@ -44,7 +44,18 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
         this.setTemplate(SideBarButtonElement, []);
         this.setLabel();
         this.setIcon();
-        this.addManagedElementListeners(this.eToggleButton, { click: this.onButtonPressed.bind(this) });
+        const { tooltipKey, tooltipDefault } = this.toolPanelDef;
+        if (tooltipKey != null || tooltipDefault != null) {
+            this.addTooltip({
+                getGui: () => this.eToggleButton,
+                getLocation: () => 'sideBar',
+                control: 'toolPanel',
+                getTooltip: () => ({
+                    value: tooltipKey ? this.getLocaleTextFunc()(tooltipKey, tooltipDefault ?? '') : tooltipDefault,
+                }),
+            });
+        }
+        _addManagedElementListeners(this, this.eToggleButton, { click: this.onButtonPressed.bind(this) });
         this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 
@@ -53,6 +64,7 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
         const label = this.getLocaleTextFunc()(def.labelKey, def.labelDefault);
 
         this.eLabel.textContent = label;
+        _setAriaLabel(this.eToggleButton, label);
     }
 
     private setIcon(): void {

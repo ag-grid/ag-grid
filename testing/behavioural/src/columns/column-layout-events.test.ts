@@ -20,6 +20,7 @@ import {
     ColumnApiModule,
     ColumnAutoSizeModule,
     RowSelectionModule,
+    ScrollApiModule,
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
@@ -355,6 +356,45 @@ describe('column layout events', () => {
         expect({ rendered: rendered(), told }).toEqual({ rendered: before.slice(0, -1), told: 1 });
     });
 
+    test('a move among columns out of view reports the displayed columns change but no virtual columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const rendered = api.getAllDisplayedVirtualColumns().map((col) => col.getColId());
+        expect(rendered).not.toContain('c28');
+        const heard: string[] = [];
+        api.addEventListener('virtualColumnsChanged', () => heard.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () => heard.push('displayedColumnsChanged'));
+
+        api.moveColumns(['c28'], 29);
+        await asyncSetTimeout(0);
+
+        expect(heard).toEqual(['displayedColumnsChanged']);
+    });
+
+    test('a horizontal scroll bringing new columns into view reports its virtual columns change as after a scroll', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
+                rowData: [{}],
+                suppressColumnVirtualisation: false,
+            },
+            { modules: [ScrollApiModule] }
+        );
+        await asyncSetTimeout(0);
+        const told: boolean[] = [];
+        api.addEventListener('virtualColumnsChanged', (event) => told.push(event.afterScroll));
+
+        api.ensureColumnVisible('c25');
+        await asyncSetTimeout(0);
+
+        expect(told).toEqual([true]);
+    });
+
     test('a refresh raises the grid events reporting it in a fixed order', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
@@ -393,6 +433,22 @@ describe('column layout events', () => {
             ],
             onMove: ['virtualColumnsChanged', 'displayedColumnsChanged', 'columnMoved'],
         });
+    });
+
+    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
+        let told = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [{}],
+            onVirtualColumnsChanged: () => ++told,
+        });
+        await asyncSetTimeout(0);
+        const atCreation = told;
+
+        api.setGridOption('columnDefs', [{ colId: 'a' }]);
+        await asyncSetTimeout(0);
+
+        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
     });
 });
 
@@ -463,6 +519,21 @@ describe('the rows drawn for the columns', () => {
         expect(ariaRowIndex()).toBe('3');
     });
 
+    test('a column shown by setColumnsVisible is drawn in the rows when its visibleChanged listener runs', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b', hide: true }, { field: 'c' }],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(drawnRow(api)).toBe('a:100px c:100px'));
+        const seen: string[] = [];
+        api.getColumn('b')!.addEventListener('visibleChanged', () => seen.push(drawnRow(api)));
+
+        api.setColumnsVisible(['b'], true);
+
+        expect(seen).toEqual(['a:100px b:100px c:100px']);
+    });
+
     // a group open or close refreshes the columns outside a column update, and its rows are laid out before its layout events
     test('a column a group shows is drawn in the rows, and one it hides is gone from them, when a column listener runs', async () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -481,6 +552,117 @@ describe('the rows drawn for the columns', () => {
         api.setColumnGroupOpened('g', false);
 
         expect(seen).toEqual(['a:100px b:100px c:100px', 'a:100px c:100px']);
+    });
+
+    test('a column call keeps the cell of every column that stays rendered, and initialises only the cells that arrive', async () => {
+        const inits: Record<string, number> = {};
+        class CountingRenderer {
+            private gui = document.createElement('span');
+            init(params: ICellRendererParams) {
+                const colId = params.column!.getColId();
+                inits[colId] = (inits[colId] ?? 0) + 1;
+            }
+            getGui() {
+                return this.gui;
+            }
+            refresh() {
+                return true;
+            }
+        }
+        const colIds = Array.from({ length: 30 }, (_, i) => `c${i}`);
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: colIds.map((colId) => ({ colId, width: 100, cellRenderer: CountingRenderer })),
+                rowData: [{}, {}, {}],
+                suppressColumnVirtualisation: false,
+            },
+            { modules: [ScrollApiModule] }
+        );
+        // keyed by lane too: a column pinned or unpinned arrives in another container's row
+        const readCells = () => {
+            const cells = new Map<string, Element>();
+            for (const row of getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index]')) {
+                const rowIndex = row.getAttribute('row-index');
+                for (const cell of row.querySelectorAll('.ag-cell[col-id]')) {
+                    const lane = cell.closest('.ag-grid-pinned-left-cells') ? 'left' : 'centre';
+                    cells.set(`${lane}:${rowIndex}:${cell.getAttribute('col-id')}`, cell);
+                }
+            }
+            return cells;
+        };
+        await waitFor(() => expect(readCells().size).toBeGreaterThan(0));
+        await asyncSetTimeout(0);
+
+        // each step with whether it brings cells into the rows
+        const steps: [string, () => void, boolean][] = [
+            ['sort', () => api.applyColumnState({ state: [{ colId: 'c1', sort: 'asc' }] }), false],
+            [
+                'applyColumnState with the current width',
+                () => api.applyColumnState({ state: [{ colId: 'c3', width: 100 }] }),
+                false,
+            ],
+            ['setColumnsVisible on a visible column', () => api.setColumnsVisible(['c1'], true), false],
+            ['moveColumns', () => api.moveColumns(['c3'], 1), false],
+            // the columns after it move left, so the next one beyond the viewport comes into view
+            ['hide', () => api.setColumnsVisible(['c2'], false), true],
+            ['show', () => api.setColumnsVisible(['c2'], true), true],
+            ['pin left', () => api.setColumnsPinned(['c4'], 'left'), true],
+            ['unpin', () => api.setColumnsPinned(['c4'], null), true],
+            ['setColumnWidths', () => api.setColumnWidths([{ key: 'c0', newWidth: 150 }]), false],
+            [
+                'equal columnDefs',
+                () =>
+                    api.setGridOption(
+                        'columnDefs',
+                        colIds.map((colId) => ({
+                            colId,
+                            width: colId === 'c0' ? 150 : 100,
+                            cellRenderer: CountingRenderer,
+                        }))
+                    ),
+                false,
+            ],
+            ['horizontal scroll', () => api.ensureColumnVisible('c25'), true],
+        ];
+
+        for (const [step, run, bringsCells] of steps) {
+            const before = readCells();
+            const initsBefore = { ...inits };
+            run();
+            await asyncSetTimeout(0);
+            const after = readCells();
+
+            const replaced: string[] = [];
+            const arrived: Record<string, number> = {};
+            for (const [key, cell] of after) {
+                const previous = before.get(key);
+                if (previous === undefined) {
+                    const colId = key.split(':')[2];
+                    arrived[colId] = (arrived[colId] ?? 0) + 1;
+                } else if (previous !== cell) {
+                    replaced.push(key);
+                }
+            }
+            const grown: Record<string, number> = {};
+            for (const colId of Object.keys(inits)) {
+                const delta = inits[colId] - (initsBefore[colId] ?? 0);
+                if (delta) {
+                    grown[colId] = delta;
+                }
+            }
+
+            const displayed = new Set(api.getAllDisplayedColumns().map((column) => column.getColId()));
+            const leftBehind = [...after.keys()].filter((key) => !displayed.has(key.split(':')[2]));
+
+            expect({ step, replaced, grown, leftBehind, brought: Object.keys(arrived).length > 0 }).toEqual({
+                step,
+                replaced: [],
+                grown: arrived,
+                leftBehind: [],
+                brought: bringsCells,
+            });
+        }
     });
 });
 
@@ -968,6 +1150,27 @@ describe('the column events of one call', () => {
         expect(resized).toEqual(['ag-Grid-AutoColumn-a,ag-Grid-AutoColumn-b']);
     });
 
+    test('the group columns a new autoGroupColumnDef redefines keep their row-group column names when told', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a', rowGroup: true }, { field: 'b', rowGroup: true }, { field: 'c' }],
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ a: 1, b: 2, c: 3 }],
+        });
+        await asyncSetTimeout(0);
+        const names = () => ['a', 'b'].map((id) => api.getColumn(`ag-Grid-AutoColumn-${id}`)!.getColDef().headerName);
+        const seen: unknown[][] = [];
+        for (const id of ['a', 'b']) {
+            api.getColumn(`ag-Grid-AutoColumn-${id}`)!.addEventListener('colDefChanged', () => seen.push(names()));
+        }
+
+        api.setGridOption('autoGroupColumnDef', { width: 150 });
+
+        expect(seen).toEqual([
+            ['A', 'B'],
+            ['A', 'B'],
+        ]);
+    });
+
     test('the selection column redefined by a new selectionColumnDef is told once it holds the new state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],
@@ -1003,6 +1206,29 @@ describe('the column events of one call', () => {
         api.expandAll();
 
         await waitFor(() => expect(seen).toEqual([true]));
+    });
+
+    test('expanding shows every group column it reveals in one displayed columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true },
+                { field: 'b', rowGroup: true },
+                { field: 'c', rowGroup: true },
+                { field: 'd' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            groupHideColumnsUntilExpanded: true,
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        await asyncSetTimeout(0);
+        const seen: string[] = [];
+        api.addEventListener('displayedColumnsChanged', () =>
+            seen.push(ids(api.getAllDisplayedColumns().filter((c) => c.getColId().startsWith('ag-Grid-AutoColumn'))))
+        );
+
+        api.expandAll();
+
+        await waitFor(() => expect(seen).toEqual(['ag-Grid-AutoColumn-a,ag-Grid-AutoColumn-b,ag-Grid-AutoColumn-c']));
     });
 
     test('a group column redefined by a row group move is told once the columns hold the new order', () => {
@@ -1847,5 +2073,120 @@ describe('the rows a column update refreshes', () => {
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF hidden id:3 country:"France" gold:2
         `);
+    });
+});
+
+describe('the column animations a column call leaves on', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const hasClass = (api: GridApi, cssClass: string) => {
+        const grid = getGridElement(api)!;
+        return grid.classList.contains(cssClass) || grid.querySelector(`.${cssClass}`) !== null;
+    };
+    const resizeAnimating = (api: GridApi) => hasClass(api, 'ag-animate-autosize');
+    const moving = (api: GridApi) => hasClass(api, 'ag-column-moving');
+    const cellLeft = (api: GridApi, colId: string) =>
+        getGridElement(api)!.querySelector<HTMLElement>(`.ag-cell[col-id="${colId}"]`)!.style.left;
+    const order = (api: GridApi) =>
+        api
+            .getAllDisplayedColumns()
+            .map((column) => column.getColId())
+            .join();
+
+    const createFittingGrid = () =>
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            defaultColDef: { width: 300 },
+            animateColumnResizing: true,
+            rowData: [{}],
+        });
+
+    test('a fit to the width the columns already fill does not cut short the animation of the width change before it', async () => {
+        const api = createFittingGrid();
+
+        api.applyColumnState({ state: [{ colId: 'a', width: 400 }] });
+        expect(resizeAnimating(api)).toBe(true);
+
+        api.sizeColumnsToFit(700);
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getActualWidth())).toEqual([400, 300]);
+        expect(resizeAnimating(api)).toBe(true);
+        await waitFor(() => expect(resizeAnimating(api)).toBe(false));
+    });
+
+    const createGroupGrid = async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g',
+                    headerName: 'Group',
+                    children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }],
+                },
+                { colId: 'c' },
+                { colId: 'd' },
+            ],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(moving(api)).toBe(false));
+        return api;
+    };
+
+    /** Widens the group's first column, the next column change after the call under test. */
+    const widenFirstGroupColumn = (api: GridApi) => {
+        api.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+        expect(api.getColumn('a')!.getActualWidth()).toBe(150);
+    };
+
+    test('opening a group makes the next column change slide', async () => {
+        const api = await createGroupGrid();
+
+        api.setColumnGroupOpened('g', true);
+        expect(order(api)).toBe('a,b,c,d');
+        expect(cellLeft(api, 'c')).toBe('200px');
+
+        widenFirstGroupColumn(api);
+        expect({ moving: moving(api), cLeft: cellLeft(api, 'c') }).toEqual({ moving: true, cLeft: '250px' });
+    });
+
+    const createLockedGrid = async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'year', lockPosition: 'left' },
+                { colId: 'athlete' },
+                { colId: 'country' },
+                { colId: 'sport' },
+            ],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(moving(api)).toBe(false));
+        return api;
+    };
+
+    /** Widens athlete, the next column change after the call under test. */
+    const widenAthlete = (api: GridApi) => {
+        api.setColumnWidths([{ key: 'athlete', newWidth: 150 }]);
+        expect(api.getColumn('athlete')!.getActualWidth()).toBe(150);
+    };
+
+    test('moving a column that is allowed to move makes the next column change slide', async () => {
+        const api = await createLockedGrid();
+
+        api.moveColumns(['sport'], 1);
+
+        expect(order(api)).toBe('year,sport,athlete,country');
+        expect(cellLeft(api, 'country')).toBe('300px');
+        widenAthlete(api);
+        expect({ moving: moving(api), countryLeft: cellLeft(api, 'country') }).toEqual({
+            moving: true,
+            countryLeft: '350px',
+        });
     });
 });

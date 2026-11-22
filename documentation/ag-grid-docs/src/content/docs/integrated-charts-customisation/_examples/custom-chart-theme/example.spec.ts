@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
     // palette, background and legend/axis styling are painted onto the chart canvas, so they are
     // not DOM-assertable. We verify the documented setup: the grid renders the charted columns
     // and a grouped-bar range chart is created using the first custom theme in `chartThemes`.
-    test.eachFramework('Custom Chart Theme', async ({ page, remoteGrid }) => {
+    test.eachFramework('Custom Chart Theme', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -14,7 +14,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: 'Ireland' }).first()).toBeVisible();
 
         // A grouped-bar range chart is auto-created and uses the first supplied custom theme.
-        const models = await waitForChartModels(remoteGrid(page));
+        const models = await waitForChartModels(page);
         expect(models[0].chartType).toBe('groupedBar');
         expect(models[0].chartThemeName).toBe('my-custom-theme-light');
         expect(models[0].cellRange.columns).toEqual(['country', 'gold', 'silver', 'bronze']);

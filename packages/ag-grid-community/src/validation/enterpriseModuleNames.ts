@@ -15,7 +15,6 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     ExcelExport: 1,
     FiltersToolPanel: 1,
     Find: 1,
-    GridCharts: 1,
     IntegratedCharts: 1,
     GroupFilter: 1,
     MasterDetail: 1,
@@ -40,6 +39,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     Toolbar: 1,
     TreeData: 1,
     ViewportRowModel: 1,
+    ViewSubscription: 1,
     Formula: 1,
     Notes: 1,
 };

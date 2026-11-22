@@ -19,7 +19,7 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 **Provenance key:**
 
 - 🟢 **Local** — ag-grid specific (normal file in `.rulesync/`)
-- 🔵 **Shared** — reusable across AG products (symlink to `external/ag-shared/`)
+- 🔵 **Shared** — reusable across AG products (delivered via ag-dev-prompts plugins; git-ignored, see `.rulesync/.gitignore`)
 
 ---
 
@@ -29,7 +29,7 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | ----- | --------------------- | ---------------------------------- | -------------------------------------------------- |
 | Skill | 🔵 `pr-create`        | `/pr-create` (user)                | Commit, push, and open a PR                        |
 | Skill | 🔵 `pr-review`        | `/pr-review [--json] <PR#>` (user) | Review a PR (Markdown default, JSON with `--json`) |
-| Skill | 🟢 `dev-server`       | `/dev-server`                      | Start dev server, check build status               |
+| Skill | 🔵 `dev-server`       | `/ag-eng:dev-server`               | Start dev server, check build status               |
 | Skill | 🔵 `git-conventions`  | `/git-conventions`                 | Branch, commit, and PR naming conventions          |
 | Skill | 🟢 `technology-stack` | `/technology-stack`                | Architecture constraints and zero-dependency rules |
 
@@ -76,8 +76,8 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 | Type  | Name                     | Invoke                            | What it does                                                                                                                 |
 | ----- | ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Skill | 🟢 `docs-review`         | `/ag-product:docs-review`         | Review docs pages for technical accuracy and example consistency (auto-detects ag-grid via `packages/ag-grid-community/src`) |
-| Skill | 🟢 `release-docs-review` | `/ag-product:release-docs-review` | Review all documentation changes between releases                                                                            |
+| Skill | 🔵 `docs-review`         | `/ag-product:docs-review`         | Review docs pages for technical accuracy and example consistency (auto-detects ag-grid via `packages/ag-grid-community/src`) |
+| Skill | 🔵 `release-docs-review` | `/ag-product:release-docs-review` | Review all documentation changes between releases                                                                            |
 
 ## Git and Branch Management
 
@@ -131,7 +131,7 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 | ------------------------------- | ----------------------------------------------------------- |
 | 🔵 `ag-shared-sync-log`         | Generate migration log entries for ag-shared changes        |
 | 🔵 `batch-lint-cleanup`         | Auto-fix ESLint violations by rule                          |
-| 🟢 `dev-server`                 | Start dev server, check build status                        |
+| 🔵 `dev-server`                 | Start dev server, check build status                        |
 | 🔵 `example`                    | AG Charts/Grid/Studio example conventions and patterns      |
 | 🔵 `git-bisect`                 | Find the commit that introduced a regression                |
 | 🔵 `git-conventions`            | Branch, commit, and PR naming conventions                   |

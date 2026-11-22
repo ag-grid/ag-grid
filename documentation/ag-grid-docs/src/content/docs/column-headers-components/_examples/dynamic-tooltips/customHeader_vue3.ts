@@ -1,10 +1,21 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderParams, SortDirection } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderParams & { menuIcon: string }>,
+            required: true,
+        },
+    },
     template: `
     <div class="headerWrapper">
     <div v-if="params.enableFilterButton" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
       <i class="fa" :class="params.menuIcon"></i>
     </div>
-    <div ref="label" class="customHeaderLabel">{{ params.displayName }}</div>
+    <div class="customHeaderLabel">{{ params.displayName }}</div>
     <div v-if="params.enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort" class="customSortDownLabel">
       <i class="fa fa-long-arrow-alt-down"></i></div>
     <div v-if="params.enableSorting" @click="onSortRequested('desc', $event)" :class="descSort" class="customSortUpLabel">
@@ -16,25 +27,23 @@ export default {
     `,
     data: function () {
         return {
-            ascSort: null,
-            descSort: null,
-            noSort: null,
+            ascSort: null as string | null,
+            descSort: null as string | null,
+            noSort: null as string | null,
         };
     },
     beforeMount() {},
     mounted() {
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
-        this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) {
-                return;
-            }
-            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
-        });
+        this.params.setTooltip(
+            'Click the cross to remove the sort',
+            () => this.params.column.getSortDef()?.direction != null
+        );
     },
     methods: {
         onMenuClicked() {
-            this.params.showColumnMenu(this.$refs.menuButton);
+            this.params.showColumnMenu(this.$refs.menuButton as HTMLElement);
         },
 
         onSortChanged() {
@@ -49,8 +58,8 @@ export default {
             }
         },
 
-        onSortRequested(order, event) {
+        onSortRequested(order: SortDirection, event: MouseEvent) {
             this.params.setSort(order, event.shiftKey);
         },
     },
-};
+});

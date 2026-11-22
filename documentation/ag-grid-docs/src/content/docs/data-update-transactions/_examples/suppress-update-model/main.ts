@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -30,7 +30,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
 ]);
 
-function getRowId(params) {
+function getRowId(params: GetRowIdParams) {
     return String(params.data.id);
 }
 

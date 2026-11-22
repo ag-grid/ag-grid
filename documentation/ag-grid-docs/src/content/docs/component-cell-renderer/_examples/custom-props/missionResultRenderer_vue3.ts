@@ -1,4 +1,19 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+interface MissionCellRendererParams extends ICellRendererParams {
+    src?: (params: boolean) => string;
+}
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<MissionCellRendererParams>,
+            required: true,
+        },
+    },
     template: `
     <span class="missionSpan">
       <img
@@ -22,4 +37,4 @@ export default {
             }.png`;
         }
     },
-};
+});

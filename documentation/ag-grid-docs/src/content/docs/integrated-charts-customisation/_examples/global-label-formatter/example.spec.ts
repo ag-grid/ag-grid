@@ -6,7 +6,7 @@ test.agExample(import.meta, () => {
     // canvas, so it is render-only and not DOM-assertable (the columns here have no grid-side
     // valueFormatter, so the grid shows raw numbers). We verify the documented setup: the grid
     // renders the charted columns and a grouped-column range chart is created from them.
-    test.eachFramework('Global Label Formatter', async ({ page, remoteGrid }) => {
+    test.eachFramework('Global Label Formatter', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -15,7 +15,7 @@ test.agExample(import.meta, () => {
         await expect(page.getByRole('columnheader', { name: 'Individual Sales' })).toBeVisible();
         await expect(page.locator('.ag-cell', { hasText: 'Q1 2021' }).first()).toBeVisible();
 
-        const models = await waitForChartModels(remoteGrid(page));
+        const models = await waitForChartModels(page);
         expect(models[0].chartType).toBe('groupedColumn');
         expect(models[0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
 

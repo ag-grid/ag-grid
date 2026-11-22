@@ -1,4 +1,4 @@
-import { _setDisplayed } from 'ag-stack';
+import { _getAriaLabel, _setDisplayed } from 'ag-stack';
 
 import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
@@ -22,6 +22,20 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     public postConstruct(): void {
+        const tooltip = this.createOptionalManagedBean(
+            this.beans.tooltipSvc?.createTooltip({
+                control: 'resizeColumn',
+                getGui: () => this.eResize,
+                getTooltipAccessibleName: () => _getAriaLabel(this.eResize),
+                getLocation: () => 'header',
+                getTooltip: () => ({
+                    value: this.column.isResizable()
+                        ? this.getLocaleTextFunc()('tooltipResizeColumn', 'Resize column')
+                        : undefined,
+                    params: { column: this.column },
+                }),
+            })
+        );
         const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;
@@ -60,12 +74,17 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const refresh = () => {
             const resize = this.column.isResizable();
             const autoSize = !this.gos.get('suppressAutoSize') && !this.column.colDef.suppressAutoSize;
+            const resizeChanged = canResize !== undefined && resize !== canResize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
                 canAutosize = autoSize;
                 removeResize();
                 addResize();
+            }
+            if (resizeChanged) {
+                tooltip?.attemptToHideTooltip();
+                tooltip?.refreshTooltip();
             }
         };
 

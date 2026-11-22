@@ -10,6 +10,6 @@
     "types": ["vite/client"],
     "paths": {}
   },
-  "include": ["src/main.ts", "src/typings.ts"],
+  "include": ["src/main.ts", "src/main-core.ts", "src/typings.ts"],
   "exclude": ["src/main-styles.ts", "src/*.test.ts"]
 }

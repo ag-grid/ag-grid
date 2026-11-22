@@ -173,6 +173,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let updatedNodes: RowNode[] | undefined = undefined;
         let insertedNodes: RowNode[] | undefined = undefined;
+        let unapplied: any[] | undefined = undefined;
         let removedNodes: RowNode[] | undefined = undefined;
         const selectionSvc = this.selectionSvc;
         selectionSvc?.beginSelectionBatch(); // one selectionChanged for the rows the transaction deselects
@@ -186,7 +187,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 if (addIndex != null && addIndex < 0) {
                     addIndex = undefined;
                 }
-                insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+                const { inserted, skipped } = this.cache.insertRowNodes(transaction.add, addIndex);
+                insertedNodes = inserted;
+                unapplied = skipped.length ? skipped : undefined;
             }
 
             if (transaction.remove?.length) {
@@ -215,6 +218,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+            unapplied,
         };
     }
 

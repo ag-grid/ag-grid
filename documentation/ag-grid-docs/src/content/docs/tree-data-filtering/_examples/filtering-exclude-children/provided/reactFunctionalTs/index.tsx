@@ -55,7 +55,7 @@ const GridExample = () => {
             },
         };
     }, []);
-    const getDataPath = useCallback((data) => data.path, []);
+    const getDataPath = useCallback((data: any) => data.path, []);
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         params.api.setFilterModel({

@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page }) => {
+    test.eachFramework('Example', async ({ agIdFor }) => {
         const rowGroupsArea = agIdFor.columnDropArea('panel', 'Row Groups');
 
         // Row group panel shows the two pills configured with `rowGroup: true`.

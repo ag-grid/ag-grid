@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { waitForGridContent } from '@utils/grid/test/remoteGridapi';
+import { waitForGridContent } from '@utils/grid/test/waitForGrid';
 
 /** A hidden `.ag-cell` that precedes the visible no-rows overlay in DOM order. */
 const HIDDEN_CELL_BEFORE_NO_ROWS_OVERLAY = `

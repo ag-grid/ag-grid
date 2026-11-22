@@ -21,6 +21,24 @@ import { _initColTooltip } from './tooltipValueUtils';
  */
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
+    public isContextMenuOpen = false;
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({
+            contextMenuVisibleChanged: ({ visible }) => {
+                this.isContextMenuOpen = visible;
+                if (!visible) {
+                    return;
+                }
+                // Fading tooltips have already released their state-manager listeners.
+                for (const popup of this.beans.popupSvc?.getActivePopups() ?? []) {
+                    if (popup.classList.contains('ag-tooltip-hiding')) {
+                        popup.style.display = 'none';
+                    }
+                }
+            },
+        });
+    }
 
     /** Creates an uninitialised feature for hosts whose element is attached later (ordinary cells). */
     public createTooltip(source: TooltipSource): TooltipFeature | undefined {

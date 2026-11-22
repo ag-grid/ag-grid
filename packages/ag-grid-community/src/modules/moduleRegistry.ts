@@ -14,9 +14,26 @@ type ModuleStore = {
 const allRegisteredModules = new Set<Module>();
 const globalModulesMap: ModuleStore = {};
 const gridModulesMap: { [gridId: string]: ModuleStore } = {};
-let currentModuleVersion: string;
+let currentModuleVersion = '';
 let areGridScopedModules = false;
 let isUmd = false;
+
+/**
+ * Forgets every registered module, as on a fresh page: for a test runner that keeps one module graph across files.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _resetModuleRegistry(): void {
+    allRegisteredModules.clear();
+    for (const key of Object.keys(globalModulesMap) as (keyof ModuleStore)[]) {
+        delete globalModulesMap[key];
+    }
+    for (const gridId of Object.keys(gridModulesMap)) {
+        delete gridModulesMap[gridId];
+    }
+    currentModuleVersion = '';
+    areGridScopedModules = false;
+    isUmd = false;
+}
 
 function isValidModuleVersion(module: Module): boolean {
     const [moduleMajor, moduleMinor] = module.version.split('.') || [];
@@ -129,12 +146,6 @@ export function _setUmd(): void {
 }
 
 export class ModuleRegistry {
-    /**
-     * @deprecated v33 Use `registerModules([module])` instead.
-     */
-    public static register(module: Module): void {
-        _registerModule(module, undefined);
-    }
     /**
      * Globally register the given modules for all grids.
      * @param modules - modules to register

@@ -1,38 +1,43 @@
-import { AgBeanStub } from '../core/agBeanStub';
+import { AgAbstractBean } from '../core/agAbstractBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import type { BaseEvents } from '../interfaces/baseEvents';
-import type { BaseProperties } from '../interfaces/baseProperties';
 import type {
     AgEventService,
     AgEventServiceGlobalListener,
     AgEventServiceListener,
     AgRawEvents,
+    ICommonSource,
 } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { LocalEventService } from './localEventService';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * The global event service. Adds the properties service's common fields to every event it dispatches,
+ * unless `addCommonToEvents` is turned off.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export class BaseEventService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TPropertiesService>,
+    TProperties,
+    TGlobalEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
 >
-    extends AgBeanStub<
+    extends AgAbstractBean<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
-        TCommon,
         TPropertiesService,
         keyof TGlobalEvents & string
     >
-    implements AgEventService<TGlobalEvents, TCommon>
+    implements AgEventService<TGlobalEvents, AgRawEvents<TGlobalEvents, TCommon>>
 {
     public beanName = 'eventSvc' as const;
     public eventServiceType = 'global' as const;
 
     private readonly globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();
+
+    /** A host that adds the common fields only to what reaches consumer code turns this off. */
+    protected readonly addCommonToEvents: boolean = true;
 
     public addListener<TEventType extends keyof TGlobalEvents & string>(
         eventType: TEventType,
@@ -50,6 +55,7 @@ export class BaseEventService<
         this.globalSvc.removeEventListener(eventType, listener as any, async);
     }
 
+    /** `eventTypes` limits the listener to those types, `exceptEventTypes` keeps those from it. */
     public addGlobalListener(
         listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
         async = false,
@@ -66,7 +72,7 @@ export class BaseEventService<
         this.globalSvc.removeGlobalListener(listener, async);
     }
 
-    public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
-        this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event as any));
+    public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon>): void {
+        this.globalSvc.dispatchEvent(this.addCommonToEvents ? this.gos.addCommon<any>(event) : event);
     }
 }

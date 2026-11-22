@@ -1,12 +1,14 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { definePropertyForFile } from 'ag-test-utils';
 import React from 'react';
 
 import { ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, ValidationModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 // Enables testing the context menu with async data
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+definePropertyForFile(HTMLElement.prototype, 'offsetParent', {
+    configurable: true,
     get() {
         return this.parentNode;
     },

@@ -8,6 +8,7 @@
     "src/typings.ts",
     "src/main-umd*.ts",
     "src/**/*.test.ts",
+    "src/**/*.test-d.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ]

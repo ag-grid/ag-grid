@@ -77,17 +77,20 @@ export interface ISetFilterCellRendererParams<TData = any, TContext = any> exten
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
-export interface ICellRenderer<TData = any> {
+export interface ICellRenderer<TData = any, TValue = any, TContext = any> {
     /**
      * Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you.
      */
-    refresh(params: ICellRendererParams<TData>): boolean;
+    refresh(params: ICellRendererParams<TData, TValue, TContext>): boolean;
 }
 
-export interface ICellRendererComp<TData = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData> {}
+export interface ICellRendererComp<TData = any, TValue = any, TContext = any>
+    extends IComponent<ICellRendererParams<TData, TValue, TContext>>, ICellRenderer<TData, TValue, TContext> {}
 
-export type ICellRendererFunc<TData = any> = (params: ICellRendererParams<TData>) => HTMLElement | string;
+export type ICellRendererFunc<TData = any, TValue = any, TContext = any> = (
+    params: ICellRendererParams<TData, TValue, TContext>
+) => HTMLElement | string;
 
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {}
 

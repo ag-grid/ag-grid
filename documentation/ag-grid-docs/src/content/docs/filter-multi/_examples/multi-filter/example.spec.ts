@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Athlete Multi Filter uses its child Text Filter', async ({ page, agIdFor }) => {
+    test.eachFramework('Athlete Multi Filter uses its child Text Filter', async ({ agIdFor }) => {
         // Michael Phelps is the first data row before any filtering.
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 
@@ -20,7 +20,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('3', 'athlete')).not.toBeVisible();
     });
 
-    test.eachFramework('Year Multi Filter uses its child Number Filter', async ({ page, agIdFor }) => {
+    test.eachFramework('Year Multi Filter uses its child Number Filter', async ({ agIdFor }) => {
         const filterButton = agIdFor.headerFilterButton('year');
         await expect(filterButton).toBeVisible();
         await filterButton.click();

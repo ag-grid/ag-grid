@@ -1,4 +1,12 @@
-import { RefPlaceholder, _areEqual, _exists, _getActiveDomElement, _makeNull, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _areEqual,
+    _exists,
+    _getActiveDomElement,
+    _makeNull,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -637,7 +645,7 @@ export class SetFilter<V = string>
         eMiniFilter.onValueChange(() => this.onMiniFilterInput()).onValueClear(() => this.onMiniFilterInput(true));
         eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));
 
-        this.addManagedElementListeners(eMiniFilter.getInputElement(), {
+        _addManagedElementListeners(this, eMiniFilter.getInputElement(), {
             keydown: (e) => this.onMiniFilterKeyDown(e!),
         });
     }
@@ -1068,8 +1076,8 @@ export class SetFilter<V = string>
         }
     }
 
-    public getModelAsString(model: SetFilterModel | null): string {
-        return this.handler.getModelAsString(model);
+    public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
+        return this.handler.getModelAsString(model, source);
     }
 
     protected override getPositionableElement(): HTMLElement {
@@ -1099,12 +1107,13 @@ export class SetFilter<V = string>
             return;
         }
 
-        // if filter present, we filter down the list
-        // to allow for case insensitive searches, upper-case both filter text and value
-        const formattedFilterText = handler.caseFormat(this.formatter(this.miniFilterText) || '');
+        const { caseSensitive, miniFilterCaseSensitive } = this.params;
+        const searchCaseFormat = (value: string): string =>
+            caseSensitive && miniFilterCaseSensitive ? value : value.toUpperCase();
+        const formattedFilterText = searchCaseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && handler.caseFormat(valueToCheck).includes(formattedFilterText);
+            valueToCheck != null && searchCaseFormat(valueToCheck).includes(formattedFilterText);
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 

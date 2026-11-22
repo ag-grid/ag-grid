@@ -4,6 +4,7 @@ import type { GridApi, IServerSideDatasource, IServerSideGetRowsRequest } from '
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
+import { pivotGroups } from '../pivotGroups';
 
 /**
  * Characterisation (golden-master) tests pinning the CURRENT behaviour of the Server-Side Row Model
@@ -135,6 +136,50 @@ describe('SSRM pivot (characterisation)', () => {
               └── 2008|gold "Gold" width:200
         `);
     });
+
+    test.each([
+        { pivotDefaultExpanded: 0, sportOpen: false, yearOpen: false },
+        { pivotDefaultExpanded: 1, sportOpen: true, yearOpen: false },
+        { pivotDefaultExpanded: -1, sportOpen: true, yearOpen: true },
+    ])(
+        'pivotDefaultExpanded $pivotDefaultExpanded opens the pivot result column groups to that depth',
+        async ({ pivotDefaultExpanded, sportOpen, yearOpen }) => {
+            const pivotResultFields = ['Swim_2000_gold', 'Swim_2004_gold', 'Run_2000_gold', 'Run_2004_gold'];
+            const datasource: IServerSideDatasource = {
+                getRows: (params) => {
+                    const rows = [
+                        { country: 'USA', Swim_2000_gold: 1, Swim_2004_gold: 2, Run_2000_gold: 3, Run_2004_gold: 4 },
+                    ];
+                    setTimeout(() => {
+                        params.success({ rowData: rows, rowCount: rows.length, pivotResultFields });
+                    }, 0);
+                },
+            };
+
+            const api: GridApi = await gridsManager.createGridAndWait('ssrm', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', pivot: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                pivotDefaultExpanded,
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+            });
+            await waitForNoLoadingRows(api);
+
+            expect(pivotGroups(api)).toEqual([
+                { id: 'Run', path: 'Run', open: sportOpen, expandable: false },
+                { id: 'Run_2000', path: 'Run > 2000', open: yearOpen, expandable: false },
+                { id: 'Run_2004', path: 'Run > 2004', open: yearOpen, expandable: false },
+                { id: 'Swim', path: 'Swim', open: sportOpen, expandable: false },
+                { id: 'Swim_2000', path: 'Swim > 2000', open: yearOpen, expandable: false },
+                { id: 'Swim_2004', path: 'Swim > 2004', open: yearOpen, expandable: false },
+            ]);
+        }
+    );
 
     // --- Scenario 3: pivot leaf-group expansion requests the group route and returns pivoted rows ---
 

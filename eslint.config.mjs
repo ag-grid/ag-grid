@@ -92,6 +92,8 @@ export const sonarjsConfig = [
             'sonarjs/no-redeclare': 0,
             'sonarjs/function-return-type': 0,
             'sonarjs/max-switch-cases': 0,
+            // Duplicates tsc, and misreads generic parameters as of TypeScript 5.9.
+            'sonarjs/argument-type': 0,
 
             'sonarjs/different-types-comparison': 0,
             'sonarjs/slow-regex': 0,

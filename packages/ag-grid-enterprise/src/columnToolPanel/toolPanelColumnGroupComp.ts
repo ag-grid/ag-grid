@@ -1,4 +1,11 @@
-import { RefPlaceholder, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -10,9 +17,9 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     IAggFunc,
     LongTapEvent,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -86,7 +93,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
         private readonly source: ColumnSelectionPanelSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super();
         const { columnGroup, depth } = modelItem;
@@ -144,37 +152,35 @@ export class ToolPanelColumnGroupComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(columnGroup.getColGroupDef()),
                 getLocation: () => 'columnToolPanelColumnGroup',
-                getTooltipValue: () => {
+                getTooltip: () => {
                     const colDef = columnGroup.getColGroupDef();
                     const displayName = this.displayName;
-                    return _resolveHeaderTooltipValue(
-                        colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
-                            location: 'columnToolPanelColumnGroup',
-                            colDef,
-                            column: this.gridColumnGroup,
-                            value: displayName,
-                            valueFormatted: displayName,
-                        })
-                    );
-                },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
-                getAdditionalParams: () => {
-                    const colDef = columnGroup.getColGroupDef();
-                    return {
+                    const params = {
                         ...(colDef ? { colDef } : {}),
                         column: this.gridColumnGroup,
-                        valueFormatted: this.displayName,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return {
+                        value: _resolveHeaderTooltipValue(
+                            colDef,
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                                location: 'columnToolPanelColumnGroup',
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
                     };
                 },
+                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
             })
         );
 
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
-        this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
         // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
@@ -261,7 +267,8 @@ export class ToolPanelColumnGroupComp extends Component {
                 this.params,
                 this.eventType,
                 this.source,
-                this.columnMove
+                this.columnMove,
+                this.refocusIfLost
             )
         );
         this.addDestroyFunc(() => {
@@ -288,6 +295,16 @@ export class ToolPanelColumnGroupComp extends Component {
             _setDisplayed(this.eDragHandle, false);
             return;
         }
+
+        this.addTooltip({
+            getGui: () => this.eDragHandle as HTMLElement,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            control: 'drag',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.gridColumnGroup, colDef: this.columnGroup.getColGroupDef() },
+            }),
+        });
 
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
@@ -367,8 +384,8 @@ export class ToolPanelColumnGroupComp extends Component {
         eGroupOpenedIcon.appendChild(_createIcon('columnSelectOpen', beans, null));
 
         const listener = this.onExpandOrContractClicked.bind(this);
-        this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
-        this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupClosedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         const touchListener = new TouchListener(eColumnGroupIcons, true);
         this.addManagedListeners(touchListener, { tap: listener });

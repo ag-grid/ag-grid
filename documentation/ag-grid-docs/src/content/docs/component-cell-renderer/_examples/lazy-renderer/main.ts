@@ -1,8 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 
-import { LazyCellLoader } from './lazyCellComp_typescript';
-
 // PLACEHOLDER MAIN FILE NOT ACTUALLY USED IN THE EXAMPLE AS REACT PROVIDED EXAMPLES ONLY
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -20,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'country',
             headerName: 'Slow Renderer',
-            cellRenderer: LazyCellLoader,
         },
     ],
     defaultColDef: {

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, GridReadyEvent, SideBarDef, ToolPanelDef } from 'ag-grid-community';
@@ -12,7 +12,6 @@ import {
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { IOlympicData } from './interfaces';
 import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -49,7 +48,7 @@ ModuleRegistry.registerModules([
                 [defaultColDef]="defaultColDef"
                 [autoGroupColumnDef]="autoGroupColumnDef"
                 [sideBar]="sideBar"
-                [rowData]="rowData"
+                [rowData]="rowData()"
                 (gridReady)="onGridReady($event)"
             />
         </div>
@@ -109,7 +108,7 @@ export class AppComponent {
 
     defaultColDef: ColDef = { flex: 1, minWidth: 100, filter: true };
     autoGroupColumnDef: ColDef = { minWidth: 200 };
-    rowData!: IOlympicData[];
+    rowData = signal<IOlympicData[] | undefined>(undefined);
 
     constructor(private http: HttpClient) {}
 
@@ -150,6 +149,6 @@ export class AppComponent {
 
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

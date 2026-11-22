@@ -72,7 +72,7 @@ const VueExample = defineComponent({
             { field: 'account' },
             { field: 'calls' },
         ]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
         const findOptions = ref<FindOptions>({
             searchDetail: true,
         });

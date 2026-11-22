@@ -1,14 +1,14 @@
 // Flat (ungrouped) CSRM pipeline benchmarks on 30k rows: filtering, sorting (delta vs full), and the
 // combined filter+sort pipeline. Merged from the former flat-filtering / flat-sorting / flat-pipeline
 // files; all three share the same row data via bench-data's flat builders.
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ApplyColumnStateParams, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule } from 'ag-grid-community';
 
 import type { FlatRow } from './bench-data';
 import { buildFlatData, buildFlatSortUpdate, buildFlatUpdate } from './bench-data';
-import { BenchGridsManager, benchDefaults, untimedPrepare } from './bench-utils';
+import { BenchGridsManager, bench, untimedPrepare } from './bench-utils';
 
 const ROW_COUNT = 15_000;
 const baseRowData = buildFlatData(ROW_COUNT);
@@ -23,7 +23,7 @@ suite('flat grid — filtering', () => {
     const filterData = baseRowData.slice(0, FILTER_ROW_COUNT);
     const updatedRowData = buildFlatUpdate(filterData, 0.1);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('flat-filter', {
@@ -32,7 +32,7 @@ suite('flat grid — filtering', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-    });
+    };
 
     const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
     let filterOn = false;
@@ -79,18 +79,17 @@ suite('flat grid — sorting (delta vs full)', () => {
     const updateLabel = `${Math.round(updateRatio * 100)}% updates (${Math.floor(SORT_ROW_COUNT * updateRatio)}/${SORT_ROW_COUNT})`;
 
     // The update benches start sorted, so each data swap is re-sorted; the sort bench starts unsorted.
-    const options = (deltaSort: boolean, sorted: boolean) =>
-        benchDefaults({
-            setup: async () => {
-                await gridsManager.reset();
-                api = gridsManager.createGrid('flat-sort', {
-                    columnDefs: [{ field: 'name', sort: sorted ? 'asc' : null }],
-                    deltaSort,
-                    rowData: sortData,
-                    getRowId: ({ data }) => data.id,
-                });
-            },
-        });
+    const options = (deltaSort: boolean, sorted: boolean) => ({
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('flat-sort', {
+                columnDefs: [{ field: 'name', sort: sorted ? 'asc' : null }],
+                deltaSort,
+                rowData: sortData,
+                getRowId: ({ data }) => data.id,
+            });
+        },
+    });
 
     const sortAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
     const sortDesc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'desc' }] };
@@ -137,7 +136,7 @@ suite('flat grid — filter + sort pipeline', () => {
 
     const updatedRowData = buildFlatUpdate(baseRowData);
 
-    const options = benchDefaults({
+    const options = {
         setup: async () => {
             await gridsManager.reset();
             api = gridsManager.createGrid('flat-pipeline', {
@@ -146,7 +145,7 @@ suite('flat grid — filter + sort pipeline', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-    });
+    };
 
     const sortAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
     const noSort: ApplyColumnStateParams = { state: [{ colId: 'name', sort: null }] };

@@ -44,7 +44,7 @@ const columnOrderState: GridState = {
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [grandTotalRow]="'bottom'"
-                    [rowData]="rowData"
+                    [rowData]="rowData()"
                     [initialState]="initialState"
                     (gridReady)="onGridReady($event)"
                 />
@@ -67,7 +67,7 @@ export class AppComponent {
         flex: 1,
         minWidth: 100,
     };
-    public rowData?: IOlympicData[];
+    public rowData = signal<IOlympicData[] | undefined>(undefined);
     public gridVisible = signal(true);
     public initialState?: GridState;
 
@@ -77,7 +77,7 @@ export class AppComponent {
         this.gridVisible.set(false);
         console.log('Recreating grid with initialState', state);
         this.initialState = state;
-        this.rowData = undefined;
+        this.rowData.set(undefined);
         setTimeout(() => {
             this.gridVisible.set(true);
         });
@@ -99,6 +99,6 @@ export class AppComponent {
         this.gridApi = params.api;
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .subscribe((data) => (this.rowData = data));
+            .subscribe((data) => this.rowData.set(data));
     }
 }

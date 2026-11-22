@@ -1,12 +1,21 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import type { IEnvironment } from '../interfaces/iEnvironment';
+import { VERSION } from '../version';
 import {
     _injectGlobalCSS,
     _setStyleInjectionEnabledForTesting,
     _unregisterInstanceUsingThemingAPI,
     _useParamsCss,
 } from './inject';
+
+// Another version's copy registered first: hoisted above the imports, as inject.ts registers on import.
+const { OTHER_VERSION, otherVersionState, versionMap } = vi.hoisted(() => {
+    const otherVersionState = {};
+    const versionMap = new Map<string, unknown>([['0.0.0-other', otherVersionState]]);
+    (globalThis as { agStyleInjectionVersions?: Map<string, unknown> }).agStyleInjectionVersions = versionMap;
+    return { OTHER_VERSION: '0.0.0-other', otherVersionState, versionMap };
+});
 
 const createEnvironment = (): IEnvironment => ({}) as IEnvironment;
 
@@ -22,6 +31,13 @@ beforeAll(() => {
 });
 
 describe('style injection', () => {
+    it("adds this version's state to another version's map, keeping that version's", () => {
+        const windowMap = (globalThis as { agStyleInjectionVersions?: Map<string, unknown> }).agStyleInjectionVersions;
+        expect(windowMap).toBe(versionMap);
+        expect(Array.from(versionMap.keys())).toEqual([OTHER_VERSION, VERSION]);
+        expect(versionMap.get(OTHER_VERSION)).toBe(otherVersionState);
+    });
+
     it('deduplicates by css content', () => {
         const container = document.createElement('div');
 

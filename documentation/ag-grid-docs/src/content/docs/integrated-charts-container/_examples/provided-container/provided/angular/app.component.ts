@@ -36,7 +36,7 @@ ModuleRegistry.registerModules([
             [enableCharts]="true"
             [popupParent]="popupParent"
             [createChartContainer]="createChartContainer"
-            [rowData]="rowData"
+            [rowData]="rowData()"
             (gridReady)="onGridReady($event)"
         />
         <div #chartParent class="chart-wrapper">
@@ -61,7 +61,7 @@ export class AppComponent {
     ];
     defaultColDef: ColDef = { flex: 1 };
     popupParent: HTMLElement | null = document.body;
-    rowData!: any[];
+    rowData = signal<any[] | undefined>(undefined);
     chartRef = signal<ChartRef | undefined>(undefined);
     createdTime = signal<string | undefined>(undefined);
 
@@ -73,7 +73,7 @@ export class AppComponent {
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
             .subscribe((data: any[]) => {
-                this.rowData = data;
+                this.rowData.set(data);
             });
         /** PROVIDED EXAMPLE DARK INTEGRATED **/
     }

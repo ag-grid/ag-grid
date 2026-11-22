@@ -2,7 +2,7 @@
     "executors": {
         "esbuild-staged": {
             "implementation": "./src/executors/esbuild-staged.cjs",
-            "schema": "@nx/esbuild/src/executors/esbuild/schema.json",
+            "schema": "../../node_modules/@nx/esbuild/dist/src/executors/esbuild/schema.json",
             "description": "@nx/esbuild into a staging folder, then only changed files copied to the output."
         }
     }

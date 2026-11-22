@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _removeFromParent,
     _setAriaControls,
@@ -77,10 +78,10 @@ export class FilterCardComp extends Component {
         _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelFilterCardDelete'));
         eDeleteIcon.appendChild(_createIcon('close', beans, null));
         this.activateTabIndex([eExpand, eDelete]);
-        this.addManagedElementListeners(eExpand, {
+        _addManagedElementListeners(this, eExpand, {
             click: () => filterPanelService.expand(id, !this.state?.expanded),
         });
-        this.addManagedElementListeners(eDelete, {
+        _addManagedElementListeners(this, eDelete, {
             click: () => filterPanelService.remove(id),
         });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });

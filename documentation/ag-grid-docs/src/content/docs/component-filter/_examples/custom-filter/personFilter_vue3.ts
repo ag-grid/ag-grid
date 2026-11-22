@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<FilterDisplayParams<any, any, string>>,
+            required: true,
+        },
+    },
     template: `
       <div class="person-filter">
         <div>Custom Athlete Filter</div>
@@ -10,7 +21,7 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null,
+            filterText: null as string | null,
         };
     },
     methods: {
@@ -18,7 +29,7 @@ export default {
             this.params.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
         },
 
-        refresh(newParams): boolean {
+        refresh(newParams: FilterDisplayParams<any, any, string>): boolean {
             const currentValue = this.filterText;
             const newValue = newParams.model ?? '';
             if (newValue !== currentValue) {
@@ -27,14 +38,14 @@ export default {
             return true;
         },
 
-        afterGuiAttached(params) {
+        afterGuiAttached(params?: IAfterGuiAttachedParams) {
             if (!params || !params.suppressFocus) {
                 // focus the input element for keyboard navigation
-                this.$refs.eFilterText.focus();
+                (this.$refs.eFilterText as HTMLInputElement).focus();
             }
         },
     },
     mounted: function () {
         this.refresh(this.params);
     },
-};
+});

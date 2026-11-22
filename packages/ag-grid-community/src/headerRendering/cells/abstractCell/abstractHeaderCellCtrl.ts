@@ -1,6 +1,7 @@
 import type { HorizontalDirection } from 'ag-stack';
 import {
     KeyCode,
+    _addManagedElementListeners,
     _addOrRemoveAttribute,
     _batchCall,
     _exists,
@@ -170,7 +171,7 @@ export abstract class AbstractHeaderCellCtrl<
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
-        compBean.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(compBean, this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
 

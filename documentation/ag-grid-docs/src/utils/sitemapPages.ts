@@ -35,6 +35,7 @@ export async function getSitemapAllowPaths() {
         urlWithBaseUrl('/campaigns/bryntum-calendar'),
         urlWithBaseUrl('/campaigns/bryntum-complete'),
         urlWithBaseUrl('/campaigns/bryntum-scheduler'),
+        // Redirects to bryntum-scheduler; stays allowed so crawlers can follow the 301
         urlWithBaseUrl('/campaigns/bryntum-scheduler-pro'),
         urlWithBaseUrl('/campaigns/bryntum-task-board'),
     ];

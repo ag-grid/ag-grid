@@ -17,6 +17,7 @@ import {
     _renderBootstrapPanel,
     _reportMissingModule,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
     getErrorLink,
@@ -563,6 +564,22 @@ describe('bootstrap panel', () => {
     });
 });
 
+describe('reset to a fresh page', () => {
+    test('a listener attached after the reset is replayed nothing from before it, though an earlier listener was never detached', () => {
+        _configureDiagnostics({ capture: true });
+        listenAll(() => undefined);
+        _warnWithoutAttribution(11);
+
+        _resetValidationLogging();
+        _configureDiagnostics({ capture: true });
+        const listener = vi.fn();
+        const off = listenAll(listener);
+
+        expect(listener).not.toHaveBeenCalled();
+        off();
+    });
+});
+
 describe('getErrorLink serialisation', () => {
     function queryParams(url: string): URLSearchParams {
         return new URLSearchParams(url.split('?')[1]);
@@ -581,5 +598,25 @@ describe('getErrorLink serialisation', () => {
         } as any);
 
         expect(queryParams(url).get('allSuggestions')).toBe('["a","b"]');
+    });
+
+    test('formats params that JSON or string conversion cannot handle without throwing', () => {
+        const throwing = () => {
+            throw new Error('cannot convert');
+        };
+        const url = getErrorLink(333, {
+            callback: 'cb',
+            error: { code: 1n },
+            symbol: Symbol('thrown'),
+            badError: Object.defineProperties(new Error('x'), {
+                toString: { value: throwing },
+                [Symbol.toStringTag]: { get: throwing },
+            }),
+        } as any);
+
+        const params = queryParams(url);
+        expect(params.get('error')).toBe('[unformattable value]');
+        expect(params.get('symbol')).toBe('Symbol(thrown)');
+        expect(params.get('badError')).toBe('[unformattable value]');
     });
 });

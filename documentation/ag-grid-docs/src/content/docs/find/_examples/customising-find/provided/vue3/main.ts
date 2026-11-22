@@ -4,6 +4,7 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    GridApi,
     GridReadyEvent,
     ModuleRegistry,
     PaginationModule,
@@ -66,9 +67,9 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
-            activeMatch: undefined,
+            goTo: undefined as number | undefined,
+            gridApi: undefined as GridApi | undefined,
+            activeMatch: undefined as string | undefined,
             toolbar: {
                 items: ['agRowGroupPanelToolbarItem', 'agFindToolbarItem'],
             },
@@ -90,7 +91,7 @@ const VueExample = defineComponent({
             if (isNaN(num) || num < 0) {
                 return;
             }
-            this.gridApi.findGoTo(num);
+            this.gridApi!.findGoTo(num);
         },
         onGridReady(params: GridReadyEvent) {
             this.gridApi = params.api;
@@ -134,7 +135,7 @@ const VueExample = defineComponent({
         });
         const paginationPageSize = ref(5);
         const paginationPageSizeSelector = ref<number[] | boolean>([5, 10]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             pinnedTopRowData,

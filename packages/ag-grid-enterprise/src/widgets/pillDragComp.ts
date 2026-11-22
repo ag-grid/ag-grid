@@ -1,4 +1,5 @@
-import { RefPlaceholder, _setAriaLabel, _setDisplayed } from 'ag-stack';
+import type { ITooltipFeature } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type {
     AgEvent,
@@ -9,11 +10,12 @@ import type {
     DropTarget,
     ElementParams,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     TooltipFeature,
     TooltipLocation,
     TooltipSourceParams,
 } from 'ag-grid-community';
-import { Component, KeyCode, TouchListener, _createIconNoSpan } from 'ag-grid-community';
+import { Component, KeyCode, TouchListener, _addGridCommonParams, _createIconNoSpan } from 'ag-grid-community';
 
 type PillDragCompEvent = 'columnRemove';
 
@@ -41,10 +43,12 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected abstract getDisplayName(): string;
     protected abstract getAriaDisplayName(): string;
-    protected abstract getTooltip(): string | null | undefined;
+    protected abstract getTooltip(params: HeaderTooltipCallbackParams): string | null | undefined;
     protected abstract createGetDragItem(): () => DragItem<TItem>;
     protected abstract getDragSourceType(): DragSourceType;
     private tooltipFeature?: TooltipFeature;
+    private dragTooltip?: ITooltipFeature;
+    private removeTooltip?: ITooltipFeature;
 
     constructor(
         private readonly dragSourceDropTarget: DropTarget,
@@ -74,14 +78,48 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => this.getTooltipComponentDefinition(),
-                getTooltipValue: () => this.getTooltip(),
                 getLocation: () => this.getTooltipLocation(),
-                getAdditionalParams: () => this.getTooltipParams(),
+                getTooltip: () => {
+                    const params = { ...this.getTooltipParams(), value: this.getDisplayName() };
+                    const componentDefinition = this.getTooltipComponentDefinition();
+                    return {
+                        value: this.getTooltip(
+                            _addGridCommonParams<HeaderTooltipCallbackParams>(this.gos, {
+                                location: this.getTooltipLocation(),
+                                ...params,
+                            })
+                        ),
+                        params,
+                        componentDefinition,
+                    };
+                },
             })
         );
 
         this.setupComponents();
+
+        if (!this.ghost) {
+            this.dragTooltip = this.addTooltip({
+                getGui: () => eDragHandle,
+                getLocation: () => this.getTooltipLocation(),
+                control: 'drag',
+                getTooltip: () => ({
+                    value: this.isDraggable() ? this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move') : null,
+                    params: this.getTooltipParams(),
+                }),
+            });
+            this.removeTooltip = this.addTooltip({
+                getGui: () => eButton,
+                getLocation: () => this.getTooltipLocation(),
+                control: 'remove',
+                getTooltip: () => ({
+                    value: this.isRemovable()
+                        ? this.getLocaleTextFunc()('advancedFilterBuilderRemoveButtonTooltip', 'Remove')
+                        : null,
+                    params: this.getTooltipParams(),
+                }),
+            });
+        }
 
         if (!this.ghost && this.isDraggable()) {
             this.addDragSource();
@@ -101,6 +139,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected refreshDraggable(): void {
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !this.isDraggable());
+        this.dragTooltip?.refreshTooltip();
     }
 
     protected setupAria() {
@@ -124,7 +163,11 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.refreshTooltip();
+        const refresh = () => {
+            this.tooltipFeature?.refreshTooltip();
+            this.dragTooltip?.refreshTooltip();
+            this.removeTooltip?.refreshTooltip();
+        };
 
         refresh();
 
@@ -184,6 +227,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.eText.textContent = this.getDisplayValue();
         this.setupAria();
         this.tooltipFeature?.refreshTooltip();
+        this.dragTooltip?.refreshTooltip();
+        this.removeTooltip?.refreshTooltip();
     }
 
     protected isRemovable(): boolean {
@@ -192,6 +237,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected refreshRemove(): void {
         _setDisplayed(this.eButton, this.isRemovable());
+        this.removeTooltip?.refreshTooltip();
     }
 
     private setupRemove(): void {
@@ -201,7 +247,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => this.onKeyDown(e));
 
-        this.addManagedElementListeners(this.eButton, {
+        _addManagedElementListeners(this, this.eButton, {
             click: (mouseEvent: MouseEvent) => {
                 // Stop first: the pill's own GUI carries a click-to-sort listener, so a listener that throws
                 // must not leak the click up to it.

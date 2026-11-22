@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, RowDragCallbackParams, RowDragEndEvent } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowDragCallbackParams, RowDragMoveEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
     },
 };
 
-function onRowDragMove(event: RowDragEndEvent) {
+function onRowDragMove(event: RowDragMoveEvent) {
     const movingNode = event.node!;
     const overNode = event.overNode!;
 

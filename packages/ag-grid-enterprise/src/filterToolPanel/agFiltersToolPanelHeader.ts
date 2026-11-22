@@ -1,9 +1,11 @@
-import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+import { FAST_TEST_TIMINGS, RefPlaceholder, _addManagedElementListeners, _debounce, _setDisplayed } from 'ag-stack';
 
 import type { AgColumn, AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
+
+const SEARCH_DEBOUNCE_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 
 export enum EXPAND_STATE {
     EXPANDED,
@@ -58,7 +60,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
+        _addManagedElementListeners(this, this.eExpand, { click: this.onExpandClicked.bind(this) });
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 
@@ -99,7 +101,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
             this.onSearchTextChangedDebounced = _debounce(
                 this,
                 () => this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() }),
-                300
+                SEARCH_DEBOUNCE_DELAY
             );
         }
 

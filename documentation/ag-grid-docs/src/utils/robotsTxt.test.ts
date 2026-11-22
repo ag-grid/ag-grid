@@ -166,6 +166,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
         ['/campaigns/bryntum-gantt.md', 'allow', 'allow'],
         ['/campaigns/bryntum-gantt.md?utm_source=x', 'allow', 'allow'],
         ['/campaigns/bryntum-scheduler-pro/', 'allow', 'allow'],
+        ['/campaigns/bryntum-scheduler-pro.md', 'allow', 'allow'],
 
         // SE-183: search-result variants are crawl waste, for every group.
         ['/changelog/?searchQuery=filter', 'block', 'block'],
@@ -258,7 +259,7 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
 
     // SE-78: the edge WAF blocks these on every path, so robots.txt must not invite them.
     test('crawlers the edge blocks are disallowed everywhere, and are not in the AI group', () => {
-        expect(BLOCKED_CRAWLERS).toEqual(['Bytespider', 'YisouSpider', 'ShapBot']);
+        expect(BLOCKED_CRAWLERS).toEqual(['Bytespider', 'YisouSpider', 'ShapBot', 'HubSpot Crawler']);
         for (const agent of BLOCKED_CRAWLERS) {
             expect(AI_CRAWLERS, agent).not.toContain(agent);
             // RFC 9309: /robots.txt itself is always allowed.
@@ -267,6 +268,9 @@ describe('productionRobotsTxt — which rule wins for each URL', () => {
             }
         }
         expect(verdict('bytespider', '/llms.txt')).toBe('block');
+        // The local parser compares the User-agent value literally, so this shows the line is emitted,
+        // not how HubSpot's own parser reads a token with a space (see BLOCKED_CRAWLERS).
+        expect(verdict('hubspot crawler', '/llms.txt')).toBe('block');
     });
 
     test('opens only the public archives to AI, not paths that merely contain "archive"', () => {

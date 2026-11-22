@@ -70,6 +70,7 @@ export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
 export { SideBarModule } from './sideBar/sideBarModule';
 export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
+export { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 export { ClipboardModule } from './clipboard/clipboardModule';
 export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
@@ -90,7 +91,7 @@ export { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsMo
 export { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 export { distributeGroupValue } from './rowGrouping/distributeGroupValue/distributeGroupValue';
 
-export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
+export { IntegratedChartsModule } from './charts/integratedChartsModule';
 
 export { AllEnterpriseModule } from './allEnterpriseModule';
 

@@ -63,6 +63,17 @@ inputs:
         options:
             - 'true'
             - 'false'
+    tidy_nx_cache_pr_threshold_mb:
+        description: 'On-disk size in MB above which a PR run resets the Nx cache. Sizes are uncompressed, so this does not equal the stored cache entry size.'
+        required: false
+        default: '700'
+    save_yarn_cache:
+        description: 'Save the yarn download cache after an install that warmed it. Set false to restore only, e.g. on PRs, so they do not spend the shared cache quota.'
+        required: false
+        default: 'true'
+        options:
+            - 'true'
+            - 'false'
     node_modules_paths:
         description: 'Newline-delimited cache paths for the node_modules cache (repo layout specific). Also reused as the wipe list on an inexact cache restore. Supplied by the wrapper.'
         required: true
@@ -245,6 +256,7 @@ runs:
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false' && inputs.tidy_nx_cache != 'false'
           with:
               branch_type: ${{ steps.nx_config.outputs.type }}
+              pr_threshold_mb: ${{ inputs.tidy_nx_cache_pr_threshold_mb }}
 
         - name: Resolve yarn cache dir
           # Ask yarn where its download cache lives rather than hard-coding the default
@@ -378,7 +390,7 @@ runs:
           # os/cpu afterwards, so most of the cache is packages this runner never links.
           # See hollow-yarn-cache.sh for why they are hollowed rather than deleted.
           # Gated identically to "Save yarn cache".
-          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
+          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true' && inputs.save_yarn_cache != 'false'
           shell: bash
           env:
               YARN_CACHE_DIR: ${{ steps.yarn_cache_dir.outputs.dir }}
@@ -395,7 +407,7 @@ runs:
           # exact hit (nothing new to save otherwise). Without this, an exact-node_modules-hit
           # job would skip the restore yet still attempt a save of an unpopulated/stale cache
           # dir.
-          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true'
+          if: inputs.cache_mode == 'rw' && steps.cache_rw.outputs.cache-hit != 'true' && steps.yarn_cache.outputs.cache-hit != 'true' && inputs.save_yarn_cache != 'false'
           uses: actions/cache/save@v6
           with:
               path: ${{ steps.yarn_cache_dir.outputs.dir }}

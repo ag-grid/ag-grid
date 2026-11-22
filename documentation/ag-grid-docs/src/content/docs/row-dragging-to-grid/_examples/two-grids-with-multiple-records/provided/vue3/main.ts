@@ -1,4 +1,5 @@
 import { createApp, defineComponent } from 'vue';
+import type { PropType } from 'vue';
 
 import type {
     ColDef,
@@ -36,6 +37,12 @@ ModuleRegistry.registerModules([
 ]);
 
 const SportRenderer = defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
     methods: {
         applyTransaction() {
@@ -104,11 +111,11 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: null,
-            rightRowData: [],
-            rawData: [],
-            leftApi: null,
-            rightApi: null,
+            leftRowData: null as any[] | null,
+            rightRowData: [] as any[],
+            rawData: [] as any[],
+            leftApi: null as GridApi | null,
+            rightApi: null as GridApi | null,
 
             defaultColDef: <ColDef>{
                 flex: 1,
@@ -128,7 +135,7 @@ const VueExample = defineComponent({
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
-                        return params.rowNode.data.athlete;
+                        return params.rowNode!.data.athlete;
                     },
                 },
                 { field: 'athlete' },
@@ -144,7 +151,7 @@ const VueExample = defineComponent({
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
-                        return params.rowNode.data.athlete;
+                        return params.rowNode!.data.athlete;
                     },
                 },
                 { field: 'athlete' },
@@ -162,7 +169,7 @@ const VueExample = defineComponent({
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())
             .then((data) => {
-                const athletes = [];
+                const athletes: any[] = [];
                 let i = 0;
 
                 while (athletes.length < 20 && i < data.length) {
@@ -187,7 +194,7 @@ const VueExample = defineComponent({
         },
 
         reset() {
-            this.$refs.eMoveRadio.checked = true;
+            (this.$refs.eMoveRadio as HTMLInputElement).checked = true;
 
             this.loadGrids();
         },
@@ -204,25 +211,25 @@ const VueExample = defineComponent({
         },
 
         addGridDropZone() {
-            const dropZoneParams = <RowDropZoneParams>this.rightApi.getRowDropZoneParams({
+            const dropZoneParams = <RowDropZoneParams>this.rightApi!.getRowDropZoneParams({
                 onDragStop: (params) => {
-                    var deselectCheck = this.$refs.eDeselectRadio.checked;
-                    var moveCheck = this.$refs.eMoveRadio.checked;
+                    var deselectCheck = (this.$refs.eDeselectRadio as HTMLInputElement).checked;
+                    var moveCheck = (this.$refs.eMoveRadio as HTMLInputElement).checked;
                     var nodes = params.nodes;
 
                     if (moveCheck) {
-                        this.leftApi.applyTransaction({
+                        this.leftApi!.applyTransaction({
                             remove: nodes.map(function (node) {
                                 return node.data;
                             }),
                         });
                     } else if (deselectCheck) {
-                        this.leftApi.setNodesSelected({ nodes, newValue: false });
+                        this.leftApi!.setNodesSelected({ nodes, newValue: false });
                     }
                 },
             });
 
-            this.leftApi.addRowDropZone(dropZoneParams);
+            this.leftApi!.addRowDropZone(dropZoneParams);
         },
     },
 });

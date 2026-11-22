@@ -1,13 +1,11 @@
 import type { MockInstance } from 'vitest';
 
-// Lives as a package unit test rather than in the behavioural suite: the behavioural global setup opts
-// every test into dev validations before it runs, whereas this pins the *default-off* contract — that
-// AllCommunityModule alone leaves validation disabled until enableDevValidations() is called — so it must
-// run where that hook is absent.
-//
-// Module registration is process-global and one-way, so "off" is only observable in a module graph nobody
-// has opted in yet. `vi.resetModules()` + dynamic import buys that outright, rather than depending on the
-// runner isolating each file — which it does not have to do, and does not when `isolate` is false.
+import { AllCommunityModule } from '../allCommunityModule';
+import { createGrid } from '../grid';
+import { enableDevValidations } from './validationModule';
+
+// A package test: the behavioural setup opts every test into validations, and registration is one-way, so
+// the default-off state is only observable in the fresh module graph per-file isolation gives this file.
 describe('enableDevValidations', () => {
     let consoleWarnSpy: MockInstance;
 
@@ -21,14 +19,7 @@ describe('enableDevValidations', () => {
         vi.restoreAllMocks();
     });
 
-    test('validations are off until opted into, then on after enableDevValidations()', async () => {
-        vi.resetModules();
-        const [{ AllCommunityModule }, { createGrid }, { enableDevValidations }] = await Promise.all([
-            import('../allCommunityModule'),
-            import('../grid'),
-            import('./validationModule'),
-        ]);
-
+    test('validations are off until opted into, then on after enableDevValidations()', () => {
         const invalidOptions = {
             columnDefs: [],
             rowData: [],

@@ -10,14 +10,31 @@ import type {
     GridApi,
     GridOptions,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { ScrollApiModule, getGridElement } from 'ag-grid-community';
+import {
+    CalculatedColumnsModule,
+    ColumnHeaderEditModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    FormulaModule,
+    PivotModule,
+    RowGroupingModule,
+} from 'ag-grid-enterprise';
 
 import { getColumnEntry, openToolPanelContextMenu as openContextMenu } from './toolPanelContextMenuHarness';
 
 describe('ToolPanelContextMenu', () => {
     const gridMgr = new TestGridsManager({
-        modules: [AllEnterpriseModule],
+        modules: [
+            ColumnsToolPanelModule,
+            ColumnMenuModule,
+            RowGroupingModule,
+            PivotModule,
+            CalculatedColumnsModule,
+            FormulaModule,
+            ColumnHeaderEditModule,
+            ScrollApiModule,
+        ],
     });
 
     const rowDataFactory = () => [
@@ -39,6 +56,8 @@ describe('ToolPanelContextMenu', () => {
     });
 
     afterEach(() => {
+        // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
+        document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         gridMgr.reset();
         vi.resetAllMocks();
         vi.clearAllMocks();

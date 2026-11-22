@@ -1,15 +1,15 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // The example demonstrates Hierarchical integrated charts (Treemap / Sunburst): a range chart is
 // created over the division + resource categories and revenue + expenses series, and the two
 // buttons switch between the treemap and sunburst chart types. These series render purely to the
 // chart canvas (no legend), so the chart type is asserted via the grid's chart model.
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Example', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
+        const api = await gridApiHandle(page);
 
         // Grid renders the documented category + series columns and first row of data.
         await expect(agIdFor.cell('0', 'division')).toContainText('Sales');
@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('#myChart canvas').first()).toBeVisible();
 
         // The chart starts as a treemap (createRangeChart chartType).
-        const initialModels = await gridApi.getChartModels();
+        const initialModels = await api.evaluate((api) => api.getChartModels());
         expect(initialModels).toHaveLength(1);
         expect(initialModels![0].chartType).toBe('treemap');
 
@@ -33,7 +33,7 @@ test.agExample(import.meta, () => {
             await buttons.nth(i).click();
             // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
             await expect(async () => {
-                const models = await gridApi.getChartModels();
+                const models = await api.evaluate((api) => api.getChartModels());
                 expect(models![0].chartType).toBe(expectedTypes[i]);
             }).toPass({ timeout: 5000 });
         }

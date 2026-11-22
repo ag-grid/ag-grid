@@ -1,4 +1,11 @@
-import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
+import {
+    ensureGridReady,
+    expect,
+    gridApiHandle,
+    test,
+    waitForGridContent,
+    waitForRowAnimations,
+} from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grid loads the Olympic winners dataset', async ({ agIdFor, page }) => {
@@ -29,51 +36,55 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'gold')).toContainText('8');
     });
 
-    test.vanilla('Structured schema snapshot', async ({ page, remoteGrid }) => {
+    test.vanilla('Structured schema snapshot', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        const schema = await gridApi.getStructuredSchema();
+        const api = await gridApiHandle(page);
+        const schema = await api.evaluate((api) => api.getStructuredSchema());
 
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('structured-schema.json');
     });
 
-    test.vanilla('Schema after columns removed', async ({ page, remoteGrid }) => {
+    test.vanilla('Schema after columns removed', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        await gridApi.setGridOption('columnDefs', [
-            { field: 'athlete', filter: 'agTextColumnFilter' },
-            { field: 'country', filter: 'agSetColumnFilter' },
-            { field: 'gold', filter: 'agNumberColumnFilter' },
-        ]);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'gold', filter: 'agNumberColumnFilter' },
+            ])
+        );
 
-        const schema = await gridApi.getStructuredSchema();
+        const schema = await api.evaluate((api) => api.getStructuredSchema());
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-columns-removed.json');
     });
 
-    test.vanilla('Schema after disabling sort and filter', async ({ page, remoteGrid }) => {
+    test.vanilla('Schema after disabling sort and filter', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        await gridApi.setGridOption('columnDefs', [
-            { field: 'athlete', sortable: false, filter: false },
-            { field: 'country', sortable: false, filter: false },
-        ]);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
+                { field: 'athlete', sortable: false, filter: false },
+                { field: 'country', sortable: false, filter: false },
+            ])
+        );
 
-        const schema = await gridApi.getStructuredSchema();
+        const schema = await api.evaluate((api) => api.getStructuredSchema());
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-no-sort-no-filter.json');
     });
 
-    test.vanilla('Schema with exclude parameter', async ({ page, remoteGrid }) => {
+    test.vanilla('Schema with exclude parameter', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const gridApi = remoteGrid(page);
-        const schema = await gridApi.getStructuredSchema({ exclude: ['sort', 'filter'] });
+        const api = await gridApiHandle(page);
+        const schema = await api.evaluate((api) => api.getStructuredSchema({ exclude: ['sort', 'filter'] }));
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-exclude-sort-filter.json');
     });
 });

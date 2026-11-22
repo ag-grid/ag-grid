@@ -36,6 +36,7 @@ documentation/ag-grid-docs/public/example-runner/grid-angular-boilerplate/main.t
 external/ag-website-shared/src/components/documentation-archive/DocumentationArchiveSection.astro
 
 /.nx/workspace-data
+/.nx/self-healing
 
 testing/ag-grid-docs/e2e/.cache
 testing/ag-grid-docs/playwright-report/

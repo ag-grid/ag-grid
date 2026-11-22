@@ -85,6 +85,7 @@ export class AppComponent {
 
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
     triggerWarning(grid: string) {
+        // @ts-expect-error deliberately updates an initial-only option
         this.apiFor(grid).setGridOption('tooltipInteraction', true);
     }
 

@@ -1,10 +1,4 @@
-import type {
-    AgComponentSelector,
-    AgCoreBeanCollection,
-    BaseEvents,
-    BaseProperties,
-    IPropertiesService,
-} from 'ag-stack';
+import type { AgBeanCollection, AgComponentSelector, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import { RefPlaceholder, _getDocument } from 'ag-stack';
 
 import type { AgInputTextFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
@@ -14,11 +8,11 @@ import { AgColor } from './agColor';
 
 type AgColorInputEvent = 'colorChanged';
 export class AgColorInput<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
 > extends AgInputTextField<
     TBeanCollection,

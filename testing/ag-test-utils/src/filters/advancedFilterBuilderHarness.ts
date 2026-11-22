@@ -145,6 +145,9 @@ export class AdvancedFilterBuilderHarness {
             }
             await openPicker(livePill);
             await this.ensureItemsRendered();
+            if (document.querySelector('.ag-rich-select-list')) {
+                return livePill;
+            }
             throw new Error(`Picker for "${pillSelector}" did not open`);
         });
     }

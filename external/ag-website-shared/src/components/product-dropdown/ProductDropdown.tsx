@@ -3,8 +3,6 @@ import BryntumCalendarLight from '@ag-website-shared/images/inline-svgs/bryntum-
 import BryntumGanttDark from '@ag-website-shared/images/inline-svgs/bryntum-gantt-dark.svg?react';
 import BryntumGanttLight from '@ag-website-shared/images/inline-svgs/bryntum-gantt.svg?react';
 import BryntumSchedulerDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-dark.svg?react';
-import BryntumSchedulerProDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro-dark.svg?react';
-import BryntumSchedulerProLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro.svg?react';
 import BryntumSchedulerLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler.svg?react';
 import BryntumTaskBoardDark from '@ag-website-shared/images/inline-svgs/bryntum-task-board-dark.svg?react';
 import BryntumTaskBoardLight from '@ag-website-shared/images/inline-svgs/bryntum-task-board.svg?react';
@@ -115,13 +113,6 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
                     <>
                         <BryntumSchedulerLight className={styles.iconLight} />
                         <BryntumSchedulerDark className={styles.iconDark} />
-                    </>
-                );
-            case 'Bryntum Scheduler Pro':
-                return (
-                    <>
-                        <BryntumSchedulerProLight className={styles.iconLight} />
-                        <BryntumSchedulerProDark className={styles.iconDark} />
                     </>
                 );
             case 'Bryntum Calendar':

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Eye, EyeOff, Link2, Plus, Trash2, Unlink2 } from 'lucide-react';
+import { Link2, Plus, Trash2, Unlink2 } from 'lucide-react';
 
 import { ColorPicker } from './ColorPicker';
 import { FormField } from './FormField';
@@ -39,9 +39,12 @@ export interface PaletteEditorProps {
     maxSeriesColors?: number;
     /** Which way linked strokes move from their fill, following the theme's background. */
     strokeDirection?: StrokeDirection;
-    /** Whether the host's previews draw strokes. Not part of the palette or the theme. */
-    previewStrokes: boolean;
-    onPreviewStrokesChange: (preview: boolean) => void;
+    /**
+     * Whether the host's previews draw series strokes. Not part of the palette or
+     * the theme: when false the series stroke inputs are greyed out, as they would
+     * change nothing on screen.
+     */
+    seriesStrokesPreviewed?: boolean;
     /** Off for a host whose charts have no series that reads the up, down and neutral colours. */
     showSemanticColors?: boolean;
 }
@@ -61,15 +64,14 @@ const SERIES_STROKE_DOCS =
     'Fills colour the series; strokes colour its outline. A linked stroke follows its fill, darker on a light background and lighter on a dark one; picking a colour for it unlinks it.';
 
 const STROKES_DOCS =
-    'Strokes are not switched on by a theme. Most series, bars included, draw one only when their own options set a stroke width, though box plots, candlesticks and treemap groups always do. This previews the stroke colours without changing the theme.';
+    'Strokes are not switched on by a theme. Most series, bars included, draw one only when their own options set a stroke width, though box plots, candlesticks and treemap groups always do. Turn on Series Strokes in the preview features to see them; until then the series stroke inputs are greyed out.';
 
 export const PaletteEditor = ({
     value,
     onChange,
     maxSeriesColors,
     strokeDirection = 'darken',
-    previewStrokes,
-    onPreviewStrokesChange,
+    seriesStrokesPreviewed = true,
     showSemanticColors = true,
 }: PaletteEditorProps) => {
     const colors = toSeriesColors(value, strokeDirection);
@@ -91,18 +93,7 @@ export const PaletteEditor = ({
 
     return (
         <Fields>
-            <FormField label="Strokes" docs={STROKES_DOCS}>
-                <PreviewToggle
-                    type="button"
-                    className="button-secondary"
-                    aria-pressed={previewStrokes}
-                    onClick={() => onPreviewStrokesChange(!previewStrokes)}
-                >
-                    Preview stroke colours
-                    {previewStrokes ? <Eye size={20} /> : <EyeOff size={20} />}
-                </PreviewToggle>
-            </FormField>
-            <FormField label="Series Colors" docs={`${SERIES_DOCS} ${SERIES_STROKE_DOCS}`}>
+            <FormField label="Series Colors" docs={`${SERIES_DOCS} ${SERIES_STROKE_DOCS} ${STROKES_DOCS}`}>
                 <Rows>
                     <ColumnHeadings gutter={SERIES_LABEL_WIDTH} />
                     {colors.map((color, index) => (
@@ -119,8 +110,9 @@ export const PaletteEditor = ({
                                 ariaLabel={`Series color ${index + 1} stroke`}
                                 value={color.stroke}
                                 // Opening a linked stroke unlinks it, keeping the colour shown.
-                                // Cleared means "no stroke of my own", so it follows the fill.
-                                muted={strokeIsDerived(color.strokeDerived)}
+                                // Greyed out too while the previews hide strokes, but still
+                                // editable: the theme exports the stroke either way.
+                                muted={strokeIsDerived(color.strokeDerived) || !seriesStrokesPreviewed}
                                 onOpen={
                                     strokeIsDerived(color.strokeDerived)
                                         ? () => setColor(index, withDerivedStroke(color, false))
@@ -368,26 +360,6 @@ const IconButton = styled('button')`
         &.is-active {
             opacity: 1;
             color: var(--color-fg-primary);
-        }
-    }
-`;
-
-// `&&&` to size it to the inputs past the design system's `.button-secondary`.
-const PreviewToggle = styled('button')`
-    &&& {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        font-weight: var(--text-semibold);
-
-        svg {
-            flex-shrink: 0;
-            color: var(--color-fg-secondary);
-        }
-
-        &[aria-pressed='true'] svg {
-            color: var(--color-button-tertiary-fg);
         }
     }
 `;

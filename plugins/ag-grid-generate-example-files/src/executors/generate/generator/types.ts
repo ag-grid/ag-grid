@@ -38,6 +38,8 @@ export interface EventHandler {
     name: string;
     handlerName: string;
     handler: string;
+    /** The types of an inline handler's event parameter, which the handler is given as it is moved out of the grid options. */
+    typings?: GridOptionsType;
 }
 export interface ExternalEventHandlers {
     name: string;
@@ -49,6 +51,8 @@ export interface DataCallback {
     url: string;
     callback: string;
     totalRows?: number;
+    /** The type the callback declares for the fetched data, e.g. `any[]` */
+    dataType?: string;
 }
 export interface Property {
     name: string;

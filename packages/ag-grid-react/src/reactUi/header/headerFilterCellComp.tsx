@@ -19,7 +19,7 @@ import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 
 const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
-    const { context, gos } = useContext(BeansContext);
+    const { context, gos, tooltipSvc } = useContext(BeansContext);
 
     const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
@@ -88,6 +88,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         };
 
         ctrl.setComp(compProxy, eRef, eButtonShowMainFilter.current!, eFloatingFilterBody.current!, compBean.current);
+        compBean.current.createOptionalManagedBean(tooltipSvc?.createTooltip(ctrl.getFilterButtonTooltip()));
     }, []);
 
     // js comps

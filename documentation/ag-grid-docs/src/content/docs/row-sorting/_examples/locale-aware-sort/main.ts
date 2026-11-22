@@ -17,6 +17,13 @@ function applyLocale() {
     });
 }
 
+function applySwedish() {
+    gridApi!.updateGridOptions({
+        accentedSort: { locales: 'sv' },
+        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Swedish Sort' }],
+    });
+}
+
 function applyDefault() {
     gridApi!.updateGridOptions({
         accentedSort: false,
@@ -29,7 +36,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     accentedSort: true,
-    rowData: [...'bàac'].map((x) => ({ letter: x })),
+    rowData: [...'bàacäz'].map((x) => ({ letter: x })),
 };
 
 // setup the grid after the page has finished loading

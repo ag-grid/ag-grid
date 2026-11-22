@@ -1,0 +1,65 @@
+name: Codex Security Review
+
+# Weekly Codex review of the source tree for security vulnerabilities. Shards are defined in
+# .github/codex-security-review.json. Findings go to Slack only: this repo is public, so the
+# action keeps them out of the workflow log, job summary, artifacts and caches.
+#
+# Not reviewed: tests and test harnesses (testing, utilities), _examples under the docs, ESLint
+# rules, patches to third-party packages, README assets, and editor and agent configuration.
+# Dependency versions are covered by security.yml (Snyk).
+
+on:
+    workflow_dispatch:
+        inputs:
+            shard:
+                description: 'Only review this shard (see .github/codex-security-review.json). Empty reviews all shards.'
+                type: string
+                required: false
+            min_severity:
+                description: 'Lowest severity to report'
+                type: choice
+                options: [low, medium, high, critical]
+                default: medium
+                required: false
+    schedule:
+        - cron: '0 2 * * 0' # Weekly, Sunday 02:00 UTC
+
+permissions:
+    contents: read
+
+concurrency:
+    group: codex-security-review
+    cancel-in-progress: false
+
+env:
+    SLACK_CHANNEL: '#ci-product-vulnerabilities'
+
+jobs:
+    review:
+        # Forks have no secrets and shouldn't spend Codex credits
+        if: github.repository == 'ag-grid/ag-grid'
+        # Pinned to ubuntu-24.04: the Codex sandbox setup is only verified there (see pr-review.yml)
+        runs-on: ubuntu-24.04
+        timeout-minutes: 360
+        steps:
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+                  persist-credentials: false
+
+            - name: Setup Node
+              uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version-file: '.nvmrc'
+
+            - name: Codex security review
+              uses: ./external/ag-shared/github/actions/codex-security-review
+              with:
+                  codex-api-key: ${{ secrets.CODEX_API_KEY }}
+                  shards-file: .github/codex-security-review.json
+                  shard: ${{ inputs.shard }}
+                  min-severity: ${{ inputs.min_severity || 'medium' }}
+                  slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+                  slack-channel: ${{ env.SLACK_CHANNEL }}
+                  product-name: AG Grid

@@ -1,5 +1,5 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import type { IMenuItemAngularComp } from 'ag-grid-angular';
@@ -18,7 +18,7 @@ export interface CustomMenuItemParams extends IMenuItemParams {
                 #option
                 tabindex="-1"
                 class="ag-menu-option"
-                [ngClass]="{ 'ag-menu-option-active': active }"
+                [ngClass]="{ 'ag-menu-option-active': active() }"
                 (mouseenter)="onMouseEnter()"
                 (mouseleave)="onMouseLeave()"
                 (click)="onClick()"
@@ -52,7 +52,7 @@ export class MenuItem implements IMenuItemAngularComp {
 
     params!: CustomMenuItemParams;
     expanded: boolean = false;
-    active: boolean = false;
+    active = signal(false);
 
     agInit(params: CustomMenuItemParams): void {
         this.params = params;
@@ -62,7 +62,7 @@ export class MenuItem implements IMenuItemAngularComp {
     }
 
     setActive(active: boolean): void {
-        this.active = active;
+        this.active.set(active);
         if (active) {
             this.option.nativeElement.focus();
         }

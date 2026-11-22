@@ -1,6 +1,8 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
 import {
+    FAST_TEST_TIMINGS,
     RefPlaceholder,
+    _addManagedElementListeners,
     _areEqual,
     _clearElement,
     _getAbsoluteWidth,
@@ -20,6 +22,9 @@ import type { ChartTranslationService } from '../../services/chartTranslationSer
 import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
+
+/** Matches the `ag-animating` slide transition; a palette change is ignored until it ends. */
+const PALETTE_SLIDE_DURATION = FAST_TEST_TIMINGS ? 0 : 300;
 
 export class ChartSettingsPanel extends Component {
     private chartTranslation: ChartTranslationService;
@@ -71,8 +76,12 @@ export class ChartSettingsPanel extends Component {
         _setAriaLabel(this.ePrevButton, this.chartTranslation.translate('ariaChartPalettePrevious'));
         _setAriaLabel(this.eNextButton, this.chartTranslation.translate('ariaChartPaletteNext'));
 
-        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
-        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
+        _addManagedElementListeners(this, this.ePrevBtn, {
+            click: () => this.setActivePalette(this.getPrev(), 'left'),
+        });
+        _addManagedElementListeners(this, this.eNextBtn, {
+            click: () => this.setActivePalette(this.getNext(), 'right'),
+        });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         const reset = () => this.resetPalettes(true);
@@ -171,7 +180,7 @@ export class ChartSettingsPanel extends Component {
         const link = _createElement({ tag: 'div', cls: 'ag-chart-settings-card-item' });
         _setAriaHidden(link, true);
 
-        this.addManagedElementListeners(link, {
+        _addManagedElementListeners(this, link, {
             click: () => {
                 this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
             },
@@ -247,7 +256,7 @@ export class ChartSettingsPanel extends Component {
             currentPalette.removeCss(animatingClass);
             futurePalette.removeCss(animatingClass);
             currentPalette.setDisplayed(false);
-        }, 300);
+        }, PALETTE_SLIDE_DURATION);
     }
 
     private destroyMiniCharts(): void {

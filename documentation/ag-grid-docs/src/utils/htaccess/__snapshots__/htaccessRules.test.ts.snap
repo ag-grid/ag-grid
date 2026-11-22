@@ -27,8 +27,23 @@ Header set Cache-Control "public, max-age=86400"
 Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
 
 
+# Current pages and markdown variants: CloudFront caches a day, browsers revalidate. Invalidated by
+# cache tag on every live docs deploy. Excludes /archive/<v>/ and error responses.
+Header set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -lt 400 && %{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Cache tag for the deploy-time CloudFront invalidation (#ag-docs). Not on archives or hashed assets.
+Header set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -lt 400 && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# ) && !( %{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$# )"
+
+
 # Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
 Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
+
+
+# Permanent redirects of current www paths with no query string: CloudFront caches a day, browsers
+# revalidate. Invalidated by cache tag on every live docs deploy. Excludes /archive/<v>/.
+Header always set Cache-Control "max-age=0, s-maxage=86400, stale-while-revalidate=300, stale-if-error=86400" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
+Header always set x-ag-cache-tag "ag-docs" "expr=%{REQUEST_STATUS} -eq 301 && %{QUERY_STRING} == '' && %{SERVER_PORT} != '80' && %{HTTP_HOST} == 'www.ag-grid.com' && !( %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]# )"
 
 
 # Archived markdown variants: noindex, as the archived HTML is by its robots meta tag.
@@ -115,7 +130,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=227]
+    RewriteRule ^ - [S=231]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
@@ -127,6 +142,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?javascript-data-grid/whats-new$" "https://www.ag-grid.com/whats-new/" [R=301,L]
     RewriteRule "^/?javascript-grid/cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?javascript-grid/client-side-model/$" "https://www.ag-grid.com/javascript-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?javascript-grid/column-api/$" "https://www.ag-grid.com/javascript-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-cell-editor/$" "https://www.ag-grid.com/javascript-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-date/$" "https://www.ag-grid.com/javascript-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?javascript-grid/component-header/$" "https://www.ag-grid.com/javascript-data-grid/column-headers/" [R=301,L]
@@ -161,6 +177,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?javascript-grid/themes-provided/$" "https://www.ag-grid.com/javascript-data-grid/themes/" [R=301,L]
     RewriteRule "^/?angular-grid/cell-rendering/$" "https://www.ag-grid.com/angular-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?angular-grid/client-side-model/$" "https://www.ag-grid.com/angular-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?angular-grid/column-api/$" "https://www.ag-grid.com/angular-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?angular-grid/component-cell-editor/$" "https://www.ag-grid.com/angular-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?angular-grid/component-date/$" "https://www.ag-grid.com/angular-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?angular-grid/component-header/$" "https://www.ag-grid.com/angular-data-grid/column-headers/" [R=301,L]
@@ -195,6 +212,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?angular-grid/themes-provided/$" "https://www.ag-grid.com/angular-data-grid/themes/" [R=301,L]
     RewriteRule "^/?react-grid/cell-rendering/$" "https://www.ag-grid.com/react-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?react-grid/client-side-model/$" "https://www.ag-grid.com/react-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?react-grid/column-api/$" "https://www.ag-grid.com/react-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?react-grid/component-date/$" "https://www.ag-grid.com/react-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?react-grid/component-header/$" "https://www.ag-grid.com/react-data-grid/column-headers/" [R=301,L]
     RewriteRule "^/?react-grid/component-overlay/$" "https://www.ag-grid.com/react-data-grid/overlays/" [R=301,L]
@@ -233,6 +251,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule "^/?react-grid/themes-provided/$" "https://www.ag-grid.com/react-data-grid/themes/" [R=301,L]
     RewriteRule "^/?vue-grid/cell-rendering/$" "https://www.ag-grid.com/vue-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?vue-grid/client-side-model/$" "https://www.ag-grid.com/vue-data-grid/row-models/" [R=301,L]
+    RewriteRule "^/?vue-grid/column-api/$" "https://www.ag-grid.com/vue-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?vue-grid/component-cell-editor/$" "https://www.ag-grid.com/vue-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?vue-grid/component-date/$" "https://www.ag-grid.com/vue-data-grid/filter-date/" [R=301,L]
     RewriteRule "^/?vue-grid/component-header/$" "https://www.ag-grid.com/vue-data-grid/column-headers/" [R=301,L]
@@ -766,7 +785,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid-cell-rendering/ /angular-data-grid/component-cell-renderer/
     Redirect 301 /angular-grid-cell-template/ /angular-data-grid/getting-started/
     Redirect 301 /angular-grid-clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /angular-grid-column-api/ /angular-data-grid/column-api/
+    Redirect 301 /angular-grid-column-api/ /angular-data-grid/grid-api/
     Redirect 301 /angular-grid-column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /angular-grid-column-menu/ /angular-data-grid/column-menu/
     Redirect 301 /angular-grid-context-menu/ /angular-data-grid/context-menu/
@@ -845,7 +864,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/angular/change-detection/ /angular-data-grid/change-detection/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
+    Redirect 301 /documentation/angular/column-api/ /angular-data-grid/grid-api/
     Redirect 301 /documentation/angular/column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /documentation/angular/column-groups/ /angular-data-grid/column-groups/
     Redirect 301 /documentation/angular/column-headers/ /angular-data-grid/column-headers/
@@ -1042,7 +1061,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/javascript/change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /documentation/javascript/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /documentation/javascript/clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /documentation/javascript/column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /documentation/javascript/column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /documentation/javascript/column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /documentation/javascript/column-groups/ /javascript-data-grid/column-groups/
     Redirect 301 /documentation/javascript/column-headers/ /javascript-data-grid/column-headers/
@@ -1230,7 +1249,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/react/change-detection/ /react-data-grid/change-detection/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/row-models/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
-    Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
+    Redirect 301 /documentation/react/column-api/ /react-data-grid/grid-api/
     Redirect 301 /documentation/react/column-definitions/ /react-data-grid/column-definitions/
     Redirect 301 /documentation/react/column-groups/ /react-data-grid/column-groups/
     Redirect 301 /documentation/react/column-headers/ /react-data-grid/column-headers/
@@ -1424,7 +1443,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /documentation/vue/change-detection/ /vue-data-grid/change-detection/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/row-models/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
-    Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
+    Redirect 301 /documentation/vue/column-api/ /vue-data-grid/grid-api/
     Redirect 301 /documentation/vue/column-definitions/ /vue-data-grid/column-definitions/
     Redirect 301 /documentation/vue/column-groups/ /vue-data-grid/column-groups/
     Redirect 301 /documentation/vue/column-headers/ /vue-data-grid/column-headers/
@@ -1626,7 +1645,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid-change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /javascript-grid-client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid-clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /javascript-grid-column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /javascript-grid-column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /javascript-grid-column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /javascript-grid-column-header/ /javascript-data-grid/column-headers/
     Redirect 301 /javascript-grid-column-interface/ /javascript-data-grid/column-interface/
@@ -1802,7 +1821,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /javascript-grid/change-detection/ /javascript-data-grid/change-detection/
     Redirect 301 /javascript-grid/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid/clipboard/ /javascript-data-grid/clipboard/
-    Redirect 301 /javascript-grid/column-api/ /javascript-data-grid/column-api/
+    Redirect 301 /javascript-grid/column-api/ /javascript-data-grid/grid-api/
     Redirect 301 /javascript-grid/column-definitions/ /javascript-data-grid/column-definitions/
     Redirect 301 /javascript-grid/column-groups/ /javascript-data-grid/column-groups/
     Redirect 301 /javascript-grid/column-headers/ /javascript-data-grid/column-headers/
@@ -1994,7 +2013,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-grid/change-detection/ /angular-data-grid/change-detection/
     Redirect 301 /angular-grid/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /angular-grid/clipboard/ /angular-data-grid/clipboard/
-    Redirect 301 /angular-grid/column-api/ /angular-data-grid/column-api/
+    Redirect 301 /angular-grid/column-api/ /angular-data-grid/grid-api/
     Redirect 301 /angular-grid/column-definitions/ /angular-data-grid/column-definitions/
     Redirect 301 /angular-grid/column-groups/ /angular-data-grid/column-groups/
     Redirect 301 /angular-grid/column-headers/ /angular-data-grid/column-headers/
@@ -2187,7 +2206,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /react-grid/change-detection/ /react-data-grid/change-detection/
     Redirect 301 /react-grid/client-side-model/ /react-data-grid/row-models/
     Redirect 301 /react-grid/clipboard/ /react-data-grid/clipboard/
-    Redirect 301 /react-grid/column-api/ /react-data-grid/column-api/
+    Redirect 301 /react-grid/column-api/ /react-data-grid/grid-api/
     Redirect 301 /react-grid/column-definitions/ /react-data-grid/column-definitions/
     Redirect 301 /react-grid/column-groups/ /react-data-grid/column-groups/
     Redirect 301 /react-grid/column-headers/ /react-data-grid/column-headers/
@@ -2386,7 +2405,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /vue-grid/change-detection/ /vue-data-grid/change-detection/
     Redirect 301 /vue-grid/client-side-model/ /vue-data-grid/row-models/
     Redirect 301 /vue-grid/clipboard/ /vue-data-grid/clipboard/
-    Redirect 301 /vue-grid/column-api/ /vue-data-grid/column-api/
+    Redirect 301 /vue-grid/column-api/ /vue-data-grid/grid-api/
     Redirect 301 /vue-grid/column-definitions/ /vue-data-grid/column-definitions/
     Redirect 301 /vue-grid/column-groups/ /vue-data-grid/column-groups/
     Redirect 301 /vue-grid/column-headers/ /vue-data-grid/column-headers/
@@ -2663,10 +2682,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/component-overlay/ /angular-data-grid/overlays/
     Redirect 301 /react-data-grid/component-overlay/ /react-data-grid/overlays/
     Redirect 301 /vue-data-grid/component-overlay/ /vue-data-grid/overlays/
-    Redirect 301 /javascript-data-grid/component-tooltip/ /javascript-data-grid/tooltips/
-    Redirect 301 /angular-data-grid/component-tooltip/ /angular-data-grid/tooltips/
-    Redirect 301 /react-data-grid/component-tooltip/ /react-data-grid/tooltips/
-    Redirect 301 /vue-data-grid/component-tooltip/ /vue-data-grid/tooltips/
     Redirect 301 /javascript-data-grid/component-date/ /javascript-data-grid/filter-date/
     Redirect 301 /angular-data-grid/component-date/ /angular-data-grid/filter-date/
     Redirect 301 /react-data-grid/component-date/ /react-data-grid/filter-date/
@@ -2892,6 +2907,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /angular-data-grid/server-side-operations-spark /angular-data-grid/server-side-model
     Redirect 301 /react-data-grid/server-side-operations-spark /react-data-grid/server-side-model
     Redirect 301 /vue-data-grid/server-side-operations-spark /vue-data-grid/server-side-model
+    Redirect 301 /javascript-data-grid/column-api /javascript-data-grid/grid-api
+    Redirect 301 /angular-data-grid/column-api /angular-data-grid/grid-api
+    Redirect 301 /react-data-grid/column-api /react-data-grid/grid-api
+    Redirect 301 /vue-data-grid/column-api /vue-data-grid/grid-api
     RedirectMatch 301 "^/javascript-grid-virtual-paging/.*" "/javascript-data-grid/infinite-scrolling/"
     RedirectMatch 301 "^/javascript-grid-enterprise-model/.*" "/javascript-data-grid/server-side-model/"
     Redirect 301 /javascript-grid-cell-style/ /javascript-data-grid/cell-styles/
@@ -3004,6 +3023,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /core-data-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /vuejs-charts/ https://www.ag-grid.com/charts/
     Redirect 301 /campaigns/beyond-the-prompt/ /community/beyond-the-prompt/
+    Redirect 301 /campaigns/bryntum-scheduler-pro/ /campaigns/bryntum-scheduler/
+    Redirect 301 /campaigns/bryntum-scheduler-pro.md /campaigns/bryntum-scheduler.md
     RedirectMatch 301 "^/gallery/(.*)" "https://www.ag-grid.com/charts/gallery/$1"
     RedirectMatch 301 "^/options(/.*)?" "https://www.ag-grid.com/charts/options/"
     RedirectMatch 301 "^/vuejs-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
@@ -3015,6 +3036,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RedirectMatch 301 "^/react/overview(/.*)?" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/(react|angular|vue|javascript)/(.*)" "https://www.ag-grid.com/charts/$1/$2"
     Redirect 301 /eula/AG-Grid-Enterprise-License-Latest.html /eula/commercial/
+    Redirect 301 /eula/ag-grid-enterprise-license-latest.html /eula/commercial/
     Redirect 301 /eula/AG-Grid-Community-License.html /eula/community/
     Redirect 301 /eula/AG-Grid-Enterprise-License-v12.0.html /eula/commercial/
     Redirect 301 /eula/AG-Grid-Enterprise-License-v13.0.html /eula/commercial/
@@ -3031,6 +3053,8 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /pricing/ /license-pricing/
     Redirect 301 /javascript-data-grid/row-grouping/ /javascript-data-grid/grouping/
     Redirect 301 /react-data-grid/row-grouping/ /react-data-grid/grouping/
+    Redirect 301 /angular-data-grid/row-grouping/ /angular-data-grid/grouping/
+    Redirect 301 /vue-data-grid/row-grouping/ /vue-data-grid/grouping/
 
 </IfModule>
 

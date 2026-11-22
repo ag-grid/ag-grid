@@ -1018,7 +1018,6 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
             const newValue = editorValue ?? (pendingValue === UNEDITED ? undefined : pendingValue) ?? sourceValue;
 
             editorsState.push({
-                column,
                 colId: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,

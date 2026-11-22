@@ -13,6 +13,7 @@ import type {
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
+import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
@@ -34,6 +35,7 @@ export abstract class TextInputFloatingFilter<
 
     private applyActive: boolean;
     private pendingEdit = false;
+    private refreshValueTooltip?: () => void;
 
     protected abstract createFloatingFilterInputService(params: TParams): FloatingFilterInputService;
 
@@ -53,6 +55,7 @@ export abstract class TextInputFloatingFilter<
             return;
         }
         inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
+        this.refreshValueTooltip?.();
         this.pendingEdit = false;
     }
 
@@ -60,6 +63,12 @@ export abstract class TextInputFloatingFilter<
         this.setupFloatingFilterInputService(params);
         super.setParams(params);
         this.setTextInputParams(params);
+        this.refreshValueTooltip = _addFloatingFilterValueTooltip(
+            this,
+            this.beans,
+            () => this.params.column,
+            () => this.inputSvc.getInputElement()
+        );
     }
 
     private setupFloatingFilterInputService(params: TParams): void {
@@ -95,6 +104,7 @@ export abstract class TextInputFloatingFilter<
                 debounceTimeout = debouncedSync(e);
             });
             inputSvc.setValueClearedListener(() => {
+                this.refreshValueTooltip?.();
                 clearTimeout(debounceTimeout);
                 this.syncUpWithParentFilter();
             });
@@ -114,6 +124,7 @@ export abstract class TextInputFloatingFilter<
         this.destroyBean(previous);
         this.setupFloatingFilterInputService(params);
         this.inputSvc.setValue(value, true);
+        this.refreshValueTooltip?.();
     }
 
     private syncUpWithParentFilter(e?: KeyboardEvent): void {
@@ -136,6 +147,7 @@ export abstract class TextInputFloatingFilter<
         if ((params.filterParams as TextFilterParams).trimInput) {
             value = trimInputForFilter(value);
             inputSvc.setValue(value, true); // ensure visible value is trimmed
+            this.refreshValueTooltip?.();
         }
 
         if (reactive) {
@@ -171,5 +183,6 @@ export abstract class TextInputFloatingFilter<
 
     protected setEditable(editable: boolean): void {
         this.inputSvc.setEditable(editable);
+        this.refreshValueTooltip?.();
     }
 }

@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('All columns and headers are rendered', async ({ agIdFor, page }) => {
@@ -22,7 +22,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-header-group-cell').filter({ hasText: 'Group B' })).toHaveCount(1);
     });
 
-    test.eachFramework('Sorting by total reorders the rows', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Sorting by total reorders the rows', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -31,7 +31,8 @@ test.agExample(import.meta, () => {
         // With animation off, exactly one row occupies row-index 0, so we assert the identity
         // of whichever row is currently at the top rather than tracking Natalie's row — which
         // scrolls out of the virtualised DOM entirely when it sorts to the bottom.
-        await remoteGrid(page).setGridOption('animateRows', false);
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('animateRows', false));
 
         // Natalie Coughlin (row-id 0) holds the unique maximum total (6) and starts at the top.
         const topRow = page.locator('.ag-grid-scrolling-container .ag-row[row-index="0"]');

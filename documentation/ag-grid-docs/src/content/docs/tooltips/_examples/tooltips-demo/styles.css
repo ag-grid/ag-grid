@@ -1,0 +1,10 @@
+.custom-tooltip {
+    padding: 5px;
+    color: var(--ag-foreground-color);
+    background-color: #5577cc;
+}
+
+.custom-tooltip div {
+    margin: 5px;
+    white-space: nowrap;
+}
