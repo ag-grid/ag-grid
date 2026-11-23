@@ -208,9 +208,11 @@ describe('Tool panel column group callbacks', () => {
         const layoutOnly = receivedGroups.find((group) => group?.getGroupId() === 'layoutOnly')!;
 
         // The layout's own group is not wired to the grid, so the diagnostic is reported without one.
-        expect(() => layoutOnly.getInstanceId()).toThrow(/^deprecation #343 /);
+        expect(() => layoutOnly.getInstanceId()).toThrow(
+            'deprecation #306 As of v32, `columnGroup.getInstanceId()` is deprecated.'
+        );
 
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         expect(layoutOnly.getInstanceId()).toEqual(expect.any(Number));
     });
     test('renaming and resetting a group that exists only in a custom layout fires headerNameChanged on its callback group', async () => {

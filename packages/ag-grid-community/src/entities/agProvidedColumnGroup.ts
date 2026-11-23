@@ -58,9 +58,17 @@ export class AgProvidedColumnGroup
     public getInstanceId(): ColumnInstanceId {
         // `beans` is null on a group the grid did not wire (tool panel layout copies)
         if (this.beans) {
-            this.deprecated(343);
+            this.deprecated(306, {
+                version: '32',
+                name: 'columnGroup.getInstanceId()',
+                message: 'It will be removed in v38.',
+            });
         } else {
-            _deprecatedWithoutAttribution(343);
+            _deprecatedWithoutAttribution(306, {
+                version: '32',
+                name: 'columnGroup.getInstanceId()',
+                message: 'It will be removed in v38.',
+            });
         }
         return this.instanceId;
     }

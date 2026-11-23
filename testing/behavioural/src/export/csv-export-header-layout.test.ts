@@ -84,9 +84,9 @@ describe('CSV export header layout', () => {
             });
 
         // The export's groups are not beans, so the diagnostic must still reach the grid's logger.
-        expect(exportWithPartId).toThrow(/^deprecation #349 /);
+        expect(exportWithPartId).toThrow('deprecation #306 As of v32, `columnGroup.getPartId()` is deprecated.');
 
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [349] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         expect(exportWithPartId()).toBe('part 0\r\nAthlete');
     });
 

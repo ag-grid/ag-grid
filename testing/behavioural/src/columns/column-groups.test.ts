@@ -1854,7 +1854,7 @@ describe('Column Groups', () => {
             expect(provided).toBeTruthy();
             expect(provided.getId()).toBe('g1');
             // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
             expect(typeof provided.getInstanceId()).toBe('number');
             expect(provided.getChildren().map((c: any) => c.getColId?.() ?? c.getGroupId?.())).toEqual(['a', 'b']);
 
@@ -1891,7 +1891,7 @@ describe('Column Groups', () => {
             expect(g).toBeTruthy();
             // partId is assigned per displayed instance — a number
             // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [349] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
             expect(typeof g.getPartId()).toBe('number');
             // group has displayed children → not empty
             expect(g.isEmptyGroup()).toBe(false);
