@@ -44,6 +44,23 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         expect(api.getColumn(colId)!.getColDef().calculatedExpression).toBe('[salary] * 0.1');
     });
 
+    test('an edit through a column menu changes that column while a later-opened dialog stays open', async () => {
+        const api = createGrid('state-edit-older-dialog', {
+            rowData: [{ id: 'r1', a: 5 }],
+            columnDefs: [{ field: 'a' }],
+        });
+        const first = await addViaDialog(api, 'a', '[A] * 2');
+        const second = await addViaDialog(api, first, '[A] * 3');
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(2);
+
+        await editViaDialog(api, first, { expression: '[A] * 4' });
+
+        expect({
+            first: api.getColumn(first)!.getColDef().calculatedExpression,
+            second: api.getColumn(second)!.getColDef().calculatedExpression,
+        }).toEqual({ first: '[a] * 4', second: '[a] * 3' });
+    });
+
     // === core repro: initialState round-trip =====================================================
     test('a dynamic calc col added via the dialog is saved in getState().userColumns and recreated via initialState on a fresh grid', async () => {
         const api = createGrid('state-initial-source', {
