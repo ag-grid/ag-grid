@@ -107,6 +107,7 @@ import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IToolbarService } from '../interfaces/iToolbar';
+import type { IViewSubscriptionService } from '../interfaces/iViewSubscription';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { INotesDataService, INotesService } from '../interfaces/notes';
@@ -329,6 +330,7 @@ interface CoreBeanCollection extends AgBeanCollection<
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
     rowNumbersSvc?: IRowNumbersService;
+    viewSubSvc?: IViewSubscriptionService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IRowGroupColsService;
@@ -453,7 +455,6 @@ export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
-    | 'viewSubSvc'
     | 'advFilterExpSvc'
     | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'

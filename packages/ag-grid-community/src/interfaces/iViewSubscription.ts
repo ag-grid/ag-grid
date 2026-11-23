@@ -92,3 +92,12 @@ export interface ViewSubscriptionOptions<TData = any, TContext = any> {
      */
     pauseWhenHidden?: boolean;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IViewSubscriptionService {
+    /**
+     * Unsubscribes every row once `gridPreDestroyed` has reached every listener, as the application's
+     * `unsubscribeRows` handler can throw and would otherwise skip the listeners after it.
+     */
+    preDestroy(): void;
+}
