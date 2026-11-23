@@ -25,6 +25,8 @@ export class SortService extends BeanStub implements NamedBean {
     private opts: SortOption[] | null = null;
     /** The `colModel.accentedSortVersion` `opts` was resolved with, as its string comparators depend on it. */
     private optsAccentedSortVersion = 0;
+    /** The `colModel.colDefsVersion` `opts` was resolved with, as its comparators are read from the colDefs. */
+    private optsColDefsVersion = 0;
     private displaySortCount = 0;
 
     public override destroy(): void {
@@ -271,8 +273,12 @@ export class SortService extends BeanStub implements NamedBean {
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
         const { colModel } = this.beans;
-        const accentedSortVersion = colModel.accentedSortVersion;
-        if (opts === null || accentedSortVersion !== this.optsAccentedSortVersion) {
+        const { accentedSortVersion, colDefsVersion } = colModel;
+        if (
+            opts === null ||
+            accentedSortVersion !== this.optsAccentedSortVersion ||
+            colDefsVersion !== this.optsColDefsVersion
+        ) {
             opts = [];
             const cols = this.getSortedCols();
             for (let i = 0, len = cols.length; i < len; ++i) {
@@ -295,6 +301,7 @@ export class SortService extends BeanStub implements NamedBean {
             _resolveSortOptions(opts, colModel, this.gos);
             this.opts = opts;
             this.optsAccentedSortVersion = accentedSortVersion;
+            this.optsColDefsVersion = colDefsVersion;
         }
         return opts;
     }

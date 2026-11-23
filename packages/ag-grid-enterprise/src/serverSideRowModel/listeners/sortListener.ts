@@ -38,7 +38,7 @@ export class SortListener extends BeanStub implements NamedBean {
         const onComparatorsMaybeChanged = this.onComparatorsMaybeChanged.bind(this);
         this.addManagedEventListeners({
             sortChanged: this.onSortChanged.bind(this),
-            newColumnsLoaded: onComparatorsMaybeChanged,
+            columnEverythingChanged: onComparatorsMaybeChanged,
         });
         this.addManagedPropertyListener('accentedSort', onComparatorsMaybeChanged);
     }
