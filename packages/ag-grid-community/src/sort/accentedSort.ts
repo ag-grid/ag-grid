@@ -29,7 +29,7 @@ const createCollatorComparator = (
 const collatorKey = (locales: string | string[] | undefined, options: Intl.CollatorOptions | undefined): string => {
     let key = JSON.stringify(locales ?? null);
     if (options) {
-        const names = Object.keys(options).sort();
+        const names = Object.keys(options).sort((a, b) => a.localeCompare(b));
         for (let i = 0, len = names.length; i < len; ++i) {
             const name = names[i];
             key += `|${name}=${JSON.stringify(options[name as keyof Intl.CollatorOptions])}`;
