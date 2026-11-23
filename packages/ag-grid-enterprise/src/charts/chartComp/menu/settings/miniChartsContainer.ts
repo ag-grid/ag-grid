@@ -1,5 +1,5 @@
 import type { AgColorType } from 'ag-charts-types';
-import { _getDocument, _setAriaLabel, _setAriaPressed, _setAriaRole } from 'ag-stack';
+import { _getDocument, _setAriaLabel, _setAriaLabelledBy, _setAriaPressed, _setAriaRole } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _createElement } from 'ag-grid-community';
@@ -42,7 +42,6 @@ const miniChartMapping: MiniChartMenuMapping = {
     pieGroup: {
         pie: { range: true, pivot: true, enterprise: false, chartType: 'pie' },
         donut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
-        doughnut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
     },
     lineGroup: {
         line: { range: true, pivot: true, enterprise: false, chartType: 'line' },
@@ -221,6 +220,7 @@ export class MiniChartsContainer extends Component {
             _setAriaRole(eGroup, 'group');
             _setAriaLabel(eGroup, label);
             _setAriaRole(groupComponent.eContainer, 'list');
+            _setAriaLabelledBy(groupComponent.eContainer);
 
             for (const menuItem of items) {
                 const { chartType } = menuItem;

@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
@@ -56,12 +56,12 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            topGridOptions: null,
-            bottomGridOptions: null,
-            gridApi: null,
-            rowData: null,
-            bottomData: null,
-            columnDefs: null,
+            topGridOptions: null as GridOptions | null,
+            bottomGridOptions: null as GridOptions | null,
+            gridApi: null as GridApi | null,
+            rowData: null as any[] | null,
+            bottomData: null as any[] | null,
+            columnDefs: null as (ColDef | ColGroupDef)[] | null,
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
@@ -124,7 +124,7 @@ const VueExample = defineComponent({
         ];
     },
     mounted() {
-        this.gridApi = this.$refs.topGrid.api;
+        this.gridApi = (this.$refs.topGrid as { api: GridApi }).api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())

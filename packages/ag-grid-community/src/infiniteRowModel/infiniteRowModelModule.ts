@@ -3,7 +3,7 @@ import { SsrmInfiniteSharedApiModule } from '../api/sharedApiModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { InfiniteRowModel } from './infiniteRowModel';
-import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
+import { purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
 import { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
 /**
@@ -25,7 +25,6 @@ export const InfiniteRowModelModule: _ModuleWithApi<_InfiniteRowModelGridApi> = 
     apiFunctions: {
         refreshInfiniteCache,
         purgeInfiniteCache,
-        getInfiniteRowCount,
     },
     dependsOn: [InfiniteRowModelCoreModule, SsrmInfiniteSharedApiModule],
 };

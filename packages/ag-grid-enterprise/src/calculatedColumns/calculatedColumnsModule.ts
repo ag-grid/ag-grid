@@ -20,11 +20,5 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi> 
     beans: [CalculatedColumnsService, _UserColumnService],
     apiFunctions: { openAddCalculatedColumnDialog, openCalculatedColumnDialog, refreshCalculatedColumns },
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
-    icons: {
-        calculatedColumnsHeader: 'fx',
-        calculatedColumnAdd: 'plus',
-        calculatedColumnEdit: 'edit',
-        calculatedColumnRemove: 'minus',
-    },
     css: [calculatedColumnsCSS],
 };

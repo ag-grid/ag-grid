@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
@@ -9,11 +9,11 @@ import type { BaseTooltipParams } from './baseTooltipStateManager';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTooltipComponent<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TTooltipParams extends BaseTooltipParams<TLocation>,
     TLocation extends string,

@@ -1,12 +1,6 @@
 import { createApp, defineComponent, ref } from 'vue';
 
-import {
-    ClientSideRowModelModule,
-    ColDef,
-    GridReadyEvent,
-    ModuleRegistry,
-    enableDevValidations,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ColDef, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -41,9 +35,7 @@ const VueExample = defineComponent({
         };
     },
     methods: {
-        onGridReady(params: GridReadyEvent) {
-            this.gridApi = params.api;
-
+        onGridReady() {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => {
@@ -62,7 +54,7 @@ const VueExample = defineComponent({
             { field: 'silver', minWidth: 100 },
             { field: 'bronze', minWidth: 100 },
         ]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             columnDefs,

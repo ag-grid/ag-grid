@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "types": ["node"]
+    "types": ["vitest/globals", "node"]
   },
   "include": ["src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts", "src/executors/generate/generator/types.ts"]
 }

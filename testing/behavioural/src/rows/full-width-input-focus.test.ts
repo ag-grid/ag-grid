@@ -50,9 +50,6 @@ describe('Full width row form fields', () => {
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-full-width-row input')!;
         expect(input).not.toBeNull();
-        // jsdom has no layout, so give the input the offsetParent the visibility check reads
-        Object.defineProperty(input, 'offsetParent', { configurable: true, get: () => document.body });
-
         input.focus();
         for (const eventName of DOWN_EVENT_NAMES) {
             input.dispatchEvent(new MouseEvent(eventName, { bubbles: true, cancelable: true }));

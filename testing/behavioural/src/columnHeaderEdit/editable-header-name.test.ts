@@ -354,6 +354,26 @@ describe('Editable header name', () => {
         await waitFor(() => expect(input.value).toBe('Layout Only'));
     });
 
+    test('renaming a row group column from the editor renames its group column', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid(
+            [{ field: 'athlete', rowGroup: true, headerNameEditable: true }, { field: 'age' }],
+            { groupDisplayType: 'multipleColumns', columnHeaderEdit: { applyMode: 'deferred' } }
+        );
+        const groupCol = api.getColumn('ag-Grid-AutoColumn-athlete')!;
+        const names = () => ({
+            displayed: api.getDisplayNameForColumn(groupCol, 'header'),
+            colDef: groupCol.getColDef().headerName,
+        });
+        expect(names()).toEqual({ displayed: 'Athlete', colDef: 'Athlete' });
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Competitor');
+        pressEnter(input);
+
+        await waitFor(() => expect(names()).toEqual({ displayed: 'Competitor', colDef: 'Competitor' }));
+    });
+
     test('a column header name edit is saved to grid state', async () => {
         const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
 
@@ -1082,6 +1102,32 @@ describe('Editable group header name', () => {
         await waitFor(() =>
             expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Group')
         );
+    });
+
+    test('a group name cleared through state leaves no override, so a later reset tells no header name change', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', { columnDefs: groupDefs(), rowData });
+        const changed: (string | null)[] = [];
+        api.addEventListener('columnHeaderNameChanged', (e) => changed.push(e.columnGroup?.getGroupId() ?? null));
+        const groupName = () => api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header');
+        const renamed = (headerName: string) => ({
+            columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName }] },
+        });
+
+        api.setState(renamed('Renamed'));
+        await waitFor(() => expect(changed).toEqual(['athleteGroup']));
+        expect(groupName()).toBe('Renamed');
+
+        api.setState({ columnGroup: { openColumnGroupIds: [] } });
+        await waitFor(() => expect(changed).toEqual(['athleteGroup', 'athleteGroup']));
+        expect(groupName()).toBe('Group');
+        expect(api.getState().columnGroup?.headerNames ?? []).toEqual([]);
+
+        // nothing is renamed any more: the reset has no name to revert; the rename after it is the positive control
+        api.resetColumnState();
+        api.setState(renamed('Again'));
+        await waitFor(() => expect(groupName()).toBe('Again'));
+        await asyncSetTimeout(0);
+        expect(changed).toEqual(['athleteGroup', 'athleteGroup', 'athleteGroup']);
     });
 
     test('an edited group name wins over the group headerValueGetter', async () => {

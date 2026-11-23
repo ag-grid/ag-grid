@@ -81,7 +81,7 @@ export let data = [
     },
 ];
 
-export function deletePortfolioOnServer(portfolio) {
+export function deletePortfolioOnServer(portfolio: string) {
     const oldDataSize = data.length;
     const filteredData = data.filter((record) => record.portfolio !== portfolio);
     // need to maintain original data reference
@@ -94,7 +94,7 @@ export function deletePortfolioOnServer(portfolio) {
 }
 
 let currentServerRecordId = data.length;
-export function createRowOnServer(portfolio, product, book) {
+export function createRowOnServer(portfolio: string, product: string, book: string) {
     const groupDidExist = data.some((record) => record.portfolio === 'Aggressive');
     const newRecord = {
         tradeId: ++currentServerRecordId,
@@ -113,9 +113,9 @@ export function createRowOnServer(portfolio, product, book) {
     };
 }
 
-export function changePortfolioOnServer(oldPortfolio, newPortfolio) {
+export function changePortfolioOnServer(oldPortfolio: string, newPortfolio: string) {
     const groupDidExist = data.some((record) => record.portfolio === newPortfolio);
-    const updatedRecords = [];
+    const updatedRecords: typeof data = [];
     data.forEach((record) => {
         if (record.portfolio === oldPortfolio) {
             record.portfolio = newPortfolio;

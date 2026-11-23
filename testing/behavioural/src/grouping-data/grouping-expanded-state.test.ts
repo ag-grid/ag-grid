@@ -8,13 +8,19 @@ import {
     cachedJSONObjects,
 } from 'ag-test-utils';
 
-import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    PinnedRowModule,
+    TextFilterModule,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [PinnedRowModule, TextFilterModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [PinnedRowModule, TextFilterModule, ClientSideRowModelModule, RowGroupingModule, GridStateModule],
     });
 
     beforeEach(() => {
@@ -830,7 +836,7 @@ describe('ag-grid grouping expanded state', () => {
         `);
     });
 
-    test('setRowNodeExpanded triggers modelUpdated via rowExpansionStateChanged event', async () => {
+    test('setRowNodeExpanded raises one modelUpdated', async () => {
         const modelUpdatedEvents: ModelUpdatedEvent[] = [];
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith' },
@@ -866,7 +872,6 @@ describe('ag-grid grouping expanded state', () => {
         // Clear events after initial grid creation
         modelUpdatedEvents.length = 0;
 
-        // Expand a group - this triggers rowExpansionStateChanged → onRowGroupOpened → refreshModel
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
 
         // One macrotask after the mutation: the observation window in which a second,
@@ -1379,5 +1384,82 @@ describe('ag-grid grouping expanded state', () => {
         expect(modelUpdatedEvents[0].newData).toBe(false);
         expect(modelUpdatedEvents[0].newPage).toBe(false);
         expect(modelUpdatedEvents[0].keepUndoRedoStack).toBe(false);
+    });
+
+    describe('bulk expansion changes refresh the rows once', () => {
+        async function createTwoLevelGrid(): Promise<GridApi> {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                    { field: 'athlete' },
+                ],
+                rowData: cachedJSONObjects.array([
+                    { id: '1', country: 'A', year: 1, athlete: 'a1' },
+                    { id: '2', country: 'A', year: 2, athlete: 'a2' },
+                    { id: '3', country: 'B', year: 1, athlete: 'b1' },
+                    { id: '4', country: 'B', year: 2, athlete: 'b2' },
+                ]),
+                getRowId: (params) => params.data.id,
+            });
+            await asyncSetTimeout(0);
+            return api;
+        }
+
+        function displayedIds(api: GridApi): string[] {
+            const ids: string[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                ids.push(api.getDisplayedRowAtIndex(i)!.id!);
+            }
+            return ids;
+        }
+
+        /** What the one `modelUpdated` heard for `act` reports, and the rows displayed when it is heard. */
+        async function observeModelUpdated(api: GridApi, act: () => void) {
+            const heard: {
+                keepRenderedRows: boolean | undefined;
+                animate: boolean | undefined;
+                displayedCount: number;
+                displayedIds: string[];
+            }[] = [];
+            const listener = (event: ModelUpdatedEvent) => {
+                heard.push({
+                    keepRenderedRows: event.keepRenderedRows,
+                    animate: event.animate,
+                    displayedCount: api.getDisplayedRowCount(),
+                    displayedIds: displayedIds(api),
+                });
+            };
+            api.addEventListener('modelUpdated', listener);
+            act();
+            // Two turns: a node's own setExpanded refreshes a turn after the call.
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            api.removeEventListener('modelUpdated', listener);
+            return { count: heard.length, ...heard[0] };
+        }
+
+        test('control: setExpanded on one group refreshes once keeping the rendered rows and their elements', async () => {
+            const api = await createTwoLevelGrid();
+            const groupElement = getGridElement(api)!.querySelector('[row-id="row-group-country-A"]');
+            expect(groupElement).not.toBeNull();
+            const expected = [
+                'row-group-country-A',
+                'row-group-country-A-year-1',
+                'row-group-country-A-year-2',
+                'row-group-country-B',
+            ];
+
+            const record = await observeModelUpdated(api, () =>
+                api.getRowNode('row-group-country-A')!.setExpanded(true)
+            );
+
+            expect({
+                count: record.count,
+                keepRenderedRows: record.keepRenderedRows,
+                displayedIds: record.displayedIds,
+                sameElement: getGridElement(api)!.querySelector('[row-id="row-group-country-A"]') === groupElement,
+            }).toEqual({ count: 1, keepRenderedRows: true, displayedIds: expected, sameElement: true });
+        });
     });
 });

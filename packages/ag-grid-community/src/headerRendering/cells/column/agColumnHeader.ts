@@ -269,6 +269,15 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         this.currentSuppressMenuHide = currentSuppressMenuHide;
         _addPopupToggleButtonListeners(this, eMenu, () => this.toggleColumnMenu(eMenu));
         this.toggleMenuAlwaysShow(currentSuppressMenuHide);
+        this.addTooltip({
+            control: 'columnMenu',
+            getGui: () => eMenu,
+            getLocation: () => 'header',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('ariaLabelColumnMenu', 'Column Menu'),
+                params: { column: this.params.column },
+            }),
+        });
     }
 
     private toggleMenuAlwaysShow(alwaysShow: boolean): void {
@@ -336,7 +345,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.createBean(new sortSvc.SortIndicatorComp(true));
+            this.eSortIndicator = this.createManagedBean(new sortSvc.SortIndicatorComp(true));
             const {
                 eSortIndicator,
                 eSortOrder,
@@ -488,6 +497,15 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
         const column = this.params.column as AgColumn;
         this.addInIcon(icon, element, column);
+        this.addTooltip({
+            control: 'filter',
+            getGui: () => element,
+            getLocation: () => 'header',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Filter'),
+                params: { column: this.params.column },
+            }),
+        });
 
         this.addManagedListeners(column, { filterChanged: filterChangedCallback });
         filterChangedCallback();

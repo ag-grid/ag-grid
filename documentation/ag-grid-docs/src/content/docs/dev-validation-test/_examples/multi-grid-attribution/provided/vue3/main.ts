@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -20,12 +20,14 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%; display: flex; flex-direction: column; gap: 1rem;">
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
-                    <span style="font-weight: bold;">Grid A</span>
-                    <button type="button" @click="triggerWarning('a')">Trigger warning</button>
-                    <button type="button" @click="triggerError('a')">Trigger error</button>
-                    <button type="button" @click="triggerAsyncWarning('a')">Trigger async warning</button>
-                    <button type="button" @click="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                    <div class="controls-row">
+                        <span style="font-weight: bold;">Grid A</span>
+                        <button type="button" @click="triggerWarning('a')">Trigger warning</button>
+                        <button type="button" @click="triggerError('a')">Trigger error</button>
+                        <button type="button" @click="triggerAsyncWarning('a')">Trigger async warning</button>
+                        <button type="button" @click="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                    </div>
                 </div>
                 <ag-grid-vue style="flex: 1 1 auto;"
                              :columnDefs="columnDefs"
@@ -35,11 +37,13 @@ const VueExample = defineComponent({
                 </ag-grid-vue>
             </div>
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
-                    <span style="font-weight: bold;">Grid B</span>
-                    <button type="button" @click="triggerWarning('b')">Trigger warning</button>
-                    <button type="button" @click="triggerError('b')">Trigger error</button>
-                    <button type="button" @click="triggerAsyncWarning('b')">Trigger async warning</button>
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                    <div class="controls-row">
+                        <span style="font-weight: bold;">Grid B</span>
+                        <button type="button" @click="triggerWarning('b')">Trigger warning</button>
+                        <button type="button" @click="triggerError('b')">Trigger error</button>
+                        <button type="button" @click="triggerAsyncWarning('b')">Trigger async warning</button>
+                    </div>
                 </div>
                 <ag-grid-vue style="flex: 1 1 auto;"
                              :columnDefs="columnDefs"
@@ -62,14 +66,17 @@ const VueExample = defineComponent({
                 { id: 'toyota', make: 'Toyota', model: 'Corolla', price: 29600 },
             ],
             getRowId: (params: { data: { id: string } }) => params.data.id,
+            gridApiA: null as GridApi | null,
+            gridApiB: null as GridApi | null,
         };
     },
     methods: {
-        apiFor(grid: string) {
-            return grid === 'a' ? this.gridApiA : this.gridApiB;
+        apiFor(grid: string): GridApi {
+            return (grid === 'a' ? this.gridApiA : this.gridApiB)!;
         },
         // Updating an initial-only option after creation emits warning #22 on the targeted grid.
         triggerWarning(grid: string) {
+            // @ts-expect-error deliberately updates an initial-only option
             this.apiFor(grid).setGridOption('tooltipInteraction', true);
         },
         // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling

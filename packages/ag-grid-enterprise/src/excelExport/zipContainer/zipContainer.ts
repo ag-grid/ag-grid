@@ -8,7 +8,7 @@ export interface ZipFile {
     created: Date;
     isBase64: boolean;
     type: 'file' | 'folder';
-    content?: string | Uint8Array;
+    content?: string | Uint8Array<ArrayBuffer>;
 }
 
 export class ZipContainer {

@@ -4,6 +4,7 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    GridApi,
     GridReadyEvent,
     ModuleRegistry,
     PaginationModule,
@@ -12,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -34,23 +33,17 @@ const VueExample = defineComponent({
     template: `
 <div style="height: 100%">
     <div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <label>
-                    <span>caseSensitive:</span>
-                    <input type="checkbox" @change="toggleCaseSensitive" checked>
-                </label>
-                <label>
-                    <span>currentPageOnly:</span>
-                    <input type="checkbox" @change="toggleCurrentPageOnly" checked>
-                </label>
-            </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input type="number" min="1" v-model="goTo" />
+        <div class="example-header example-controls">
+            <div class="controls-row">
+                <label for="caseSensitive">caseSensitive:</label>
+                <input id="caseSensitive" type="checkbox" @change="toggleCaseSensitive" checked>
+                <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
+                <input id="currentPageOnly" type="checkbox" @change="toggleCurrentPageOnly" checked>
+                <label for="find-goto" class="gap-left">Go to match:</label>
+                <input type="number" id="find-goto" min="1" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
             </div>
-            <div>{{ activeMatch }}</div>
+            <div class="controls-row">{{ activeMatch }}</div>
         </div>
         <ag-grid-vue
             style="width: 100%; height: 100%;"
@@ -74,9 +67,9 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
-            activeMatch: undefined,
+            goTo: undefined as number | undefined,
+            gridApi: undefined as GridApi | undefined,
+            activeMatch: undefined as string | undefined,
             toolbar: {
                 items: ['agRowGroupPanelToolbarItem', 'agFindToolbarItem'],
             },
@@ -98,7 +91,7 @@ const VueExample = defineComponent({
             if (isNaN(num) || num < 0) {
                 return;
             }
-            this.gridApi.findGoTo(num);
+            this.gridApi!.findGoTo(num);
         },
         onGridReady(params: GridReadyEvent) {
             this.gridApi = params.api;
@@ -142,7 +135,7 @@ const VueExample = defineComponent({
         });
         const paginationPageSize = ref(5);
         const paginationPageSizeSelector = ref<number[] | boolean>([5, 10]);
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
 
         return {
             pinnedTopRowData,

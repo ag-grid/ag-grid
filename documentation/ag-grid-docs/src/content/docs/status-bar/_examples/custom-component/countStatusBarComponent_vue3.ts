@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IStatusPanelParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IStatusPanelParams>,
+            required: true,
+        },
+    },
     template: `
       <div class="ag-status-name-value">
         <span>Row Count Component&nbsp;:</span>
@@ -7,7 +18,7 @@ export default {
     `,
     data: function () {
         return {
-            count: null,
+            count: null as number | null,
         };
     },
     beforeMount() {
@@ -15,7 +26,4 @@ export default {
             this.count = this.params.api.getDisplayedRowCount();
         });
     },
-    methods: {
-        onGridReady(params) {},
-    },
-};
+});

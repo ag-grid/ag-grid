@@ -1,3 +1,5 @@
+import type { StringComparator } from 'ag-stack';
+
 import type { SortComparatorFn } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { SortDirection, SortType } from './iSort';
@@ -27,4 +29,6 @@ export interface SortOption {
     missingValues: number;
     /** `true` when the column can hold formula error values, which sort like `NaN`. Filled by `_resolveSortOptions`. */
     formulaErrors: boolean;
+    /** Compares strings for the column's effective `accentedSort`, `undefined` when it is off. Filled by `_resolveSortOptions`. */
+    stringComparator: StringComparator | undefined;
 }

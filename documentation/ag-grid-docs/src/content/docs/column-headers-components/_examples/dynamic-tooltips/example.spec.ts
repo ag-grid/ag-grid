@@ -29,4 +29,22 @@ test.agExample(import.meta, () => {
         await goldHeader.locator('.customSortUpLabel').click();
         await expect(firstRowGold).toContainText('8');
     });
+
+    test.eachFramework('Header tooltip shows only while the column is sorted', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const goldHeader = agIdFor.headerCell('gold');
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+
+        await goldHeader.locator('.customHeaderLabel').hover();
+        // The default show delay is 2000ms; wait past it before concluding nothing appeared.
+        await page.waitForTimeout(2500);
+        await expect(tooltip).toHaveCount(0);
+
+        await goldHeader.locator('.customSortDownLabel').click();
+        await page.mouse.move(0, 0);
+        await goldHeader.locator('.customHeaderLabel').hover();
+        await expect(tooltip).toHaveText('Click the cross to remove the sort');
+    });
 });

@@ -11,6 +11,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType, ColumnStateUpdatedEvent } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _mergedEqual } from '../utils/mergeDeep';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -59,6 +60,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
+    /** Bumped when the `accentedSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
+    public accentedSortVersion = 0;
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */
     public colUpdateDepth = 0;
@@ -134,6 +137,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             this.recreateColumnDefs.bind(this)
         );
+        // the grid options compare by identity, so a framework re-creating them with an equal value keeps the comparators
+        this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
+            if (!_mergedEqual(currentValue, previousValue)) {
+                ++this.accentedSortVersion;
+            }
+        });
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );

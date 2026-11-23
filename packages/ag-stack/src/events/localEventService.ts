@@ -26,13 +26,13 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private globalSyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
     private globalAsyncListeners: readonly GlobalListenerEntry<TEventType>[] | null = null;
 
-    private frameworkOverrides: AgFrameworkOverrides | undefined = undefined;
+    private frameworkOverrides?: AgFrameworkOverrides;
 
     private asyncQueue: AsyncQueue<TEventType> | null = null;
     private scheduled = false;
 
     /** Set by a framework that may wrap user listeners: maps each user listener to the one registered for it. */
-    public listenerWrapper: AgListenerWrapper | undefined = undefined;
+    public listenerWrapper?: AgListenerWrapper;
 
     public setFrameworkOverrides(frameworkOverrides: AgFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;
@@ -122,7 +122,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         const eventType = event.type;
         if ('event' in event) {
             const browserEvent = (event as any).event;
-            if (browserEvent instanceof Event) {
+            if (typeof Event !== 'undefined' && browserEvent instanceof Event) {
                 // AG-7893 - Persist composedPath() so that its result can still be accessed by the user asynchronously.
                 // Within an async event handler if they call composedPath() on the event it will always return an empty [].
                 (event as any).eventPath = browserEvent.composedPath();
@@ -210,10 +210,11 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         }
         const flush = this.flushAsyncQueue.bind(this);
         const frameworkOverrides = this.frameworkOverrides;
+        // Bare `setTimeout`: hosts without a DOM have no `window`.
         if (frameworkOverrides) {
-            frameworkOverrides.wrapIncoming(() => window.setTimeout(flush, 0));
+            frameworkOverrides.wrapIncoming(() => setTimeout(flush, 0));
         } else {
-            window.setTimeout(flush, 0);
+            setTimeout(flush, 0);
         }
         this.scheduled = true;
     }

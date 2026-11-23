@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef, ColGroupDef, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
@@ -29,13 +29,15 @@ ModuleRegistry.registerModules([
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <div style="flex: 0 1 auto;">
-                <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
-                <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
-                <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
+                    <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
+                    <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
+                </div>
             </div>
-            <ag-grid-vue style="flex: 1 1 auto;"
+            <ag-grid-vue
                          ref="topGrid"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
@@ -43,8 +45,7 @@ const VueExample = defineComponent({
                          :gridOptions="topOptions"
                          @grid-ready="onGridReady($event)">
             </ag-grid-vue>
-            <div style='height: 5%'></div>
-            <ag-grid-vue style="flex: 1 1 auto;"
+            <ag-grid-vue
                          ref="bottomGrid"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
@@ -80,6 +81,7 @@ const VueExample = defineComponent({
                 },
             ],
             rowData: [],
+            topGridApi: null as GridApi | null,
             topOptions: <GridOptions>{
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
@@ -105,19 +107,19 @@ const VueExample = defineComponent({
             .then((rowData) => (this.rowData = rowData));
     },
     methods: {
-        onCbAthlete(value) {
+        onCbAthlete(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['athlete'], value);
+            this.topGridApi!.setColumnsVisible(['athlete'], value);
         },
 
-        onCbAge(value) {
+        onCbAge(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['age'], value);
+            this.topGridApi!.setColumnsVisible(['age'], value);
         },
 
-        onCbCountry(value) {
+        onCbCountry(value: boolean) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnsVisible(['country'], value);
+            this.topGridApi!.setColumnsVisible(['country'], value);
         },
 
         onGridReady(params: GridReadyEvent) {

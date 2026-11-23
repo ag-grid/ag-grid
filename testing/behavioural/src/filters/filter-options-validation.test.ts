@@ -143,15 +143,16 @@ describe('Column filter — a model saved for another filter type', () => {
         { id: 'b', name: 'Ian Thorpe', age: 23, big: BigInt(23), date: new Date(2000, 9, 1) },
         { id: 'c', name: 'Zoe', age: 5, big: BigInt(5), date: new Date(2012, 6, 27) },
     ];
+    const columnDefs: ColDef<MixedRow>[] = [
+        { field: 'name', filter: 'agTextColumnFilter' },
+        { field: 'age', filter: 'agNumberColumnFilter' },
+        { field: 'big', filter: 'agBigIntColumnFilter' },
+        { field: 'date', filter: 'agDateColumnFilter' },
+    ];
     // Initial filters can hide every row, so firstDataRendered is not guaranteed to fire.
-    const createGrid = (enableFilterHandlers: boolean, initialFilterModel?: Record<string, unknown>) =>
+    const createGrid = (enableFilterHandlers: boolean, colId: string, initialFilterModel?: Record<string, unknown>) =>
         gridsManager.createGrid<MixedRow>('grid1', {
-            columnDefs: [
-                { field: 'name', filter: 'agTextColumnFilter' },
-                { field: 'age', filter: 'agNumberColumnFilter' },
-                { field: 'big', filter: 'agBigIntColumnFilter' },
-                { field: 'date', filter: 'agDateColumnFilter' },
-            ],
+            columnDefs: columnDefs.filter((colDef) => colDef.field === colId),
             rowData,
             getRowId: (params) => params.data.id,
             enableFilterHandlers,
@@ -255,7 +256,11 @@ describe('Column filter — a model saved for another filter type', () => {
         '$kind on the $colId column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
         async ({ colId, model, entry, enableFilterHandlers }) => {
             const fromState = entry === 'the initial state';
-            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers, fromState ? { [colId]: model } : undefined);
+            const api: GridApi<MixedRow> = createGrid(
+                enableFilterHandlers,
+                colId,
+                fromState ? { [colId]: model } : undefined
+            );
             if (!fromState) {
                 api.setFilterModel({ [colId]: model });
             }
@@ -275,7 +280,7 @@ describe('Column filter — a model saved for another filter type', () => {
     )(
         'a Date Filter model on the name column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
         async ({ entry, enableFilterHandlers }) => {
-            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers);
+            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers, 'name');
             if (entry === 'setState') {
                 api.setState({ filter: { filterModel: { name: dateEquals } } });
             } else {
@@ -547,7 +552,11 @@ describe('Column filter — a model saved for another filter type', () => {
         '$kind on the $colId column, given through $entry with enableFilterHandlers $enableFilterHandlers, applies as a model of its own type',
         async ({ colId, model, applied, shown, entry, enableFilterHandlers }) => {
             const fromState = entry === 'the initial state';
-            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers, fromState ? { [colId]: model } : undefined);
+            const api: GridApi<MixedRow> = createGrid(
+                enableFilterHandlers,
+                colId,
+                fromState ? { [colId]: model } : undefined
+            );
             if (!fromState) {
                 api.setFilterModel({ [colId]: model });
             }

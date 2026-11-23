@@ -268,6 +268,11 @@ const DEFAULT_CHART_TRANSLATIONS = {
     // aria
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
+    ariaChartSeriesChartType: '${variable} Chart Type',
+    ariaChartPalettePrevious: 'Previous palette',
+    ariaChartPaletteNext: 'Next palette',
+    ariaChartPalettePage: 'Palette ${variable} of ${variable}',
+    ariaLabelAggregationFunction: 'Aggregation Function',
 
     // group
     group: 'Group',
@@ -297,9 +302,12 @@ const DEFAULT_CHART_TRANSLATIONS = {
 export class ChartTranslationService extends BeanStub implements NamedBean {
     beanName = 'chartTranslation' as const;
 
-    public translate(toTranslate: ChartTranslationKey): string {
+    public translate(toTranslate: ChartTranslationKey, variableValues?: string[]): string {
         const translate = this.getLocaleTextFunc();
-        const defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
-        return translate(toTranslate, defaultTranslation);
+        let defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
+        for (const value of variableValues ?? []) {
+            defaultTranslation = defaultTranslation.replace('${variable}', () => value);
+        }
+        return translate(toTranslate, defaultTranslation, variableValues);
     }
 }

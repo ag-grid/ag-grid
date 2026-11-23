@@ -1,4 +1,5 @@
-import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -45,9 +46,7 @@ describe('pivot: interactive pivot column sort animation', () => {
         expect(isAnimating()).toBe(true);
 
         // Clearing the last sort (desc → null) reorders back to default, so it must animate too.
-        // eslint-disable-next-line no-restricted-syntax -- ColumnAnimationService removes the `ag-column-moving` class on a hardcoded 200ms setTimeout
-        await asyncSetTimeout(200);
-        expect(isAnimating()).toBe(false);
+        await waitFor(() => expect(isAnimating()).toBe(false));
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
         expect(isAnimating()).toBe(true);
     });

@@ -1,17 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "types": ["vitest/globals", "node"],
-    "noEmit": true
+    "types": ["vitest/globals", "node"]
   },
-  "include": [
-    "jest.config.ts",
-    "jest.setup.ts",
-    "src/typings.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
-  ],
+  "include": ["src/typings.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"],
   "exclude": []
 }

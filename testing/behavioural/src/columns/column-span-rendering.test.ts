@@ -2,7 +2,6 @@ import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -1338,7 +1337,6 @@ describe('colSpan follows row data updates', () => {
     describe('with an auto-height column', () => {
         const SYMBOL_HEIGHT = 120;
         const ROW_HEIGHT = 30;
-        let uninstallResizeObserver: () => void;
 
         beforeAll(() => {
             mockGridLayout.useRealOffsetDimensions = true;
@@ -1351,14 +1349,6 @@ describe('colSpan follows row data updates', () => {
         afterAll(() => {
             mockGridLayout.useRealOffsetDimensions = false;
             mockGridLayout.elementHeightOverride = undefined;
-        });
-
-        beforeEach(() => {
-            uninstallResizeObserver = installMockResizeObserver();
-        });
-
-        afterEach(() => {
-            uninstallResizeObserver();
         });
 
         test('a re-measure asks getRowHeight only for the rows whose auto-height cells are all measured', async () => {

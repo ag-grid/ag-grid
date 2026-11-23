@@ -2,9 +2,10 @@
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
     "declaration": true,
+    "noEmit": false,
     "emitDeclarationOnly": true,
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "scripts/**/*.ts"],
-  "exclude": ["jest.config.ts", "jest.setup.ts", "src/main-test.ts", "**/*.test.ts", "**/test/**"]
+  "exclude": ["src/main-test.ts", "**/*.test.ts", "**/test/**"]
 }

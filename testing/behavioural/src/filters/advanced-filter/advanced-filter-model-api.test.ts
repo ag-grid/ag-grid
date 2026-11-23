@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     AdvancedFilterBuilderHarness,
@@ -1279,6 +1280,45 @@ describe('Advanced Filter', () => {
 
     test.each([
         {
+            action: 'new columnDefs without the column',
+            run: (api: GridApi<TestRow>) =>
+                api.setGridOption('columnDefs', [
+                    { field: 'athlete', filter: true },
+                    { field: 'date', filter: true },
+                    { field: 'hasGold', filter: true },
+                    { field: 'country', filter: true },
+                ]),
+        },
+        { action: 'setColumnsVisible(false)', run: (api: GridApi<TestRow>) => api.setColumnsVisible(['age'], false) },
+        {
+            action: 'applyColumnState hide',
+            run: (api: GridApi<TestRow>) => api.applyColumnState({ state: [{ colId: 'age', hide: true }] }),
+        },
+    ])(
+        'a model on a column that $action stops applying, showing every row and telling filterChanged once',
+        async (row) => {
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('grid1', {
+                ...DEFAULT_OPTIONS,
+                onFilterChanged: (event) => sources.push(event.source),
+            });
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'greaterThan', filter: 24 });
+            await waitFor(() => expect(sources).toEqual(['api']));
+            expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+            sources.length = 0;
+
+            row.run(api);
+            await waitFor(() => expect(sources).toEqual(['advancedFilter']));
+            await asyncSetTimeout(0);
+            expect(sources).toEqual(['advancedFilter']);
+            expect(getDisplayedAthletes(api)).toEqual(ROW_DATA.map((row) => row.athlete));
+        }
+    );
+
+    test.each([
+        {
             call: 'setFilterModel',
             run: (api: GridApi) => api.setFilterModel({ age: { filterType: 'number', type: 'lessThan', filter: 20 } }),
         },
@@ -1417,11 +1457,15 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
             expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
-            expect(sources).toEqual(['advancedFilter']);
+            expect(sources).toEqual(['gridInitializing']);
         });
 
         test('a model restored with setState reads back at once and applies once rows arrive', async () => {
-            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                onFilterChanged: ({ source }) => sources.push(source),
+            });
             await asyncSetTimeout(0);
 
             api.setState({ filter: { advancedFilterModel: OVER_24 } });
@@ -1431,6 +1475,7 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toEqual(OVER_24);
             expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+            expect(sources).toEqual(['api']);
         });
 
         test('an expression applied in the input after a model replaces it, before and after rows arrive', async () => {

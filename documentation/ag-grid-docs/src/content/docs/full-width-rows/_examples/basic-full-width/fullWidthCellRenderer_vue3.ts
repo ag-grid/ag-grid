@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
         <div :class="cssClass">
             <button @click="clicked()">Click</button>
@@ -21,4 +32,4 @@ export default {
             console.log('button clicked');
         },
     },
-};
+});

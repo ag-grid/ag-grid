@@ -24,7 +24,11 @@ export default (params: CustomCellRendererProps) => {
         <span>
             {getParts(params).map(({ value: partValue, match, activeMatch }, index) =>
                 match ? (
-                    <mark key={index} className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}>
+                    <mark
+                        key={index}
+                        className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}
+                        aria-current={activeMatch ? 'true' : undefined}
+                    >
                         {partValue}
                     </mark>
                 ) : (

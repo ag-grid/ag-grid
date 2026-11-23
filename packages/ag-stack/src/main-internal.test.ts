@@ -4,6 +4,8 @@ import * as ts from 'typescript';
 
 const STACK_SRC = path.resolve(__dirname);
 const MAIN_INTERNAL_PATH = path.join(STACK_SRC, 'main-internal.ts');
+// Also a published internal entry point, so its exports may carry the annotation too.
+const MAIN_CORE_PATH = path.join(STACK_SRC, 'main-core.ts');
 
 interface SymbolInfo {
     originalName: string;
@@ -56,8 +58,8 @@ function getExportedNamesFromFile(filePath: string): string[] {
     return names;
 }
 
-function parseMainInternalExports(): SymbolInfo[] {
-    const { sourceFile } = getSourceFile(MAIN_INTERNAL_PATH);
+function parseEntryPointExports(entryPath: string): SymbolInfo[] {
+    const { sourceFile } = getSourceFile(entryPath);
     const symbols: SymbolInfo[] = [];
 
     for (const stmt of sourceFile.statements) {
@@ -151,7 +153,7 @@ function getJSDocForSymbol(filePath: string, symbolName: string): string | null 
     return null;
 }
 
-const symbols = parseMainInternalExports();
+const symbols = parseEntryPointExports(MAIN_INTERNAL_PATH);
 
 describe('main-internal.ts JSDoc validation', () => {
     test('should have at least 250 symbols to validate', () => {
@@ -288,7 +290,7 @@ function findSurplusAnnotations(srcDir: string, internalSymbols: SymbolInfo[]): 
 }
 
 // Run at module scope so the scan cost is load time rather than test time.
-const surplusAnnotations = findSurplusAnnotations(STACK_SRC, symbols);
+const surplusAnnotations = findSurplusAnnotations(STACK_SRC, [...symbols, ...parseEntryPointExports(MAIN_CORE_PATH)]);
 
 describe('AG_GRID_INTERNAL annotations are limited to main-internal.ts exports', () => {
     test('should have no AG_GRID_INTERNAL annotation outside the internal entry point', () => {

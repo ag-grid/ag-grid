@@ -1,4 +1,4 @@
-import { RefPlaceholder, _removeFromParent } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _removeFromParent } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -189,7 +189,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             if (applyButton) {
                 const mouseListener = (isEnter: boolean) =>
                     this.toggleCss('ag-advanced-filter-builder-validation', isEnter);
-                this.addManagedElementListeners(applyButton, {
+                _addManagedElementListeners(this, applyButton, {
                     mouseenter: () => mouseListener(true),
                     mouseleave: () => mouseListener(false),
                 });

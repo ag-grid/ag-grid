@@ -6,7 +6,7 @@ import type { ColDef, GridApi, GridState, HeaderValueGetterParams } from 'ag-gri
 import {
     clickDialogButton,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     propertiesOf,
     selectDataType,
     setExpression,
@@ -67,7 +67,7 @@ async function setupGrid(opts: {
         const before = new Set(api.getAllGridColumns().map((col) => col.getColId()));
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle(headerName ?? '');
         setExpression('[a] - [b]');
         clickDialogButton('Apply');
@@ -99,11 +99,11 @@ function closeOpenDialogs(): void {
 async function openEdit(api: GridApi, colId: string): Promise<void> {
     api.showColumnMenu(colId);
     await clickMenuOption('Edit Calculated Column');
-    await waitFor(() => getDialog());
+    await waitFor(() => getCalculatedColumnDialog());
 }
 
 function dialogTitle(): string {
-    return getDialog().querySelector<HTMLInputElement>('input')!.value;
+    return getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value;
 }
 
 function header(api: GridApi, colId: string): string | null {

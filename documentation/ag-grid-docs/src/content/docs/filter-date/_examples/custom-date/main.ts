@@ -28,9 +28,13 @@ const columnDefs: ColDef[] = [
     { field: 'sport' },
 ];
 
-let gridApi: GridApi<IOlympicData>;
+interface OlympicWinner extends Omit<IOlympicData, 'date'> {
+    date: Date;
+}
 
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<OlympicWinner>;
+
+const gridOptions: GridOptions<OlympicWinner> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -48,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data) => {
+        .then((data: IOlympicData[]) => {
             gridApi!.setGridOption(
                 'rowData',
-                data.map((row: IOlympicData) => {
-                    const dateParts = (row.date as any).split('/');
+                data.map((row) => {
+                    const dateParts = row.date.split('/');
                     const date = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
                     return {
                         ...row,

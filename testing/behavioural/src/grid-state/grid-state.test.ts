@@ -27,6 +27,17 @@ describe('StateService - Grid State Management', () => {
 
     const defaultColumnDefs = [{ field: 'id' }, { field: 'name' }, { field: 'age' }, { field: 'sport' }];
 
+    new Set([
+        'columnRowGroupChanged',
+        'sortChanged',
+        'filterChanged',
+        'modelUpdated',
+        'columnEverythingChanged',
+        'virtualColumnsChanged',
+        'displayedColumnsChanged',
+        'gridColumnsChanged',
+    ]);
+
     beforeEach(() => {
         gridsManager.reset();
     });
@@ -53,7 +64,7 @@ describe('StateService - Grid State Management', () => {
             const animating = () => !!getGridElement(api)!.querySelector('.ag-column-moving');
             api.moveColumns(['id'], 1);
             expect(animating()).toBe(true);
-            await waitFor(() => expect(animating()).toBe(false));
+            await waitFor(() => expect(animating()).toBe(false), { interval: 5 });
 
             api.setState({ columnOrder: { orderedColIds: ['sport', 'age', 'name', 'id'] } });
 
@@ -567,6 +578,84 @@ describe('StateService - Grid State Management', () => {
             expect(api2.getState().columnGroup).toEqual({ openColumnGroupIds: [groupId] });
             expect(api2.getColumnGroupState()[0].open).toBe(true);
         });
+
+        test('one setState call applies visibility, pinning, order, sizing and an open group together', async () => {
+            let initialised!: () => void;
+            const initialState = new Promise<void>((resolve) => (initialised = resolve));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'id' },
+                    { field: 'name' },
+                    { field: 'age' },
+                    {
+                        headerName: 'Results',
+                        groupId: 'results',
+                        children: [
+                            { field: 'total', columnGroupShow: 'closed' },
+                            { field: 'gold', columnGroupShow: 'open' },
+                            { field: 'silver', columnGroupShow: 'open' },
+                        ],
+                    },
+                    { field: 'sport' },
+                ],
+                rowData: defaultRowData,
+                onStateUpdated: (event) => {
+                    if (event.sources.includes('gridInitializing')) {
+                        initialised();
+                    }
+                },
+            });
+            await initialState;
+            await asyncSetTimeout(0);
+
+            let displayedColumnsChanged = 0;
+            api.addEventListener('displayedColumnsChanged', () => ++displayedColumnsChanged);
+
+            // Positive control: the listener sees a displayed-columns change made by the grid itself.
+            api.setColumnsVisible(['age'], false);
+            await asyncSetTimeout(0);
+            expect(displayedColumnsChanged).toBe(1);
+            displayedColumnsChanged = 0;
+            api.setColumnsVisible(['age'], true);
+            await asyncSetTimeout(0);
+            displayedColumnsChanged = 0;
+
+            api.setState({
+                columnVisibility: { hiddenColIds: ['name'] },
+                columnPinning: { leftColIds: ['id'], rightColIds: [] },
+                columnOrder: { orderedColIds: ['sport', 'age', 'name', 'id', 'total', 'gold', 'silver'] },
+                columnSizing: { columnSizingModel: [{ colId: 'age', width: 321 }] },
+                columnGroup: { openColumnGroupIds: ['results'] },
+            });
+            await asyncSetTimeout(0);
+
+            expect(
+                api
+                    .getColumnState()
+                    .map((col) => [
+                        col.colId,
+                        col.hide ?? false,
+                        col.pinned ?? null,
+                        col.colId === 'age' ? col.width : null,
+                    ])
+            ).toEqual([
+                ['sport', false, null, null],
+                ['age', false, null, 321],
+                ['name', true, null, null],
+                ['id', false, 'left', null],
+                ['total', false, null, null],
+                ['gold', false, null, null],
+                ['silver', false, null, null],
+            ]);
+            expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['results'] });
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual([
+                'id',
+                'sport',
+                'age',
+                'gold',
+                'silver',
+            ]);
+        });
     });
 
     // ===== ROW STATE TESTS =====
@@ -1013,6 +1102,88 @@ describe('StateService - Grid State Management', () => {
             expect(api.getRowNode('fr')!.expanded).toBe(false);
         });
 
+        // Ireland expanded, France collapsed, under the expandAll strategy.
+        const createIrelandOnlyExpandedGrid = async (id: string) => {
+            const api = gridsManager.createGrid(id, {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }],
+                rowModelType: 'serverSide',
+                serverSideDatasource: twoGroupsOneLeafEach,
+                getRowId: (params) => params.data.id,
+                ssrmExpandAllAffectsAllRows: true,
+            });
+            await waitForNoLoadingRows(api);
+            api.expandAll();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('fr')!, false);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0); // allow debounced state update to flush
+            return api;
+        };
+
+        const irelandOnlyExpanded = { expandAll: true, invertedRowGroupIds: ['fr'] };
+
+        test('SSRM expandAll strategy: setState without ssrmRowGroupExpansion collapses the groups', async () => {
+            const api = await createIrelandOnlyExpandedGrid('ssrmOmittedCollapses');
+            expect(api.getState().ssrmRowGroupExpansion).toEqual(irelandOnlyExpanded);
+
+            const withoutSection = structuredClone(api.getState());
+            delete withoutSection.ssrmRowGroupExpansion;
+
+            api.setState(withoutSection);
+            await waitForNoLoadingRows(api);
+
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
+        // TODO: disabled due to AG-18635 - re-enable once fixed
+        test.skip.each([
+            { name: 'omits it', otherExpansion: undefined },
+            {
+                name: 'carries a different one',
+                otherExpansion: { expandAll: true, invertedRowGroupIds: ['ie'] },
+            },
+        ])(
+            'SSRM expandAll strategy: setState ignoring ssrmRowGroupExpansion keeps the groups as they are when the state $name',
+            async (row) => {
+                const api = await createIrelandOnlyExpandedGrid('ssrmIgnoredExpansion');
+
+                const state = structuredClone(api.getState());
+                if (row.otherExpansion) {
+                    state.ssrmRowGroupExpansion = row.otherExpansion;
+                } else {
+                    delete state.ssrmRowGroupExpansion;
+                }
+
+                api.setState(state, ['ssrmRowGroupExpansion']);
+                await waitForNoLoadingRows(api);
+                await asyncSetTimeout(0);
+
+                expect(api.getRowNode('ie')!.expanded).toBe(true);
+                expect(api.getRowNode('fr')!.expanded).toBe(false);
+                // Ireland, its leaf, France
+                expect(api.getDisplayedRowCount()).toBe(3);
+                expect(api.getState().ssrmRowGroupExpansion).toEqual(irelandOnlyExpanded);
+            }
+        );
+
+        // TODO: disabled due to AG-18635 - re-enable once fixed
+        test.skip('SSRM expandAll strategy: an ignored rowGroupExpansion in setState expands no group', async () => {
+            const api = await createIrelandOnlyExpandedGrid('ssrmIgnoredClientExpansion');
+
+            const state = structuredClone(api.getState());
+            delete state.ssrmRowGroupExpansion;
+            state.rowGroupExpansion = { expandedRowGroupIds: ['fr'], collapsedRowGroupIds: [] };
+
+            api.setState(state, ['rowGroupExpansion']);
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(0);
+
+            expect(api.getRowNode('ie')!.expanded).toBe(false);
+            expect(api.getRowNode('fr')!.expanded).toBe(false);
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
         test('SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on grid creation', async () => {
             // Tests the gridInitializing path: ssrmRowGroupExpansion must be checked (not just
             // rowGroupExpansion) when deciding whether to call setRowGroupExpansionState.
@@ -1196,6 +1367,146 @@ describe('StateService - Grid State Management', () => {
             ]);
         });
 
+        // TODO: disabled due to AG-18919 - re-enable once fixed
+        test.skip('CSRM: getState lists the expanded groups right after new column definitions regroup the rows', async () => {
+            const api = gridsManager.createGrid('csrmRegroupByColumnDefs', {
+                columnDefs: [{ field: 'sport', rowGroup: true, hide: true }, { field: 'name' }],
+                rowData: defaultRowData.slice(0, 2),
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await waitFor(
+                () =>
+                    expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual([
+                        'row-group-sport-Football',
+                        'row-group-sport-Tennis',
+                    ]),
+                { interval: 5 }
+            );
+
+            api.setGridOption('columnDefs', [
+                { field: 'sport', rowGroup: false },
+                { field: 'name', rowGroup: true, hide: true },
+            ]);
+            const now = api.getState().rowGroupExpansion?.expandedRowGroupIds;
+            await asyncSetTimeout(0);
+            const later = api.getState().rowGroupExpansion?.expandedRowGroupIds;
+
+            const regrouped = ['row-group-name-Alice', 'row-group-name-Bob'];
+            expect({ now, later }).toEqual({ now: regrouped, later: regrouped });
+        });
+
+        test('CSRM: getState and stateUpdated list the groups groupDefaultExpanded opens when new column definitions add row grouping', async () => {
+            let lastState: GridState | undefined;
+            const api = gridsManager.createGrid('csrmGroupByColumnDefs', {
+                columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'v', aggFunc: 'sum' }],
+                rowData: [
+                    { country: 'A', sport: 'x', v: 1 },
+                    { country: 'B', sport: 'y', v: 2 },
+                ],
+                groupDefaultExpanded: -1,
+                onStateUpdated: (event) => {
+                    lastState = event.state;
+                },
+            });
+            const groupIds = () => {
+                const ids: string[] = [];
+                api.forEachNode((node) => {
+                    if (node.group) {
+                        ids.push(node.id!);
+                    }
+                });
+                return ids.sort();
+            };
+            expect({
+                groups: groupIds(),
+                expanded: api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [],
+            }).toEqual({ groups: [], expanded: [] });
+
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true },
+                { field: 'sport' },
+                { field: 'v', aggFunc: 'sum' },
+            ]);
+
+            await waitFor(
+                () => {
+                    const groups = groupIds();
+                    const expandedNow = [...(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                    const expandedEvent = [...(lastState?.rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                    expect({ groups: groups.length, expandedNow, expandedEvent }).toEqual({
+                        groups: 2,
+                        expandedNow: groups,
+                        expandedEvent: groups,
+                    });
+                },
+                { interval: 5 }
+            );
+        });
+
+        test('CSRM: getState and stateUpdated list the groups groupDefaultExpanded opens when new column definitions change the keyCreator of the row group column', async () => {
+            let lastState: GridState | undefined;
+            const api = gridsManager.createGrid('csrmGroupKeyCreatorChange', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, keyCreator: (p) => 'k1-' + p.value },
+                    { field: 'v', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'A', v: 1 },
+                    { country: 'B', v: 2 },
+                ],
+                groupDefaultExpanded: -1,
+                onStateUpdated: (event) => {
+                    lastState = event.state;
+                },
+            });
+            const groups = () => {
+                const ids: string[] = [];
+                const keys: string[] = [];
+                api.forEachNode((node) => {
+                    if (node.group) {
+                        ids.push(node.id!);
+                        keys.push(node.key!);
+                    }
+                });
+                return { ids: ids.sort(), keys: keys.sort() };
+            };
+            const expandedIds = () => [...(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+
+            await waitFor(
+                () => {
+                    const { ids, keys } = groups();
+                    expect({ keyPrefixes: keys.map((key) => key.slice(0, 3)), expanded: expandedIds() }).toEqual({
+                        keyPrefixes: ['k1-', 'k1-'],
+                        expanded: ids,
+                    });
+                },
+                { interval: 5 }
+            );
+
+            api.setGridOption('columnDefs', [
+                { field: 'country', rowGroup: true, keyCreator: (p) => 'k2-' + p.value },
+                { field: 'v', aggFunc: 'sum' },
+            ]);
+
+            await waitFor(
+                () => {
+                    const { ids, keys } = groups();
+                    const expandedEvent = [...(lastState?.rowGroupExpansion?.expandedRowGroupIds ?? [])].sort();
+                    expect({
+                        keyPrefixes: keys.map((key) => key.slice(0, 3)),
+                        expandedNow: expandedIds(),
+                        expandedEvent,
+                    }).toEqual({
+                        keyPrefixes: ['k2-', 'k2-'],
+                        expandedNow: ids,
+                        expandedEvent: ids,
+                    });
+                },
+                { interval: 5 }
+            );
+        });
+
         test('should capture pagination state', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1254,6 +1565,30 @@ describe('StateService - Grid State Management', () => {
                 ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
                 └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
             `);
+        });
+
+        test('setState applies its pagination section to the rows its own call leaves after clearing the filter', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'age', filter: 'agNumberColumnFilter' }],
+                rowData: defaultRowData,
+                pagination: true,
+                paginationPageSize: 2,
+                paginationPageSizeSelector: [2],
+            });
+            // Premises: the filter keeps 3 rows, so 2 pages.
+            api.setFilterModel({ age: { filterType: 'number', type: 'greaterThan', filter: 29 } });
+            await waitFor(() => expect(api.paginationGetRowCount()).toBe(3), { timeout: 500, interval: 5 });
+            expect(api.paginationGetTotalPages()).toBe(2);
+
+            // No filter section: the call clears the filter (5 rows, 3 pages), so page 2 exists in it.
+            api.setState({ pagination: { page: 2, pageSize: 2 } });
+
+            await waitFor(() => expect(api.paginationGetRowCount()).toBe(5), { timeout: 500, interval: 5 });
+            expect({
+                totalPages: api.paginationGetTotalPages(),
+                currentPage: api.paginationGetCurrentPage(),
+                statePagination: api.getState().pagination,
+            }).toEqual({ totalPages: 3, currentPage: 2, statePagination: { page: 2, pageSize: 2 } });
         });
 
         test('should capture row pinning state', async () => {
@@ -1332,19 +1667,21 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
             `);
 
-            await waitFor(() =>
-                expect(api.getState().filter).toEqual({
-                    advancedFilterModel: undefined,
-                    columnFilterState: undefined,
-                    filterModel: {
-                        name: {
-                            filter: 'A',
-                            filterType: 'text',
-                            type: 'startsWith',
+            await waitFor(
+                () =>
+                    expect(api.getState().filter).toEqual({
+                        advancedFilterModel: undefined,
+                        columnFilterState: undefined,
+                        filterModel: {
+                            name: {
+                                filter: 'A',
+                                filterType: 'text',
+                                type: 'startsWith',
+                            },
                         },
-                    },
-                    selectableFilters: undefined,
-                })
+                        selectableFilters: undefined,
+                    }),
+                { interval: 5 }
             );
         });
 
@@ -1357,21 +1694,27 @@ describe('StateService - Grid State Management', () => {
 
             // Apply a filter and capture the state with filters active
             api.setFilterModel({ name: { filterType: 'text', type: 'startsWith', filter: 'A' } });
-            const stateWithFilter = await waitFor(() => {
-                const state = api.getState();
-                expect(state.filter?.filterModel).toEqual({
-                    name: { filterType: 'text', type: 'startsWith', filter: 'A' },
-                });
-                return state;
-            });
+            const stateWithFilter = await waitFor(
+                () => {
+                    const state = api.getState();
+                    expect(state.filter?.filterModel).toEqual({
+                        name: { filterType: 'text', type: 'startsWith', filter: 'A' },
+                    });
+                    return state;
+                },
+                { interval: 5 }
+            );
 
             // Clear filters and capture the state with no filters
             api.setFilterModel(null);
-            const stateWithoutFilter = await waitFor(() => {
-                const state = api.getState();
-                expect(state.filter).toBeUndefined();
-                return state;
-            });
+            const stateWithoutFilter = await waitFor(
+                () => {
+                    const state = api.getState();
+                    expect(state.filter).toBeUndefined();
+                    return state;
+                },
+                { interval: 5 }
+            );
             expect(stateWithoutFilter.filter).toBeUndefined();
 
             // Restore the filtered state
@@ -1404,11 +1747,11 @@ describe('StateService - Grid State Management', () => {
 
             // Activate a selectable filter via state restore
             api.setState({ filter: { selectableFilters: { name: 0 } } });
-            await waitFor(() => expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 }));
+            await waitFor(() => expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 }), { interval: 5 });
 
             // Restoring a state without a filter section must clear the active selectable filter
             api.setState({});
-            await waitFor(() => expect(api.getState().filter).toBeUndefined());
+            await waitFor(() => expect(api.getState().filter).toBeUndefined(), { interval: 5 });
         });
 
         test('should serialise bigint filter state and rehydrate on setState', async () => {
@@ -1442,11 +1785,14 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:1 id:"2n"
             `);
 
-            const savedState = await waitFor(() => {
-                const state = api.getState();
-                expect(state.filter?.filterModel?.id?.filter).toBe('2n');
-                return state;
-            });
+            const savedState = await waitFor(
+                () => {
+                    const state = api.getState();
+                    expect(state.filter?.filterModel?.id?.filter).toBe('2n');
+                    return state;
+                },
+                { interval: 5 }
+            );
 
             const api2 = gridsManager.createGrid('bigIntStateTarget', {
                 columnDefs,
@@ -1455,7 +1801,7 @@ describe('StateService - Grid State Management', () => {
 
             api2.setState(savedState as GridState);
 
-            await waitFor(() => expect(api2.getFilterModel()?.id?.filter).toBe('2n'));
+            await waitFor(() => expect(api2.getFilterModel()?.id?.filter).toBe('2n'), { interval: 5 });
         });
 
         test('setState filter restore fires onFilterChanged with source "api", not "columnFilter"', async () => {
@@ -1472,8 +1818,8 @@ describe('StateService - Grid State Management', () => {
             } as GridState);
             // Gate on the first filter event arriving — the row count cannot be used here, as it can
             // already be 1 before the restore lands, which would make the gate resolve on tick 0.
-            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0), { interval: 5 });
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { interval: 5 });
             // Negative assertion over the event *tail*: no positive signal can prove a later filter
             // event carrying the wrong source will not arrive, so hold an observation window open.
             // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
@@ -1482,7 +1828,7 @@ describe('StateService - Grid State Management', () => {
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
 
-        test('initialState filter restore fires onFilterChanged with source "columnFilter"', async () => {
+        test('initialState filter restore fires onFilterChanged with source "gridInitializing"', async () => {
             const sources: (string | undefined)[] = [];
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1495,13 +1841,13 @@ describe('StateService - Grid State Management', () => {
             });
             // Gate on the first filter event arriving — the row count cannot be used here, as it can
             // already be 1 before the restore lands, which would make the gate resolve on tick 0.
-            await waitFor(() => expect(sources.length).toBeGreaterThan(0));
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            await waitFor(() => expect(sources.length).toBeGreaterThan(0), { interval: 5 });
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { interval: 5 });
             // Negative assertion over the event *tail* — see the setState twin above.
             // eslint-disable-next-line no-restricted-syntax -- window in which a late, wrongly-sourced onFilterChanged would arrive
             await asyncSetTimeout(10);
 
-            expect(sources.every((s) => s === 'columnFilter')).toBe(true);
+            expect(sources.every((s) => s === 'gridInitializing')).toBe(true);
         });
 
         describe('a filter set before row data is first provided lands after the initial state filter', () => {
@@ -1611,12 +1957,14 @@ describe('StateService - Grid State Management', () => {
             // Focus a cell
             api.setFocusedCell(0, 'name');
 
-            await waitFor(() =>
-                expect(api.getState().focusedCell).toEqual({
-                    colId: 'name',
-                    rowIndex: 0,
-                    rowPinned: null,
-                })
+            await waitFor(
+                () =>
+                    expect(api.getState().focusedCell).toEqual({
+                        colId: 'name',
+                        rowIndex: 0,
+                        rowPinned: null,
+                    }),
+                { interval: 5 }
             );
             await new GridRows(api, `should capture focused cell state final state`).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1652,25 +2000,27 @@ describe('StateService - Grid State Management', () => {
 
             api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['name'] });
 
-            await waitFor(() =>
-                expect(api.getState().cellSelection).toEqual({
-                    cellRanges: [
-                        {
-                            colIds: ['name'],
-                            endRow: {
-                                rowIndex: 1,
-                                rowPinned: undefined,
+            await waitFor(
+                () =>
+                    expect(api.getState().cellSelection).toEqual({
+                        cellRanges: [
+                            {
+                                colIds: ['name'],
+                                endRow: {
+                                    rowIndex: 1,
+                                    rowPinned: undefined,
+                                },
+                                id: undefined,
+                                startColId: 'name',
+                                startRow: {
+                                    rowIndex: 0,
+                                    rowPinned: undefined,
+                                },
+                                type: undefined,
                             },
-                            id: undefined,
-                            startColId: 'name',
-                            startRow: {
-                                rowIndex: 0,
-                                rowPinned: undefined,
-                            },
-                            type: undefined,
-                        },
-                    ],
-                })
+                        ],
+                    }),
+                { interval: 5 }
             );
 
             api.clearCellSelection();
@@ -1743,11 +2093,13 @@ describe('StateService - Grid State Management', () => {
 
             api.ensureIndexVisible(20);
 
-            await waitFor(() =>
-                expect(api.getState().scroll).toEqual({
-                    left: 0,
-                    top: 840,
-                })
+            await waitFor(
+                () =>
+                    expect(api.getState().scroll).toEqual({
+                        left: 0,
+                        top: 840,
+                    }),
+                { interval: 5 }
             );
             await new GridRows(api, `should capture scroll state final state`).check(`
                 ROOT id:ROOT_NODE_ID
@@ -1901,11 +2253,14 @@ describe('StateService - Grid State Management', () => {
 
             api.setState(stateToApply);
 
-            const state = await waitFor(() => {
-                const currentState = api.getState();
-                expect(currentState.sort?.sortModel).toHaveLength(1);
-                return currentState;
-            });
+            const state = await waitFor(
+                () => {
+                    const currentState = api.getState();
+                    expect(currentState.sort?.sortModel).toHaveLength(1);
+                    return currentState;
+                },
+                { interval: 5 }
+            );
             expect(state.columnVisibility?.hiddenColIds).toContain('age');
             expect(state.pagination?.page).toBe(1);
             await new GridRows(api, `should set state and apply all features final state`).check(`
@@ -1956,11 +2311,14 @@ describe('StateService - Grid State Management', () => {
 
             // setState applies every section in one pass, so once the sort has landed the
             // (ignored) row selection can be asserted synchronously.
-            const state = await waitFor(() => {
-                const currentState = api.getState();
-                expect(currentState.sort?.sortModel).toHaveLength(1);
-                return currentState;
-            });
+            const state = await waitFor(
+                () => {
+                    const currentState = api.getState();
+                    expect(currentState.sort?.sortModel).toHaveLength(1);
+                    return currentState;
+                },
+                { interval: 5 }
+            );
             // Row selection should not have changed
             if (Array.isArray(state.rowSelection)) {
                 expect(state.rowSelection).toContain('1');
@@ -2012,7 +2370,7 @@ describe('StateService - Grid State Management', () => {
 
             api2.setState(savedState);
 
-            await waitFor(() => expect(api2.getState()).toEqual(savedState));
+            await waitFor(() => expect(api2.getState()).toEqual(savedState), { interval: 5 });
         });
 
         test('should preserve absolute sort type when restoring state via setState', async () => {
@@ -2094,8 +2452,9 @@ describe('StateService - Grid State Management', () => {
 
             api.setState(savedState);
 
-            await waitFor(() =>
-                expect(api.getState().sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }])
+            await waitFor(
+                () => expect(api.getState().sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }]),
+                { interval: 5 }
             );
         });
 
@@ -2163,8 +2522,9 @@ describe('StateService - Grid State Management', () => {
             // Restore a state that only sorts 'name' — 'age' absolute sort should be cleared
             api.setState({ sort: { sortModel: [{ colId: 'name', sort: 'asc', type: 'default' }] } });
 
-            await waitFor(() =>
-                expect(api.getState().sort?.sortModel).toEqual([{ colId: 'name', sort: 'asc', type: 'default' }])
+            await waitFor(
+                () => expect(api.getState().sort?.sortModel).toEqual([{ colId: 'name', sort: 'asc', type: 'default' }]),
+                { interval: 5 }
             );
         });
 
@@ -2284,9 +2644,233 @@ describe('StateService - Grid State Management', () => {
                     └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
                 `
             );
-            await waitFor(() => expect(eventFired).toBe(true));
+            await waitFor(() => expect(eventFired).toBe(true), { interval: 5 });
 
             expect(eventState?.sort).toBeDefined();
+        });
+
+        describe('stateUpdated sources list each state key the call changed, once', () => {
+            test('applyColumnState pinning and sorting a column shows in the columnPinning and sort state', async () => {
+                const { api } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                    ],
+                    rowData,
+                });
+
+                api.applyColumnState({ state: [{ colId: 'a', pinned: 'left', sort: 'asc' }] });
+
+                const state = api.getState();
+                expect(state.columnPinning?.leftColIds).toEqual(['a']);
+                expect(state.sort?.sortModel).toMatchObject([{ colId: 'a', sort: 'asc' }]);
+            });
+
+            test('applyColumnState setting a width and hiding a column shows in the columnSizing and columnVisibility state', async () => {
+                const { api } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                    ],
+                    rowData,
+                });
+
+                api.applyColumnState({
+                    state: [
+                        { colId: 'a', width: 300 },
+                        { colId: 'b', hide: true },
+                    ],
+                });
+
+                const state = api.getState();
+                expect(state.columnVisibility?.hiddenColIds).toEqual(['b']);
+                expect(state.columnSizing?.columnSizingModel.find((m) => m.colId === 'a')?.width).toBe(300);
+            });
+            const rowData = [
+                { a: 'x', b: 1, c: 'p' },
+                { a: 'y', b: 2, c: 'q' },
+            ];
+
+            // creates the grid and returns the state keys of each later stateUpdated: every init stage raises a
+            // gridInitializing update, which can merge into a later one
+            const createAndListen = async (options: Parameters<typeof gridsManager.createGrid>[1]) => {
+                const events: string[][] = [];
+                let rendered = false;
+                const api = gridsManager.createGrid('myGrid', {
+                    ...options,
+                    onFirstDataRendered: () => {
+                        rendered = true;
+                    },
+                });
+                api.addEventListener('stateUpdated', (e) => {
+                    const keys = e.sources.filter((source) => source !== 'gridInitializing').sort();
+                    if (keys.length !== 0) {
+                        events.push(keys);
+                    }
+                });
+                await waitFor(() => expect(rendered).toBe(true), { interval: 5 });
+                // the first data rendered stage holds back state events until its timer, then debounces its own
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+                events.length = 0;
+                return { api, events };
+            };
+
+            // the debounced event for one call has arrived, and no second one follows it
+            const settled = async (events: string[][]) => {
+                await waitFor(() => expect(events.length).toBeGreaterThan(0), { interval: 5 });
+                await asyncSetTimeout(0);
+                return events;
+            };
+
+            test('moveColumns lists columnOrder alone', async () => {
+                const { api, events } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                    ],
+                    rowData,
+                });
+
+                api.moveColumns(['a'], 1);
+
+                expect(api.getState().columnOrder?.orderedColIds).toEqual(['b', 'a']);
+                expect(await settled(events)).toEqual([['columnOrder']]);
+            });
+
+            test('setColumnAggFunc lists aggregation alone', async () => {
+                const { api, events } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b', aggFunc: 'sum' },
+                    ],
+                    rowData,
+                });
+
+                api.setColumnAggFunc('b', 'max');
+
+                expect(api.getState().aggregation?.aggregationModel).toEqual([{ colId: 'b', aggFunc: 'max' }]);
+                expect(await settled(events)).toEqual([['aggregation']]);
+            });
+
+            test('a column update changing no column state raises no stateUpdated, one changing it does', async () => {
+                const { api, events } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                    ],
+                    rowData,
+                });
+                const widthOfA = () => api.getColumn('a')!.getActualWidth();
+                const width = widthOfA();
+
+                api.setColumnWidths([{ key: 'a', newWidth: width }], true);
+                api.applyColumnState({ state: api.getColumnState() });
+                api.applyColumnState({ state: [{ colId: 'a', width }] });
+                // the same-state calls above are over before the positive control starts
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+                expect(events).toEqual([]);
+
+                api.setColumnWidths([{ key: 'a', newWidth: width + 100 }], true);
+
+                expect(widthOfA()).toBe(width + 100);
+                expect(await settled(events)).toEqual([['columnSizing']]);
+            });
+
+            test('removing a column through columnDefs removes it from the columnSizing and columnOrder state', async () => {
+                const { api } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                        { colId: 'c', field: 'c' },
+                    ],
+                    rowData,
+                });
+                expect(api.getState().columnSizing?.columnSizingModel.map((m) => m.colId)).toEqual(['a', 'b', 'c']);
+
+                api.setGridOption('columnDefs', [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ]);
+
+                expect(api.getState().columnSizing?.columnSizingModel.map((m) => m.colId)).toEqual(['a', 'b']);
+                expect(api.getState().columnOrder?.orderedColIds).toEqual(['a', 'b']);
+            });
+
+            test('setRowGroupColumns hides the grouped column and shows it in the rowGroup and columnVisibility state', async () => {
+                const { api } = await createAndListen({
+                    columnDefs: [
+                        { colId: 'a', field: 'a' },
+                        { colId: 'b', field: 'b' },
+                    ],
+                    rowData,
+                });
+
+                api.setRowGroupColumns(['a']);
+
+                // the grouped column is hidden in the displayed columns, so its visibility changed
+                expect(api.getColumn('a')!.isVisible()).toBe(false);
+                expect(api.getState().rowGroup?.groupColIds).toEqual(['a']);
+                expect(api.getState().columnVisibility?.hiddenColIds).toEqual(['a']);
+            });
+
+            test('resetColumnGroupState clearing the name of a group whose columns are all hidden lists columnGroup, keeping the open groups', async () => {
+                const { api, events } = await createAndListen({
+                    columnDefs: [
+                        {
+                            groupId: 'g',
+                            headerName: 'G',
+                            children: [
+                                { colId: 'a', field: 'a' },
+                                { colId: 'b', field: 'b' },
+                            ],
+                        },
+                        {
+                            groupId: 'h',
+                            headerName: 'H',
+                            openByDefault: true,
+                            children: [
+                                { colId: 'c', field: 'c' },
+                                { colId: 'd', field: 'd', columnGroupShow: 'open' },
+                            ],
+                        },
+                    ],
+                    rowData,
+                });
+                const idle = async () => {
+                    await asyncSetTimeout(0);
+                    await asyncSetTimeout(0);
+                };
+
+                api.setState({
+                    columnGroup: { openColumnGroupIds: ['h'], headerNames: [{ groupId: 'g', headerName: 'Renamed' }] },
+                });
+                api.applyColumnState({
+                    state: [
+                        { colId: 'a', hide: true },
+                        { colId: 'b', hide: true },
+                    ],
+                });
+                await idle();
+
+                // premises: the group is renamed with none of its columns shown, and h is open
+                expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'g', headerName: 'Renamed' }]);
+                expect(api.getState().columnVisibility?.hiddenColIds).toEqual(['a', 'b']);
+                expect(api.getColumnGroupState().find((s) => s.groupId === 'h')?.open).toBe(true);
+                const openBefore = api.getState().columnGroup?.openColumnGroupIds;
+                events.length = 0;
+
+                api.resetColumnGroupState();
+
+                const state = api.getState();
+                expect(state.columnGroup?.headerNames).toBeUndefined();
+                expect(state.columnGroup?.openColumnGroupIds).toEqual(openBefore);
+                expect(api.getColumnGroupState().find((s) => s.groupId === 'h')?.open).toBe(true);
+                const sources = await settled(events);
+                expect(sources.length).toBe(1);
+                expect(sources[0]).toContain('columnGroup');
+            });
         });
     });
 
@@ -2305,6 +2889,34 @@ describe('StateService - Grid State Management', () => {
             aggregation: { aggregationModel: [{ colId: 'gold', aggFunc: 'sum' }] },
         };
 
+        describe('the state column order lists every column getColumnState reports, pivot result columns included', () => {
+            const pivotDefs = [
+                { colId: 'a', field: 'a', rowGroup: true },
+                { colId: 'b', field: 'b', aggFunc: 'sum' },
+                { colId: 'c', field: 'c', pivot: true },
+            ];
+            const pivotRows = [
+                { a: 'x', b: 1, c: 'p' },
+                { a: 'y', b: 2, c: 'q' },
+            ];
+
+            const expectOrderAsColumnState = (api: GridApi) => {
+                const colIds = api.getColumnState().map((s) => s.colId);
+                expect(colIds.filter((id) => id.startsWith('pivot_'))).not.toEqual([]);
+                expect(api.getState().columnOrder?.orderedColIds).toEqual(colIds);
+            };
+
+            test('switched to pivot mode by setGridOption', async () => {
+                const api = gridsManager.createGrid('myGrid', { columnDefs: pivotDefs, rowData: pivotRows });
+                await waitForNoLoadingRows(api);
+
+                api.setGridOption('pivotMode', true);
+
+                await waitFor(() => expect(api.getPivotResultColumns()?.length).toBeGreaterThan(0), { interval: 5 });
+                expectOrderAsColumnState(api);
+            });
+        });
+
         test('setState restores a filter on a pivot result column', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
             await waitForNoLoadingRows(api);
@@ -2314,16 +2926,20 @@ describe('StateService - Grid State Management', () => {
                 filter: { filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } } },
             } as GridState);
 
-            await waitFor(() =>
-                expect(api.getFilterModel()).toEqual({
-                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-                })
+            await waitFor(
+                () =>
+                    expect(api.getFilterModel()).toEqual({
+                        pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                    }),
+                { interval: 5 }
             );
             // Print Grid State must report the restored filter, not undefined.
-            await waitFor(() =>
-                expect(api.getState().filter?.filterModel).toEqual({
-                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-                })
+            await waitFor(
+                () =>
+                    expect(api.getState().filter?.filterModel).toEqual({
+                        pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                    }),
+                { interval: 5 }
             );
             await new GridRows(api, `setState restores a filter on a pivot result column`).check(`
                 ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
@@ -2334,6 +2950,7 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('initialState restores a filter on a pivot result column', async () => {
+            const sources: (string | undefined)[] = [];
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData,
@@ -2343,18 +2960,23 @@ describe('StateService - Grid State Management', () => {
                         filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } },
                     },
                 } as GridState,
+                onFilterChanged: ({ source }) => sources.push(source),
             });
             await waitForNoLoadingRows(api);
 
-            await waitFor(() =>
-                expect(api.getFilterModel()).toEqual({
-                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-                })
+            await waitFor(
+                () =>
+                    expect(api.getFilterModel()).toEqual({
+                        pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                    }),
+                { interval: 5 }
             );
-            await waitFor(() =>
-                expect(api.getState().filter?.filterModel).toEqual({
-                    pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
-                })
+            await waitFor(
+                () =>
+                    expect(api.getState().filter?.filterModel).toEqual({
+                        pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+                    }),
+                { interval: 5 }
             );
             await new GridRows(api, `initialState restores a filter on a pivot result column`).check(`
                 ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
@@ -2362,6 +2984,8 @@ describe('StateService - Grid State Management', () => {
                 · ├── LEAF hidden id:0 pivot_year_2000_gold:66 pivot_year_2004_gold:66
                 · └── LEAF hidden id:1 pivot_year_2000_gold:10 pivot_year_2004_gold:10
             `);
+            expect(sources).toContain('gridInitializing');
+            expect(sources.every((s) => s === 'gridInitializing')).toBe(true);
         });
 
         test.each([[[]], [undefined]])(
@@ -2375,7 +2999,7 @@ describe('StateService - Grid State Management', () => {
                 });
                 await asyncSetTimeout(0);
                 api.setGridOption('rowData', rowData);
-                await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+                await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { interval: 5 });
                 expect(api.getFilterModel()).toEqual(filterModel);
                 expect(api.getState().filter?.filterModel).toEqual(filterModel);
             }
@@ -2390,7 +3014,7 @@ describe('StateService - Grid State Management', () => {
             });
             await asyncSetTimeout(0);
             api.setGridOption('rowData', rowData);
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { interval: 5 });
             expect(api.getFilterModel()).toEqual(filterModel);
         });
 
@@ -2402,7 +3026,7 @@ describe('StateService - Grid State Management', () => {
                 initialState: { ...pivotState, filter: { filterModel } } as GridState,
             });
             api.setState({ ...pivotState } as GridState, ['filter']);
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1), { interval: 5 });
             expect(api.getFilterModel()).toEqual(filterModel);
         });
 
@@ -2482,8 +3106,8 @@ describe('StateService - Grid State Management', () => {
                 if (given === 'after creation') {
                     api.setGridOption('serverSideDatasource', serverSideDatasource);
                 }
-                await waitFor(() => expect(api.getFilterModel()).toEqual(filterModel));
-                await waitFor(() => expect(requests.at(-1)).toEqual(filterModel));
+                await waitFor(() => expect(api.getFilterModel()).toEqual(filterModel), { interval: 5 });
+                await waitFor(() => expect(requests.at(-1)).toEqual(filterModel), { interval: 5 });
             }
         );
 
@@ -2498,11 +3122,13 @@ describe('StateService - Grid State Management', () => {
             });
             await waitForNoLoadingRows(api);
 
-            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getSort()).toBe('desc'));
-            await waitFor(() =>
-                expect(api.getState().sort).toEqual({
-                    sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc', type: 'default' }],
-                })
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getSort()).toBe('desc'), { interval: 5 });
+            await waitFor(
+                () =>
+                    expect(api.getState().sort).toEqual({
+                        sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc', type: 'default' }],
+                    }),
+                { interval: 5 }
             );
         });
 
@@ -2517,7 +3143,9 @@ describe('StateService - Grid State Management', () => {
             });
             await waitForNoLoadingRows(api);
 
-            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getActualWidth()).toBe(333));
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getActualWidth()).toBe(333), {
+                interval: 5,
+            });
         });
 
         test('initialState restores column visibility on a pivot result column', async () => {
@@ -2532,7 +3160,9 @@ describe('StateService - Grid State Management', () => {
             await waitForNoLoadingRows(api);
 
             // Poll the live column (absent until the pivot result columns exist), then the cached state.
-            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.isVisible()).toBe(false));
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.isVisible()).toBe(false), {
+                interval: 5,
+            });
             expect(api.getState().columnVisibility).toEqual({ hiddenColIds: ['pivot_year_2000_gold'] });
         });
 
@@ -2544,8 +3174,12 @@ describe('StateService - Grid State Management', () => {
             });
             await waitForNoLoadingRows(api);
 
-            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getPinned()).toBe('left'));
-            await waitFor(() => expect(api.getState().columnPinning?.leftColIds).toEqual(['pivot_year_2000_gold']));
+            await waitFor(() => expect(api.getColumn('pivot_year_2000_gold')?.getPinned()).toBe('left'), {
+                interval: 5,
+            });
+            await waitFor(() => expect(api.getState().columnPinning?.leftColIds).toEqual(['pivot_year_2000_gold']), {
+                interval: 5,
+            });
         });
 
         test('initialState restores an open pivot column group', async () => {
@@ -2571,8 +3205,9 @@ describe('StateService - Grid State Management', () => {
             // The cached column-group state is refreshed once the pivot result columns exist, which is
             // strictly after the column itself appears — so poll the state, not the column. It starts
             // out undefined, so this cannot pass on tick 0.
-            await waitFor(() =>
-                expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] })
+            await waitFor(
+                () => expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] }),
+                { interval: 5 }
             );
         });
     });

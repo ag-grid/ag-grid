@@ -59,12 +59,23 @@ export class PageSummaryComp extends Component {
     private initNavButtons(): void {
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        for (const { el, fn } of [
-            { el: btFirst, fn: this.onBtFirst.bind(this) },
-            { el: btPrevious, fn: this.onBtPrevious.bind(this) },
-            { el: btNext, fn: this.onBtNext.bind(this) },
-            { el: btLast, fn: this.onBtLast.bind(this) },
+        for (const { el, fn, control, defaultValue } of [
+            { el: btFirst, fn: this.onBtFirst.bind(this), control: 'firstPage', defaultValue: 'First Page' },
+            {
+                el: btPrevious,
+                fn: this.onBtPrevious.bind(this),
+                control: 'previousPage',
+                defaultValue: 'Previous Page',
+            },
+            { el: btNext, fn: this.onBtNext.bind(this), control: 'nextPage', defaultValue: 'Next Page' },
+            { el: btLast, fn: this.onBtLast.bind(this), control: 'lastPage', defaultValue: 'Last Page' },
         ]) {
+            this.addTooltip({
+                control,
+                getGui: () => el,
+                getLocation: () => 'pagination',
+                getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+            });
             this.addManagedListeners(el, {
                 click: fn,
                 keydown: (e: KeyboardEvent) => {
@@ -81,6 +92,12 @@ export class PageSummaryComp extends Component {
         const { lbCurrentInput, pagination } = this;
         const eInput = lbCurrentInput.getInputElement();
         _setAriaRole(eInput, 'spinbutton');
+        lbCurrentInput.addTooltip({
+            control: 'pageNumber',
+            getLocation: () => 'pagination',
+            getAriaElement: () => eInput,
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipGoToPage', 'Go to page') }),
+        });
         this.addManagedListeners(eInput, {
             keydown: (e: KeyboardEvent) => {
                 const { key } = e;
@@ -219,6 +236,9 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
+        const strPage = localeTextFunc('page', 'Page');
+        // An unknown total is left out rather than read as "of more".
+        const strOfTotal = lastPageFound ? ` ${localeTextFunc('of', 'of')} ${lbTotalStr}` : '';
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -231,18 +251,13 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
-            _setAriaLabel(
-                eInput,
-                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
-            );
+            _setAriaLabel(eInput, `${strPage} ${localeTextFunc('number', 'number')}, ${lbCurrentValue}${strOfTotal}`);
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
-        const strPage = localeTextFunc('page', 'Page');
-        const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
+        this.ariaStatus = `${strPage} ${lbCurrent}${strOfTotal}`;
     }
 
     private formatNumber(value: number): string {

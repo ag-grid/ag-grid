@@ -1,4 +1,4 @@
-import { dragOverTo, expect, test } from '@utils/grid/test-utils';
+import { dragOverTo, expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
 import { GROUP_AUTO_COLUMN_ID, GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
 
@@ -99,22 +99,24 @@ test.agExample(import.meta, () => {
         );
     });
 
-    test.eachFramework('Example with dragging from Column List', async ({ agIdFor, page, remoteGrid }) => {
+    test.eachFramework('Example with dragging from Column List', async ({ agIdFor, page }) => {
         const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
 
-        const remoteApi = remoteGrid(page, '1');
+        const api = await gridApiHandle(page, '1');
 
-        await remoteApi.setGridOption('columnDefs', [
-            {
-                field: 'date',
-                enableRowGroup: true,
-                enablePivot: true,
-                groupHierarchy: ['year', 'month'],
-            },
-            { field: 'country' },
-            { field: 'sport' },
-            { field: 'total', aggFunc: 'sum' },
-        ]);
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'date',
+                    enableRowGroup: true,
+                    enablePivot: true,
+                    groupHierarchy: ['year', 'month'],
+                },
+                { field: 'country' },
+                { field: 'sport' },
+                { field: 'total', aggFunc: 'sum' },
+            ])
+        );
 
         const dateHandle = agIdFor.columnSelectListItemDragHandle('Date Column');
         await dragOverTo(dateHandle, agIdFor.columnDropArea('toolbar', 'Row Groups'));
@@ -123,23 +125,25 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });
     });
 
-    test.eachFramework('Example with rowGroupIndex', async ({ page, agIdFor, remoteGrid }) => {
+    test.eachFramework('Example with rowGroupIndex', async ({ page, agIdFor }) => {
         const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
         const level1GroupRowId = `${level0GroupRowId}-${vcolPrefix}-date-month-8`;
         const level2GroupRowId = `${level1GroupRowId}-date-2008-08-24`;
 
-        const remoteApi = remoteGrid(page, '1');
+        const api = await gridApiHandle(page, '1');
 
-        await remoteApi.setGridOption('columnDefs', [
-            {
-                field: 'date',
-                rowGroupIndex: 0,
-                groupHierarchy: ['year', 'month'],
-            },
-            { field: 'country' },
-            { field: 'sport' },
-            { field: 'total', aggFunc: 'sum' },
-        ]);
+        await api.evaluate((api) =>
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'date',
+                    rowGroupIndex: 0,
+                    groupHierarchy: ['year', 'month'],
+                },
+                { field: 'country' },
+                { field: 'sport' },
+                { field: 'total', aggFunc: 'sum' },
+            ])
+        );
 
         // Assert has grouped by date parts
         await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });

@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-syntax -- each remaining sleep is the observation window for "the tooltip
-   has not appeared yet", which `waitFor` cannot express; a new one still needs that justification.
-   Delay behaviour itself is asserted in `tooltip-delays.test.ts`. */
+/* eslint-disable no-restricted-syntax -- each remaining sleep flushes one tick after an edit action; a "the tooltip
+   has not appeared yet" window runs on a fake clock. Delay behaviour itself is asserted in `tooltip-delays.test.ts`. */
 import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
@@ -58,12 +57,19 @@ describe('Tooltips', () => {
     beforeEach(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
     afterEach(() => {
         gridMgr.reset();
+        vi.useRealTimers();
         resetLegacyTooltipProperties();
     });
 
     /** Texts of tooltips that are on screen and not fading out. */
     const visibleTooltipTexts = () => getTooltips().map((tooltip) => tooltip.textContent ?? '');
     const hasTooltipText = (text: string) => getTooltips().some((tooltip) => tooltip.textContent?.includes(text));
+    /** Escape hides at once, where an unhover alone waits out the grid's real 100 ms leave grace. */
+    const dismissTooltip = async (source: HTMLElement) => {
+        await userEvent.keyboard('{Escape}');
+        expect(getTooltips()).toEqual([]);
+        await userEvent.unhover(source);
+    };
 
     test('shows tooltip when configured', async () => {
         const gridOptions: GridOptions = {
@@ -112,8 +118,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('value');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         api.startBatchEdit();
         await asyncSetTimeout(1);
@@ -131,8 +136,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('edited');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         api.commitBatchEdit();
         await asyncSetTimeout(1);
@@ -169,8 +173,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('b-value');
 
-        await userEvent.unhover(cellA);
-        await waitForTooltips(0);
+        await dismissTooltip(cellA);
 
         api.startBatchEdit();
         await asyncSetTimeout(1);
@@ -187,8 +190,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('b-edited');
 
-        await userEvent.unhover(cellA);
-        await waitForTooltips(0);
+        await dismissTooltip(cellA);
 
         api.commitBatchEdit();
         await asyncSetTimeout(1);
@@ -248,8 +250,7 @@ describe('Tooltips', () => {
         expect(getTooltips()[0]).toHaveTextContent('b-value');
         expect(hasTooltipText('computed')).toBe(false);
 
-        await userEvent.unhover(cellA);
-        await waitForTooltips(0);
+        await dismissTooltip(cellA);
 
         api.startBatchEdit();
         await asyncSetTimeout(1);
@@ -295,8 +296,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Empty field falls through');
 
-        await userEvent.unhover(emptyFieldCell);
-        await waitForTooltips(0);
+        await dismissTooltip(emptyFieldCell);
         await userEvent.hover(missingFieldCell);
         await asyncSetTimeout(0);
         expect(getTooltips()).toHaveLength(0);
@@ -347,8 +347,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tooltip: value');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         api.startBatchEdit();
         await asyncSetTimeout(1);
@@ -366,8 +365,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tooltip: edited');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         api.commitBatchEdit();
         await asyncSetTimeout(1);
@@ -422,8 +420,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tip for value');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
     });
 
     test('does not duplicate after formula errors toggle during edits', async () => {
@@ -480,21 +477,19 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0].classList.contains('ag-cell-formula-tooltip')).toBe(true);
 
-        await userEvent.unhover(resultCell);
-        await waitForTooltips(0);
+        await dismissTooltip(resultCell);
 
         api.getRowNode('r1')!.setDataValue('A', 2);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(resultCell).toHaveTextContent('SUCCESS'));
 
         await userEvent.hover(resultCell);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('My cell tooltip');
 
-        await userEvent.unhover(resultCell);
-        await waitForTooltips(0);
+        await dismissTooltip(resultCell);
 
         api.getRowNode('r1')!.setDataValue('A', 1);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(resultCell).toHaveTextContent('#ERROR!'));
 
         await userEvent.hover(resultCell);
         await waitForTooltips(1);
@@ -561,8 +556,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveClass('formula-error-tooltip');
 
-        await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'))));
-        await waitForTooltips(0);
+        await dismissTooltip(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result'))));
 
         api.setGridOption('columnDefs', [
             { field: 'A' },
@@ -573,7 +567,9 @@ describe('Tooltips', () => {
                 tooltipComponent: FormulaErrorTooltip,
             },
         ]);
-        await asyncSetTimeout(50);
+        await waitFor(() =>
+            expect(getByTestId(gridDiv, agTestIdFor.headerCell('result'))).toHaveTextContent('Renamed')
+        );
         await new GridColumns(api, `formula error tooltip after colDef change renamed`).checkColumns(`
             LEFT
             └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
@@ -608,6 +604,8 @@ describe('Tooltips', () => {
             }
         }
 
+        const position = vi.fn(() => 'top-start' as const);
+        const interaction = vi.fn(() => false);
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'A', editable: true },
@@ -618,6 +616,8 @@ describe('Tooltips', () => {
             editType: 'fullRow',
             getFullRowEditValidationErrors: ({ editorsState }) =>
                 editorsState.some((state) => String(state.newValue).includes('bad')) ? ['Row is not allowed'] : [],
+            tooltipPosition: position,
+            tooltipInteraction: interaction,
             tooltipShowDelay: 0,
             tooltipSwitchShowDelay: 0,
         };
@@ -635,9 +635,15 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveClass('validation-error-tooltip');
         expect(getTooltips()[0]).toHaveTextContent('Row is not allowed');
+        const expected = expect.objectContaining({
+            location: 'cellEditor',
+            column: api.getColumn('B'),
+            value: 'Row is not allowed',
+        });
+        expect(position).toHaveBeenCalledWith(expected);
+        expect(interaction).toHaveBeenCalledWith(expected);
 
-        await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
-        await waitForTooltips(0);
+        await dismissTooltip(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
 
         api.setGridOption('columnDefs', [
             { field: 'A', editable: true },
@@ -649,7 +655,7 @@ describe('Tooltips', () => {
                 tooltipComponent: ValidationErrorTooltip,
             },
         ]);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(getByTestId(gridDiv, agTestIdFor.headerCell('B'))).toHaveTextContent('Renamed'));
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'B'))));
         await waitForTooltips(1);
@@ -783,11 +789,13 @@ describe('Tooltips', () => {
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-pending-cleared', gridOptions);
         const gridDiv = getGridElement(api)! as HTMLElement;
 
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+        vi.useFakeTimers();
         // the renderer and its tooltip go while the show is still waiting out its delay
-        await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
+        await userEvent.setup({ delay: null }).hover(cell);
         api.setGridOption('rowData', [{ id: 'r1', A: 'a2', showDetail: false }]);
 
-        await asyncSetTimeout(150);
+        await vi.advanceTimersByTimeAsync(150);
         // Attached, not visible: a tooltip that showed and is fading would pass a visible-only check.
         expect(getAttachedTooltips()).toHaveLength(0);
     });
@@ -820,10 +828,12 @@ describe('Tooltips', () => {
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-pending-predicate', gridOptions);
         const gridDiv = getGridElement(api)! as HTMLElement;
 
-        await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+        vi.useFakeTimers();
+        await userEvent.setup({ delay: null }).hover(cell);
         api.setGridOption('rowData', [{ id: 'r1', A: 'a2', showTip: false }]);
 
-        await asyncSetTimeout(150);
+        await vi.advanceTimersByTimeAsync(150);
         // Attached, not visible: a tooltip that showed and is fading would pass a visible-only check.
         expect(getAttachedTooltips()).toHaveLength(0);
     });
@@ -1002,11 +1012,10 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('A: first');
 
-        await userEvent.unhover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
-        await waitForTooltips(0);
+        await dismissTooltip(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
 
         api.setGridOption('columnDefs', [{ field: 'A', tooltipComponent: TooltipB, tooltip: 'second' }]);
-        await asyncSetTimeout(50);
+        await asyncSetTimeout(0);
 
         await userEvent.hover(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A'))));
         await waitForTooltips(1);
@@ -1053,14 +1062,13 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(hasTooltipText('Cell renderer tooltip')).toBe(true);
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         api.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(cell).toHaveTextContent('plain'));
 
         await userEvent.hover(cell);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(hasTooltipText('ColDef tooltip')).toBe(true));
 
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
@@ -1104,11 +1112,10 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(hasTooltipText('Tip a1')).toBe(true);
 
-        await userEvent.unhover(cellA);
-        await waitForTooltips(0);
+        await dismissTooltip(cellA);
 
         api.setGridOption('rowData', [{ id: 'r1', A: 'a2', B: 'b2' }]);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(cellA).toHaveTextContent('a2'));
         await new GridRows(api, `colDef tooltip survives renderer recreation`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 A:"a2" B:"b2"
@@ -1119,8 +1126,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(hasTooltipText('Tip a2')).toBe(true);
 
-        await userEvent.unhover(cellA);
-        await waitForTooltips(0);
+        await dismissTooltip(cellA);
 
         // a plain cell with no renderer at all takes the same teardown path
         await userEvent.hover(cellB);
@@ -1169,8 +1175,7 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Renderer tooltip');
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
         api.setGridOption('rowData', [{ id: 'r1', A: 'a2', showTooltip: false }]);
         await waitFor(() => expect(cell).toHaveTextContent('a2'));
 
@@ -1234,17 +1239,16 @@ describe('Tooltips', () => {
         await waitForTooltips(1);
         expect(hasTooltipText('Cell renderer tooltip')).toBe(true);
 
-        await userEvent.unhover(cell);
-        await waitForTooltips(0);
+        await dismissTooltip(cell);
 
         for (let i = 0; i < 5; i++) {
             const showDetail = i % 2 === 1;
             api.setGridOption('rowData', [{ id: 'r1', showDetail }]);
-            await asyncSetTimeout(50);
+            await waitFor(() => expect(cell).toHaveTextContent(showDetail ? 'detail' : 'plain'));
         }
         // final state: plain renderer (no setTooltip), so only the ColDef tooltip should remain
         api.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
-        await asyncSetTimeout(50);
+        await waitFor(() => expect(cell).toHaveTextContent('plain'));
 
         await userEvent.hover(cell);
         await waitForTooltips(1);
@@ -1419,8 +1423,9 @@ describe('Tooltips', () => {
             const gridDiv = getGridElement(api)! as HTMLElement;
             const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
 
-            await userEvent.hover(cell);
-            await asyncSetTimeout(50);
+            vi.useFakeTimers();
+            await userEvent.setup({ delay: null }).hover(cell);
+            await vi.advanceTimersByTimeAsync(50);
             expect(getTooltips()).toHaveLength(0);
         });
 
@@ -1536,13 +1541,13 @@ describe('Tooltips', () => {
             await waitForTooltips(1);
             expect(getTooltips()[0]).toHaveTextContent('Selector tooltip');
 
-            await userEvent.unhover(rendererCell);
-            await waitForTooltips(0);
+            await dismissTooltip(rendererCell);
 
             // Row where the selector returned undefined renders plain text: gated on overflow, and not truncated.
             const plainCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'A')));
-            await userEvent.hover(plainCell);
-            await asyncSetTimeout(50);
+            vi.useFakeTimers();
+            await userEvent.setup({ delay: null }).hover(plainCell);
+            await vi.advanceTimersByTimeAsync(50);
             expect(getTooltips()).toHaveLength(0);
         });
     });

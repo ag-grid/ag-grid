@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test } from '@utils/grid/test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
 
@@ -22,9 +22,13 @@ test.agExample(import.meta, () => {
         { field: 'string', testInput: 'G' },
         { field: 'number', testInput: '1' },
     ].forEach(({ field, testInput }) => {
-        test.vanilla(`click-type-edit ${field}`, async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page, '1');
-            await remoteApi.updateGridOptions(gridOptions);
+        test.vanilla(`click-type-edit ${field}`, async ({ page, agIdFor }) => {
+            const api = await gridApiHandle(page, '1');
+            // Sent as JSON, as recreateGrid does: the options are plain data, and GridOptions does not fit evaluate's argument type.
+            await api.evaluate(
+                (api, optionsJson) => api.updateGridOptions(JSON.parse(optionsJson)),
+                JSON.stringify(gridOptions)
+            );
 
             const cell = agIdFor.cell('0', field);
             await cell.click(); // click the cell to focus it

@@ -97,36 +97,6 @@ const normaliseValue = (value: number | bigint | null): string | null => {
 };
 
 describe('AggregationComp mixed numeric inputs', () => {
-    it('parses large integer strings as bigint', () => {
-        const results = createAggregationSnapshot(['9007199254740993', 1]);
-
-        expect(results.sum.value).toBe(9007199254740994n);
-        expect(results.min.value).toBe(1n);
-        expect(results.max.value).toBe(9007199254740993n);
-        expect(results.avg.value).toBe(4503599627370497n);
-        expect(results.count.value).toBe(2);
-
-        expect(results.sum.displayed).toBe(true);
-        expect(results.min.displayed).toBe(true);
-        expect(results.max.displayed).toBe(true);
-        expect(results.avg.displayed).toBe(true);
-    });
-
-    it('keeps decimal strings in number aggregations', () => {
-        const results = createAggregationSnapshot(['1.5', '2.5']);
-
-        expect(results.sum.value).toBe(4);
-        expect(results.min.value).toBe(1.5);
-        expect(results.max.value).toBe(2.5);
-        expect(results.avg.value).toBe(2);
-        expect(results.count.value).toBe(2);
-
-        expect(results.sum.displayed).toBe(true);
-        expect(results.min.displayed).toBe(true);
-        expect(results.max.displayed).toBe(true);
-        expect(results.avg.displayed).toBe(true);
-    });
-
     it('includes bigint values in number aggregations when mixed with decimals', () => {
         const bigValue = 9007199254740993n;
         const results = createAggregationSnapshot([0.5, bigValue]);
@@ -143,23 +113,9 @@ describe('AggregationComp mixed numeric inputs', () => {
         expect(results.avg.displayed).toBe(true);
     });
 
-    it('falls back to number aggregation for exponent integer strings', () => {
-        const results = createAggregationSnapshot(['1e21', 1]);
-
-        expect(results.sum.value).toBe(1e21 + 1);
-        expect(results.min.value).toBe(1);
-        expect(results.max.value).toBe(1e21);
-        expect(results.avg.value).toBe((1e21 + 1) / 2);
-        expect(results.count.value).toBe(2);
-
-        expect(results.sum.displayed).toBe(true);
-        expect(results.min.displayed).toBe(true);
-        expect(results.max.displayed).toBe(true);
-        expect(results.avg.displayed).toBe(true);
-    });
     it('matches number and bigint aggregations for mixed integer inputs', () => {
-        const numberResults = createAggregationSnapshot([10, '20', { value: 30 }, '', null, { value: '' }, 40]);
-        const bigintResults = createAggregationSnapshot([10n, '20', { value: 30n }, '', null, { value: '' }, 40n]);
+        const numberResults = createAggregationSnapshot([10, 20, { value: 30 }, '', null, { value: '' }, 40]);
+        const bigintResults = createAggregationSnapshot([10n, 20n, { value: 30n }, '', null, { value: '' }, 40n]);
 
         expect(normaliseValue(bigintResults.sum.value)).toBe(normaliseValue(numberResults.sum.value));
         expect(normaliseValue(bigintResults.min.value)).toBe(normaliseValue(numberResults.min.value));
@@ -174,8 +130,8 @@ describe('AggregationComp mixed numeric inputs', () => {
     });
 
     it('falls back to number aggregations when non-integer values are present', () => {
-        const numberResults = createAggregationSnapshot([10, '20.5', { value: 30 }, 40.5]);
-        const bigintResults = createAggregationSnapshot([10n, '20.5', { value: 30n }, 40.5]);
+        const numberResults = createAggregationSnapshot([10, 20.5, { value: 30 }, 40.5]);
+        const bigintResults = createAggregationSnapshot([10n, 20.5, { value: 30n }, 40.5]);
 
         expect(bigintResults.sum.value).toBe(numberResults.sum.value);
         expect(bigintResults.min.value).toBe(numberResults.min.value);

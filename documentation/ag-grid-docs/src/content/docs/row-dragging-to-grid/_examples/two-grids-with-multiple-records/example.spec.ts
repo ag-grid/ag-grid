@@ -99,7 +99,7 @@ test.agExample(import.meta, () => {
         const left = gridFor(page, 0);
         const right = gridFor(page, 1);
 
-        await page.getByLabel('Only Deselect Source Rows').check();
+        await page.locator('label[for="deselect"]').click();
         await selectRows(page, [PHELPS, NEMOV]);
 
         await startDrag(page, left.ids.rowNode(PHELPS), right.root);
@@ -120,7 +120,7 @@ test.agExample(import.meta, () => {
             const left = gridFor(page, 0);
             const right = gridFor(page, 1);
 
-            await page.getByLabel('Only Deselect Source Rows').check();
+            await page.locator('label[for="deselect"]').click();
             await selectRows(page, [PHELPS]);
 
             await startDrag(page, left.ids.rowNode(COUTTS), right.root);
@@ -138,7 +138,7 @@ test.agExample(import.meta, () => {
         const left = gridFor(page, 0);
         const right = gridFor(page, 1);
 
-        await page.getByLabel('None').check();
+        await page.locator('label[for="none"]').click();
         await selectRows(page, [COUGHLIN, NEMOV]);
 
         await startDrag(page, left.ids.rowNode(NEMOV), right.root);
@@ -156,7 +156,7 @@ test.agExample(import.meta, () => {
         const left = gridFor(page, 0);
         const right = gridFor(page, 1);
 
-        await page.getByLabel('None').check();
+        await page.locator('label[for="none"]').click();
         await startDrag(page, left.ids.rowNode(PHELPS), right.root);
         await page.mouse.up();
         await expect(async () => expect(await rowIds(right.root)).toEqual([PHELPS])).toPass();

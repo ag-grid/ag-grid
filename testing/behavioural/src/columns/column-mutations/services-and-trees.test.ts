@@ -2,30 +2,51 @@
  * Split from column-mutations.test.ts — see sibling files for related coverage.
  * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
  */
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { vi } from 'vitest';
 
-import { ClientSideRowModelModule, RowAutoHeightModule, RowSelectionModule } from 'ag-grid-community';
+import type { CalculatedUserColumnState, ColDef, Column, GridApi, GridOptions, GridStateKey } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    RowAutoHeightModule,
+    RowSelectionModule,
+    SELECTION_COLUMN_ID,
+    TextFilterModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
+
+/** The `providedId -> usedId` of each warning 273 among the console calls, in the order raised. */
+const warnings273 = (calls: unknown[][]): string[] =>
+    calls.flatMap((call) => {
+        const match = /Provided column id `([^`]+)` was already in use.*Using `([^`]+)` instead/.exec(call.join(' '));
+        return match ? [`${match[1]} -> ${match[2]}`] : [];
+    });
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
             PivotModule,
             RowAutoHeightModule,
             RowGroupingModule,
             RowNumbersModule,
             RowSelectionModule,
+            TextFilterModule,
             TreeDataModule,
         ],
     });
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     describe('column order preservation across service-col recreation', () => {
-        test('rowSelection toggled on after user reorder: selection col at head, user order kept', async () => {
+        test('service columns added one by one after a user reorder go at the head in fixed order, user order kept', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
                 maintainColumnOrder: true,
@@ -40,24 +61,15 @@ describe('Column Mutations', () => {
                 └── b width:200
             `);
 
-            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
 
-            await new GridColumns(api, 'after selection enabled').checkColumns(`
+            await new GridColumns(api, 'after row grouping enabled').checkColumns(`
                 CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── ag-Grid-AutoColumn "Group" width:200
                 ├── c width:200
-                ├── a width:200
+                ├── a width:200 rowGroup
                 └── b width:200
             `);
-        });
-
-        test('rowNumbers toggled on after user reorder: rowNumbers col at head, user order kept', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
-                maintainColumnOrder: true,
-            });
-
-            api.moveColumns(['c'], 0);
 
             api.setGridOption('rowNumbers', true);
 
@@ -65,24 +77,19 @@ describe('Column Mutations', () => {
                 LEFT
                 └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
                 CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
                 ├── c width:200
-                ├── a width:200
+                ├── a width:200 rowGroup
                 └── b width:200
             `);
-        });
 
-        test('auto-group col added after user reorder: auto col at head, user order kept', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
-                maintainColumnOrder: true,
-            });
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
 
-            api.moveColumns(['c'], 0);
-
-            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
-
-            await new GridColumns(api, 'after row grouping enabled').checkColumns(`
+            await new GridColumns(api, 'after selection enabled').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
                 CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
                 ├── ag-Grid-AutoColumn "Group" width:200
                 ├── c width:200
                 ├── a width:200 rowGroup
@@ -162,32 +169,6 @@ describe('Column Mutations', () => {
                 └── c width:200
             `);
         });
-
-        test('multiple service cols added simultaneously appear at head in fixed order', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
-                maintainColumnOrder: true,
-            });
-
-            api.moveColumns(['c'], 0);
-
-            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
-            api.setGridOption('rowNumbers', true);
-            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
-
-            // Display order at head: rowNumber (left-pinned) → selection (left-pinned in center
-            // bucket) → autoGroup → user-reorder preserved.
-            await new GridColumns(api, 'all service cols enabled').checkColumns(`
-                LEFT
-                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-                ├── ag-Grid-AutoColumn "Group" width:200
-                ├── c width:200
-                ├── a width:200 rowGroup
-                └── b width:200
-            `);
-        });
     });
 
     describe('service col instance preservation across configuration changes', () => {
@@ -228,6 +209,110 @@ describe('Column Mutations', () => {
                 └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK"
                 · └── LEAF hidden id:1 country:"UK" value:2
             `);
+        });
+
+        test('a columnDefs update keeps the width the user gave the group column over its autoGroupColumnDef width', () => {
+            const defs = () => [{ field: 'country', rowGroup: true }, { field: 'value' }];
+            const api = gridsManager.createGrid('autoGroup', {
+                columnDefs: defs(),
+                rowData: [{ country: 'USA', value: 1 }],
+                autoGroupColumnDef: { width: 180 },
+            });
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', width: 333 }] });
+
+            api.setGridOption('columnDefs', defs());
+
+            expect(api.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(333);
+        });
+
+        test.each<[GridOptions['groupDisplayType'], string[]]>([
+            ['singleColumn', ['ag-Grid-AutoColumn']],
+            ['multipleColumns', ['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-year']],
+        ])(
+            'a new autoGroupColumnDef applies the width, sort and pinned it sets to the %s auto columns and keeps the rest of their state',
+            (groupDisplayType, autoColIds) => {
+                const api = gridsManager.createGrid('autoGroup', {
+                    columnDefs: [
+                        { field: 'country', rowGroup: true },
+                        { field: 'year', rowGroup: true },
+                        { field: 'value' },
+                    ],
+                    rowData: [{ country: 'USA', year: 2000, value: 1 }],
+                    groupDisplayType,
+                    autoGroupColumnDef: { width: 180 },
+                });
+                const read = () =>
+                    Object.fromEntries(
+                        autoColIds.map((colId) => {
+                            const column = api.getColumn(colId)!;
+                            return [
+                                colId,
+                                {
+                                    width: column.getActualWidth(),
+                                    sort: column.getSort() ?? null,
+                                    pinned: column.getPinned() ?? null,
+                                },
+                            ];
+                        })
+                    );
+                const all = (state: { width: number; sort: string | null; pinned: string | null }) =>
+                    Object.fromEntries(autoColIds.map((colId) => [colId, state]));
+
+                expect(read()).toEqual(all({ width: 180, sort: null, pinned: null }));
+
+                // the user sorts the auto columns, then the definition sets a width and pinned: the sort stays
+                api.applyColumnState({ state: autoColIds.map((colId) => ({ colId, sort: 'desc' as const })) });
+                api.setGridOption('autoGroupColumnDef', { width: 220, pinned: 'left' });
+                expect(read()).toEqual(all({ width: 220, sort: 'desc', pinned: 'left' }));
+
+                // the next definition sets the sort only: the width and pinned stay
+                api.setGridOption('autoGroupColumnDef', { sort: 'asc' });
+                expect(read()).toEqual(all({ width: 220, sort: 'asc', pinned: 'left' }));
+            }
+        );
+
+        describe('the auto group column of a tree data grid with no columnDefs', () => {
+            const treeGrid = (autoGroupColumnDef: ColDef) =>
+                gridsManager.createGrid('treeAuto', {
+                    columnDefs: [],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                    rowData: [{ path: ['a'] }],
+                    autoGroupColumnDef,
+                });
+
+            test('a new autoGroupColumnDef headerName reaches the column and its header cell', async () => {
+                const api = treeGrid({ headerName: 'A' });
+
+                api.setGridOption('autoGroupColumnDef', { headerName: 'B' });
+
+                expect(api.getColumn('ag-Grid-AutoColumn')!.getColDef().headerName).toBe('B');
+                await vi.waitFor(() =>
+                    expect(
+                        getGridElement(api)!.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"]')?.textContent
+                    ).toContain('B')
+                );
+            });
+        });
+
+        test('column state for a column that does not exist returns false and raises no column events, nor does a reset', async () => {
+            const api = gridsManager.createGrid('noCols', { columnDefs: [] });
+            await asyncSetTimeout(0);
+            const raised: string[] = [];
+            for (const type of [
+                'displayedColumnsChanged',
+                'columnEverythingChanged',
+                'columnResized',
+                'gridColumnsChanged',
+            ] as const) {
+                api.addEventListener(type, () => raised.push(type));
+            }
+
+            const applied = api.applyColumnState({ state: [{ colId: 'x', width: 1 }] });
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+
+            expect({ applied, raised }).toEqual({ applied: false, raised: [] });
         });
 
         test('pivot mode toggle preserves selection col instance', async () => {
@@ -412,17 +497,1334 @@ describe('Column Mutations', () => {
                 └── c width:200
             `);
 
-            const rgIds = api.getRowGroupColumns().map((c) => c.getColId());
-            const dateIdx = rgIds.indexOf('date');
-            const yearIdx = rgIds.findIndex((id) => id.includes('-date-year'));
-            const monthIdx = rgIds.findIndex((id) => id.includes('-date-month'));
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+                'b',
+                'ag-Grid-HierarchyColumn-date-year',
+                'ag-Grid-HierarchyColumn-date-month',
+                'date',
+            ]);
+        });
 
-            expect(dateIdx).toBeGreaterThanOrEqual(0);
-            expect(yearIdx).toBeGreaterThanOrEqual(0);
-            expect(monthIdx).toBeGreaterThanOrEqual(0);
-            expect(yearIdx).toBeLessThan(monthIdx);
-            expect(monthIdx).toBeLessThan(dateIdx);
-            expect(new Set(rgIds).size).toBe(rgIds.length);
+        test('columns grouped by rowGroupIndex keep each source’s hierarchy columns before it, in declared order', () => {
+            const api = gridsManager.createGrid('splicePos', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, rowGroupIndex: 3 },
+                    {
+                        colId: 'date2',
+                        field: 'date',
+                        rowGroup: true,
+                        rowGroupIndex: 2,
+                        groupHierarchy: ['day', 'year'],
+                    },
+                    { field: 'date', rowGroup: true, rowGroupIndex: 1, groupHierarchy: ['month', 'year'] },
+                    { field: 'sport', rowGroup: true, rowGroupIndex: 0 },
+                ],
+                rowData: [{ country: 'Italy', sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'sport',
+                'ag-Grid-HierarchyColumn-date-month',
+                'ag-Grid-HierarchyColumn-date-year',
+                'date',
+                'ag-Grid-HierarchyColumn-date2-day',
+                'ag-Grid-HierarchyColumn-date2-year',
+                'date2',
+                'country',
+            ]);
+        });
+
+        test('a columnDefs update dropping a hierarchy part groups by the parts left', () => {
+            const defs = (groupHierarchy: string[]) => [
+                { field: 'date', rowGroup: true, enableRowGroup: true, groupHierarchy },
+                { field: 'sport' },
+            ];
+            const api = gridsManager.createGrid('dropPart', {
+                columnDefs: defs(['year', 'month']),
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            api.setGridOption('columnDefs', defs(['year']));
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'ag-Grid-HierarchyColumn-date-year',
+                'date',
+            ]);
+        });
+
+        test('a column state re-asserting a grouping already in place moves nothing, also when it groups another column', () => {
+            const year = 'ag-Grid-HierarchyColumn-date-year';
+            const api = gridsManager.createGrid('spliceAlone', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enableRowGroup: true },
+                    { field: 'country', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', country: 'Italy', date: new Date(2020, 5, 15) }],
+            });
+            const ids = () => api.getRowGroupColumns().map((col) => col.getColId());
+            const apart = ['date', 'sport', year];
+            const apply = (state: { colId: string; rowGroup: true }[]) => {
+                api.setRowGroupColumns(apart);
+                expect(ids()).toEqual(apart);
+                api.applyColumnState({ state });
+                return ids();
+            };
+
+            expect({
+                hierarchyColumnAlone: apply([{ colId: year, rowGroup: true }]),
+                hierarchyColumnAndAnother: apply([
+                    { colId: year, rowGroup: true },
+                    { colId: 'country', rowGroup: true },
+                ]),
+                sourceAndAnother: apply([
+                    { colId: 'date', rowGroup: true },
+                    { colId: 'country', rowGroup: true },
+                ]),
+            }).toEqual({
+                hierarchyColumnAlone: ['date', 'sport', year],
+                hierarchyColumnAndAnother: ['date', 'sport', year, 'country'],
+                sourceAndAnother: ['date', 'sport', year, 'country'],
+            });
+        });
+
+        test('a column state re-asserting a pivot already in place moves nothing, also when it pivots another column', () => {
+            const year = 'ag-Grid-HierarchyColumn-date-year';
+            const api = gridsManager.createGrid('splicePivot', {
+                columnDefs: [
+                    { field: 'date', enablePivot: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enablePivot: true },
+                    { field: 'country', enablePivot: true },
+                ],
+                pivotMode: true,
+                rowData: [{ sport: 'Rowing', country: 'Italy', date: new Date(2020, 5, 15) }],
+            });
+            api.setPivotColumns(['date', 'sport', year]);
+            expect(api.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'sport', year]);
+
+            api.applyColumnState({
+                state: [
+                    { colId: year, pivot: true },
+                    { colId: 'country', pivot: true },
+                ],
+            });
+
+            expect(api.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'sport', year, 'country']);
+        });
+
+        test('a column state naming neither a hierarchy column grouped apart from its source nor the source leaves it there', () => {
+            const api = gridsManager.createGrid('splicePos', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enableRowGroup: true },
+                    { field: 'country', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', country: 'Italy', date: new Date(2020, 5, 15) }],
+            });
+            api.setRowGroupColumns(['date', 'sport', 'ag-Grid-HierarchyColumn-date-year']);
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'date',
+                'sport',
+                'ag-Grid-HierarchyColumn-date-year',
+            ]);
+
+            api.applyColumnState({ state: [{ colId: 'country', rowGroupIndex: 0 }] });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'country',
+                'date',
+                'sport',
+                'ag-Grid-HierarchyColumn-date-year',
+            ]);
+        });
+
+        test.each([{ rowGroup: true }, { rowGroupIndex: 0 }, { initialRowGroup: true }, { initialRowGroupIndex: 0 }])(
+            'resetColumnState groups by every hierarchy level of a source its colDef groups by with %o',
+            (grouping) => {
+                const api = gridsManager.createGrid('reset', {
+                    columnDefs: [
+                        { field: 'date', ...grouping, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                        { field: 'sport', enableRowGroup: true },
+                    ],
+                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+                });
+                api.setRowGroupColumns(['sport']);
+
+                api.resetColumnState();
+
+                expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                    'ag-Grid-HierarchyColumn-date-year',
+                    'ag-Grid-HierarchyColumn-date-month',
+                    'date',
+                ]);
+            }
+        );
+
+        test.each(['rowGroup', 'pivot'] as const)(
+            'resetColumnState leaves out every hierarchy level of a %s source its colDef does not set it on, as a new grid does',
+            (prop) => {
+                const api = gridsManager.createGrid('resetOff', {
+                    columnDefs: [
+                        { field: 'date', enableRowGroup: true, enablePivot: true, groupHierarchy: ['year', 'month'] },
+                        { field: 'sport', enableRowGroup: true, enableValue: true, aggFunc: 'count' },
+                    ],
+                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+                    pivotMode: prop === 'pivot',
+                });
+                if (prop === 'pivot') {
+                    api.setPivotColumns(['date']);
+                } else {
+                    api.setRowGroupColumns(['date']);
+                }
+
+                api.resetColumnState();
+
+                const active = prop === 'pivot' ? api.getPivotColumns() : api.getRowGroupColumns();
+                expect(active.map((col) => col.getColId())).toEqual([]);
+            }
+        );
+
+        const year = 'ag-Grid-HierarchyColumn-date-year';
+        test.each([
+            ['rowGroup before another level', ['q', 'year'], { rowGroup: true }, ['q', year, 'date']],
+            ['rowGroup, a source index', ['year', 'q'], { rowGroupIndex: 0 }, [year, 'q', 'date']],
+            ['rowGroup, an index after the source', ['year', 'q'], { rowGroupIndex: 0 }, [year, 'q', 'date'], 5],
+        ] as [string, string[], ColDef, string[], number?][])(
+            'resetColumnState sets the role of a hierarchy part declaring %s as a new grid does',
+            (name, parts, sourceRole, active, qIndex) => {
+                const pivot = name.startsWith('pivot');
+                const q: ColDef = {
+                    colId: 'q',
+                    valueGetter: () => 'Q',
+                    [pivot ? 'pivot' : 'rowGroup']: true,
+                    rowGroupIndex: qIndex,
+                };
+                const columnDefs = (): ColDef[] => [
+                    {
+                        field: 'date',
+                        ...sourceRole,
+                        groupHierarchy: parts.map((part) => (part === 'q' ? q : part)),
+                    },
+                    { field: 'x', enableRowGroup: true, enablePivot: true },
+                ];
+                const rowData = [{ date: new Date(2020, 5, 15), x: 1 }];
+                const ids = (grid: GridApi) =>
+                    (pivot ? grid.getPivotColumns() : grid.getRowGroupColumns()).map((col) => col.getColId());
+                const fresh = gridsManager.createGrid('fresh', { columnDefs: columnDefs(), rowData, pivotMode: pivot });
+                const api = gridsManager.createGrid('reset', { columnDefs: columnDefs(), rowData, pivotMode: pivot });
+                if (pivot) {
+                    api.setPivotColumns(['x']);
+                } else {
+                    api.setRowGroupColumns(['x']);
+                }
+
+                api.resetColumnState();
+
+                expect({ fresh: ids(fresh), reset: ids(api) }).toEqual({ fresh: active, reset: active });
+            }
+        );
+
+        test('resetColumnState after the user reorders and removes row groups groups as a new grid does', () => {
+            const columnDefs = (): ColDef[] => [
+                { field: 'a', rowGroup: true },
+                { field: 'b', rowGroup: true },
+                { field: 'date', enableRowGroup: true, initialRowGroup: true, groupHierarchy: ['year'] },
+            ];
+            const rowData = [{ a: 1, b: 2, date: new Date(2020, 5, 15) }];
+            const ids = (grid: GridApi) => grid.getRowGroupColumns().map((col) => col.getColId());
+            const fresh = gridsManager.createGrid('fresh', { columnDefs: columnDefs(), rowData });
+            const api = gridsManager.createGrid('reset', { columnDefs: columnDefs(), rowData });
+            api.setGridOption('defaultColDef', { minWidth: 20 }); // a rebuild keeping every column
+            api.setRowGroupColumns(['b', 'a']);
+
+            api.resetColumnState();
+
+            const asNew = ['a', 'b', 'ag-Grid-HierarchyColumn-date-year', 'date'];
+            expect({ fresh: ids(fresh), reset: ids(api) }).toEqual({ fresh: asNew, reset: asNew });
+        });
+
+        test.each(['rowGroup', 'pivot'] as const)(
+            'resetColumnState keeps every hierarchy level of a source its colDef sets %s on when the source is already active',
+            (prop) => {
+                const api = gridsManager.createGrid('reset', {
+                    columnDefs: [
+                        {
+                            field: 'date',
+                            [prop]: true,
+                            enableRowGroup: true,
+                            enablePivot: true,
+                            groupHierarchy: ['year', 'month'],
+                        },
+                        { field: 'sport', enableRowGroup: true, enableValue: true, aggFunc: 'count' },
+                    ],
+                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+                    pivotMode: prop === 'pivot',
+                });
+
+                api.resetColumnState();
+
+                const active = prop === 'pivot' ? api.getPivotColumns() : api.getRowGroupColumns();
+                expect(active.map((col) => col.getColId())).toEqual([
+                    'ag-Grid-HierarchyColumn-date-year',
+                    'ag-Grid-HierarchyColumn-date-month',
+                    'date',
+                ]);
+            }
+        );
+
+        test.each(['source first'])(
+            'column state setting a hierarchy source’s levels inactive groups by the source alone, %s',
+            (order) => {
+                const api = gridsManager.createGrid('levelsOff', {
+                    columnDefs: [
+                        { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                        { field: 'sport', enableRowGroup: true },
+                    ],
+                    rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+                });
+                const levels = [
+                    { colId: 'ag-Grid-HierarchyColumn-date-year', rowGroup: false },
+                    { colId: 'ag-Grid-HierarchyColumn-date-month', rowGroup: false },
+                ];
+                const source = { colId: 'date', rowGroup: true };
+
+                api.applyColumnState({ state: order === 'levels first' ? [...levels, source] : [source, ...levels] });
+
+                expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['date']);
+            }
+        );
+
+        test('column state turning a hierarchy source off leaves out the levels it leaves unset', () => {
+            const api = gridsManager.createGrid('sourceOff', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', rowGroup: true, enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            api.applyColumnState({ state: [{ colId: 'date', rowGroup: false }] });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['sport']);
+        });
+
+        test('column state grouping again by a hierarchy source keeps its levels where they are when all are grouped', () => {
+            const api = gridsManager.createGrid('reassertApart', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            const grouping = [
+                'date',
+                'sport',
+                'ag-Grid-HierarchyColumn-date-year',
+                'ag-Grid-HierarchyColumn-date-month',
+            ];
+            api.setRowGroupColumns(grouping);
+
+            api.applyColumnState({ state: [{ colId: 'date', rowGroup: true }] });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(grouping);
+        });
+
+        test('column state that does not name a hierarchy source leaves its removed levels out after an earlier state grouped by it', () => {
+            const api = gridsManager.createGrid('laterPass', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            api.applyColumnState({ state: [{ colId: 'date', rowGroup: true }] });
+            api.removeRowGroupColumns(['ag-Grid-HierarchyColumn-date-year']);
+
+            api.applyColumnState({ state: [{ colId: 'sport', rowGroup: true }] });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'ag-Grid-HierarchyColumn-date-month',
+                'date',
+                'sport',
+            ]);
+        });
+
+        test('a hierarchy source grouped without its levels groups by every level when setRowGroupColumns or a columnDefs update sets it', () => {
+            const levels = ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month'];
+            const defs = (rowGroup: boolean | undefined): ColDef[] => [
+                { field: 'date', rowGroup, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                { field: 'sport', enableRowGroup: true },
+            ];
+            const api = gridsManager.createGrid('listAgain', {
+                columnDefs: defs(undefined),
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            api.setGridOption('columnDefs', defs(undefined));
+            api.setRowGroupColumns(['date']);
+            api.removeRowGroupColumns(levels);
+
+            api.setRowGroupColumns(['date']);
+            const listed = api.getRowGroupColumns().map((col) => col.getColId());
+            api.removeRowGroupColumns(levels);
+            api.setGridOption('columnDefs', defs(true));
+
+            expect({ listed, declared: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                listed: [...levels, 'date'],
+                declared: [...levels, 'date'],
+            });
+        });
+
+        test('a columnDefs update ungrouping a grouped hierarchy source ungroups its levels too: rowGroup false, nothing enabled', () => {
+            const hierarchy: ColDef = { field: 'date', groupHierarchy: ['year', 'month'] };
+            const api = gridsManager.createGrid('ungroup', {
+                columnDefs: [{ ...hierarchy, rowGroup: true }],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            const before = api.getRowGroupColumns().map((col) => col.getColId());
+
+            api.setGridOption('columnDefs', [{ ...hierarchy, rowGroup: false }]);
+
+            expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                before: ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month', 'date'],
+                after: [],
+            });
+        });
+
+        // TODO: disabled due to AG-19382 - re-enable once fixed
+        test.skip('a columnTypes update ungrouping a grouped hierarchy source ungroups its levels too', () => {
+            const api = gridsManager.createGrid('typeUngroup', {
+                columnTypes: { grouped: { rowGroup: true } },
+                columnDefs: [
+                    { field: 'date', type: 'grouped', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+            const before = api.getRowGroupColumns().map((col) => col.getColId());
+
+            api.setGridOption('columnTypes', { grouped: { rowGroup: false } });
+
+            expect({ before, after: api.getRowGroupColumns().map((col) => col.getColId()) }).toEqual({
+                before: ['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month', 'date'],
+                after: [],
+            });
+        });
+
+        test('column state grouping by a hierarchy source with a null defaultState for the rest groups by the source alone', () => {
+            const api = gridsManager.createGrid('defaultNull', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            api.applyColumnState({ state: [{ colId: 'date', rowGroup: true }], defaultState: { rowGroup: null } });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['date']);
+        });
+
+        test('a grid state grouping without a column order that names a hierarchy source without its levels groups by the source alone', () => {
+            const api = gridsManager.createGrid('stateNoOrder', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            api.setState({ rowGroup: { groupColIds: ['sport', 'date'] } });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['sport', 'date']);
+        });
+
+        test('a hierarchy column grouped without its source column takes its own rowGroupIndex', () => {
+            const api = gridsManager.createGrid('splicePos', {
+                columnDefs: [
+                    { field: 'date', enableRowGroup: true, groupHierarchy: ['year'] },
+                    { field: 'sport', enableRowGroup: true },
+                ],
+                rowData: [{ sport: 'Rowing', date: new Date(2020, 5, 15) }],
+            });
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'sport', rowGroupIndex: 1 },
+                    { colId: 'ag-Grid-HierarchyColumn-date-year', rowGroupIndex: 0 },
+                ],
+            });
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([
+                'ag-Grid-HierarchyColumn-date-year',
+                'sport',
+            ]);
+        });
+    });
+
+    describe('row group, pivot and value columns when columns are rebuilt without setting column definitions', () => {
+        const year = 'ag-Grid-HierarchyColumn-date-year';
+        const rowData = [{ sport: 'Rowing', country: 'UK', m: 2, n: 1, date: new Date(2020, 5, 15) }];
+
+        const rebuild = (api: GridApi) => {
+            const others = Object.keys(api.getState()).filter((key): key is GridStateKey => key !== 'userColumns');
+            api.setState(
+                { userColumns: [{ colId: 'n', properties: [{ property: 'headerName', value: 'N' }] }] },
+                others
+            );
+        };
+        const ids = (cols: Column[]) => cols.map((col) => col.getColId());
+        const headerTexts = (api: GridApi) =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell-text'), (el) => el.textContent);
+
+        test('a rebuild keeps a level the user grouped alone under a source that is not grouped', async () => {
+            const api = gridsManager.createGrid('levelGrouped', {
+                columnDefs: [
+                    { field: 'date', rowGroup: false, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport' },
+                    { field: 'n' },
+                ],
+                rowData,
+            });
+            api.setRowGroupColumns([year]);
+            const before = ids(api.getRowGroupColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
+
+            rebuild(api);
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
+            await asyncSetTimeout(0);
+
+            expect({
+                before,
+                after: ids(api.getRowGroupColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+                headers: ['Group', 'Date', 'Sport', 'N'],
+            });
+        });
+
+        test('a rebuild keeps a level the user pivoted alone under a source that is not pivoted', async () => {
+            const api = gridsManager.createGrid('levelPivoted', {
+                columnDefs: [
+                    { field: 'date', pivot: false, enablePivot: true, groupHierarchy: ['year', 'month'] },
+                    { field: 'sport', rowGroup: true },
+                    { field: 'n', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData,
+            });
+            api.setPivotColumns([year]);
+            const before = ids(api.getPivotColumns());
+            const colDefBefore = api.getColumn('n')!.getColDef();
+
+            rebuild(api);
+            // setState applies part of the state in a timeout; the renamed header shows the rebuild rendered
+            await asyncSetTimeout(0);
+
+            expect({
+                before,
+                after: ids(api.getPivotColumns()),
+                rebuilt: api.getColumn('n')!.getColDef() !== colDefBefore,
+                headers: headerTexts(api),
+            }).toEqual({
+                before: [year],
+                after: [year],
+                rebuilt: true,
+                headers: ['Group', 'sum(N)'],
+            });
+        });
+    });
+
+    describe('hierarchy columns and maintainColumnOrder', () => {
+        test('a moved hierarchy column keeps its place when its source column gains a hierarchy part', () => {
+            const defs = (groupHierarchy: string[]) => [
+                { colId: 'a' },
+                { colId: 'date', rowGroup: true, groupHierarchy },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(['year', 'month']),
+                rowData: [{ a: 1, date: new Date(2020, 5, 15) }],
+                maintainColumnOrder: true,
+            });
+            const order = () =>
+                api
+                    .getColumnState()
+                    .map((s) => s.colId.replace('ag-Grid-HierarchyColumn-date-', ''))
+                    .filter((id) => !id.startsWith('ag-Grid-AutoColumn'));
+            api.moveColumns(['ag-Grid-HierarchyColumn-date-year'], api.getColumnState().length - 1);
+            const moved = order();
+            expect(moved.at(-1)).toBe('year');
+
+            api.setGridOption('columnDefs', defs(['year', 'month', 'day']));
+
+            expect(order()).toEqual([...moved, 'day']);
+        });
+    });
+
+    describe('group columns when the grouping changes', () => {
+        test('a group column keeps its width and sort when another grouping is added', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }],
+                rowData: [{ country: 'Italy', sport: 'Rowing' }],
+                groupDisplayType: 'multipleColumns',
+            });
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn-country', width: 333, sort: 'desc' }] });
+
+            api.addRowGroupColumns(['sport']);
+
+            const col = api.getAllGridColumns().find((c) => c.getColId() === 'ag-Grid-AutoColumn-country')!;
+            expect(`${col.getActualWidth()}:${col.getSort()}`).toBe('333:desc');
+        });
+    });
+
+    describe('column definitions set while the grid builds its columns', () => {
+        test('a rebuild for a user columns state keeps the width the user gave the group column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y' }],
+                columnDefs: [{ field: 'a', rowGroup: true }, { field: 'b' }],
+                autoGroupColumnDef: { width: 150 },
+            });
+            const autoCol = 'ag-Grid-AutoColumn';
+            api.setColumnWidths([{ key: autoCol, newWidth: 300 }]);
+
+            const others = (Object.keys(api.getState()) as GridStateKey[]).filter((key) => key !== 'userColumns');
+            api.setState(
+                { userColumns: [{ colId: 'b', properties: [{ property: 'headerName', value: 'B' }] }] },
+                others
+            );
+
+            expect(api.getColumn(autoCol)!.getActualWidth()).toBe(300);
+        });
+
+        test('column definitions a callback sets beside a user columns state during a build apply their width, in either order', () => {
+            let onMatch: (() => void) | null = null;
+            let api: GridApi | undefined = undefined;
+            api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                columnDefs: [{ field: 'a' }],
+                dataTypeDefinitions: {
+                    mine: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        dataTypeMatcher: (value) => {
+                            const run = onMatch;
+                            onMatch = null;
+                            run?.();
+                            return value === 'never';
+                        },
+                    },
+                },
+            });
+            const width = () => api!.getColumn('a')!.getActualWidth();
+            const named = (headerName: string): CalculatedUserColumnState[] => [
+                { colId: 'a', properties: [{ property: 'headerName', value: headerName }] },
+            ];
+
+            onMatch = () => {
+                api!.setState({ userColumns: named('X') });
+                api!.setGridOption('columnDefs', [{ field: 'a', width: 300 }, { field: 'b' }]);
+            };
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            const stateFirst = width();
+
+            onMatch = () => {
+                api!.setGridOption('columnDefs', [{ field: 'a', width: 400 }, { field: 'b' }]);
+                api!.setState({ userColumns: named('Y') });
+            };
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'c' }]);
+
+            expect({ stateFirst, stateLast: width() }).toEqual({ stateFirst: 300, stateLast: 400 });
+        });
+
+        test('column definitions a callback sets beside a column state reset during a build apply their width, in either order', () => {
+            let onMatch: (() => void) | null = null;
+            let api: GridApi | undefined = undefined;
+            api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                columnDefs: [{ field: 'a' }],
+                initialState: { userColumns: [{ colId: 'a', properties: [{ property: 'headerName', value: 'X' }] }] },
+                dataTypeDefinitions: {
+                    mine: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        dataTypeMatcher: (value) => {
+                            const run = onMatch;
+                            onMatch = null;
+                            run?.();
+                            return value === 'never';
+                        },
+                    },
+                },
+            });
+            const width = () => api!.getColumn('a')!.getActualWidth();
+
+            onMatch = () => {
+                api!.resetColumnState();
+                api!.setGridOption('columnDefs', [{ field: 'a', width: 300 }, { field: 'b' }]);
+            };
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            const resetFirst = width();
+
+            api.setState({ userColumns: [{ colId: 'a', properties: [{ property: 'headerName', value: 'X' }] }] });
+            onMatch = () => {
+                api!.setGridOption('columnDefs', [{ field: 'a', width: 400 }, { field: 'b' }]);
+                api!.resetColumnState();
+            };
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'c' }]);
+
+            expect({ resetFirst, resetLast: width() }).toEqual({ resetFirst: 300, resetLast: 400 });
+        });
+    });
+
+    describe('padding groups', () => {
+        test('a defaultColGroupDef feature only padding groups take is reported when its module is missing', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES });
+
+            expect(() =>
+                gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { headerName: 'G', headerTooltip: undefined, children: [{ field: 'a' }] },
+                        { field: 'b' },
+                    ],
+                    defaultColGroupDef: { headerTooltip: 'tip' },
+                })
+            ).toThrow(/Tooltip/);
+        });
+    });
+
+    describe('hierarchy columns when the hierarchy changes', () => {
+        test.each([
+            ['moved to another source', [], ['q']],
+            ['its source repeated once less, given to another source', ['q'], ['q_1']],
+        ] as [string, string[], string[]][])(
+            'a hierarchy part %s takes its colId, as in a new grid',
+            (_name, keptParts, movedParts) => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                const part = (colId: string): ColDef => ({ colId, valueGetter: () => 'Q' });
+                const source = (field: string, colIds: string[]): ColDef => ({
+                    field,
+                    enableRowGroup: true,
+                    groupHierarchy: colIds.map(part),
+                });
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [source('a', [...keptParts, 'q']), source('b', [])],
+                    rowData: [{ a: 1, b: 2 }],
+                });
+                warn.mockClear();
+
+                api.setGridOption('columnDefs', [source('a', keptParts), source('b', movedParts)]);
+
+                const ids = api
+                    .getAllGridColumns()
+                    .map((c) => c.getColId())
+                    .filter((id) => id.startsWith('q'));
+                expect([ids, warn.mock.calls.length]).toEqual([[...keptParts, ...movedParts], 0]);
+            }
+        );
+
+        // A kept part keeps its id over a field, yields to a declared colId or groupId, wherever the other column sits.
+        test.each(['before', 'after'])(
+            'a kept hierarchy part keeps its id and width over a new column with its colId as field, placed %s its source',
+            (placement) => {
+                const source: ColDef = {
+                    field: 'date',
+                    enableRowGroup: true,
+                    groupHierarchy: [{ colId: 'y', valueGetter: () => 'Q' }],
+                };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [source],
+                    rowData: [{ date: 1, y: 2 }],
+                });
+                api.applyColumnState({ state: [{ colId: 'y', width: 333 }] });
+
+                api.setGridOption(
+                    'columnDefs',
+                    placement === 'before' ? [{ field: 'y' }, source] : [source, { field: 'y' }]
+                );
+
+                const ids = api
+                    .getAllGridColumns()
+                    .filter((c) => c.getColId().startsWith('y'))
+                    .map((c) => `${c.getColId()}:${c.getColDef().field ?? '-'}:${c.getActualWidth()}`)
+                    .sort();
+                expect(ids).toEqual(['y:-:333', 'y_1:y:200']);
+            }
+        );
+
+        test('a hierarchy column keeps its width when groupHierarchyConfig gives its part a colId, then removes it', () => {
+            const columnDefs: ColDef[] = [{ field: 'date', enableRowGroup: true, groupHierarchy: ['year'] }];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupHierarchyConfig: { year: { colId: 'Y', valueGetter: () => 2020 } },
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+            const level = () =>
+                api.getAllGridColumns().find((c) => c.getColId() === 'ag-Grid-HierarchyColumn-date-year');
+            const before = level();
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-HierarchyColumn-date-year', width: 333 }] });
+
+            api.setGridOption('groupHierarchyConfig', undefined);
+            api.setGridOption('columnDefs', [...columnDefs]);
+
+            expect([level() === before, level()?.getActualWidth()]).toEqual([true, 333]);
+        });
+
+        test('a hierarchy removed from a kept column and added back gives it new hierarchy columns with their default width', () => {
+            const defs = (parts: string[] | undefined): ColDef[] => [
+                { field: 'date', enableRowGroup: true, groupHierarchy: parts },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(['year']),
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+            const level = () =>
+                api.getAllGridColumns().find((c) => c.getColId() === 'ag-Grid-HierarchyColumn-date-year');
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-HierarchyColumn-date-year', width: 333 }] });
+            api.setGridOption('columnDefs', defs(['year']));
+            const before = level();
+
+            api.setGridOption('columnDefs', defs(undefined));
+            api.setGridOption('columnDefs', defs(['year']));
+
+            expect([level() === before, level()?.getActualWidth()]).toEqual([false, 200]);
+        });
+
+        test('each hierarchy column’s definition names its part, a configured part without a colId too', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'fy'] }],
+                groupHierarchyConfig: { fy: { headerName: 'FY', valueGetter: () => 'FY' } },
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+
+            expect(
+                api
+                    .getAllGridColumns()
+                    .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-'))
+                    .map((c) => `${c.getColId()}:${c.getColDef().colId}`)
+            ).toEqual([
+                'ag-Grid-HierarchyColumn-date-year:ag-Grid-HierarchyColumn-date-year',
+                'ag-Grid-HierarchyColumn-date-fy:ag-Grid-HierarchyColumn-date-fy',
+            ]);
+        });
+
+        test('a part replaced by another shows the new part, with its default width and sort', () => {
+            const defs = (parts: string[]): ColDef[] => [
+                { field: 'date', enableRowGroup: true, groupHierarchy: parts },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(['year']),
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-HierarchyColumn-date-year', width: 333, sort: 'desc' }] });
+
+            api.setGridOption('columnDefs', defs(['month']));
+
+            expect(
+                api
+                    .getAllGridColumns()
+                    .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-'))
+                    .map((c) => `${c.getColId()}:${c.getActualWidth()}:${c.getSort() ?? '-'}`)
+            ).toEqual(['ag-Grid-HierarchyColumn-date-month:200:-']);
+        });
+
+        test('repeated parts each keep a column of their own when a part is added', () => {
+            const defs = (parts: string[]): ColDef[] => [
+                { field: 'date', enableRowGroup: true, groupHierarchy: parts },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(['year', 'year']),
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+
+            api.setGridOption('columnDefs', defs(['year', 'year', 'month']));
+
+            const hierarchyCols = api
+                .getAllGridColumns()
+                .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-'));
+            expect(new Set(hierarchyCols).size).toBe(3);
+        });
+
+        test('an unchanged part’s group column keeps its width and sort, and its hierarchy column takes the new definition, when a part is added', () => {
+            const defs = (yearHeader: string, parts: string[]): ColDef[] => [
+                {
+                    colId: 'date',
+                    rowGroup: true,
+                    groupHierarchy: [
+                        { colId: 'yr', headerName: yearHeader, valueGetter: (p) => p.data?.date.getFullYear() },
+                        ...parts,
+                    ],
+                },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs('Year', ['month']),
+                rowData: [{ date: new Date(2020, 5, 15) }],
+                groupDisplayType: 'multipleColumns',
+            });
+            api.applyColumnState({
+                state: [{ colId: 'ag-Grid-AutoColumn-yr', width: 333, sort: 'desc' }],
+            });
+
+            api.setGridOption('columnDefs', defs('Year!', ['month', 'day']));
+
+            const read = (colId: string) => {
+                const col = api.getAllGridColumns().find((c) => c.getColId() === colId)!;
+                return `${col.getActualWidth()}:${col.getSort() ?? '-'}`;
+            };
+            expect(read('ag-Grid-AutoColumn-yr')).toBe('333:desc');
+            expect(
+                api
+                    .getAllGridColumns()
+                    .find((c) => c.getColId() === 'yr')!
+                    .getColDef().headerName
+            ).toBe('Year!');
+        });
+
+        test('a part defined only in groupHierarchyConfig groups by its own column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: ['half'] }],
+                groupHierarchyConfig: { half: { valueGetter: (p) => (p.data?.date.getMonth() < 6 ? 'H1' : 'H2') } },
+                rowData: [{ date: new Date(2020, 0, 1) }, { date: new Date(2020, 8, 1) }],
+            });
+            const keys: string[] = [];
+            api.forEachNode((node) => {
+                if (node.group && node.level === 0) {
+                    keys.push(String(node.key));
+                }
+            });
+
+            expect(keys).toEqual(['H1', 'H2']);
+        });
+
+        test('a date part’s hierarchy column keeps its definition when groupHierarchyConfig is set to a new but equal object', () => {
+            const defs = (): ColDef[] => [{ field: 'date', enableRowGroup: true, groupHierarchy: ['year'] }];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(),
+                groupHierarchyConfig: {},
+                rowData: [{ date: new Date(2020, 0, 1) }],
+            });
+            const valueGetter = () => api.getColumn('ag-Grid-HierarchyColumn-date-year')!.getColDef().valueGetter;
+            const before = valueGetter();
+
+            api.setGridOption('groupHierarchyConfig', {});
+            api.setGridOption('columnDefs', defs());
+
+            expect(valueGetter()).toBe(before);
+        });
+    });
+
+    test('pivot result columns without colId set again after a column took their id while they were cleared get another id', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'b' }],
+            rowData: [{ b: 2 }],
+            pivotMode: true,
+        });
+        api.setPivotResultColumns([{ headerName: 'P' }]);
+        const [pivotId] = api.getPivotResultColumns()!.map((col) => col.getColId());
+        api.setPivotResultColumns(null);
+        api.setGridOption('columnDefs', [{ headerName: 'X' }, { field: 'b' }]);
+        expect(api.getColumn(pivotId)!.getColDef().headerName).toBe('X');
+
+        api.setPivotResultColumns([{ headerName: 'P' }]);
+
+        const [pivotCol] = api.getPivotResultColumns()!;
+        expect(pivotCol.getColId()).not.toBe(pivotId);
+        expect(api.getColumn(pivotId)!.getColDef().headerName).toBe('X');
+    });
+
+    test('a renamed repeat of a pivot result colId takes no later repeat’s state when a column took an earlier repeat’s id while they were cleared', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId repeats
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'b' }],
+            rowData: [{ b: 2, p_1: 3 }],
+            pivotMode: true,
+        });
+        api.setPivotResultColumns([
+            { colId: 'p', headerName: 'A' },
+            { colId: 'p', headerName: 'B' },
+            { colId: 'p', headerName: 'C' },
+        ]);
+        api.applyColumnState({ state: [{ colId: 'p_2', width: 333 }] });
+        api.setPivotResultColumns(null);
+        api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'p_1' }]);
+
+        api.setPivotResultColumns([
+            { colId: 'p', headerName: 'A2' },
+            { colId: 'p', headerName: 'B2' },
+        ]);
+
+        const widths = api
+            .getPivotResultColumns()!
+            .map((col) => `${col.getColDef().headerName} ${col.getActualWidth()}`);
+        expect(widths).toEqual(['A2 200', 'B2 200']);
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+    });
+
+    test('a pivot result column whose id a column took while they were cleared does not count as removed by the next update', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'b' }],
+            rowData: [{ b: 2 }],
+            pivotMode: true,
+        });
+        api.setPivotResultColumns([{ headerName: 'A' }, { headerName: 'B' }]);
+        const colB = api.getColumn('1')!;
+        api.applyColumnState({ state: [{ colId: '1', width: 333 }] });
+        api.setPivotResultColumns(null);
+        api.setGridOption('columnDefs', [{ headerName: 'X' }, { field: 'b' }]);
+
+        api.setPivotResultColumns([{ headerName: 'C' }]);
+
+        const [colC] = api.getPivotResultColumns()!;
+        expect(colC).not.toBe(colB);
+        expect(colC.getActualWidth()).toBe(200);
+    });
+
+    test('a column taking the suffixed id of duplicate pivot result colIds while they were cleared keeps it when they are set again, with warning 273', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'b' }],
+            rowData: [{ b: 2, r_1: 3 }],
+            pivotMode: true,
+        });
+        const results = (): ColDef[] => [
+            { colId: 'r', headerName: 'R' },
+            { colId: 'r', headerName: 'R' },
+        ];
+        api.setPivotResultColumns(results());
+        api.setPivotResultColumns(null);
+        api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'r_1' }]);
+
+        api.setPivotResultColumns(results());
+
+        expect(api.getColumn('r_1')!.getColDef().field).toBe('r_1');
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+    });
+
+    describe('a user column given the selection column’s colId', () => {
+        test('orders the row groups and pivots by their initial indexes when one of them takes the group column’s id, in a new grid and when set later', () => {
+            const colId = 'ag-Grid-AutoColumn';
+            const rowData = [
+                { country: 'UK', sport: 'Rowing', year: 2000, gold: 1 },
+                { country: 'Italy', sport: 'Fencing', year: 2004, gold: 2 },
+            ];
+            const fieldsOf = (cols: Column[]) => cols.map((col) => col.getColDef().field);
+            const both = (
+                columnDefs: ColDef[],
+                read: (api: GridApi) => Column[],
+                options: GridOptions = {}
+            ): { created: (string | undefined)[]; setLater: (string | undefined)[] } => {
+                const created = fieldsOf(read(gridsManager.createGrid('myGrid', { columnDefs, rowData, ...options })));
+                gridsManager.reset();
+                const api = gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'x' }], rowData, ...options });
+                api.setGridOption('columnDefs', columnDefs);
+                const setLater = fieldsOf(read(api));
+                gridsManager.reset();
+                return { created, setLater };
+            };
+            const rowGroups = (api: GridApi) => api.getRowGroupColumns();
+
+            const result = {
+                initialRowGroupIndexOnTaker: both(
+                    [
+                        { colId, field: 'country', initialRowGroup: true, initialRowGroupIndex: 1 },
+                        { field: 'sport', initialRowGroup: true, initialRowGroupIndex: 0 },
+                        { field: 'gold' },
+                    ],
+                    rowGroups
+                ),
+                rowGroupIndexOnTaker: both(
+                    [
+                        { colId, field: 'country', rowGroupIndex: 1 },
+                        { field: 'sport', initialRowGroup: true, initialRowGroupIndex: 0 },
+                        { field: 'gold' },
+                    ],
+                    rowGroups
+                ),
+                takerWithoutRole: both(
+                    [
+                        { field: 'sport', initialRowGroupIndex: 1 },
+                        { field: 'year', initialRowGroupIndex: 0 },
+                        { colId, field: 'country' },
+                    ],
+                    rowGroups
+                ),
+                initialPivotIndexOnTaker: both(
+                    [
+                        { colId, field: 'country', initialPivot: true, initialPivotIndex: 1 },
+                        { field: 'sport', initialPivotIndex: 0 },
+                        { field: 'year', rowGroup: true },
+                        { field: 'gold', aggFunc: 'sum' },
+                    ],
+                    (api) => api.getPivotColumns(),
+                    { pivotMode: true }
+                ),
+            };
+
+            expect(result).toEqual({
+                initialRowGroupIndexOnTaker: { created: ['sport', 'country'], setLater: ['sport', 'country'] },
+                rowGroupIndexOnTaker: { created: ['sport', 'country'], setLater: ['sport', 'country'] },
+                takerWithoutRole: { created: ['year', 'sport'], setLater: ['year', 'sport'] },
+                initialPivotIndexOnTaker: { created: ['sport', 'country'], setLater: ['sport', 'country'] },
+            });
+        });
+        test('set while the selection column is on gets the first free suffixed id with warning 273, the selection column keeping its own, and keeps that column when its definition is set again', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            const userId = `${SELECTION_COLUMN_ID}_1`;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                rowSelection: { mode: 'multiRow' },
+            });
+            const selectionColumn = api.getColumn(SELECTION_COLUMN_ID);
+            const gridColIds = (): string[] => api.getAllGridColumns().map((c) => c.getColId());
+            expect(gridColIds()).toEqual([SELECTION_COLUMN_ID, 'a']);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { colId: SELECTION_COLUMN_ID, headerName: 'Mine' }]);
+
+            expect(gridColIds()).toEqual([SELECTION_COLUMN_ID, 'a', userId]);
+            expect(api.getColumn(SELECTION_COLUMN_ID)).toBe(selectionColumn);
+            expect(api.getColumns()!.map((c) => c.getColDef().headerName === 'Mine')).toEqual([false, true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+
+            const userColumn = api.getColumn(userId)!;
+            api.applyColumnState({ state: [{ colId: userId, width: 222 }] });
+            api.setGridOption('columnDefs', [{ field: 'a' }, { colId: SELECTION_COLUMN_ID, headerName: 'Mine' }]);
+
+            expect(api.getColumn(userId)).toBe(userColumn);
+            expect(api.getColumn(SELECTION_COLUMN_ID)).toBe(selectionColumn);
+            expect(gridColIds()).toEqual([SELECTION_COLUMN_ID, 'a', userId]);
+        });
+
+        test('two of them set again with the first renamed take the two columns by position, whatever their headerName', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            const colId = SELECTION_COLUMN_ID;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'x' }],
+                rowSelection: { mode: 'multiRow' },
+            });
+            api.setGridOption('columnDefs', [
+                { colId, headerName: 'A' },
+                { colId, headerName: 'B' },
+            ]);
+            const [a, b] = api.getColumns()!;
+
+            api.setGridOption('columnDefs', [
+                { colId, headerName: 'N' },
+                { colId, headerName: 'A' },
+            ]);
+
+            expect(api.getColumns()!.map((col) => [col === a, col === b])).toEqual([
+                [true, false],
+                [false, true],
+            ]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('every header cell has a col-id of its own and the first row’s cells follow the displayed columns when the selection column comes after a column holding its colId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: SELECTION_COLUMN_ID, field: 'a', filter: true }, { field: 'x' }],
+                rowData: [
+                    { a: 'p', x: 1 },
+                    { a: 'q', x: 2 },
+                ],
+            });
+            api.applyColumnState({ state: [{ colId: SELECTION_COLUMN_ID, width: 150, sort: 'desc' }] });
+            api.setFilterModel({ [SELECTION_COLUMN_ID]: { type: 'equals', filter: 'p' } });
+            expect(warn.mock.calls).toEqual([]);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow' });
+
+            const gridElement = getGridElement(api)!;
+            const colIds = (parent: ParentNode, selector: string): string[] =>
+                Array.from(parent.querySelectorAll(selector), (el) => el.getAttribute('col-id')!);
+            const rows = Array.from(gridElement.querySelectorAll('.ag-row'));
+            expect(rows.length).toBeGreaterThan(0);
+            const headerIds = colIds(gridElement, '.ag-header-cell[col-id]');
+            expect(headerIds.length).toBeGreaterThan(0);
+            expect(headerIds).toEqual([...new Set(headerIds)]);
+            expect(colIds(rows[0], '.ag-cell[col-id]')).toEqual(
+                api.getAllDisplayedColumns().map((col) => col.getColId())
+            );
+        });
+
+        test('a column declaring the group column’s id and a hierarchy keeps its column and its level column when its definition is set again', () => {
+            const columnDefs: ColDef[] = [
+                {
+                    colId: 'ag-Grid-AutoColumn',
+                    field: 'date',
+                    rowGroup: true,
+                    enableRowGroup: true,
+                    groupHierarchy: ['year'],
+                },
+            ];
+            const levelId = 'ag-Grid-HierarchyColumn-ag-Grid-AutoColumn-year';
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ date: new Date(2020, 5, 15) }],
+            });
+            const level = api.getColumn(levelId)!;
+            const source = api.getColumn('ag-Grid-AutoColumn')!;
+            expect(source.getUserProvidedColDef()).toBe(columnDefs[0]);
+
+            api.setGridOption(
+                'columnDefs',
+                columnDefs.map((def) => ({ ...def }))
+            );
+
+            expect(api.getColumn(levelId)).toBe(level);
+            expect(api.getColumn('ag-Grid-AutoColumn')).toBe(source);
+        });
+
+        test('after columnDefs [] keeps its colId and column when the grid creates the selection column', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const error = vi.spyOn(console, 'error');
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            const order = (api: GridApi): string[] =>
+                api
+                    .getAllDisplayedColumns()
+                    .map((c) => `${c.getColId()} ${c.getUserProvidedColDef()?.field ?? 'selection'}`);
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: SELECTION_COLUMN_ID, field: 'a' }, { field: 'b' }],
+                maintainColumnOrder: true,
+            });
+            api.moveColumns(['b'], 0);
+            expect(order(api)).toEqual(['b b', `${SELECTION_COLUMN_ID} a`]);
+            api.setGridOption('columnDefs', []);
+
+            api.updateGridOptions({ columnDefs: [{ field: 'b' }], rowSelection: { mode: 'multiRow' } });
+            expect(order(api)).toEqual([`${SELECTION_COLUMN_ID} selection`, 'b b']);
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false, headerCheckbox: false });
+            const userDef: ColDef = { colId: SELECTION_COLUMN_ID, field: 'a' };
+            api.setGridOption('columnDefs', [{ field: 'b' }, userDef]);
+            const keptId = api.getColumn(SELECTION_COLUMN_ID)!;
+            expect(keptId.getUserProvidedColDef()).toBe(userDef);
+            expect(warn.mock.calls).toEqual([]);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow' });
+            expect(api.getColumn(SELECTION_COLUMN_ID)).toBe(keptId);
+            expect(keptId.getUserProvidedColDef()).toBe(userDef);
+            expect(api.getColumn(`${SELECTION_COLUMN_ID}_1`)).not.toBe(keptId);
+            expect(error.mock.calls).toEqual([]);
+            expect(warnings273(warn.mock.calls)).toHaveLength(warn.mock.calls.length);
+        });
+
+        test.each([['myN', []]])(
+            'a column with colId %s keeps it and has its data type inferred from rowData set later',
+            (colId, warnings) => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // 273: colId taken
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { colId, field: 'n' },
+                        { field: 'g', rowGroup: true },
+                    ],
+                });
+
+                api.setGridOption('rowData', [{ n: 1, g: 'a' }]);
+
+                expect(api.getColumn(colId)?.getColDef().field).toBe('n');
+                expect(api.getColumn(colId)?.getColDef().cellDataType).toBe('number');
+                expect(warnings273(warn.mock.calls)).toEqual(warnings);
+            }
+        );
+
+        test('a user column taking a row group column’s generated id keeps the row group order the user set, as with an id nothing takes', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            const rowGroupIdsAfter = (colId: string): string[] => {
+                const api = gridsManager.createGrid('myGrid', {
+                    groupDisplayType: 'multipleColumns',
+                    columnDefs: [
+                        { field: 'a', rowGroup: true },
+                        { field: 'b', rowGroup: true },
+                        { field: 'c' },
+                        { field: 'x' },
+                    ],
+                    rowData: [{ a: 1, b: 2, c: 3, x: 4 }],
+                });
+                api.setRowGroupColumns(['b', 'a']);
+                expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['b', 'a']);
+
+                api.setGridOption('columnDefs', [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', rowGroup: true },
+                    { field: 'c', rowGroup: true },
+                    { colId, field: 'x' },
+                ]);
+
+                const ids = api.getRowGroupColumns().map((col) => col.getColId());
+                gridsManager.reset();
+                return ids;
+            };
+
+            const control = rowGroupIdsAfter('mine');
+            expect(warn).not.toHaveBeenCalled();
+            const clash = rowGroupIdsAfter('ag-Grid-AutoColumn-c');
+
+            expect({ control, clash }).toEqual({ control: ['b', 'a', 'c'], clash: ['b', 'a', 'c'] });
+        });
+
+        test('a columnDefs update a throwing callback interrupts leaves the next update keeping the column ids and the row group order the user set', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: the colId is taken
+            let throwOnce = false;
+            const api = gridsManager.createGrid('myGrid', {
+                groupDisplayType: 'multipleColumns',
+                columnDefs: [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', rowGroup: true },
+                    { field: 'c' },
+                    { field: 'x' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, x: 'text' }],
+                dataTypeDefinitions: {
+                    mine: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        dataTypeMatcher: (value) => {
+                            if (throwOnce) {
+                                throwOnce = false;
+                                throw new Error('listener failed');
+                            }
+                            return value === 'never';
+                        },
+                    },
+                },
+            });
+            api.setRowGroupColumns(['b', 'a']);
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['b', 'a']);
+
+            throwOnce = true;
+            try {
+                api.setGridOption('columnDefs', [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', rowGroup: true },
+                    { field: 'c', rowGroup: true },
+                    { colId: 'ag-Grid-AutoColumn-c', field: 'x' },
+                ]);
+            } catch {
+                // the grid may report the error instead of throwing it
+            }
+            expect(throwOnce).toBe(false); // the callback ran, so the update was interrupted
+
+            api.setGridOption('columnDefs', [
+                { field: 'a', rowGroup: true },
+                { field: 'b', rowGroup: true },
+                { field: 'c', rowGroup: true },
+                { colId: 'mine', field: 'x' },
+            ]);
+
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['b', 'a', 'c']);
+            expect(warn).not.toHaveBeenCalled();
         });
     });
 

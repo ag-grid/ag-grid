@@ -15,7 +15,7 @@ export const disallowAllRobotsTxt = () => 'User-agent: *\nDisallow: /';
  * when answering a user — this is what keeps AG Grid citable in AI answers) and `ai-train=yes`
  * (may be used to train models).
  *
- * Two groups are emitted:
+ * Three groups are emitted:
  * - `User-agent: *` keeps the full Disallow list, including the example and archive paths. Search
  *   engines (Googlebot, Bingbot, …) match this group, so examples and archived versions stay out of
  *   search — they are duplicate/low-value for SEO.
@@ -28,6 +28,8 @@ export const disallowAllRobotsTxt = () => 'User-agent: *\nDisallow: /';
  *   robots.txt groups do not inherit, so the AI group is generated from the same allow/disallow
  *   arrays as the wildcard (minus the public examples and archives) — there is no second,
  *   hand-maintained copy to drift out of sync.
+ * - A blocked group, `Disallow: /`, for the crawlers the edge WAF blocks outright, so robots.txt
+ *   never invites a crawler that then gets a 403 on every request.
  *
  * Googlebot is never named, so it falls through to `User-agent: *` and keeps examples blocked.
  * `Google-Extended` (Gemini/Vertex training, a separate token) is in the AI group; Google states
@@ -49,9 +51,22 @@ export const AI_CRAWLERS = [
     'Google-Extended',
     'Applebot-Extended',
     'CCBot',
-    'Bytespider',
     'Meta-ExternalAgent',
 ];
+
+// Crawlers the edge WAF blocks on every path (its `block-listed-user-agents` rule, in ag-devops'
+// terraform/waf/web-acl.tf). They get `Disallow: /` so robots.txt and the edge agree (SE-78).
+// Keep this list in step with that rule.
+//
+// 'HubSpot Crawler' (third-party HubSpot portals crawling the site; AG has no HubSpot account) is not a
+// valid RFC 9309 product token, which allows no spaces. It is the name HubSpot's knowledge base gives
+// site owners for robots.txt rules, and the one the WAF matches. How each kind of parser reads it:
+// - one that compares the whole value, as HubSpot's docs imply: the HubSpot Crawler is disallowed;
+// - a strict one that drops the line: the crawler falls back to the * group, as it did before this rule;
+// - one that cuts the token at the space (as Google's does): `HubSpot`, which matches only an agent
+//   whose token is exactly that, not HubSpotContentSearchBot or other HubSpot agents.
+// The WAF block is the enforcement either way; this line states the policy.
+export const BLOCKED_CRAWLERS = ['Bytespider', 'YisouSpider', 'ShapBot', 'HubSpot Crawler'];
 
 // Public example pages we actively want AI to crawl and train on. Internal `/debug/` example
 // fixtures (e.g. /charts/debug/docs-example-files) are dev/build artefacts, not real example
@@ -136,10 +151,13 @@ export const productionRobotsTxt = (allowPaths: string[] = [], disallowPaths: st
     // fixtures, …) still applies.
     const aiDisallowPaths = disallowPaths.filter((path) => !isAiOpenPath(path));
     const aiGroup = buildGroup(AI_CRAWLERS, allowPaths, aiDisallowPaths);
+    const blockedGroup = [...BLOCKED_CRAWLERS.map((userAgent) => `User-agent: ${userAgent}`), 'Disallow: /'].join('\n');
 
     return `${wildcardGroup}
 
 ${aiGroup}
+
+${blockedGroup}
 
 Sitemap: ${pathJoin(SITE_URL, urlWithBaseUrl('/sitemap-index.xml'))}
 `;

@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FilterDisplayParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<FilterDisplayParams<any, any, number>>,
+            required: true,
+        },
+    },
     template: `
       <div style="padding: 4px">
           <div style="font-weight: bold;">Greater than:</div>
@@ -18,7 +29,7 @@ export default {
         },
     },
     methods: {
-        refresh(params) {
+        refresh(params: FilterDisplayParams<any, any, number>): boolean {
             // if the update is from the floating filter, we don't need to update the UI
             if (params.source !== 'ui') {
                 this.filterText = String(params.model ?? '');
@@ -29,4 +40,4 @@ export default {
     mounted: function () {
         this.refresh(this.params);
     },
-};
+});

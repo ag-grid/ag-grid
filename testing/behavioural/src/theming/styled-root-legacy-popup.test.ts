@@ -1,12 +1,11 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 describe('styled root legacy theme classes on popups', () => {
     const gridMgr = new TestGridsManager({ modules: [ColumnMenuModule] });
     let eGridDiv: HTMLElement;
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeEach(() => {
         eGridDiv = document.createElement('div');
@@ -17,8 +16,6 @@ describe('styled root legacy theme classes on popups', () => {
     afterEach(() => {
         gridMgr.reset();
         eGridDiv.remove();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     test('copies the theme class to a popup styled root but not the grid root styled root', async () => {
@@ -32,7 +29,6 @@ describe('styled root legacy theme classes on popups', () => {
         expect(document.querySelector('.ag-styled-root.ag-theme-sas')).toBeNull();
 
         // popups can be mounted outside the themed element, so their styled root copies the class
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('make');
         const menu = await waitFor(() => {
             const el = document.querySelector('.ag-menu');

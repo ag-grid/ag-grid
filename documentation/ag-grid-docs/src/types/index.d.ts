@@ -1,8 +1,7 @@
 export {};
 
 declare global {
-    //Copy of this interface is present in shared-types/generators so that it can be added as a string to the code files inline
-    // when it is use. Please keep the two in sync if you are adding a property!
+    // Keep these row interfaces in sync with the copies in the example generator's sharedInterfaces.ts.
 
     interface IOlympicData {
         athlete: string;

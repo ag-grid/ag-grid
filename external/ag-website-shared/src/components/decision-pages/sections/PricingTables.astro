@@ -1,0 +1,59 @@
+---
+import styles from '../DecisionPage.module.scss';
+import { ctaAttributes } from '../decisionPageCta';
+import { PRICING_COST } from '../decisionPageText';
+import type { DecisionPageSite, PricingRow } from '../types';
+import TonePill from './TonePill.astro';
+
+interface Props {
+    /** One group of plan rows per product; the product's own rows carry the brand highlight. */
+    tables: Array<{ name: string; rows: PricingRow[]; isProduct?: boolean }>;
+    site: DecisionPageSite;
+    analyticsPrefix: string;
+}
+
+const { tables, site, analyticsPrefix } = Astro.props;
+const pricing = ctaAttributes({ site, analyticsPrefix, action: 'pricing', placement: 'pricing' });
+---
+
+<div class={styles.tableWrapper}>
+    <table class={styles.table}>
+        <colgroup>
+            <col class={styles.pricingPlanColumn} />
+            <col class={styles.pricingCostColumn} />
+            <col />
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">Plan</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Licence</th>
+            </tr>
+        </thead>
+        {tables.map(({ name, rows, isProduct }) => (
+            <tbody>
+                <tr class={styles.groupRow}>
+                    <th scope="rowgroup" colspan="3">
+                        {name}
+                    </th>
+                </tr>
+                {rows.map(({ plan, cost, licence }) => (
+                    <tr>
+                        <th scope="row">{plan}</th>
+                        <td class:list={[isProduct && styles.pricingProductCell]}>
+                            <TonePill {...PRICING_COST[cost]} />
+                        </td>
+                        <td class:list={[styles.pricingLicence, isProduct && styles.pricingProductCell]}>{licence}</td>
+                    </tr>
+                ))}
+            </tbody>
+        ))}
+    </table>
+</div>
+<a
+    {...pricing.attributes}
+    class:list={['button-tertiary', styles.pricingCta, pricing.analyticsClass]}
+    href={site.resolveUrl(site.urls.pricing)}
+>
+    See {site.productName} pricing
+</a>

@@ -1,9 +1,18 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils';
 
-import type { GridApi, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
+import type {
+    Column,
+    GridApi,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+} from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
+import { pivotGroups } from '../pivotGroups';
 
 /**
  * Characterisation (golden-master) tests pinning the CURRENT behaviour of the Server-Side Row Model
@@ -136,6 +145,119 @@ describe('SSRM pivot (characterisation)', () => {
         `);
     });
 
+    test.each([
+        { pivotDefaultExpanded: 0, sportOpen: false, yearOpen: false },
+        { pivotDefaultExpanded: 1, sportOpen: true, yearOpen: false },
+        { pivotDefaultExpanded: -1, sportOpen: true, yearOpen: true },
+    ])(
+        'pivotDefaultExpanded $pivotDefaultExpanded opens the pivot result column groups to that depth',
+        async ({ pivotDefaultExpanded, sportOpen, yearOpen }) => {
+            const pivotResultFields = ['Swim_2000_gold', 'Swim_2004_gold', 'Run_2000_gold', 'Run_2004_gold'];
+            const datasource: IServerSideDatasource = {
+                getRows: (params) => {
+                    const rows = [
+                        { country: 'USA', Swim_2000_gold: 1, Swim_2004_gold: 2, Run_2000_gold: 3, Run_2004_gold: 4 },
+                    ];
+                    setTimeout(() => {
+                        params.success({ rowData: rows, rowCount: rows.length, pivotResultFields });
+                    }, 0);
+                },
+            };
+
+            const api: GridApi = await gridsManager.createGridAndWait('ssrm', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', pivot: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                pivotDefaultExpanded,
+                rowModelType: 'serverSide',
+                serverSideDatasource: datasource,
+            });
+            await waitForNoLoadingRows(api);
+
+            expect(pivotGroups(api)).toEqual([
+                { id: 'Run', path: 'Run', open: sportOpen, expandable: false },
+                { id: 'Run_2000', path: 'Run > 2000', open: yearOpen, expandable: false },
+                { id: 'Run_2004', path: 'Run > 2004', open: yearOpen, expandable: false },
+                { id: 'Swim', path: 'Swim', open: sportOpen, expandable: false },
+                { id: 'Swim_2000', path: 'Swim > 2000', open: yearOpen, expandable: false },
+                { id: 'Swim_2004', path: 'Swim > 2004', open: yearOpen, expandable: false },
+            ]);
+        }
+    );
+
+    test('entering pivot mode hides the primary columns at once and keeps them hidden once loads settle', async () => {
+        const getRows = vi.fn((params: IServerSideGetRowsParams) => params.success({ rowData: [] }));
+        const api: GridApi = gridsManager.createGrid('ssrm', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'v', aggFunc: 'sum' },
+            ],
+            pivotMode: false,
+            rowModelType: 'serverSide',
+            serverSideDatasource: { getRows },
+        });
+        await waitFor(() => expect(getRows).toHaveBeenCalledTimes(1));
+
+        const displayedIds = () => api.getAllDisplayedColumns().map((col) => col.getColId());
+        const before = displayedIds();
+        expect(before).toEqual(['ag-Grid-AutoColumn', 'country', 'year', 'v']);
+
+        const onDisplayedColumnsChanged = vi.fn();
+        api.addEventListener('displayedColumnsChanged', onDisplayedColumnsChanged);
+
+        api.setGridOption('pivotMode', true);
+
+        expect(displayedIds()).toEqual(['ag-Grid-AutoColumn', 'v']);
+        expect(displayedIds()).not.toEqual(before);
+
+        await waitFor(() => expect(onDisplayedColumnsChanged).toHaveBeenCalled());
+        await waitFor(() => expect(getRows).toHaveBeenCalledTimes(2));
+
+        expect(displayedIds()).toEqual(['ag-Grid-AutoColumn', 'v']);
+    });
+
+    test('application-supplied pivot result columns stay while pivot mode is turned off and on again', async () => {
+        const getRows = vi.fn((params: IServerSideGetRowsParams) => params.success({ rowData: [] }));
+        const api: GridApi = gridsManager.createGrid('ssrm', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: { getRows },
+        });
+        await waitFor(() => expect(getRows).toHaveBeenCalledTimes(1));
+
+        const resultIds = () => (api.getPivotResultColumns() ?? []).map((col) => col.getColId());
+        const displayedIds = () => api.getAllDisplayedColumns().map((col) => col.getColId());
+
+        api.setPivotResultColumns([
+            { colId: '2000_gold', field: '2000_gold', headerName: '2000 Gold', pivotKeys: ['2000'], aggFunc: 'sum' },
+        ]);
+        expect({ resultIds: resultIds(), displayedIds: displayedIds() }).toEqual({
+            resultIds: ['2000_gold'],
+            displayedIds: ['ag-Grid-AutoColumn', '2000_gold'],
+        });
+
+        api.setGridOption('pivotMode', false);
+        expect(resultIds()).toEqual(['2000_gold']);
+
+        api.setGridOption('pivotMode', true);
+        await waitFor(() =>
+            expect({ resultIds: resultIds(), displayedIds: displayedIds() }).toEqual({
+                resultIds: ['2000_gold'],
+                displayedIds: ['ag-Grid-AutoColumn', '2000_gold'],
+            })
+        );
+    });
+
     // --- Scenario 3: pivot leaf-group expansion requests the group route and returns pivoted rows ---
 
     test('expanding a pivot row group requests the group route and returns pivoted child rows', async () => {
@@ -177,5 +299,61 @@ describe('SSRM pivot (characterisation)', () => {
             │ └── GROUP-leafGroup collapsed id:USA-2008 ag-Grid-AutoColumn:"2008" Swimming_gold:3
             └── GROUP collapsed id:Russia ag-Grid-AutoColumn:"Russia" Swimming_gold:9
         `);
+    });
+
+    const headerSnapshot = (api: GridApi) => ({
+        dom: Array.from(
+            getGridElement(api)!.querySelectorAll('.ag-header-cell-text, .ag-header-group-text'),
+            (el) => el.textContent
+        ),
+        names: (api.getPivotResultColumns() ?? []).map(
+            (col) => `${col.getColId()}: ${api.getDisplayNameForColumn(col, 'header')}`
+        ),
+    });
+
+    const renameColumnDefs = (gold: object) => [
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
+        gold,
+    ];
+
+    test('renaming a value column leaves the headers of application-supplied pivot result columns as supplied', async () => {
+        const getRows = vi.fn();
+        const api: GridApi = gridsManager.createGrid('ssrm', {
+            columnDefs: renameColumnDefs({ field: 'gold', aggFunc: 'sum' }),
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => {
+                    getRows(params);
+                    params.success({ rowData: [] });
+                },
+            },
+        });
+        await waitFor(() => expect(getRows).toHaveBeenCalledTimes(1));
+        api.setPivotResultColumns([
+            { colId: '2000_gold', field: '2000_gold', headerName: '2000 Gold', pivotKeys: ['2000'], aggFunc: 'sum' },
+        ]);
+        const supplied = () =>
+            getGridElement(api)!.querySelector('.ag-header-cell[col-id="2000_gold"] .ag-header-cell-text')?.textContent;
+        const colsBefore: Column[] = [...(api.getPivotResultColumns() ?? [])];
+        expect({ supplied: supplied(), names: headerSnapshot(api).names }).toEqual({
+            supplied: '2000 Gold',
+            names: ['2000_gold: 2000 Gold'],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'gold', headerName: 'Medals' }] });
+
+        const valueColumnName = api.getDisplayNameForColumn(api.getColumn('gold')!, 'header');
+        const same = (api.getPivotResultColumns() ?? []).map((col, i) => col === colsBefore[i]);
+        const after = { supplied: supplied(), names: headerSnapshot(api).names };
+        await waitForNoLoadingRows(api);
+
+        expect({ valueColumnName, same, after, requests: getRows.mock.calls.length }).toEqual({
+            valueColumnName: 'Medals',
+            same: [true],
+            after: { supplied: '2000 Gold', names: ['2000_gold: 2000 Gold'] },
+            requests: 1,
+        });
     });
 });

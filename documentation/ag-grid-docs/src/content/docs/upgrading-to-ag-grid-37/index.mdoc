@@ -1,0 +1,166 @@
+---
+title: "Upgrading to AG Grid 37"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v37."
+migrationVersion: "37.0.0"
+---
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+{% note %}
+To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads this migration guide, checks it against your repository, and produces a plan of the changes needed.
+{% /note %}
+
+## Breaking Changes
+
+{% if isFramework("react") %}
+
+### Frameworks
+
+- React 16 is no longer supported. The minimum React version is now v17.
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+### Frameworks
+
+- Angular 20 support is no longer available due to reaching its end of life. The minimum Angular version is now v21. To keep using Angular 20, stay on AG Grid v36.
+
+{% /if %}
+
+### TypeScript
+
+- The minimum TypeScript version is now 5.9.3.
+
+### Filtering
+
+- `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
+
+### Tooltip Positioning
+
+Grid tooltips now default to target anchoring, `top-start` placement, and an arrow. For pointer-style tooltips without arrows:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipAnchor: 'pointer',
+    tooltipPosition: 'bottom-start',
+    tooltipOffset: 6,
+    theme: themeQuartz.withParams({ tooltipArrowSize: 0 }),
+};
+```
+
+This does not reproduce the exact previous appearance. Focus and built-in control tooltips always anchor to the target; `tooltipMouseTrack: true` implies pointer anchoring for ordinary hover tooltips. Native browser positioning is unchanged. See [Tooltip Positioning](./tooltips-positioning/).
+
+## Behaviour Changes
+
+### Tooltips
+
+- Built-in control tooltips are enabled by default with `TooltipModule`, replacing managed controls' native `title` hints. They always support hover and immediate keyboard focus, regardless of `tooltipTrigger` or `tooltipShowDelay`, and remain target-anchored. Set `suppressBuiltInTooltips: true` to hide them or use `builtInTooltipComponent` for custom rendering. See [Built-in Control Tooltips](./tooltips-built-in/).
+- `tooltipTrigger: 'focus'` now uses the same show-delay rules as hover for ordinary tooltips. Set `tooltipShowDelay: 0` for immediate display, except for filter Apply-button validation and Advanced Filter validation tooltips, which override it with 1 second. Pointer switching uses `tooltipSwitchShowDelay` instead (200 ms by default). Screen-reader descriptions remain available immediately on focus.
+- Tooltips no longer hide after 10 seconds by default. Set `tooltipHideDelay: 10000` to restore the timeout.
+- All tooltips now accept the pointer and remain open while hovered. `tooltipInteraction` is only needed for focusable custom content; use `true` or a callback to select individual sources.
+- `Escape` dismisses an open tooltip without also cancelling editing or closing its source menu.
+- The default trigger for ordinary tooltips remains `'hover'`. Use `'hoverOrFocus'` to support both mouse and keyboard users. Focus descriptions are available before the visual tooltip appears; use `getTooltipAriaDescription` for structured custom values.
+- TypeScript: header tooltip callbacks (including `headerTooltipValueGetter`) use `HeaderTooltipCallbackParams`, whose `value` is a displayed header name, not the column's cell value. `tooltipValueGetter` uses `TooltipCallbackParams`; `getTooltipAriaDescription` uses `TooltipContentParams`. These callback params no longer expose `hideTooltipCallback`, which remains available to tooltip components through `ITooltipParams`.
+
+### Filtering
+
+- Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
+- With `caseSensitive: true`, the Set Filter Mini Filter search now ignores case. Values that differ only by case are still filtered separately, and listed separately except in a Tree List. Set `miniFilterCaseSensitive: true` to restore the case-sensitive search. See [Enabling Case-Sensitive Searches](./filter-set-mini-filter/#enabling-case-sensitive-searches).
+
+### Column Headers
+
+- `headerClass` classes are now also added to the column's floating filter cell, and the `headerClass` callback receives `params.floatingFilter` (`true` for floating filter cells, `false` for column and column group header cells). To keep header-only styling, return classes only when `params.floatingFilter` is `false`, or narrow selectors with `.ag-header-cell:not(.ag-floating-filter)`.
+- A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
+
+### Validation
+
+- With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
+- Until custom data is moved into `context`, `enableDevValidations({ suppress: [307, 310] })` keeps these warnings out of the validation overlay and stops `throwOn` from throwing on them but they are still logged to the console. See [Suppressing Diagnostics](./dev-validation/#suppressing-diagnostics).
+
+### Status Bar
+
+- The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
+
+### Server-Side Row Model
+
+- When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).
+
+{% if isFramework("react") %}
+
+### Grid Options
+
+- Removing a grid option prop from `AgGridReact` now resets the option, as setting the prop to `undefined` does. Previously the grid kept the last value. To keep a value, including one changed through the grid UI or `api.setGridOption`, keep passing the prop.
+
+{% /if %}
+
+## Removal of Deprecated APIs
+
+The following deprecated APIs have now been removed.
+
+{% expandingSection headerText="Removed Deprecated APIs" %}
+
+### Grid API
+
+- `getInfiniteRowCount()` - removed, use `getDisplayedRowCount()` instead.
+
+### Grid Options
+
+- `groupRemoveSingleChildren` - removed, use `groupHideParentOfSingleChild: true` instead.
+- `groupRemoveLowestSingleChildren` - removed, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
+- `suppressRowGroupHidesColumns` - removed, use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
+- `suppressMakeColumnVisibleAfterUnGroup` - removed, use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+- `sortingOrder` - removed, use `defaultColDef.sortingOrder` instead.
+- `unSortIcon` - removed, use `defaultColDef.unSortIcon` instead.
+- `suppressPropertyNamesCheck` - removed, put custom data in `context` instead.
+- `suppressBrowserResizeObserver` - removed, it had no effect as the grid always uses the browser's `ResizeObserver`.
+
+### Column Definitions
+
+- `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
+- Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
+
+### Interfaces and Types
+
+- `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
+- `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
+- `ChartCreated`, `ChartRangeSelectionChanged`, `ChartOptionsChanged`, `ChartDestroyed` and `AsyncTransactionsFlushed` - removed, use `ChartCreatedEvent`, `ChartRangeSelectionChangedEvent`, `ChartOptionsChangedEvent`, `ChartDestroyedEvent` and `AsyncTransactionsFlushedEvent` instead.
+- `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
+- `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
+- `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
+
+### Modules
+
+- `GridChartsModule` - removed, please use `IntegratedChartsModule` instead.
+- `ModuleRegistry.register(module)` - removed, use `ModuleRegistry.registerModules([module])` instead.
+
+### Icons
+
+The following icon keys have been removed. Setting them in the `icons` grid option or `colDef.icons` now has no effect.
+
+- `smallDown` - removed, use:
+    - `advancedFilterBuilderSelectOpen` for Advanced Filter Builder dropdown.
+    - `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
+    - `richSelectOpen` for Rich Select cell editor.
+- `smallLeft` - removed, use:
+    - `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
+    - `subMenuOpenRtl` for sub-menus.
+- `smallRight` - removed, use:
+    - `panelDelimiter` for Row Group Panel / Pivot Panel.
+    - `subMenuOpen` for sub-menus.
+- `smallUp` - removed, please use the icon CSS name `small-up` instead.
+- `colorPicker` - removed, please use the icon CSS name `color-picker` instead.
+- `checkboxChecked` - removed, please use the icon CSS name `checkbox-checked` instead.
+- `checkboxIndeterminate` - removed, please use the icon CSS name `checkbox-indeterminate` instead.
+- `checkboxUnchecked` - removed, please use the icon CSS name `checkbox-unchecked` instead.
+- `radioButtonOn` - removed, please use the icon CSS name `radio-button-on` instead.
+- `radioButtonOff` - removed, please use the icon CSS name `radio-button-off` instead.
+
+{% /expandingSection %}
+
+{% changelogSection version=$migrationVersion /%}

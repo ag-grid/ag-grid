@@ -28,10 +28,10 @@ export class ColumnFilterHarness {
         from: 'header' | 'floatingFilter' = 'header'
     ): Promise<ColumnFilterHarness> {
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await asyncSetTimeout(0);
         const testId =
             from === 'header' ? agTestIdFor.headerFilterButton(colId) : agTestIdFor.floatingFilterButton(colId);
-        const button = getByTestId(gridDiv, testId);
+        // test ids are stamped on a debounce, which each layout report re-arms
+        const button = await waitFor(() => getByTestId(gridDiv, testId));
         await firePointerLikeClick(button);
         await asyncSetTimeout(0);
         return new ColumnFilterHarness(api, colId, gridDiv);

@@ -1,29 +1,24 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import {
-    TestGridsManager,
-    asyncSetTimeout,
-    getVisibleTooltips,
-    openMenuOption,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, getVisibleTooltips, openMenuOption } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, TooltipModule } from 'ag-grid-community';
-import { ContextMenuModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
+import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 describe('menu tooltip triggers', () => {
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, ContextMenuModule, TooltipModule] });
-    let restoreOffsetParent: (() => void) | undefined;
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, TooltipModule],
+    });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     async function openContextMenu(
-        tooltipTrigger: 'focus' | 'hover',
+        tooltipTrigger: 'focus' | 'hover' | 'hoverOrFocus',
         initialTooltip?: string,
         {
             interaction = 'mouse',
@@ -59,7 +54,6 @@ describe('menu tooltip triggers', () => {
                 return Promise.resolve(items);
             },
         });
-        restoreOffsetParent = polyfillOffsetParent();
         const cell = document.querySelector<HTMLElement>('.ag-cell')!;
         if (interaction === 'api') {
             api.showContextMenu();
@@ -84,6 +78,57 @@ describe('menu tooltip triggers', () => {
     async function expectTooltip(text: string): Promise<void> {
         await waitFor(() => expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual([text]));
     }
+
+    test.each(['focus', 'hoverOrFocus'] as const)(
+        'restores the source tooltip after a context menu closes with trigger %s',
+        async (tooltipTrigger) => {
+            const api = await gridMgr.createGridAndWait('menu-tooltip-restore', {
+                columnDefs: [{ field: 'value', tooltip: 'Cell hint' }],
+                rowData: [{ value: 'Cell' }],
+                tooltipTrigger,
+                tooltipShowDelay: 0,
+                getContextMenuItems: () => [{ name: 'Action' }],
+            });
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+            cell.focus();
+            await expectTooltip('Cell hint');
+
+            await userEvent.pointer({ keys: '[MouseRight]', target: cell });
+            const item = await openMenuOption('Action');
+            expect(getVisibleTooltips()).toHaveLength(0);
+            await userEvent.click(item);
+
+            expect(cell).toHaveFocus();
+            await expectTooltip('Cell hint');
+        }
+    );
+
+    test.each([false, true])('context menus dismiss fading tooltips (source already left: %s)', async (sourceLeft) => {
+        const api = await gridMgr.createGridAndWait('menu-tooltip-no-fade', {
+            columnDefs: [{ field: 'value', tooltip: 'Cell hint' }],
+            rowData: [{ value: 'Cell' }, { value: 'Other cell' }],
+            tooltipShowDelay: 0,
+            getContextMenuItems: () => [{ name: 'Action' }],
+        });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
+        cell.dispatchEvent(new MouseEvent('mouseenter'));
+        await expectTooltip('Cell hint');
+        const tooltip = getVisibleTooltips()[0];
+
+        vi.useFakeTimers();
+        let menuSource = cell;
+        if (sourceLeft) {
+            cell.dispatchEvent(new MouseEvent('mouseleave'));
+            await vi.advanceTimersByTimeAsync(100);
+            menuSource = getGridElement(api)!.querySelector<HTMLElement>('.ag-row[row-index="1"] .ag-cell')!;
+        } else {
+            cell.dispatchEvent(new MouseEvent('mousedown', { button: 2, bubbles: true }));
+        }
+        expect(tooltip).toHaveClass('ag-tooltip-hiding');
+        menuSource.dispatchEvent(new MouseEvent('contextmenu', { button: 2, bubbles: true, cancelable: true }));
+        expect(document.querySelector('[role="menu"]')).toBeVisible();
+        expect(tooltip).not.toBeVisible();
+    });
 
     test.each([false, true])(
         'mouse opening suppresses the initial focus tooltip (async items: %s)',
@@ -116,6 +161,57 @@ describe('menu tooltip triggers', () => {
     test('API opening preserves the initial focus tooltip', async () => {
         await openContextMenu('focus', 'Initial tooltip', { interaction: 'api' });
         await expectTooltip('Initial tooltip');
+    });
+
+    test.each(['context', 'column', 'legacy column'])(
+        'destroying a grid with an open %s menu tooltip releases Escape handling',
+        async (menu) => {
+            const getMenuItems = () => [{ name: 'Initial', tooltip: 'Initial tooltip' }];
+            const api = await gridMgr.createGridAndWait('menu-tooltip-destroy', {
+                columnDefs: [{ field: 'value', menuTabs: ['generalMenuTab'] }],
+                rowData: [{ value: 'Cell' }],
+                columnMenu: menu === 'legacy column' ? 'legacy' : 'new',
+                tooltipTrigger: 'focus',
+                tooltipShowDelay: 0,
+                getContextMenuItems: getMenuItems,
+                getColumnMenuItems: getMenuItems,
+            });
+            if (menu === 'context') {
+                api.showContextMenu();
+            } else {
+                api.showColumnMenu('value');
+            }
+            await expectTooltip('Initial tooltip');
+            gridMgr.reset();
+
+            const button = document.createElement('button');
+            const onKeyDown = vi.fn();
+            button.addEventListener('keydown', onKeyDown);
+            document.body.appendChild(button);
+            try {
+                button.focus();
+                await userEvent.keyboard('{Escape}');
+                expect(onKeyDown).toHaveBeenCalledTimes(1);
+                expect(button).toHaveFocus();
+            } finally {
+                button.remove();
+            }
+        }
+    );
+
+    test('combined mode describes the focused item and Escape dismisses only its tooltip', async () => {
+        const first = await openContextMenu('hoverOrFocus');
+        await userEvent.keyboard('{ArrowDown}');
+        expect(first).toHaveFocus();
+        expect(first).toHaveAccessibleDescription('First tooltip');
+        await expectTooltip('First tooltip');
+
+        await userEvent.keyboard('{Escape}');
+        expect(getVisibleTooltips()).toHaveLength(0);
+        expect(first).toHaveFocus();
+        expect(first).toBeInTheDocument();
+        await userEvent.keyboard('{Escape}');
+        expect(first).not.toBeInTheDocument();
     });
 
     test('focus trigger ignores hover activation but shows tooltips during keyboard navigation', async () => {
@@ -167,7 +263,7 @@ describe('menu tooltip triggers', () => {
         await expectTooltip('Second tooltip');
     });
 
-    test.each(['focus', 'hover'] as const)(
+    test.each(['focus', 'hover', 'hoverOrFocus'] as const)(
         '%s trigger keeps focus on the hovered sibling after leaving a keyboard-focused submenu',
         async (tooltipTrigger) => {
             const user = userEvent.setup();
@@ -190,12 +286,12 @@ describe('menu tooltip triggers', () => {
                     },
                 ],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await user.pointer({ keys: '[MouseRight]', target: document.querySelector('.ag-cell')! });
             const log = (await openMenuOption('Log Cell')).closest<HTMLElement>('.ag-menu-option')!;
             const country = (await openMenuOption('Country')).closest<HTMLElement>('.ag-menu-option')!;
 
-            await user.hover(country);
+            // Coordinate-less hovers land at (0,0) and read as a stationary pointer, which focus-owned tooltips ignore.
+            await user.pointer({ target: country, coords: { clientX: 20, clientY: 100 } });
             await openMenuOption('Ireland');
             await user.keyboard('{ArrowRight}{ArrowDown}');
             const uk = (await openMenuOption('UK')).closest<HTMLElement>('.ag-menu-option')!;
@@ -204,7 +300,7 @@ describe('menu tooltip triggers', () => {
                 await expectTooltip('uk');
             }
 
-            await user.hover(log);
+            await user.pointer({ target: log, coords: { clientX: 20, clientY: 40 } });
             await waitFor(() => expect(log).toHaveFocus());
             await asyncSetTimeout(0);
             expect(uk).not.toBeInTheDocument();

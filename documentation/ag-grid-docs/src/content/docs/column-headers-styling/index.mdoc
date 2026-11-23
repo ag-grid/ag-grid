@@ -41,6 +41,8 @@ const gridOptions = {
 Provides a class for the header. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
 
+The classes are applied to the column's header cell and its floating filter cell. In a function, `params.floatingFilter` is `true` for the floating filter cell and `false` for column and column group header cells. To target only header cells in CSS, use `.ag-header-cell:not(.ag-floating-filter)`.
+
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["headerClass"] /%}
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
@@ -62,6 +64,13 @@ const gridOptions = {
             headerClass: params => {
                 return params.columnGroup ? 'my-custom-column-group' : 'my-custom-column';
             },
+        },
+        {
+            headerName: 'Different Class for Floating Filter',
+            field: 'perCell',
+            headerClass: params => {
+                return params.floatingFilter ? 'my-floating-filter-class' : 'my-header-class';
+            },
         }
     ]
 }
@@ -74,7 +83,7 @@ Below shows both headerStyle and headerClass in a full working example. The exam
 - **Athlete Details**: uses `headerStyle` static object.
 - **Athlete**: uses `headerStyle` static object. This also causes the floating filter to be styled.
 - **Country**: uses `headerStyle` function callback. This allows to set a different background color for the header and floating filter.
-- **Sport**: uses `headerClass` to add the `sport-header` class to the header.
+- **Sport**: uses `headerClass` to add the `sport-header` class to the header and the floating filter.
 - **Medal Details**: uses `headerStyle` callback function to toggle different styles when the group is expanded or collapsed.
 
 {% gridExampleRunner title="Header Styling" name="header-styles" /%}

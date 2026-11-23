@@ -283,6 +283,63 @@ describe('ag-grid grouping sorting', () => {
         `);
     });
 
+    test('sorting the group column follows autoGroupColumnDef.comparator as it is set and removed at runtime', () => {
+        const rowData = [
+            { id: '1', country: 'Ireland' },
+            { id: '2', country: 'Ireland' },
+            { id: '3', country: 'Ireland' },
+            { id: '4', country: 'Italy' },
+            { id: '5', country: 'Brazil' },
+            { id: '6', country: 'Brazil' },
+        ];
+
+        // Documented custom group sort: rows ordered by their number of descendants (a leaf has none).
+        const leafCount = (node: any): number => node.allLeafChildren?.length ?? 0;
+        const byLeafCount = (_a: unknown, _b: unknown, nodeA: any, nodeB: any) => leafCount(nodeA) - leafCount(nodeB);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const groupKeys = () => {
+            const keys: (string | null)[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => node.group && keys.push(node.key));
+            return keys;
+        };
+        const sort = (country: 'asc' | 'desc' | null, groupColumn: 'asc' | 'desc' | null) =>
+            api.applyColumnState({
+                state: [
+                    { colId: 'country', sort: country },
+                    { colId: 'ag-Grid-AutoColumn', sort: groupColumn },
+                ],
+            });
+
+        expect(groupKeys()).toEqual(['Ireland', 'Italy', 'Brazil']);
+
+        // Coupled: sorting the grouped column orders the groups.
+        sort('asc', null);
+        expect(groupKeys()).toEqual(['Brazil', 'Ireland', 'Italy']);
+
+        // Decoupled: sorting the grouped column leaves the groups in their structural order.
+        api.setGridOption('autoGroupColumnDef', { headerName: 'Country', comparator: byLeafCount });
+        sort('desc', null);
+        expect(groupKeys()).toEqual(['Ireland', 'Italy', 'Brazil']);
+
+        // The group column sorts with the comparator (leaf count: Italy 1, Brazil 2, Ireland 3).
+        sort(null, 'desc');
+        expect(groupKeys()).toEqual(['Ireland', 'Brazil', 'Italy']);
+
+        // Coupled again once the comparator is removed: the grouped column orders the groups.
+        api.setGridOption('autoGroupColumnDef', { headerName: 'Country' });
+        sort('asc', null);
+        expect(groupKeys()).toEqual(['Brazil', 'Ireland', 'Italy']);
+    });
+
     test('grouping with multi-level sorting', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', year: 2020, athlete: 'John Smith', sport: 'Sailing', gold: 1 },

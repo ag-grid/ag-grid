@@ -2,9 +2,11 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { AgColumn } from '../entities/agColumn';
 import { _normalizeSortType } from '../entities/agColumn';
 import type { SortComparatorFn } from '../entities/colDef';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { SortType } from '../interfaces/iSort';
 import type { SortOption } from '../interfaces/iSortOption';
 import { _isUserComparator } from './builtInComparators';
+import { _getColumnStringComparator } from './accentedSort';
 
 /** Pick the comparator for the sort type: a bare function applies to all types; a dict selects by type. */
 const resolveComparator = (
@@ -24,12 +26,12 @@ const resolveComparator = (
 /**
  * Resolves each option's comparators in place so the sorter reads them directly per comparison: a comparator on
  * the col applies to every row; a row-group display col otherwise falls back to its primary column's comparator
- * (the sorter applies that fallback to leaf rows only). `sortMissingValues` only applies to rows no user comparator
- * applies to.
+ * (the sorter applies that fallback to leaf rows only). The column's effective `accentedSort` is resolved to a
+ * string comparator here. `sortMissingValues` only applies to rows no user comparator applies to.
  * Call once after building an option array, before sorting.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel): void => {
+export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel, gos: GridOptionsService): void => {
     for (let i = 0, len = options.length; i < len; ++i) {
         const sortOption = options[i];
         const column = sortOption.column as AgColumn;
@@ -55,5 +57,6 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         const sortMissingValues = column.colDef.sortMissingValues;
         sortOption.missingValues = sortMissingValues === 'first' ? -1 : sortMissingValues === 'last' ? 1 : 0;
         sortOption.formulaErrors = column.allowFormula || column.isCalculatedCol;
+        sortOption.stringComparator = _getColumnStringComparator(column, colModel, gos);
     }
 };

@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('BigInt equals filter matches exact value without precision loss', async ({ page, agIdFor }) => {
+    test.eachFramework('BigInt equals filter matches exact value without precision loss', async ({ agIdFor }) => {
         // 9007199254740993n and 9007199254740995n both exceed Number.MAX_SAFE_INTEGER (2^53 - 1)
         // and would be indistinguishable as JS numbers. The BigInt Filter keeps them distinct.
         const filterButton = agIdFor.headerFilterButton('ledgerId');

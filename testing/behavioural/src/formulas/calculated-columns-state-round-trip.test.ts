@@ -10,7 +10,7 @@ import {
     createGrid,
     editViaDialog,
     entryOf,
-    getDialog,
+    getCalculatedColumnDialog,
     order,
     propertiesOf,
     setExpression,
@@ -38,10 +38,27 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         source.destroy();
         api.showColumnMenu(colId);
         await clickMenuOption('Edit Calculated Column');
-        expect(getDialog().querySelector('textarea')!.value).toBe('[Salary] * 0.1');
+        expect(getCalculatedColumnDialog().querySelector('textarea')!.value).toBe('[Salary] * 0.1');
         clickDialogButton('Apply');
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
         expect(api.getColumn(colId)!.getColDef().calculatedExpression).toBe('[salary] * 0.1');
+    });
+
+    test('an edit through a column menu changes that column while a later-opened dialog stays open', async () => {
+        const api = createGrid('state-edit-older-dialog', {
+            rowData: [{ id: 'r1', a: 5 }],
+            columnDefs: [{ field: 'a' }],
+        });
+        const first = await addViaDialog(api, 'a', '[A] * 2');
+        const second = await addViaDialog(api, first, '[A] * 3');
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(2);
+
+        await editViaDialog(api, first, { expression: '[A] * 4' });
+
+        expect({
+            first: api.getColumn(first)!.getColDef().calculatedExpression,
+            second: api.getColumn(second)!.getColDef().calculatedExpression,
+        }).toEqual({ first: '[a] * 4', second: '[a] * 3' });
     });
 
     // === core repro: initialState round-trip =====================================================
@@ -84,6 +101,52 @@ describe('calculated columns - grid state persistence - saving and restoring a d
     });
 
     // === api.setState round-trip: exercises the setState re-entrancy path ========================
+    test('api.setState restoring an edited expression together with a sort and a filter on the calc col orders and keeps rows by the new values', async () => {
+        const rowData = [
+            { id: 'r1', a: 1 },
+            { id: 'r2', a: 3 },
+            { id: 'r3', a: 2 },
+        ];
+        const columnDefs = [{ field: 'a' }];
+        const defaultColDef = { filter: 'agNumberColumnFilter' };
+        const source = createGrid('state-edited-expression-source', { rowData, columnDefs, defaultColDef });
+        const calcId = await addViaDialog(source, 'a', '[A] * 1');
+        const stateBeforeEdit = source.getState();
+        await editViaDialog(source, calcId, { expression: '10 - [A]' });
+        const stateAfterEdit = source.getState();
+        expect(propertiesOf(stateBeforeEdit, calcId)).toMatchObject({ calculatedExpression: '[a] * 1' });
+        expect(propertiesOf(stateAfterEdit, calcId)).toMatchObject({ calculatedExpression: '10 - [a]' });
+
+        const api = createGrid('state-edited-expression-target', {
+            rowData,
+            columnDefs,
+            defaultColDef,
+            initialState: stateBeforeEdit,
+        });
+        await waitFor(() => expect(api.getColumn(calcId)).not.toBeNull());
+        expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 1');
+
+        api.setState({ ...stateAfterEdit, sort: { sortModel: [{ colId: calcId, sort: 'asc' }] } });
+        await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('10 - [a]'));
+        await new GridRows(api, 'edited expression restored with a sort on the calc col - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r2 a:3 ${calcId}:7
+            ├── LEAF id:r3 a:2 ${calcId}:8
+            └── LEAF id:r1 a:1 ${calcId}:9
+        `);
+
+        api.setState({
+            ...stateAfterEdit,
+            sort: { sortModel: [{ colId: calcId, sort: 'asc' }] },
+            filter: { filterModel: { [calcId]: { filterType: 'number', type: 'greaterThan', filter: 7.5 } } },
+        });
+        await new GridRows(api, 'edited expression restored with a sort and a filter on the calc col - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r3 a:2 ${calcId}:8
+            └── LEAF id:r1 a:1 ${calcId}:9
+        `);
+    });
+
     test('a dynamic calc col is recreated via api.setState on a fresh grid, and cachedState round-trips afterwards', async () => {
         const api = createGrid('state-setstate-source', {
             rowData: [{ id: 'r1', a: 5, b: 2 }],
@@ -227,7 +290,7 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         // Reopen the column menu and edit the expression live (default apply mode).
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 3');
         await waitFor(() => expect(api.getColumn(calcId)!.getColDef().calculatedExpression).toBe('[a] * 3'));
         clickDialogButton('Apply');

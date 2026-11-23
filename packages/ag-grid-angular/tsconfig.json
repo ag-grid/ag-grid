@@ -2,7 +2,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -21,7 +20,7 @@
     "module": "ES2022",
     "lib": ["ES2022", "dom"],
     "paths": {
-      "ag-grid-angular": ["dist/ag-grid-angular/ag-grid-angular", "dist/ag-grid-angular"]
+      "ag-grid-angular": ["./dist/ag-grid-angular/ag-grid-angular", "./dist/ag-grid-angular"]
     },
     "useDefineForClassFields": false
   },

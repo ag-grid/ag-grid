@@ -6,7 +6,7 @@ test.agExample(import.meta, () => {
     // labels/tooltips are painted onto the canvas, so the chart-side output is render-only. What
     // is DOM-assertable is the source of truth the formatter reuses: the grid cells themselves,
     // which render through the very same column `valueFormatter`s (period reordered, £ / $ prefixes).
-    test.eachFramework('Formatter Context', async ({ page, remoteGrid }) => {
+    test.eachFramework('Formatter Context', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-cell', { hasText: '$237438' }).first()).toBeVisible();
 
         // A grouped-column range chart is created over the three columns.
-        const models = await waitForChartModels(remoteGrid(page));
+        const models = await waitForChartModels(page);
         expect(models[0].chartType).toBe('groupedColumn');
         expect(models[0].cellRange.columns).toEqual(['period', 'recurring', 'individual']);
 

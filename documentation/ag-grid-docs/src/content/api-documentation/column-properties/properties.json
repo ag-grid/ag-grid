@@ -120,7 +120,7 @@
         "tooltipComponentSelector": {
             "more": {
                 "name": "Custom Tooltip Component",
-                "url": "./tooltips/#custom-component"
+                "url": "./component-tooltip/"
             }
         },
         "tooltipComponentParams": {}
@@ -379,6 +379,12 @@
             "more": {
                 "name": "Missing Values",
                 "url": "./row-sorting/#missing-values"
+            }
+        },
+        "accentedSort": {
+            "more": {
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
             }
         },
         "unSortIcon": {}

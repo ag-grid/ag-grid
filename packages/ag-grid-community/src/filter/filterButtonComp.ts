@@ -123,7 +123,6 @@ export class FilterButtonComp extends Component<FilterAction> {
             this.validationTooltipFeature = this.createOptionalManagedBean(
                 this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eApply ?? initialApplyButton,
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'filter',
                     getTooltipShowDelayOverride: () => 1000,
                 })

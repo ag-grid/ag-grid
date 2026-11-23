@@ -1,10 +1,21 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `<span class="imgSpan">
       <img v-for="images in arr" :src="src" class="priceIcon" />
       </span>`,
     data: function () {
         return {
-            arr: [],
+            arr: [] as undefined[],
             src: 'https://www.ag-grid.com/example-assets/icons/pound-coin-color-icon.svg',
         };
     },
@@ -12,10 +23,10 @@ export default {
         this.updateDisplay(this.params);
     },
     methods: {
-        refresh(params) {
+        refresh(params: ICellRendererParams) {
             this.updateDisplay(params);
         },
-        updateDisplay(params) {
+        updateDisplay(params: ICellRendererParams) {
             let priceMultiplier = 1;
 
             if (params.value > 300_000_000_000) {
@@ -30,4 +41,4 @@ export default {
             this.arr = new Array(priceMultiplier);
         },
     },
-};
+});

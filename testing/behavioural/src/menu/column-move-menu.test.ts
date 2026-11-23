@@ -15,32 +15,44 @@ import {
     getRevealedElements,
     installFocusScroll,
     mockGridLayout,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IColumnToolPanel } from 'ag-grid-community';
-import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
-import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, LocaleModule, ScrollApiModule, getGridElement } from 'ag-grid-community';
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingModule,
+    RowNumbersModule,
+} from 'ag-grid-enterprise';
 
 import { openToolPanelContextMenu } from '../columnToolPanel/toolPanelContextMenuHarness';
 
 type Surface = 'header' | 'panel' | 'chooser';
 
 describe('column movement menu actions', () => {
-    const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const grids = new TestGridsManager({
+        modules: [
+            ColumnMenuModule,
+            ColumnsToolPanelModule,
+            LocaleModule,
+            PivotModule,
+            RowGroupingModule,
+            RowNumbersModule,
+            ScrollApiModule,
+        ],
+    });
     const headerGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
     const panelGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnsToolPanelModule] });
-    let restoreOffsetParent: () => void;
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
     afterEach(() => {
+        // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
+        document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         grids.reset();
         headerGrids.reset();
         panelGrids.reset();
-        restoreOffsetParent();
     });
 
     const columnDefs: ColDef[] = ['a', 'b', 'c', 'd'].map((field) => ({ field }));

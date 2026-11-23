@@ -29,13 +29,10 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
 
         this.syncExpandButtons();
 
-        params.setTooltip(this.params.displayName, () => {
-            const el = this.eGui.querySelector('.customHeaderLabel');
-            if (!el) {
-                return true;
-            }
-            return el?.scrollWidth > el.clientWidth;
-        });
+        params.setTooltip(
+            'Expand the group to show more columns',
+            () => !this.params.columnGroup.getProvidedColumnGroup().isExpanded()
+        );
     }
 
     getGui() {

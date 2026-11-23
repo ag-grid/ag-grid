@@ -1,4 +1,4 @@
-import { _getPageBody, _isVisible, _last, _setDisplayed } from 'ag-stack';
+import { _addManagedElementListeners, _getPageBody, _isVisible, _last, _setDisplayed } from 'ag-stack';
 
 import type { CellCtrl, CellPosition, CellRange, CellSelectionChangedEvent, RowPosition } from 'ag-grid-community';
 import { Component, _areCellsEqual, _getCellPositionForEvent, _isRowBefore } from 'ag-grid-community';
@@ -71,7 +71,7 @@ export abstract class AbstractSelectionHandle extends Component {
             cellSelectionChanged: this.updateLocalRangeIfNeeded.bind(this),
         });
 
-        this.addManagedElementListeners(this.getGui(), {
+        _addManagedElementListeners(this, this.getGui(), {
             pointerdown: stopEventPropagation,
             mousedown: stopEventPropagation,
         });

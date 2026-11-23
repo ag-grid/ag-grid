@@ -153,7 +153,7 @@ const gridsManager = new TestGridsManager({
 beforeAll(() => setupAgTestIds());
 afterEach(() => {
     gridsManager.reset();
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
 });
 
 const cell = (api: GridApi, r: number, colId: string): HTMLElement =>

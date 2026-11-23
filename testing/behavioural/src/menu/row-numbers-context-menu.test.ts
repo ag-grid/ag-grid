@@ -11,7 +11,6 @@ import {
     objectUrls,
     openMenuEntries,
     openMenuOption,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 
 import type {
@@ -23,8 +22,6 @@ import type {
 } from 'ag-grid-community';
 import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-let restoreOffsetParent: (() => void) | undefined;
 
 function fireContextMenu(element: HTMLElement): void {
     element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
@@ -61,8 +58,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
     afterEach(() => {
         gridMgr.reset();
         clipboardUtils.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
+        vi.restoreAllMocks();
     });
 
     // TC1: rowNumbers without cellSelection — the user's getContextMenuItems must still be honoured.
@@ -73,7 +69,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             getContextMenuItems: () => [{ name: 'Foo' }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -98,7 +93,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             cellSelection: true,
             getContextMenuItems: (params) => params.defaultItems!,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -129,7 +123,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
                 return [{ name: 'Foo' }];
             },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         rightClick(cell(gridDiv, 1, ROW_NUMBERS_COLUMN_ID));
@@ -155,7 +148,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
                 return p.defaultItems ?? [];
             },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -181,7 +173,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowData,
             rowNumbers: true,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -198,7 +189,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowData,
             rowSelection: { mode: 'multiRow' },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -218,7 +208,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             rowSelection: { mode: 'multiRow', copySelectedRows: true },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         api.setFocusedCell(0, 'athlete');
@@ -248,7 +237,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             getContextMenuItems: () => ['cut', 'copy', 'paste', { name: 'Foo' }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         api.setFocusedCell(0, 'athlete');
@@ -279,7 +267,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
                     resolveItems = resolve;
                 }),
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const athlete = cell(gridDiv, 0, 'athlete');
@@ -305,7 +292,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             getContextMenuItems: () => [{ name: 'Clipboard', subMenu: ['cut', 'copy', { name: 'Foo' }] }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         api.setFocusedCell(0, 'athlete');
@@ -330,7 +316,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
                 { name: 'Foo' },
             ],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         api.setFocusedCell(0, 'athlete');
@@ -353,7 +338,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             getContextMenuItems: () => [{ name: 'Clipboard', action, subMenu: ['cut', 'copy'] }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -386,7 +370,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             getContextMenuItems: () => [{ name: 'Clipboard', menuItem: CustomMenuItem, subMenu: ['cut', 'copy'] }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -403,7 +386,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: true,
             rowSelection: { mode: 'multiRow', copySelectedRows: true },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         api.setNodesSelected({ nodes: [api.getDisplayedRowAtIndex(2)!], newValue: true });
@@ -420,7 +402,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             cellSelection: true,
             rowSelection: { mode: 'multiRow' },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
@@ -437,13 +418,13 @@ describe('Row Numbers context menu (AG-16355)', () => {
     test('a row-number cell follows the legacy rowSelection copy behaviour', async () => {
         // the string form of rowSelection is deprecated (#306) but still supported
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const withCopy = await gridMgr.createGridAndWait('rowNumbersCtxLegacy', {
             columnDefs,
             rowData,
             rowNumbers: true,
             rowSelection: 'multiple',
         });
-        restoreOffsetParent = polyfillOffsetParent();
         withCopy.setNodesSelected({ nodes: [withCopy.getDisplayedRowAtIndex(1)!], newValue: true });
         rightClick(cell(getGridElement(withCopy)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
         await clickMenuOption('Copy');
@@ -460,6 +441,9 @@ describe('Row Numbers context menu (AG-16355)', () => {
         rightClick(cell(getGridElement(suppressed)! as HTMLElement, 0, ROW_NUMBERS_COLUMN_ID));
         await waitFor(() => expect(menuOption('Export')).not.toBeNull());
         expect(menuOption('Copy')).toBeNull();
+        const warnings = warnSpy.mock.calls.flat().join(' ');
+        expect(warnings).toContain('`rowSelection` with the values "single" or "multiple"');
+        expect(warnings).toContain('suppressCopyRowsToClipboard');
     });
 
     // A range is not always a copy target: under the legacy API `suppressCopySingleCellRanges` makes the clipboard
@@ -468,6 +452,7 @@ describe('Row Numbers context menu (AG-16355)', () => {
     test('a row-number cell hides Copy when suppressCopySingleCellRanges rejects the range', async () => {
         // the legacy enableRangeSelection/suppressCopySingleCellRanges options are deprecated (#306) but supported
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = await gridMgr.createGridAndWait('rowNumbersCtxSuppressedSingleCellRange', {
             columnDefs,
             rowData,
@@ -475,7 +460,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             enableRangeSelection: true,
             suppressCopySingleCellRanges: true,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -495,6 +479,9 @@ describe('Row Numbers context menu (AG-16355)', () => {
         rightClick(cell(gridDiv, 2, ROW_NUMBERS_COLUMN_ID));
         await clickMenuOption('Copy');
         await waitFor(() => expect(clipboardUtils.getText()).toBe('Michael Phelps\t23\r\nNatalie Coughlin\t25'));
+        const warnings = warnSpy.mock.calls.flat().join(' ');
+        expect(warnings).toContain('enableRangeSelection');
+        expect(warnings).toContain('suppressCopySingleCellRanges');
     });
 
     // With the integration suppressed a row-number right-click leaves an existing range alone, and Copy copies it.
@@ -505,7 +492,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             cellSelection: true,
             rowNumbers: { suppressCellSelectionIntegration: true },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         fireGridPointerDown(cell(gridDiv, 0, 'athlete'));
@@ -526,7 +512,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             getRowId: ({ data }) => data.athlete,
             notesDataSource: { getNote: () => undefined, setNote: () => {} },
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
@@ -542,7 +527,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             rowNumbers: { contextMenuItems: [{ name: 'Bar' }] },
             getContextMenuItems: () => [{ name: 'Foo' }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         rightClick(cell(gridDiv, 0, ROW_NUMBERS_COLUMN_ID));
@@ -560,7 +544,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             cellSelection: true,
             getContextMenuItems: (params) => params.defaultItems!,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -594,7 +577,6 @@ describe('Row Numbers context menu (AG-16355)', () => {
             cellSelection: true,
             allowContextMenuWithControlKey: true,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -627,15 +609,12 @@ describe('Row Numbers context menu items without cell selection integration (AG-
     beforeEach(() => {
         clipboardUtils.init();
         objectUrls.init();
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         gridMgr.reset();
         clipboardUtils.reset();
         objectUrls.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     test('Add Note opens the notes editor for the right-clicked row-number cell', async () => {
@@ -786,14 +765,8 @@ describe('Row Numbers context menu chart items (AG-16355)', () => {
     });
     afterAll(() => canvasPolyfill.reset());
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
-
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     async function chartFromMenu(chartItem: 'Chart Range' | 'Pivot Chart'): Promise<void> {

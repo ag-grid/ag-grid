@@ -160,6 +160,9 @@ const GridExample = () => {
     const addGridDropZone = (side: string, api: GridApi) => {
         const dropApi = side === 'Left' ? rightApi : leftApi;
         const dropZone = dropApi!.getRowDropZoneParams();
+        if (!dropZone) {
+            return;
+        }
 
         api.addRowDropZone(dropZone);
     };
@@ -196,7 +199,11 @@ const GridExample = () => {
 
     const getInnerGridCol = (side: string) => (
         <div className="inner-col">
-            <div className="toolbar">{['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}</div>
+            <div className="toolbar example-controls">
+                <div className="controls-row">
+                    {['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}
+                </div>
+            </div>
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
@@ -214,7 +221,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="example-wrapper">
+            <div className="example-wrapper example-wrapper--row">
                 {getInnerGridCol('Left')}
                 <div className="inner-col vertical-toolbar">
                     <span className="bin" ref={eBin}>

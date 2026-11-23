@@ -50,7 +50,11 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 
     public getInputText(): string {
-        return this.eInput.getInputElement().value;
+        return this.getInputElement().value;
+    }
+
+    public getInputElement(): HTMLInputElement {
+        return this.eInput.getInputElement();
     }
 
     public setValue(value: string | null | undefined, silent?: boolean): void {

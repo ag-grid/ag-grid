@@ -3,22 +3,12 @@ body {
     font-size: 13px;
 }
 
-.example-wrapper {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-}
-
 .drop-containers {
     display: flex;
     flex: 1 1 auto;
     flex-direction: row;
     position: relative;
     overflow: hidden;
-}
-
-.toolbar {
-    height: 30px;
 }
 
 .grid-wrapper {

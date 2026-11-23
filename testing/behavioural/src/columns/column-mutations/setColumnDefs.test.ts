@@ -1,7 +1,3 @@
-/**
- * Split from column-mutations.test.ts — see sibling files for related coverage.
- * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
- */
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -12,7 +8,7 @@ import {
 } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, Column, GridApi } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
@@ -22,6 +18,8 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
+
+import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../../tooltip/legacyTooltipTestUtils';
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
@@ -40,6 +38,7 @@ describe('Column Mutations', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     describe('setColumnDefs: instance preservation', () => {
@@ -650,6 +649,72 @@ describe('Column Mutations', () => {
                 └── b width:200
             `);
         });
+    });
+
+    describe('suppressFieldDotNotation mutations', () => {
+        const rowData = [{ a: { b: 'nested' }, 'a.b': 'flat', x: 'X' }];
+        const cellText = (api: GridApi, colId: string) =>
+            getGridHTMLElement(api)!.querySelector(`.ag-row .ag-cell[col-id="${colId}"]`)!.textContent;
+        const cellValue = (api: GridApi, colKey: string) =>
+            api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey });
+
+        test('switching suppressFieldDotNotation leaves a dot-free field column unchanged', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a.b' }, { field: 'x' }],
+                rowData,
+                suppressFieldDotNotation: false,
+            });
+            await asyncSetTimeout(0);
+            let colDefChangedCount = 0;
+            api.getColumn('x')!.addEventListener('colDefChanged', () => ++colDefChangedCount);
+
+            api.setGridOption('suppressFieldDotNotation', true);
+            await asyncSetTimeout(0);
+
+            expect(colDefChangedCount).toBe(0);
+            expect(cellText(api, 'x')).toBe('X');
+            expect(cellValue(api, 'x')).toBe('X');
+        });
+
+        test('setting the same column definitions again does not redefine a dotted field column', async () => {
+            const columnDefs: ColDef[] = [{ field: 'a.b' }, { field: 'x' }];
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, suppressFieldDotNotation: false });
+            await asyncSetTimeout(0);
+            let colDefChangedCount = 0;
+            api.getColumn('a.b')!.addEventListener('colDefChanged', () => ++colDefChangedCount);
+
+            api.setGridOption('columnDefs', columnDefs);
+            await asyncSetTimeout(0);
+
+            expect(colDefChangedCount).toBe(0);
+            expect(cellText(api, 'a.b')).toBe('nested');
+            expect(cellValue(api, 'a.b')).toBe('nested');
+        });
+
+        test.each([false, true])(
+            'setting the same column definitions again does not redefine tooltipField columns (suppressFieldDotNotation %s)',
+            async (suppressFieldDotNotation) => {
+                allowLegacyTooltipProperties();
+                try {
+                    const columnDefs: ColDef[] = [
+                        { field: 'x', tooltipField: 'a.b' },
+                        { field: 'y', tooltipField: 'x' },
+                    ];
+                    const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, suppressFieldDotNotation });
+                    await asyncSetTimeout(0);
+                    const counts = { x: 0, y: 0 };
+                    api.getColumn('x')!.addEventListener('colDefChanged', () => ++counts.x);
+                    api.getColumn('y')!.addEventListener('colDefChanged', () => ++counts.y);
+
+                    api.setGridOption('columnDefs', columnDefs);
+                    await asyncSetTimeout(0);
+
+                    expect(counts).toEqual({ x: 0, y: 0 });
+                } finally {
+                    resetLegacyTooltipProperties();
+                }
+            }
+        );
     });
 
     describe('in-place colDef mutations (same ref)', () => {
@@ -1351,33 +1416,29 @@ describe('Column Mutations', () => {
             `);
         });
 
-        test('groupId-less group does not match by reference across setGridOption', async () => {
-            // Without groupId, groups can never be reused — every setColumnDefs creates a fresh
-            // AgProvidedColumnGroup. Verifies the existing-lookup correctly skips entries
-            // without `colGroupDef.groupId`.
+        test('a group without groupId keeps its column across a columnDefs update', async () => {
             const api = gridsManager.createGrid('noGroupId', {
                 columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }],
             });
-            await new GridColumns(api, `groupId-less group does not match by reference across setGridOption setup`)
+            await new GridColumns(api, `a group without groupId keeps its column across a columnDefs update setup`)
                 .checkColumns(`
                     CENTER
                     └─┬ "G" GROUP
                       └── a width:200
                 `);
-            await new GridRows(api, `groupId-less group does not match by reference across setGridOption setup`).check(
+            await new GridRows(api, `a group without groupId keeps its column across a columnDefs update setup`).check(
                 `
                     ROOT id:ROOT_NODE_ID
                 `
             );
             await asyncSetTimeout(0);
 
-            // Round-trip with identical structure but no groupId — colId 'a' still reused
-            // (cols reuse independently of groups).
+            // Columns are matched independently of their groups.
             const colABefore = api.getColumn('a');
             api.setGridOption('columnDefs', [{ headerName: 'G', children: [{ colId: 'a' }] }]);
             await new GridColumns(
                 api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
             ).checkColumns(`
                 CENTER
                 └─┬ "G" GROUP
@@ -1385,12 +1446,262 @@ describe('Column Mutations', () => {
             `);
             await new GridRows(
                 api,
-                `groupId-less group does not match by reference across setGridOption after setGridOption columnDefs`
+                `a group without groupId keeps its column across a columnDefs update after setGridOption columnDefs`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
             await asyncSetTimeout(0);
             expect(api.getColumn('a')).toBe(colABefore);
+        });
+
+        test('a group without groupId keeps its open state by position when it is renamed and other groups repeat one groupId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            // warning 273: expected groupId collision
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const defs = (headerName: string) => [
+                { groupId: 'x', children: [{ field: 'a' }] },
+                { groupId: 'x', children: [{ field: 'b' }] },
+                { headerName, children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandRenamedBesideDuplicates', { columnDefs: defs('G') });
+            api.setColumnGroupOpened(api.getColumn('c')!.getOriginalParent()!.getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs('H'));
+
+            const parent = api.getColumn('c')!.getOriginalParent()!;
+            expect([parent.getColGroupDef()!.headerName, parent.isExpanded()]).toEqual(['H', true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('a group without groupId keeps its open state by position when it is renamed and a column colId equals another group groupId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            // warning 273: expected id collision between the colId and the groupId
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('expandRenamedBesideColIdEqualGroupId', {
+                columnDefs: [
+                    { groupId: 'x', children: [{ field: 'a' }] },
+                    { headerName: 'G', children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+                ],
+            });
+            api.setColumnGroupOpened(api.getColumn('c')!.getOriginalParent()!.getGroupId(), true);
+            expect(api.getColumn('c')!.getOriginalParent()!.isExpanded()).toBe(true);
+
+            api.setGridOption('columnDefs', [
+                { colId: 'x', field: 'z' },
+                { groupId: 'x', children: [{ field: 'a' }] },
+                { headerName: 'H', children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+            ]);
+
+            const parent = api.getColumn('c')!.getOriginalParent()!;
+            expect([parent.getColGroupDef()!.headerName, parent.isExpanded()]).toEqual(['H', true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('groups without groupId keep their open states when every header is renamed and a group with a groupId is added', () => {
+            const group = (headerName: string, field: string, groupId?: string) => ({
+                headerName,
+                groupId,
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandRenamedBesideAdded', {
+                columnDefs: [group('Total', 'a'), group('Country', 'b')],
+            });
+            api.setColumnGroupOpened('1', true);
+
+            api.setGridOption('columnDefs', [group('K', 'k', 'k'), group('Gesamt', 'a'), group('Land', 'b')]);
+
+            const opened = (field: string) => api.getColumn(field)!.getOriginalParent()!.isExpanded();
+            expect([opened('k'), opened('a'), opened('b')]).toEqual([false, false, true]);
+        });
+
+        test('groups without groupId keep their open states when every header is renamed around a group kept by its groupId', () => {
+            const group = (headerName: string, field: string, groupId?: string) => ({
+                headerName,
+                groupId,
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandRenamedAroundKept', {
+                columnDefs: [group('Total', 'a'), group('K', 'k', 'k'), group('Country', 'b')],
+            });
+            api.setColumnGroupOpened(api.getColumn('b')!.getOriginalParent()!.getGroupId(), true);
+
+            api.setGridOption('columnDefs', [group('Gesamt', 'a'), group('K', 'k', 'k'), group('Land', 'b')]);
+
+            const opened = (field: string) => api.getColumn(field)!.getOriginalParent()!.isExpanded();
+            expect([opened('a'), opened('k'), opened('b')]).toEqual([false, false, true]);
+        });
+
+        test('a group without groupId keeps its open state when defaultColGroupDef sets a groupId', () => {
+            const defs = () => [
+                { headerName: 'G', children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandDefaultGroupId', {
+                columnDefs: defs(),
+                defaultColGroupDef: { groupId: 'x' },
+            });
+            const group = () => api.getColumn('a')!.getOriginalParent()!;
+            api.setColumnGroupOpened(group().getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs());
+
+            expect(group().isExpanded()).toBe(true);
+        });
+
+        test('renamed groups without groupId take the open states at their positions when a group with a groupId between them is removed', () => {
+            const sub = (headerName: string, field: string) => ({
+                headerName,
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandAroundRemovedGroupId', {
+                columnDefs: [sub('G1', 'a'), { groupId: 'k', children: [{ field: 'b' }] }, sub('G2', 'c')],
+            });
+            const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+            api.setColumnGroupOpened(parentOf('c').getGroupId(), true);
+
+            api.setGridOption('columnDefs', [sub('H1', 'a'), sub('H2', 'c')]);
+
+            expect([parentOf('a').isExpanded(), parentOf('c').isExpanded()]).toEqual([false, true]);
+        });
+
+        test('a padding group has no group definition without defaultColGroupDef', () => {
+            const api = gridsManager.createGrid('paddingNoDefault', {
+                columnDefs: [{ headerName: 'G', children: [{ field: 'a' }] }, { field: 'b' }],
+            });
+
+            expect(api.getColumn('b')!.getOriginalParent()!.getColGroupDef()).toBeNull();
+        });
+
+        test.each([
+            ['their headerNames change, as in a language switch', undefined, ['Group', 'Other'], ['Gruppe', 'Andere']],
+            ['the headerName of the group around them changes', 'outer', ['Group', 'Other'], ['Group', 'Other']],
+        ])(
+            'groups without groupId keep their open states by position when %s',
+            (_name, outerGroupId: string | undefined, before: string[], after: string[]) => {
+                const group = (headerName: string, field: string) => ({
+                    headerName,
+                    children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+                });
+                const defs = (headers: string[], outer: string) => [
+                    {
+                        groupId: outerGroupId,
+                        headerName: outer,
+                        children: [
+                            group(headers[0], 'a'),
+                            group(headers[1], 'b'),
+                            { field: 'c', columnGroupShow: 'open' as const },
+                        ],
+                    },
+                ];
+                const api = gridsManager.createGrid('expandByPosition', { columnDefs: defs(before, 'Outer') });
+                const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+                api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+                api.setGridOption('columnDefs', defs(after, 'Äußere'));
+
+                const outer = parentOf('a').getOriginalParent()!; // `c`'s own parent is a padding group
+                expect([parentOf('a').isExpanded(), parentOf('b').isExpanded(), outer.isExpanded()]).toEqual([
+                    true,
+                    false,
+                    false,
+                ]);
+            }
+        );
+
+        test('a group without groupId keeps its open state by headerName when the group around it is renamed and a group is added beside it', () => {
+            const group = (headerName: string, field: string) => ({
+                headerName,
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandOuterRenamed', {
+                columnDefs: [{ headerName: 'Year', children: [group('Q1', 'a')] }],
+            });
+            const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+            api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+            api.setGridOption('columnDefs', [{ headerName: 'Année', children: [group('Q1', 'a'), group('Q2', 'b')] }]);
+
+            expect([parentOf('a').isExpanded(), parentOf('b').isExpanded()]).toEqual([true, false]);
+        });
+
+        test('a group without groupId after a column keeps its open state by headerName', () => {
+            const defs = () => [
+                { field: 'x' },
+                { headerName: 'G', children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandAfterColumn', { columnDefs: defs() });
+            const parentOf = (field: string) => api.getColumn(field)!.getOriginalParent()!;
+            api.setColumnGroupOpened(parentOf('a').getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs());
+
+            expect(parentOf('a').isExpanded()).toBe(true);
+        });
+
+        test('a group without groupId does not take the open state of a removed group with a groupId and the same headerName', () => {
+            const group = (field: string, groupId?: string) => ({
+                groupId,
+                headerName: 'G',
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandFromGroupId', { columnDefs: [group('a', 'g')] });
+            api.setColumnGroupOpened('g', true);
+
+            api.setGridOption('columnDefs', [group('b')]);
+
+            expect(api.getColumn('b')!.getOriginalParent()!.isExpanded()).toBe(false);
+        });
+
+        test('a duplicate groupId added in an update takes no open state, and keeps its own at its suffixed id', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected groupId collision
+            const group = (field: string) => ({
+                groupId: 'g',
+                children: [{ field }, { field: `${field}2`, columnGroupShow: 'open' as const }],
+            });
+            const api = gridsManager.createGrid('expandDuplicateAdded', { columnDefs: [group('a')] });
+            api.setColumnGroupOpened('g', true);
+            const openStates = () => [
+                api.getProvidedColumnGroup('g')!.isExpanded(),
+                api.getProvidedColumnGroup('g_1')!.isExpanded(),
+            ];
+
+            api.setGridOption('columnDefs', [group('a'), group('b')]);
+            expect(openStates()).toEqual([true, false]);
+
+            api.setColumnGroupOpened('g', false);
+            api.setColumnGroupOpened('g_1', true);
+            api.setGridOption('columnDefs', [group('a'), group('b')]);
+            expect(openStates()).toEqual([false, true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('a group without groupId edited in place to another headerName keeps its open state at its position', () => {
+            const group: ColGroupDef = {
+                headerName: 'G',
+                children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' }],
+            };
+            const api = gridsManager.createGrid('anonymousEdited', { columnDefs: [group] });
+            api.setColumnGroupOpened(api.getColumn('a')!.getOriginalParent()!.getGroupId(), true);
+
+            group.headerName = 'H';
+            api.setGridOption('columnDefs', [group]);
+
+            const parent = api.getColumn('a')!.getOriginalParent()!;
+            expect([parent.getColGroupDef()!.headerName, parent.isExpanded()]).toEqual(['H', true]);
+        });
+
+        test('groups set again after columnDefs [] start closed', () => {
+            const group = (): ColGroupDef => ({
+                groupId: 'g',
+                children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' }],
+            });
+            const api = gridsManager.createGrid('groupsAfterEmpty', { columnDefs: [group()] });
+            api.setColumnGroupOpened('g', true);
+
+            api.setGridOption('columnDefs', []);
+            api.setGridOption('columnDefs', [group()]);
+
+            expect(api.getColumn('a')!.getOriginalParent()!.isExpanded()).toBe(false);
         });
 
         test('expanded state restored on group reuse via groupId', async () => {
@@ -2087,6 +2398,21 @@ describe('Column Mutations', () => {
     });
 
     describe('setColumnDefs: stateful colDef attrs still apply on update (BC)', () => {
+        test('a columnDefs update moving a column width bound past its width brings the width within it', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            api.setColumnWidths([{ key: 'b', newWidth: 300 }]);
+            expect(api.getColumn('b')!.getActualWidth()).toBe(300);
+
+            api.setGridOption('columnDefs', [
+                { field: 'a', minWidth: 250 },
+                { field: 'b', maxWidth: 220 },
+            ]);
+
+            expect([api.getColumn('a')!.getActualWidth(), api.getColumn('b')!.getActualWidth()]).toEqual([250, 220]);
+        });
+
         test('a present pinned colDef re-applies, overwriting a runtime unpin', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 rowData: [{ a: 1, b: 2 }],
@@ -2141,6 +2467,108 @@ describe('Column Mutations', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0
             `);
+        });
+    });
+
+    describe('column definitions changed while the grid builds its columns', () => {
+        /** A text data type whose matcher, once armed, runs `onMatch` the first time the grid infers a column's type. */
+        const matcherOnce = (onMatch: () => void) => {
+            const state = { armed: false, calls: 0 };
+            const dataTypeDefinitions = {
+                mine: {
+                    baseDataType: 'text' as const,
+                    extendsDataType: 'text' as const,
+                    dataTypeMatcher: (value: any) => {
+                        if (state.armed && state.calls++ === 0) {
+                            onMatch();
+                        }
+                        return value === 'never';
+                    },
+                },
+            };
+            return { state, dataTypeDefinitions };
+        };
+        const ids = (cols: Column[] | null) => (cols ?? []).map((col) => col.getColId()).join(',');
+
+        test('after a callback throws during a columnDefs update, the next update applies', () => {
+            const { state, dataTypeDefinitions } = matcherOnce(() => {
+                throw new Error('callback failed');
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y', c: 'z' }],
+                columnDefs: [{ field: 'a' }],
+                dataTypeDefinitions,
+            });
+            state.armed = true;
+            expect(() => api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }])).toThrow('callback failed');
+
+            api.setGridOption('columnDefs', [{ field: 'c' }]);
+
+            expect(ids(api.getColumns())).toBe('c');
+        });
+
+        test('a defaultColDef set by a callback during a columnDefs update applies to every column', () => {
+            let setDefault = () => {};
+            const { state, dataTypeDefinitions } = matcherOnce(() => setDefault());
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y', d: 'w' }],
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                dataTypeDefinitions,
+            });
+            setDefault = () => api.setGridOption('defaultColDef', { width: 150 });
+            state.armed = true;
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'd' }]);
+
+            expect((api.getColumns() ?? []).map((col) => `${col.getColId()}:${col.getActualWidth()}`)).toEqual([
+                'a:150',
+                'b:150',
+                'd:150',
+            ]);
+        });
+
+        test('column definitions set by a column listener after an update take effect at once', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 1, b: 2, c: 3 }],
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            let seenInListener = '';
+            api.getColumn('a')!.addEventListener('sortChanged', () => {
+                if (seenInListener === '') {
+                    api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'c' }]);
+                    seenInListener = ids(api.getColumns());
+                }
+            });
+
+            api.setGridOption('columnDefs', [{ field: 'a', sort: 'asc' }, { field: 'b' }]);
+
+            expect(seenInListener).toBe('a,c');
+        });
+
+        test('a callback setting column definitions and throwing in every build makes the update throw its error', () => {
+            let calls = 0;
+            let api: GridApi | undefined = undefined;
+            api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y' }],
+                columnDefs: [{ field: 'a' }],
+                dataTypeDefinitions: {
+                    mine: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        dataTypeMatcher: (value) => {
+                            // gives up after 10 calls, so a grid that keeps rebuilding ends the test
+                            if (calls !== 0 && ++calls <= 10) {
+                                api!.setGridOption('columnDefs', [{ field: 'a' }, { field: `c${calls}` }]);
+                                throw new Error('callback failed');
+                            }
+                            return value === 'never';
+                        },
+                    },
+                },
+            });
+            calls = 1;
+
+            expect(() => api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }])).toThrow('callback failed');
         });
     });
 });

@@ -219,16 +219,19 @@ describe('Text Filter — buttons & model round-trip', () => {
             });
 
             const filter = await ColumnFilterHarness.open(api, 'name');
-            // eslint-disable-next-line no-restricted-syntax -- outlast TestIdService's 500ms delayed pass scheduled by opening, so only typing can stamp the radios it reveals
-            await asyncSetTimeout(600);
             await filter.setText('li');
 
             const orTestId = agTestIdFor.filterConditionRadioButton({ source: 'column-filter' }, 'OR');
-            const orRadio = await waitFor(() => {
-                const radio = document.querySelector<HTMLInputElement>(`[data-testid="${orTestId}"]`);
-                expect(radio).not.toBeNull();
-                return radio!;
-            });
+            // Bounded below TestIdService's 500ms delayed pass scheduled by opening, so only typing can stamp
+            // the radios it reveals.
+            const orRadio = await waitFor(
+                () => {
+                    const radio = document.querySelector<HTMLInputElement>(`[data-testid="${orTestId}"]`);
+                    expect(radio).not.toBeNull();
+                    return radio!;
+                },
+                { timeout: 250 }
+            );
             await firePointerLikeClick(orRadio);
             await filter.setText('bo', 1);
             await filter.apply();

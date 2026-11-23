@@ -1693,3 +1693,112 @@ describe('header auto-size', () => {
         }
     });
 });
+
+describe('group header resize handle', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const groupDefs = (resizable: boolean[]): ColGroupDef[] => [
+        {
+            headerName: 'G',
+            groupId: 'g',
+            children: resizable.map((value, i) => ({ colId: `c${i}`, field: `c${i}`, width: 100, resizable: value })),
+        },
+    ];
+
+    const createGrid = (resizable: boolean[], id = 'groupHandle'): GridApi =>
+        gridsManager.createGrid(id, { columnDefs: groupDefs(resizable), rowData: [{}] });
+
+    const handle = (api: GridApi): HTMLElement | null =>
+        TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+            '.ag-header-group-cell .ag-header-cell-resize'
+        );
+
+    const handleShown = (api: GridApi): boolean => {
+        const bar = handle(api);
+        return bar !== null && !bar.classList.contains('ag-hidden');
+    };
+
+    const leafWidths = (api: GridApi, count: number): number[] =>
+        Array.from({ length: count }, (_, i) => api.getColumn(`c${i}`)!.getActualWidth());
+
+    const dragHandle = async (api: GridApi): Promise<void> => {
+        const bar = handle(api)!;
+        const dispatcher = new DragEventDispatcher('mouse');
+        await dispatcher.startDrag(bar, 600, 10);
+        await dispatcher.movePointer(bar, 640, 10);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+    };
+
+    const altArrowRightOnGroup = async (api: GridApi): Promise<void> => {
+        api.setFocusedHeader('g');
+        const header = document.activeElement!;
+        header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+        header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+        await asyncSetTimeout(0);
+    };
+
+    // TODO: disabled due to AG-19353 - re-enable once fixed
+    test.skip('a group shows its resize handle exactly while a columnDefs update leaves a leaf resizable, as in a new grid', async () => {
+        const api = createGrid([false, false]);
+        const notResizable = createGrid([false, false], 'notResizable');
+        const resizable = createGrid([true, true], 'resizable');
+        const mixed = createGrid([false, true], 'mixed');
+        expect(handleShown(api)).toBe(false);
+
+        const states: boolean[][] = [
+            [true, true],
+            [false, false],
+            [false, true],
+        ];
+        const shown = [];
+        for (const state of states) {
+            api.setGridOption('columnDefs', groupDefs(state));
+            await asyncSetTimeout(0);
+            shown.push(handleShown(api));
+        }
+        expect({ updated: shown, fresh: [resizable, notResizable, mixed].map(handleShown) }).toEqual({
+            updated: [true, false, true],
+            fresh: [true, false, true],
+        });
+    });
+
+    // TODO: disabled due to AG-19353 - re-enable once fixed
+    test.skip('dragging the handle of a group made resizable by a columnDefs update resizes its leaves', async () => {
+        const api = createGrid([false, false]);
+        api.setGridOption('columnDefs', groupDefs([true, true]));
+        await asyncSetTimeout(0);
+
+        await dragHandle(api);
+
+        const [a, b] = leafWidths(api, 2);
+        expect({ grew: a > 100 && b > 100 }).toEqual({ grew: true });
+    });
+
+    test('Alt+ArrowRight on a group made resizable by a columnDefs update resizes its leaves', async () => {
+        const api = createGrid([false, false]);
+        api.setGridOption('columnDefs', groupDefs([true, true]));
+        await asyncSetTimeout(0);
+
+        await altArrowRightOnGroup(api);
+
+        const [a, b] = leafWidths(api, 2);
+        expect({ grew: a > 100 && b > 100 }).toEqual({ grew: true });
+    });
+
+    test('Alt+ArrowRight on a group whose leaves became not resizable by a columnDefs update resizes nothing', async () => {
+        const api = createGrid([true, true]);
+        api.setGridOption('columnDefs', groupDefs([false, false]));
+        await asyncSetTimeout(0);
+
+        await altArrowRightOnGroup(api);
+
+        expect(leafWidths(api, 2)).toEqual([100, 100]);
+    });
+});

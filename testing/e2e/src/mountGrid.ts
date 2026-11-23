@@ -1,12 +1,13 @@
 import type { Locator, Page } from '@playwright/test';
 import path from 'node:path';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type * as AgGrid from 'ag-grid-community';
 
 declare global {
     interface Window {
+        agGrid: typeof AgGrid;
         /** The API of the grid `mountGrid` created, for code evaluated in the page. */
-        gridApi: GridApi;
+        gridApi: AgGrid.GridApi;
     }
 }
 
@@ -48,7 +49,7 @@ export interface MountGridParams {
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
      */
-    options: () => GridOptions;
+    options: () => AgGrid.GridOptions;
 }
 
 export interface MountedGrid {
@@ -56,7 +57,7 @@ export interface MountedGrid {
     cell(rowIndex: number, colId: string): Locator;
     headerCell(colId: string): Locator;
     /** Runs `fn` in the page with the grid API as its argument. */
-    withApi<T>(fn: (api: GridApi) => T): Promise<T>;
+    withApi<T>(fn: (api: AgGrid.GridApi) => T): Promise<T>;
 }
 
 export async function mountGrid(
@@ -95,13 +96,13 @@ export async function mountGrid(
                 gridDiv.style.width = `${width}px`;
                 gridDiv.style.height = `${height}px`;
             }
-            window.gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
+            window.gridApi = window.agGrid.createGrid(gridDiv, gridOptions);
         },
         { optionsSource: options.toString(), selector: GRID_SELECTOR, shadowDom, width, height }
     );
 
     const grid = page.locator(GRID_SELECTOR);
-    await grid.locator('.ag-root-wrapper').waitFor();
+    await grid.locator('.ag-root-wrapper').first().waitFor();
 
     return {
         grid,

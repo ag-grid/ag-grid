@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, gridEventLog, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 const COLUMNS = ['athlete', 'age', 'country', 'text1', 'text2', 'text3'];
@@ -53,14 +53,13 @@ test.agExample(import.meta, () => {
         expect(widths.every((width) => width > 0)).toBe(true);
     });
 
-    test.eachFramework('changing page re-fits the columns to the new page contents', async ({ page, remoteGrid }) => {
-        // One proxy per test: creating it exposes the `logEvent` binding on the page.
-        const remoteApi = remoteGrid(page, '1');
+    test.eachFramework('changing page re-fits the columns to the new page contents', async ({ page }) => {
         await waitForGridContent(page);
 
-        await remoteApi.logEvent('columnResized', ['finished', 'source']);
-        const autoSizePasses = () =>
-            remoteGrid.eventLog.filter(
+        const log = await gridEventLog(page, '1');
+        await log.record('columnResized', ['finished', 'source']);
+        const autoSizePasses = async () =>
+            (await log.entries()).filter(
                 ([eventType, eventData]) =>
                     eventType === 'columnResized' && eventData.finished && eventData.source === 'autosizeColumns'
             ).length;
@@ -89,7 +88,7 @@ test.agExample(import.meta, () => {
         for (let i = 0; i < 5 && !changed; i++) {
             // The event log is cumulative and never reset, so each page compares against its own
             // snapshot rather than an absolute count.
-            const passesBeforePage = autoSizePasses();
+            const passesBeforePage = await autoSizePasses();
 
             // the previous page's rows are still on screen right after the click, so wait on the page
             // number rather than on row content, which would match before the new page had rendered

@@ -1,7 +1,18 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IHeaderGroupParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IHeaderGroupParams>,
+            required: true,
+        },
+    },
     template: `
         <div class="ag-header-group-cell-label">
-            <div ref="label" class="customHeaderLabel">{{params.displayName}}</div>
+            <div class="customHeaderLabel">{{params.displayName}}</div>
             <div class="customExpandButton" :class="{expanded : groupExpanded, collapsed : !groupExpanded}" v-on:click="expandOrCollapse"><i class="fa fa-arrow-right"></i></div>
         </div>
     `,
@@ -15,12 +26,10 @@ export default {
         this.params.columnGroup
             .getProvidedColumnGroup()
             .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
-        this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) {
-                return false;
-            }
-            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
-        });
+        this.params.setTooltip(
+            'Expand the group to show more columns',
+            () => !this.params.columnGroup.getProvidedColumnGroup().isExpanded()
+        );
         this.syncExpandButtons();
     },
     methods: {
@@ -32,4 +41,4 @@ export default {
             this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         },
     },
-};
+});

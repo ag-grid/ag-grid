@@ -14,10 +14,12 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                <label>Dark mode: <input type="checkbox" @change="event => setDarkMode(event.target.checked)" /></label>
-            </p>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <label>Dark mode: <input type="checkbox" @change="event => setDarkMode(event.target.checked)" /></label>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-vue
                     style="height: 100%;"
@@ -52,7 +54,7 @@ const VueExample = defineComponent({
                 'dark-red'
             );
 
-        function setDarkMode(enabled) {
+        function setDarkMode(enabled: boolean) {
             document.body.dataset.agThemeMode = enabled ? 'dark-red' : 'light-red';
         }
         setDarkMode(false);

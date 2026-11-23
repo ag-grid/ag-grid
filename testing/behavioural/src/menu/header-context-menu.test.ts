@@ -1,9 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, menuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, menuOption } from 'ag-test-utils';
 
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-let restoreOffsetParent: (() => void) | undefined;
 
 function fireContextMenu(element: HTMLElement): void {
     element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
@@ -15,8 +13,6 @@ describe('header context menu on empty header space (AG-18411)', () => {
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     test('right-clicking the empty header space opens the column chooser context menu', async () => {
@@ -24,7 +20,6 @@ describe('header context menu on empty header space (AG-18411)', () => {
             columnDefs: [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }],
             rowData,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         fireContextMenu(document.querySelector('.ag-header-row') as HTMLElement);
 
@@ -37,7 +32,6 @@ describe('header context menu on empty header space (AG-18411)', () => {
             columnDefs: [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }],
             rowData,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         fireContextMenu(document.querySelector('.ag-header-cell') as HTMLElement);
 
@@ -53,7 +47,6 @@ describe('header context menu on empty header space (AG-18411)', () => {
             ],
             rowData,
         });
-        restoreOffsetParent = polyfillOffsetParent();
 
         fireContextMenu(document.querySelector('.ag-header-group-cell') as HTMLElement);
 

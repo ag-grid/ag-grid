@@ -730,7 +730,7 @@
             },
             {
                 "text": "Display Tooltips for Truncated Cell Values and Column Headers",
-                "path": "./component-cell-renderer/#dynamic-tooltips"
+                "path": "./tooltips-columns/#tooltips-for-truncated-text"
             },
             {
                 "text": "Exporting Grid Content as a Formatted Excel Table",
@@ -871,7 +871,7 @@
             },
             {
                 "text": "Interactive Tooltips",
-                "path": "./tooltips/#interactive-tooltips"
+                "path": "./tooltips-show-hide/#interactive-tooltips"
             }
         ]
     },
