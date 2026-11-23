@@ -40,7 +40,7 @@ const measureDropLine = (page: Page, rowIndex: number) =>
             (element) => element.closest('.ag-root-wrapper') === root
         )!;
         const parts = row.matches('.ag-full-width-row:not(.ag-embedded-full-width-row)')
-            ? [row]
+            ? [row.querySelector<HTMLElement>(':scope > .ag-full-width-anchor')!]
             : Array.from(row.querySelectorAll<HTMLElement>(':scope > [class*="-cells"]'));
         const lines: Record<string, number> = {};
         let label: { part: string; offset: number } | null = null;
@@ -52,7 +52,7 @@ const measureDropLine = (page: Page, rowIndex: number) =>
             const rtl = getComputedStyle(part).direction === 'rtl';
             const left = part.getBoundingClientRect().left + part.clientLeft;
             const offsetOf = (rect: DOMRect) => (rtl ? left + part.clientWidth - rect.right : rect.left - left);
-            const name = part === row ? 'row' : part.classList[0];
+            const name = part.matches('.ag-full-width-anchor') ? 'row' : part.classList[0];
             // Firefox misreports a pseudo-element's resolved `right` in RTL, so the end is derived from `left`
             const lineLeft = parseFloat(after.left) + parseFloat(after.marginLeft);
             lines[name] = Math.round(rtl ? part.clientWidth - lineLeft - parseFloat(after.width) : lineLeft);
