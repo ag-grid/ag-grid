@@ -18,13 +18,13 @@ Migrating takes four steps:
 3. [Set `enableFilterHandlers: true`](#step-3-set-the-flag-and-verify) and verify.
 4. Remove any `enableFilterHandlers: false` opt-out.
 
-A grid that uses only the grid-provided filters, with none of the features listed in Step 1, behaves the same in both modes and does not need any change.
+A grid that uses only the grid-provided filters, with none of the features listed in Step 1, behaves the same in both modes and does not need any change. It can leave `enableFilterHandlers` unset.
 
 ## Rules
 
 Follow these rules when migrating.
 
-- **Migrate the whole grid at once.** `enableFilterHandlers` is a grid option, not a column option. Every custom filter, custom floating filter and Multi Filter in the grid must be migrated in the same change that sets the flag to `true`.
+- **Migrate the whole grid at once.** `enableFilterHandlers` is a grid option, not a column option. A grid with any case from Step 1 must migrate all of its cases in the same change that sets the flag to `true`.
 - **There is no component that works in both modes.** A legacy filter component keeps its logic in the component, whereas a filter handler component only displays the model. Do not try to write one component that supports both. A custom filter component given as `{ component, doesFilterPass }` or `{ component, handler }` is ignored while the flag is unset: the grid uses the default filter in its place and logs [error #335](./errors/335/).
 - **Do not set `true` as a shortcut.** Set `enableFilterHandlers: true` only after each case in Step 2 has been migrated and checked against this page. Setting it earlier gives each legacy custom filter a placeholder handler that passes every row, and logs [error #277](./errors/277/).
 - **A grid warning means the code needs attention, not that it is wrong.** Some warned code, such as a React floating filter that only uses `model` and `onModelChange`, may behave the same in both modes. The grid cannot tell, so it warns until `enableFilterHandlers` is set explicitly. Check the code against Step 2, then set the flag.
@@ -101,6 +101,52 @@ const gridOptions = {
 ```
 
 `doesFilterPass` is only called while the model is not `null`. With the Server-Side Row Model the logic is not used, so `doesFilterPass` can be omitted, but the component must still be migrated. If the filter needs `getModelAsString` or to process the model before applying it, provide a `handler` instead. See [Filter Logic](./component-filter/#filter-logic).
+
+`doesFilterPass` receives `model`, the filter model, which is not `null` while the filter is active. It also receives `node` and `data` for the row, and `handlerParams`, where `handlerParams.getValue(node)` returns the column's value for the row.
+
+A component registered by name migrates the same way. Keep the registration and give its name as `component`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableFilterHandlers: true,
+    components: { containsFilter: ContainsFilterDisplay },
+    columnDefs: [
+        {
+            field: 'name',
+            filter: {
+                component: 'containsFilter',
+                doesFilterPass: ({ model, node, handlerParams }) =>
+                    String(handlerParams.getValue(node)).toLowerCase().includes(model.toLowerCase()),
+            },
+        },
+    ],
+};
+```
+
+A custom child of a Multi Filter takes the same `{ component, doesFilterPass }` object as its `filter`. The Multi Filter model holds the child's model at the child's index, for example `{ filterType: 'multi', filterModels: ['alp'] }`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableFilterHandlers: true,
+    columnDefs: [
+        {
+            field: 'name',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: {
+                            component: ContainsFilterDisplay,
+                            doesFilterPass: ({ model, node, handlerParams }) =>
+                                String(handlerParams.getValue(node)).toLowerCase().includes(model.toLowerCase()),
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+```
 
 {% if isFramework("javascript") %}
 Component, before:
@@ -194,8 +240,6 @@ Change `IFilterAngularComp` to `IFilterDisplayAngularComp`, remove the `doesFilt
 Change the component to implement the `FilterDisplay` interface, remove the `doesFilterPass`, `getModel`, `setModel` and `isFilterActive` methods, and read the model from `this.params.model`. See [FilterDisplay](./component-filter/#filterdisplay).
 {% /if %}
 
-Do the same for custom filters used as children of a Multi Filter, whether given in `filterParams.filters` as an object or as a function result.
-
 ### Custom Floating Filters
 
 | Legacy                                        | Replacement                                                                                            |
@@ -204,6 +248,8 @@ Do the same for custom filters used as children of a Multi Filter, whether given
 | `params.currentParentModel()`                 | `params.model`                                                                                         |
 | `params.parentFilterInstance(callback)`       | `params.onModelChange(model)` to change the model, or `params.getHandler()` to call the filter handler |
 | `params.filterParams.filterChangedCallback()` | `params.onModelChange(model)`                                                                          |
+
+Unlike a filter display, the floating filter's `refresh(params)` returns nothing.
 
 {% if isFramework("javascript") %}
 ```js
@@ -288,15 +334,17 @@ See [Floating Filter Component](./component-floating-filter/).
 
 `filterModified` and `onFilterModified` do not fire when `enableFilterHandlers` is `true`.
 
-| Legacy                                            | Replacement                                         |
-| ------------------------------------------------- | --------------------------------------------------- |
-| `filterModified` event, `onFilterModified` option | `filterUiChanged` event, `onFilterUiChanged` option |
-| `getModelFromUi()`                                | `api.getColumnFilterModel(column, true)`            |
+| Legacy                                            | Replacement                                                                                                         |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `filterModified` event, `onFilterModified` option | `filterUiChanged` and `floatingFilterUiChanged` events, `onFilterUiChanged` and `onFloatingFilterUiChanged` options |
+| `getModelFromUi()`                                | `api.getColumnFilterModel(column, true)`                                                                            |
 
-`filterUiChanged` fires when the filter UI changes, for the grid-provided filters and for custom filters that call `onUiChange()`. `floatingFilterUiChanged` fires when a floating filter calls `onUiChange()`.
+`filterModified` fired for changes in the filter and in its floating filter. Listen to both replacements to keep that. `filterUiChanged` fires when the filter's own UI changes, such as typing in the filter popup, for the grid-provided filters and for custom filters that call `onUiChange()`. `floatingFilterUiChanged` fires when the UI of a floating filter changes, including typing in a grid-provided floating filter.
+
+In `api.getColumnFilterModel(column, true)`, `column` is a column ID or a `Column`.
 
 {% if isFramework("angular") %}
-In templates, change the `(filterModified)` output to `(filterUiChanged)`.
+In templates, change the `(filterModified)` output to `(filterUiChanged)` and `(floatingFilterUiChanged)`.
 {% /if %}
 
 ### Multi Filter
@@ -315,13 +363,15 @@ With `enableFilterHandlers` set to `true`:
 | `applyModel()`         | `api.doFilterAction({ colId, action: 'apply' })` |
 | `isFilterActive()`     | `api.getColumnFilterModel(column) != null`       |
 
+`api.setColumnFilterModel` returns a promise and applies the model, so no further `api.onFilterChanged()` call is needed.
+
 - The model is read back as it was given, including a partial model. Legacy filter mode rebuilt it from the child filters, with `null` for each inactive child. Code that depends on the `null` entries in `filterModels` needs updating.
 
 See [Applying Multi Filters](./filter-multi/#applying-multi-filters).
 
 ## Step 3: Set the Flag and Verify
 
-1. Set `enableFilterHandlers: true`, in the same change as the Step 2 migrations.
+1. Set `enableFilterHandlers: true`, in the same change as the Step 2 migrations. A grid with no cases from Step 1 can leave it unset.
 2. Run the application, and open the console. None of the following should be logged:
     - warnings #343 to #347, which mean a legacy case remains;
     - [error #277](./errors/277/), which means a custom filter has no `doesFilterPass` or `handler`;

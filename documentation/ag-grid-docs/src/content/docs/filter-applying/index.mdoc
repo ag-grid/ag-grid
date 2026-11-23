@@ -37,7 +37,7 @@ The example below demonstrates using the different buttons. It also demonstrates
 Note the following about filter events:
 
 - `onFilterOpened` is called when the filter is opened.
-- `onFilterUiChanged` is called when the filter UI changes regardless of whether the Apply button is present. It replaces `onFilterModified`, which is deprecated and does not fire when `enableFilterHandlers = true`.
+- `onFilterUiChanged` is called when the filter UI changes regardless of whether the Apply button is present. Together with `onFloatingFilterUiChanged`, it replaces `onFilterModified`, which is deprecated and does not fire when `enableFilterHandlers = true`.
 - `onFilterChanged` is called only after a new filter is applied.
 - Looking at the console, it can be noted when a filter is changed, the results of `api.getColumnFilterModel(column)` and `api.getColumnFilterModel(column, true)` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied). The second replaces the deprecated `getModelFromUi()`.
 

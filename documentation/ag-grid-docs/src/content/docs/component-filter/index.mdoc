@@ -477,12 +477,12 @@ See [Floating Filter Component](./component-floating-filter/).
 
 The `filterModified` event and `onFilterModified` grid option are deprecated, and do not fire when `enableFilterHandlers` is `true`. Use the following instead:
 
-| Deprecated                            | Replacement                              |
-| ------------------------------------- | ---------------------------------------- |
-| `filterModified` / `onFilterModified` | `filterUiChanged` / `onFilterUiChanged`  |
-| `getModelFromUi()`                    | `api.getColumnFilterModel(column, true)` |
+| Deprecated                            | Replacement                                                                                         |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `filterModified` / `onFilterModified` | `filterUiChanged` / `onFilterUiChanged` and `floatingFilterUiChanged` / `onFloatingFilterUiChanged` |
+| `getModelFromUi()`                    | `api.getColumnFilterModel(column, true)`                                                            |
 
-`filterUiChanged` fires when the filter UI changes, for the grid-provided filters and for custom filters that call `onUiChange()`. `floatingFilterUiChanged` fires when a floating filter calls `onUiChange()`. See [Applying Filters](./filter-applying/).
+`filterModified` fired for changes in the filter and in its floating filter, so listen to both replacements. `filterUiChanged` fires when the filter's own UI changes, such as typing in the filter popup, for the grid-provided filters and for custom filters that call `onUiChange()`. `floatingFilterUiChanged` fires when the UI of a floating filter changes, including typing in a grid-provided floating filter. See [Applying Filters](./filter-applying/).
 
 ### Multi Filter
 
