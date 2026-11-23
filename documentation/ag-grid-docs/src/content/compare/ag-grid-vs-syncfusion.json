@@ -1,0 +1,617 @@
+{
+    "meta": {
+        "title": "AG Grid vs Syncfusion: Features, Pricing and Licensing",
+        "description": "Compare AG Grid and Syncfusion Data Grid feature by feature: framework support, free and paid features, large datasets, pricing and licensing.",
+        "targetTerm": "ag grid vs syncfusion"
+    },
+    "analyticsPrefix": "compare-syncfusion",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-19",
+    "competitor": {
+        "name": "Syncfusion Data Grid",
+        "slug": "syncfusion",
+        "url": "https://www.syncfusion.com/javascript-ui-controls/js-data-grid",
+        "logo": "/images/compare/logos/syncfusion.png"
+    },
+    "hero": {
+        "heading": "AG Grid vs Syncfusion",
+        "subHeading": "Compare AG Grid vs Syncfusion Data Grid on framework support, free and paid features, large datasets, pricing and licensing."
+    },
+    "shortAnswer": "AG Grid Community is free under the MIT licence for organisations of any size. Syncfusion Data Grid is commercial software: its free Community License is limited to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees, and other organisations need a paid licence such as the Grid SDK, an annual subscription per developer. Both support React, Angular, Vue and plain JavaScript, and Syncfusion also covers Blazor, other .NET platforms and Flutter. In Syncfusion, pivoting and tree data are separate Pivot Table and Tree Grid components; in AG Grid they are features of the grid itself, in [AG Grid Enterprise](/license-pricing/).",
+    "keyFigures": [
+        {
+            "value": "$0",
+            "label": "AG Grid Community for any company size",
+            "detail": "MIT licence with no revenue or headcount limits."
+        },
+        {
+            "value": "AI",
+            "label": "Natural-language grid control",
+            "detail": "Users query and change the grid in plain language with AG Grid's AI Toolkit."
+        },
+        {
+            "value": "$1M",
+            "label": "Syncfusion Community License revenue limit",
+            "detail": "Also limited to 5 or fewer developers, 10 or fewer employees and no more than $3M in outside capital."
+        }
+    ],
+    "features": {
+        "subHeading": "Which features each grid includes, and which plan they are in. Syncfusion's Grid SDK features are also available under its free Community License to organisations that meet its eligibility limits.",
+        "groups": [
+            {
+                "name": "Platform",
+                "rows": [
+                    {
+                        "feature": "Frameworks",
+                        "docsUrl": "./getting-started/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "React, Angular, Vue and plain JavaScript"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "React, Angular, Vue, JavaScript and TypeScript; also Blazor, ASP.NET Core and MVC, .NET MAUI, WPF, WinForms, WinUI, UWP and Flutter",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "TypeScript",
+                        "docsUrl": "./typescript-generics/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Typed row data, cell values and grid context"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "npm packages ship TypeScript declaration files",
+                            "sourceUrl": "https://www.npmjs.com/package/@syncfusion/ej2-grids",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Ready-made grid UI",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Renders its own UI"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Renders its own UI; the React component extends the Grid class of the framework-agnostic @syncfusion/ej2-grids package",
+                            "sourceUrl": "https://unpkg.com/@syncfusion/ej2-react-grids@35.2.12/src/grid/grid.component.d.ts",
+                            "checkedOn": "2026-11-19"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Data and performance",
+                "rows": [
+                    {
+                        "feature": "Row virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Opt-in through enableVirtualization; not compatible with some features, such as batch editing and detail templates",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/scrolling/virtual-scrolling",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Column virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Opt-in through enableColumnVirtualization, alongside row virtualisation; not compatible with some features, such as grouping and batch editing",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/scrolling/virtual-scrolling",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Remote data through adaptors such as OData, Web API, URL and GraphQL, with paging, sorting and filtering on the server",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/data-binding/remote-data",
+                            "checkedOn": "2026-11-19"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Core grid features",
+                "rows": [
+                    {
+                        "feature": "Sorting",
+                        "docsUrl": "./row-sorting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Single and multi-column sorting"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Single and multi-column sorting",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/sorting",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Filtering",
+                        "docsUrl": "./filtering/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Text, number, date and quick filters; Set, Multi and Advanced filters in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Filter bar, and Menu, Excel and CheckBox filter types",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/filtering/filtering",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Cell editing",
+                        "docsUrl": "./cell-editing/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in editors and undo/redo"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Inline, dialog and batch edit modes",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/editing/edit",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Column pinning",
+                        "docsUrl": "./column-pinning/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Pin columns left or right"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Frozen columns on the left, right or in a fixed section",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/columns/frozen-column",
+                            "checkedOn": "2026-11-19"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Drag column headers to the group drop area; lazy-load grouping for large datasets",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/grouping/grouping",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Aggregation",
+                        "docsUrl": "./aggregation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Built-in aggregates in footer, group footer and group caption cells",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/aggregates/aggregates",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "A separate Pivot Table component, included in the Grid SDK",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "A separate Tree Grid component, included in the Grid SDK",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Master / detail",
+                        "docsUrl": "./master-detail/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Hierarchy grid with nested child grids, or detail templates",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/hierarchy-grid",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Integrated charts",
+                        "docsUrl": "./integrated-charts/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Charts from selected rows through the context menu, using the separate @syncfusion/ej2-grid-chart package",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/integrate-chart-in-grid",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Selection and export",
+                "rows": [
+                    {
+                        "feature": "Cell range selection",
+                        "docsUrl": "./cell-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Includes the fill handle"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Flow, Box and BoxWithBorder cell selection modes",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/selection/cell-selection",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Clipboard",
+                        "docsUrl": "./clipboard/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Copy and paste, and an AutoFill handle; pasting and AutoFill need Box cell selection and batch editing",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/clipboard",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "CSV export",
+                        "docsUrl": "./csv-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "csvExport method",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/excel-export/excel-exporting",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Excel (.xlsx) export",
+                        "docsUrl": "./excel-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Including styles and formulas"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "excelExport method",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/excel-export/excel-exporting",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built in, with no third-party libraries"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "pdfExport method",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/pdf-export/pdf-export",
+                            "checkedOn": "2026-11-19"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Styling, accessibility and support",
+                "rows": [
+                    {
+                        "feature": "Theming",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in themes, the Theming API and the Theme Builder"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Built-in themes including Tailwind 3.4, Bootstrap 5.3, Fluent 2 and Material 3, with CSS variables; Theme Studio",
+                            "sourceUrl": "https://ej2.syncfusion.com/react/documentation/appearance/theme",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Accessibility",
+                        "docsUrl": "./accessibility/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "ARIA attributes and keyboard navigation"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Follows the WAI-ARIA grid pattern; Syncfusion rates its WCAG 2.2, Section 508 and keyboard navigation support as Intermediate",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/accessibility",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "AI coding tools",
+                        "docsUrl": "./mcp-server/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "MCP server; needs a Syncfusion licence (commercial, Community or trial) and an API key",
+                            "sourceUrl": "https://ej2.syncfusion.com/react/documentation/mcp",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in AI features in the web Data Grid; the Smart DataGrid is for .NET MAUI and WPF only",
+                            "sourceUrl": "https://www.syncfusion.com/react-components/react-data-grid/evaluation-guide",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Technical support",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Ticketed support with guaranteed response times; Community support through GitHub"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Business Support included in the list price; Standard and Enterprise support levels also offered",
+                            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ],
+        "competitor": [
+            {
+                "plan": "Community License",
+                "cost": "conditional",
+                "licence": "Eligible organisations only: under $1M annual gross revenue, 5 or fewer developers, 10 or fewer employees and never more than $3M in outside capital",
+                "sourceUrl": "https://www.syncfusion.com/products/communitylicense",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Grid SDK",
+                "cost": "paid",
+                "licence": "Annual subscription per developer, minimum one year, with Business Support; Data Grid, Tree Grid, Pivot Table and Smart DataGrid",
+                "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "UI Component Suite",
+                "cost": "paid",
+                "licence": "Annual subscription per developer, minimum one year, with Business Support; includes all seven standalone UI SDKs",
+                "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+                "checkedOn": "2026-11-11"
+            }
+        ]
+    },
+    "chooseIf": {
+        "product": [
+            "Your organisation is outside Syncfusion's Community License limits and wants a free grid.",
+            "You want a perpetual licence rather than an annual subscription.",
+            "You want pivoting and tree data in the same grid component."
+        ],
+        "competitor": [
+            "You build with Blazor or other .NET platforms.",
+            "You already use other Syncfusion components.",
+            "Your organisation qualifies for the Community License."
+        ]
+    },
+    "faq": [
+        {
+            "question": "How much does Syncfusion cost?",
+            "answer": "The Syncfusion Grid SDK and the UI Component Suite, which includes all seven of Syncfusion's standalone UI SDKs, are both annual subscriptions per developer, with a minimum term of one year, and include Business Support. Syncfusion publishes its prices on its pricing page. Organisations that meet the Community License limits can apply for a free licence."
+        },
+        {
+            "question": "Is Syncfusion UI free?",
+            "answer": "Only for organisations that qualify for the Syncfusion Community License: under $1M annual gross revenue, 5 or fewer developers, 10 or fewer employees and never more than $3M in outside capital. Government bodies funded by taxes are not eligible. AG Grid Community is free under the MIT licence for any organisation."
+        },
+        {
+            "question": "What is Syncfusion used for?",
+            "answer": "Syncfusion sells UI component libraries for web, desktop and mobile applications, including a data grid, charts, a scheduler and document-processing SDKs."
+        },
+        {
+            "question": "Does Syncfusion work with Angular?",
+            "answer": "Yes. Syncfusion Data Grid is available for Angular, React, Vue and JavaScript. AG Grid also supports all four."
+        },
+        {
+            "question": "What is AG Grid used for?",
+            "answer": "AG Grid is a JavaScript data grid for displaying, editing and analysing tabular data in web applications built with React, Angular, Vue or plain JavaScript. Its features include sorting, filtering, cell editing and virtualisation for large datasets and, in Enterprise, row grouping, pivoting, Excel export and integrated charts."
+        },
+        {
+            "question": "Can I use AG Grid for free?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model. See [Community vs Enterprise](./community-vs-enterprise/)."
+        },
+        {
+            "question": "Does AG Grid have AI features for users?",
+            "answer": "Yes. AG Grid Enterprise's AI Toolkit connects your own LLM so users can query and change the grid in plain language. Syncfusion's web Data Grid has no built-in AI features; its Smart DataGrid is for .NET MAUI and WPF only."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Syncfusion Data Grid is commercial software.",
+            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "Syncfusion's free Community License is limited to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital; government bodies funded by taxes are not eligible; eligible organisations apply and are validated.",
+            "sourceUrl": "https://www.syncfusion.com/products/communitylicense",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Organisations outside the Community License limits need a paid licence.",
+            "sourceUrl": "https://www.syncfusion.com/products/communitylicense",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Syncfusion Data Grid supports React, Angular, Vue and JavaScript, and also Blazor, other .NET platforms and Flutter.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "In Syncfusion, pivoting and tree data are separate Pivot Table and Tree Grid components, included in the Grid SDK.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Syncfusion sells UI component libraries for web, desktop and mobile applications, including a data grid, charts, a scheduler and document-processing SDKs.",
+            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Syncfusion has an MCP server for AI coding assistants, which needs a Syncfusion licence and an API key.",
+            "sourceUrl": "https://ej2.syncfusion.com/react/documentation/mcp",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "The Syncfusion Smart DataGrid is for .NET MAUI and WPF only, and the Grid SDK includes the Data Grid, Tree Grid, Pivot Table and Smart DataGrid.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "Syncfusion Data Grid supports lazy-load grouping for large datasets.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/grouping/lazy-load-grouping",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "The Syncfusion Grid SDK and UI Component Suite are annual subscriptions per developer, minimum one year, including Business Support; the UI Component Suite includes all seven standalone UI SDKs.",
+            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}

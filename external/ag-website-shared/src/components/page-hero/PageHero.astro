@@ -3,7 +3,11 @@ import styles from './PageHero.module.scss';
 
 /**
  * Each part takes either a plain string prop or, for markup a string can't express
- * (a logotype standing in for words, a forced line break), a same-named slot.
+ * (a logotype standing in for words, a forced line break), a same-named slot. The eyebrow
+ * is a `div`, so its slot can hold block markup such as a breadcrumb `nav`.
+ *
+ * Slots:
+ * - media: an image or logo lockup between the eyebrow and the headline.
  */
 interface Props {
     eyebrow?: string;
@@ -26,10 +30,11 @@ const hasSubhead = subhead != null || Astro.slots.has('subhead');
 
 <section class:list={[styles.pageHero, tone === 'brand' && styles.pageHeroBrand]}>
     {hasEyebrow && (
-        <p class={styles.pageHeroEyebrow}>
+        <div class={styles.pageHeroEyebrow}>
             <slot name="eyebrow">{eyebrow}</slot>
-        </p>
+        </div>
     )}
+    <slot name="media" />
     {hasHeadline && (
         <h1 class={styles.pageHeroHeadline}>
             <slot name="headline">{headline}</slot>

@@ -1,0 +1,122 @@
+---
+/**
+ * The comparison page template (`/compare/{product}-vs-{competitor}/`), shared by AG Grid,
+ * AG Charts and AG Studio. It renders page content only: each site wraps it in its own Layout,
+ * passing the JSON-LD from `buildDecisionPageStructuredData` plus its reviewer nodes.
+ *
+ * Slots:
+ * - review-credit: the site's "Technically reviewed by" credit, rendered in the hero beside the last-updated date.
+ *
+ * Section order and labels match `buildComparisonPageMarkdown`, the page's `.md` twin.
+ */
+import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
+import {
+    renderFAQAnswers,
+    renderMarkdocBlocksHtml,
+} from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
+import styles from './DecisionPage.module.scss';
+import { COMPARISON_SECTIONS, comparisonPageName } from './decisionPageText';
+import ChooseIf from './sections/ChooseIf.astro';
+import DecisionHero from './sections/DecisionHero.astro';
+import DecisionSection from './sections/DecisionSection.astro';
+import FeatureMatrix from './sections/FeatureMatrix.astro';
+import GetStartedPanel from './sections/GetStartedPanel.astro';
+import KeyFigures from './sections/KeyFigures.astro';
+import PricingTables from './sections/PricingTables.astro';
+import RelatedPages from './sections/RelatedPages.astro';
+import type { ComparisonPageContent, DecisionPageSite, RelatedPageGroup } from './types';
+
+interface Props {
+    content: ComparisonPageContent;
+    site: DecisionPageSite;
+    /** The cluster name shown in the breadcrumb. */
+    hubName: string;
+    related: RelatedPageGroup[];
+}
+
+const { content, site, hubName, related } = Astro.props;
+const { productName } = site;
+const competitorName = content.competitor.name;
+const product = { name: productName, logo: site.productLogo };
+const competitor = {
+    name: competitorName,
+    logo: content.competitor.logo && site.resolveUrl(content.competitor.logo),
+};
+---
+
+<DecisionHero
+    site={site}
+    hubName={hubName}
+    pageName={comparisonPageName(productName, competitorName)}
+    heading={content.hero.heading}
+    subHeading={content.hero.subHeading}
+    lastUpdated={content.lastUpdated}
+    analyticsPrefix={content.analyticsPrefix}
+    logos={{ product: product.logo, competitor: competitor.logo }}
+>
+    <slot name="review-credit" slot="review-credit" />
+</DecisionHero>
+
+<DecisionSection
+    id="short-answer"
+    eyebrow={`${productName} vs ${competitorName}`}
+    heading={COMPARISON_SECTIONS.shortAnswer}
+>
+    <div class={styles.shortAnswer} set:html={renderMarkdocBlocksHtml(content.shortAnswer, site.framework)} />
+</DecisionSection>
+
+<DecisionSection id="key-differences" heading={COMPARISON_SECTIONS.keyFigures} tone="muted">
+    <KeyFigures figures={content.keyFigures} />
+</DecisionSection>
+
+<DecisionSection id="features" heading={COMPARISON_SECTIONS.features} subHeading={content.features.subHeading}>
+    <FeatureMatrix
+        groups={content.features.groups}
+        product={product}
+        competitor={competitor}
+        resolveUrl={site.resolveUrl}
+    />
+</DecisionSection>
+
+<DecisionSection id="pricing" heading={COMPARISON_SECTIONS.pricing} subHeading={content.pricing.subHeading}>
+    <PricingTables
+        tables={[
+            { name: productName, rows: content.pricing.product, isProduct: true },
+            { name: competitorName, rows: content.pricing.competitor },
+        ]}
+        site={site}
+        analyticsPrefix={content.analyticsPrefix}
+    />
+</DecisionSection>
+
+<DecisionSection id="choose" heading={COMPARISON_SECTIONS.chooseIf} tone="muted">
+    <ChooseIf
+        options={[
+            { name: productName, reasons: content.chooseIf.product, isProduct: true },
+            { name: competitorName, reasons: content.chooseIf.competitor },
+        ]}
+        site={site}
+        analyticsPrefix={content.analyticsPrefix}
+    />
+</DecisionSection>
+
+{content.faq.length > 0 && (
+    <DecisionSection id="faq" heading={COMPARISON_SECTIONS.faq}>
+        <LandingPageFAQ
+            client:load
+            FAQData={renderFAQAnswers(content.faq, site.framework)}
+            analyticsEventName={`${content.analyticsPrefix}-expand-faq`}
+        />
+    </DecisionSection>
+)}
+
+<DecisionSection id="get-started" heading={COMPARISON_SECTIONS.getStarted} headingHidden>
+    <GetStartedPanel site={site} analyticsPrefix={content.analyticsPrefix} />
+</DecisionSection>
+
+{related.length > 0 && (
+    <DecisionSection id="related" heading={COMPARISON_SECTIONS.related}>
+        <RelatedPages groups={related} resolveUrl={site.resolveUrl} />
+    </DecisionSection>
+)}
