@@ -263,6 +263,7 @@ import {
     _BOOLEAN_MIXED_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _processOnChange,
+    _reportFilterModifiedListened,
     createGrid,
 } from 'ag-grid-community';
 
@@ -350,6 +351,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
             if (api) {
                 this.api = api;
+                if (this.isEmitterUsed('filterModified')) {
+                    _reportFilterModifiedListened(api);
+                }
             }
 
             this._initialised = true;
