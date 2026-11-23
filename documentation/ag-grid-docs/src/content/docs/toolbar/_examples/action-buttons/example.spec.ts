@@ -33,11 +33,13 @@ test.agExample(import.meta, () => {
 
         await page.locator('.ag-toolbar-button[aria-label="Open Column Chooser"]').click();
         await expect(page.locator('.ag-dialog')).toBeVisible();
+        const firstColumn = page.locator('.ag-column-select-list .ag-virtual-list-item').first();
+        await expect(firstColumn).toBeVisible();
 
         await page.keyboard.press('Tab');
         await expect(page.locator('.ag-column-select-header-filter-wrapper input')).toBeFocused();
         await page.keyboard.press('Tab');
-        await expect(page.locator('.ag-column-select-list .ag-virtual-list-item').first()).toBeFocused();
+        await expect(firstColumn).toBeFocused();
         await page.keyboard.press('Tab');
 
         await expect(page.locator('#focus-after-grid')).toBeFocused();

@@ -392,6 +392,7 @@ test.agExample(import.meta, () => {
             await form.locator('.ag-input-field-input').first().fill('Age Plus Ten');
             await form.locator('.ag-picker-field').click();
             await page.locator('.ag-select-list .ag-list-item', { hasText: 'Number' }).click();
+            await form.locator('textarea').click();
             await form.locator('textarea').fill('[Age] + 10');
             await page.keyboard.press('Escape');
             await expect(form).toBeHidden();
@@ -421,6 +422,7 @@ test.agExample(import.meta, () => {
             await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
             await expect(form).toBeVisible();
             await form.locator('.ag-input-field-input').first().fill('Age Plus Twenty');
+            await form.locator('textarea').click();
             await form.locator('textarea').fill('[Age] + 20');
             await page.keyboard.press('Escape');
             await expect(form).toBeHidden();
