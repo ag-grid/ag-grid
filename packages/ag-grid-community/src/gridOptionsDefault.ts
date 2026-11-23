@@ -68,6 +68,7 @@ export const GRID_OPTION_DEFAULTS = {
     detailRowAutoHeight: false,
     tabIndex: 0,
     suppressInputClearButton: false,
+    readOnlyFloatingFilterClickAction: 'selectText',
     enableInputAutoComplete: false,
     rowBuffer: 10,
     stickyRowsMaxViewportRatio: 0.5,

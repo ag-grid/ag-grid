@@ -13,6 +13,7 @@ import type {
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
+import { _addReadOnlyFloatingFilterClick, _clearFloatingFilterModel } from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
@@ -35,12 +36,14 @@ export abstract class TextInputFloatingFilter<
 
     private applyActive: boolean;
     private pendingEdit = false;
+    private editable = false;
     private refreshValueTooltip?: () => void;
 
     protected abstract createFloatingFilterInputService(params: TParams): FloatingFilterInputService;
 
     public postConstruct(): void {
         this.setTemplate(TextInputFloatingFilterElement);
+        _addReadOnlyFloatingFilterClick(this.beans, this, () => this.params.showParentFilter());
     }
     protected override defaultDebounceMs: number = 500;
 
@@ -92,6 +95,7 @@ export abstract class TextInputFloatingFilter<
             autoComplete: browserAutoComplete ?? (filterParams as TextFilterParams).browserAutoComplete,
             placeholder,
         });
+        inputSvc.setClearable(!readOnly);
 
         this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
@@ -106,7 +110,11 @@ export abstract class TextInputFloatingFilter<
             inputSvc.setValueClearedListener(() => {
                 this.refreshValueTooltip?.();
                 clearTimeout(debounceTimeout);
-                this.syncUpWithParentFilter();
+                if (this.editable) {
+                    this.syncUpWithParentFilter();
+                } else {
+                    _clearFloatingFilterModel(this.beans, this.params.column as AgColumn);
+                }
             });
         }
     }
@@ -182,6 +190,7 @@ export abstract class TextInputFloatingFilter<
     }
 
     protected setEditable(editable: boolean): void {
+        this.editable = editable;
         this.inputSvc.setEditable(editable);
         this.refreshValueTooltip?.();
     }

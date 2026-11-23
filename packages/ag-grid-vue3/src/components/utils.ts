@@ -880,6 +880,10 @@ export interface Props<TData> {
          * @default false
          */
     suppressInputClearButton?: boolean,
+    /** Prototype only. What clicking a read-only floating filter input does: select its text, or open the filter popup.
+         * @default 'selectText'
+         */
+    readOnlyFloatingFilterClickAction?: 'selectText' | 'openPopup',
     /** Set to `true` to enable the browser's autocomplete/autofill behaviour for eligible grid input fields.
          * Inputs that provide grid-owned suggestions, such as Rich Select and Advanced Filter inputs, keep browser autocomplete disabled.
          * @default false
@@ -2394,6 +2398,7 @@ export function getProps() {
         alignedGrids: undefined,
         tabIndex: undefined,
         suppressInputClearButton: undefined,
+        readOnlyFloatingFilterClickAction: undefined,
         enableInputAutoComplete: undefined,
         rowBuffer: undefined,
         valueCache: undefined,

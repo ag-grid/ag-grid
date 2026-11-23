@@ -58,6 +58,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'tooltipTrigger',
     'tooltipAnchor',
     'noteTrigger',
+    'readOnlyFloatingFilterClickAction',
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',

@@ -5,7 +5,8 @@
         "excludeEvents": true,
         "undocumentedProperties": {
             "renderingMode": "React-only, so needs to be omitted from grid-options/properties.json (it is documented in grid-options/react-grid-options.json)",
-            "enableGroupEdit": "AG-2995 - 'Remove the grid option enableGroupEdit from docs API page to discourage its use'"
+            "enableGroupEdit": "AG-2995 - 'Remove the grid option enableGroupEdit from docs API page to discourage its use'",
+            "readOnlyFloatingFilterClickAction": "AG-19386 prototype only, not for release"
         }
     },
     "accessories": {

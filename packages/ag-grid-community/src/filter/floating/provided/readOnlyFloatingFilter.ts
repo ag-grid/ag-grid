@@ -6,13 +6,18 @@ import type { IFilter } from '../../../interfaces/iFilter';
 import type { ElementParams } from '../../../utils/element';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
+import type { IProvidedFilterParams } from '../../provided/iProvidedFilter';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterComp,
     IFloatingFilterParams,
     IFloatingFilterParent,
 } from '../floatingFilter';
-import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
+import {
+    _addReadOnlyFloatingFilterClick,
+    _clearFloatingFilterModel,
+    _getFloatingFilterAriaLabel,
+} from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
@@ -45,9 +50,13 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
             this.params = params;
             _addFloatingFilterValueTooltip(this, this.beans, () => this.params.column, this.eFloatingFilterText);
+            this.eFloatingFilterText
+                .setReadOnly(true)
+                .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+            _addReadOnlyFloatingFilterClick(this.beans, this, () => this.params.showParentFilter());
         }
         this.params = params;
-        this.eFloatingFilterText.setDisabled(true);
+        this.eFloatingFilterText.setClearButtonEnabled(!(params.filterParams as IProvidedFilterParams)?.readOnly);
         this.refreshAriaLabel();
         if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;

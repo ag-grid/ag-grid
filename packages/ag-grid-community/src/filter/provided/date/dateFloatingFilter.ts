@@ -1,4 +1,12 @@
-import { RefPlaceholder, _debounce, _parseDateTimeFromString, _serialiseDate, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _debounce,
+    _focusInto,
+    _getActiveDomElement,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _setDisplayed,
+} from 'ag-stack';
 
 import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -8,6 +16,7 @@ import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
+import { _addReadOnlyFloatingFilterClick, _clearFloatingFilterModel } from '../../floating/floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from '../../floating/provided/floatingFilterValueTooltip';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
@@ -59,7 +68,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
         this.createDateComponent();
         const translate = this.getLocaleTextFunc();
-        this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
+        this.eReadOnlyText
+            .setReadOnly(true)
+            .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'))
+            .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+        _addReadOnlyFloatingFilterClick(this.beans, this, () => this.params.showParentFilter());
         this.refreshValueTooltip = _addFloatingFilterValueTooltip(
             this,
             this.beans,
@@ -79,6 +92,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         // Update the read-only text field
         const allowEditing = !this.readOnly && this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(allowEditing);
+        this.eReadOnlyText.setClearButtonEnabled(!this.readOnly);
 
         if (allowEditing) {
             const dateModel = (model as DateFilterModel) ? _parseDateTimeFromString(model.dateFrom) : null;
@@ -97,9 +111,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     }
 
     protected setEditable(editable: boolean): void {
+        const readOnlyTextHadFocus = _getActiveDomElement(this.beans) === this.eReadOnlyText.getInputElement();
         this.editable = editable;
         _setDisplayed(this.eDateWrapper, editable);
         _setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        if (!editable || !readOnlyTextHadFocus) {
+            return;
+        }
+        _focusInto(this.eDateWrapper);
     }
 
     protected onModelUpdated(model: ISimpleFilterModel): void {

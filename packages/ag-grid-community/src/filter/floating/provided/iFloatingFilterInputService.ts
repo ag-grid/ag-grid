@@ -3,6 +3,7 @@ import type { Bean } from '../../../context/bean';
 export interface FloatingFilterInputService extends Bean {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
+    setClearable(clearable: boolean): void;
     isFocused(): boolean;
     getValue(): string | null | undefined;
     getInputElement(): HTMLInputElement;
