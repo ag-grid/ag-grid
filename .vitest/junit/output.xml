@@ -1,0 +1,1027 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="460" failures="0" errors="0" time="36.412870289">
+    <testsuite name="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" timestamp="2026-11-23T11:32:48.135Z" hostname="runnervm0hi8g" tests="14" failures="0" errors="0" skipped="0" time="2.602232666">
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedColumn - value axis labels and the crosshair show percentages, tooltips and series labels keep raw values" time="0.600386725">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedBar - value axis labels and the crosshair show percentages, tooltips and series labels keep raw values" time="0.280034737">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedLine - value axis labels and the crosshair show percentages, tooltips and series labels keep raw values" time="0.187638144">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedArea - value axis labels and the crosshair show percentages, tooltips and series labels keep raw values" time="0.15751821">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedColumn - a common theme value axis label formatter replaces the percentage" time="0.169211767">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedBar - a common theme value axis label formatter replaces the percentage" time="0.145721859">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedLine - a common theme value axis label formatter replaces the percentage" time="0.126183342">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; normalizedArea - a common theme value axis label formatter replaces the percentage" time="0.135940604">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; a value axis label formatter from a series-type override replaces the percentage" time="0.131193759">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; a value axis label formatter from a axis position override replaces the percentage" time="0.126443787">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; a value axis label formatter from a custom chart theme replaces the percentage" time="0.124388795">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; a theme value axis label format string replaces the percentage" time="0.151873559">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; the value axis keeps the percentage with a formatter for the other axis position" time="0.122831234">
+        </testcase>
+        <testcase classname="testing/behavioural/src/charts/normalized-chart-tooltip.test.ts" name="normalized (100% stacked) integrated charts &gt; the value axis keeps the percentage with the global formatter" time="0.126268496">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" timestamp="2026-11-23T11:32:48.138Z" hostname="runnervm0hi8g" tests="29" failures="0" errors="0" skipped="0" time="7.130478241">
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — tooltips &gt; the header tooltip reflects the edited name after a rename" time="0.265362695">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — tooltips &gt; a static headerTooltip string is unaffected by a rename" time="0.082262706">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; header: the edited name renders as the header cell text" time="0.058822535">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; csv: the edited name is used in the exported header row" time="0.056123475">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; columnToolPanel: the edited name renders as the tool-panel column label" time="0.108998154">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; columnDrop: the edited name renders in the row-group panel pill" time="0.094592051">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; filterToolPanel: the edited name renders as the filters tool-panel group title" time="0.056146839">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; advancedFilter: the edited name renders in the column autocomplete" time="0.072325948">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — rendered header locations &gt; groupFilter: the edited name renders in the group filter field select" time="0.127233676">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — integrated charts location &gt; chart: the edited name renders in the chart data tool panel" time="2.555475591">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — row grouping &gt; a renamed leaf column keeps its edited name through a row-group and ungroup cycle" time="0.122856546">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — row grouping &gt; a renamed leaf column that is row-grouped still exports its edited name to grid state" time="0.06787693">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — live drop zone pills &gt; the Values section relabels its pill and keeps the aggregation function" time="0.098574643">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — live drop zone pills &gt; the Row Groups section relabels only the renamed pill" time="0.091609922">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — live drop zone pills &gt; the Column Labels section relabels its pill in pivot mode" time="0.134816096">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — live drop zone pills &gt; the row-group panel above the grid relabels its pill" time="0.06501394">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; filters tool panel &gt; relabels a column while the panel is open" time="0.242521455">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; filters tool panel &gt; shows the new name when reopened after a rename made while closed" time="0.284694146">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; filters tool panel &gt; relabels a column group" time="0.357094826">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; new filters tool panel: relabels the filter card" time="0.191064787">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; group filter: the field select shows the new name when the filter is reopened" time="0.31015964">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; auto group column: a multipleColumns group column follows its row-group column" time="0.337039328">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; text floating filter" time="0.172963159">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; number floating filter" time="0.158660789">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; date floating filter" time="0.174734238">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; set floating filter" time="0.182704048">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; multi floating filter" time="0.179889833">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; read-only (custom filter) floating filter" time="0.185869577">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnHeaderEdit/editable-header-name-tooltip-and-grouping.test.ts" name="Editable header name — labels follow a rename made in the UI &gt; floating filter aria-labels &gt; group floating filter on a multipleColumns group column" time="0.246365574">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" timestamp="2026-11-23T11:32:48.144Z" hostname="runnervm0hi8g" tests="10" failures="0" errors="0" skipped="0" time="1.114190805">
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; the label renderer receives the grid group, which fires headerNameChanged on a rename" time="0.238606102">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; each part of a split group receives the grid group and all of its columns" time="0.105581669">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; toolPanelClass receives the grid group" time="0.058361977">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; getColumnMenuItems from the tool panel context menu receives the grid group" time="0.088984263">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; a group headerValueGetter in the agColumnsToolPanel receives the grid group" time="0.07907645">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; a group headerValueGetter in the agFiltersToolPanel receives the grid group" time="0.052936149">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; a custom layout keeps its own group names and passes its own group where the grid has none" time="0.100090839">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; the deprecated getInstanceId still works on a group that exists only in a custom layout" time="0.047123221">
+            <system-err>
+AG Grid: warning #306 As of v32, `columnGroup.getInstanceId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getInstanceId%28%29&amp;message=It+will+be+removed+in+v38.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; renaming and resetting a group that exists only in a custom layout fires headerNameChanged on its callback group" time="0.162860541">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columnToolPanel/tool-panel-group-callbacks.test.ts" name="Tool panel column group callbacks &gt; resetting a layout-only group renamed before the layout was reapplied notifies the current callback group" time="0.177604607">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/columns/column-edge-cases.test.ts" timestamp="2026-11-23T11:32:48.146Z" hostname="runnervm0hi8g" tests="102" failures="0" errors="0" skipped="0" time="2.777438139">
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; groupHideOpenParents &gt; hides parent group columns when group is expanded" time="0.157801968">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; suppressFieldDotNotation &gt; treats dotted field name as literal when suppressed" time="0.040789341">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; suppressFieldDotNotation &gt; without suppressFieldDotNotation, dots are path separators" time="0.025271432">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; duplicate colIds &gt; duplicate colIds in columnDefs warns and renames" time="0.040864923">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and empty columnDefs &gt; empty columnDefs array creates empty grid" time="0.021807278">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and empty columnDefs &gt; column group with empty children does not crash" time="0.031056748">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and empty columnDefs &gt; grid constructed without columnDefs + rowSelection change — refreshAll() !ready guard short-circuits" time="0.049780373">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and empty columnDefs &gt; grid constructed without columnDefs property — api methods safe on !ready grid; later setGridOption activates cols" time="0.048447585">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; all columns hidden &gt; hiding all columns results in empty display" time="0.03166081">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; all columns hidden &gt; group with all-hidden children is not flagged as first/last visible" time="0.025084087">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; all columns pinned to one side &gt; all columns pinned left leaves center empty" time="0.022588865">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; all columns pinned to one side &gt; all columns pinned right leaves center empty" time="0.021780538">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; all columns pinned to one side &gt; pinned: true (boolean shorthand) is treated as left-pinned" time="0.024480668">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; columnEverythingChanged fires on setColumnDefs" time="0.025017612">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; columnPivotModeChanged fires when pivotMode toggles" time="0.045155478">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; columnVisible fires when column visibility changes" time="0.025702286">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; columnPinned fires when column pinning changes" time="0.050268886">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; columnMoved fires when column is moved" time="0.029752144">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; sortChanged fires when column sort changes" time="0.025594953">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; applyColumnState dispatches all 5 change events in one call when every category changes" time="0.080369448">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column events &gt; applyColumnState does not dispatch events for unchanged categories" time="0.02985022">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; RTL mode &gt; enableRtl keeps column left positions as start-edge offsets" time="0.015820151">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; RTL mode &gt; enableRtl with pinned columns" time="0.016518459">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; RTL mode &gt; allDisplayedColumns order: LTR=[left, center, right], RTL=[right, center, left]" time="0.063469228">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; RTL mode &gt; getDisplayedColAfter / getDisplayedColBefore navigate within allDisplayedColumns order" time="0.04169956">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; RTL mode &gt; isPinningLeft / isPinningRight reflect presence of pinned columns" time="0.051780851">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; colSpan interactions &gt; colSpan leaves the column structure alone" time="0.019405583">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; state preservation across structural changes &gt; hidden column state preserved when colDefs change" time="0.025584824">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; state preservation across structural changes &gt; sort state preserved when group structure changes" time="0.033778208">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; state preservation across structural changes &gt; pinning state preserved when columns are added" time="0.051986847">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; groupDisplayType=custom &gt; custom groupDisplayType does not create auto-group columns" time="0.02151662">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; pivot mode column filtering &gt; pivot mode without pivot columns shows only value and auto-group columns" time="0.025994017">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; groupHideColumnsUntilExpanded &gt; hides auto columns until a group is expanded" time="0.019042507">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; rowNumbers option &gt; rowNumbers=true adds row numbers column pinned left" time="0.014958073">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; rowNumbers option &gt; toggling rowNumbers at runtime adds/removes column" time="0.027136908">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; hidePaddedHeaderRows &gt; column structure correct when padding rows hidden" time="0.025861373">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column &gt; selection column appears with checkbox selection" time="0.018234773">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column &gt; selection column is first in center section by default" time="0.018027339">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column &gt; selectionColumnDef customizes selection column" time="0.045902799">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column width edge cases &gt; zero width gets clamped to minWidth" time="0.019085738">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; many columns performance &gt; grid with 50 columns handles all correctly" time="0.155534366">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; multiple rapid setColumnDefs &gt; rapid column definition changes maintain consistency" time="0.053917749">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column state edge cases &gt; applyColumnState with non-array state warns and returns false" time="0.030766974">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column state edge cases &gt; applyColumnState with empty state array is a no-op" time="0.015463668">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column state edge cases &gt; defaultState clears properties on columns not in state array" time="0.030053394">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column tree structure edge cases &gt; identical setColumnDefs should not change tree" time="0.018551179">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column tree structure edge cases &gt; flex column with value 0 should use width instead" time="0.018506044">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; row group/pivot/value column index edge cases &gt; rowGroupIndex=null clears row grouping" time="0.022577925">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; row group/pivot/value column index edge cases &gt; pivotIndex=null clears pivot" time="0.060243317">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; marryChildren constraint on column ordering &gt; marryChildren prevents column separation within group" time="0.021378551">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; selection column auto-hidden when all user columns are hidden" time="0.014793209">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; selection column auto-hide keeps tree and flat representations consistent" time="0.014048755">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; checkboxLocation=autoGroupColumn disables separate selection column" time="0.022919971">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; updating selectionColumnDef when selection col does NOT exist is a safe no-op" time="0.01808572">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; updating selectionColumnDef with sort populates the column state sort field" time="0.022170725">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; selection col pinned left + all data cols hidden — refreshVisibility takes the matching switch branch" time="0.012427102">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; selection col pinned right + all data cols hidden — refreshVisibility takes the matching switch branch" time="0.012915432">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; selection column edge cases &gt; selection col pinned right honours pinned position when data cols also visible" time="0.02629215">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column creation and matching &gt; column matched by field when colId not set" time="0.012635746">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column creation and matching &gt; preserves cellDataType from original colDef" time="0.010349568">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; visible columns service edge cases &gt; first and last column markers correct with pinned sections" time="0.037603677">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; visible columns service edge cases &gt; empty center with pinned sides has correct displayed columns" time="0.011992351">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column group expansion state preservation &gt; group expansion state preserved across setColumnDefs" time="0.017030798">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; improper API usage &gt; setColumnsVisible with non-existent colIds does not crash" time="0.011242124">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; improper API usage &gt; setColumnsPinned with non-existent colIds does not crash" time="0.009009096">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; improper API usage &gt; moveColumns with non-existent colIds does not crash" time="0.010780081">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; improper API usage &gt; applyColumnState with mix of valid and invalid colIds" time="0.0157085">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; improper API usage &gt; setColumnGroupOpened with non-existent groupId does not crash" time="0.021118318">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and undefined colDef edge cases &gt; column with no colId and no field gets auto-generated id" time="0.017832802">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and undefined colDef edge cases &gt; column with empty string colId" time="0.012770501">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; null and undefined colDef edge cases &gt; column with field containing special characters" time="0.013330619">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column width boundary conditions &gt; very large width is accepted" time="0.037610498">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column width boundary conditions &gt; width=1 is accepted" time="0.010722954">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column width boundary conditions &gt; minWidth greater than width clamps up" time="0.009532124">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column width boundary conditions &gt; maxWidth less than width clamps down" time="0.011576235">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column sorting edge cases &gt; sort on unsortable column via colDef is still applied" time="0.013737417">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column sorting edge cases &gt; clearing all sorts via applyColumnState" time="0.014955197">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column pinning edge cases &gt; pinning with boolean true equals left" time="0.011521252">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column pinning edge cases &gt; pin then unpin returns to center" time="0.012831826">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; mixed column operations &gt; hide + pin + sort + move in sequence" time="0.022116974">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; mixed column operations &gt; resetColumnState after complex modifications" time="0.028708003">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; deprecated methods still work &gt; getRight() equals getLeft() + getActualWidth()" time="0.015317611">
+            <system-err>
+AG Grid: warning #306 As of v32, `column.getRight()` is deprecated. It will be removed in v38. Use `(column.getLeft() ?? 0) + column.getActualWidth()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.getRight%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60%28column.getLeft%28%29+%3F%3F+0%29+%2B+column.getActualWidth%28%29%60+instead.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column navigation methods &gt; getDisplayedColAfter returns null at last column" time="0.049985411">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column navigation methods &gt; getDisplayedColBefore returns null at first column" time="0.018215375">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column navigation methods &gt; navigation skips hidden columns across all sections" time="0.014169443">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column group leaf columns &gt; getDisplayedLeafColumns excludes hidden leaves" time="0.018623045">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column group state API &gt; getColumnGroupState includes nested groups" time="0.017584313">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating only headerName preserves all column state" time="0.011099465">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; changing colDef reference on same colId reuses column instance" time="0.017338519">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating autoGroupColumnDef with row grouping keeps the header from its headerValueGetter" time="0.028684378">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating autoGroupColumnDef with tree data keeps the header from its headerValueGetter" time="0.041840057">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating selectionColumnDef keeps the header from its headerValueGetter" time="0.018881363">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating autoGroupColumnDef with row grouping keeps a header name applied through column state" time="0.025193465">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating autoGroupColumnDef with tree data keeps a header name applied through column state" time="0.018978516">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; column definition update effects &gt; updating selectionColumnDef keeps a header name applied through column state" time="0.016892657">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; method return type guarantees &gt; getDisplayNameForColumn returns string for column with field" time="0.011158205">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; method return type guarantees &gt; getDisplayNameForColumn returns empty string for colId-only column without headerName" time="0.014032364">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; method return type guarantees &gt; applyColumnState returns boolean, not null" time="0.017756629">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; method return type guarantees &gt; getColumnState returns array for all columns" time="0.010439848">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; suppressMovable effect via API &gt; moveColumns ignores columns with suppressMovable" time="0.020247703">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; headerValueGetter precedence &gt; headerValueGetter takes precedence over headerName" time="0.013499889">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-edge-cases.test.ts" name="Column Edge Cases &gt; headerValueGetter precedence &gt; headerValueGetter receives column context" time="0.01758274">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/columns/column-features.test.ts" timestamp="2026-11-23T11:32:48.166Z" hostname="runnervm0hi8g" tests="103" failures="0" errors="0" skipped="0" time="5.423190724">
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column spanning (colSpan) &gt; column with colSpan still appears in column list" time="0.172718572">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column sizing: fixed width with constraints &gt; width is clamped to minWidth" time="0.036210533">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column sizing: fixed width with constraints &gt; width is clamped to maxWidth" time="0.054354466">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column headers &gt; headerValueGetter overrides headerName" time="0.036886279">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column headers &gt; field auto-generates headerName with camelCase split" time="0.03284704">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; rightAligned column type" time="0.030929758">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; custom column type" time="0.02798718">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; type as array applies all listed types" time="0.033409593">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; unknown type key in colDef without userTypes is a warn-only no-op" time="0.031213514">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; userTypes that override a default type are rejected (warn-only)" time="0.028896057">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; userTypes with nested `type` field is rejected (warn-only)" time="0.064797514">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; unknown type with userTypes present is a warn-only no-op" time="0.024761145">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column types &gt; empty type array short-circuits the type assignment" time="0.018510331">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; defaultColDef and defaultColGroupDef &gt; defaultColDef applies to all columns" time="0.032801905">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; defaultColDef and defaultColGroupDef &gt; column-specific values override defaultColDef" time="0.024855015">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; defaultColDef and defaultColGroupDef &gt; defaultColGroupDef applies to all groups" time="0.029234136">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column updating definitions matching &gt; columns match by colId when field changes" time="0.026436582">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column updating definitions matching &gt; columns match by field when colId not specified" time="0.02612873">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column updating definitions matching &gt; the grid states its column count as the column definitions change" time="0.02485739">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; column changes sync between aligned grids" time="0.095867179">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a flex column a resize holds on its maxWidth is reported, and its width reaches the other grid where it is fixed" time="0.061678239">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a width outside the other grid&apos;s bounds lands on its bound there, and the rest of the change still lands" time="0.046697057">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; the other grid copies a resize exactly under its own colResizeDefault &apos;shift&apos;" time="0.031139517">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; the other grid takes a resized width but re-flexes its own flex columns to its own space" time="0.031780876">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a column state width keeps a flex column after it flexed in the other grid, and the grids aligned" time="0.072286808">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a column state width keeps a flex column before it flexed in the other grid, and the grids aligned" time="0.041592931">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a viewport resize in one grid leaves the flex columns of the other grid flexing" time="0.062799082">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a flex: 0 column is aligned as a column with no flex" time="0.023095983">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; flex columns stay aligned as a column hides and a column group opens and closes" time="0.073028603">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a flex changed in one grid passes the widths it gives to the other grid" time="0.027819975">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize or a viewport resize in one grid leaves a column flexing differently in the other grid flexing there" time="0.0328362">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize in one grid passes a flexed width to a flex column pinned in the other grid, which takes it as a fixed width" time="0.037055328">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize in one grid ends the flex of the column in the other grid whose width it already had" time="0.036152974">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize in one grid leaving a flex column at its width leaves it flexing in the other grid" time="0.063725392">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize refused in one grid leaves a column flexing differently in the other grid flexing there" time="0.022420407">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a resize in one grid flexes the other grid around its own resized columns, not a column flexing only there" time="0.032360883">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; an auto-size in one grid re-flexes every flex column in the other grid, as it did in its own" time="0.044323627">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; an auto-size in one grid gives a column it re-flexed, fixed in the other grid, its width, fixed" time="0.049552304">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; an auto-size in one grid gives a column it re-flexed, flexing with another factor in the other grid, its width, fixed" time="0.086442168">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a group fit in one grid re-flexes every flex column in the other grid, those before the group too" time="0.065400277">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a group fit in one grid lands the same widths in the other, its flex columns re-flexing in both" time="0.056053443">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a group drag in one grid that leaves a flex column on its bound lands the same widths in the other" time="0.098714743">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a column flexed again in one grid passes its width to the other grid, where it no longer flexes" time="0.042105759">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a grid destroyed by another aligned grid replaying a change is not sent it" time="0.039940448">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; colResizeDefault &apos;shift&apos;: the other grid takes the widths a shift resize sets, adjacent column included" time="0.030457157">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a grid taking another&apos;s column change gives it its vertical scrollbar" time="0.022325658">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; a grid aligned through a callback of refs follows column changes and horizontal scrolls" time="0.127687436">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; aligned grids column sync &gt; an aligned grid entry with no grid is reported, and the others are still told" time="0.021220912">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; value getters and formatters &gt; valueGetter column has correct header" time="0.012977692">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; Shift+Arrow on a focused header moves its column, without Alt, which resizes" time="0.050094327">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; suppressHeaderKeyboardEvent returning true stops keyboard moves, resizes and copies on a column or group" time="0.03499074">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; a header comp key listener on eGridHeader receives the keys the grid resizes with, on a column or group" time="0.025042848">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; suppressHeaderKeyboardEvent stops a keyboard resize on a header whose comp listener prevents the key" time="0.027440498">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; suppressMovable prevents column movement" time="0.017631001">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; lockPosition=left keeps column at start" time="0.02212525">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressMovable and lockPosition &gt; lockPosition=right keeps column at end" time="0.02058894">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; lockVisible &gt; lockVisible does not prevent API-based hiding (only prevents UI hiding)" time="0.018707995">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column group state &gt; getColumnGroupState returns expansion state" time="0.020063055">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column group state &gt; setColumnGroupState restores expansion state" time="0.059625337">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; suppressColumnsToolPanel &gt; suppressColumnsToolPanel does not affect column structure" time="0.011324189">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; editable columns &gt; editable flag shown in diagram" time="0.017879321">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; resizable columns &gt; resizable=false column" time="0.015419547">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; autoHeight &gt; hiding the taller of two auto-height columns shrinks the row to the other" time="0.033160723">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; autoHeight &gt; colDef.colSpan + colDef.autoHeight on same grid draws the span and sets the auto-height cell up" time="0.020032858">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; initialSort &gt; initialSort populates the column state sort field" time="0.015243943">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; deprecated Column methods &gt; report a deprecation diagnostic naming the method ahead of its v38 removal" time="0.038358561">
+            <system-err>
+AG Grid: warning #306 As of v32, `column.getInstanceId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.getInstanceId%28%29&amp;message=It+will+be+removed+in+v38.
+AG Grid: warning #306 As of v32, `columnGroup.getInstanceId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getInstanceId%28%29&amp;message=It+will+be+removed+in+v38.
+AG Grid: warning #306 As of v32, `column.isFieldContainsDots()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isFieldContainsDots%28%29&amp;message=It+will+be+removed+in+v38.
+AG Grid: warning #306 As of v32, `column.isTooltipFieldContainsDots()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isTooltipFieldContainsDots%28%29&amp;message=It+will+be+removed+in+v38.
+AG Grid: warning #306 As of v32, `column.isGreaterThanMax()` is deprecated. It will be removed in v38. Compare the width with `column.getMaxWidth()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isGreaterThanMax%28%29&amp;message=It+will+be+removed+in+v38.+Compare+the+width+with+%60column.getMaxWidth%28%29%60+instead.
+AG Grid: warning #306 As of v32, `column.isAnyFunctionActive()` is deprecated. It will be removed in v38. Use `column.isRowGroupActive()`, `column.isPivotActive()` and `column.isValueActive()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isAnyFunctionActive%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.isRowGroupActive%28%29%60%2C+%60column.isPivotActive%28%29%60+and+%60column.isValueActive%28%29%60+instead.
+AG Grid: warning #306 As of v32, `column.isAnyFunctionAllowed()` is deprecated. It will be removed in v38. Check `enableRowGroup`, `enablePivot` and `enableValue` on `column.getColDef()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isAnyFunctionAllowed%28%29&amp;message=It+will+be+removed+in+v38.+Check+%60enableRowGroup%60%2C+%60enablePivot%60+and+%60enableValue%60+on+%60column.getColDef%28%29%60+instead.
+AG Grid: warning #306 As of v32, `columnGroup.getPartId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getPartId%28%29&amp;message=It+will+be+removed+in+v38.
+AG Grid: warning #306 As of v32, `column.isSortAscending()` is deprecated. It will be removed in v38. Use `column.getSort() === &apos;asc&apos;` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortAscending%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%3D%3D%3D+%27asc%27%60+instead.
+AG Grid: warning #306 As of v32, `column.isSortDescending()` is deprecated. It will be removed in v38. Use `column.getSort() === &apos;desc&apos;` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortDescending%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%3D%3D%3D+%27desc%27%60+instead.
+AG Grid: warning #306 As of v32, `column.isSortNone()` is deprecated. It will be removed in v38. Use `!column.getSort()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortNone%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60%21column.getSort%28%29%60+instead.
+AG Grid: warning #306 As of v32, `column.isSorting()` is deprecated. It will be removed in v38. Use `column.getSort() != null` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSorting%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%21%3D+null%60+instead.
+AG Grid: warning #306 As of v32, `column.getRight()` is deprecated. It will be removed in v38. Use `(column.getLeft() ?? 0) + column.getActualWidth()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.getRight%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60%28column.getLeft%28%29+%3F%3F+0%29+%2B+column.getActualWidth%28%29%60+instead.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)" time="0.100609999">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; reflect colDef-driven aggregation/function flags + auto-header + parent" time="0.029798473">
+            <system-err>
+AG Grid: warning #306 As of v32, `column.isAnyFunctionActive()` is deprecated. It will be removed in v38. Use `column.isRowGroupActive()`, `column.isPivotActive()` and `column.isValueActive()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isAnyFunctionActive%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.isRowGroupActive%28%29%60%2C+%60column.isPivotActive%28%29%60+and+%60column.isValueActive%28%29%60+instead.
+AG Grid: warning #306 As of v32, `column.isAnyFunctionAllowed()` is deprecated. It will be removed in v38. Check `enableRowGroup`, `enablePivot` and `enableValue` on `column.getColDef()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isAnyFunctionAllowed%28%29&amp;message=It+will+be+removed+in+v38.+Check+%60enableRowGroup%60%2C+%60enablePivot%60+and+%60enableValue%60+on+%60column.getColDef%28%29%60+instead.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; autoHeaderHeight: measurement runs and lands on the column when DOM offsets are available" time="0.034507176">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; autoHeaderHeight: measured height is cleared when autoHeaderHeight is toggled off" time="0.087695427">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; autoHeaderHeight: a hidden column stops sizing the header, keeping its measured height for when it is shown" time="0.216124792">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; autoHeaderHeight: keeps the group of an unrendered column in the header rows" time="0.040848664">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; isColumnFunc invokes function with column params; clamps boolean false" time="0.013397194">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; colSpan and rowSpan callbacks clamped min 1 and rounded down; default 1 when no callback" time="0.0192822">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; user resize clears flex; event-listener round-trip on widthChanged" time="0.014601419">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; Column public-interface getters &gt; deprecated sort helpers reflect current sort + absolute-sort initialSort exercises absolute sort-types path" time="0.016561802">
+            <system-err>
+AG Grid: warning #306 As of v32, `column.isSortNone()` is deprecated. It will be removed in v38. Use `!column.getSort()` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortNone%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60%21column.getSort%28%29%60+instead.
+AG Grid: warning #306 As of v32, `column.isSorting()` is deprecated. It will be removed in v38. Use `column.getSort() != null` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSorting%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%21%3D+null%60+instead.
+AG Grid: warning #306 As of v32, `column.isSortAscending()` is deprecated. It will be removed in v38. Use `column.getSort() === &apos;asc&apos;` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortAscending%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%3D%3D%3D+%27asc%27%60+instead.
+AG Grid: warning #306 As of v32, `column.isSortDescending()` is deprecated. It will be removed in v38. Use `column.getSort() === &apos;desc&apos;` instead. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=column.isSortDescending%28%29&amp;message=It+will+be+removed+in+v38.+Use+%60column.getSort%28%29+%3D%3D%3D+%27desc%27%60+instead.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a focused cell keeps its ctrl across both a short and a long scroll out of the viewport" time="0.101366697">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a focused cell kept after a scroll or a column move takes it out of the viewport is removed once focus moves on" time="0.135719186">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; an unfocused cell is removed when its column scrolls out of the viewport" time="0.101184686">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; an editing cell keeps its ctrl when its column scrolls out of the viewport" time="0.116229433">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a cell with a pending batch edit kept out of the viewport is removed once the batch is cancelled or commits" time="0.156686977">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a row that moves off the focused index drops the cell it kept for focus" time="0.091776175">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a short scroll leaves the rendered cells matching the virtual columns" time="0.152063004">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a short scroll with ensureDomOrder off still renders exactly the virtual columns" time="0.101834573">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a retained cell is dropped once it stops being focused" time="0.066751201">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a column move after a short scroll still reorders the rendered cells" time="0.079476063">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; pinning a column after a short scroll keeps the rendered cells correct" time="0.040541724">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a column pinned with `true` renders in the left lane" time="0.023681148">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; print layout renders a pinned column in the centre lane" time="0.038742194">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; re-pinning a grouped column re-lanes its group header" time="0.025754294">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; lanes stay consistent across a sequence of pin, move, scroll and toggle" time="0.075832914">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a pinned cell rebuilt by a colDef change keeps its lane and is rendered once" time="0.065840577">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a scroll with column spanning renders each row consistently" time="0.116846878">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a column move recycles the rendered cells rather than rebuilding them" time="0.046430207">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; moving a left-pinned column past another keeps both pinned cells" time="0.047056139">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a cell retained by focus is rebuilt when its column is unpinned out of view" time="0.102448651">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a cell drawn for a focus set outside the viewport takes a colDef change" time="0.040102455">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a column unpinned from the right draws one cell in its new lane, which takes a colDef change" time="0.070129482">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a focused cell keeps browser focus when a scroll retains it in its own lane" time="0.057950183">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a focused cell keeps browser focus when its column changes lane" time="0.071623924">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; cell ctrl recycling and render lanes &gt; a full-row edit retains every cell in order across a scroll" time="0.150797093">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column hover &gt; the cells, header and floating filter of the hovered column are marked, and only while it is hovered" time="0.044049079">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-features.test.ts" name="Column Features &gt; column hover &gt; hovering a row number cell or header does not mark the row numbers column as hovered" time="0.028691001">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/columns/column-groups.test.ts" timestamp="2026-11-23T11:32:48.187Z" hostname="runnervm0hi8g" tests="77" failures="0" errors="0" skipped="0" time="2.058094428">
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group header aria-colspan &gt; a hidden child keeps its slot inside the span, and hiding down to one leaf removes it" time="0.146035264">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group header aria-colspan &gt; a collapsed group spans the slots of the children it hides" time="0.029355044">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group header aria-colspan &gt; a group split by pinning spans each part from its own first leaf, and a hidden first leaf drops out" time="0.050020426">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; a centre group&apos;s label is sticky while the group is scrolled part out, as it scrolls and as it resizes" time="0.059059972">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; empty groups stay findable (matches released behaviour) &gt; a group declared with no children remains discoverable via the group APIs" time="0.031234835">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; empty groups stay findable (matches released behaviour) &gt; a group emptied via setColumnDefs stays findable (now empty)" time="0.030276666">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; empty groups stay findable (matches released behaviour) &gt; getColumnGroupState surfaces synthetic padding groups (matches latest)" time="0.025654535">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expand state survives a rebuild &gt; a generated-id group stays expanded across a columnDefs rebuild (no calc cols)" time="0.036675882">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; single-level column groups &gt; group with two children" time="0.021153344">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; single-level column groups &gt; multiple groups side by side" time="0.029668999">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; single-level column groups &gt; group with a single child" time="0.019964086">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; single-level column groups &gt; group with explicit groupId" time="0.020670732">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; multi-level nested groups &gt; two levels deep" time="0.026644735">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; multi-level nested groups &gt; three levels deep" time="0.022673244">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; multi-level nested groups &gt; nested groups with siblings at each level" time="0.027710328">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expansion and collapse &gt; expandable group in open state shows open indicator" time="0.019125232">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expansion and collapse &gt; expandable group in closed state shows closed indicator" time="0.019560665">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expansion and collapse &gt; non-expandable group has no open/closed state" time="0.036731995">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expansion and collapse &gt; collapsing/expanding clears the left of children that leave the displayed set (no stale offset)" time="0.020809914">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group expansion and collapse &gt; collapsing removes a focused child header that is scrolled out of the viewport" time="0.069937988">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; columnGroupShow behaviour &gt; all children with no columnGroupShow - group is not expandable" time="0.018559073">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; columnGroupShow behaviour &gt; mixed columnGroupShow values when group is open" time="0.019326683">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; columnGroupShow behaviour &gt; mixed columnGroupShow values when group is closed" time="0.031763113">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; columnGroupShow behaviour &gt; only open children - group is expandable" time="0.016765305">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; columnGroupShow behaviour &gt; only closed children - group is expandable" time="0.014411149">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; expandable recomputes on visibility toggle &gt; hiding the only changeable child makes group not-expandable" time="0.015639499">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; expandable recomputes on visibility toggle &gt; showing a changeable child makes a previously-flat group expandable" time="0.015053743">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; expandable recomputes on visibility toggle &gt; toggle visibility updates ALL ancestor groups in a nested tree" time="0.022763595">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; expandable propagation through padded ancestor chains &gt; toggling visibility of a deeply-nested col flips a real ancestor across padding" time="0.019383009">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; display-tree run-merging &gt; siblings sharing an originalParent fold under one display wrapper" time="0.022955848">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; marryChildren &gt; group with marryChildren keeps children together" time="0.01974858">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; marryChildren &gt; marryChildren with expandable group" time="0.015055145">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; openByDefault &gt; openByDefault: true starts group expanded" time="0.014474158">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; openByDefault &gt; openByDefault: false starts group collapsed" time="0.02956809">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; openByDefault &gt; openByDefault not set defaults to closed" time="0.015381923">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; unbalanced groups &gt; some columns in groups and some standalone" time="0.020404659">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; unbalanced groups &gt; standalone columns alongside nested groups" time="0.018947718">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; unbalanced groups &gt; showPaddingGroups option reveals padding groups" time="0.014622869">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; Enter keeps group focus (pinned=left, keepPinnedVisible=false)" time="0.060707721">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; Enter keeps group focus (pinned=right, keepPinnedVisible=false)" time="0.045063764">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; Enter keeps group focus (pinned=left, keepPinnedVisible=true)" time="0.057678826">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; Enter keeps group focus (pinned=right, keepPinnedVisible=true)" time="0.039215328">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; group children in left pinned section" time="0.01878464">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; group children split across pinned sections" time="0.022262077">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; groups with pinned columns &gt; groups in all three sections" time="0.029112586">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; empty groups &gt; group where all children are hidden" time="0.013197847">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; empty groups &gt; group with mix of hidden and visible children" time="0.014494005">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; collapse an open group via setColumnGroupOpened" time="0.022439603">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; group listeners added async run after the change, apart from the same function added sync" time="0.020613383">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; a provided group with its children hidden ignores removing a listener never added" time="0.010942227">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; expand a closed group via setColumnGroupOpened" time="0.023459291">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; toggle group open then closed then open again" time="0.035755133">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; descendant-only change dispatches displayedChildrenChanged on ancestor (cascade)" time="0.031742965">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; re-setting identical columnDefs keeps the column instance stable" time="0.017400175">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; re-setting identical columnDefs keeps the column group instance stable" time="0.017582469">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; toggle group expansion via API &gt; toggle nested expandable groups independently" time="0.023365401">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; getColumnGroup lookup &gt; finds group by colId with no partId" time="0.01571414">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; getColumnGroup lookup &gt; returns null for empty colId" time="0.012931504">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; getColumnGroup lookup &gt; returns null for unknown colId" time="0.013629052">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; getColumnGroup lookup &gt; finds group by colId + partId for cross-section groups" time="0.020225301">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; getColumnGroup lookup &gt; without a partId resolves to the primary (first) display instance of a cross-section group" time="0.035765843">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; resetColumnGroupState &gt; resets all expandable groups to their openByDefault setting" time="0.01902866">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; top-level parent clearing on group removal &gt; col previously inside a group has its parent cleared when the group is removed" time="0.017251955">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; setColumnGroupOpened input forms &gt; accepts a string groupId" time="0.015710543">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; setColumnGroupOpened input forms &gt; accepts a ProvidedColumnGroup reference" time="0.01357533">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; AgProvidedColumnGroup getters + leaf walk &gt; getId / getInstanceId / getChildren return live values; getLeafColumns returns leaf columns" time="0.017148609">
+            <system-err>
+AG Grid: warning #306 As of v32, `columnGroup.getInstanceId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getInstanceId%28%29&amp;message=It+will+be+removed+in+v38.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; AgColumnGroup wrapper getters &gt; getPartId / isEmptyGroup / getActualWidth on a displayed group" time="0.015271134">
+            <system-err>
+AG Grid: warning #306 As of v32, `columnGroup.getPartId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getPartId%28%29&amp;message=It+will+be+removed+in+v38.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; AgColumnGroup wrapper getters &gt; isResizable reflects child cols on a single-instance group" time="0.015003438">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; AgColumnGroup wrapper getters &gt; isResizable reflects child resizable + group with all-non-resizable returns false" time="0.018847408">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; AgColumnGroup wrapper getters &gt; arrow keys at a group-row level use getColGroupAtLevel to navigate sibling groups" time="0.042333368">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; getColumnGroup resolves every group after a refresh — padding before group" time="0.022014039">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; getColumnGroup resolves every group after a refresh — group before padding" time="0.020395612">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; a regroup rebuilds the rendered header rows, though the columns are unchanged" time="0.023335185">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; a regroup outside the rendered window still rebuilds the header rows" time="0.074126296">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; a rebuild that changes nothing does not report a re-parent, however deep the nesting" time="0.01666146">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; group id uniqueness across refresh &gt; group split across pinned sections has dense partId-indexed instances" time="0.015441535">
+        </testcase>
+        <testcase classname="testing/behavioural/src/columns/column-groups.test.ts" name="Column Groups &gt; collapsed group part with no displayed children &gt; a pin-split expandable group whose part has only columnGroupShow:open children does not crash" time="0.016858562">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/export/csv-export-header-layout.test.ts" timestamp="2026-11-23T11:32:48.203Z" hostname="runnervm0hi8g" tests="5" failures="0" errors="0" skipped="0" time="0.230178842">
+        <testcase classname="testing/behavioural/src/export/csv-export-header-layout.test.ts" name="CSV export header layout &gt; emits padded group header rows with resolvable group names" time="0.112271148">
+        </testcase>
+        <testcase classname="testing/behavioural/src/export/csv-export-header-layout.test.ts" name="CSV export header layout &gt; resolves padded group header values through processGroupHeaderCallback" time="0.0264132">
+        </testcase>
+        <testcase classname="testing/behavioural/src/export/csv-export-header-layout.test.ts" name="CSV export header layout &gt; removing, adding and removing a listener on the group passed to processGroupHeaderCallback leaves the export intact" time="0.021595049">
+        </testcase>
+        <testcase classname="testing/behavioural/src/export/csv-export-header-layout.test.ts" name="CSV export header layout &gt; the deprecated getPartId still works on the group passed to processGroupHeaderCallback" time="0.026103454">
+            <system-err>
+AG Grid: warning #306 As of v32, `columnGroup.getPartId()` is deprecated. It will be removed in v38. 
+See https://localhost:4610/javascript-data-grid/errors/306?_version_=36.3.0-beta.20261115.2036&amp;version=32&amp;name=columnGroup.getPartId%28%29&amp;message=It+will+be+removed+in+v38.
+
+            </system-err>
+        </testcase>
+        <testcase classname="testing/behavioural/src/export/csv-export-header-layout.test.ts" name="CSV export header layout &gt; suppressSpanHeaderHeight does not change CSV output" time="0.041994549">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" timestamp="2026-11-23T11:32:48.204Z" hostname="runnervm0hi8g" tests="12" failures="0" errors="0" skipped="0" time="0.877843843">
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; mouse opening suppresses the initial focus tooltip (async items: false)" time="0.227431123">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; mouse opening suppresses the initial focus tooltip (async items: true)" time="0.107007151">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; keyboard opening shows the initial focus tooltip (async items: false)" time="0.063516101">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; keyboard opening shows the initial focus tooltip (async items: true)" time="0.059467625">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; API opening preserves the initial focus tooltip" time="0.040049641">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; focus trigger ignores hover activation but shows tooltips during keyboard navigation" time="0.048873937">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; focus trigger shows tooltips when entering and leaving a submenu with the keyboard" time="0.058519116">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; focus trigger still shows tooltips on direct focus after hover activation" time="0.037201031">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; focus trigger ignores delayed hover activation while another submenu is open" time="0.055558321">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; focus trigger keeps focus on the hovered sibling after leaving a keyboard-focused submenu" time="0.065331239">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; hover trigger keeps focus on the hovered sibling after leaving a keyboard-focused submenu" time="0.067193887">
+        </testcase>
+        <testcase classname="testing/behavioural/src/menu/menu-tooltip-trigger.test.ts" name="menu tooltip triggers &gt; hover trigger ignores keyboard focus but shows tooltips on hover" time="0.044593011">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" timestamp="2026-11-23T11:32:48.207Z" hostname="runnervm0hi8g" tests="10" failures="0" errors="0" skipped="0" time="0.463224929">
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: false) &gt; shows the tooltip without opening a Community filter popup (filter: false)" time="0.137213849">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: false) &gt; shows the tooltip without opening a Community filter popup (filter: true)" time="0.044769861">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: false) &gt; respects Enterprise header menu availability (suppressed: false)" time="0.052305364">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: false) &gt; respects Enterprise header menu availability (suppressed: true)" time="0.029128197">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: false) &gt; preserves long press for an enabled legacy filter menu" time="0.040213466">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: true) &gt; shows the tooltip without opening a Community filter popup (filter: false)" time="0.031853184">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: true) &gt; shows the tooltip without opening a Community filter popup (filter: true)" time="0.034115818">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: true) &gt; respects Enterprise header menu availability (suppressed: false)" time="0.036731249">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: true) &gt; respects Enterprise header menu availability (suppressed: true)" time="0.02666279">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/header-tooltip-touch.test.ts" name="header tooltip long press (iOS: true) &gt; preserves long press for an enabled legacy filter menu" time="0.028421173">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-api.test.ts" timestamp="2026-11-23T11:32:48.208Z" hostname="runnervm0hi8g" tests="7" failures="0" errors="0" skipped="0" time="0.855906618">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; supports displayed values, static content, callbacks, and popup metadata" time="0.243704545">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; tooltip false disables Column Definition content without changing renderer tooltip components" time="0.136867421">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; headerTooltip uses the same true, string, callback, and false forms" time="0.236150548">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; refreshed custom headers preserve their tooltip value and use the current tooltip component" time="0.047898369">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; does not attach touch listeners to each tooltip cell" time="0.030832306">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; long press shows cell and header tooltips without triggering the header tap action" time="0.080528">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-api.test.ts" name="Unified tooltip API &gt; a tap on a grid in a shadow root does not also show the hover tooltip" time="0.076349244">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-delays.test.ts" timestamp="2026-11-23T11:32:48.210Z" hostname="runnervm0hi8g" tests="3" failures="0" errors="0" skipped="0" time="2.68765532">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-delays.test.ts" name="Tooltips - the show, hide and switch delays &gt; destroys the tooltip element once the fade-out window has passed" time="1.200157576">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-delays.test.ts" name="Tooltips - the show, hide and switch delays &gt; respects tooltipShowDelay and tooltipHideDelay" time="0.653746446">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-delays.test.ts" name="Tooltips - the show, hide and switch delays &gt; respects tooltipSwitchShowDelay when moving between cells" time="0.829927126">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" timestamp="2026-11-23T11:32:48.211Z" hostname="runnervm0hi8g" tests="11" failures="0" errors="0" skipped="0" time="1.243018973">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: aggregated sum cell tooltips the aggregated value" time="0.239815211">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: value-getter cell tooltips the derived group value" time="0.09329699">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; tree data: aggregated cell tooltips the aggregate, not the node data value" time="0.104096963">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; tree data: aggregated cell with a cross-field tooltipField tooltips the aggregate" time="0.136182484">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; tree data: non-aggregated column with a distinct tooltipField keeps the underlying value" time="0.118291654">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: leaf-row aggregated column cell still tooltips its own value" time="0.088345486">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; tree data: expanded group with a footer keeps the underlying tooltipField (displayIgnoresAggData)" time="0.101539935">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: group footer aggregated cell tooltips the aggregate" time="0.106703268">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: custom tooltipComponent renders with the aggregated value" time="0.077787876">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: tooltipValueGetter still resolves on an aggregated group-row cell" time="0.080627188">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-aggregation.test.ts" name="AG-5004: tooltip on aggregated group-row cells &gt; row grouping: legacy tooltipField with showValuesAs resolves the unformatted aggregate" time="0.09183829">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" timestamp="2026-11-23T11:32:48.213Z" hostname="runnervm0hi8g" tests="22" failures="0" errors="0" skipped="0" time="1.307912674">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group cell inherits tooltipValueGetter when grouped (singleColumn)" time="0.214957538">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group cell inherits tooltipValueGetter when grouped (multipleColumns)" time="0.083762949">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group cell inherits tooltipField from underlying colDef" time="0.061769911">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; grouped header inherits headerTooltip from underlying colDef (multipleColumns)" time="0.050379277">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; leaf rows use autoGroupColumnDef tooltipValueGetter" time="0.0610024">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; tree data group rows use autoGroupColumnDef tooltip" time="0.059175169">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group rows use underlying colDef tooltip, ignoring autoGroupColumnDef tooltipValueGetter" time="0.046726987">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group column inherits tooltipComponentSelector (multipleColumns)" time="0.044652669">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; group cell uses tooltipComponentSelector from source column (singleColumn)" time="0.062298945">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; renderer tooltip keeps the source column component when tooltip is false (singleColumn)" time="0.05235083">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width renderer tooltip keeps the source column component when tooltip is false (groupRows)" time="0.045903702">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; a group row renderer that refreshes in place keeps the tooltip it set (groupRows)" time="0.043893715">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; a group row renderer that refreshes in place shows the tooltip its column gains (groupRows)" time="0.052445037">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; a group row renderer that refreshes in place shows the tooltip its column changes (groupRows)" time="0.053585351">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row inherits tooltipValueGetter (groupRows)" time="0.04694514">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row prefers tooltipValueGetter over tooltipField (groupRows)" time="0.044603296">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; auto group column group row prefers tooltipValueGetter over tooltipField" time="0.049972038">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row reads tooltipField from node.data, not display value (groupRows + tree data)" time="0.04158781">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row inherits tooltipField from underlying colDef (groupRows, regular grouping)" time="0.07104016">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row tooltipValueGetter receives value from the owning column (groupRows + multiple groups)" time="0.041737403">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row passes group display value to tooltipComponent when no getter or field (groupRows)" time="0.035300725">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-group-col-inheritance.test.ts" name="Tooltip inheritance in group columns &gt; full-width group row passes formatted value to tooltipComponent params.valueFormatted (groupRows)" time="0.039193248">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" timestamp="2026-11-23T11:32:48.217Z" hostname="runnervm0hi8g" tests="15" failures="0" errors="0" skipped="0" time="2.27349251">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction &gt; AG-17885 re-hovering a cell whose tooltip is fading re-opens it with tooltipInteraction" time="0.812520599">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction &gt; AG-17885 moving cursor cell -&gt; tooltip -&gt; cell keeps the interactive tooltip open" time="0.483847698">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction &gt; AG-17885 leaving a cell with no tooltip showing does not lock the next tooltip" time="0.296369398">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction &gt; connects an interactive tooltip to its source and supports keyboard entry and dismissal" time="0.087813619">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; does not deliver a long-press callback after an early touchend" time="0.086948648">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; does not deliver a long-press callback after an early touchmove" time="0.061954633">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; does not deliver a long-press callback after an early touchcancel" time="0.054874963">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: false &gt; respects context menu availability (enterprise: false, suppressed: false)" time="0.034150168">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: false &gt; respects context menu availability (enterprise: false, suppressed: true)" time="0.038292382">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: false &gt; respects context menu availability (enterprise: true, suppressed: true)" time="0.035379283">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: false &gt; respects context menu availability (enterprise: true, suppressed: false)" time="0.096903076">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: true &gt; respects context menu availability (enterprise: false, suppressed: false)" time="0.049045682">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: true &gt; respects context menu availability (enterprise: false, suppressed: true)" time="0.043534242">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: true &gt; respects context menu availability (enterprise: true, suppressed: true)" time="0.040871613">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-interaction.test.ts" name="Tooltip interaction on iOS &gt; cell tooltips: true &gt; respects context menu availability (enterprise: true, suppressed: false)" time="0.047270769">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip-react.test.tsx" timestamp="2026-11-23T11:32:48.219Z" hostname="runnervm0hi8g" tests="8" failures="0" errors="0" skipped="0" time="1.568662192">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer (React)" time="0.514354822">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; AG-17663 destroys cell renderer tooltip when the selector swaps to no renderer (React)" time="0.132298201">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; re-registers the renderer tooltip when refresh() returning false remounts the renderer (React)" time="0.135697398">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; clears a renderer tooltip when the same React renderer remounts without registering one" time="0.111695937">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; keeps the formula error tooltip after a colDef change on a column with no tooltip config (React)" time="0.253693545">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; AG-5004 legacy tooltipField uses the aggregated group-row value (React)" time="0.149942898">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; whenTruncated (React) &gt; AG-17691 does not show whenTruncated tooltip for a non-truncated cell whose selector returns undefined" time="0.176580752">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip-react.test.tsx" name="Tooltips (React) &gt; whenTruncated (React) &gt; AG-17691 keeps showing whenTruncated tooltip for a stateless functional cell renderer" time="0.075796505">
+        </testcase>
+    </testsuite>
+    <testsuite name="testing/behavioural/src/tooltip/tooltip.test.ts" timestamp="2026-11-23T11:32:48.221Z" hostname="runnervm0hi8g" tests="32" failures="0" errors="0" skipped="0" time="3.799349385">
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; shows tooltip when configured" time="0.240294266">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17120 tooltipField cell tooltip reflects the pending value during a batch edit" time="0.177177374">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17120 tooltipField pointing at another column reflects that column pending batch value" time="0.16475444">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17120 tooltipField reads the data field, not a matching column value getter" time="0.068208862">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17120 tooltipField reads the pending data value, not a matching column value getter" time="0.124401231">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; legacy tooltipField preserves its fallback precedence" time="0.086152931">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; legacy tooltipField falls through to tooltipValueGetter while row data is loading" time="0.046405849">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17120 tooltipValueGetter cell tooltip reflects the pending value during a batch edit" time="0.171023411">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; does not leak tooltips when a setTooltip cellRenderer is refreshed repeatedly" time="0.059568472">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; does not duplicate after formula errors toggle during edits" time="0.282270668">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; keeps the formula error tooltip and custom component when tooltip is false" time="0.162508109">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; keeps the row validation error tooltip and custom component when tooltip is false" time="0.168402516">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; uses a non-terminal locale separator between row validation tooltip errors" time="0.099629028">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; does not leave an open colDef tooltip showing a stale value" time="0.038678245">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; takes down an open custom tooltip when its params change behind the same text" time="0.062543734">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; never shows a tooltip whose source was cleared while the show delay was running" time="0.183093109">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; never shows a tooltip whose predicate turned false while the show delay was running" time="0.189766929">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; takes down an open tooltip when a renderer re-registers the same text behind a new predicate" time="0.082937496">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; takes down an open tooltip when a colDef change swaps the component behind the same text" time="0.045332381">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; takes down an open renderer tooltip when its renderer goes and the column resolves the same text" time="0.040914719">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; a colDef change swaps the custom tooltip component and its value" time="0.113169964">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17663 destroys cell renderer tooltip when the selector swaps to no renderer" time="0.167491335">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; keeps the colDef tooltip current when a renderer that never set one is recreated" time="0.187410779">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; clears a renderer tooltip when the same renderer class is recreated without registering one" time="0.046555471">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer" time="0.351531691">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; full-width renderer kept on refresh can still set tooltips through its initial params" time="0.050399592">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; full-width renderer replaced by a redraw cannot set tooltips through its old params" time="0.043164416">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; AG-17872 tooltipComponentSelector receives ITooltipParams and selects a component" time="0.039064374">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; whenTruncated with cellRendererSelector &gt; AG-17691 does not show whenTruncated tooltip for a non-truncated cell whose selector returns undefined" time="0.08671178">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; whenTruncated with cellRendererSelector &gt; AG-17691 keeps showing whenTruncated tooltip for a column with a real cell renderer" time="0.04071929">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; whenTruncated with cellRendererSelector &gt; AG-17691 keeps showing whenTruncated tooltip for a renderer that registers one via setTooltip" time="0.038973532">
+        </testcase>
+        <testcase classname="testing/behavioural/src/tooltip/tooltip.test.ts" name="Tooltips &gt; whenTruncated with cellRendererSelector &gt; AG-17691 gates per-cell when a selector returns a renderer for one row and undefined for another" time="0.134803575">
+        </testcase>
+    </testsuite>
+</testsuites>
