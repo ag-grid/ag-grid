@@ -12,14 +12,9 @@ export class PortalManager {
     private portals: ReactPortal[] = [];
     private hasPendingPortalUpdate = false;
 
-    private readonly maxComponentCreationTimeMs: number;
-
-    constructor(refresher: () => void, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
+    constructor(refresher: () => void, wrappingElement?: string) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
         this.refresher = refresher;
-        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs
-            ? maxComponentCreationTimeMs
-            : MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
     public getPortals(): ReactPortal[] {
@@ -76,7 +71,7 @@ export class PortalManager {
         if (reactComponent.rendered()) {
             resolve(reactComponent);
         } else {
-            if (Date.now() - startTime >= this.maxComponentCreationTimeMs! && !this.hasPendingPortalUpdate) {
+            if (Date.now() - startTime >= MAX_COMPONENT_CREATION_TIME_IN_MS && !this.hasPendingPortalUpdate) {
                 // Hit the time limit, lets try forcing React to render portals synchronously as a final attempt
                 agFlushSync(true, () => this.refresher());
                 if (reactComponent.rendered()) {

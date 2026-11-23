@@ -689,8 +689,7 @@ export const AG_GRID_ERRORS = {
     // 229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         '`detailCellRendererParams.template` is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
-    // @deprecated v32 mark for removal as part of v32 deprecated features
-    231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
+    // 231: retired (`reactiveCustomComponents` deprecation warning)
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
     234: () =>
@@ -770,21 +769,7 @@ export const AG_GRID_ERRORS = {
     // 272: () => NoModulesRegisteredError(),
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
         `Provided column id \`${providedId}\` was already in use, ensure all column and group ids are unique. Using \`${usedId}\` instead.` as const,
-    274: ({ prop }: { prop: string }) => {
-        let msg = `Since v33, \`${prop}\` has been deprecated.`;
-        switch (prop) {
-            case 'maxComponentCreationTimeMs':
-                msg += ' This property is no longer required and so will be removed in a future version.';
-                break;
-            case 'setGridApi':
-                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
-                break;
-            case 'children':
-                msg += ` For multiple versions AgGridReact does not support children.`;
-                break;
-        }
-        return msg;
-    },
+    // 274: retired (deprecated `AgGridReact` props warning)
     // 275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
@@ -960,7 +945,7 @@ export const AG_GRID_ERRORS = {
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
-    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
+    333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
     // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,

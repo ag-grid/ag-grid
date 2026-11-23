@@ -350,7 +350,7 @@ describe('filter models set before rows load, applied once they do', () => {
         expect(api.getFilterModel()).toEqual({ age: AGE_LT_20 });
         expect(api.getDisplayedRowCount()).toBe(2);
         // the column's removal fires nothing, as no filter was built; the model set before it fires once the rows load
-        expect(events).toEqual(['after:columnFilter', 'after:api']);
+        expect(events).toEqual(['after:api']);
     });
 });
 
@@ -441,6 +441,31 @@ describe('filter models set before rows load are not lost before they apply', ()
             expect(api.getDisplayedRowCount()).toBe(2);
         }
     );
+
+    test.each([
+        { when: 'no row has a value for the other column', rows: [{ country: 'Ireland' }, { country: 'Spain' }] },
+        {
+            when: 'the rows give a value for the other column to infer',
+            rows: [
+                { country: 'Ireland', notes: 'a' },
+                { country: 'Spain', notes: 'b' },
+            ],
+        },
+    ])('a model set before rows load applies once they do, when $when', async (scenario) => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'country', cellDataType: 'text', filter: 'agTextColumnFilter' },
+                { field: 'notes', filter: 'agTextColumnFilter' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'Ireland' } });
+
+        api.setGridOption('rowData', scenario.rows);
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowCount()).toBe(1);
+        expect(api.isAnyFilterPresent()).toBe(true);
+    });
 
     test('with filter handlers, a model set before rows load on a handler refusing the definition its inferred type gives applies once they load', async () => {
         const events: string[] = [];

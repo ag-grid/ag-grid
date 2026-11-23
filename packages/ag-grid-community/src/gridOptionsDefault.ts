@@ -185,7 +185,6 @@ export const GRID_OPTION_DEFAULTS = {
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
-    reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
     enableFilterHandlers: false,
 } as const;

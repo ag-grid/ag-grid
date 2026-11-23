@@ -1,3 +1,4 @@
+import { onFileEnd } from '../fileScope';
 import { asyncSetTimeout } from '../node-utils';
 
 export type InteractionEventOptions = MouseEventInit | PointerEventInit | TouchEventInit;
@@ -248,6 +249,7 @@ export class DragEventDispatcher {
         }
         root.elementsFromPoint = this.hitTest;
         this.hitTestRoot = root;
+        onFileEnd(() => this.removeHitTest());
     }
 
     /** Topmost first, then its ancestors, as a browser stacks them, so a container matches over any of its children. */

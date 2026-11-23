@@ -26,23 +26,6 @@ import { TestGridsManager, waitForEvent } from 'ag-test-utils';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.parentElement;
-        },
-    });
-});
-afterAll(() => {
-    if (originalOffsetParent) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-    } else {
-        delete (HTMLElement.prototype as any).offsetParent;
-    }
-});
-
 // TODO: disabled due to AG-19223 - re-enable once fixed
 describe.skip('Toolbar update with an open menu', () => {
     const gridMgr = new TestGridsManager({

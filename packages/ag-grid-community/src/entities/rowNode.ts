@@ -78,7 +78,7 @@ export class RowNode<TData = any>
 
     /**
      * The data as provided by the application.
-     * Can be `undefined` when using row grouping or during grid initialisation.
+     * Can be `undefined` when using row grouping, on total rows, or during grid initialisation.
      */
     public data: TData | undefined;
 

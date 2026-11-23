@@ -1,4 +1,6 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
@@ -347,6 +349,107 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('deselecting an un-selectable row keeps the selected row', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowSelection: {
+                        mode: 'singleRow',
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                });
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+
+                api.setNodesSelected({ nodes: [api.getRowNode('0')!], newValue: false });
+
+                assertSelectedRowsByIndex([1], api);
+            });
+
+            test('a reload asking an un-selectable row keeps the selected row', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    getRowId: (params) => params.data.sport,
+                    rowSelection: {
+                        mode: 'singleRow',
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0);
+                        },
+                    },
+                });
+                await waitForNoLoadingRows(api);
+                api.setNodesSelected({ nodes: [api.getRowNode('rugby')!], newValue: true });
+                const selectionState = api.getServerSideSelectionState();
+
+                api.refreshServerSide({ purge: true });
+
+                await waitForNoLoadingRows(api);
+                expect(api.getRowNode('rugby')!.isSelected()).toBe(true);
+                expect(api.getServerSideSelectionState()).toEqual(selectionState);
+            });
+
+            test('the selected row is deselected when a reload makes it un-selectable', async () => {
+                const serverRows = rowData.map((row, index) => ({ ...row, id: String(index) }));
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    getRowId: (params) => params.data.id,
+                    rowSelection: { mode: 'singleRow', isRowSelectable: (node) => node.data.sport !== 'football' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            const rows = serverRows.map((row) => ({ ...row }));
+                            return params.success({ rowData: rows, rowCount: rows.length });
+                        },
+                    },
+                });
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+
+                serverRows[1].sport = 'football';
+                api.refreshServerSide({ purge: true });
+                await waitForNoLoadingRows(api);
+
+                expect(api.getRowNode('1')!.isSelected()).toBe(false);
+                expect(api.getServerSideSelectionState()).toEqual({ selectAll: false, toggledNodes: [] });
+            });
+
+            test('the selected row is deselected when a cell edit makes it un-selectable', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowSelection: {
+                        mode: 'singleRow',
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({
+                                rowData: rowData.map((row) => ({ ...row })),
+                                rowCount: rowData.length,
+                            });
+                        },
+                    },
+                });
+                api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                api.getRowNode('1')!.setDataValue('sport', 'football');
+
+                await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+                assertSelectedRowsByIndex([], api);
+                expect(api.getServerSideSelectionState()).toEqual({ selectAll: false, toggledNodes: [] });
+                api.setNodesSelected({ nodes: [api.getRowNode('2')!], newValue: true, source: 'checkboxSelected' });
+                await waitFor(() => expect(sources).toEqual(['selectableChanged', 'checkboxSelected']));
             });
         });
     });

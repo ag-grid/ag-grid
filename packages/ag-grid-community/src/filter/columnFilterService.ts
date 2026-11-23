@@ -281,6 +281,9 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
+    /** Above zero while the API sets a model: a filter rewriting that model is part of the call, not its own change. */
+    private applyingModelDepth = 0;
+
     /** Model updates deferred until cell data types are inferred, in call order. */
     private modelUpdates: QueuedModelUpdate[] = [];
 
@@ -344,43 +347,48 @@ export class ColumnFilterService
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getModel(true);
 
-        if (model) {
-            // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = new Set(Object.keys(model));
+        ++this.applyingModelDepth;
+        try {
+            if (model) {
+                // mark the filters as we set them, so any active filters left over we stop
+                const modelKeys = new Set(Object.keys(model));
 
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
-                const newModel = model[colId];
+                this.allColumnFilters.forEach((filterWrapper, colId) => {
+                    const newModel = model[colId];
 
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
-                modelKeys.delete(colId);
-            });
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
+                    modelKeys.delete(colId);
+                });
 
-            // at this point, processedFields contains data for which we don't have a filter working yet
-            modelKeys.forEach((colId) => {
-                const column = colModel.colsById[colId];
+                // at this point, processedFields contains data for which we don't have a filter working yet
+                modelKeys.forEach((colId) => {
+                    const column = colModel.colsById[colId];
 
-                if (!column) {
-                    this.warn(62, { colId });
-                    return;
-                }
+                    if (!column) {
+                        this.warn(62, { colId });
+                        return;
+                    }
 
-                if (!column.isFilterAllowed()) {
-                    this.warn(63, { colId });
-                    return;
-                }
+                    if (!column.isFilterAllowed()) {
+                        this.warn(63, { colId });
+                        return;
+                    }
 
-                const filterWrapper = this.getOrCreateFilterWrapper(column, true);
-                if (!filterWrapper) {
-                    this.warn(64, { colId });
-                    return;
-                }
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
-            });
-        } else {
-            this.model = {};
-            this.allColumnFilters.forEach((filterWrapper) => {
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
-            });
+                    const filterWrapper = this.getOrCreateFilterWrapper(column, true);
+                    if (!filterWrapper) {
+                        this.warn(64, { colId });
+                        return;
+                    }
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
+                });
+            } else {
+                this.model = {};
+                this.allColumnFilters.forEach((filterWrapper) => {
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
+                });
+            }
+        } finally {
+            --this.applyingModelDepth;
         }
 
         AgPromise.all(allPromises).then(() => {
@@ -1542,9 +1550,16 @@ export class ColumnFilterService
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
         return (model, additionalEventAttributes) => {
             this.updateStoredModel(colId, model);
-            this.refreshHandlerAndUi(column, model, source, source === 'floating', additionalEventAttributes).then(() =>
-                filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' })
+            const refreshed = this.refreshHandlerAndUi(
+                column,
+                model,
+                source,
+                source === 'floating',
+                additionalEventAttributes
             );
+            if (this.applyingModelDepth === 0) {
+                refreshed.then(() => filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' }));
+            }
         };
     }
 

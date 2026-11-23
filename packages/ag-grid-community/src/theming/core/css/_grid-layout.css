@@ -429,8 +429,18 @@
     background-image: var(--ag-internal-row-overlay-image);
 }
 
+:where(.ag-row).ag-row-selected {
+    color: var(--ag-selected-row-text-color, var(--ag-cell-text-color));
+}
+
 .ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
+    --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
+    --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
+    --ag-drag-handle-color: var(--ag-selected-row-drag-handle-color);
+    --ag-note-indicator-color: var(--ag-selected-row-note-indicator-color);
+    --ag-value-change-delta-up-color: var(--ag-selected-row-value-change-delta-up-color);
+    --ag-value-change-delta-down-color: var(--ag-selected-row-value-change-delta-down-color);
 }
 
 .ag-row-hover:not(.ag-full-width-row),
@@ -539,6 +549,10 @@
 .ag-skeleton-container {
     width: 100%;
     height: 100%;
+
+    /* a wrapped cell value (enableCellTextSelection, autoHeight) has no definite height for
+       height: 100% to resolve against, so fill the line as text does */
+    min-height: var(--ag-internal-content-line-height);
     align-content: center;
 }
 

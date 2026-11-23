@@ -1,7 +1,7 @@
 // `ALL_SEVERITIES` comes from the specific module, not the test-utils barrel: the barrel transitively
 // imports `ag-grid-community` at runtime, which would defeat the lazy `ag`-import guard below.
 import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
-import { runFileEndCallbacks } from 'ag-test-utils/fileScope';
+import { runFileEndCallbacks, runOwedFileReset, setOwedFileReset } from 'ag-test-utils/fileScope';
 import { ignoreConsoleLicenseKeyError } from 'ag-test-utils/ignoreKnownNoise';
 import { polyfillDomGlobals } from 'ag-test-utils/polyfills/domGlobals';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi, vitest } from 'vitest';
@@ -11,15 +11,19 @@ import { clearFileIntervals } from './fileIntervals';
 // Runs once per test file: the project keeps one window and module graph per worker (`isolate: false`), so
 // this file installs what every file needs once, and puts the page back the way it found it at each file's end.
 
+// The page reset a file whose tests were all filtered out never ran, before this file's snapshot.
+await runOwedFileReset();
 polyfillDomGlobals();
 
 // Imported after the DOM globals they read are in place.
-const [{ mockGridLayout }, { objectUrls }, { clipboardUtils }] = await Promise.all([
+const [{ mockGridLayout }, { resetLayoutObservers }, { objectUrls }, { clipboardUtils }] = await Promise.all([
     import('ag-test-utils/polyfills/mockGridLayout'),
+    import('ag-test-utils/polyfills/mockResizeObserver'),
     import('ag-test-utils/polyfills/objectUrls'),
     import('ag-test-utils/polyfills/clipboard'),
 ]);
 mockGridLayout.init();
+resetLayoutObservers();
 objectUrls.init();
 clipboardUtils.init();
 // user-event patches `focus`/`blur` once per window and marks the document, so it can never be undone per file.
@@ -63,8 +67,9 @@ const bodyAttributes = snapshotAttributes(document.body);
 const htmlAttributes = snapshotAttributes(document.documentElement);
 const headChildren = Array.from(document.head.childNodes);
 
-// Registered before the file's own hooks, so it runs after all of them.
-afterAll(async () => {
+/** Puts the page back as this file found it, returning the shared objects it had to restore. */
+async function resetPage(): Promise<string[]> {
+    setOwedFileReset(null);
     const [{ _resetModuleRegistry, _resetValidationLogging, getGridApi }, { _doOnce, _resetKeyboardMode }] =
         await Promise.all([import('ag-grid-community'), import('ag-stack')]);
     // Each step runs even when an earlier one throws: a half-reset page fails the next file instead of this one.
@@ -108,7 +113,13 @@ afterAll(async () => {
             leaks = restoreSharedObjects(baseline);
         }
     }
+    return leaks;
+}
+setOwedFileReset(resetPage);
 
+// Registered before the file's own hooks, so it runs after all of them.
+afterAll(async () => {
+    const leaks = await resetPage();
     if (leaks.length) {
         throw new Error(
             `This test file left shared globals or prototypes changed (put back, so the next file in the worker starts clean):\n` +

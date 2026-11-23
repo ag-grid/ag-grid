@@ -356,7 +356,7 @@ describe('Filter State & Events', () => {
         expect(displayedAtRefresh).toEqual([['athlete', 'country']]);
     });
 
-    test('a custom filter throwing on new column definitions leaves the next filter refreshed with its new params', async () => {
+    test('a custom filter throwing on new column definitions throws to the caller, and the next column definitions refresh every filter with its new params', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const refreshedWith: string[] = [];
         class OptionFilter implements IFilterComp {
@@ -395,8 +395,11 @@ describe('Filter State & Events', () => {
         await api.getColumnFilterInstance('country');
 
         expect(() => api.setGridOption('columnDefs', cols('throw', 'b'))).toThrow('refresh failed');
+        refreshedWith.length = 0;
 
-        expect(refreshedWith).toEqual(['country:b']);
+        api.setGridOption('columnDefs', cols('c', 'd'));
+
+        expect([...refreshedWith].sort()).toEqual(['athlete:c', 'country:d']);
     });
 
     test('new column definitions recreating a handler that holds a model filter the rows once', async () => {

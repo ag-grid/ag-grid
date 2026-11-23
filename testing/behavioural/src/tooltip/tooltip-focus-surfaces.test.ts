@@ -7,7 +7,6 @@ import {
     TestGridsManager,
     fakeElementAttribute,
     getVisibleTooltips,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 
 import { getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -15,18 +14,15 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('Tooltip focus surfaces', () => {
     const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeAll(() => setupAgTestIds());
 
     beforeEach(() => {
         fakeElementAttribute('offsetHeight', 300, '.ag-virtual-list-viewport');
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         grids.reset();
-        restoreOffsetParent?.();
         vi.clearAllTimers();
         vi.useRealTimers();
     });

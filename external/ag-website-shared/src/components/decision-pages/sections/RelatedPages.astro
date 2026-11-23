@@ -1,0 +1,26 @@
+---
+import styles from '../DecisionPage.module.scss';
+import type { RelatedPageGroup } from '../types';
+
+interface Props {
+    groups: RelatedPageGroup[];
+    resolveUrl: (url: string) => string;
+}
+
+const { groups, resolveUrl } = Astro.props;
+---
+
+<div class={styles.relatedGroups}>
+    {groups.map(({ name, links }) => (
+        <nav aria-label={name}>
+            <h3>{name}</h3>
+            <ul>
+                {links.map(({ title, url }) => (
+                    <li>
+                        <a href={resolveUrl(url)}>{title}</a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    ))}
+</div>

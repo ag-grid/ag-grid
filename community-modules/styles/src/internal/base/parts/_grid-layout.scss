@@ -227,8 +227,21 @@
         background-color: var(--ag-odd-row-background-color);
     }
 
+    .ag-row.ag-row-selected {
+        color: var(--ag-selected-row-text-color, var(--ag-data-color));
+    }
+
     .ag-row-selected {
         --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
+        --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
+        --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
+        --ag-note-indicator-color: var(--ag-selected-row-note-indicator-color);
+        --ag-value-change-delta-up-color: var(--ag-selected-row-value-change-delta-up-color);
+        --ag-value-change-delta-down-color: var(--ag-selected-row-value-change-delta-down-color);
+        --ag-checkbox-background-color: var(--ag-selected-row-checkbox-background-color);
+        --ag-checkbox-checked-color: var(--ag-selected-row-checkbox-checked-color);
+        --ag-checkbox-unchecked-color: var(--ag-selected-row-checkbox-unchecked-color);
+        --ag-checkbox-indeterminate-color: var(--ag-selected-row-checkbox-indeterminate-color);
     }
 
     .ag-row-hover:not(.ag-full-width-row),
@@ -405,6 +418,11 @@
     .ag-skeleton-container {
         width: 100%;
         height: 100%;
+        // a wrapped cell value has no definite height to resolve height: 100% against.
+        // Mirrors the core theme: a getRowHeight line height still has the row border to fit inside.
+        min-height: calc(
+            Min(var(--ag-row-height), var(--ag-line-height, var(--ag-row-height))) - var(--ag-row-border-width) - 2px
+        );
         align-content: center;
     }
 

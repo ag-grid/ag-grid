@@ -1,10 +1,11 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
+    ColumnAutoSizeModule,
     RowAutoHeightModule,
     ScrollApiModule,
     getGridElement,
@@ -42,9 +43,20 @@ const expectedVirtual = (api: GridApi): string[] => {
         .map((col) => col.getColId());
 };
 
+const settle = async (): Promise<void> => {
+    await nextAnimationFrame();
+    await asyncSetTimeout(0);
+};
+
 describe('column virtualisation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, RowAutoHeightModule, ScrollApiModule],
+        modules: [
+            ClientSideRowModelModule,
+            ColumnApiModule,
+            ColumnAutoSizeModule,
+            RowAutoHeightModule,
+            ScrollApiModule,
+        ],
     });
 
     afterEach(() => {
@@ -107,5 +119,63 @@ describe('column virtualisation', () => {
             expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).toEqual(expectedVirtual(api))
         );
         expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c50');
+    });
+
+    test('a fit that moves columns into view without changing the total width draws them, headers and cells, without a scroll', async () => {
+        // every column but c0 and c9 sits at its minWidth, so the 2000px total cannot shrink to the 1000px viewport
+        const columnDefs: ColDef[] = [{ colId: 'c0', width: 700, minWidth: 300 }];
+        for (let i = 1; i < 9; ++i) {
+            columnDefs.push({ colId: `c${i}`, width: 150, minWidth: 150 });
+        }
+        columnDefs.push({ colId: 'c9', width: 100, minWidth: 100 });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        const gridElement = getGridElement(api)!;
+        const drawnCells = () =>
+            Array.from(gridElement.querySelectorAll('.ag-row .ag-cell')).map((cell) => cell.getAttribute('col-id'));
+        const drawnHeaders = () =>
+            Array.from(gridElement.querySelectorAll('.ag-header-cell[col-id]')).map((cell) =>
+                cell.getAttribute('col-id')
+            );
+        const widths = () => api.getDisplayedCenterColumns().map((col) => col.getActualWidth());
+        const total = () => widths().reduce((sum, width) => sum + width, 0);
+        await waitFor(() => expect(api.getHorizontalPixelRange().right).toBeGreaterThan(0));
+
+        const widthsBefore = widths();
+        expect({ widthsBefore, total: total() }).toEqual({
+            widthsBefore: [700, 150, 150, 150, 150, 150, 150, 150, 150, 100],
+            total: 2000,
+        });
+        const expectedBefore = expectedVirtual(api);
+        expect(expectedBefore).toEqual(['c0', 'c1', 'c2', 'c3', 'c4']);
+        expect({ headers: drawnHeaders(), cells: drawnCells() }).toEqual({
+            headers: expectedBefore,
+            cells: expectedBefore,
+        });
+
+        // c0 narrows by 400px and c9 widens by 400px: the columns between move left, c5 to c7 into view
+        api.sizeColumnsToFit({
+            columnLimits: [
+                { key: 'c0', maxWidth: 300 },
+                { key: 'c9', minWidth: 500 },
+            ],
+        });
+        await settle();
+
+        expect({ widths: widths(), total: total(), scrollLeft: api.getHorizontalPixelRange().left }).toEqual({
+            widths: [300, 150, 150, 150, 150, 150, 150, 150, 150, 500],
+            total: 2000,
+            scrollLeft: 0,
+        });
+        const expectedAfter = expectedVirtual(api);
+        expect(expectedAfter).toEqual(['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7']);
+        expect({
+            virtual: api.getAllDisplayedVirtualColumns().map((col) => col.getColId()),
+            headers: drawnHeaders(),
+            cells: drawnCells(),
+        }).toEqual({ virtual: expectedAfter, headers: expectedAfter, cells: expectedAfter });
     });
 });

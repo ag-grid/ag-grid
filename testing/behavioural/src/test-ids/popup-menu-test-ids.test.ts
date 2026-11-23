@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
@@ -53,12 +53,11 @@ describe('popup menu test IDs', () => {
         return api;
     }
 
-    /**
-     * Let every stamping pass already scheduled run to completion, so that the menu opened next is
-     * the only thing the service could react to. Without this the test passes on a pending debounce
-     * landing after the menu opens rather than on the menu opening.
-     */
-    const drainStampingPasses = () => new Promise((resolve) => setTimeout(resolve, 600));
+    /** Runs out pending stamping passes (two macrotasks at 0 ms debounces), so only the menu opening stamps it. */
+    const drainStampingPasses = async () => {
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+    };
 
     function menuTestIds(gridDiv: HTMLElement): { menus: (string | null)[]; options: (string | null)[] } {
         return {

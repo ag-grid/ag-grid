@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { _isIOSUserAgent } from 'ag-stack';
-import { TestGridsManager, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, getVisibleTooltips } from 'ag-test-utils';
 
 import { AllCommunityModule, getGridElement } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
@@ -12,16 +12,13 @@ vi.mock(import('ag-stack'), async (importOriginal) => ({
 
 describe.each([false, true])('header tooltip long press (iOS: %s)', (isIOS) => {
     const gridMgr = new TestGridsManager({ modules: [AllCommunityModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeEach(() => {
         vi.mocked(_isIOSUserAgent).mockReturnValue(isIOS);
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
         vi.useRealTimers();
         vi.restoreAllMocks();
     });

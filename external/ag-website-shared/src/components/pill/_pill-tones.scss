@@ -1,0 +1,39 @@
+@use 'design-system' as *;
+
+// Shared by `Pill` and the decision pages' pills; the pill using a tone sets its border width and style.
+
+@mixin pill-tone-green {
+    color: var(--color-success);
+    background-color: color-mix(in srgb, var(--color-green-100) 50%, transparent);
+    border-color: var(--color-success);
+
+    #{$selector-darkmode} & {
+        color: var(--color-green-300);
+        background-color: color-mix(in srgb, var(--color-green-950) 50%, transparent);
+        border-color: color-mix(in srgb, var(--color-green-600) 30%, transparent);
+    }
+}
+
+@mixin pill-tone-blue {
+    color: var(--color-brand-500);
+    background-color: color-mix(in srgb, var(--color-brand-100) 50%, transparent);
+    border-color: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-300);
+        background-color: color-mix(in srgb, var(--color-brand-950) 50%, transparent);
+        border-color: color-mix(in srgb, var(--color-brand-300) 30%, transparent);
+    }
+}
+
+@mixin pill-tone-yellow {
+    color: var(--color-warning-500);
+    background-color: color-mix(in srgb, var(--color-warning-100) 50%, transparent);
+    border-color: var(--color-warning-400);
+
+    #{$selector-darkmode} & {
+        color: var(--color-warning-300);
+        background-color: color-mix(in srgb, var(--color-warning-950) 50%, transparent);
+        border-color: color-mix(in srgb, var(--color-warning-600) 30%, transparent);
+    }
+}

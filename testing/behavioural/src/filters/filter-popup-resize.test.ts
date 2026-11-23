@@ -1,4 +1,4 @@
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 
@@ -55,18 +55,11 @@ describe('column filter popup resize', () => {
             rowData: [{ make: 'Toyota' }],
             enableRtl,
         });
-        api.showColumnFilter('make');
-        await asyncSetTimeout(0);
-
         const root = TestGridsManager.getHTMLElement(api)!;
         const popupParent = root.querySelector<HTMLElement>('.ag-root-wrapper') ?? root;
-        const filterEl = root.ownerDocument.querySelector<HTMLElement>('.ag-filter-body-wrapper')!;
-        const menuEl = filterEl.closest<HTMLElement>('.ag-menu')!;
-        menuEl.style.left = `${popupX}px`;
-        const resizer = filterEl.querySelector<HTMLElement>(`.ag-resizer-${side ?? (enableRtl ? 'left' : 'right')}`)!;
-        expect(resizer).not.toBeNull();
-
-        const currentWidth = () => Number.parseFloat(filterEl.style.width) || popupWidth;
+        let filterEl: HTMLElement | null = null;
+        let menuEl: HTMLElement | null = null;
+        const currentWidth = () => Number.parseFloat(filterEl?.style.width ?? '') || popupWidth;
         const popupLeft = gridLeft + popupX;
         const rect = (left: number, width: number) =>
             ({ left, right: left + width, top: 0, bottom: 300, width, height: 300, x: left, y: 0 }) as DOMRect;
@@ -81,8 +74,21 @@ describe('column filter popup resize', () => {
             return originalRect.call(this);
         });
         Object.defineProperty(popupParent, 'clientWidth', { configurable: true, get: () => GRID_WIDTH });
+        // the grid takes its size before the filter opens, as in a browser: its resize reports run first
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
+
+        api.showColumnFilter('make');
+        await asyncSetTimeout(0);
+        filterEl = root.ownerDocument.querySelector<HTMLElement>('.ag-filter-body-wrapper')!;
+        menuEl = filterEl.closest<HTMLElement>('.ag-menu')!;
+        const resizer = filterEl.querySelector<HTMLElement>(`.ag-resizer-${side ?? (enableRtl ? 'left' : 'right')}`)!;
+        expect(resizer).not.toBeNull();
         Object.defineProperty(filterEl, 'offsetWidth', { configurable: true, get: currentWidth });
         Object.defineProperty(menuEl, 'offsetWidth', { configurable: true, get: currentWidth });
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
+        menuEl.style.left = `${popupX}px`;
 
         const startX = enableRtl ? popupLeft : popupLeft + popupWidth;
         const dispatcher = new DragEventDispatcher('mouse');

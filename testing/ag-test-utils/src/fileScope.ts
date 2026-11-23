@@ -25,6 +25,20 @@ export function definePropertyForFile<T extends object>(
     });
 }
 
+let owedFileReset: (() => Promise<unknown>) | null = null;
+
+/** The setup's page reset, run at the next file's start when its own file ran no hooks (every test filtered out). */
+export function setOwedFileReset(reset: (() => Promise<unknown>) | null): void {
+    owedFileReset = reset;
+}
+
+/** Runs the reset a previous file owed and never ran. */
+export async function runOwedFileReset(): Promise<void> {
+    const reset = owedFileReset;
+    owedFileReset = null;
+    await reset?.();
+}
+
 /** Called by the test setup once per file, after the file's own hooks; rethrows the first undo that threw. */
 export function runFileEndCallbacks(): void {
     let failed = false;

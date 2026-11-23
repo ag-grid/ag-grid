@@ -1,0 +1,622 @@
+@use 'design-system' as *;
+@use '../pill/pill-tones' as *;
+
+// Shared by every decision page section: comparison, alternative, solution and migration pages.
+
+// Below the sticky site header, so headings and the sticky table header aren't hidden under it.
+$sticky-offset: var(--layout-site-header-height);
+
+// Below this width the feature matrix scrolls sideways instead of keeping its header in view.
+$table-scroll-breakpoint: 620px;
+
+// The brand bar down the feature matrix's product column
+$product-bar-width: 3px;
+
+// Sections span the page so a tone can paint edge to edge; `.sectionInner` holds the content width.
+.section {
+    padding-top: $spacing-size-12;
+    scroll-margin-top: $sticky-offset;
+
+    &:last-child {
+        padding-bottom: $spacing-size-24;
+    }
+}
+
+.sectionInner {
+    max-width: calc(var(--layout-max-width-small) + var(--layout-horizontal-margins) * 2);
+    margin: 0 auto;
+    padding: 0 var(--layout-horizontal-margins);
+}
+
+// Toned sections pad their own bottom edge, so the band holds its content with even space.
+.sectionMuted {
+    margin-top: $spacing-size-12;
+    background: var(--color-bg-secondary);
+
+    &,
+    &:last-child {
+        padding-bottom: $spacing-size-12;
+    }
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-tertiary);
+    }
+}
+
+.sectionEyebrow {
+    margin: 0 0 $spacing-size-1;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
+}
+
+// A heading sits close to its subheading, which then holds the gap to the content
+.sectionHeading {
+    margin: 0 0 $spacing-size-6;
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    line-height: var(--text-lh-ratio-tight);
+
+    &:has(+ .sectionSubHeading) {
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+// Keeps a section heading in the outline and accessibility tree when the section's content carries its own
+// visible heading.
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sectionSubHeading {
+    margin: 0 0 $spacing-size-6;
+    color: var(--color-fg-secondary);
+}
+
+// The short answer callout: a tinted panel with a brand bar down its left edge
+.shortAnswer {
+    padding: $spacing-size-5 $spacing-size-6;
+    border-left: 3px solid var(--color-util-brand-600);
+    background: var(--color-bg-secondary);
+    font-size: var(--text-fs-lg);
+
+    // The dark secondary background is too light for a panel this size
+    #{$selector-darkmode} & {
+        background: var(--color-bg-tertiary);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    p + p {
+        margin-top: $spacing-size-3;
+    }
+
+    p + p {
+        margin-top: $spacing-size-3;
+    }
+}
+
+// Hero
+
+.breadcrumbs {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-regular);
+
+    a {
+        color: inherit;
+        font-weight: var(--text-bold);
+    }
+}
+
+.breadcrumbCurrent {
+    opacity: 0.8;
+}
+
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-4;
+}
+
+// Product and competitor logos facing each other above the heading
+.heroLogos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-4;
+    margin-top: $spacing-size-6;
+
+    img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+    }
+}
+
+.heroLogosVs {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-bold);
+    text-transform: uppercase;
+    color: var(--color-fg-secondary);
+}
+
+// Last updated and the reviewer credit, on one line separated by a dot when there is room
+.heroMeta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-1 $spacing-size-2;
+    width: 100%;
+    margin-top: $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+
+    // `p` for the specificity to win over the reviewer credit's own margin
+    > p {
+        margin: 0;
+    }
+
+    > * + *::before {
+        content: '·';
+        margin-right: $spacing-size-2;
+    }
+}
+
+// Key figures: the figure in a fixed-width column on the left, so every card's text starts at the same edge
+
+.keyFigures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-size-4;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.keyFigure {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-5;
+    margin: 0;
+    padding: $spacing-size-5 $spacing-size-6;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+}
+
+.keyFigureValue {
+    flex: 0 0 112px;
+    font-size: var(--text-fs-3xl);
+    font-weight: var(--text-bold);
+    line-height: 1;
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-text-brand-primary);
+    }
+}
+
+.keyFigureText {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+}
+
+.keyFigureSuffix {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-secondary);
+}
+
+.keyFigureLabel {
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-ratio-tight);
+    color: var(--color-fg-primary);
+}
+
+.keyFigureDetail {
+    font-size: var(--text-fs-sm);
+    line-height: 1.5;
+    color: var(--color-fg-tertiary);
+}
+
+// Tables (feature matrix and pricing)
+
+.tableWrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+
+    // `clip` keeps the rounded corners without making the wrapper a scroll container, which
+    // would stop the feature matrix header sticking to the viewport.
+    @media (min-width: $table-scroll-breakpoint) {
+        overflow: clip;
+    }
+}
+
+.table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: $spacing-size-3 $spacing-size-4;
+        border-bottom: 1px solid var(--color-border-secondary);
+        text-align: left;
+        vertical-align: top;
+    }
+
+    thead th {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-bold);
+        border-bottom-color: var(--color-border-primary);
+    }
+
+    tbody th {
+        font-weight: var(--text-semibold);
+    }
+
+    tbody:last-child tr:last-child > * {
+        border-bottom: none;
+    }
+}
+
+// The feature matrix header stays under the site header while its rows scroll past. A collapsed
+// border scrolls away from a sticky cell, so the header's bottom rule is an inset shadow instead.
+.featureTable thead th {
+    @media (min-width: $table-scroll-breakpoint) {
+        position: sticky;
+        top: $sticky-offset;
+        z-index: 2;
+        border-bottom: none;
+        box-shadow: inset 0 -1px 0 var(--color-border-primary);
+        background: var(--color-bg-primary);
+
+        &.productColumnHeading {
+            box-shadow:
+                inset $product-bar-width 0 0 var(--color-util-brand-600),
+                inset 0 -1px 0 var(--color-border-primary);
+        }
+    }
+}
+
+// An inset shadow, not a border: a collapsed border scrolls away from the sticky header cell.
+.productColumnHeading,
+.productCell,
+.pricingProductCell {
+    box-shadow: inset $product-bar-width 0 0 var(--color-util-brand-600);
+}
+
+// Feature matrix `<col>`s: equal widths for the two products, and a tint on the product column.
+// The tint is opaque, so the sticky header cell can wear it too.
+.featureColumn {
+    width: 24%;
+}
+
+.productColumn,
+.featureTable thead th.productColumnHeading,
+.pricingProductCell {
+    background: color-mix(in srgb, var(--color-bg-primary), var(--color-brand-500) 8%);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-brand-400) 18%);
+    }
+}
+
+.productColumn,
+.competitorColumn {
+    width: 38%;
+}
+
+.groupRow th {
+    padding-block: $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--color-bg-secondary);
+}
+
+// Feature names read as text; the underline and hover colour show they link to the docs.
+.featureLink {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-primary);
+    text-underline-offset: 3px;
+
+    &:hover {
+        color: var(--color-link);
+        text-decoration-color: currentColor;
+    }
+}
+
+.productHeading {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.productLogo {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+// Feature pills follow the bordered, tinted treatment of the shared `Pill` component.
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-1;
+    padding: 2px $spacing-size-2 2px 6px;
+    border: 1px solid;
+    border-radius: var(--radius-4xl);
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-semibold);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.pillFree {
+    @include pill-tone-green;
+}
+
+.pillPaid {
+    @include pill-tone-blue;
+}
+
+.pillLimited {
+    @include pill-tone-yellow;
+}
+
+.pillNone {
+    color: var(--color-fg-secondary);
+    background-color: color-mix(in srgb, var(--color-gray-100) 50%, transparent);
+    border-color: var(--color-border-primary);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-gray-800) 50%, transparent);
+    }
+}
+
+.cellDetail {
+    margin-top: $spacing-size-1;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+}
+
+.pricingPlanColumn {
+    width: 30%;
+}
+
+.pricingCostColumn {
+    width: 24%;
+}
+
+.pricingLicence {
+    color: var(--color-fg-secondary);
+}
+
+.pricingCta {
+    margin-top: $spacing-size-4;
+}
+
+// Choose-if lists
+
+.chooseIf {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-size-6;
+}
+
+.chooseIfCard {
+    --tick-color: var(--color-fg-secondary);
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+
+    h3 {
+        margin: 0 0 $spacing-size-4;
+        font-size: var(--text-fs-xl);
+    }
+
+    // Grows to fill the card, so the product card's button lines up with the bottom of its neighbour
+    ul {
+        flex-grow: 1;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        position: relative;
+        margin: 0;
+        padding-left: $spacing-size-8;
+    }
+
+    li + li {
+        margin-top: $spacing-size-3;
+    }
+
+    // A tick in place of the bullet
+    li::before {
+        content: '';
+        position: absolute;
+        top: 0.15em;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--tick-color);
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.5 14.1L4.4 10l1.4-1.4 2.7 2.7 5.7-5.7 1.4 1.4-7.1 7.1z'/%3E%3C/svg%3E")
+            center / contain no-repeat;
+    }
+}
+
+.chooseIfProduct {
+    --tick-color: var(--color-util-brand-600);
+
+    border-color: var(--color-util-brand-300);
+    background: color-mix(in srgb, var(--color-bg-primary), var(--color-brand-500) 6%);
+
+    #{$selector-darkmode} & {
+        --tick-color: var(--color-brand-300);
+
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-brand-400) 12%);
+    }
+}
+
+.chooseIfCta {
+    margin-top: $spacing-size-6;
+}
+
+// Get started
+
+.getStarted {
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+
+    h3 {
+        margin: 0 0 $spacing-size-3;
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-ratio-tight);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    @media (min-width: $table-scroll-breakpoint) {
+        padding: $spacing-size-12;
+    }
+}
+
+.getStartedEyebrow {
+    margin-bottom: $spacing-size-2;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
+}
+
+.getStartedCtas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+    margin-top: $spacing-size-6;
+}
+
+.getStartedCta {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.getStartedCtaIcon {
+    width: 16px;
+    height: 16px;
+}
+
+// Related pages
+
+.relatedGroups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-size-8 $spacing-size-6;
+    padding-top: $spacing-size-8;
+    border-top: 1px solid var(--color-border-secondary);
+
+    h3 {
+        margin: 0 0 $spacing-size-4;
+        font-size: var(--text-fs-sm);
+        font-weight: var(--text-semibold);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--color-fg-tertiary);
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-size-3;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    a {
+        font-size: var(--text-fs-base);
+        color: var(--color-fg-secondary);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-link);
+            text-decoration: underline;
+        }
+    }
+}
+
+// Hub
+
+.hubCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-size-4;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hubCard {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    height: 100%;
+    padding: $spacing-size-5;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        border-color: var(--color-util-brand-400);
+    }
+
+    strong {
+        font-size: var(--text-fs-lg);
+        color: var(--color-link);
+    }
+
+    span {
+        color: var(--color-fg-secondary);
+    }
+}

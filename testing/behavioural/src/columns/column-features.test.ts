@@ -20,9 +20,8 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     mockGridLayout,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type {
     ColDef,
@@ -649,11 +648,7 @@ describe('Column Features', () => {
 
         test('a viewport resize in one grid leaves the flex columns of the other grid flexing', async () => {
             const originalGridWidth = mockGridLayout.gridWidth;
-            let uninstallResizeObserver: (() => void) | undefined;
-            let restoreOffsetParent: (() => void) | undefined;
             try {
-                restoreOffsetParent = polyfillOffsetParent();
-                uninstallResizeObserver = installMockResizeObserver();
                 const api1 = gridsManager.createGrid('grid1', {
                     columnDefs: ['a', 'b', 'c'].map((colId) => ({ colId, flex: 1 })),
                 });
@@ -675,8 +670,6 @@ describe('Column Features', () => {
                 expect(api2.getColumn('b')!.getActualWidth()).toBe(366);
             } finally {
                 mockGridLayout.gridWidth = originalGridWidth;
-                uninstallResizeObserver?.();
-                restoreOffsetParent?.();
             }
         });
 
@@ -756,11 +749,7 @@ describe('Column Features', () => {
 
         test('a resize or a viewport resize in one grid leaves a column flexing differently in the other grid flexing there', async () => {
             const originalGridWidth = mockGridLayout.gridWidth;
-            let uninstallResizeObserver: (() => void) | undefined;
-            let restoreOffsetParent: (() => void) | undefined;
             try {
-                restoreOffsetParent = polyfillOffsetParent();
-                uninstallResizeObserver = installMockResizeObserver();
                 const columnDefs = (flex: number) => [
                     { colId: 'a', width: 200 },
                     { colId: 'b', flex },
@@ -782,8 +771,6 @@ describe('Column Features', () => {
                 ]);
             } finally {
                 mockGridLayout.gridWidth = originalGridWidth;
-                uninstallResizeObserver?.();
-                restoreOffsetParent?.();
             }
         });
 
@@ -1595,7 +1582,6 @@ describe('Column Features', () => {
                 el.classList.contains('ag-cell-wrapper')
                     ? cellHeights.get(el.closest('.ag-cell')?.getAttribute('col-id') ?? '')
                     : undefined;
-            const uninstallResizeObserver = installMockResizeObserver();
             try {
                 const api = gridsManager.createGrid('myGrid', {
                     columnDefs: [
@@ -1614,7 +1600,6 @@ describe('Column Features', () => {
                 ]);
                 await waitFor(() => expect(row.rowHeight).toBe(60));
             } finally {
-                uninstallResizeObserver();
                 mockGridLayout.useRealOffsetDimensions = false;
                 mockGridLayout.elementHeightOverride = undefined;
             }

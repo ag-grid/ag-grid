@@ -85,7 +85,9 @@ const gridOptions = {
 }
 ```
 
-Rows for which `isRowSelectable` returns `false` cannot be selected at all, whether using the UI or the API.
+Rows for which `isRowSelectable` returns `false` cannot be selected at all, whether using the UI or the API. With the Server-Side Row Model and `groupSelects: 'descendants'`, a group for which it returns `false` still shows the selection of its rows, and can be deselected through the API.
+
+Selecting a total row selects its group, or the root node for the grand total row (see [Selecting Total Rows](./grouping-row-selection/#selecting-total-rows)). A group total row can be selected when its group can. For the grand total row, `isRowSelectable` is called with the grand total row itself, which has no `data` with the Client-Side Row Model. With the Client-Side Row Model and `groupSelects` set to `'descendants'` or `'filteredDescendants'`, the grand total row can be selected when any of its rows can, as groups are.
 
 {% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 

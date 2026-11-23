@@ -9,7 +9,6 @@ import type {
 import { BeanStub, ServerSideTransactionResultStatus } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
-import type { ServerSideSelectionService } from './services/serverSideSelectionService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -21,12 +20,10 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
     private valueCache?: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
-    private selectionSvc?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;
     }
 
     private asyncTransactionsTimeout: number | undefined;
@@ -135,11 +132,6 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
             this.valueCache?.onDataChanged();
-            if (res.remove && this.selectionSvc) {
-                const removedRowIds = res.remove.map((row) => row.id!);
-                this.selectionSvc.deleteSelectionStateFromParent(transaction.route ?? [], removedRowIds);
-            }
-
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
             return res;
         } else {

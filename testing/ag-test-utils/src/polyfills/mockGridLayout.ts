@@ -1,6 +1,7 @@
 // A deterministic fake layout for the test DOM, installed once per worker onto the Element/HTMLElement
 // prototypes: happy-dom computes none, so every rect, offset and scroll dimension the grid measures would
 // read 0, virtualisation would render nothing and popups would have nowhere to go.
+import { installLayoutResizeObserver } from './mockResizeObserver';
 import { VIRTUAL_LIST_VIEWPORT_CLASSES } from './virtualListViewports';
 
 let initialized = false;
@@ -58,14 +59,8 @@ function resetOptions(): void {
     Object.assign(mockGridLayout, DEFAULT_OPTIONS);
 }
 
-const POPUP_OR_DIALOG_SELECTOR =
-    '.ag-popup,.ag-dialog,.ag-advanced-filter-builder,.ag-tooltip,.ag-rich-select-list,.ag-menu';
 // `.ag-rich-select` on top of the shared list: here the match is by `closest`, so the picker's own wrapper counts.
 const VIRTUAL_LIST_SELECTOR = [...VIRTUAL_LIST_VIEWPORT_CLASSES, '.ag-rich-select'].join(',');
-
-function inPopupOrDialog(el: HTMLElement): boolean {
-    return !!el.closest(POPUP_OR_DIALOG_SELECTOR);
-}
 
 function inVirtualList(el: HTMLElement): boolean {
     return !!el.closest(VIRTUAL_LIST_SELECTOR);
@@ -296,6 +291,7 @@ function init(): boolean {
     }
     initialized = true;
     innerTextPolyfill();
+    installLayoutResizeObserver();
 
     const DOMRectInspect = class DOMRect {
         constructor(
@@ -450,10 +446,17 @@ function init(): boolean {
             if (native != null) {
                 return native;
             }
-            if (inPopupOrDialog(this)) {
-                return this.parentElement;
+            // Null when detached or not rendered, as a browser; the parent stands for the positioned ancestor.
+            // The theme's CSS variable probes stay detached, taking the defaults: no CSS variable is computed here.
+            if (!this.isConnected || this.closest('.ag-measurement-container')) {
+                return null;
             }
-            return null;
+            for (let el: HTMLElement | null = this; el !== null; el = el.parentElement) {
+                if (el.classList.contains('ag-hidden') || el.hidden || el.style.display === 'none') {
+                    return null;
+                }
+            }
+            return this.parentElement;
         },
     });
 
@@ -570,9 +573,8 @@ export function innerTextPolyfill() {
     });
 }
 
-/** No public API resizes the grid element and happy-dom's ResizeObserver never delivers, so the event is
- *  the entry point (see `installMockResizeObserver` to drive the observer paths instead). Sets the mocked
- *  layout too, so anything that measures agrees with what was reported. */
+/** Raises `gridSizeChanged` at once, the mocked layout set to match; `triggerResizeObservers` drives the grid's own
+ *  resize path instead, a frame later. */
 export function dispatchGridSizeChanged(
     api: { dispatchEvent: (event: { type: string }) => void },
     width: number

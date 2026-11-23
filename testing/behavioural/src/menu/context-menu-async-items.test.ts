@@ -1,11 +1,9 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, fireGridPointerDown, menuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, fireGridPointerDown, menuOption } from 'ag-test-utils';
 
 import type { MenuItemDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { ContextMenuModule } from 'ag-grid-enterprise';
-
-let restoreOffsetParent: (() => void) | undefined;
 
 function rightClickFirstCell(gridDiv: HTMLElement): void {
     const cell = gridDiv.querySelector<HTMLElement>('[row-index="0"] [col-id="athlete"]')!;
@@ -23,7 +21,6 @@ describe('Context menu with async items', () => {
     const onRejection = (reason: unknown) => rejections.push(reason);
 
     beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
         rejections.length = 0;
         process.on('unhandledRejection', onRejection);
     });
@@ -31,8 +28,6 @@ describe('Context menu with async items', () => {
     afterEach(() => {
         process.off('unhandledRejection', onRejection);
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     test('the loading icon is removed when the items promise rejects', async () => {

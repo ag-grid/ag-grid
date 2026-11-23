@@ -618,6 +618,37 @@ describe('Auto Group Column Order', () => {
 
             expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', ...groupColIds, 'c']);
         });
+
+        test('the auto group column keeps its width, sort and pinned across regroups; when grouping is cleared it is gone and a new one with default state replaces it when set again', () => {
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }],
+                groupDisplayType,
+            });
+            gridApi.applyColumnState({
+                state: [{ colId: GROUP_AUTO_COLUMN_ID, width: 321, sort: 'asc', pinned: 'left' }],
+            });
+            const read = () => {
+                const state = gridApi.getColumnState().find((s) => s.colId === GROUP_AUTO_COLUMN_ID);
+                return state && { width: state.width, sort: state.sort, pinned: state.pinned };
+            };
+            const kept = { width: 321, sort: 'asc', pinned: 'left' };
+
+            gridApi.addRowGroupColumns(['b']);
+            const afterAdd = read();
+            gridApi.removeRowGroupColumns(['a']);
+            const afterRemove = read();
+            gridApi.setRowGroupColumns([]);
+            const whenCleared = gridApi.getColumn(GROUP_AUTO_COLUMN_ID);
+            gridApi.setRowGroupColumns(['a', 'c']);
+            const afterSetAgain = read();
+
+            expect({ afterAdd, afterRemove, whenCleared, afterSetAgain }).toEqual({
+                afterAdd: kept,
+                afterRemove: kept,
+                whenCleared: null,
+                afterSetAgain: { width: 200, sort: null, pinned: null },
+            });
+        });
     });
 
     describe('groupDisplayType=multipleColumns', () => {
@@ -1726,6 +1757,116 @@ describe('Auto Group Column Order', () => {
                 `);
 
             expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', ...groupColIds, 'c']);
+        });
+
+        test('surviving auto group columns keep their width, sort and pinned across regroups, a new or re-added level starts with defaults, a removed one is gone', () => {
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b', rowGroup: true },
+                    { colId: 'c' },
+                    { colId: 'd' },
+                ],
+                groupDisplayType,
+            });
+            const idOf = (level: string) => `${GROUP_AUTO_COLUMN_ID}-${level}`;
+            gridApi.applyColumnState({
+                state: [
+                    { colId: idOf('a'), width: 321, sort: 'asc', pinned: 'left' },
+                    { colId: idOf('b'), width: 250, sort: 'desc', pinned: 'right' },
+                ],
+            });
+            const read = () => ({
+                rowGroups: gridApi.getRowGroupColumns().map((col) => col.getColId()),
+                autoColumns: Object.fromEntries(
+                    gridApi
+                        .getColumnState()
+                        .filter((state) => state.colId.startsWith(GROUP_AUTO_COLUMN_ID))
+                        .map((state) => [state.colId, { width: state.width, sort: state.sort, pinned: state.pinned }])
+                ),
+            });
+            const keptA = { width: 321, sort: 'asc', pinned: 'left' };
+            const keptB = { width: 250, sort: 'desc', pinned: 'right' };
+            const fresh = { width: 200, sort: null, pinned: null };
+
+            expect(read()).toEqual({
+                rowGroups: ['a', 'b'],
+                autoColumns: { [idOf('a')]: keptA, [idOf('b')]: keptB },
+            });
+
+            gridApi.addRowGroupColumns(['c']);
+            expect(read()).toEqual({
+                rowGroups: ['a', 'b', 'c'],
+                autoColumns: { [idOf('a')]: keptA, [idOf('b')]: keptB, [idOf('c')]: fresh },
+            });
+
+            gridApi.removeRowGroupColumns(['a']);
+            expect(read()).toEqual({
+                rowGroups: ['b', 'c'],
+                autoColumns: { [idOf('b')]: keptB, [idOf('c')]: fresh },
+            });
+            expect(gridApi.getColumn(idOf('a'))).toBeNull();
+
+            gridApi.moveRowGroupColumn(1, 0);
+            expect(read()).toEqual({
+                rowGroups: ['c', 'b'],
+                autoColumns: { [idOf('b')]: keptB, [idOf('c')]: fresh },
+            });
+
+            gridApi.addRowGroupColumns(['d']);
+            expect(read()).toEqual({
+                rowGroups: ['c', 'b', 'd'],
+                autoColumns: { [idOf('b')]: keptB, [idOf('c')]: fresh, [idOf('d')]: fresh },
+            });
+
+            gridApi.addRowGroupColumns(['a']);
+            expect(read()).toEqual({
+                rowGroups: ['c', 'b', 'd', 'a'],
+                autoColumns: { [idOf('a')]: fresh, [idOf('b')]: keptB, [idOf('c')]: fresh, [idOf('d')]: fresh },
+            });
+        });
+
+        test('an auto group column shows the header name of its row group column and follows a rename of it', async () => {
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', headerName: 'Nation', rowGroup: true },
+                    { field: 'year', rowGroup: true },
+                    { field: 'gold' },
+                ],
+                groupDisplayType,
+            });
+            await new GridColumns(gridApi, 'header names at creation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-country "Nation" width:200
+                ├── ag-Grid-AutoColumn-year "Year" width:200
+                ├── country "Nation" width:200 rowGroup
+                ├── year "Year" width:200 rowGroup
+                └── gold "Gold" width:200
+            `);
+
+            gridApi.setGridOption('columnDefs', [
+                { field: 'country', headerName: 'Land', rowGroup: true },
+                { field: 'year', headerName: 'Season', rowGroup: true },
+                { field: 'gold' },
+            ]);
+
+            await new GridColumns(gridApi, 'header names after the rename').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-country "Land" width:200
+                ├── ag-Grid-AutoColumn-year "Season" width:200
+                ├── country "Land" width:200 rowGroup
+                ├── year "Season" width:200 rowGroup
+                └── gold "Gold" width:200
+            `);
+            const headerText = (colId: string) =>
+                getGridElement(gridApi)!.querySelector(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-text`)
+                    ?.textContent;
+            await waitFor(() =>
+                expect([
+                    headerText(`${GROUP_AUTO_COLUMN_ID}-country`),
+                    headerText(`${GROUP_AUTO_COLUMN_ID}-year`),
+                ]).toEqual(['Land', 'Season'])
+            );
         });
     });
 });

@@ -2259,16 +2259,6 @@ export interface GridOptions<TData = any> {
     initialState?: GridState;
 
     /**
-     * **React only**.
-     *
-     * @deprecated As of v32 custom components are created reactively by default.
-     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
-     * @initial
-     * @default true
-     */
-    reactiveCustomComponents?: boolean;
-
-    /**
      *
      * ** React only**.
      *
@@ -3459,6 +3449,8 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     hideDisabledCheckboxes?: boolean;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row non-selectable.
+     * The grand total row (`footer` is `true`) is passed too, except to the Client-Side Row Model with `groupSelects`
+     * set to `'descendants'` or `'filteredDescendants'`. With the Client-Side Row Model it has no `data`.
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**

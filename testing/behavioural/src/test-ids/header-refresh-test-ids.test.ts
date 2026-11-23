@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -46,10 +46,9 @@ describe('header test IDs survive a header refresh', () => {
 
         api.setGridOption('context', { reportingCurrency: 'USD' });
 
-        // Let every stamping pass the context change may have scheduled run to completion, so that
-        // the refresh below is the only thing the service could react to. Without this the test
-        // passes on a pending debounce landing after the refresh rather than on the refresh itself.
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        // runs out the stamping passes the context change scheduled (0 ms debounces), so only the refresh stamps
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
 
         // refreshHeader() destroys and recreates the header row, so every test id stamped on the old
         // header DOM goes with it. The service must stamp the replacement.

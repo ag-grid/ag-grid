@@ -5,7 +5,6 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     fireGridPointerDown,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IDoesFilterPassParams, IFilterComp } from 'ag-grid-community';
@@ -33,18 +32,11 @@ const gridsManager = new TestGridsManager({
 });
 
 const createdElements: HTMLElement[] = [];
-let restoreOffsetParent: (() => void) | undefined;
-
-beforeEach(() => {
-    restoreOffsetParent = polyfillOffsetParent();
-});
 
 afterEach(() => {
     gridsManager.reset();
     createdElements.forEach((el) => el.remove());
     createdElements.length = 0;
-    restoreOffsetParent?.();
-    restoreOffsetParent = undefined;
 });
 
 function appendDiv(parent: HTMLElement, className?: string): HTMLDivElement {
