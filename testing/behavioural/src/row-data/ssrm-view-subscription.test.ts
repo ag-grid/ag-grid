@@ -530,20 +530,21 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
-    test('destroy() throws the unsubscribeRows error after every gridPreDestroyed listener has run', async () => {
+    test('destroy() throws the unsubscribeRows error in an AggregateError after every gridPreDestroyed listener has run', async () => {
         const preDestroyed: string[] = [];
         const api = await createFlatGrid({ onGridPreDestroyed: () => preDestroyed.push('onGridPreDestroyed') });
         api.addEventListener('gridPreDestroyed', () => preDestroyed.push('addEventListener'));
         let apiDestroyedInHandler: boolean | undefined;
+        const error = new Error('unsubscribe failed');
         api.setGridOption('viewSubscription', {
             subscribeRows: () => {},
             unsubscribeRows: (_rows, params) => {
                 apiDestroyedInHandler = params.api.isDestroyed();
-                throw new Error('unsubscribe failed');
+                throw error;
             },
         });
 
-        expect(() => api.destroy()).toThrow('unsubscribe failed');
+        expect(() => api.destroy()).toThrow(expect.objectContaining({ errors: [error] }));
 
         expect(preDestroyed.sort()).toEqual(['addEventListener', 'onGridPreDestroyed']);
         expect(apiDestroyedInHandler).toBe(false);
