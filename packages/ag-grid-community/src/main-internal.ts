@@ -368,7 +368,6 @@ export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
-export type { IViewSubscriptionService } from './interfaces/iViewSubscription';
 export type { IWatermark } from './interfaces/iWatermark';
 export type { HeaderElement, PrefixedXmlAttributes, XmlAttributes, XmlElement } from './interfaces/iXmlFactory';
 export type { IRenderStatusService } from './interfaces/renderStatusService';

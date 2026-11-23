@@ -215,18 +215,9 @@ export class GridOptionsService
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
 
-        // An error thrown by a listener, such as an application's handler, is rethrown once every option is notified.
-        let failure: { error: unknown } | undefined;
         for (const event of events) {
             _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            try {
-                this.propEventSvc.dispatchEvent(event);
-            } catch (error) {
-                failure ??= { error };
-            }
-        }
-        if (failure) {
-            throw failure.error;
+            this.propEventSvc.dispatchEvent(event);
         }
     }
 
