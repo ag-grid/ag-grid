@@ -437,7 +437,23 @@ cleanup_locked() {
     done
 }
 
-cleanup_stale_agent_worktrees
+# The detached cleanup started at the end of this hook re-runs this script in this mode.
+if [[ -n "${CLAUDE_WT_CLEANUP_ONLY:-}" ]]; then
+    log "Stale cleanup started $(date '+%Y-%m-%d %H:%M:%S')"
+    cleanup_stale_agent_worktrees
+    exit 0
+fi
+
+# Runs a command in a new session, so it outlives this hook and the process group Claude Code started it in.
+detach() {
+    if command -v setsid >/dev/null; then
+        setsid "$@"
+    elif command -v perl >/dev/null; then
+        perl -MPOSIX=setsid -e 'setsid(); exec @ARGV or exit 127' -- "$@"
+    else
+        nohup "$@"
+    fi
+}
 
 log "Creating worktree '${NAME}' for ${REPO_NAME}..."
 
@@ -473,6 +489,13 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 if [[ -f "$WT_PATH/package.json" ]]; then
     bash "$SCRIPT_DIR/setup-worktree.sh" "$WT_PATH" 2>&1 | while IFS= read -r line; do log "$line"; done
 fi
+
+# Stale cleanup walks every candidate's files, so it runs detached once the new worktree is ready; the cleanup lock
+# keeps runs apart.
+CLEANUP_LOG="${WORKTREE_ROOT}/${REPO_NAME}/.cleanup.log"
+if [[ -f "$CLEANUP_LOG" && $(wc -c <"$CLEANUP_LOG") -gt 1048576 ]]; then mv -f "$CLEANUP_LOG" "$CLEANUP_LOG.1"; fi
+printf '%s' "$INPUT" | CLAUDE_WT_CLEANUP_ONLY=1 detach bash "$0" >>"$CLEANUP_LOG" 2>&1 &
+log "Cleaning up stale agent worktrees in the background; see ${CLEANUP_LOG}"
 
 log "Worktree ready at: ${WT_PATH}"
 echo "$WT_PATH"

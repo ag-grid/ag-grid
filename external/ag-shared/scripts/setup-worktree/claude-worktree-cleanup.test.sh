@@ -33,7 +33,7 @@ expect() {
 }
 
 # Load the cleanup functions without running the hook.
-eval "$(sed -n '/^# Agents run in parallel/,/^cleanup_stale_agent_worktrees$/p' "$CREATE" | sed '$d')"
+eval "$(sed -n '/^# Agents run in parallel/,/^if \[\[ -n "\${CLAUDE_WT_CLEANUP_ONLY/p' "$CREATE" | sed '$d')"
 STALE_AGENT_WORKTREE_MINUTES=1
 LOG="$T/log"
 log() { echo "$*" >>"$LOG"; }
@@ -73,6 +73,10 @@ if [[ "$(uname)" == Darwin ]]; then
     chmod +a "everyone deny delete_child" "$WTS/agent-acl/node_modules/p"
     chmod +a "everyone deny delete" "$WTS/agent-aclroot/.git"
 fi
+# A stale worktree where the hook's detached cleanup mode looks: $HOME/.worktrees/<repo>.
+HB="$T/home"
+git -C "$CWD" worktree add -q "$HB/.worktrees/repo/agent-bg" -b agent-bg 2>/dev/null
+echo "$DEAD_PID" >"$(git -C "$HB/.worktrees/repo/agent-bg" rev-parse --absolute-git-dir)/$OWNER_FILE_NAME"
 # Occupies the path cleanup moves agent-blocked to.
 mkdir "$WTS/.removing-agent-blocked"
 sleep 600 &
@@ -154,6 +158,20 @@ if [[ "$(uname)" == Darwin ]]; then
 fi
 expect "a refused move aside leaves no record" test ! -e "$(git -C "$WTS/agent-blocked" rev-parse --absolute-git-dir)/claude-moved-from"
 expect "lock is released after cleanup" bash -c 'exec 9>>"$1"; perl -MFcntl=:flock -e '"'"'open(my $fh, ">&=", 9) or exit 1; flock($fh, LOCK_EX | LOCK_NB) or exit 1'"'" _ "$WTS/.cleanup.lock"
+
+# The hook's cleanup-only mode, which it starts detached, cleans up and creates nothing.
+if printf '{"name":"agent-fresh","cwd":"%s"}' "$CWD" | HOME="$HB" CLAUDE_WT_CLEANUP_ONLY=1 bash "$CREATE" >"$T/bg-out" 2>"$T/bg-err"; then
+    pass "cleanup-only mode succeeds"
+else
+    fail "cleanup-only mode succeeds"
+fi
+expect "cleanup-only mode considers the stale worktree" grep -q "$HB/.worktrees/repo/agent-bg" "$T/bg-err"
+expect "cleanup-only mode prints nothing on stdout" test ! -s "$T/bg-out"
+expect "cleanup-only mode creates no worktree" test ! -e "$HB/.worktrees/repo/agent-fresh"
+# detach starts its command in a new process group, outside the one Claude Code may end with the hook.
+eval "$(sed -n '/^detach() {/,/^}/p' "$CREATE")"
+detach bash -c 'ps -o pgid= -p $$' >"$T/detached-pgid"
+expect "detach starts a new process group" test "$(tr -d ' ' <"$T/detached-pgid")" != "$(ps -o pgid= -p $$ | tr -d ' ')"
 
 # move_worktree refuses an occupied destination and leaves the worktree registered where it was.
 mkdir "$WTS/.occupied"
