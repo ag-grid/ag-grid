@@ -19,10 +19,16 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     template: `
         <div class="example-wrapper">
             <div class="example-controls">
-                <label>
-                    <input type="checkbox" [checked]="debounceVerticalScrollbar" (change)="onDebounceChange($event)" />
-                    Debounce vertical scroll
-                </label>
+                <div class="controls-row">
+                    <label>
+                        <input
+                            type="checkbox"
+                            [checked]="debounceVerticalScrollbar"
+                            (change)="onDebounceChange($event)"
+                        />
+                        Debounce vertical scroll
+                    </label>
+                </div>
             </div>
             @if (gridVisible) {
                 <ag-grid-angular

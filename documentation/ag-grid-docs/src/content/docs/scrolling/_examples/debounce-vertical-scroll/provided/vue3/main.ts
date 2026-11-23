@@ -17,10 +17,12 @@ const VueExample = defineComponent({
     template: `
         <div class="example-wrapper">
             <div class="example-controls">
-                <label>
-                    <input type="checkbox" v-model="debounceVerticalScrollbar" />
-                    Debounce vertical scroll
-                </label>
+                <div class="controls-row">
+                    <label>
+                        <input type="checkbox" v-model="debounceVerticalScrollbar" />
+                        Debounce vertical scroll
+                    </label>
+                </div>
             </div>
             <!-- This initial-only option requires a new grid when toggled. -->
             <ag-grid-vue
