@@ -44,7 +44,10 @@ const pageStructuredData = [
         description: content.meta.description,
         lastUpdated: content.lastUpdated,
         breadcrumbs: [
-            { name: GRID_DECISION_SITE.productName, url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href },
+            {
+                name: GRID_DECISION_SITE.productName,
+                url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
+            },
             { name: COMPARE_HUB_NAME, url: hubUrl },
             { name: comparisonPageName(GRID_DECISION_SITE.productName, content.competitor.name), url: pageUrl },
         ],
