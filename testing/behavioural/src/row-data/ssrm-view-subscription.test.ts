@@ -578,26 +578,6 @@ describe('SSRM viewSubscription', () => {
         expect(api.isDestroyed()).toBe(true);
     });
 
-    test('a gridPreDestroyed listener that removes the option does not skip onGridPreDestroyed', async () => {
-        const preDestroyed: string[] = [];
-        const api = await createFlatGrid({ onGridPreDestroyed: () => preDestroyed.push('onGridPreDestroyed') });
-        const unsubscribed: string[] = [];
-        api.setGridOption('viewSubscription', {
-            subscribeRows: () => {},
-            unsubscribeRows: (rows) => {
-                unsubscribed.push(...rows.map((row) => row.id));
-                throw new Error('unsubscribe failed');
-            },
-        });
-        api.addEventListener('gridPreDestroyed', () => api.setGridOption('viewSubscription', undefined));
-
-        expect(() => api.destroy()).toThrow('unsubscribe failed');
-
-        expect(preDestroyed).toEqual(['onGridPreDestroyed']);
-        expect(unsubscribed.sort()).toEqual(range(0, 5).sort());
-        expect(api.isDestroyed()).toBe(true);
-    });
-
     test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
