@@ -30,15 +30,12 @@ $product-bar-width: 3px;
 // Toned sections pad their own bottom edge, so the band holds its content with even space.
 .sectionMuted {
     margin-top: $spacing-size-12;
+    background: var(--color-bg-secondary);
 
     &,
     &:last-child {
         padding-bottom: $spacing-size-12;
     }
-}
-
-.sectionMuted {
-    background: var(--color-bg-secondary);
 
     #{$selector-darkmode} & {
         background: var(--color-bg-tertiary);
