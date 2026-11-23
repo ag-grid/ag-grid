@@ -342,32 +342,17 @@ export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
 
-const SUB_PIXEL_OVERFLOW_TOLERANCE = 0.5;
-
 function _isVerticalScrollShowing(element: HTMLElement): boolean {
     if (element.clientHeight >= element.scrollHeight) {
         return false;
     }
-    // Fractional zoom snaps borders to device pixels, so rounded scroll metrics can report sub-pixel overflow.
+    // Fractional zoom rounds the scroll metrics enough to report overflow when the text fits, so check where the
+    // text is. An empty range (e.g. only ::before/::after content) cannot be measured, so trust the metrics there.
     const range = element.ownerDocument.createRange();
-    if (typeof range.getBoundingClientRect !== 'function') {
-        return true;
-    }
     range.selectNodeContents(element);
     const content = range.getBoundingClientRect();
-    if (content.width === 0 && content.height === 0) {
-        return false;
-    }
-    // Overflow clips at the padding edge; computed border widths are unzoomed CSS pixels, hence the scale.
     const box = element.getBoundingClientRect();
-    const scale = element.offsetHeight ? box.height / element.offsetHeight : 1;
-    const style = window.getComputedStyle(element);
-    const clipTop = box.top + pf(style.borderTopWidth) * scale;
-    const clipBottom = box.bottom - pf(style.borderBottomWidth) * scale;
-    return (
-        content.top < clipTop - SUB_PIXEL_OVERFLOW_TOLERANCE ||
-        content.bottom > clipBottom + SUB_PIXEL_OVERFLOW_TOLERANCE
-    );
+    return content.height === 0 || content.top < box.top || content.bottom > box.bottom;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

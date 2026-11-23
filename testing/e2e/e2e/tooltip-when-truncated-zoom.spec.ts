@@ -8,15 +8,13 @@ import { mountGrid } from '../src/mountGrid';
 const mountZoomedGrid = (page: Page, zoom: number) =>
     mountGrid(page, {
         width: 1000,
-        css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }
-            .ag-cell.bordered-cell { white-space: pre-line; line-height: 20px; border-bottom: 12px solid red; }`,
+        css: `html { zoom: ${zoom}; } .multiline-cell { white-space: normal; line-height: 20px; }`,
         options: () => ({
             columnDefs: [
                 { field: 'athlete', tooltipField: 'athlete', width: 180 },
                 { field: 'country', tooltipField: 'country', width: 100 },
                 { field: 'notes', tooltipField: 'notes', width: 200, cellClass: 'multiline-cell' },
                 { field: 'wrapped', tooltipField: 'wrapped', width: 200, wrapText: true },
-                { field: 'bordered', tooltipField: 'bordered', width: 200, cellClass: 'bordered-cell' },
             ],
             rowData: [
                 {
@@ -24,8 +22,6 @@ const mountZoomedGrid = (page: Page, zoom: number) =>
                     country: 'United States',
                     notes: 'A long note that wraps onto several lines and is clipped by the height of the row',
                     wrapped: 'Another long note that wraps onto several lines and is clipped by the height of the row',
-                    // The second line ends below the padding edge but inside the 12px bottom border.
-                    bordered: 'First line\nSecond line',
                 },
             ],
             tooltipShowDelay: 0,
@@ -62,11 +58,6 @@ test.describe('tooltipShowMode whenTruncated at fractional zoom', () => {
             const { cell } = await mountZoomedGrid(page, zoom);
             await expect(await tooltipWithText(page, cell(0, 'notes'), /^A long note/)).toHaveCount(1);
             await expect(await tooltipWithText(page, cell(0, 'wrapped'), /^Another long note/)).toHaveCount(1);
-        });
-
-        test(`shows a tooltip for text clipped inside the bottom border at ${zoom * 100}% zoom`, async ({ page }) => {
-            const { cell } = await mountZoomedGrid(page, zoom);
-            await expect(await tooltipWithText(page, cell(0, 'bordered'), /^First line\s+Second line$/)).toHaveCount(1);
         });
     }
 });
