@@ -170,7 +170,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, options);
+            options.subscribeRows(rows, this.createParams());
         }
     }
 
@@ -260,13 +260,10 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             }
         });
 
-        try {
-            if (removed.length) {
-                this.getOptions()?.unsubscribeRows(removed, this.createParams());
-            }
-        } finally {
-            this.subscribeNodes(sub, added);
+        if (removed.length) {
+            this.getOptions()?.unsubscribeRows(removed, this.createParams());
         }
+        this.subscribeNodes(sub, added);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */
@@ -291,25 +288,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             this.schedule();
         }
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, this.getOptions());
-        }
-    }
-
-    /** Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`. */
-    private callSubscribeRows(
-        sub: ActiveSubscription,
-        rows: ViewRow[],
-        options: ViewSubscriptionOptions | undefined
-    ): void {
-        // Read before the call, as the handler owns the array and can change it.
-        const ids = rows.map((row) => row.id);
-        try {
-            options?.subscribeRows(rows, this.createParams());
-        } catch (error) {
-            for (const id of ids) {
-                sub.rows.delete(id);
-            }
-            throw error;
+            this.getOptions()?.subscribeRows(rows, this.createParams());
         }
     }
 
