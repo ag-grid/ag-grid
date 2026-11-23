@@ -10,7 +10,6 @@ import {
 } from 'ag-grid-community';
 import type {
     BodyScrollEvent,
-    IViewSubscriptionService,
     NamedBean,
     PaginationChangedEvent,
     RowNode,
@@ -46,7 +45,7 @@ interface ViewEnds {
 
 const DEFAULT_DEBOUNCE_MS = 50;
 
-export class ViewSubscriptionService extends BeanStub implements NamedBean, IViewSubscriptionService {
+export class ViewSubscriptionService extends BeanStub implements NamedBean {
     beanName = 'viewSubSvc' as const;
 
     private sub: ActiveSubscription | undefined;
@@ -87,9 +86,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
             sortChanged: markDirty,
             filterChanged: markDirty,
             pinnedRowsChanged: markDirty,
-            // The rows are unsubscribed in `preDestroy`, once every `gridPreDestroyed` listener has run.
             gridPreDestroyed: () => {
                 this.preDestroyed = true;
+                this.stop();
             },
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
@@ -138,11 +137,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
         const lastOptions = options ?? previousOptions ?? this.lastOptions;
-        if (this.preDestroyed) {
-            // `preDestroy` unsubscribes the rows once every `gridPreDestroyed` listener has run, as the handler can throw.
-            this.lastOptions = lastOptions;
-            return;
-        }
         this.lastOptions = options;
         const wanted =
             !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
@@ -195,7 +189,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
 
         const refs = Array.from(sub.rows.values(), (row) => row.ref);
         if (refs.length) {
-            options?.unsubscribeRows(refs, this.createParams());
+            this.callUnsubscribeRows(refs, options);
         }
     }
 
@@ -206,11 +200,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
 
     private getOptions(): ViewSubscriptionOptions | undefined {
         return this.gos.get('viewSubscription');
-    }
-
-    public preDestroy(): void {
-        this.preDestroyed = true;
-        this.stop(this.getOptions() ?? this.lastOptions);
     }
 
     public override destroy(): void {
@@ -275,13 +264,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
         });
 
         if (removed.length) {
-            try {
-                this.getOptions()?.unsubscribeRows(removed, this.createParams());
-            } catch (e) {
-                // The added rows are not subscribed yet, and no change may come to schedule them.
-                this.schedule();
-                throw e;
-            }
+            this.callUnsubscribeRows(removed, this.getOptions());
         }
         this.subscribeNodes(sub, added);
     }
@@ -312,7 +295,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
         }
     }
 
-    /** Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`. */
+    /** An error thrown by the handler is reported, so one failed call does not stop the grid or later calls. */
+    private callUnsubscribeRows(refs: ViewRowRef[], options: ViewSubscriptionOptions | undefined): void {
+        try {
+            options?.unsubscribeRows(refs, this.createParams());
+        } catch (error) {
+            this.reportHandlerError('unsubscribeRows', error);
+        }
+    }
+
+    /**
+     * Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`.
+     * The error is reported, so one failed call does not stop the grid or later calls.
+     */
     private callSubscribeRows(
         sub: ActiveSubscription,
         rows: ViewRow[],
@@ -323,7 +318,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
         try {
             options?.subscribeRows(rows, this.createParams());
             sub.retried = false;
-        } catch (e) {
+        } catch (error) {
             for (const id of ids) {
                 sub.rows.delete(id);
             }
@@ -332,7 +327,19 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
                 sub.retried = true;
                 this.schedule();
             }
-            throw e;
+            this.reportHandlerError('subscribeRows', error);
+        }
+    }
+
+    /**
+     * Reports a handler error as warning #333. Reporting never throws, so a `throwOn` dev validation setting
+     * does not stop the grid part-way through destroying or updating subscriptions.
+     */
+    private reportHandlerError(handler: 'subscribeRows' | 'unsubscribeRows', error: unknown): void {
+        try {
+            this.warn(333, { callback: `viewSubscription.${handler}`, error });
+        } catch {
+            // the warning is already logged and captured; only the `throwOn` rethrow is dropped
         }
     }
 
