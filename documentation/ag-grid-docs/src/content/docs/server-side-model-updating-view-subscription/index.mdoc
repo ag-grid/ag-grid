@@ -117,7 +117,7 @@ If the server loses the subscriptions, for example after a reconnect, set `viewS
 
 The grid leaves error handling to you: it does not catch errors thrown by the handlers or retry failed calls.
 
-- If `subscribeRows` throws, its rows still count as subscribed and are passed to `unsubscribeRows` later, so make `unsubscribeRows` happy to receive IDs the server never subscribed.
+- If `subscribeRows` throws, its rows still count as subscribed and are passed to `unsubscribeRows` later, so have `unsubscribeRows` skip any rows the server was never subscribed to.
 - If `unsubscribeRows` throws, its rows count as unsubscribed and are not passed again, so retry the call yourself to stop the server sending their updates.
 - After a lost connection, set `viewSubscriptionActive` to `false` and back to `true` to subscribe the rows in view again.
 
