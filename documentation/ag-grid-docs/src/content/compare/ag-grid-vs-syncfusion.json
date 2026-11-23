@@ -10,6 +10,7 @@
     "competitor": {
         "name": "Syncfusion Data Grid",
         "slug": "syncfusion",
+        "url": "https://www.syncfusion.com/javascript-ui-controls/js-data-grid",
         "logo": "/images/compare/logos/syncfusion.png"
     },
     "hero": {

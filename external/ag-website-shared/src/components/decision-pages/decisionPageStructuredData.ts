@@ -9,7 +9,7 @@ import {
 } from '@ag-website-shared/utils/structuredData';
 
 import { toIsoDate } from './decisionPageText';
-import type { DecisionPageFaqItem } from './types';
+import type { Competitor, DecisionPageFaqItem } from './types';
 
 interface DecisionPageStructuredDataInput {
     canonicalUrlBase: string;
@@ -20,8 +20,11 @@ interface DecisionPageStructuredDataInput {
     breadcrumbs: BreadcrumbItem[];
     /** The page's visible FAQ. `FAQPage` is only emitted when there is one, so markup matches content. */
     faq?: DecisionPageFaqItem[];
-    /** The competitor the page compares against; emitted as a mentioned `SoftwareApplication`. */
-    competitorName?: string;
+    /**
+     * The competitor the page compares against, emitted as a mentioned `Thing` identified by its
+     * site. Not a `SoftwareApplication`, which Google would read as an incomplete rich result.
+     */
+    competitor?: Pick<Competitor, 'name' | 'url'>;
 }
 
 /**
@@ -38,7 +41,7 @@ export function buildDecisionPageStructuredData({
     lastUpdated,
     breadcrumbs,
     faq = [],
-    competitorName,
+    competitor,
 }: DecisionPageStructuredDataInput): JsonLdObject[] {
     const breadcrumbList = buildBreadcrumbList({ pageUrl, items: breadcrumbs });
 
@@ -54,8 +57,8 @@ export function buildDecisionPageStructuredData({
         about: { '@id': getSoftwareApplicationId(canonicalUrlBase) },
         breadcrumb: { '@id': breadcrumbList['@id'] },
     };
-    if (competitorName) {
-        webPage.mentions = { '@type': 'SoftwareApplication', name: competitorName };
+    if (competitor) {
+        webPage.mentions = { '@type': 'Thing', name: competitor.name, sameAs: competitor.url };
     }
 
     const nodes = [webPage, breadcrumbList];

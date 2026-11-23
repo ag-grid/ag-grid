@@ -60,6 +60,7 @@ export function createComparisonPageSchema({ reviewerKeys, now = new Date() }: C
         competitor: z.object({
             name: z.string(),
             slug: z.string().regex(/^[a-z0-9-]+$/),
+            url: z.string().url(),
             logo: z.string().startsWith('/').optional(),
         }),
         hero: z.object({

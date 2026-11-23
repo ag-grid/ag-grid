@@ -20,7 +20,7 @@ describe('buildDecisionPageStructuredData', () => {
     test('emits a WebPage about the site SoftwareApplication, its breadcrumbs and a FAQPage', () => {
         const nodes = buildDecisionPageStructuredData({
             ...BASE_INPUT,
-            competitorName: 'TanStack Table',
+            competitor: { name: 'TanStack Table', url: 'https://tanstack.com/table' },
             faq: [
                 { question: 'Is AG Grid free?', answer: 'Yes, see [pricing](./license-pricing/) for **Enterprise**.' },
             ],
@@ -38,7 +38,7 @@ describe('buildDecisionPageStructuredData', () => {
                 isPartOf: { '@id': 'https://www.ag-grid.com/#website' },
                 about: { '@id': 'https://www.ag-grid.com/#software-application' },
                 breadcrumb: { '@id': `${PAGE_URL}#breadcrumb` },
-                mentions: { '@type': 'SoftwareApplication', name: 'TanStack Table' },
+                mentions: { '@type': 'Thing', name: 'TanStack Table', sameAs: 'https://tanstack.com/table' },
             },
             {
                 '@type': 'BreadcrumbList',

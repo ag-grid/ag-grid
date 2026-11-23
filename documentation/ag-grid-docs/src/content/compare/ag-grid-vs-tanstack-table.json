@@ -12,6 +12,7 @@
     "competitor": {
         "name": "TanStack Table",
         "slug": "tanstack-table",
+        "url": "https://tanstack.com/table",
         "logo": "/images/compare/logos/tanstack-table.png"
     },
     "hero": {

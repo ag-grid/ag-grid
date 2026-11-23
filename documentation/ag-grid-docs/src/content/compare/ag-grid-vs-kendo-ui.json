@@ -10,6 +10,7 @@
     "competitor": {
         "name": "Kendo UI Grid",
         "slug": "kendo-ui",
+        "url": "https://www.telerik.com/kendo-ui/grid",
         "logo": "/images/compare/logos/kendo-ui.png"
     },
     "hero": {

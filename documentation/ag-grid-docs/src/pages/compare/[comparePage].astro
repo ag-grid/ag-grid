@@ -49,7 +49,7 @@ const pageStructuredData = [
             { name: comparisonPageName(GRID_DECISION_SITE.productName, content.competitor.name), url: pageUrl },
         ],
         faq: content.faq,
-        competitorName: content.competitor.name,
+        competitor: content.competitor,
     }),
     ...(content.technicalReviewer
         ? buildTechnicalReviewStructuredData({ pageUrl, reviewer: content.technicalReviewer })

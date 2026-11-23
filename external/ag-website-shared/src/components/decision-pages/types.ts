@@ -92,6 +92,8 @@ export interface Competitor {
     name: string;
     /** URL segment, e.g. `tanstack-table` in `/compare/ag-grid-vs-tanstack-table/`. */
     slug: string;
+    /** The competitor product's own page, which the structured data names as its `sameAs`. */
+    url: string;
     /** Site-root path of the competitor's logo, shown beside its name in table headings. */
     logo?: string;
 }

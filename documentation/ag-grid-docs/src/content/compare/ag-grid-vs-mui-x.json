@@ -11,6 +11,7 @@
     "competitor": {
         "name": "MUI X Data Grid",
         "slug": "mui-x",
+        "url": "https://mui.com/x/react-data-grid/",
         "logo": "/images/compare/logos/mui-x.svg"
     },
     "hero": {

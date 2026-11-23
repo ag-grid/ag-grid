@@ -14,7 +14,7 @@ function validPage({ checkedOn = '2026-11-01' }: { checkedOn?: string } = {}) {
         analyticsPrefix: 'compare-tanstack-table',
         technicalReviewer: 'james',
         lastUpdated: '2026-11-11',
-        competitor: { name: 'TanStack Table', slug: 'tanstack-table' },
+        competitor: { name: 'TanStack Table', slug: 'tanstack-table', url: 'https://tanstack.com/table' },
         hero: { heading: 'AG Grid vs TanStack Table', subHeading: 'How they compare.' },
         shortAnswer: 'AG Grid renders its own UI.',
         keyFigures: [{ value: 'MIT', label: 'Both free cores', detail: 'Both are MIT licensed.' }],
