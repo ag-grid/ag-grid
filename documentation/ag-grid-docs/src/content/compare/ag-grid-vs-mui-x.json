@@ -702,7 +702,7 @@
         "competitor": [
             "Your application is built with React and already uses Material UI.",
             "You want the grid to follow your existing Material UI theme.",
-            "Your free-tier needs fit within 100 rows."
+            "You don't need row virtualisation beyond 100 rows in the free version."
         ]
     },
     "faq": [
