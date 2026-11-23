@@ -355,6 +355,7 @@ describe('Built-in control tooltips', () => {
                     {
                         field: 'value',
                         tooltip: 'Cell detail',
+                        headerTooltip: false,
                         tooltipComponent: ColumnTooltip,
                         tooltipComponentParams: { columnOnly: true },
                     },

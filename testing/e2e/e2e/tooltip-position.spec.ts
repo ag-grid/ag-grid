@@ -21,6 +21,7 @@ test.describe('tooltip positioning', () => {
             height: 110,
             css: '.sized-tooltip { width: 100px; height: 40px; background: white; } .sized-tooltip.ag-tooltip-position-bottom-start { height: 20px; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [
                     {
                         field: 'value',
@@ -66,6 +67,7 @@ test.describe('tooltip positioning', () => {
             width: 550,
             height: 600,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 350, tooltip: true }],
                 rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
                 tooltipShowDelay: 0,
@@ -101,6 +103,7 @@ test.describe('tooltip positioning', () => {
                 height: 600,
                 shadowDom: layout === 'shadow host' || layout === 'inside shadow root',
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [
                         {
                             field: 'value',
@@ -155,6 +158,7 @@ test.describe('tooltip positioning', () => {
             const { cell, withApi } = await mountGrid(page, {
                 height: 600,
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [
                         {
                             field: 'value',
@@ -221,6 +225,7 @@ test.describe('tooltip positioning', () => {
         const { cell } = await mountGrid(page, {
             css: '#myGrid { margin-top: 180px; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', tooltip: true }],
                 rowData: [{ value: 'Tooltip' }],
                 tooltipTrigger: 'focus',
@@ -246,6 +251,7 @@ test.describe('tooltip positioning', () => {
             const { grid, cell, withApi } = await mountGrid(page, {
                 height: 300,
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [{ field: 'value', tooltip: true }],
                     rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
                     headerHeight: 80,
@@ -289,6 +295,7 @@ test.describe('tooltip positioning', () => {
         const { grid, cell } = await mountGrid(page, {
             height: 300,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', tooltip: true }],
                 rowData: Array.from({ length: 20 }, (_, i) => ({ value: `Row ${i}` })),
                 pinnedBottomRowData: [{ value: 'Pinned' }],
@@ -329,6 +336,7 @@ test.describe('tooltip positioning', () => {
                     height: 300,
                     css: `#myGrid { margin: 40px; border: 8px solid black; transform-origin: top left; ${css} }`,
                     options: () => ({
+                        tooltipShowMode: 'standard',
                         columnDefs: [
                             { field: 'a', width: 200 },
                             { field: 'b', width: 200, tooltip: true },
@@ -385,6 +393,7 @@ test.describe('tooltip positioning', () => {
                     height: 300,
                     css: `body { position: relative; margin: 40px; border: 5px solid; } #myGrid { zoom: ${zoom}; border: 8px solid; } .ag-tooltip { height: 40px; }`,
                     options: () => ({
+                        tooltipShowMode: 'standard',
                         columnDefs: [
                             { field: 'a', width: 200 },
                             { field: 'b', width: 200, tooltip: true },
@@ -441,6 +450,7 @@ test.describe('tooltip positioning', () => {
                 height: 300,
                 css: `body { margin: 30px; border: 5px solid black; padding: 150px 70px; min-height: 1500px; ${bodyStyle} }`,
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [{ field: 'value', tooltip: true }],
                     rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                     popupParent: document.body,
@@ -469,6 +479,7 @@ test.describe('tooltip positioning', () => {
                 height: 180,
                 css: 'html { overflow-y: auto; } body { padding-top: 900px; min-height: 1800px; }',
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [{ field: 'value', tooltip: true }],
                     rowData: [{ value: 'Tooltip' }],
                     headerHeight: 40,
@@ -496,6 +507,7 @@ test.describe('tooltip positioning', () => {
     test('keeps a top tooltip clear of its source after delayed content growth', async ({ page }) => {
         const { cell } = await mountGrid(page, {
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [
                     {
                         field: 'value',
@@ -549,6 +561,7 @@ test.describe('tooltip positioning', () => {
                 width: 700,
                 height: 350,
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [
                         { field: 'left', pinned: 'left', width: 120 },
                         {
@@ -594,6 +607,7 @@ test.describe('tooltip positioning', () => {
             width: 600,
             height: 350,
             options: () => ({
+                tooltipShowMode: 'standard',
                 enableRtl: true,
                 columnDefs: [
                     { field: 'right', pinned: 'right', width: 180 },
@@ -627,6 +641,7 @@ test.describe('tooltip positioning', () => {
                 height: 300,
                 css: '#myGrid { margin: 60px; }',
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [{ field: 'value', width: 280, tooltip: true }],
                     rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                     popupParent: document.body,
@@ -658,6 +673,7 @@ test.describe('tooltip positioning', () => {
             height: 300,
             css: '#myGrid { margin: 60px; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 280, tooltip: true }],
                 rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                 enableRtl: true,
@@ -688,6 +704,7 @@ test.describe('tooltip positioning', () => {
             height: 162,
             css: '#myGrid { position: absolute; left: 40px; bottom: 0; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 300, tooltip: true }],
                 rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                 headerHeight: 0,
@@ -756,6 +773,7 @@ test.describe('tooltip positioning', () => {
             height: 300,
             css: '#myGrid { margin: 60px; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 280, tooltip: true }],
                 rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                 popupParent: document.body,
@@ -789,6 +807,7 @@ test.describe('tooltip positioning', () => {
             width: 700,
             height: 250,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 650, tooltip: true }],
                 rowData: [{ value: 'Tracking tooltip' }],
                 tooltipMouseTrack: true,
@@ -820,6 +839,7 @@ test.describe('tooltip positioning', () => {
             height: 260,
             css: '#myGrid { position: absolute; left: 80px; top: 60px; } .ag-tooltip { width: 180px; box-sizing: border-box; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: ['a', 'b', 'c'].map((field) => ({ field, width: 100, tooltip: true })),
                 rowData: Array.from({ length: 4 }, () => ({ a: 'A', b: 'B', c: 'Shifted tooltip' })),
                 popupParent: document.querySelector<HTMLElement>('#myGrid')!,
@@ -868,6 +888,7 @@ test.describe('tooltip positioning', () => {
             height: 260,
             css: '#myGrid { position: absolute; left: 180px; top: 50px; }',
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 100, tooltip: true }],
                 rowData: Array.from({ length: 4 }, () => ({
                     value: 'An ordinary text tooltip with enough words to need wrapping in a narrow viewport.',
@@ -892,6 +913,7 @@ test.describe('tooltip positioning', () => {
             const { cell } = await mountGrid(page, {
                 css: '#myGrid { margin: 60px; }',
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     theme: window.agGrid.themeQuartz.withParams({
                         spacing: 4,
                         borderRadius: 6,
@@ -954,6 +976,7 @@ test.describe('tooltip positioning', () => {
                         }
                     }
                     return {
+                        tooltipShowMode: 'standard',
                         columnDefs: [{ field: 'value', width: 300, tooltip: true, tooltipComponent: CustomTooltip }],
                         rowData: Array.from({ length: 4 }, () => ({ value: 'Value' })),
                         tooltipShowDelay: 0,
@@ -996,6 +1019,7 @@ test.describe('tooltip positioning', () => {
                     popupParent.appendChild(document.querySelector('#myGrid')!);
                     popupParent.scrollTop = 80;
                     return {
+                        tooltipShowMode: 'standard',
                         columnDefs: [{ field: 'value', tooltip: true }],
                         rowData: Array.from({ length: 8 }, (_, i) => ({ value: `Row ${i}` })),
                         popupParent,
@@ -1024,6 +1048,7 @@ test.describe('tooltip positioning', () => {
     test('the default non-interactive tooltip accepts the pointer across the target gap', async ({ page }) => {
         const { cell, withApi } = await mountGrid(page, {
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', tooltip: true }],
                 rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                 tooltipShowDelay: 0,
@@ -1055,6 +1080,7 @@ test.describe('tooltip positioning', () => {
         const { cell } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', width: 400, tooltip: true }],
                 rowData: Array.from({ length: 4 }, (_, i) => ({ value: `Row ${i}` })),
                 tooltipShowDelay: 0,

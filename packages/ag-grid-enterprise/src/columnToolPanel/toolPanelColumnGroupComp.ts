@@ -31,11 +31,9 @@ import {
     _addGridCommonParams,
     _createIcon,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _isHeaderNameChangeForGroup,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
 import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
@@ -162,19 +160,15 @@ export class ToolPanelColumnGroupComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'columnToolPanelColumnGroup',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumnGroup',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getTextElement: () => (this.labelRendererFeature?.hasRenderer() ? undefined : eLabel),
             })
         );
 

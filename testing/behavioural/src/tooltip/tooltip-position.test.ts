@@ -288,7 +288,7 @@ describe('Tooltip positioning callbacks', () => {
         { zone: 'pivot', field: 'sport', displayName: 'Sport', location: 'pivotColumnsList' },
         { zone: 'aggregation', field: 'total', displayName: 'Total', location: 'valueColumnsList' },
     ])(
-        'passes the display name for a $zone pill, not its tooltip text',
+        'passes the displayed source values for a $zone pill, not its tooltip text',
         async ({ zone, field, displayName, location }) => {
             const position = vi.fn(() => 'bottom-start' as const);
             const api = await gridMgr.createGridAndWait('tooltip-position-pill', {
@@ -324,7 +324,7 @@ describe('Tooltip positioning callbacks', () => {
                     trigger: 'hover',
                     location,
                     value: displayName,
-                    valueFormatted: displayName,
+                    valueFormatted: zone === 'aggregation' ? `sum(${displayName})` : displayName,
                     column: api.getColumn(field),
                 })
             );
@@ -802,7 +802,7 @@ describe('Tooltip positioning callbacks', () => {
         );
     });
 
-    test('native renderer tooltips do not format unused group metadata', async () => {
+    test('native renderer tooltips in standard mode do not format unused group metadata', async () => {
         let rendererParams: ICellRendererParams;
         const formatter = vi.fn(({ value }) => `Formatted ${value}`);
         const api = await gridMgr.createGridAndWait('native-group-tooltip', {
@@ -814,6 +814,7 @@ describe('Tooltip positioning callbacks', () => {
                 return document.createElement('span');
             },
             enableBrowserTooltips: true,
+            tooltipShowMode: 'standard',
         });
         formatter.mockClear();
         rendererParams!.setTooltip('Custom native text');

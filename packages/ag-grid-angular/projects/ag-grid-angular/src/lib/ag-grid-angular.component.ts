@@ -476,12 +476,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public enableBrowserTooltips: boolean | undefined = undefined;
-    /** Hide built-in control tooltips without affecting cell, header or validation tooltips.
+    /** Hide built-in control hints only.
+     * Automatic text tooltips, explicitly configured tooltips and validation tooltips are unaffected.
      * @default false
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public suppressBuiltInTooltips: boolean | undefined = undefined;
-    /** Custom component for built-in control tooltips, separate from a column's `tooltipComponent`.
+    /** Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
      * Receives `IBuiltInTooltipParams`.
      * @agModule `TooltipModule`
      */
@@ -554,10 +555,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public tooltipMouseTrack: boolean | undefined = undefined;
-    /** This defines when tooltip will show up for Cells, Headers and SetFilter Items.
-     *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
-     * @default `standard`
+    /** Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
+     * - `whenTruncated` - Automatically shows displayed text when truncated. Configured tooltips that repeat
+     *   the raw or displayed value require truncation; different content does not.
+     * - `standard` - Shows only configured tooltips, without requiring truncation.
+     * Applies to browser tooltips too. Custom components must supply their own truncation check.
+     * @default 'whenTruncated'
      * @agModule `TooltipModule`
      */
     @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
