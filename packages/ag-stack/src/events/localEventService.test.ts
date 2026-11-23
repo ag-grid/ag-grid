@@ -22,6 +22,25 @@ describe('LocalEventService', () => {
         expect(paths).toEqual([[button, document.body, document.documentElement, document, expect.anything()]]);
     });
 
+    test('dispatchEventToAll calls every sync listener when some throw, and returns their errors in order', () => {
+        const svc = new LocalEventService<T>();
+        const log: string[] = [];
+        const first = new Error('first');
+        const second = new Error('second');
+        svc.addEventListener('a', () => {
+            throw first;
+        });
+        svc.addEventListener('a', () => log.push('sync 2'));
+        svc.addGlobalListener(() => {
+            throw second;
+        });
+        svc.addGlobalListener((type) => log.push(`global ${type}`));
+
+        expect(svc.dispatchEventToAll({ type: 'a' })).toEqual([first, second]);
+        expect(log).toEqual(['sync 2', 'global a']);
+        expect(() => svc.dispatchEvent({ type: 'a' })).toThrow(first);
+    });
+
     test('calls per-type listeners before global ones, sync inline and async on the next flush', () => {
         vi.useFakeTimers();
         const svc = new LocalEventService<T>();

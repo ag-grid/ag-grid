@@ -10,7 +10,6 @@ import {
 } from 'ag-grid-community';
 import type {
     BodyScrollEvent,
-    IViewSubscriptionService,
     NamedBean,
     PaginationChangedEvent,
     RowNode,
@@ -34,8 +33,6 @@ interface ActiveSubscription {
     timer: ReturnType<typeof setTimeout> | undefined;
     /** The view at the last flush or scroll. */
     view: ViewEnds;
-    /** Set once a failed `subscribeRows` call has scheduled a retry, so a handler that keeps throwing is retried once. */
-    retried: boolean;
 }
 
 interface ViewEnds {
@@ -46,7 +43,7 @@ interface ViewEnds {
 
 const DEFAULT_DEBOUNCE_MS = 50;
 
-export class ViewSubscriptionService extends BeanStub implements NamedBean, IViewSubscriptionService {
+export class ViewSubscriptionService extends BeanStub implements NamedBean {
     beanName = 'viewSubSvc' as const;
 
     private sub: ActiveSubscription | undefined;
@@ -87,9 +84,9 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
             sortChanged: markDirty,
             filterChanged: markDirty,
             pinnedRowsChanged: markDirty,
-            // The rows are unsubscribed in `preDestroy`, once every `gridPreDestroyed` listener has run.
             gridPreDestroyed: () => {
                 this.preDestroyed = true;
+                this.stop();
             },
         });
         this.addManagedPropertyListener('viewSubscription', ({ previousValue }) => this.refresh(previousValue));
@@ -138,11 +135,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
         const lastOptions = options ?? previousOptions ?? this.lastOptions;
-        if (this.preDestroyed) {
-            // `preDestroy` unsubscribes the rows once every `gridPreDestroyed` listener has run, as the handler can throw.
-            this.lastOptions = lastOptions;
-            return;
-        }
         this.lastOptions = options;
         const wanted =
             !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
@@ -172,7 +164,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
             stopped: false,
             timer: undefined,
             view: this.getViewEnds(),
-            retried: false,
         };
         this.sub = sub;
 
@@ -206,11 +197,6 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
 
     private getOptions(): ViewSubscriptionOptions | undefined {
         return this.gos.get('viewSubscription');
-    }
-
-    public preDestroy(): void {
-        this.preDestroyed = true;
-        this.stop(this.getOptions() ?? this.lastOptions);
     }
 
     public override destroy(): void {
@@ -274,16 +260,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
             }
         });
 
-        if (removed.length) {
-            try {
+        try {
+            if (removed.length) {
                 this.getOptions()?.unsubscribeRows(removed, this.createParams());
-            } catch (e) {
-                // The added rows are not subscribed yet, and no change may come to schedule them.
-                this.schedule();
-                throw e;
             }
+        } finally {
+            this.subscribeNodes(sub, added);
         }
-        this.subscribeNodes(sub, added);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */
@@ -322,17 +305,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
         const ids = rows.map((row) => row.id);
         try {
             options?.subscribeRows(rows, this.createParams());
-            sub.retried = false;
-        } catch (e) {
+        } catch (error) {
             for (const id of ids) {
                 sub.rows.delete(id);
             }
-            if (!sub.retried) {
-                // Try the rows in view once more, as no other change may come to subscribe them.
-                sub.retried = true;
-                this.schedule();
-            }
-            throw e;
+            throw error;
         }
     }
 

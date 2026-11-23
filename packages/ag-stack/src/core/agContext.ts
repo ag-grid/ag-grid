@@ -161,12 +161,24 @@ export class AgContext<
         if (this.beanDestroyComparator) {
             beanInstances.sort(this.beanDestroyComparator);
         }
-        this.destroyBeans(beanInstances);
+        // Every bean is destroyed even when one throws, then the first error is thrown.
+        const errors: unknown[] = [];
+        for (let i = 0, len = beanInstances.length; i < len; ++i) {
+            try {
+                this.destroyBean(beanInstances[i]);
+            } catch (error) {
+                errors.push(error);
+            }
+        }
 
         this.beans = {} as TBeanCollection;
         this.createdBeans = [];
 
         this.destroyCallback?.();
+
+        if (errors.length) {
+            throw errors[0];
+        }
     }
 
     /**

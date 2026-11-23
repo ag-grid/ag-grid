@@ -12,28 +12,29 @@ export class GridDestroyService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { stateSvc, ctrlsSvc, context, viewSubSvc } = this.beans;
+        const { stateSvc, ctrlsSvc, context } = this.beans;
 
+        const errors = this.eventSvc.dispatchEventToAll({
+            type: 'gridPreDestroyed',
+            state: stateSvc?.getState() ?? {},
+        });
+
+        // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
+        this.destroyCalled = true;
+
+        // destroy the UI first (as they use the services)
+        ctrlsSvc.get('gridCtrl')?.destroyGridUi();
+
+        // destroy the services
         try {
-            this.eventSvc.dispatchEvent({
-                type: 'gridPreDestroyed',
-                state: stateSvc?.getState() ?? {},
-            });
-        } finally {
-            try {
-                // After every `gridPreDestroyed` listener, as the application's `unsubscribeRows` handler can throw.
-                viewSubSvc?.preDestroy();
-            } finally {
-                // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
-                this.destroyCalled = true;
+            context.destroy();
+        } catch (error) {
+            errors.push(error);
+        }
+        super.destroy();
 
-                // destroy the UI first (as they use the services)
-                ctrlsSvc.get('gridCtrl')?.destroyGridUi();
-
-                // destroy the services
-                context.destroy();
-                super.destroy();
-            }
+        if (errors.length) {
+            throw errors[0];
         }
     }
 }
