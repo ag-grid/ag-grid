@@ -405,8 +405,11 @@
     .ag-skeleton-container {
         width: 100%;
         height: 100%;
-        // a wrapped cell value has no definite height to resolve height: 100% against
-        min-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
+        // a wrapped cell value has no definite height to resolve height: 100% against.
+        // Mirrors the core theme: a getRowHeight line height still has the row border to fit inside.
+        min-height: calc(
+            Min(var(--ag-row-height), var(--ag-line-height, var(--ag-row-height))) - var(--ag-row-border-width) - 2px
+        );
         align-content: center;
     }
 
