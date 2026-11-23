@@ -210,6 +210,40 @@ describe('Sorting missing values and NaN', () => {
             expect(groupKeys('desc')).toEqual(['A', 'C', 'B']);
         });
 
+        test("an auto group column with a field uses its primary column's setting unless it sets its own", () => {
+            const rowData = [
+                { path: ['A'], value: 2 },
+                { path: ['B'], value: null },
+                { path: ['C'], value: 1 },
+            ];
+            const sortedKeys = (api: GridApi, direction: 'asc' | 'desc') => {
+                api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: direction }] });
+                const keys: string[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => keys.push(node.key!));
+                return keys;
+            };
+
+            const inherited = createGrid('auto-group-field-inherits', {
+                columnDefs: [{ field: 'value', sortMissingValues: 'last' }],
+                autoGroupColumnDef: { field: 'value' },
+                treeData: true,
+                getDataPath: (data) => data.path,
+                rowData,
+            });
+            expect(sortedKeys(inherited, 'asc')).toEqual(['C', 'A', 'B']);
+            expect(sortedKeys(inherited, 'desc')).toEqual(['A', 'C', 'B']);
+
+            const own = createGrid('auto-group-field-own', {
+                columnDefs: [{ field: 'value', sortMissingValues: 'last' }],
+                autoGroupColumnDef: { field: 'value', sortMissingValues: 'first' },
+                treeData: true,
+                getDataPath: (data) => data.path,
+                rowData,
+            });
+            expect(sortedKeys(own, 'asc')).toEqual(['B', 'C', 'A']);
+            expect(sortedKeys(own, 'desc')).toEqual(['B', 'A', 'C']);
+        });
+
         test('treats an empty aggregation result as a missing value', () => {
             const api = createGrid('aggregation', {
                 columnDefs: [

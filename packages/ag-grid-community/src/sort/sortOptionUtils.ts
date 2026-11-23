@@ -5,8 +5,8 @@ import type { SortComparatorFn } from '../entities/colDef';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { SortType } from '../interfaces/iSort';
 import type { SortOption } from '../interfaces/iSortOption';
-import { _isUserComparator } from './builtInComparators';
 import { _getColumnStringComparator } from './accentedSort';
+import { _isUserComparator } from './builtInComparators';
 
 /** Pick the comparator for the sort type: a bare function applies to all types; a dict selects by type. */
 const resolveComparator = (
@@ -40,12 +40,17 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         // comparator on col gets preference over everything else
         const colComparator = resolveComparator(column.colDef.comparator, type);
         let leafComparator: SortComparatorFn | undefined;
+        let sortMissingValues = column.colDef.sortMissingValues;
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        if (!colComparator && column.showRowGroup) {
+        // and, unless the auto group column sets its own, the associated column's `sortMissingValues`
+        if (column.showRowGroup && (!colComparator || !sortMissingValues)) {
             const field = column.field;
             const primaryColumn = field ? colModel.getNonPivotCol(field) : null;
             if (primaryColumn) {
-                leafComparator = resolveComparator(primaryColumn.colDef.comparator, type);
+                if (!colComparator) {
+                    leafComparator = resolveComparator(primaryColumn.colDef.comparator, type);
+                }
+                sortMissingValues ??= primaryColumn.colDef.sortMissingValues;
             }
         }
         sortOption.colComparator = colComparator;
@@ -54,7 +59,6 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         sortOption.absolute = type === 'absolute';
         sortOption.userComparator = _isUserComparator(colComparator);
         sortOption.userLeafComparator = _isUserComparator(colComparator ?? leafComparator);
-        const sortMissingValues = column.colDef.sortMissingValues;
         sortOption.missingValues = sortMissingValues === 'first' ? -1 : sortMissingValues === 'last' ? 1 : 0;
         sortOption.formulaErrors = column.allowFormula || column.isCalculatedCol;
         sortOption.stringComparator = _getColumnStringComparator(column, colModel, gos);
