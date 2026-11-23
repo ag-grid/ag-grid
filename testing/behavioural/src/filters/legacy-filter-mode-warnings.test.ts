@@ -276,21 +276,40 @@ describe('legacy filter mode warnings', () => {
     });
 
     describe('Multi Filter (346, 347)', () => {
-        test.each<[string, ColDef['filterParams']]>([
-            ['parent `buttons`', { buttons: ['apply'] }],
-            ['parent `closeOnApply`', { closeOnApply: true }],
-            ['child `buttons`', { filters: [{ filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } }] }],
-            [
-                'child `closeOnApply`',
-                { filters: [{ filter: 'agTextColumnFilter', filterParams: { closeOnApply: true } }] },
-            ],
-        ])('%s is reported', async (_name, filterParams) => {
-            const api = createGrid({ columnDefs: [{ field: 'name', filter: 'agMultiColumnFilter', filterParams }] });
+        const TEXT_CHILD = { filter: 'agTextColumnFilter' };
+        const buttonCases: [string, ColDef['filterParams']][] = [
+            ['parent `buttons`', { filters: [TEXT_CHILD], buttons: ['apply'] }],
+            ['parent `closeOnApply`', { filters: [TEXT_CHILD], closeOnApply: true }],
+            ['child `buttons`', { filters: [{ ...TEXT_CHILD, filterParams: { buttons: ['apply'] } }] }],
+            ['child `closeOnApply`', { filters: [{ ...TEXT_CHILD, filterParams: { closeOnApply: true } }] }],
+        ];
+        const multiFilterCol = (filterParams: ColDef['filterParams']): ColDef => ({
+            field: 'name',
+            filter: 'agMultiColumnFilter',
+            filterParams,
+        });
+
+        test.each(buttonCases)('%s is reported', async (_name, filterParams) => {
+            const api = createGrid({ columnDefs: [multiFilterCol(filterParams)] });
 
             await api.getColumnFilterInstance('name');
 
             expect(count(346)).toBe(1);
         });
+
+        test.each(buttonCases)(
+            '%s added by a column definition update to a built filter is reported',
+            async (_name, filterParams) => {
+                const api = createGrid({ columnDefs: [multiFilterCol({ filters: [TEXT_CHILD] })] });
+                const filter = await api.getColumnFilterInstance('name');
+                expect(count(346)).toBe(0);
+
+                api.setGridOption('columnDefs', [multiFilterCol(filterParams)]);
+
+                expect(await api.getColumnFilterInstance('name')).toBe(filter);
+                expect(count(346)).toBe(1);
+            }
+        );
 
         test('the grid using a default Multi Filter reports nothing; an application method call is reported', async () => {
             const api = createGrid({

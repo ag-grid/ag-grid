@@ -90,10 +90,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         this.filterDefs = getMultiFilterDefs(params);
 
         const beans = this.beans;
-        const { buttons, closeOnApply } = params as MultiFilterParams & FilterWrapperParams;
-        if (buttons?.length || closeOnApply) {
-            _warnLegacyFilterMode(beans, 346);
-        }
+        this.warnIfButtons(params);
         const column = params.column as AgColumn;
         const initialModel = _getFilterModel(beans.colFilter!.model, column.getColId());
 
@@ -131,6 +128,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         // `filterDefs` is deliberately not updated: the gui is built from it once, so fresh defs beside a
         // stale gui would misreport each child's `display` to `afterGuiAttached`.
         this.params = params;
+        this.warnIfButtons(params);
         const { beans, wrappers } = this;
         const colFilter = beans.colFilter!;
         const column = params.column as AgColumn;
@@ -163,6 +161,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 true,
                 'colDef'
             )!.compDetails.params;
+            this.warnIfButtons(filterParams);
             // stored first, as reconciling the model inside `refresh` refreshes the child from the wrapper
             wrapper.handlerParams = handlerParams;
             wrapper.filterParams = filterParams;
@@ -454,6 +453,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         wrapper.handler?.[name]?.();
     }
 
+    /** Buttons behave differently once `enableFilterHandlers` is set, so a legacy Multi Filter or child using them warns. */
+    private warnIfButtons(params: Partial<FilterWrapperParams> | undefined): void {
+        if (params?.buttons?.length || params?.closeOnApply) {
+            _warnLegacyFilterMode(this.beans, 346);
+        }
+    }
+
     private createFilter(
         filterDef: IMultiFilterDef,
         index: number,
@@ -518,10 +524,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             return updatedParams;
         });
 
-        const childParams = compDetails?.params;
-        if (childParams?.buttons?.length || childParams?.closeOnApply) {
-            _warnLegacyFilterMode(beans, 346);
-        }
+        this.warnIfButtons(compDetails?.params);
 
         if (!createFilterUi) {
             return AgPromise.resolve(null);
