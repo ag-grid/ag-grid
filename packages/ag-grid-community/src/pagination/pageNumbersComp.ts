@@ -8,7 +8,7 @@ import { Component } from '../widgets/component';
 import { _getPageNumberItems } from './pageNumberItems';
 import pageNumbersCompCSS from './pageNumbersComp.css';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import { _formatPaginationNumber, _getPageAriaStatus } from './paginationUtils';
 
 const PAGE_ATTR = 'data-page';
 
@@ -150,7 +150,8 @@ export class PageNumbersComp extends Component {
         const currentPage = pagination.getCurrentPage();
         const totalPages = pagination.getTotalPages();
         const localeTextFunc = this.getLocaleTextFunc();
-        const items = _getPageNumberItems(currentPage, totalPages, this.rowModel.isLastRowIndexKnown());
+        const lastPageFound = this.rowModel.isLastRowIndexKnown();
+        const items = _getPageNumberItems(currentPage, totalPages, lastPageFound);
         const { eNumbers } = this;
 
         // Rebuilding the numbers drops the focused button; move focus to the rebuilt current page so it isn't lost.
@@ -178,10 +179,9 @@ export class PageNumbersComp extends Component {
 
         this.updateArrows(currentPage, totalPages);
 
-        const ofLabel = localeTextFunc('of', 'of');
         const currentLabel = this.formatNumber(totalPages > 0 ? currentPage + 1 : 1);
-        const totalLabel = this.formatNumber(Math.max(totalPages, 1));
-        this.ariaStatus = `${pageLabel} ${currentLabel} ${ofLabel} ${totalLabel}`;
+        const totalLabel = lastPageFound ? this.formatNumber(Math.max(totalPages, 1)) : null;
+        this.ariaStatus = _getPageAriaStatus(localeTextFunc, currentLabel, totalLabel);
     }
 
     private updateArrows(currentPage: number, totalPages: number): void {
