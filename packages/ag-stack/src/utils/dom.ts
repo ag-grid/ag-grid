@@ -343,7 +343,16 @@ export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
 }
 
 function _isVerticalScrollShowing(element: HTMLElement): boolean {
-    return element.clientHeight < element.scrollHeight;
+    if (element.clientHeight >= element.scrollHeight) {
+        return false;
+    }
+    // Fractional zoom rounds the scroll metrics enough to report overflow when the text fits, so check where the
+    // text is. An empty range (e.g. only ::before/::after content) cannot be measured, so trust the metrics there.
+    const range = element.ownerDocument.createRange();
+    range.selectNodeContents(element);
+    const content = range.getBoundingClientRect();
+    const box = element.getBoundingClientRect();
+    return content.height === 0 || content.top < box.top || content.bottom > box.bottom;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
