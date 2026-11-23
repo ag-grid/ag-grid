@@ -882,6 +882,8 @@ export const AG_GRID_LOCALE_FI_FI = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Sarakeluettelo',
     ariaFilterPanelList: 'Suodatinluettelo',
+    ariaToolPanelWiden: 'Levennä paneelia',
+    ariaToolPanelNarrow: 'Kavenna paneelia',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',

@@ -887,6 +887,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Spaltenliste',
     ariaFilterPanelList: 'Filterliste',
+    ariaToolPanelWiden: 'Panel verbreitern',
+    ariaToolPanelNarrow: 'Panel verschmälern',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',

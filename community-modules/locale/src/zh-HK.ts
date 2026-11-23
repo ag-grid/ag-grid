@@ -876,6 +876,8 @@ export const AG_GRID_LOCALE_ZH_HK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '欄位清單',
     ariaFilterPanelList: '篩選清單',
+    ariaToolPanelWiden: '加寬面板',
+    ariaToolPanelNarrow: '收窄面板',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: '新增篩選字段',
