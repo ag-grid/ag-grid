@@ -26,9 +26,9 @@
             "detail": "AG Grid Community and TanStack Table are both MIT licensed."
         },
         {
-            "value": "4",
+            "value": "5",
             "label": "Features TanStack Table does not include",
-            "detail": "Pivoting, CSV export, Excel export and integrated charts."
+            "detail": "Pivoting, CSV and Excel export, integrated charts and natural-language grid control."
         },
         {
             "value": "0",

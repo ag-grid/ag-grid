@@ -33,7 +33,7 @@
         {
             "value": "6",
             "label": "Features MUI X Data Grid does not include",
-            "detail": "Including Find, cell notes, the Set Filter and the status bar, all in AG Grid Enterprise."
+            "detail": "Including Find, cell notes, the Set Filter and the status bar, all in AG Grid."
         }
     ],
     "features": {
