@@ -53,6 +53,14 @@
             border: var(--ag-input-read-only-border);
         }
 
+        /* Focus only adds a ring, so a focused read-only input doesn't look editable. */
+        :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
+            --ag-input-focus-background-color: var(--ag-input-read-only-background-color);
+            --ag-input-focus-border: var(--ag-input-read-only-border);
+            --ag-input-focus-text-color: var(--ag-input-read-only-text-color);
+            --ag-input-focus-shadow: var(--ag-focus-shadow);
+        }
+
         &:where(:focus) {
             box-shadow: var(--ag-input-focus-shadow);
             background-color: var(--ag-input-focus-background-color);

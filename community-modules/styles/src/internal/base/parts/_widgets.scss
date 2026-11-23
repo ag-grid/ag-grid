@@ -70,6 +70,8 @@
             color: var(--ag-input-read-only-text-color);
             background-color: var(--ag-input-read-only-background-color);
             border-color: var(--ag-input-read-only-border-color);
+            // Focus only adds a ring, so a focused read-only input doesn't look editable.
+            --ag-input-focus-border-color: var(--ag-input-read-only-border-color);
         }
 
         &:focus {
