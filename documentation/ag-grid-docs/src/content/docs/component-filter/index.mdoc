@@ -344,7 +344,17 @@ The example below illustrates how a custom filter component can be accessed and 
 
 ## Migrating to Filter Handlers
 
-Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable new features such as the [New Filters Tool Panel](./tool-panel-filters-new/).
+Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable:
+
+- The [New Filters Tool Panel](./tool-panel-filters-new/).
+- [Filter Buttons](./filter-applying/) on [Custom Filter Components](#using-buttons) and on the parent [Multi Filter](./filter-multi/#applying-multi-filters).
+- [Custom filter components using grid-provided filter logic](#using-custom-filters-with-grid-provided-filter-logic).
+- A [read-only floating filter](./component-floating-filter/#example-custom-filter-and-read-only-floating-filter) from `getModelAsString()` on the filter handler.
+- Filters in the [initial state](./grid-state/#restore-via-initial-state) that apply without creating the filter components, which are only created when a filter is opened.
+
+{% if isFramework("react") %}
+In legacy filter mode, a filter in the initial state applies only once its React filter component has rendered, so the grid first renders the rows unfiltered.
+{% /if %}
 
 Legacy filter mode, which applies when `enableFilterHandlers` is not set or is `false`, is deprecated in AG Grid 37. In AG Grid 38 `enableFilterHandlers` defaults to `true`, which changes the behaviour of legacy custom filters, custom floating filters, `filterModified` listeners, and Multi Filters that use buttons or the legacy Multi Filter methods.
 
