@@ -3,7 +3,7 @@ import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 
 import styles from '../DecisionPage.module.scss';
 import { ctaAttributes } from '../decisionPageCta';
-import { formatLastUpdated, toIsoDate } from '../decisionPageText';
+import { HERO_CTAS, formatLastUpdated, toIsoDate } from '../decisionPageText';
 import type { DecisionPageSite } from '../types';
 
 interface Props {
@@ -47,14 +47,14 @@ const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: '
             class:list={['button', getStarted.analyticsClass]}
             href={site.resolveUrl(site.urls.getStarted)}
         >
-            Get started free
+            {HERO_CTAS.getStarted}
         </a>
         <a
             {...demo.attributes}
             class:list={['button-tertiary', demo.analyticsClass]}
             href={site.resolveUrl(site.urls.demo)}
         >
-            See the live demo
+            {HERO_CTAS.demo}
         </a>
     </div>
     <div class={styles.heroMeta}>

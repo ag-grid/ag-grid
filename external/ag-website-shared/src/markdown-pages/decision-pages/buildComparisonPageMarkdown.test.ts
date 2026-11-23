@@ -130,6 +130,30 @@ describe('buildComparisonPageMarkdown', () => {
         );
     });
 
+    test('links a feature to its docs page, when it has one', () => {
+        const [group] = CONTENT.features.groups;
+        const rows = [{ ...group.rows[0], docsUrl: './grid-interface/' }];
+        const content = { ...CONTENT, features: { ...CONTENT.features, groups: [{ ...group, rows }] } };
+
+        expect(build({ content })).toContain(
+            '| [Ready-made grid UI](https://www.ag-grid.com/react-data-grid/grid-interface/) | ✓ Free'
+        );
+    });
+
+    test('keeps the hero and Choose-if calls to action', () => {
+        const markdown = build();
+
+        expect(markdown).toContain(
+            [
+                '- [Get started free](https://www.ag-grid.com/react-data-grid/getting-started/)',
+                '- [See the live demo](https://www.ag-grid.com/example/)',
+            ].join('\n')
+        );
+        expect(markdown).toContain(
+            '- You want a grid UI.\n\n[Get started free](https://www.ag-grid.com/react-data-grid/getting-started/)\n\n### Choose TanStack Table if'
+        );
+    });
+
     test('renders each pricing plan with its cost tier rather than a price', () => {
         const markdown = build();
 

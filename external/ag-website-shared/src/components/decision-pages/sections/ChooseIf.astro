@@ -1,7 +1,7 @@
 ---
 import styles from '../DecisionPage.module.scss';
 import { ctaAttributes } from '../decisionPageCta';
-import { chooseIfHeading } from '../decisionPageText';
+import { HERO_CTAS, chooseIfHeading } from '../decisionPageText';
 import type { DecisionPageSite } from '../types';
 
 interface Props {
@@ -30,7 +30,7 @@ const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started',
                     class:list={['button', styles.chooseIfCta, getStarted.analyticsClass]}
                     href={site.resolveUrl(site.urls.getStarted)}
                 >
-                    Get started free
+                    {HERO_CTAS.getStarted}
                 </a>
             )}
         </div>

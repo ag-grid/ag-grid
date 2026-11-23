@@ -28,6 +28,12 @@ export const GET_STARTED_CTAS = {
     trial: 'Try Enterprise Free',
 } as const;
 
+/** The hero's calls to action; `getStarted` is also the product's Choose-if button. */
+export const HERO_CTAS = {
+    getStarted: 'Get started free',
+    demo: 'See the live demo',
+} as const;
+
 export const FEATURE_STATUS: Record<FeatureStatus, { symbol: string; label: string }> = {
     yes: { symbol: '✓', label: 'Included' },
     limited: { symbol: '◐', label: 'Limited' },

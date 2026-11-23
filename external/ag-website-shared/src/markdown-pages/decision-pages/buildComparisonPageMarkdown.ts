@@ -1,7 +1,7 @@
 import {
     COMPARISON_SECTIONS,
     FEATURE_STATUS,
-    GET_STARTED_CTAS,
+    HERO_CTAS,
     PRICING_COST,
     chooseIfHeading,
     featureCellLabel,
@@ -18,6 +18,7 @@ import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
 import { resolveMarkdownLinks } from '../landing-pages/buildLandingPageMarkdown';
 import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdownFrontmatter';
+import { getStartedMarkdown } from './getStartedMarkdown';
 
 export interface BuildComparisonPageMarkdownOptions {
     /** The same collection entry the comparison page renders. */
@@ -75,6 +76,10 @@ export function buildComparisonPageMarkdown({
             `# ${content.hero.heading}`,
             content.hero.subHeading,
             `Last updated ${formatLastUpdated(content.lastUpdated)}`,
+            [
+                `- [${HERO_CTAS.getStarted}](${absolute(site.urls.getStarted)})`,
+                `- [${HERO_CTAS.demo}](${absolute(site.urls.demo)})`,
+            ].join('\n'),
         ],
         [`## ${COMPARISON_SECTIONS.shortAnswer}`, markdoc(content.shortAnswer)],
         [
@@ -93,7 +98,11 @@ export function buildComparisonPageMarkdown({
                 `### ${group.name}`,
                 table(
                     ['Feature', productName, competitorName],
-                    group.rows.map((row) => [cell(row.feature), featureCell(row.product), featureCell(row.competitor)])
+                    group.rows.map((row) => [
+                        row.docsUrl ? `[${cell(row.feature)}](${absolute(row.docsUrl)})` : cell(row.feature),
+                        featureCell(row.product),
+                        featureCell(row.competitor),
+                    ])
                 ).join('\n'),
             ]),
         ],
@@ -117,9 +126,11 @@ export function buildComparisonPageMarkdown({
             ...[
                 { name: productName, reasons: content.chooseIf.product },
                 { name: competitorName, reasons: content.chooseIf.competitor },
-            ].flatMap(({ name, reasons }) => [
+            ].flatMap(({ name, reasons }, index) => [
                 `### ${chooseIfHeading(name)}`,
                 reasons.map((reason) => `- ${reason}`).join('\n'),
+                // The product's card carries the page's get started button.
+                ...(index === 0 ? [`[${HERO_CTAS.getStarted}](${absolute(site.urls.getStarted)})`] : []),
             ]),
         ],
         content.faq.length
@@ -128,15 +139,7 @@ export function buildComparisonPageMarkdown({
                   ...content.faq.flatMap(({ question, answer }) => [`### ${question}`, markdoc(answer)]),
               ]
             : [],
-        [
-            `## ${COMPARISON_SECTIONS.getStarted}`,
-            `### ${site.getStarted.heading}`,
-            site.getStarted.body,
-            [
-                `- [${GET_STARTED_CTAS.docs}](${absolute(site.urls.getStarted)})`,
-                `- [${GET_STARTED_CTAS.trial}](${absolute(site.urls.trial)})`,
-            ].join('\n'),
-        ],
+        getStartedMarkdown(site, absolute),
         related.length
             ? [
                   `## ${COMPARISON_SECTIONS.related}`,
