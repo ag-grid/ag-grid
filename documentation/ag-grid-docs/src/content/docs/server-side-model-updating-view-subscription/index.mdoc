@@ -119,7 +119,6 @@ The grid leaves error handling to you: it does not catch errors thrown by the ha
 
 - If `subscribeRows` throws, its rows still count as subscribed and are passed to `unsubscribeRows` later, so have `unsubscribeRows` skip any rows the server was never subscribed to.
 - If `unsubscribeRows` throws, its rows count as unsubscribed and are not passed again, so retry the call to stop the server sending their updates.
-- After a lost connection, set `viewSubscriptionActive` to `false` and back to `true` to subscribe the rows in view again.
 
 ## Grand Total Row
 
