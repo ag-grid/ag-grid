@@ -147,7 +147,9 @@ const expectDetailRowFlush = async (page: Page) => {
     await expect
         .poll(() =>
             page.evaluate(() => {
-                const nestedRow = document.querySelector<HTMLElement>('.ag-details-row .ag-row[row-index="0"]')!;
+                const nestedRow = document.querySelector<HTMLElement>(
+                    '.ag-details-row .ag-row[row-index="0"] > .ag-full-width-anchor'
+                )!;
                 const after = getComputedStyle(nestedRow, '::after');
                 return [after.content, parseFloat(after.left) + parseFloat(after.marginLeft)];
             })
