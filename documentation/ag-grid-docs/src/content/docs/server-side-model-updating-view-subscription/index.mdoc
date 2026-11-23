@@ -96,7 +96,7 @@ No rows are subscribed with `domLayout: 'print'`. With `'autoHeight'` every load
 The subscription starts when the grid is ready, unless `viewSubscriptionActive` is `false`.
 
 - Setting `viewSubscriptionActive` to `false` unsubscribes every row and keeps the handlers configured. While it is `false`, nothing is subscribed, even when the page is shown.
-- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed on `gridPreDestroyed`, while the API is still usable in the handlers.
+- Setting `viewSubscription` to `undefined`, or destroying the grid, unsubscribes every row. On destroy, the rows are unsubscribed once every `gridPreDestroyed` listener has run, while the API is still usable in the handlers.
 - The handlers are read on each call, so new handlers take effect without unsubscribing any rows. Rows subscribed by the old handlers are unsubscribed through the new ones.
 
 Bind `viewSubscriptionActive` to application state, for example to let the user freeze the prices with a Live Updates toggle while they read them:
@@ -112,6 +112,8 @@ const gridOptions = {
 ```
 
 If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
+
+The grid does not catch errors thrown by `subscribeRows` or `unsubscribeRows`. An error thrown during a grid call, such as `setGridOption` or `destroy()`, is thrown from that call, and an error thrown after the rows in view change is an uncaught error. The rows of a failed `subscribeRows` call are not subscribed and are tried once more, and the rows of a failed `unsubscribeRows` call count as unsubscribed. When `unsubscribeRows` throws during `destroy()`, the `gridPreDestroyed` listeners have already run and the grid is still destroyed. To handle these errors, for example to reconnect, catch them in the handler.
 
 ## Grand Total Row
 
