@@ -1,10 +1,8 @@
-import type { StringComparator } from 'ag-stack';
-
 import type {
     BeanCollection,
-    Column,
     NamedBean,
     SortModelItem,
+    SortOption,
     SortService,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
@@ -19,9 +17,8 @@ export class SortListener extends BeanStub implements NamedBean {
     private sortSvc: SortService;
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
-    /** The sorted columns and their `accentedSort` comparators when last checked, to detect a comparator change. */
-    private readonly sortedCols: Column[] = [];
-    private readonly stringComparators: (StringComparator | undefined)[] = [];
+    /** The sort options when last checked, copied, to detect a comparator change with the sort model unchanged. */
+    private readonly checkedOpts: Pick<SortOption, 'column' | 'sort' | 'type' | 'stringComparator'>[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.sortSvc = beans.sortSvc!;
@@ -50,27 +47,26 @@ export class SortListener extends BeanStub implements NamedBean {
         }
     }
 
-    /** Records the sorted columns' string comparators; `true` when the same columns now compare strings differently. */
+    /** Records the sort options; `true` when only their string comparators changed, which raises no `sortChanged`. */
     private updateComparators(): boolean {
         const opts = this.sortSvc.getSortOptions();
-        const { sortedCols, stringComparators } = this;
+        const checkedOpts = this.checkedOpts;
         const len = opts.length;
-        let sameCols = len === sortedCols.length;
+        let sameSort = len === checkedOpts.length;
         let changed = false;
         for (let i = 0; i < len; ++i) {
-            const { column, stringComparator } = opts[i];
-            if (sameCols && sortedCols[i] !== column) {
-                sameCols = false;
+            const { column, sort, type, stringComparator } = opts[i];
+            const checked = checkedOpts[i];
+            if (sameSort && (checked.column !== column || checked.sort !== sort || checked.type !== type)) {
+                sameSort = false;
             }
-            if (sameCols && stringComparators[i] !== stringComparator) {
+            if (sameSort && checked.stringComparator !== stringComparator) {
                 changed = true;
             }
-            sortedCols[i] = column;
-            stringComparators[i] = stringComparator;
+            checkedOpts[i] = { column, sort, type, stringComparator };
         }
-        sortedCols.length = len;
-        stringComparators.length = len;
-        return sameCols && changed;
+        checkedOpts.length = len;
+        return sameSort && changed;
     }
 
     private onSortChanged(): void {
