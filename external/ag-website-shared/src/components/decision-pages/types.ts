@@ -14,7 +14,7 @@ export type FeatureStatus = 'yes' | 'limited' | 'no';
 /**
  * A fact about a competitor, with the public source it was checked against and when. Every
  * competitor claim a page states carries one, so the claims register (SE-148) is the content
- * itself and the build can refuse a claim that is unsourced or stale.
+ * itself. The build refuses an unsourced claim and warns on a stale one (`findStaleClaims`).
  */
 export interface ClaimSource {
     sourceUrl: string;

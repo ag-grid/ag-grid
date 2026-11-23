@@ -593,7 +593,8 @@ const homepage = defineCollection({
 
 /**
  * Comparison pages at /compare/ag-grid-vs-{competitor}/. Every competitor claim carries its source
- * and the date it was checked, and the build fails on a claim that is unsourced or stale (SE-148).
+ * and the date it was checked. The build fails on an unsourced claim and warns on one not checked in
+ * the last 90 days (SE-148).
  */
 const comparePages = defineCollection({
     loader: glob({ base: './src/content/compare', pattern: '*.json' }),
