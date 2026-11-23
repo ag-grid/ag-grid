@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser verdier som',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
-    ariaColumnSelectExpandAll: 'Utvid eller skjul alle kolonnegrupper',
+    ariaColumnSelectExpandAll: 'Utvid alle kolonnegrupper',
+    ariaColumnSelectCollapseAll: 'Skjul alle kolonnegrupper',
     ariaDateFilterInput: 'Inndata for datofilter',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',
@@ -878,6 +879,8 @@ export const AG_GRID_LOCALE_NB_NO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonneliste',
     ariaFilterPanelList: 'Filterliste',
+    ariaFilterPanelExpandAll: 'Utvid Alle Filtergrupper',
+    ariaFilterPanelCollapseAll: 'Skjul Alle Filtergrupper',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Legg til filterfelt',

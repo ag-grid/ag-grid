@@ -395,7 +395,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     addToLabels: 'Добавяне на ${variable} към етикети',
     removeFromLabels: 'Премахване на ${variable} от етикети',
     resetColumns: 'Нулиране на колони',
-    expandAll: 'Разширяване на всички групи редове',
+    expandAll: 'Разгъване на всички групи редове',
     collapseAll: 'Затваряне на всички групи редове',
     copy: 'Копиране',
     ctrlC: 'Ctrl+C',
@@ -756,7 +756,8 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaCalculatedColumn: 'Изчислена колона',
     ariaColumnShowValuesAs: 'Показване на стойностите като',
     ariaColumnSelectAll: 'Превключване на видимостта на всички колони',
-    ariaColumnSelectExpandAll: 'Разгъване или свиване на всички групи колони',
+    ariaColumnSelectExpandAll: 'Разгъване на всички групи колони',
+    ariaColumnSelectCollapseAll: 'Свиване на всички групи колони',
     ariaDateFilterInput: 'Вход за филтър по дата',
     ariaDefaultListName: 'Списък',
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
@@ -883,6 +884,8 @@ export const AG_GRID_LOCALE_BG_BG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',
     ariaFilterPanelList: 'Списък с филтри',
+    ariaFilterPanelExpandAll: 'Разгъване на всички групи филтри',
+    ariaFilterPanelCollapseAll: 'Свиване на всички групи филтри',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',

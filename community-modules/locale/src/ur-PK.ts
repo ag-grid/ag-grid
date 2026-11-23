@@ -752,7 +752,8 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaCalculatedColumn: 'حساب شدہ کالم',
     ariaColumnShowValuesAs: 'اقدار کو اس طور دکھایا جا رہا ہے',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
-    ariaColumnSelectExpandAll: 'تمام کالم گروپس کو پھیلائیں یا سکیڑیں',
+    ariaColumnSelectExpandAll: 'تمام کالم گروپس کو پھیلائیں',
+    ariaColumnSelectCollapseAll: 'تمام کالم گروپس کو سکیڑیں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
     ariaDefaultListName: 'فہرست',
     ariaFilterColumnsInput: 'کالمز فلٹر انپٹ',
@@ -877,6 +878,8 @@ export const AG_GRID_LOCALE_UR_PK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'کالم کی فہرست',
     ariaFilterPanelList: 'فلٹر کی فہرست',
+    ariaFilterPanelExpandAll: 'تمام فلٹر گروپس کو پھیلائیں',
+    ariaFilterPanelCollapseAll: 'تمام فلٹر گروپس کو سکیڑیں',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',

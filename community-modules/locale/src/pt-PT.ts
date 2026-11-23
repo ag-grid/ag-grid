@@ -756,7 +756,8 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaCalculatedColumn: 'Coluna calculada',
     ariaColumnShowValuesAs: 'A mostrar valores como',
     ariaColumnSelectAll: 'Alternar visibilidade de todas as colunas',
-    ariaColumnSelectExpandAll: 'Expandir ou recolher todos os grupos de colunas',
+    ariaColumnSelectExpandAll: 'Expandir todos os grupos de colunas',
+    ariaColumnSelectCollapseAll: 'Recolher todos os grupos de colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtro de Colunas',
@@ -882,6 +883,8 @@ export const AG_GRID_LOCALE_PT_PT = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de Colunas',
     ariaFilterPanelList: 'Lista de Filtros',
+    ariaFilterPanelExpandAll: 'Expandir Todos os Grupos de Filtros',
+    ariaFilterPanelCollapseAll: 'Recolher Todos os Grupos de Filtros',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',

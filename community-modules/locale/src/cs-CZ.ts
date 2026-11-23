@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaCalculatedColumn: 'Vypočítaný sloupec',
     ariaColumnShowValuesAs: 'Zobrazování hodnot jako',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
-    ariaColumnSelectExpandAll: 'Rozbalit nebo sbalit všechny skupiny sloupců',
+    ariaColumnSelectExpandAll: 'Rozbalit všechny skupiny sloupců',
+    ariaColumnSelectCollapseAll: 'Sbalit všechny skupiny sloupců',
     ariaDateFilterInput: 'Vstup datového filtru',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vstup filtru sloupců',
@@ -878,6 +879,8 @@ export const AG_GRID_LOCALE_CS_CZ = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Seznam sloupců',
     ariaFilterPanelList: 'Seznam filtrů',
+    ariaFilterPanelExpandAll: 'Rozbalit všechny skupiny filtrů',
+    ariaFilterPanelCollapseAll: 'Sbalit všechny skupiny filtrů',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Přidat filtr',

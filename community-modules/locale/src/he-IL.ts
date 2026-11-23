@@ -751,7 +751,8 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaCalculatedColumn: 'עמודה מחושבת',
     ariaColumnShowValuesAs: 'מציג ערכים בתור',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
-    ariaColumnSelectExpandAll: 'הרחב או כווץ את כל קבוצות העמודות',
+    ariaColumnSelectExpandAll: 'הרחב את כל קבוצות העמודות',
+    ariaColumnSelectCollapseAll: 'כווץ את כל קבוצות העמודות',
     ariaDateFilterInput: 'קלט סינון תאריך',
     ariaDefaultListName: 'רשימה',
     ariaFilterColumnsInput: 'קלט סינון עמודות',
@@ -876,6 +877,8 @@ export const AG_GRID_LOCALE_HE_IL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'רשימת עמודות',
     ariaFilterPanelList: 'רשימת מסננים',
+    ariaFilterPanelExpandAll: 'הרחב את כל קבוצות המסננים',
+    ariaFilterPanelCollapseAll: 'כווץ את כל קבוצות המסננים',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'הוסף שדה סינון',

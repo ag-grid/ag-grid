@@ -752,7 +752,8 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
-    ariaColumnSelectExpandAll: 'すべての列グループを展開または折りたたむ',
+    ariaColumnSelectExpandAll: 'すべての列グループを展開',
+    ariaColumnSelectCollapseAll: 'すべての列グループを折りたたむ',
     ariaDateFilterInput: '日付フィルター入力',
     ariaDefaultListName: 'リスト',
     ariaFilterColumnsInput: 'フィルター列入力',
@@ -877,6 +878,8 @@ export const AG_GRID_LOCALE_JA_JP = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '列リスト',
     ariaFilterPanelList: 'フィルターリスト',
+    ariaFilterPanelExpandAll: 'すべてのフィルターグループを展開',
+    ariaFilterPanelCollapseAll: 'すべてのフィルターグループを折りたたむ',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'フィルターフィールドを追加',

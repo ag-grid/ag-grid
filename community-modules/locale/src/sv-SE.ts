@@ -755,7 +755,8 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaCalculatedColumn: 'Beräknad kolumn',
     ariaColumnShowValuesAs: 'Visar värden som',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
-    ariaColumnSelectExpandAll: 'Expandera eller fäll ihop alla kolumngrupper',
+    ariaColumnSelectExpandAll: 'Expandera alla kolumngrupper',
+    ariaColumnSelectCollapseAll: 'Fäll ihop alla kolumngrupper',
     ariaDateFilterInput: 'Datumfilterinmatning',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',
@@ -881,6 +882,8 @@ export const AG_GRID_LOCALE_SV_SE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolumnlista',
     ariaFilterPanelList: 'Filterlista',
+    ariaFilterPanelExpandAll: 'Expandera Alla Filtergrupper',
+    ariaFilterPanelCollapseAll: 'Fäll Ihop Alla Filtergrupper',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Lägg till filterfält',

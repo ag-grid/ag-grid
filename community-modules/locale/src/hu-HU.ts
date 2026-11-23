@@ -758,7 +758,8 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaCalculatedColumn: 'Számított oszlop',
     ariaColumnShowValuesAs: 'Értékek megjelenítése mint',
     ariaColumnSelectAll: 'Az összes oszlop láthatóságának váltása',
-    ariaColumnSelectExpandAll: 'Az összes oszlopcsoport kibontása vagy összecsukása',
+    ariaColumnSelectExpandAll: 'Az összes oszlopcsoport kibontása',
+    ariaColumnSelectCollapseAll: 'Az összes oszlopcsoport összecsukása',
     ariaDateFilterInput: 'Dátum szűrő bevitel',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Oszlopok szűrése bevitel',
@@ -886,6 +887,8 @@ export const AG_GRID_LOCALE_HU_HU = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Oszloplista',
     ariaFilterPanelList: 'Szűrőlista',
+    ariaFilterPanelExpandAll: 'Összes szűrőcsoport kibontása',
+    ariaFilterPanelCollapseAll: 'Összes szűrőcsoport összecsukása',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',

@@ -754,7 +754,8 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaCalculatedColumn: 'Berekende kolom',
     ariaColumnShowValuesAs: 'Waarden worden weergegeven als',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
-    ariaColumnSelectExpandAll: 'Alle kolomgroepen uit- of samenvouwen',
+    ariaColumnSelectExpandAll: 'Alle kolomgroepen uitvouwen',
+    ariaColumnSelectCollapseAll: 'Alle kolomgroepen samenvouwen',
     ariaDateFilterInput: 'Datum Filter Invoer',
     ariaDefaultListName: 'Lijst',
     ariaFilterColumnsInput: 'Filter Kolommen Invoer',
@@ -881,6 +882,8 @@ export const AG_GRID_LOCALE_NL_NL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolom Lijst',
     ariaFilterPanelList: 'Filterlijst',
+    ariaFilterPanelExpandAll: 'Alle filtergroepen uitvouwen',
+    ariaFilterPanelCollapseAll: 'Alle filtergroepen samenvouwen',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filterveld toevoegen',

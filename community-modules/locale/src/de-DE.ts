@@ -758,7 +758,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaCalculatedColumn: 'Berechnete Spalte',
     ariaColumnShowValuesAs: 'Werte werden angezeigt als',
     ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
-    ariaColumnSelectExpandAll: 'Alle Spaltengruppen auf- oder zuklappen',
+    ariaColumnSelectExpandAll: 'Alle Spaltengruppen aufklappen',
+    ariaColumnSelectCollapseAll: 'Alle Spaltengruppen zuklappen',
     ariaDateFilterInput: 'Datum-Filtereingang',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',
@@ -887,6 +888,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Spaltenliste',
     ariaFilterPanelList: 'Filterliste',
+    ariaFilterPanelExpandAll: 'Alle Filtergruppen erweitern',
+    ariaFilterPanelCollapseAll: 'Alle Filtergruppen reduzieren',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',

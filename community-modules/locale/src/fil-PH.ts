@@ -774,7 +774,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaCalculatedColumn: 'Kinalkulang column',
     ariaColumnShowValuesAs: 'Ipinapakita ang mga Halaga Bilang',
     ariaColumnSelectAll: 'I-toggle ang Visibility ng Lahat ng Column',
-    ariaColumnSelectExpandAll: 'I-expand o I-collapse ang Lahat ng Grupo ng Column',
+    ariaColumnSelectExpandAll: 'I-expand ang Lahat ng Grupo ng Column',
+    ariaColumnSelectCollapseAll: 'I-collapse ang Lahat ng Grupo ng Column',
     ariaDateFilterInput: 'Input ng Date Filter',
     ariaDefaultListName: 'Listahan',
     ariaFilterColumnsInput: 'Input ng Filter Columns',
@@ -911,6 +912,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Listahan ng Column',
     ariaFilterPanelList: 'Listahan ng Filter',
+    ariaFilterPanelExpandAll: 'Buksan ang Lahat ng Filter Group',
+    ariaFilterPanelCollapseAll: 'Isara ang Lahat ng Filter Group',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Magdagdag ng Field ng Filter',

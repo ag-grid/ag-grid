@@ -768,7 +768,8 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaCalculatedColumn: 'গণনাকৃত কলাম',
     ariaColumnShowValuesAs: 'মান দেখানো হচ্ছে হিসেবে',
     ariaColumnSelectAll: 'সব কলামের দৃশ্যমানতা টগল করুন',
-    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত বা সংকুচিত করুন',
+    ariaColumnSelectExpandAll: 'সব কলাম গ্রুপ প্রসারিত করুন',
+    ariaColumnSelectCollapseAll: 'সব কলাম গ্রুপ সংকুচিত করুন',
     ariaDateFilterInput: 'তারিখ ফিল্টার ইনপুট',
     ariaDefaultListName: 'তালিকা',
     ariaFilterColumnsInput: 'কলাম ফিল্টার ইনপুট',
@@ -901,6 +902,8 @@ export const AG_GRID_LOCALE_BN_IN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'কলাম তালিকা',
     ariaFilterPanelList: 'ফিল্টার তালিকা',
+    ariaFilterPanelExpandAll: 'সব ফিল্টার গ্রুপ প্রসারিত করুন',
+    ariaFilterPanelCollapseAll: 'সব ফিল্টার গ্রুপ সংকুচিত করুন',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',

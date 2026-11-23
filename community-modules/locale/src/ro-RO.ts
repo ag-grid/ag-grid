@@ -756,7 +756,8 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaCalculatedColumn: 'Coloană calculată',
     ariaColumnShowValuesAs: 'Se afișează valorile ca',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
-    ariaColumnSelectExpandAll: 'Extinde sau restrânge toate grupurile de coloane',
+    ariaColumnSelectExpandAll: 'Extinde toate grupurile de coloane',
+    ariaColumnSelectCollapseAll: 'Restrânge toate grupurile de coloane',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
     ariaDefaultListName: 'Listă',
     ariaFilterColumnsInput: 'Intrare Filtrare Coloane',
@@ -883,6 +884,8 @@ export const AG_GRID_LOCALE_RO_RO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Listă de coloane',
     ariaFilterPanelList: 'Listă de filtre',
+    ariaFilterPanelExpandAll: 'Extinde toate grupurile de filtre',
+    ariaFilterPanelCollapseAll: 'Restrânge toate grupurile de filtre',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',

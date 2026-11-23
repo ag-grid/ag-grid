@@ -751,7 +751,8 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaCalculatedColumn: '计算列',
     ariaColumnShowValuesAs: '正在以此方式显示值',
     ariaColumnSelectAll: '切换所有列的可见性',
-    ariaColumnSelectExpandAll: '展开或折叠所有列组',
+    ariaColumnSelectExpandAll: '展开所有列组',
+    ariaColumnSelectCollapseAll: '折叠所有列组',
     ariaDateFilterInput: '日期过滤器输入',
     ariaDefaultListName: '列表',
     ariaFilterColumnsInput: '过滤列输入',
@@ -876,6 +877,8 @@ export const AG_GRID_LOCALE_ZH_CN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '列列表',
     ariaFilterPanelList: '过滤列表',
+    ariaFilterPanelExpandAll: '展开所有过滤组',
+    ariaFilterPanelCollapseAll: '折叠所有过滤组',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: '添加过滤字段',

@@ -753,7 +753,8 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaCalculatedColumn: 'Cột được tính toán',
     ariaColumnShowValuesAs: 'Đang hiển thị giá trị dưới dạng',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
-    ariaColumnSelectExpandAll: 'Mở rộng hoặc thu gọn tất cả nhóm cột',
+    ariaColumnSelectExpandAll: 'Mở rộng tất cả nhóm cột',
+    ariaColumnSelectCollapseAll: 'Thu gọn tất cả nhóm cột',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
     ariaDefaultListName: 'Danh sách',
     ariaFilterColumnsInput: 'Đầu vào Lọc Cột',
@@ -878,6 +879,8 @@ export const AG_GRID_LOCALE_VI_VN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Danh sách Cột',
     ariaFilterPanelList: 'Danh sách Bộ lọc',
+    ariaFilterPanelExpandAll: 'Mở Rộng Tất Cả Các Nhóm Bộ Lọc',
+    ariaFilterPanelCollapseAll: 'Thu Gọn Tất Cả Các Nhóm Bộ Lọc',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',

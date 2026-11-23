@@ -751,7 +751,8 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaCalculatedColumn: 'عمود محسوب',
     ariaColumnShowValuesAs: 'إظهار القيم كـ',
     ariaColumnSelectAll: 'تبديل ظهور كل الأعمدة',
-    ariaColumnSelectExpandAll: 'توسيع أو طي كل مجموعات الأعمدة',
+    ariaColumnSelectExpandAll: 'توسيع كل مجموعات الأعمدة',
+    ariaColumnSelectCollapseAll: 'طي كل مجموعات الأعمدة',
     ariaDateFilterInput: 'إدخال فلتر التاريخ',
     ariaDefaultListName: 'قائمة',
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',
@@ -876,6 +877,8 @@ export const AG_GRID_LOCALE_AR_EG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'قائمة الأعمدة',
     ariaFilterPanelList: 'قائمة المرشحات',
+    ariaFilterPanelExpandAll: 'توسيع جميع مجموعات المرشحات',
+    ariaFilterPanelCollapseAll: 'طي جميع مجموعات المرشحات',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
