@@ -551,6 +551,24 @@ describe('SSRM viewSubscription', () => {
         expect(api.isDestroyed()).toBe(true);
     });
 
+    test('destroy() throws a bean destroy error in the same AggregateError as a gridPreDestroyed listener error', async () => {
+        const api = await createFlatGrid();
+        const listenerError = new Error('listener failed');
+        const beanError = new Error('bean destroy failed');
+        api.addEventListener('gridPreDestroyed', () => {
+            throw listenerError;
+        });
+        const viewSubSvc = (api.getAllGridColumns()[0] as any).beans.viewSubSvc;
+        const destroy = viewSubSvc.destroy.bind(viewSubSvc);
+        vi.spyOn(viewSubSvc, 'destroy').mockImplementation(() => {
+            destroy();
+            throw beanError;
+        });
+
+        expect(() => api.destroy()).toThrow(expect.objectContaining({ errors: [listenerError, beanError] }));
+        expect(api.isDestroyed()).toBe(true);
+    });
+
     test('a subscribeRows handler that throws on an empty array does not stop createGrid returning the api', async () => {
         const subscribed: string[] = [];
         const api = gridsManager.createGrid('myGrid', {

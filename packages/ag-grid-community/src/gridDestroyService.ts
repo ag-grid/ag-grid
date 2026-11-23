@@ -31,7 +31,8 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         try {
             context.destroy();
         } catch (error) {
-            errors.push(error);
+            // The context throws an AggregateError of the bean errors; add them without nesting.
+            errors.push(...(error instanceof AggregateError ? error.errors : [error]));
         }
         super.destroy();
 
