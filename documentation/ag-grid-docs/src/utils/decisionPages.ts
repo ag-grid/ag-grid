@@ -55,7 +55,9 @@ export const COMPARE_HUB: DecisionHubContent = {
 
 export const COMPARE_HUB_NAME = 'Compare';
 
-export const comparePageUrl = (slug: string): string => `/compare/${slug}/`;
+const { urls } = GRID_DECISION_SITE;
+
+export const comparePageUrl = (slug: string): string => `${urls.hub}${slug}/`;
 
 export const compareHubCard = (slug: string, content: ComparisonPageContent): DecisionHubCard => ({
     title: content.hero.heading,
@@ -82,14 +84,14 @@ export function compareRelatedPages({
     );
 
     return [
-        ...(otherComparisons.length ? [{ name: 'Compare', links: otherComparisons }] : []),
+        ...(otherComparisons.length ? [{ name: COMPARE_HUB_NAME, links: otherComparisons }] : []),
         {
-            name: 'AG Grid',
+            name: GRID_DECISION_SITE.productName,
             links: [
                 { title: 'Community vs Enterprise', url: './community-vs-enterprise/' },
-                { title: 'Pricing', url: '/license-pricing/' },
-                { title: 'Demos', url: '/example/' },
-                { title: 'Documentation', url: './getting-started/' },
+                { title: 'Pricing', url: urls.pricing },
+                { title: 'Demos', url: urls.demo },
+                { title: 'Documentation', url: urls.getStarted },
             ],
         },
     ];

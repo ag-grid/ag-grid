@@ -34,7 +34,7 @@ const { data: metadata } = (await getEntry('metadata', 'metadata')) as Collectio
 
 // Matches the canonical URL Layout emits, so the WebPage node describes the page being served.
 const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
-const hubUrl = new URL('/compare/', metadata.canonicalUrlBase).href;
+const hubUrl = new URL(GRID_DECISION_SITE.urls.hub, metadata.canonicalUrlBase).href;
 
 const pageStructuredData = [
     ...buildDecisionPageStructuredData({
@@ -44,7 +44,7 @@ const pageStructuredData = [
         description: content.meta.description,
         lastUpdated: content.lastUpdated,
         breadcrumbs: [
-            { name: GRID_DECISION_SITE.productName, url: new URL('/', metadata.canonicalUrlBase).href },
+            { name: GRID_DECISION_SITE.productName, url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href },
             { name: COMPARE_HUB_NAME, url: hubUrl },
             { name: comparisonPageName(GRID_DECISION_SITE.productName, content.competitor.name), url: pageUrl },
         ],
