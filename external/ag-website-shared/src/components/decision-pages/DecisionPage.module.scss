@@ -1,4 +1,5 @@
 @use 'design-system' as *;
+@use '../pill/pill-tones' as *;
 
 // Shared by every decision page section: comparison, alternative, solution and migration pages.
 
@@ -372,39 +373,15 @@ $product-bar-width: 3px;
 }
 
 .pillFree {
-    color: var(--color-success);
-    background-color: color-mix(in srgb, var(--color-green-100) 50%, transparent);
-    border-color: var(--color-success);
-
-    #{$selector-darkmode} & {
-        color: var(--color-green-300);
-        background-color: color-mix(in srgb, var(--color-green-950) 50%, transparent);
-        border-color: color-mix(in srgb, var(--color-green-600) 30%, transparent);
-    }
+    @include pill-tone-green;
 }
 
 .pillPaid {
-    color: var(--color-brand-500);
-    background-color: color-mix(in srgb, var(--color-brand-100) 50%, transparent);
-    border-color: var(--color-brand-500);
-
-    #{$selector-darkmode} & {
-        color: var(--color-brand-300);
-        background-color: color-mix(in srgb, var(--color-brand-900) 10%, var(--color-negative) 3%);
-        border-color: color-mix(in srgb, var(--color-brand-300) 30%, transparent);
-    }
+    @include pill-tone-blue;
 }
 
 .pillLimited {
-    color: var(--color-warning-500);
-    background-color: color-mix(in srgb, var(--color-warning-100) 50%, transparent);
-    border-color: var(--color-warning-400);
-
-    #{$selector-darkmode} & {
-        color: var(--color-warning-300);
-        background-color: color-mix(in srgb, var(--color-warning-950) 50%, transparent);
-        border-color: color-mix(in srgb, var(--color-warning-600) 30%, transparent);
-    }
+    @include pill-tone-yellow;
 }
 
 .pillNone {
