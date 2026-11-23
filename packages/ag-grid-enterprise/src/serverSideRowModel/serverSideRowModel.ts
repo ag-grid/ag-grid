@@ -336,6 +336,15 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.onStoreUpdated();
     }
 
+    public clientSideResort(): void {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        rootStore.clientSideResort();
+        this.onStoreUpdated();
+    }
+
     public generateSecondaryColumns(pivotFields: string[]) {
         if (!this.pivotColDefSvc) {
             this.gos.assertModuleRegistered('SharedPivot', 2);

@@ -1489,4 +1489,30 @@ describe('SSRM Client-Side Sorting', () => {
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 5]);
         expect(getDisplayedValues(api, 'name')).toEqual(['Alice', 'Dora', 'Bob', 'Charlie']);
     });
+
+    test('changing accentedSort re-sorts the loaded rows client-side', async () => {
+        const rowData = ['Zoe', 'Åsa', 'Anna', 'Örjan', 'Ola'].map((name) => ({ name }));
+        let getRowsCalls = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'name', sort: 'asc' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            accentedSort: { locales: 'sv' },
+            serverSideDatasource: {
+                getRows: (params) => {
+                    getRowsCalls++;
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForNoLoadingRows(api);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+
+        api.setGridOption('accentedSort', { locales: 'de' });
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+
+        api.setGridOption('columnDefs', [{ field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } }]);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        expect(getRowsCalls).toBe(1);
+    });
 });

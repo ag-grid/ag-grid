@@ -25,9 +25,23 @@ const createCollatorComparator = (
     }
 };
 
+/** Key for a locales/options pair, independent of the order the options were written in. */
+const collatorKey = (locales: string | string[] | undefined, options: Intl.CollatorOptions | undefined): string => {
+    let key = JSON.stringify(locales ?? null);
+    if (options) {
+        const names = Object.keys(options).sort();
+        for (let i = 0, len = names.length; i < len; ++i) {
+            const name = names[i];
+            key += `|${name}=${JSON.stringify(options[name as keyof Intl.CollatorOptions])}`;
+        }
+    }
+    return key;
+};
+
 /** Builds the comparator for an `accentedSort` value, or `undefined` when it is off. */
 const createStringComparator = (
-    accentedSort: boolean | AccentedSortOptions | undefined
+    accentedSort: boolean | AccentedSortOptions | undefined,
+    colModel: ColumnModel
 ): StringComparator | undefined => {
     if (!accentedSort) {
         return undefined;
@@ -35,7 +49,15 @@ const createStringComparator = (
     if (accentedSort === true) {
         return localeStringComparator;
     }
-    return createCollatorComparator(accentedSort.locales, accentedSort.options);
+    const { locales, options } = accentedSort;
+    const cache = colModel.collatorComparators;
+    const key = collatorKey(locales, options);
+    let comparator = cache.get(key);
+    if (!comparator) {
+        comparator = createCollatorComparator(locales, options);
+        cache.set(key, comparator);
+    }
+    return comparator;
 };
 
 /** `stringComparatorVersion` of a column with its own `accentedSort`, which the grid option does not affect. */
@@ -56,7 +78,7 @@ export function _getColumnStringComparator(
     const version = ownAccentedSort === undefined ? colModel.accentedSortVersion : OWN_ACCENTED_SORT;
     if (column.stringComparatorVersion !== version) {
         column.stringComparatorVersion = version;
-        column.stringComparator = createStringComparator(ownAccentedSort ?? gos.get('accentedSort'));
+        column.stringComparator = createStringComparator(ownAccentedSort ?? gos.get('accentedSort'), colModel);
     }
     return column.stringComparator;
 }

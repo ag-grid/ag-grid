@@ -233,9 +233,37 @@ describe('accentedSort locale and collator options', () => {
         expect(sortedValues(api, 'german')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
         expect(built).toBe(builtInitially);
 
-        api.setGridOption('accentedSort', { locales: 'de' });
+        api.setGridOption('accentedSort', { locales: 'de', options: { sensitivity: 'base' } });
         expect(sortedValues(api, 'name')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
         expect(built).toBe(builtInitially + 1);
+    });
+
+    test('columns with equal locales and options share one collator, whatever the option order', () => {
+        const RealCollator = Intl.Collator;
+        let built = 0;
+        vi.spyOn(Intl, 'Collator').mockImplementation(function (
+            locales?: string | string[],
+            options?: Intl.CollatorOptions
+        ) {
+            if (!new Error().stack?.includes('validateAccentedSort')) {
+                built++;
+            }
+            return new RealCollator(locales, options);
+        } as any);
+        const api = createGrid('accented-shared-collator', {
+            columnDefs: [
+                { field: 'grid' },
+                { field: 'own', accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } } },
+                { field: 'reordered', accentedSort: { options: { sensitivity: 'base', numeric: true }, locales: 'sv' } },
+            ],
+            rowData: names.map((name) => ({ grid: name, own: name, reordered: name })),
+            accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } },
+        });
+
+        for (const colId of ['grid', 'own', 'reordered']) {
+            expect(sortedValues(api, colId)).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        }
+        expect(built).toBe(1);
     });
 
     test('colDef.accentedSort overrides the grid option for that column', () => {

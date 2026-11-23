@@ -1,4 +1,4 @@
-import type { AgEvent } from 'ag-stack';
+import type { AgEvent, StringComparator } from 'ag-stack';
 import { _areEqual } from 'ag-stack';
 
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
@@ -62,6 +62,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefsVersion = 0;
     /** Bumped when the `accentedSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
     public accentedSortVersion = 0;
+    /** The `accentedSort` object-form comparators, keyed by locales and options, so columns with equal settings share one. */
+    public readonly collatorComparators = new Map<string, StringComparator>();
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */
     public colUpdateDepth = 0;

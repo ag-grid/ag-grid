@@ -1,4 +1,13 @@
-import type { BeanCollection, NamedBean, SortModelItem, SortService, StoreRefreshAfterParams } from 'ag-grid-community';
+import type { StringComparator } from 'ag-stack';
+
+import type {
+    BeanCollection,
+    Column,
+    NamedBean,
+    SortModelItem,
+    SortService,
+    StoreRefreshAfterParams,
+} from 'ag-grid-community';
 import { BeanStub, _getSortModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -10,6 +19,9 @@ export class SortListener extends BeanStub implements NamedBean {
     private sortSvc: SortService;
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
+    /** The sorted columns and their `accentedSort` comparators when last checked, to detect a comparator change. */
+    private readonly sortedCols: Column[] = [];
+    private readonly stringComparators: (StringComparator | undefined)[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.sortSvc = beans.sortSvc!;
@@ -23,10 +35,46 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedEventListeners({ sortChanged: this.onSortChanged.bind(this) });
+        const onComparatorsMaybeChanged = this.onComparatorsMaybeChanged.bind(this);
+        this.addManagedEventListeners({
+            sortChanged: this.onSortChanged.bind(this),
+            newColumnsLoaded: onComparatorsMaybeChanged,
+        });
+        this.addManagedPropertyListener('accentedSort', onComparatorsMaybeChanged);
+    }
+
+    /** Client-side sorting re-sorts when a sorted column's `accentedSort` changes, as the sort model stays the same. */
+    private onComparatorsMaybeChanged(): void {
+        if (this.updateComparators() && this.gos.get('serverSideEnableClientSideSort')) {
+            this.serverSideRowModel.clientSideResort();
+        }
+    }
+
+    /** Records the sorted columns' string comparators; `true` when the same columns now compare strings differently. */
+    private updateComparators(): boolean {
+        const opts = this.sortSvc.getSortOptions();
+        const { sortedCols, stringComparators } = this;
+        const len = opts.length;
+        let sameCols = len === sortedCols.length;
+        let changed = false;
+        for (let i = 0; i < len; ++i) {
+            const { column, stringComparator } = opts[i];
+            if (sameCols && sortedCols[i] !== column) {
+                sameCols = false;
+            }
+            if (sameCols && stringComparators[i] !== stringComparator) {
+                changed = true;
+            }
+            sortedCols[i] = column;
+            stringComparators[i] = stringComparator;
+        }
+        sortedCols.length = len;
+        stringComparators.length = len;
+        return sameCols && changed;
     }
 
     private onSortChanged(): void {
+        this.updateComparators();
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
