@@ -125,6 +125,15 @@ The following deprecated APIs have now been removed.
 - `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
 - Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
 
+### Row Node
+
+- `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+- `lastChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.at(-1) === rowNode` instead.
+- `childIndex` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
+- `isFullWidthCell()` - removed, check `rowNode.detail`, then the `isFullWidthRow` grid option callback instead.
+
+In the Server-Side Row Model only `firstChild` was ever set, and it has no direct replacement; listen to the `modelUpdated` event to re-check row positions.
+
 ### Interfaces and Types
 
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
@@ -133,6 +142,11 @@ The following deprecated APIs have now been removed.
 - `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
 - `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 - `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
+- `FirstChildChangedEvent`, `LastChildChangedEvent` and `ChildIndexChangedEvent` - removed, along with the row node events below.
+
+### Events
+
+- Row node events `firstChildChanged`, `lastChildChanged` and `childIndexChanged` - removed. With the Client-Side Row Model, listen to the grid's `modelUpdated` event and read `rowNode.parent.childrenAfterSort` instead. The Server-Side Row Model only ever dispatched `firstChildChanged`; listen to the `modelUpdated` event instead.
 
 ### Modules
 

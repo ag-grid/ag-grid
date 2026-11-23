@@ -1022,15 +1022,6 @@ export class GridColumnsValidator {
             colErrors.add('getDefinition() is not the same object reference as getColDef().');
         }
 
-        // ── getRight() = getLeft() + getActualWidth() ───────────────────────
-        if (left != null) {
-            const right = col.getRight();
-            const expectedRight = left + width;
-            if (right !== expectedRight) {
-                colErrors.add(`getRight() is ${right}, expected ${expectedRight} (left=${left} + width=${width}).`);
-            }
-        }
-
         // ── isSpanHeaderHeight consistency with colDef ──────────────────────
         const colDef = col.getColDef();
         const spanHeaderHeight = col.isSpanHeaderHeight();

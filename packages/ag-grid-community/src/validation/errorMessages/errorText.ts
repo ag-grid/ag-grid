@@ -9,7 +9,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { getErrorLink, getValidationDocLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -255,8 +255,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation \`${key}\`` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for \`${variable?.cssName}\`. This usually means that the grid has been initialised before styles have been loaded. The default value of \`${variable?.defaultValue}\` will be used and updated when styles load.` as const,
-    10: ({ eventType }: { eventType: RowNodeEventType }) =>
-        `As of v33, the \`${eventType}\` event is deprecated. Use the global \`modelUpdated\` event to determine when row children have changed.`,
+    // 10: retired (deprecated row node event warning)
     11: () => 'No gridOptions provided to `createGrid`' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -350,8 +349,7 @@ export const AG_GRID_ERRORS = {
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
-    61: () =>
-        'since version v32.2.0, `rowNode.isFullWidthCell()` has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    // 61: retired (deprecated rowNode.isFullWidthCell warning)
     62: ({ colId }: { colId: string }) => `\`setFilterModel()\` - no column found for colId: ${colId}` as const,
     63: ({ colId }: { colId: string }) =>
         `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
