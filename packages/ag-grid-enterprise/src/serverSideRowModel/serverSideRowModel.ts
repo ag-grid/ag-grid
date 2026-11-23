@@ -91,6 +91,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public rootNode: RowNode;
+    public refreshingData = false;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;

@@ -15,6 +15,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
+    _getGrandTotalRow,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isMultiRowSelection,
@@ -31,43 +32,43 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     private selectionStrategy: ISelectionStrategy;
     private selectionMode?: RowSelectionMode;
+    /** Rows `isRowSelectable` rejected in this selection batch, their own selection removed together by `deselectRejectedRows`. */
+    private rejectedRows: RowNode[] = [];
+    private pendingSelectionSource: SelectionEventSourceType | null = null;
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
-            const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
-
-            // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
-            const Strategy =
-                groupSelectsChildren && this.selectionStrategy instanceof DefaultStrategy
-                    ? GroupSelectsChildrenStrategy
-                    : !groupSelectsChildren && this.selectionStrategy instanceof GroupSelectsChildrenStrategy
-                      ? DefaultStrategy
-                      : undefined;
-
-            if (Strategy) {
-                this.destroyBean(this.selectionStrategy);
-
-                this.selectionStrategy = this.createManagedBean(new Strategy(this.selectionCtx));
-
-                this.shotgunResetNodeSelectionState();
-                this.dispatchSelectionChanged('api');
-            }
-        });
-
-        this.addManagedPropertyListeners(['rowSelection'], () => {
-            // Only reset selection when selection mode changes, not just any part of selection options
-            const rowSelection = _getRowSelectionMode(this.gos);
-            if (rowSelection !== this.selectionMode) {
-                this.selectionMode = rowSelection;
-                this.deselectAllRowNodes({ source: 'api' });
-            }
-        });
-
         this.selectionMode = _getRowSelectionMode(this.gos);
         const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
         const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new Strategy(this.selectionCtx));
+    }
+
+    /** Runs before the rows are asked again, so a selection the new options discard is gone before they are. */
+    protected override refreshSelectionOptions(): boolean {
+        const gos = this.gos;
+        // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
+        const groupSelectsChildren = _getGroupSelectsDescendants(gos);
+        const oldStrategy = this.selectionStrategy;
+        if (groupSelectsChildren !== oldStrategy instanceof GroupSelectsChildrenStrategy) {
+            const hadSelection = !oldStrategy.isEmpty();
+            this.destroyBean(oldStrategy);
+            const Strategy = groupSelectsChildren ? GroupSelectsChildrenStrategy : DefaultStrategy;
+            this.selectionStrategy = this.createManagedBean(new Strategy(this.selectionCtx));
+
+            this.shotgunResetNodeSelectionState();
+            if (hadSelection) {
+                this.dispatchSelectionChanged('api');
+            }
+        }
+
+        // Only reset selection when selection mode changes, not just any part of selection options
+        const rowSelection = _getRowSelectionMode(gos);
+        if (rowSelection !== this.selectionMode) {
+            this.selectionMode = rowSelection;
+            this.deselectAllRowNodes({ source: 'api' });
+        }
+        return false;
     }
 
     public handleSelectionEvent(
@@ -136,10 +137,22 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return;
         }
         if (state) {
-            this.selectionStrategy.setSelectedState(state);
-            this.shotgunResetNodeSelectionState();
-
-            this.dispatchSelectionChanged(source);
+            ++this.selectionBatchDepth;
+            try {
+                this.selectionStrategy.setSelectedState(state);
+                // a loaded row isRowSelectable rejects does not keep the selection the state gives it
+                const rowModel = this.beans.rowModel;
+                rowModel.forEachNode((node) => this.queueIfRejected(node));
+                const rootNode = rowModel.rootNode;
+                if (rootNode) {
+                    this.queueIfRejected(rootNode); // `forEachNode` skips the root
+                }
+                this.deselectRejectedRows();
+                this.shotgunResetNodeSelectionState();
+                this.dispatchSelectionChanged(source);
+            } finally {
+                this.endSelectionBatch();
+            }
         } else {
             this.deselectAllRowNodes({ source });
         }
@@ -159,11 +172,13 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         }
 
         const adjustedParams = {
-            nodes: nodes.filter((node) => node.selectable),
+            // a row isRowSelectable rejects is neither selected nor deselected, but for a group or root selecting its rows
+            nodes: nodes.filter(
+                (node) => node.selectable || (!params.newValue && this.selectsItsRows(node.primaryRow))
+            ),
             ...otherParams,
         };
 
-        // if no selectable nodes, then return 0
         if (!adjustedParams.nodes.length) {
             return 0;
         }
@@ -174,18 +189,15 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return changedNodes;
     }
 
-    /**
-     * Deletes the selection state for a set of nodes, for use after deleting nodes via
-     * transaction. As this is designed for transactions, all nodes should belong to the same group.
-     */
-    public deleteSelectionStateFromParent(storeRoute: string[], removedNodeIds: string[]) {
-        const stateChanged = this.selectionStrategy.deleteSelectionStateFromParent(storeRoute, removedNodeIds);
+    /** Deletes the selection state of the children of `parentNode` a transaction removed. */
+    public deleteSelectionStateFromParent(removedNodeIds: string[], parentNode: RowNode) {
+        const stateChanged = this.selectionStrategy.deleteSelectionStateFromParent(removedNodeIds, parentNode);
         if (!stateChanged) {
             return;
         }
 
         this.shotgunResetNodeSelectionState();
-        this.dispatchSelectionChanged('api');
+        this.dispatchSelectionChanged('rowDataChanged');
     }
 
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType, event?: Event) {
@@ -201,6 +213,106 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         });
 
         this.syncRootNode(source, event);
+    }
+
+    /** The selection a row shows: the state's, unless the row may not show selected. */
+    private isShownSelected(rowNode: RowNode): boolean | undefined {
+        const selected = this.selectionStrategy.isNodeSelected(rowNode);
+        return selected && !this.canShowSelected(rowNode) ? false : selected;
+    }
+
+    /** A group selecting its rows shows theirs whatever its own answer; the root shows through its grand total row. */
+    protected override canShowSelected(rowNode: RowNode): boolean {
+        return rowNode.selectable || (rowNode.level !== -1 && this.selectsItsRows(rowNode));
+    }
+
+    /** With `groupSelects: 'descendants'`, a group's or the root's own selection selects its rows. */
+    private selectsItsRows(rowNode: RowNode): boolean {
+        return (
+            this.selectionStrategy instanceof GroupSelectsChildrenStrategy &&
+            (rowNode.level === -1 || rowNode.hasChildren())
+        );
+    }
+
+    /** Queues a rejected selected row, whose own selection is removed by `deselectRejectedRows`. */
+    private queueIfRejected(rowNode: RowNode): void {
+        if (rowNode.selectable || !this.selectionStrategy.isNodeSelected(rowNode)) {
+            return;
+        }
+        this.rejectedRows.push(rowNode);
+    }
+
+    /** Deselects the queued rows still rejected and selected, in one strategy call, as a GroupSelectsChildren call walks the whole state. */
+    private deselectRejectedRows(): number {
+        const queued = this.rejectedRows;
+        if (!queued.length) {
+            return 0;
+        }
+        this.rejectedRows = [];
+        // a group's or the root's own selection selects its rows, which keep it
+        const rows = queued.filter(
+            (row) => !row.selectable && !this.selectsItsRows(row) && this.selectionStrategy.isNodeSelected(row)
+        );
+        // single-row selection takes one row, and deselecting any one clears the whole selection
+        const nodes = this.selectionMode === 'multiRow' ? rows : rows.slice(0, 1);
+        return this.selectionStrategy.setNodesSelected({ nodes, newValue: false, source: 'selectableChanged' });
+    }
+
+    /** While `grandTotalRow` is set but its row is absent (reloading, removed, no rows), the root keeps that row's last answer. */
+    public override updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
+        if (rowNode.level === -1 && !rowNode.sibling && _getGrandTotalRow(this.gos)) {
+            return rowNode.selectable;
+        }
+        return super.updateRowSelectable(rowNode, suppressSelectionUpdate);
+    }
+
+    protected override setRowSelectable(rowNode: RowNode, newVal: boolean, suppressSelectionUpdate?: boolean): void {
+        if (rowNode.selectable === newVal) {
+            return;
+        }
+        super.setRowSelectable(rowNode, newVal, true);
+        if (!suppressSelectionUpdate) {
+            this.showRowSelection(rowNode);
+        }
+    }
+
+    /** Asks the row again and shows its selection even when its answer stays, as its group info or grand total row changed. */
+    public refreshRowSelection(rowNode: RowNode): void {
+        this.updateRowSelectable(rowNode, true);
+        this.showRowSelection(rowNode);
+    }
+
+    /** Queues the row if rejected and shows its selection, in one selection batch. */
+    private showRowSelection(rowNode: RowNode): void {
+        ++this.selectionBatchDepth;
+        try {
+            this.queueIfRejected(rowNode);
+            if (this.selectRowNode(rowNode, this.isShownSelected(rowNode), undefined, 'selectableChanged')) {
+                this.dispatchSelectionChanged('selectableChanged');
+            }
+        } finally {
+            this.endSelectionBatch();
+        }
+    }
+
+    /** Closes the batch, in a `finally`; the outermost close deselects the rejected rows, then emits one `selectionChanged`. */
+    public endSelectionBatch(): void {
+        if (--this.selectionBatchDepth > 0) {
+            return;
+        }
+        let source = this.pendingSelectionSource;
+        this.pendingSelectionSource = null;
+        try {
+            if (!this.deselectRejectedRows()) {
+                return;
+            }
+            source ??= 'selectableChanged';
+            this.shotgunResetNodeSelectionState('selectableChanged');
+        } finally {
+            if (source) {
+                this.dispatchSelectionChanged(source);
+            }
+        }
     }
 
     /** `forEachNode` skips the root, whose selection the grand total row reports as its own. */
@@ -232,28 +344,17 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return this.selectionStrategy.isSoleSelection(node);
     }
 
+    /** Shows a loaded row's, a new root's or a reloaded row's selection from the state; a rejected row is deselected as the batch ends. */
     public syncInRowNode(rowNode: RowNode<any>): void {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
-
-        const isNodeSelected = this.selectionStrategy.isNodeSelected(rowNode);
-
-        // if the node was selected but node is not selectable, we deselect the node.
-        // (could be due to user applying selected state directly, or a change in selectable)
-        if (isNodeSelected !== false && !rowNode.selectable) {
-            this.selectionStrategy.setNodesSelected({
-                nodes: [rowNode],
-                newValue: false,
-                source: 'api',
-            });
-
-            // we need to shotgun reset here as if this was hierarchical, some group nodes
-            // may be changing from indeterminate to unchecked.
-            this.shotgunResetNodeSelectionState();
-            this.dispatchSelectionChanged('api');
-            return;
+        // written before the removal, so the removal's sync of every row raises no `rowSelected` for it
+        rowNode.__selected = this.isShownSelected(rowNode);
+        this.queueIfRejected(rowNode);
+        if (this.selectionBatchDepth === 0) {
+            ++this.selectionBatchDepth; // a sync outside any batch is a batch of its own
+            this.endSelectionBatch();
         }
-        rowNode.__selected = isNodeSelected;
     }
 
     public reset(): void {
@@ -280,8 +381,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return this.warn(130);
         }
 
-        this.selectionStrategy.selectAllRowNodes(params);
+        const changed = this.selectionStrategy.selectAllRowNodes(params);
         this.selectionCtx.selectAll = true;
+        if (!changed) {
+            return;
+        }
 
         this.beans.rowModel.forEachNode((node) => {
             if (node.stub) {
@@ -298,8 +402,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         validateSelectionParameters(this.beans.log, params);
 
-        this.selectionStrategy.deselectAllRowNodes(params);
+        const changed = this.selectionStrategy.deselectAllRowNodes(params);
         this.selectionCtx.selectAll = false;
+        if (!changed) {
+            return;
+        }
 
         this.beans.rowModel.forEachNode((node) => {
             if (node.stub) {
@@ -322,38 +429,31 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return this.warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
     }
 
-    /**
-     * Updates the selectable state for a node by invoking isRowSelectable callback.
-     * If the node is not selectable, it will be deselected.
-     *
-     * Callers:
-     *  - property isRowSelectable changed
-     *  - after grouping / treeData
-     */
+    /** Re-asks every node and the root, in one selection batch. */
     protected override updateSelectable(): void {
         if (!_isRowSelection(this.gos)) {
             return;
         }
 
-        const nodesToDeselect: RowNode[] = [];
-
-        this.beans.rowModel.forEachNode((node) => {
-            const rowSelectable = this.updateRowSelectable(node, true);
-            if (!rowSelectable && node.isSelected()) {
-                nodesToDeselect.push(node);
+        const rowModel = this.beans.rowModel;
+        ++this.selectionBatchDepth;
+        try {
+            rowModel.forEachNode((node) => this.updateRowSelectable(node));
+            // `forEachNode` skips the root, which its grand total row selects
+            const rootNode = rowModel.rootNode;
+            if (rootNode) {
+                this.updateRowSelectable(rootNode);
             }
-        });
-
-        if (nodesToDeselect.length) {
-            this.setNodesSelected({
-                nodes: nodesToDeselect,
-                newValue: false,
-                source: 'selectableChanged',
-            });
+        } finally {
+            this.endSelectionBatch();
         }
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        if (this.selectionBatchDepth > 0) {
+            this.pendingSelectionSource = source; // the latest: a transaction's removals follow its updates
+            return;
+        }
         this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
