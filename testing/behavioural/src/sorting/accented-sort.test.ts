@@ -254,7 +254,10 @@ describe('accentedSort locale and collator options', () => {
             columnDefs: [
                 { field: 'grid' },
                 { field: 'own', accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } } },
-                { field: 'reordered', accentedSort: { options: { sensitivity: 'base', numeric: true }, locales: 'sv' } },
+                {
+                    field: 'reordered',
+                    accentedSort: { options: { sensitivity: 'base', numeric: true }, locales: 'sv' },
+                },
             ],
             rowData: names.map((name) => ({ grid: name, own: name, reordered: name })),
             accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } },
