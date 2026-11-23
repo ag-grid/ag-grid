@@ -272,9 +272,6 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 ref: 'textColor',
                 mix: 0.5,
             },
-            inputReadOnlyBorder: {
-                color: 'transparent',
-            },
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
             },
@@ -305,10 +302,6 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
                 mix: 0.5,
             },
             inputDisabledBorder: 'solid 1px var(--ag-border-color)',
-            inputReadOnlyBorder: {
-                width: 2,
-                color: 'transparent',
-            },
             inputInvalidBorder: {
                 width: 2,
                 color: {
