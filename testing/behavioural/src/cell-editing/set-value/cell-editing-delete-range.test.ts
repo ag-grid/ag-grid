@@ -652,9 +652,12 @@ describe('Cell Editing: delete and range clearing', () => {
         `);
     });
 
-    test('range delete calls suppressKeyboardEvent once per cell', async () => {
+    test.each([
+        { name: 'one range', extraRanges: [] },
+        { name: 'overlapping ranges', extraRanges: [{ rowStartIndex: 0, rowEndIndex: 1, columns: ['b'] }] },
+    ])('range delete calls suppressKeyboardEvent once per cell ($name)', async ({ extraRanges }) => {
         const calls: string[] = [];
-        const api = await gridMgr.createGridAndWait('cellEditingSuppressCallsPerCell', {
+        const api = await gridMgr.createGridAndWait(`cellEditingSuppressCallsPerCell-${extraRanges.length}`, {
             cellSelection: true,
             defaultColDef: {
                 editable: true,
@@ -679,9 +682,53 @@ describe('Cell Editing: delete and range clearing', () => {
         await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
         await user.keyboard('{Shift>}');
         await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'b')));
-        await user.keyboard('{/Shift}{Delete}');
+        await user.keyboard('{/Shift}');
+        for (const range of extraRanges) {
+            api.addCellRange(range);
+        }
+        await user.keyboard('{Delete}');
         await asyncSetTimeout(0);
 
         expect(calls).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a', 'ROW_1:b']);
+    });
+
+    test('range delete passes editing to suppressKeyboardEvent for a cell with an open full-row editor', async () => {
+        const editingByColumn: Record<string, boolean> = {};
+        const api = await gridMgr.createGridAndWait('cellEditingSuppressFullRowOpenEditor', {
+            cellSelection: true,
+            editType: 'fullRow',
+            defaultColDef: {
+                suppressKeyboardEvent: (params) => {
+                    if (params.event.key === 'Delete') {
+                        editingByColumn[params.column.getColId()] = params.editing;
+                    }
+                    return params.editing;
+                },
+            },
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: false },
+            ],
+            rowData: [{ id: 'ROW_0', a: 'A0', b: 'B0', c: 'C0' }],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(0);
+
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await waitForInput(gridDiv, getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')));
+        api.setFocusedCell(0, 'c');
+        api.clearCellSelection();
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b', 'c'] });
+        await asyncSetTimeout(0);
+        await user.keyboard('{Delete}');
+        await asyncSetTimeout(0);
+
+        const bInput = await waitForInput(gridDiv, getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b')));
+        expect(editingByColumn).toEqual({ b: true, c: false });
+        expect(bInput.value).toBe('B0');
     });
 });

@@ -1394,17 +1394,25 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         callback: (rowNode: IRowNode, column: AgColumn) => void
     ): void {
         const { beans } = this;
+        // OPTIMIZATION: a single range cannot overlap itself, so only track visited cells across several.
+        const visited = cellRanges.length > 1 ? new Map<IRowNode, Set<AgColumn>>() : null;
         for (const cellRange of cellRanges) {
             this.forEachRowInRange(cellRange, (rowPosition) => {
                 const rowNode = _getRowNode(beans, rowPosition);
                 if (!rowNode) {
                     return;
                 }
+                let visitedColumns = visited?.get(rowNode);
+                if (visited && !visitedColumns) {
+                    visitedColumns = new Set();
+                    visited.set(rowNode, visitedColumns);
+                }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
-                    if (!column?.isCellEditable(rowNode)) {
+                    if (!column?.isCellEditable(rowNode) || visitedColumns?.has(column)) {
                         continue;
                     }
+                    visitedColumns?.add(column);
                     callback(rowNode, column);
                 }
             });

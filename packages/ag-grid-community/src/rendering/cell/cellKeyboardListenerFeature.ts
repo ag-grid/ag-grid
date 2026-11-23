@@ -150,7 +150,7 @@ function clearCellRangeOnDeleteKey(
     event: KeyboardEvent,
     focusedCellSuppressed: boolean
 ): void {
-    const { gos } = beans;
+    const { gos, editSvc } = beans;
     const { rowNode: focusedRowNode, column: focusedColumn } = cellCtrl;
     rangeSvc.clearCellRangeCellValues({
         dispatchWrapperEvents: true,
@@ -159,7 +159,8 @@ function clearCellRangeOnDeleteKey(
             if (node === focusedRowNode && column === focusedColumn) {
                 return focusedCellSuppressed;
             }
-            return _isUserSuppressingKeyboardEvent(gos, event, node, column, false);
+            const editing = editSvc?.isEditing({ rowNode: node, column }, { withOpenEditor: true }) ?? false;
+            return _isUserSuppressingKeyboardEvent(gos, event, node, column, editing);
         },
     });
 }
