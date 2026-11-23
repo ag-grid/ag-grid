@@ -113,7 +113,13 @@ const gridOptions = {
 
 If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
 
-The grid does not catch errors thrown by `subscribeRows` or `unsubscribeRows`. When `unsubscribeRows` throws while the grid is destroyed, the grid is still destroyed and `destroy()` throws the error, or an `AggregateError` when a `gridPreDestroyed` listener also throws.
+### Handler Errors
+
+The grid does not catch errors thrown by the handlers. An error thrown during an API call, such as `setGridOption`, is thrown from that call. An error thrown after the grid is scrolled or loads rows is reported by the browser as an uncaught error.
+
+Failed calls are not retried. Rows passed to a `subscribeRows` call that throws still count as subscribed, so they are passed to `unsubscribeRows` later. Rows passed to an `unsubscribeRows` call that throws count as unsubscribed. Make `unsubscribeRows` safe to call with IDs the server never subscribed, and after a lost connection, set `viewSubscriptionActive` to `false` and back to `true` to subscribe the rows in view again.
+
+When `unsubscribeRows` throws while the grid is destroyed, the other `gridPreDestroyed` listeners still run and the grid is still destroyed. `destroy()` then throws the error, or an `AggregateError` when more than one listener threw.
 
 ## Grand Total Row
 
