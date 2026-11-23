@@ -113,12 +113,9 @@ const gridOptions = {
 
 If the server loses the subscriptions, for example after a reconnect, set `viewSubscriptionActive` to `false` and back to `true`. The grid then calls `unsubscribeRows` with every subscribed row, and `subscribeRows` with the rows in view.
 
-### Handler Errors
-
-The grid leaves error handling to you: it does not catch errors thrown by the handlers or retry failed calls.
-
-- If `subscribeRows` throws, its rows still count as subscribed and are passed to `unsubscribeRows` later, so have `unsubscribeRows` skip any rows the server was never subscribed to.
-- If `unsubscribeRows` throws, its rows count as unsubscribed and are not passed again, so retry the call to stop the server sending their updates.
+{% note %}
+The grid leaves error handling to you: it does not catch errors thrown by the handlers or retry failed calls. If `subscribeRows` throws, its rows still count as subscribed and are passed to `unsubscribeRows` later, so have `unsubscribeRows` skip any rows the server was never subscribed to. If `unsubscribeRows` throws, its rows count as unsubscribed and are not passed again, so retry the call to stop the server sending their updates.
+{% /note %}
 
 ## Grand Total Row
 
