@@ -10,10 +10,10 @@
     font-weight: var(--ag-pinned-row-font-weight);
 }
 
-.ag-row-pinned-source.ag-row-selected {
+.ag-row.ag-row-pinned-source.ag-row-selected {
     color: var(--ag-selected-row-text-color, var(--ag-pinned-source-row-text-color));
 }
 
-.ag-row-pinned.ag-row-selected {
+.ag-row.ag-row-pinned.ag-row-selected {
     color: var(--ag-selected-row-text-color, var(--ag-pinned-row-text-color));
 }

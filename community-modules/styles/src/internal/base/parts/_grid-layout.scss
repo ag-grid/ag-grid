@@ -227,8 +227,11 @@
         background-color: var(--ag-odd-row-background-color);
     }
 
-    .ag-row-selected {
+    .ag-row.ag-row-selected {
         color: var(--ag-selected-row-text-color, var(--ag-data-color));
+    }
+
+    .ag-row-selected {
         --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
         --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
         --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);

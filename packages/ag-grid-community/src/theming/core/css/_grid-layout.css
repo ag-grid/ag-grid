@@ -429,9 +429,11 @@
     background-image: var(--ag-internal-row-overlay-image);
 }
 
-.ag-row.ag-row-selected {
+:where(.ag-row).ag-row-selected {
     color: var(--ag-selected-row-text-color, var(--ag-cell-text-color));
+}
 
+.ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
     --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
     --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
