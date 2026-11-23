@@ -224,6 +224,10 @@
         color: var(--ag-secondary-foreground-color);
     }
 
+    :where(.ag-row-selected) .ag-row-drag {
+        color: var(--ag-selected-row-drag-handle-color);
+    }
+
     .ag-drag-handle-disabled {
         opacity: 0.35;
         pointer-events: none;

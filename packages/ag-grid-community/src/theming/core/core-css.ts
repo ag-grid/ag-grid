@@ -549,6 +549,41 @@ export interface CoreParams extends SharedThemeParams {
     selectedRowBackgroundColor: ColorValue;
 
     /**
+     * Text color of selected rows in the grid. Icons in selected rows also use this color unless `iconColor` is set. When not set, selected rows keep their normal text color.
+     */
+    selectedRowTextColor: ColorValue;
+
+    /**
+     * Color used for borders around range selections and the focused cell within selected rows. Change this if `selectedRowBackgroundColor` is too close to `rangeSelectionBorderColor` for the border to be visible.
+     */
+    selectedRowRangeSelectionBorderColor: ColorValue;
+
+    /**
+     * Color of the row drag indicator line within selected rows. Change this if `selectedRowBackgroundColor` is too close to `rowDragIndicatorColor` for the line to be visible.
+     */
+    selectedRowDragIndicatorColor: ColorValue;
+
+    /**
+     * Color of the drag handle on draggable rows within selected rows. Change this if `selectedRowBackgroundColor` is too close to `dragHandleColor` for the handle to be visible.
+     */
+    selectedRowDragHandleColor: ColorValue;
+
+    /**
+     * Color of the indicator on cells with notes within selected rows. Change this if `selectedRowBackgroundColor` is too close to `noteIndicatorColor` for the indicator to be visible.
+     */
+    selectedRowNoteIndicatorColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value increases in an agAnimateShowChangeCellRenderer cell
+     */
+    selectedRowValueChangeDeltaUpColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value decreases in an agAnimateShowChangeCellRenderer cell
+     */
+    selectedRowValueChangeDeltaDownColor: ColorValue;
+
+    /**
      * Amount of indentation for each level of child items in the Set Filter list when filtering tree data.
      */
     setFilterIndentSize: LengthValue;
@@ -949,6 +984,11 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnHoverColor: accentMix(0.05),
     columnHeaderHoverColor: { ref: 'columnHoverColor' },
     selectedRowBackgroundColor: accentMix(0.12),
+    selectedRowTextColor: 'initial',
+    selectedRowRangeSelectionBorderColor: { ref: 'rangeSelectionBorderColor' },
+    selectedRowDragIndicatorColor: { ref: 'rowDragIndicatorColor' },
+    selectedRowDragHandleColor: { ref: 'dragHandleColor' },
+    selectedRowNoteIndicatorColor: { ref: 'noteIndicatorColor' },
     modalOverlayBackgroundColor: {
         ref: 'backgroundColor',
         mix: 0.66,
@@ -971,6 +1011,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
+    selectedRowValueChangeDeltaUpColor: { ref: 'valueChangeDeltaUpColor' },
+    selectedRowValueChangeDeltaDownColor: { ref: 'valueChangeDeltaDownColor' },
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     rowHeight: {
         calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
