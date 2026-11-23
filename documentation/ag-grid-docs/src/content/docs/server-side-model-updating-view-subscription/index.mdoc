@@ -117,8 +117,6 @@ If the server loses the subscriptions, for example after a reconnect, set `viewS
 
 The grid does not catch errors thrown by the handlers, and does not retry a failed call, so catch errors in the handlers. Rows passed to a `subscribeRows` call that throws still count as subscribed, so they are passed to `unsubscribeRows` later. Rows passed to an `unsubscribeRows` call that throws count as unsubscribed and are not passed again, so retry the call to stop the server sending their updates. Make `unsubscribeRows` safe to call with IDs the server never subscribed, and after a lost connection, set `viewSubscriptionActive` to `false` and back to `true` to subscribe the rows in view again.
 
-When `unsubscribeRows` throws while the grid is destroyed, the other `gridPreDestroyed` listeners still run and the grid is still destroyed. `destroy()` then throws the error, or an `AggregateError` when more than one listener threw.
-
 ## Grand Total Row
 
 With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
