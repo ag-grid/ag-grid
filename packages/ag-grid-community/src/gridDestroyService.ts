@@ -1,3 +1,5 @@
+import { _throwErrors } from 'ag-stack';
+
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 
@@ -33,8 +35,6 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         }
         super.destroy();
 
-        if (errors.length) {
-            throw errors[0];
-        }
+        _throwErrors(errors);
     }
 }
