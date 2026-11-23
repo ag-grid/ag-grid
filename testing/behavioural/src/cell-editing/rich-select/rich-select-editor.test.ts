@@ -799,6 +799,47 @@ describe('Rich Select cell editor', () => {
             expect(highlighted()).toBe('Lion');
         });
 
+        describe('with values from a Promise', () => {
+            const COLOURS = ['Ant', 'Blue', 'Bloom'];
+
+            const startEditingWithKey = async (values: () => Promise<string[]>, key: string) => {
+                const api = await createGrid({
+                    columnDefs: [baseColDef({ values })],
+                    rowData: [{ id: '0', a: 'Ant' }],
+                    getRowId: (p) => p.data.id,
+                });
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                api.setFocusedCell(0, 'a');
+                api.startEditingCell({ rowIndex: 0, colKey: 'a', key });
+                const highlighted = () => gridDiv.querySelector('.ag-rich-select-row-highlighted')?.textContent?.trim();
+                return { gridDiv, highlighted };
+            };
+
+            test('the character that starts editing applies once the values load', async () => {
+                let resolveValues!: (values: string[]) => void;
+                const { gridDiv, highlighted } = await startEditingWithKey(
+                    () => new Promise<string[]>((resolve) => (resolveValues = resolve)),
+                    'b'
+                );
+                await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).not.toBeNull());
+
+                resolveValues(COLOURS);
+                await waitFor(() => expect(highlighted()).toBe('Blue'));
+
+                pressKey(gridDiv, 'l');
+                expect(highlighted()).toBe('Blue');
+            });
+
+            test('the character that starts editing applies when the values load before the list opens', async () => {
+                const { gridDiv, highlighted } = await startEditingWithKey(() => Promise.resolve(COLOURS), 'b');
+
+                await waitFor(() => expect(highlighted()).toBe('Blue'));
+
+                pressKey(gridDiv, 'l');
+                expect(highlighted()).toBe('Blue');
+            });
+        });
+
         test('an explicit searchType keeps its own search', async () => {
             const { type, highlighted } = await openWithValues(ANIMALS, 'Ant', { searchType: 'match' });
 
