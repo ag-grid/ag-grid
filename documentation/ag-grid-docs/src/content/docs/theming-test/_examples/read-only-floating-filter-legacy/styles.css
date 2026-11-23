@@ -1,0 +1,18 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+#myGrid {
+    flex: none;
+    height: 1000px;
+    width: 100%;
+}
