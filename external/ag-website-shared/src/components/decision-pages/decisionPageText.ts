@@ -23,6 +23,21 @@ export const chooseIfHeading = (name: string): string => `Choose ${name} if`;
 export const comparisonPageName = (productName: string, competitorName: string): string =>
     `${productName} vs ${competitorName}`;
 
+/** Alternative page section labels; the FAQ, get started and related sections share `COMPARISON_SECTIONS`. */
+export const ALTERNATIVE_SECTIONS = {
+    whyProduct: (productName: string): string => `Why ${productName}`,
+    atAGlance: (productName: string, competitorName: string): string =>
+        `${productName} and ${competitorName} at a glance`,
+    pricing: 'Pricing',
+} as const;
+
+/** An alternative page's short name, e.g. `Syncfusion alternative`: its breadcrumb and hero eyebrow. */
+export const alternativePageName = (competitor: { name: string; shortName?: string }): string =>
+    `${competitor.shortName ?? competitor.name} alternative`;
+
+/** The link text from an alternative page to the full comparison with the same competitor. */
+export const fullComparisonLinkText = (comparisonName: string): string => `full ${comparisonName} comparison`;
+
 /** The get started panel's two calls to action: the docs, and an Enterprise trial licence. */
 export const GET_STARTED_CTAS = {
     docs: 'Explore the Docs',

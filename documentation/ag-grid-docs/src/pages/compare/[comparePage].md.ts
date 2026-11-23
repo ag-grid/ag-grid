@@ -1,6 +1,6 @@
 import { buildComparisonPageMarkdown } from '@ag-website-shared/markdown-pages/decision-pages/buildComparisonPageMarkdown';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
-import { GRID_DECISION_SITE, comparePagePaths, type compareRelatedPages } from '@utils/decisionPages';
+import { GRID_DECISION_SITE, comparePagePaths, type decisionRelatedPages } from '@utils/decisionPages';
 import { gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
 import { type CollectionEntry, getCollection } from 'astro:content';
 
@@ -11,13 +11,16 @@ export async function getStaticPaths() {
         return [];
     }
 
-    return comparePagePaths(await getCollection('comparePages'));
+    return comparePagePaths({
+        comparePages: await getCollection('comparePages'),
+        alternativePages: await getCollection('alternativePages'),
+    });
 }
 
 export function GET({
     props,
 }: {
-    props: { content: CollectionEntry<'comparePages'>['data']; related: ReturnType<typeof compareRelatedPages> };
+    props: { content: CollectionEntry<'comparePages'>['data']; related: ReturnType<typeof decisionRelatedPages> };
 }) {
     const markdown = buildComparisonPageMarkdown({
         content: props.content,

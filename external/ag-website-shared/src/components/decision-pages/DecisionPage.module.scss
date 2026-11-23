@@ -152,7 +152,7 @@ $product-bar-width: 3px;
     }
 }
 
-.heroLogosVs {
+.heroLogosSeparator {
     font-size: var(--text-fs-sm);
     font-weight: var(--text-bold);
     text-transform: uppercase;
@@ -494,6 +494,63 @@ $product-bar-width: 3px;
 
 .chooseIfCta {
     margin-top: $spacing-size-6;
+}
+
+// Alternative pages: why teams switch, and why the product
+
+.reasonList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+    margin: 0;
+    padding-left: $spacing-size-6;
+    font-size: var(--text-fs-lg);
+
+    li {
+        margin: 0;
+    }
+
+    li::marker {
+        color: var(--color-util-brand-600);
+
+        #{$selector-darkmode} & {
+            color: var(--color-link);
+        }
+    }
+}
+
+.productReasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: $spacing-size-4;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.productReason {
+    margin: 0;
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
+
+    h3 {
+        margin: 0 0 $spacing-size-2;
+        font-size: var(--text-fs-lg);
+        line-height: var(--text-lh-ratio-tight);
+    }
+
+    p {
+        margin: 0;
+        color: var(--color-fg-secondary);
+    }
+}
+
+// A line of text under a section's content, e.g. the link to the full comparison
+.sectionNote {
+    margin: $spacing-size-4 0 0;
+    color: var(--color-fg-secondary);
 }
 
 // Get started

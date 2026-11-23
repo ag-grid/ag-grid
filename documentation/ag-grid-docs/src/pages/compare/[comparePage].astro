@@ -6,10 +6,10 @@ import TechnicalReviewCredit from '@components/technical-review-credit/Technical
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import Layout from '@layouts/Layout.astro';
 import {
-    COMPARE_HUB_NAME,
+    COMPARE_HUB_LINK,
     GRID_DECISION_SITE,
     comparePagePaths,
-    type compareRelatedPages,
+    type decisionRelatedPages,
     warnStaleClaims,
 } from '@utils/decisionPages';
 import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
@@ -17,14 +17,14 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-    const entries = await getCollection('comparePages');
-    warnStaleClaims(entries);
-    return comparePagePaths(entries);
+    const comparePages = await getCollection('comparePages');
+    warnStaleClaims('compare', comparePages);
+    return comparePagePaths({ comparePages, alternativePages: await getCollection('alternativePages') });
 }
 
 type Props = {
     content: CollectionEntry<'comparePages'>['data'];
-    related: ReturnType<typeof compareRelatedPages>;
+    related: ReturnType<typeof decisionRelatedPages>;
 };
 
 const { content, related } = Astro.props;
@@ -34,7 +34,7 @@ const { data: metadata } = (await getEntry('metadata', 'metadata')) as Collectio
 
 // Matches the canonical URL Layout emits, so the WebPage node describes the page being served.
 const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
-const hubUrl = new URL(GRID_DECISION_SITE.urls.hub, metadata.canonicalUrlBase).href;
+const hubUrl = new URL(COMPARE_HUB_LINK.url, metadata.canonicalUrlBase).href;
 
 const pageStructuredData = [
     ...buildDecisionPageStructuredData({
@@ -48,7 +48,7 @@ const pageStructuredData = [
                 name: GRID_DECISION_SITE.productName,
                 url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
             },
-            { name: COMPARE_HUB_NAME, url: hubUrl },
+            { name: COMPARE_HUB_LINK.name, url: hubUrl },
             { name: comparisonPageName(GRID_DECISION_SITE.productName, content.competitor.name), url: pageUrl },
         ],
         faq: content.faq,
@@ -68,7 +68,7 @@ const pageStructuredData = [
     pageStructuredData={pageStructuredData}
     markdownUrl={markdownUrl}
 >
-    <ComparisonPage content={content} site={GRID_DECISION_SITE} hubName={COMPARE_HUB_NAME} related={related}>
+    <ComparisonPage content={content} site={GRID_DECISION_SITE} hub={COMPARE_HUB_LINK} related={related}>
         {content.technicalReviewer && (
             <TechnicalReviewCredit slot="review-credit" reviewer={content.technicalReviewer} />
         )}

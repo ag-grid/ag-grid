@@ -1,3 +1,4 @@
+import { createAlternativePageSchema } from '@ag-website-shared/components/decision-pages/alternativePageSchema';
 import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
@@ -601,6 +602,15 @@ const comparePages = defineCollection({
     schema: createComparisonPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
 });
 
+/**
+ * Alternative pages at /alternatives/{competitor}-alternative/, sourced the same way as the
+ * comparison pages.
+ */
+const alternativePages = defineCollection({
+    loader: glob({ base: './src/content/alternatives', pattern: '*.json' }),
+    schema: createAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
 export const collections = {
     docs,
     homepage,
@@ -623,4 +633,5 @@ export const collections = {
     contactResults,
     landingPages,
     comparePages,
+    alternativePages,
 };

@@ -1,0 +1,304 @@
+{
+    "meta": {
+        "title": "The Kendo UI Grid alternative for every framework | AG Grid",
+        "description": "Looking for a Kendo UI Grid alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and JavaScript with a free MIT-licensed core. Compare features, pricing and licensing.",
+        "targetTerm": "kendo ui grid alternative"
+    },
+    "analyticsPrefix": "alternative-kendo-ui",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "competitor": {
+        "name": "Kendo UI Grid",
+        "shortName": "Kendo UI",
+        "slug": "kendo-ui",
+        "url": "https://www.telerik.com/kendo-ui/grid",
+        "logo": "/images/compare/logos/kendo-ui.png"
+    },
+    "hero": {
+        "heading": "A Kendo UI Grid alternative",
+        "subHeading": "AG Grid is one data grid for React, Angular, Vue and plain JavaScript, with a free MIT-licensed Community edition for every framework."
+    },
+    "whySwitch": {
+        "heading": "Why teams look for a Kendo UI Grid alternative",
+        "reasons": [
+            "Kendo UI is sold as separate libraries per framework, and only the React version has a free tier.",
+            "Row virtualisation, column pinning and server-side data are paid features in KendoReact.",
+            "Kendo licences are annual subscriptions per developer."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Analysis built into the grid",
+            "body": "AG Grid Enterprise adds row grouping, aggregation, pivoting, master/detail, Excel export and integrated charts to the same component."
+        },
+        {
+            "title": "Clear licensing",
+            "body": "AG Grid Community is MIT licensed. AG Grid Enterprise is a perpetual licence with one year of updates and support."
+        }
+    ],
+    "features": {
+        "groups": [
+            {
+                "name": "Platform",
+                "rows": [
+                    {
+                        "feature": "Frameworks",
+                        "docsUrl": "./getting-started/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "React, Angular, Vue and plain JavaScript"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Separate libraries for React (KendoReact), Angular, Vue and jQuery; only KendoReact has a free tier",
+                            "sourceUrl": "https://www.telerik.com/purchase/kendo-ui",
+                            "checkedOn": "2026-11-19"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Data and performance",
+                "rows": [
+                    {
+                        "feature": "Row virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Row virtualisation is premium; not in KendoReact Free",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Server and hybrid data operations, OData, DataSource and RSC mode are premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Core grid features",
+                "rows": [
+                    {
+                        "feature": "Column pinning",
+                        "docsUrl": "./column-pinning/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Pin columns left or right"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Locked columns stay visible while scrolling horizontally; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/columns/locked",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Grouping is premium; not in KendoReact Free",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "A separate PivotGrid component (@progress/kendo-react-pivotgrid), not a Grid feature",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/pivotgrid",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "A separate TreeList component (@progress/kendo-react-treelist), not a Grid feature",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/treelist",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Selection and export",
+                "rows": [
+                    {
+                        "feature": "Excel (.xlsx) export",
+                        "docsUrl": "./excel-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Including styles and formulas"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Through the @progress/kendo-react-excel-export package; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/export/excel-export",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ],
+        "competitor": [
+            {
+                "plan": "KendoReact Free",
+                "cost": "free",
+                "licence": "Proprietary licence, free for commercial use; React only; community forum support",
+                "sourceUrl": "https://www.telerik.com/kendo-react-ui/free-react-components",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "KendoReact",
+                "cost": "paid",
+                "licence": "Annual subscription per developer, with Lite, Priority or Ultimate support",
+                "sourceUrl": "https://www.telerik.com/kendo-react-ui/pricing",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Kendo UI (React, Angular, Vue and jQuery)",
+                "cost": "paid",
+                "licence": "Annual subscription per developer, with Lite, Priority or Ultimate support",
+                "sourceUrl": "https://www.telerik.com/purchase/kendo-ui",
+                "checkedOn": "2026-11-11"
+            }
+        ]
+    },
+    "faq": [
+        {
+            "question": "Is there a free alternative to Kendo UI Grid?",
+            "answer": "Yes. AG Grid Community is free under the MIT licence for React, Angular, Vue and plain JavaScript, including for commercial use."
+        },
+        {
+            "question": "Is Kendo grid free?",
+            "answer": "Only the React version has a free tier, KendoReact Free, with a reduced Grid feature set. Kendo UI for Angular, Vue and jQuery need a paid licence."
+        },
+        {
+            "question": "Does AG Grid work with Angular?",
+            "answer": "Yes. AG Grid has official packages for Angular, React and Vue, and can be used with plain JavaScript."
+        },
+        {
+            "question": "How much does an AG Grid licence cost?",
+            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are paid perpetual licences that include one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Kendo UI Grid is sold as separate libraries for React (KendoReact), Angular, Vue and jQuery; the Kendo UI subscription covers all four.",
+            "sourceUrl": "https://www.telerik.com/purchase/kendo-ui",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "KendoReact Free includes the Grid with a reduced feature set.",
+            "sourceUrl": "https://www.telerik.com/kendo-react-ui/free-react-components",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "All Kendo UI for Angular components need a trial or commercial licence.",
+            "sourceUrl": "https://www.telerik.com/kendo-angular-ui/components/faq",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "The Kendo UI for Vue Grid needs a commercial or trial licence key.",
+            "sourceUrl": "https://www.telerik.com/kendo-vue-ui/components/grid",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Kendo UI Core, the free jQuery library, does not include the Grid.",
+            "sourceUrl": "https://www.telerik.com/kendo-ui/core-faq",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "In KendoReact, row virtualisation and server-side data operations are premium.",
+            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "KendoReact locked columns are premium.",
+            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/columns/locked",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "KendoReact and Kendo UI are sold as annual subscriptions per developer.",
+            "sourceUrl": "https://www.telerik.com/purchase/kendo-ui",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}

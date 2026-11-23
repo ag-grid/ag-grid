@@ -4,7 +4,7 @@ import { sortHubCards } from '@ag-website-shared/components/decision-pages/decis
 import { buildBreadcrumbList } from '@ag-website-shared/utils/structuredData';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import Layout from '@layouts/Layout.astro';
-import { COMPARE_HUB, COMPARE_HUB_NAME, GRID_DECISION_SITE, compareHubCard } from '@utils/decisionPages';
+import { COMPARE_HUB, COMPARE_HUB_LINK, GRID_DECISION_SITE, compareHubCard } from '@utils/decisionPages';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
 
@@ -31,7 +31,7 @@ const pageStructuredData = [
                 name: GRID_DECISION_SITE.productName,
                 url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
             },
-            { name: COMPARE_HUB_NAME, url: pageUrl },
+            { name: COMPARE_HUB_LINK.name, url: pageUrl },
         ],
     }),
 ];
