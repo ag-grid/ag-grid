@@ -1,4 +1,4 @@
-import { _debounce, _getRootNode } from 'ag-stack';
+import { FAST_TEST_TIMINGS, _debounce, _getRootNode } from 'ag-stack';
 
 import { getGridId } from '../api/coreApi';
 import type { NamedBean } from '../context/bean';
@@ -7,6 +7,9 @@ import type { BeanName } from '../context/context';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { ColumnFilterSpec, FilterSpec } from './testIdUtils';
 import { agTestIdFor } from './testIdUtils';
+
+const DELAYED_SETUP_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 500;
+const VIRTUAL_LIST_SCROLL_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 100;
 
 let TEST_ID_ATTR = 'data-testid';
 
@@ -45,7 +48,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
     public postConstruct(): void {
         // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
-        const delayedDebounce = _debounce(this, () => this.setupAllTestIds(), 500);
+        const delayedDebounce = _debounce(this, () => this.setupAllTestIds(), DELAYED_SETUP_DEBOUNCE);
         const setup = _debounce(
             this,
             () => {
@@ -83,7 +86,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         // Virtual lists in column panels/choosers create new DOM elements on scroll,
         // which lose their test IDs. Capture-phase scroll listener re-applies them.
         const root = _getRootNode(this.beans);
-        const onVirtualListScroll = _debounce(this, () => this.setupAllTestIds(), 100);
+        const onVirtualListScroll = _debounce(this, () => this.setupAllTestIds(), VIRTUAL_LIST_SCROLL_DEBOUNCE);
         const onScroll = (e: Event) => {
             const target = e.target;
             if (

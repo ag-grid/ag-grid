@@ -1,13 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import {
-    TestGridsManager,
-    asyncSetTimeout,
-    getVisibleTooltips,
-    openMenuOption,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, getVisibleTooltips, openMenuOption } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule } from 'ag-grid-enterprise';
@@ -16,12 +10,9 @@ describe('menu tooltip triggers', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, TooltipModule],
     });
-    let restoreOffsetParent: (() => void) | undefined;
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         vi.clearAllTimers();
         vi.useRealTimers();
     });
@@ -63,7 +54,6 @@ describe('menu tooltip triggers', () => {
                 return Promise.resolve(items);
             },
         });
-        restoreOffsetParent = polyfillOffsetParent();
         const cell = document.querySelector<HTMLElement>('.ag-cell')!;
         if (interaction === 'api') {
             api.showContextMenu();
@@ -99,7 +89,6 @@ describe('menu tooltip triggers', () => {
                 tooltipShowDelay: 0,
                 getContextMenuItems: () => [{ name: 'Action' }],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell')!;
             cell.focus();
             await expectTooltip('Cell hint');
@@ -187,7 +176,6 @@ describe('menu tooltip triggers', () => {
                 getContextMenuItems: getMenuItems,
                 getColumnMenuItems: getMenuItems,
             });
-            restoreOffsetParent = polyfillOffsetParent();
             if (menu === 'context') {
                 api.showContextMenu();
             } else {
@@ -298,7 +286,6 @@ describe('menu tooltip triggers', () => {
                     },
                 ],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await user.pointer({ keys: '[MouseRight]', target: document.querySelector('.ag-cell')! });
             const log = (await openMenuOption('Log Cell')).closest<HTMLElement>('.ag-menu-option')!;
             const country = (await openMenuOption('Country')).closest<HTMLElement>('.ag-menu-option')!;

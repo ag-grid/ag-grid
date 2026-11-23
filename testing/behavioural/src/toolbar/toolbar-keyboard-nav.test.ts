@@ -3,28 +3,6 @@ import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-u
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-// happy-dom's `offsetParent` is null for all elements because it does not compute layout. The
-// toolbar's arrow-key navigation uses `_findFocusableElements`, which filters by `_isVisible` —
-// which in turn checks `offsetParent` via `_isInDOM`. Polyfill `offsetParent` so the navigation
-// logic sees the rendered toolbar buttons. Matches what a real browser reports for a visible
-// button attached to the document.
-const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.parentElement;
-        },
-    });
-});
-afterAll(() => {
-    if (originalOffsetParent) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-    } else {
-        delete (HTMLElement.prototype as any).offsetParent;
-    }
-});
-
 function dispatchKeyDown(target: HTMLElement, key: string): boolean {
     return target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
 }

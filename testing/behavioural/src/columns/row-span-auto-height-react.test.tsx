@@ -1,7 +1,6 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 import React from 'react';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
@@ -15,8 +14,6 @@ const ACTION_HEIGHT = 60;
 // React mounts the replacement cells and unmounts the replaced ones in its own order, and StrictMode remounts
 // them all: whichever order that is, the span's last row ends at the height of its own cells.
 describe('row spanning with auto height (React)', () => {
-    let uninstallResizeObserver: () => void;
-
     beforeAll(() => {
         mockGridLayout.init();
         mockGridLayout.useRealOffsetDimensions = true;
@@ -28,11 +25,9 @@ describe('row spanning with auto height (React)', () => {
             const isOwnTitle = eCell.getAttribute('col-id') === 'title' && !eCell.classList.contains('ag-spanned-cell');
             return isOwnTitle ? OWN_TITLE_HEIGHT : ACTION_HEIGHT;
         };
-        uninstallResizeObserver = installMockResizeObserver();
     });
 
     afterAll(() => {
-        uninstallResizeObserver();
         mockGridLayout.useRealOffsetDimensions = false;
         mockGridLayout.elementHeightOverride = undefined;
     });

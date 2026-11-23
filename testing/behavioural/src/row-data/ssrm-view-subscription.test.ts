@@ -2,7 +2,6 @@ import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     TestGridsManager,
-    installMockResizeObserver,
     mockGridLayout,
     nextAnimationFrame,
     triggerResizeObservers,
@@ -166,7 +165,6 @@ describe('SSRM viewSubscription', () => {
     });
 
     test('resizing the grid without row virtualisation updates the subscribed rows', async () => {
-        const uninstall = installMockResizeObserver();
         try {
             const api = await createFlatGrid({ suppressRowVirtualisation: true }, 100);
             const recorder = createRecorder();
@@ -181,7 +179,6 @@ describe('SSRM viewSubscription', () => {
             expect(recorder.violations).toEqual([]);
         } finally {
             mockGridLayout.gridHeight = 300;
-            uninstall();
         }
     });
 

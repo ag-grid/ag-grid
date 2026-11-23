@@ -322,6 +322,7 @@ describe('accentedSort locale and collator options', () => {
     });
 
     test('an invalid locale tag is reported by validation', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         expect(() =>
             createGrid('accented-invalid-validation', {
                 columnDefs: [{ field: 'name' }],
@@ -329,6 +330,7 @@ describe('accentedSort locale and collator options', () => {
                 accentedSort: { locales: 'not a locale!' },
             })
         ).toThrow(/warning #322 accentedSort could not create an `Intl.Collator`/);
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #322');
     });
 
     test('an invalid locale tag falls back to the default locale instead of throwing', () => {

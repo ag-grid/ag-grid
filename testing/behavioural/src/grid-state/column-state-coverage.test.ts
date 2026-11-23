@@ -68,6 +68,13 @@ describe('grid state carries every column state field', () => {
         test.each(fields)('%s', (_field, [read, expected]) => {
             expect(read(converted)).toEqual(expected);
         });
+
+        // TODO: disabled due to AG-18635 - re-enable once fixed
+        test.skip('a zero width is sized, as column state has no column without a width', () => {
+            expect(convertColumnState([{ colId: 'a', width: 0 }]).columnSizing).toEqual({
+                columnSizingModel: [{ colId: 'a', flex: undefined, width: 0 }],
+            });
+        });
     });
 
     /** The same map read from a live grid after `setState`, so a field must survive the write side too. */

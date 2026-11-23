@@ -1,18 +1,12 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import {
-    GridColumns,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    clickMenuOption,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 
 import {
     CellSpanModule,
     ClientSideRowModelModule,
     CsvExportModule,
+    EventApiModule,
     GRAND_TOTAL_ROW_ID,
     GridStateModule,
     PaginationModule,
@@ -31,6 +25,7 @@ import type {
     RowPinnedType,
 } from 'ag-grid-community';
 import {
+    AggregationModule,
     CellSelectionModule,
     ContextMenuModule,
     MasterDetailModule,
@@ -65,6 +60,8 @@ describe('Manual pinned rows', () => {
             RowGroupingModule,
             PaginationModule,
             PivotModule,
+            AggregationModule,
+            EventApiModule,
             TextFilterModule,
             GridStateModule,
             RowSelectionModule,
@@ -392,42 +389,37 @@ describe('Manual pinned rows', () => {
     });
 
     test('a grand total pinned by `grandTotalRow` stays there when a context menu item pins or unpins it', async () => {
-        const restoreOffsetParent = polyfillOffsetParent();
-        try {
-            const isRowPinned = vi.fn((_node: IRowNode) => null);
-            const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
-                rowData,
-                enableRowPinning: true,
-                grandTotalRow: 'pinnedBottom',
-                getContextMenuItems: () => ['pinTop', 'unpinRow'],
-                isRowPinned,
-            });
-            // the rows `isRowPinned` can pin: the grand total is not one of them
-            expect(isRowPinned.mock.calls.map(([node]) => node.id)).toEqual(['0', '1', '2', '3', '4', '5', '6']);
-            const pinnedBottomElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned[row-index^="b"]');
-            const expectPinnedBottomOnly = () => {
-                assertPinnedRows(api, 'top', []);
-                assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
-                expect(pinnedBottomElements().length).toBe(1);
-            };
-            await waitFor(() => expect(pinnedBottomElements().length).toBe(1));
-            const modelUpdated = vi.fn();
-            api.addEventListener('modelUpdated', modelUpdated);
+        const isRowPinned = vi.fn((_node: IRowNode) => null);
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'pinnedBottom',
+            getContextMenuItems: () => ['pinTop', 'unpinRow'],
+            isRowPinned,
+        });
+        // the rows `isRowPinned` can pin: the grand total is not one of them
+        expect(isRowPinned.mock.calls.map(([node]) => node.id)).toEqual(['0', '1', '2', '3', '4', '5', '6']);
+        const pinnedBottomElements = () => getGridElement(api)!.querySelectorAll('.ag-row-pinned[row-index^="b"]');
+        const expectPinnedBottomOnly = () => {
+            assertPinnedRows(api, 'top', []);
+            assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+            expect(pinnedBottomElements().length).toBe(1);
+        };
+        await waitFor(() => expect(pinnedBottomElements().length).toBe(1));
+        const modelUpdated = vi.fn();
+        api.addEventListener('modelUpdated', modelUpdated);
 
-            for (const option of ['Pin to Top', 'Unpin Row']) {
-                await userEvent.pointer({
-                    keys: '[MouseRight]',
-                    target: pinnedBottomElements()[0].querySelector<HTMLElement>('.ag-cell')!,
-                });
-                await clickMenuOption(option);
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly();
-            }
-            expect(modelUpdated).not.toHaveBeenCalled(); // nothing to re-map when the pin is refused
-        } finally {
-            restoreOffsetParent();
+        for (const option of ['Pin to Top', 'Unpin Row']) {
+            await userEvent.pointer({
+                keys: '[MouseRight]',
+                target: pinnedBottomElements()[0].querySelector<HTMLElement>('.ag-cell')!,
+            });
+            await clickMenuOption(option);
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly();
         }
+        expect(modelUpdated).not.toHaveBeenCalled(); // nothing to re-map when the pin is refused
     });
 
     test('a grand total pinned by `grandTotalRow` stays there when the row pinning state names it', async () => {
@@ -568,36 +560,31 @@ describe('Manual pinned rows', () => {
     });
 
     test('a grand total the user unpinned stays unpinned when the rows refresh', async () => {
-        const restoreOffsetParent = polyfillOffsetParent();
-        try {
-            const api = await gridsManager.createGridAndWait('myGrid', {
-                columnDefs,
-                rowData,
-                enableRowPinning: true,
-                grandTotalRow: 'bottom',
-                getContextMenuItems: () => ['pinTop', 'unpinRow'],
-            });
-            const gridElement = getGridElement(api)!;
-            await userEvent.pointer({
-                keys: '[MouseRight]',
-                target: gridElement.querySelector<HTMLElement>(`[row-id="${GRAND_TOTAL_ROW_ID}"] .ag-cell`)!,
-            });
-            await clickMenuOption('Pin to Top');
-            await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            grandTotalRow: 'bottom',
+            getContextMenuItems: () => ['pinTop', 'unpinRow'],
+        });
+        const gridElement = getGridElement(api)!;
+        await userEvent.pointer({
+            keys: '[MouseRight]',
+            target: gridElement.querySelector<HTMLElement>(`[row-id="${GRAND_TOTAL_ROW_ID}"] .ag-cell`)!,
+        });
+        await clickMenuOption('Pin to Top');
+        await waitFor(() => assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']));
 
-            await userEvent.pointer({
-                keys: '[MouseRight]',
-                target: gridElement.querySelector<HTMLElement>('.ag-row-pinned .ag-cell')!,
-            });
-            await clickMenuOption('Unpin Row');
-            await waitFor(() => assertPinnedRows(api, 'top', []));
-            expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+        await userEvent.pointer({
+            keys: '[MouseRight]',
+            target: gridElement.querySelector<HTMLElement>('.ag-row-pinned .ag-cell')!,
+        });
+        await clickMenuOption('Unpin Row');
+        await waitFor(() => assertPinnedRows(api, 'top', []));
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
 
-            api.setGridOption('rowData', rowData);
-            assertPinnedRows(api, 'top', []);
-        } finally {
-            restoreOffsetParent();
-        }
+        api.setGridOption('rowData', rowData);
+        assertPinnedRows(api, 'top', []);
     });
 
     test('a pinned grand total is removed in pivot mode without row groups, where the root row shows the totals', async () => {
@@ -1957,13 +1944,6 @@ describe('Manual pinned rows', () => {
     });
 
     describe('pinning through the context menu', () => {
-        let restoreOffsetParent: (() => void) | undefined;
-
-        afterEach(() => {
-            restoreOffsetParent?.();
-            restoreOffsetParent = undefined;
-        });
-
         const createMenuGrid = (initialState?: GridState) => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'country' }, { field: 'sport' }],
@@ -1978,7 +1958,6 @@ describe('Manual pinned rows', () => {
                 initialState,
                 getContextMenuItems: () => ['pinTop', 'pinBottom', 'unpinRow'],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             return api;
         };
 
@@ -2046,7 +2025,6 @@ describe('Manual pinned rows', () => {
                 enableCellSpan: true,
                 getContextMenuItems: () => ['pinTop'],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             const spannedCell = await waitFor(() => {
                 const found = document.querySelector<HTMLElement>('#myGrid .ag-spanned-cell-wrapper .ag-cell');
                 expect(found).not.toBeNull();

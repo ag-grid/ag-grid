@@ -51,6 +51,31 @@ describe('setState with sections omitted', () => {
         });
     });
 
+    describe('columnSizing', () => {
+        const sizingOptions: GridOptions<Row> = {
+            columnDefs: [
+                { colId: 'flexCol', field: 'a', flex: 1 },
+                { colId: 'widthCol', field: 'b', width: 150 },
+                { colId: 'n', field: 'n' },
+            ],
+            rowData,
+        };
+
+        test.each<[string, GridState]>([
+            ['an empty state', {}],
+            ['a state with other sections but no columnSizing', { sort: { sortModel: [{ colId: 'n', sort: 'asc' }] } }],
+        ])('%s leaves a resized column at its width', async (_name, state) => {
+            const api = gridsManager.createGrid('myGrid', sizingOptions);
+            await asyncSetTimeout(0);
+            api.setColumnWidths([{ key: 'widthCol', newWidth: 321 }]);
+            expect(colState(api, 'flexCol')?.flex).toBe(1);
+            expect(colState(api, 'widthCol')?.width).toBe(321);
+
+            await setStateSettled(api, state);
+            expect(colState(api, 'widthCol')?.width).toBe(321);
+        });
+    });
+
     describe('pivot mode', () => {
         const pivotOptions: GridOptions<Row> = {
             columnDefs: [
@@ -122,6 +147,23 @@ describe('setState with sections omitted', () => {
             api.applyColumnState({ state: [{ colId: 'a', pivotSort }] });
             expect(colState(api, 'a')?.pivotSort).toBe(pivotSort);
         }
+
+        // TODO: disabled due to AG-18635 - re-enable once fixed
+        test.skip.each<
+            [string, { pivotSort?: 'asc' | 'desc'; initialPivotSort?: 'asc' | 'desc' }, 'asc' | 'desc', 'asc' | 'desc']
+        >([
+            ['colDef pivotSort', { pivotSort: 'desc' }, 'asc', 'desc'],
+            ['colDef initialPivotSort', { initialPivotSort: 'desc' }, 'asc', 'desc'],
+            ['no colDef pivotSort', {}, 'desc', 'asc'],
+        ])('setState({}) returns a column to its %s', async (_name, colDef, applied, expected) => {
+            const api = createPivotGrid(colDef);
+            await asyncSetTimeout(0);
+            await applyUserPivotSort(api, applied);
+
+            await setStateSettled(api, {});
+
+            expect(colState(api, 'a')?.pivotSort).toBe(expected);
+        });
 
         test('pivot in propertiesToIgnore keeps the pivotSort the user applied', async () => {
             const api = createPivotGrid({ pivotSort: 'desc' });
@@ -202,6 +244,27 @@ describe('setState with sections omitted', () => {
             await waitFor(() => expect(expandedGroupIds(api)).toEqual(['row-group-a-a0']));
             return api;
         }
+
+        // TODO: disabled due to AG-18635 - re-enable once fixed
+        test.skip.each<[string, GridState]>([
+            ['omits rowGroupExpansion', sameGrouping],
+            [
+                'carries a different rowGroupExpansion',
+                {
+                    ...sameGrouping,
+                    rowGroupExpansion: { expandedRowGroupIds: ['row-group-a-a1'], collapsedRowGroupIds: [] },
+                },
+            ],
+        ])(
+            'rowGroupExpansion in propertiesToIgnore keeps the expanded groups when the state %s',
+            async (_name, state) => {
+                const api = await createWithA0Expanded();
+
+                await setStateSettled(api, state, ['rowGroupExpansion']);
+
+                expect(expandedGroupIds(api)).toEqual(['row-group-a-a0']);
+            }
+        );
 
         test('an omitted rowGroupExpansion collapses the expanded groups', async () => {
             const api = await createWithA0Expanded();

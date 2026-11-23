@@ -201,7 +201,7 @@ describe('Column Groups', () => {
     });
 
     describe('group expand state survives a rebuild', () => {
-        // Generated-id groups are recreated on rebuild (can't be reused), so the build must carry their expand state over.
+        // A group without groupId keeps its expand state across a rebuild giving it an equal definition.
         test('a generated-id group stays expanded across a columnDefs rebuild (no calc cols)', async () => {
             const makeDefs = (): (ColDef | ColGroupDef)[] => [
                 { headerName: 'G', children: [{ field: 'a' }, { field: 'b', columnGroupShow: 'open' }] },
@@ -225,14 +225,16 @@ describe('Column Groups', () => {
                 .map((s) => s.groupId);
             expect(openedIds.length).toBeGreaterThan(0);
 
-            // Rebuild from fresh (structurally identical) colDefs — recreates the generated-id group.
-            const groupBeforeRebuild = api.getProvidedColumnGroup(openedIds[0]);
+            // Rebuild from fresh (structurally identical) colDefs.
+            const defBeforeRebuild = api.getProvidedColumnGroup(openedIds[0])!.getColGroupDef();
             api.setGridOption('columnDefs', makeDefs());
 
             // The open state we assert below is also the pre-rebuild state, so it would pass vacuously if
-            // read before the rebuild landed. Gate on the group instance having been recreated (today that
-            // happens synchronously inside setGridOption; poll so a deferred rebuild stays covered).
-            await waitFor(() => expect(api.getProvidedColumnGroup(openedIds[0])).not.toBe(groupBeforeRebuild));
+            // read before the rebuild landed. Gate on the group holding the new definition (poll so a deferred
+            // rebuild stays covered).
+            await waitFor(() =>
+                expect(api.getProvidedColumnGroup(openedIds[0])!.getColGroupDef()).not.toBe(defBeforeRebuild)
+            );
 
             // Its expand state must survive: the rebuild must not collapse it.
             expect(

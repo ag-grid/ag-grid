@@ -12,7 +12,7 @@
  */
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, mockGridLayout, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, mockGridLayout, openMenuOption } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -20,16 +20,12 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 describe('autoSizeStrategy applyToUiActions', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
-    let restoreOffsetParent: (() => void) | undefined;
-
     beforeEach(() => {
         mockGridLayout.useRealOffsetDimensions = false;
     });
 
     afterEach(() => {
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         mockGridLayout.useRealOffsetDimensions = false;
     });
 
@@ -65,7 +61,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -80,7 +75,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -95,7 +89,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -110,7 +103,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -126,7 +118,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
                 getContextMenuItems: () => ['autoSizeAll'],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showContextMenu({
@@ -147,7 +138,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250 },
                 getContextMenuItems: () => ['autoSizeAll'],
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showContextMenu({
@@ -172,7 +162,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                     applyToUiActions: true,
                 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 400]);
 
             api.showColumnMenu('athlete');
@@ -192,7 +181,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                     applyToUiActions: true,
                 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await waitFor(() => expect(totalWidth(api)).toBeGreaterThan(mockGridLayout.gridWidth * 0.9));
 
             api.setColumnWidths(api.getAllDisplayedColumns().map((col) => ({ key: col, newWidth: 100 })));
@@ -212,7 +200,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 skipHeaderOnAutoSize: true,
                 autoSizeStrategy: { type: 'fitCellContents', defaultMinWidth: 250, applyToUiActions: true },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -235,7 +222,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                     applyToUiActions: true,
                 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 250]);
 
             api.showColumnMenu('athlete');
@@ -255,7 +241,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                     applyToUiActions: true,
                 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [250, 300]);
 
             api.showColumnMenu('athlete');
@@ -278,7 +263,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitGridWidth', defaultMinWidth: 250 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [500, 500]);
 
             api.showColumnMenu('athlete');
@@ -293,7 +277,6 @@ describe('autoSizeStrategy applyToUiActions', () => {
                 rowData,
                 autoSizeStrategy: { type: 'fitProvidedWidth', width: 900 },
             });
-            restoreOffsetParent = polyfillOffsetParent();
             await settleThenReset(api, [450, 450]);
 
             api.showColumnMenu('athlete');

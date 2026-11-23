@@ -2,7 +2,7 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
-import type { ChartType, GridOptions } from 'ag-grid-community';
+import type { ChartRef, ChartType, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -406,12 +406,24 @@ export function setupFormatPanelSuite(): (
         ],
     });
 
+    // One grid per suite, each probe making its own chart; no settings panel, which binds no option and costs
+    // a third of opening the menu.
+    let api: GridApi;
     beforeAll(async () => {
         setupAgTestIds();
         await canvasPolyfill.init();
+        api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: COLUMN_DEFS,
+            rowData: ROW_DATA,
+            cellSelection: true,
+            popupParent: document.body,
+            chartToolPanelsDef: { panels: ['data', 'format'] },
+        });
     });
-    afterAll(() => canvasPolyfill.reset());
-    afterEach(() => gridsManager.reset());
+    afterAll(() => {
+        gridsManager.reset();
+        canvasPolyfill.reset();
+    });
 
     /** Opens the format panel on a chart of `chartType` and probes every binding it built. */
     async function openFormatPanel(
@@ -423,14 +435,9 @@ export function setupFormatPanelSuite(): (
         const unexpected: string[] = [];
         const panels = instrumentPanels();
         const warnings = captureWarnings();
+        let chartRef: ChartRef | undefined;
         try {
-            const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: COLUMN_DEFS,
-                rowData: ROW_DATA,
-                cellSelection: true,
-                popupParent: document.body,
-            });
-            const chartRef = api.createRangeChart({
+            chartRef = api.createRangeChart({
                 cellRange: { columns: ALL_COLUMNS },
                 chartType,
                 chartThemeOverrides,
@@ -457,7 +464,7 @@ export function setupFormatPanelSuite(): (
             const shown = new Map<string, unknown>();
             const options = new Map<string, unknown>();
             const proxies = new Map<string, ChartOptionsProxy>();
-            const writes = new Map<ChartOptionsProxy, { expression: string; value: unknown }[]>();
+            const writes = new Map<string, { expression: string; value: unknown }[]>();
             for (let i = 0, len = panels.widgets.length; i < len; ++i) {
                 const widget = panels.widgets[i];
                 const key = `${widget.scope} -> ${widget.expression}`;
@@ -480,10 +487,10 @@ export function setupFormatPanelSuite(): (
 
                 const probe = probeFor(widget, value);
                 if (probe !== undefined) {
-                    let batch = writes.get(widget.proxy);
+                    let batch = writes.get(widget.scope);
                     if (!batch) {
                         batch = [];
-                        writes.set(widget.proxy, batch);
+                        writes.set(widget.scope, batch);
                     }
                     batch.push({ expression: widget.expression, value: probe });
                 }
@@ -494,22 +501,16 @@ export function setupFormatPanelSuite(): (
                 options.set(key, proxies.get(scope)?.getValue(expression));
             }
 
-            // Batched per proxy, then settled once: `setValues` is the expensive half, and one call per
-            // option would put the matrix into the tens of minutes. Awaiting each proxy separately only
-            // paid for updates the chart coalesces anyway - an unknown option injected into a batch is
-            // still reported, so the rejection check below keeps working.
-            //
-            // Draining before the batch keeps the rejection check to this batch's own output, but the
-            // drained messages are still drift: the chart build raises `Unknown option` too, and dropping
-            // them outright hid exactly what this suite exists to catch.
+            // One `setValues` (a full chart update) per scope, as panels build several proxies for one, then
+            // settled once. The chart build's own messages, drained first, count as drift too.
             for (const message of warnings.take()) {
                 if (KNOWN_SETUP_WARNINGS.some((k) => message.includes(k))) {
                     continue;
                 }
                 (message.includes('Unknown option') ? rejected : unexpected).push(message.trim());
             }
-            for (const [proxy, batch] of writes) {
-                proxy.setValues(batch);
+            for (const [scope, batch] of writes) {
+                proxies.get(scope)!.setValues(batch);
             }
             await chartRef.chart.waitForUpdate();
             for (const message of warnings.take()) {
@@ -532,7 +533,7 @@ export function setupFormatPanelSuite(): (
         } finally {
             warnings.restore();
             panels.restore();
-            gridsManager.reset();
+            chartRef?.destroyChart();
         }
     }
 

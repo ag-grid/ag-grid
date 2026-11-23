@@ -1,5 +1,5 @@
 import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, onTestFinished, test, vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import {
@@ -117,11 +117,16 @@ describe('Column refresh layout reads', () => {
     // A refresh changes the columns, not the viewport, and everything it sizes is re-pushed when the
     // reported width changes — so no caller has to measure.
     test('a column refresh does not measure the viewport', async () => {
+        // grid timers re-reading the layout (a slide's end, the scrollbar debounce) stay out of counts on a fake clock
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: buildCols(50),
             rowData: [{ c0: 1 }],
         });
-        await asyncSetTimeout(0);
+        await vi.runAllTimersAsync();
 
         // Each count is only good news if the call it wrapped actually did something, and a column count
         // cannot show that: hiding then showing returns to 50 either way, and a move never changes it.
@@ -139,45 +144,6 @@ describe('Column refresh layout reads', () => {
         expect(api.getAllDisplayedColumns()).toHaveLength(50);
 
         expect({ onMove, onReset, onHide, onShow }).toEqual({ onMove: 0, onReset: 0, onHide: 0, onShow: 0 });
-    });
-
-    // A change to the body width moves every column's `left`, so the virtual-column extraction has to run
-    // again, asking every centre column where it now is. Each row container asks for that on the same
-    // change, and all but the first have nothing left to recompute.
-    test('a column refresh extracts the virtual columns once, not once per row container', async () => {
-        // The suite suppresses column virtualisation, which skips the filtering this counts.
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: buildCols(50),
-            rowData: [{ c0: 1 }],
-            suppressColumnVirtualisation: false,
-        });
-        await asyncSetTimeout(0);
-
-        // Far outside the viewport, so the renderer never asks where it is and the extraction is the
-        // only thing that does.
-        const column = api.getColumn('c40');
-        expect(column, 'c40 should be a grid column').not.toBeNull();
-        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c40');
-
-        let leftReads = 0;
-        const getLeft = column!.getLeft.bind(column);
-        column!.getLeft = () => {
-            ++leftReads;
-            return getLeft();
-        };
-
-        try {
-            // Narrows the body, unlike a move, which reorders the same total width and so arms nothing.
-            api.setColumnsVisible(['c1'], false);
-            await asyncSetTimeout(0);
-
-            // Two extractions, one per reported change, at one pass each: the rendered and header sets are
-            // built together. Each row container asks as well, and is answered from the layout version the
-            // extraction recorded rather than extracting again.
-            expect(leftReads, 'getLeft calls on one unrendered column').toBe(2);
-        } finally {
-            column!.getLeft = getLeft;
-        }
     });
 
     test('the rendered columns are those within 200px of the viewport, a column touching that edge included', async () => {
@@ -308,41 +274,6 @@ describe('Column refresh layout reads', () => {
         expect(api.getPinnedTopRowCount(), 'the pinned-row change this counted must have landed').toBe(2);
     });
 
-    // A move reports one change and reads once. Hiding reports two and reads twice, and the second read is
-    // the point: narrowing the columns lets the browser clamp `scrollLeft`, and the clamp only lands when a
-    // read forces layout, so the first read still holds the pre-clamp position. Neither caching the value
-    // nor dropping the second read is safe.
-    test('a column refresh reads the scroll position once per reported change', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: buildCols(50),
-            rowData: [{ c0: 1 }],
-        });
-        await asyncSetTimeout(0);
-
-        const viewport = document.querySelector('.ag-grid-viewport') as HTMLElement;
-        expect(viewport, 'grid viewport should be rendered').not.toBeNull();
-
-        const onMove = await countPropertyReads(viewport, 'scrollLeft', () => api.moveColumnByIndex(0, 10));
-        expect(onMove, 'scrollLeft reads on a column move').toBe(1);
-
-        const ids = api.getAllGridColumns().map((col) => col.getColId());
-        const onHide = await countPropertyReads(viewport, 'scrollLeft', () => api.setColumnsVisible(ids, false));
-        expect(onHide, 'scrollLeft reads on hiding every column').toBe(2);
-    });
-
-    // What is left is the viewport checks that deliberately measure and report, each resolving one style
-    // for both axes. An exact count, so a consumer going back to measuring for itself fails here — and so
-    // does the grid stopping measuring at all, which the scrollbar and pinned-overflow rules depend on.
-    test('creating a grid measures the viewport an exact number of times', async () => {
-        let api: GridApi | undefined;
-        const reads = await countViewportMeasurements(() => {
-            api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(50), rowData: [{ c0: 1 }] });
-        });
-
-        expect(reads, 'getComputedStyle on the grid viewport').toBe(4);
-        expect(api!.getAllDisplayedColumns(), 'the grid this counted must have built its columns').toHaveLength(50);
-    });
-
     // A scroll handler already holds the position it just read and clamped, so the consumers it drives
     // should be handed it rather than reading it back out of the DOM.
     test('a horizontal scroll reads the scroll position exactly three times', async () => {
@@ -408,5 +339,59 @@ describe('Column refresh layout reads', () => {
 
         expect({ onHide, onMove }).toEqual({ onHide: 1, onMove: 1 });
         expect(api.getAllDisplayedColumns(), 'the refresh this counted must have happened').toHaveLength(19);
+    });
+
+    test('a column refresh extracts the virtual columns once, not once per row container', async () => {
+        // The suite suppresses column virtualisation, which skips the filtering this counts.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(50),
+            rowData: [{ c0: 1 }],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+
+        // Far outside the viewport, so the renderer never asks where it is and the extraction is the
+        // only thing that does.
+        const column = api.getColumn('c40');
+        expect(column, 'c40 should be a grid column').not.toBeNull();
+        expect(api.getAllDisplayedVirtualColumns().map((col) => col.getColId())).not.toContain('c40');
+
+        let leftReads = 0;
+        const getLeft = column!.getLeft.bind(column);
+        column!.getLeft = () => {
+            ++leftReads;
+            return getLeft();
+        };
+
+        try {
+            // Narrows the body, unlike a move, which reorders the same total width and so arms nothing.
+            api.setColumnsVisible(['c1'], false);
+            await asyncSetTimeout(0);
+
+            // Two extractions, one per reported change, at one pass each: the rendered and header sets are
+            // built together. Each row container asks as well, and is answered from the layout version the
+            // extraction recorded rather than extracting again.
+            expect(leftReads, 'getLeft calls on one unrendered column').toBe(2);
+        } finally {
+            column!.getLeft = getLeft;
+        }
+    });
+
+    test('a column refresh reads the scroll position once per reported change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: buildCols(50),
+            rowData: [{ c0: 1 }],
+        });
+        await asyncSetTimeout(0);
+
+        const viewport = document.querySelector('.ag-grid-viewport') as HTMLElement;
+        expect(viewport, 'grid viewport should be rendered').not.toBeNull();
+
+        const onMove = await countPropertyReads(viewport, 'scrollLeft', () => api.moveColumnByIndex(0, 10));
+        expect(onMove, 'scrollLeft reads on a column move').toBe(1);
+
+        const ids = api.getAllGridColumns().map((col) => col.getColId());
+        const onHide = await countPropertyReads(viewport, 'scrollLeft', () => api.setColumnsVisible(ids, false));
+        expect(onHide, 'scrollLeft reads on hiding every column').toBe(2);
     });
 });

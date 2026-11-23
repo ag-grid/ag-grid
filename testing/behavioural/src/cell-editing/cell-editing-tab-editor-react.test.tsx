@@ -1,7 +1,7 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { asyncSetTimeout, initPointerEventPolyfill, mockGridLayout, waitForPopup } from 'ag-test-utils';
+import { initPointerEventPolyfill, mockGridLayout, waitForPopup } from 'ag-test-utils';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -108,7 +108,8 @@ async function renderGrid(props: {
     const api = await readyPromise;
     const gridDiv = getGridElement(api)! as HTMLElement;
     const user = userEvent.setup({ skipHover: true });
-    await asyncSetTimeout(0);
+    // the first measure of the viewport, a frame after mount as in a browser, can redraw the rows
+    await waitFor(() => expect(gridDiv.querySelector('[data-testid^="ag-cell:"]')).not.toBeNull());
 
     return { api, gridDiv, user };
 }

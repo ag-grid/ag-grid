@@ -13,27 +13,6 @@ describe('ag-grid popup cleanup on destroy', () => {
         modules: [ColumnMenuModule],
     });
 
-    // happy-dom has no layout engine, so offsetParent and dimensions are all 0.
-    // The column chooser dialog needs these to position itself.
-    const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-
-    beforeAll(() => {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            get() {
-                return this.parentNode;
-            },
-            configurable: true,
-        });
-    });
-
-    afterAll(() => {
-        if (originalOffsetParent) {
-            Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-        } else {
-            delete (HTMLElement.prototype as any).offsetParent;
-        }
-    });
-
     afterEach(() => {
         gridsManager.reset();
     });
