@@ -1,4 +1,11 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
+} from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -14,13 +21,60 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
-// ATHLETE is editable; COUNTRY, YEAR, AGE and SPORT are read-only.
+// Custom filter with no floating filter component, so the grid shows getModelAsString() in a read-only input.
+class GreaterThanFilter implements IFilterComp {
+    private params!: IFilterParams;
+    private eGui!: HTMLDivElement;
+    private eInput!: HTMLInputElement;
+    private value: number | null = null;
+
+    init(params: IFilterParams) {
+        this.params = params;
+        this.eGui = document.createElement('div');
+        this.eGui.style.padding = '8px';
+        this.eGui.innerHTML = '<label>Greater than <input type="number" min="0" /></label>';
+        this.eInput = this.eGui.querySelector('input')!;
+        this.eInput.addEventListener('input', () => {
+            this.value = this.eInput.value === '' ? null : Number(this.eInput.value);
+            this.params.filterChangedCallback();
+        });
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    doesFilterPass({ node }: IDoesFilterPassParams) {
+        const cellValue = this.params.getValue(node);
+        return cellValue != null && this.value != null && Number(cellValue) > this.value;
+    }
+
+    isFilterActive() {
+        return this.value != null;
+    }
+
+    getModel() {
+        return this.value;
+    }
+
+    setModel(model: number | null) {
+        this.value = model ?? null;
+        this.eInput.value = this.value == null ? '' : String(this.value);
+    }
+
+    getModelAsString(model: number | null) {
+        return model == null ? '' : `> ${model}`;
+    }
+}
+
+// ATHLETE is editable; COUNTRY, YEAR, AGE, SPORT and TOTAL are read-only.
 const columnDefs: ColDef[] = [
     { field: 'athlete', filter: 'agTextColumnFilter' },
     { field: 'country', filter: 'agSetColumnFilter' },
     { field: 'year', filter: 'agSetColumnFilter' },
     { field: 'age', filter: 'agNumberColumnFilter' },
     { field: 'sport', filter: 'agTextColumnFilter', filterParams: { readOnly: true } },
+    { field: 'total', filter: GreaterThanFilter },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -47,6 +101,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                     ],
                 },
                 sport: { filterType: 'text', type: 'contains', filter: 'e' },
+                total: 0,
             },
         },
     },
@@ -54,6 +109,10 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function useTheme(theme: string, isDark: boolean) {
     document.getElementById('myGrid')!.className = `ag-theme-${theme}${isDark ? '-dark' : ''}`;
+}
+
+function setClickAction(action: 'selectText' | 'openPopup') {
+    gridApi.setGridOption('readOnlyFloatingFilterClickAction', action);
 }
 
 // setup the grid after the page has finished loading
