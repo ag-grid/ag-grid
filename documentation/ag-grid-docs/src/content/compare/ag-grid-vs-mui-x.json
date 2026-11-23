@@ -15,7 +15,7 @@
     },
     "hero": {
         "heading": "AG Grid vs MUI X Data Grid",
-        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "subHeading": "Compare AG Grid vs MUI X Data Grid on framework support, free and paid features, large datasets, pricing and licensing."
     },
     "shortAnswer": "AG Grid and MUI X Data Grid (the MUI DataGrid) both render a complete grid UI, and both have a free, MIT-licensed version and paid plans. AG Grid works with React, Angular, Vue and plain JavaScript; MUI X Data Grid is built for React only and needs Material UI as a peer dependency. The free version of AG Grid includes unlimited row virtualisation, column pinning and lazy loading from the server, which MUI X puts in its paid Pro plan. Row grouping, aggregation, pivoting and Excel export are paid in both: in [AG Grid Enterprise](/license-pricing/), a perpetual licence, and in MUI X Premium, sold per developer as an annual or a perpetual licence.",
     "keyFigures": [

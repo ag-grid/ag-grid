@@ -14,7 +14,7 @@
     },
     "hero": {
         "heading": "AG Grid vs Kendo UI",
-        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "subHeading": "Compare AG Grid vs Kendo UI Grid on framework support, free and paid features, large datasets, pricing and licensing."
     },
     "shortAnswer": "AG Grid is one data grid for React, Angular, Vue and plain JavaScript, with a free, MIT-licensed Community edition. Kendo UI Grid, from Progress Telerik, is sold as separate libraries for React (KendoReact), Angular, Vue and jQuery. Only the React library has a free tier, KendoReact Free, which includes the Grid with a reduced feature set; the Angular, Vue and jQuery grids need a trial or paid licence. In KendoReact, row virtualisation, locked (pinned) columns, grouping and Excel export are premium features, and pivoting and tree data are separate components. AG Grid Community includes row virtualisation, column pinning and CSV export, and [AG Grid Enterprise](/license-pricing/), a paid perpetual licence, adds row grouping, pivoting, tree data and Excel export.",
     "keyFigures": [

@@ -14,7 +14,7 @@
     },
     "hero": {
         "heading": "AG Grid vs Syncfusion",
-        "subHeading": "How the two JavaScript data grids compare on framework support, free and paid features, large datasets, pricing and licensing."
+        "subHeading": "Compare AG Grid vs Syncfusion Data Grid on framework support, free and paid features, large datasets, pricing and licensing."
     },
     "shortAnswer": "AG Grid Community is free under the MIT licence for organisations of any size. Syncfusion Data Grid is commercial software: its free Community License is limited to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees, and other organisations need a paid licence such as the Grid SDK, an annual subscription per developer. Both support React, Angular, Vue and plain JavaScript, and Syncfusion also covers Blazor, other .NET platforms and Flutter. In Syncfusion, pivoting and tree data are separate Pivot Table and Tree Grid components; in AG Grid they are features of the grid itself, in [AG Grid Enterprise](/license-pricing/).",
     "keyFigures": [

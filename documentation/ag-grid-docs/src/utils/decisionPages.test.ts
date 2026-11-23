@@ -36,7 +36,7 @@ describe('comparison page content', () => {
 
             expect(content.meta.title.toLowerCase()).toContain(term);
             expect(content.hero.heading.toLowerCase()).toContain(term);
-            expect(intro.toLowerCase()).toContain(content.competitor.name.toLowerCase());
+            expect(intro.toLowerCase()).toContain(term);
         });
 
         test('is named after the competitor it compares against', () => {
