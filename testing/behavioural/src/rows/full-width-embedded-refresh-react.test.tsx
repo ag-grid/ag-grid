@@ -148,6 +148,49 @@ describe('embedded full width row refresh (React)', () => {
         expect(mounts).toBe(1);
     });
 
+    test('refreshCells updates an embedded group row renderer in every section without remounting it', async () => {
+        let mounts = 0;
+        const GroupRow = (params: ICellRendererParams) => {
+            useEffect(() => {
+                ++mounts;
+            }, []);
+            return (
+                <span className="group-label">
+                    {params.context.label} {params.pinned ?? 'center'}
+                </span>
+            );
+        };
+        let api: GridApi | undefined;
+        const container = render(
+            <AgGridReact
+                columnDefs={[
+                    { field: 'g', rowGroup: true, hide: true },
+                    { colId: 'l', pinned: 'left' },
+                    { field: 'v' },
+                    { colId: 'r', pinned: 'right' },
+                ]}
+                rowData={[{ id: '1', g: 'x', v: 'a' }]}
+                getRowId={(params) => params.data.id}
+                groupDisplayType="groupRows"
+                embedFullWidthRows
+                groupRowRenderer={GroupRow}
+                context={{ label: 'one' }}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        ).container;
+        const labels = () => [...container.querySelectorAll('.group-label')].map((e) => e.textContent).sort();
+        await waitFor(() => expect(labels()).toEqual(['one center', 'one left', 'one right']));
+
+        act(() => {
+            api!.setGridOption('context', { label: 'two' });
+            api!.refreshCells({ rowNodes: [api!.getDisplayedRowAtIndex(0)!] });
+        });
+        await waitFor(() => expect(labels()).toEqual(['two center', 'two left', 'two right']));
+        expect(mounts).toBe(3);
+    });
+
     test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {
         const apis: GridApi[] = [];
         for (let i = 0; i < 2; ++i) {

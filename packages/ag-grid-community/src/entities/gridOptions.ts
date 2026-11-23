@@ -2257,16 +2257,6 @@ export interface GridOptions<TData = any> {
     initialState?: GridState;
 
     /**
-     * **React only**.
-     *
-     * @deprecated As of v32 custom components are created reactively by default.
-     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
-     * @initial
-     * @default true
-     */
-    reactiveCustomComponents?: boolean;
-
-    /**
      *
      * ** React only**.
      *
