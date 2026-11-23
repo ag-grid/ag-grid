@@ -334,10 +334,11 @@
     margin-left: 3px;
 }
 
+/* NOTE: these selectors must not match row elements themselves (.ag-row) to avoid a Safari bug that double-animates transitions on elements whose ::after uses anchor positioning */
 .ag-grid-pinned-left-cells::after,
 .ag-grid-scrolling-cells::after,
 .ag-grid-pinned-right-cells::after,
-.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+.ag-full-width-anchor::after {
     content: var(--ag-internal-row-highlight-content, none);
     position: absolute;
     inset: var(--ag-internal-row-highlight-inset, auto);
@@ -377,10 +378,11 @@
 }
 
 .ag-row-highlight-inside {
+    /* NOTE: these selectors must not match row elements themselves (.ag-row) to avoid a Safari bug that double-animates transitions on elements whose ::after uses anchor positioning */
     > .ag-grid-pinned-left-cells::after,
     > .ag-grid-scrolling-cells::after,
     > .ag-grid-pinned-right-cells::after,
-    &.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+    > .ag-full-width-anchor::after {
         --ag-internal-row-highlight-content: '';
 
         inset: 0;
