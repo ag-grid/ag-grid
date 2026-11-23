@@ -109,6 +109,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private searchStrings?: string[];
     private searchString = '';
     private readonly typeAhead: AgTypeAhead;
+    private pendingTypeAheadChars: string[] = [];
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[] | undefined;
@@ -531,10 +532,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             .then((values) => {
                 if (values !== undefined) {
                     this.setValueListInternal({ ...params, valueList: values });
+                    this.applyPendingTypeAhead();
                 }
             })
             .catch(() => {
                 this.setValueListInternal({ ...params, valueList: [], refresh: true });
+                this.applyPendingTypeAhead();
             });
     }
 
@@ -573,6 +576,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.beforeHidePicker();
         this.listComponent?.cancelStateAnnouncement();
         this.typeAhead.reset();
+        this.pendingTypeAheadChars = [];
     }
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
@@ -732,7 +736,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public typeAheadCharacter(char: string): void {
         const { listComponent, searchStrings } = this;
-        if (!listComponent || !searchStrings) {
+        if (!listComponent) {
+            return;
+        }
+        if (!searchStrings) {
+            this.pendingTypeAheadChars.push(char);
             return;
         }
         const matchIdx = this.typeAhead.type(
@@ -745,6 +753,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
         listComponent.highlightIndex(matchIdx);
+    }
+
+    private isTypingAhead(): boolean {
+        return this.typeAhead.isActive() || this.pendingTypeAheadChars.length > 0;
+    }
+
+    private applyPendingTypeAhead(): void {
+        const chars = this.pendingTypeAheadChars;
+        this.pendingTypeAheadChars = [];
+        for (let i = 0, len = chars.length; i < len; ++i) {
+            this.typeAheadCharacter(chars[i]);
+        }
     }
 
     private typeAheadFromKeyboardEvent(e: KeyboardEvent): void {
@@ -1312,7 +1332,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (lastItemHovered !== undefined) {
                 listComponent.toggleListItemSelection(lastItemHovered);
             }
-        } else if (!multiSelect && this.typeAhead.isActive() && this.isTypeAheadSearch()) {
+        } else if (!multiSelect && this.isTypingAhead() && this.isTypeAheadSearch()) {
             this.typeAheadFromKeyboardEvent(e);
         }
     }

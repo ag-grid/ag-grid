@@ -838,6 +838,43 @@ describe('Rich Select cell editor', () => {
                 pressKey(gridDiv, 'l');
                 expect(highlighted()).toBe('Blue');
             });
+
+            test('characters typed while the values load combine with the one that starts editing', async () => {
+                vi.useFakeTimers({ toFake: ['Date'] });
+                let resolveValues!: (values: string[]) => void;
+                const { gridDiv, highlighted } = await startEditingWithKey(
+                    () => new Promise<string[]>((resolve) => (resolveValues = resolve)),
+                    'b'
+                );
+                await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).not.toBeNull());
+
+                pressKey(gridDiv, 'l');
+                pressKey(gridDiv, 'o');
+                vi.setSystemTime(Date.now() + 2000);
+                resolveValues(COLOURS);
+
+                await waitFor(() => expect(highlighted()).toBe('Bloom'));
+            });
+
+            test('characters typed into an open list apply once the values load', async () => {
+                let resolveValues!: (values: string[]) => void;
+                const api = await createGrid({
+                    columnDefs: [
+                        baseColDef({ values: () => new Promise<string[]>((resolve) => (resolveValues = resolve)) }),
+                    ],
+                    rowData: [{ id: '0', a: 'Newark' }],
+                    getRowId: (p) => p.data.id,
+                });
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const popup = await openEditor(api, gridDiv, 0, 'a');
+
+                for (const key of 'new d') {
+                    pressKey(gridDiv, key);
+                }
+                resolveValues(['Newark', 'New York', 'New Delhi']);
+
+                await waitFor(() => expect(getHighlightedRow(popup)?.textContent?.trim()).toBe('New Delhi'));
+            });
         });
 
         test('an explicit searchType keeps its own search', async () => {

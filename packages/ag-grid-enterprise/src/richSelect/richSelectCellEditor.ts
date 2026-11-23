@@ -26,8 +26,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private pendingInitialEventKey: string | null = null;
-    /** Type-ahead matches against the loaded values, and must run after `showPicker()` highlights the current value. */
-    private typeAheadValuesLoaded: Promise<void> | null = null;
     private initialEventKeyProcessed = false;
     /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
     private cachedRaw: unknown = this;
@@ -44,7 +42,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
         const { cellStartedEdit, values, valuesPage, eventKey } = this.params;
         this.pendingInitialEventKey = null;
-        this.typeAheadValuesLoaded = null;
         this.initialEventKeyProcessed = false;
 
         if (_missing(values) && _missing(valuesPage)) {
@@ -90,21 +87,19 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 this.pendingInitialEventKey = eventKey;
             }
         } else if (valueList && !Array.isArray(valueList)) {
-            const valuesLoaded = valueList
+            valueList
                 .then((values) => {
                     const searchStringCallback = this.getSearchStringCallback(values);
                     if (searchStringCallback) {
                         richSelect.setSearchStringCreator(searchStringCallback);
                     }
+
+                    this.consumeInitialEventKeyOnValuesLoaded(eventKey);
                 })
                 .catch((error) => {
                     _consoleError('Rich Select', error);
+                    this.consumeInitialEventKeyOnValuesLoaded(eventKey);
                 });
-            if (richSelect.isTypeAheadSearch()) {
-                this.typeAheadValuesLoaded = valuesLoaded;
-            } else {
-                this.consumeInitialEventKeyAfter(valuesLoaded, eventKey);
-            }
         }
 
         this.addManagedListeners(richSelect, {
@@ -385,26 +380,18 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 richSelect.showPicker();
             }
 
-            const { pendingInitialEventKey, typeAheadValuesLoaded } = this;
-            if (typeAheadValuesLoaded) {
-                this.consumeInitialEventKeyAfter(typeAheadValuesLoaded, eventKey);
-            } else if (pendingInitialEventKey == null) {
+            if (this.pendingInitialEventKey == null) {
                 this.consumeInitialEventKey(eventKey);
             }
         });
     }
 
-    private consumeInitialEventKeyAfter(ready: Promise<void>, eventKey: string | null | undefined): void {
-        ready
-            .then(() => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                this.consumeInitialEventKey(eventKey);
-            })
-            .catch((error) => {
-                _consoleError('Rich Select', error);
-            });
+    private consumeInitialEventKeyOnValuesLoaded(eventKey: string | null | undefined): void {
+        // Type-ahead waits for `afterGuiAttached`, as `showPicker()` resets the highlight; the widget holds keys until values load.
+        if (this.eEditor.isTypeAheadSearch()) {
+            return;
+        }
+        this.consumeInitialEventKey(eventKey);
     }
 
     private consumeInitialEventKey(eventKey: string | null | undefined): void {
