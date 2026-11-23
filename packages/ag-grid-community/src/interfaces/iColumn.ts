@@ -53,7 +53,7 @@ interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter
 interface IProvidedColumn {
     /** Returns `true` if the column is visible. */
     isVisible(): boolean;
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     getInstanceId(): ColumnInstanceId;
     /** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */
     getColumnGroupShow(): ColumnGroupShowType | undefined;
@@ -113,13 +113,13 @@ export interface Column<TValue = any>
     /** Returns `true` if column filtering is allowed. */
     isFilterAllowed(): boolean;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isFieldContainsDots(): boolean;
 
     /** Returns `true` if a tooltip is enabled for this column. */
     isTooltipEnabled(): boolean;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isTooltipFieldContainsDots(): boolean;
 
     /** Add an event listener to the column. */
@@ -173,16 +173,16 @@ export interface Column<TValue = any>
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;
 
-    /** @deprecated v32 use col.getSort() === 'asc' */
+    /** @deprecated v32 use col.getSort() === 'asc */
     isSortAscending(): boolean;
 
-    /** @deprecated v32 use col.getSort() === 'desc' */
+    /** @deprecated v32 use col.getSort() === 'desc */
     isSortDescending(): boolean;
 
-    /** @deprecated v32 use !col.getSort() */
+    /** @deprecated v32 use col.getSort() === undefined */
     isSortNone(): boolean;
 
-    /** @deprecated v32 use col.getSort() != null */
+    /** @deprecated v32 use col.getSort() !== undefined */
     isSorting(): boolean;
 
     /** Returns the sort index for this column. */
@@ -200,7 +200,7 @@ export interface Column<TValue = any>
      *  is {@link getShowValuesAs}. */
     getShowValuesAsDef(): ShowValuesAsDefResolved<any, TValue> | null;
 
-    /** @deprecated v32 Use `(col.getLeft() ?? 0) + col.getActualWidth()` instead. */
+    /** @deprecated v32 Use col.getLeft() + col.getActualWidth() instead. */
     getRight(): number;
 
     /** Returns `true` if filter is active on the column. */
@@ -256,7 +256,7 @@ export interface Column<TValue = any>
     /** Returns the row span for this column and row node. */
     getRowSpan(rowNode: IRowNode): number;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isGreaterThanMax(width: number): boolean;
 
     /** Returns the max width for the column. */
@@ -271,10 +271,10 @@ export interface Column<TValue = any>
     /** Returns `true` if pivot is currently active for this column. */
     isPivotActive(): boolean;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isAnyFunctionActive(): boolean;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isAnyFunctionAllowed(): boolean;
 
     /** Returns `true` if value (aggregation) is currently active for this column. */
@@ -307,7 +307,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
      *  colGroupDef `headerName`, then the group id. */
     getDisplayName(location?: HeaderLocation): string;
 
-    /** @deprecated v32 Internal method, to be removed in v38. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     getPartId(): number;
 
     /** Returns `true` if this group is resizable. */

@@ -210,12 +210,6 @@ export class AgColumnGroup<TValue = any>
     }
 
     public getPartId(): number {
-        // Standalone export groups are not beans, but their provided group always is.
-        this.providedColumnGroup.deprecated(306, {
-            version: '32',
-            name: 'columnGroup.getPartId()',
-            message: 'It will be removed in v38.',
-        });
         return this.partId;
     }
 

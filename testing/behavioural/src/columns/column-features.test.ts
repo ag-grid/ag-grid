@@ -1664,50 +1664,10 @@ describe('Column Features', () => {
         });
     });
 
-    describe('deprecated Column methods', () => {
-        test('report a deprecation diagnostic naming the method ahead of its v38 removal', async () => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES });
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ groupId: 'g1', children: [{ colId: 'a', field: 'a' }] }],
-            });
-            await new GridColumns(api, `deprecated Column methods setup`).checkColumns(`
-                CENTER
-                └─┬ GROUP
-                  └── a "A" width:200
-            `);
-
-            const col = api.getColumn('a')!;
-            const group = api.getColumnGroup('g1')!;
-            const provided = api.getProvidedColumnGroup('g1')!;
-            const deprecatedCalls: [string, () => unknown][] = [
-                ['column.getInstanceId()', () => col.getInstanceId()],
-                ['columnGroup.getInstanceId()', () => provided.getInstanceId()],
-                ['column.isFieldContainsDots()', () => col.isFieldContainsDots()],
-                ['column.isTooltipFieldContainsDots()', () => col.isTooltipFieldContainsDots()],
-                ['column.isGreaterThanMax()', () => col.isGreaterThanMax(100)],
-                ['column.isAnyFunctionActive()', () => col.isAnyFunctionActive()],
-                ['column.isAnyFunctionAllowed()', () => col.isAnyFunctionAllowed()],
-                ['columnGroup.getPartId()', () => group.getPartId()],
-                ['column.isSortAscending()', () => col.isSortAscending()],
-                ['column.isSortDescending()', () => col.isSortDescending()],
-                ['column.isSortNone()', () => col.isSortNone()],
-                ['column.isSorting()', () => col.isSorting()],
-                ['column.getRight()', () => col.getRight()],
-            ];
-            for (const [name, call] of deprecatedCalls) {
-                // The thrown message is prefixed with the severity, so this also rejects plain warning severity.
-                expect(call).toThrow(
-                    `deprecation #306 As of v32, \`${name}\` is deprecated. It will be removed in v38.`
-                );
-            }
-        });
-    });
-
     describe('Column public-interface getters', () => {
         test('reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)', async () => {
             // Retains compatibility coverage for the legacy tooltip-field Column getters.
-            // Also allow the deprecation warnings of the deprecated Column methods asserted below.
-            allowLegacyTooltipProperties([306]);
+            allowLegacyTooltipProperties();
             // Single fixture exercising the bulk of Column public-interface getters that flip from
             // colDef properties. Each assertion is independent — combined to avoid N grid setups.
             const api = gridsManager.createGrid('myGrid', {
@@ -1835,8 +1795,6 @@ describe('Column Features', () => {
             expect(allCol.isValueActive()).toBe(false);
             expect(allCol.isPivotActive()).toBe(false);
             expect(allCol.isRowGroupActive()).toBe(false);
-            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
             expect(allCol.isAnyFunctionActive()).toBe(false);
 
             // Allowed flags from colDef.
@@ -2196,8 +2154,6 @@ describe('Column Features', () => {
             `);
 
             const a = api.getColumn('a')!;
-            // The deprecated methods below warn ahead of their v38 removal; suppress only those warnings.
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
             expect(a.isSortNone()).toBe(true);
             expect(a.isSorting()).toBe(false);
             expect(a.isSortAscending()).toBe(false);

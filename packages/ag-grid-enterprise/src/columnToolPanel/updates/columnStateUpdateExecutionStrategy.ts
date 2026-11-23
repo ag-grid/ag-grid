@@ -308,7 +308,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean {
-        return column.isFunctionActive();
+        return column.isAnyFunctionActive();
     }
 
     public getPivotMode(): boolean {

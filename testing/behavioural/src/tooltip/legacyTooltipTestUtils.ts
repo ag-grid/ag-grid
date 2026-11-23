@@ -1,28 +1,20 @@
 import { ALL_SEVERITIES } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { ErrorId } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
 const LEGACY_TOOLTIP_PROPERTIES = ['`tooltipField`', '`tooltipValueGetter`', '`headerTooltipValueGetter`'];
 
 let warnSpy: MockInstance<typeof console.warn> | undefined;
-let allowedWarningIds: ErrorId[] = [];
 
 function isLegacyTooltipDeprecation(args: unknown[]): boolean {
     const message = args.map(String).join(' ');
     return message.includes('warning #306') && LEGACY_TOOLTIP_PROPERTIES.some((property) => message.includes(property));
 }
 
-function isAllowedWarning(args: unknown[], ids: ErrorId[]): boolean {
-    const message = args.map(String).join(' ');
-    return ids.some((id) => message.includes(`warning #${id}`));
-}
-
-/** Allows explicit legacy API coverage without hiding unrelated console diagnostics, plus any `extraWarningIds`. */
-export function allowLegacyTooltipProperties(extraWarningIds: ErrorId[] = []): void {
-    allowedWarningIds = extraWarningIds;
-    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306, ...extraWarningIds] });
+/** Allows explicit legacy API coverage without hiding unrelated console diagnostics. */
+export function allowLegacyTooltipProperties(): void {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
     warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 }
 
@@ -30,16 +22,12 @@ export function allowLegacyTooltipProperties(extraWarningIds: ErrorId[] = []): v
 export function resetLegacyTooltipProperties(): void {
     const currentWarnSpy = warnSpy;
     warnSpy = undefined;
-    const allowed = allowedWarningIds;
-    allowedWarningIds = [];
 
     if (!currentWarnSpy) {
         return;
     }
 
-    const unexpectedWarnings = currentWarnSpy.mock.calls.filter(
-        (args) => !isLegacyTooltipDeprecation(args) && !isAllowedWarning(args, allowed)
-    );
+    const unexpectedWarnings = currentWarnSpy.mock.calls.filter((args) => !isLegacyTooltipDeprecation(args));
     currentWarnSpy.mockRestore();
     expect(unexpectedWarnings).toEqual([]);
 }

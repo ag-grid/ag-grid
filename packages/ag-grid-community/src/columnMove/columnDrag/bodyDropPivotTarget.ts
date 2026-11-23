@@ -34,7 +34,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
                 continue;
             }
 
-            if (column.isFunctionActive()) {
+            if (column.isAnyFunctionActive()) {
                 continue;
             }
 

@@ -283,7 +283,6 @@ export class AgColumn<TValue = any>
     }
 
     public getInstanceId(): ColumnInstanceId {
-        this.deprecated(306, { version: '32', name: 'column.getInstanceId()', message: 'It will be removed in v38.' });
         return this.instanceId;
     }
 
@@ -460,11 +459,6 @@ export class AgColumn<TValue = any>
     }
 
     public isFieldContainsDots(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isFieldContainsDots()',
-            message: 'It will be removed in v38.',
-        });
         return this.fieldPath !== null;
     }
 
@@ -477,15 +471,6 @@ export class AgColumn<TValue = any>
     }
 
     public isTooltipFieldContainsDots(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isTooltipFieldContainsDots()',
-            message: 'It will be removed in v38.',
-        });
-        return this.hasTooltipFieldDots();
-    }
-
-    public hasTooltipFieldDots(): boolean {
         return (this.colFlags & COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS) !== 0;
     }
 
@@ -671,42 +656,22 @@ export class AgColumn<TValue = any>
         return this.colDef.sortable ?? true;
     }
 
-    /** @deprecated v32 use col.getSort() === 'asc' */
+    /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isSortAscending()',
-            message: "It will be removed in v38. Use `column.getSort() === 'asc'` instead.",
-        });
         return this.getSort() === 'asc';
     }
 
-    /** @deprecated v32 use col.getSort() === 'desc' */
+    /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isSortDescending()',
-            message: "It will be removed in v38. Use `column.getSort() === 'desc'` instead.",
-        });
         return this.getSort() === 'desc';
     }
-    /** @deprecated v32 use !col.getSort() */
+    /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isSortNone()',
-            message: 'It will be removed in v38. Use `!column.getSort()` instead.',
-        });
         return !this.getSort();
     }
 
-    /** @deprecated v32 use col.getSort() != null */
+    /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isSorting()',
-            message: 'It will be removed in v38. Use `column.getSort() != null` instead.',
-        });
         return this.getSort() != null;
     }
 
@@ -739,11 +704,6 @@ export class AgColumn<TValue = any>
     }
 
     public getRight(): number {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.getRight()',
-            message: 'It will be removed in v38. Use `(column.getLeft() ?? 0) + column.getActualWidth()` instead.',
-        });
         // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
         return this.left! + this.actualWidth;
     }
@@ -977,11 +937,6 @@ export class AgColumn<TValue = any>
     }
 
     public isGreaterThanMax(width: number): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isGreaterThanMax()',
-            message: 'It will be removed in v38. Compare the width with `column.getMaxWidth()` instead.',
-        });
         return width > this.maxWidth;
     }
 
@@ -1006,32 +961,10 @@ export class AgColumn<TValue = any>
     }
 
     public isAnyFunctionActive(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isAnyFunctionActive()',
-            message:
-                'It will be removed in v38. Use `column.isRowGroupActive()`, `column.isPivotActive()` and `column.isValueActive()` instead.',
-        });
-        return this.isFunctionActive();
-    }
-
-    public isAnyFunctionAllowed(): boolean {
-        this.deprecated(306, {
-            version: '32',
-            name: 'column.isAnyFunctionAllowed()',
-            message:
-                'It will be removed in v38. Check `enableRowGroup`, `enablePivot` and `enableValue` on `column.getColDef()` instead.',
-        });
-        return this.isFunctionAllowed();
-    }
-
-    /** Whether row grouping, pivoting or aggregation is active on the column. */
-    public isFunctionActive(): boolean {
         return this.pivotActive || this.rowGroupActive || this.aggregationActive;
     }
 
-    /** Whether row grouping, pivoting or aggregation is enabled on the column. */
-    public isFunctionAllowed(): boolean {
+    public isAnyFunctionAllowed(): boolean {
         const colDef = this.colDef;
         return colDef.enablePivot === true || colDef.enableRowGroup === true || colDef.enableValue === true;
     }

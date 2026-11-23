@@ -1,6 +1,6 @@
-import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, CsvExportModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 
 describe('CSV export header layout', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, CsvExportModule] });
@@ -69,25 +69,6 @@ describe('CSV export header layout', () => {
         });
 
         expect(csv).toBe('Athlete Details\r\nAthlete');
-    });
-
-    test('the deprecated getPartId still works on the group passed to processGroupHeaderCallback', () => {
-        const api = gridsManager.createGrid('csv-grouped-header-part-id', {
-            columnDefs: [{ headerName: 'Athlete Details', children: [{ field: 'athlete' }] }],
-            rowData: [],
-        });
-
-        const exportWithPartId = () =>
-            api.getDataAsCsv({
-                suppressQuotes: true,
-                processGroupHeaderCallback: ({ columnGroup }) => `part ${columnGroup.getPartId()}`,
-            });
-
-        // The export's groups are not beans, so the diagnostic must still reach the grid's logger.
-        expect(exportWithPartId).toThrow('deprecation #306 As of v32, `columnGroup.getPartId()` is deprecated.');
-
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-        expect(exportWithPartId()).toBe('part 0\r\nAthlete');
     });
 
     test('suppressSpanHeaderHeight does not change CSV output', () => {

@@ -1,6 +1,6 @@
 import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type {
     ColGroupDef,
@@ -13,7 +13,7 @@ import type {
     ProvidedColumnGroup,
     ToolPanelClassParams,
 } from 'ag-grid-community';
-import { enableDevValidations, getGridElement } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { openToolPanelContextMenu } from './toolPanelContextMenuHarness';
@@ -196,24 +196,6 @@ describe('Tool panel column group callbacks', () => {
             (element) => element.textContent
         );
         expect(labels).toEqual(expect.arrayContaining(['Layout Results', 'Layout Only']));
-    });
-
-    test('the deprecated getInstanceId still works on a group that exists only in a custom layout', async () => {
-        const api = await createGrid({ columnDefs: [{ field: 'gold' }] });
-        const toolPanel = api.getToolPanelInstance('panel') as any;
-        toolPanel.setColumnLayout([
-            { groupId: 'layoutOnly', headerName: 'Layout Only', children: [{ field: 'gold' }] },
-        ]);
-        await waitForLabels(api, 1);
-        const layoutOnly = receivedGroups.find((group) => group?.getGroupId() === 'layoutOnly')!;
-
-        // The layout's own group is not wired to the grid, so the diagnostic is reported without one.
-        expect(() => layoutOnly.getInstanceId()).toThrow(
-            'deprecation #306 As of v32, `columnGroup.getInstanceId()` is deprecated.'
-        );
-
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-        expect(layoutOnly.getInstanceId()).toEqual(expect.any(Number));
     });
     test('renaming and resetting a group that exists only in a custom layout fires headerNameChanged on its callback group', async () => {
         const api = await createGrid({
