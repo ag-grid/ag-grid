@@ -119,7 +119,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     }
 
     public dispatchEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
-        this.dispatch(event, null);
+        this.dispatch(event);
     }
 
     /** Calls every sync listener even when one throws, for teardown, and returns the errors thrown. */
@@ -129,7 +129,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         return errors;
     }
 
-    private dispatch(event: AgEvent<TEventType>, errors: unknown[] | null): void {
+    private dispatch(event: AgEvent<TEventType>, errors?: unknown[]): void {
         const eventType = event.type;
         if ('event' in event) {
             const browserEvent = (event as any).event;
@@ -177,17 +177,26 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private callListeners(
         event: AgEvent<TEventType>,
         listeners: TypeListeners<TEventType> | undefined,
-        errors: unknown[] | null
+        errors?: unknown[]
     ): void {
         if (typeof listeners === 'function') {
-            callListener(errors, listeners, event);
+            if (errors) {
+                collectError(errors, () => listeners(event));
+            } else {
+                listeners(event);
+            }
         } else if (listeners !== undefined) {
             // a listener added by this dispatch is not in the snapshot, so it waits for the next one
             const snapshot = Array.from(listeners);
             for (let i = 0, len = snapshot.length; i < len; ++i) {
                 const listener = snapshot[i];
                 if (listeners.has(listener)) {
-                    callListener(errors, listener, event); // else removed by a listener called before it
+                    // else removed by a listener called before it
+                    if (errors) {
+                        collectError(errors, () => listener(event));
+                    } else {
+                        listener(event);
+                    }
                 }
             }
         }
@@ -198,7 +207,11 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             for (let i = 0, len = globalListeners.length; i < len; ++i) {
                 const entry = globalListeners[i];
                 if (receivesEventType(entry, eventType)) {
-                    callGlobalListener(errors, entry.listener, event);
+                    if (errors) {
+                        collectError(errors, () => entry.listener(eventType, event));
+                    } else {
+                        entry.listener(eventType, event);
+                    }
                 }
             }
         }
@@ -265,33 +278,9 @@ function callQueuedListeners<TEventType extends string>(queue: AsyncQueue<TEvent
     }
 }
 
-function callListener<TEventType extends string>(
-    errors: unknown[] | null,
-    listener: IEventListener<TEventType>,
-    event: AgEvent<TEventType>
-): void {
-    if (errors === null) {
-        listener(event);
-        return;
-    }
+function collectError(errors: unknown[], call: () => void): void {
     try {
-        listener(event);
-    } catch (error) {
-        errors.push(error);
-    }
-}
-
-function callGlobalListener<TEventType extends string>(
-    errors: unknown[] | null,
-    listener: IGlobalEventListener<TEventType>,
-    event: AgEvent<TEventType>
-): void {
-    if (errors === null) {
-        listener(event.type, event);
-        return;
-    }
-    try {
-        listener(event.type, event);
+        call();
     } catch (error) {
         errors.push(error);
     }
