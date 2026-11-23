@@ -180,10 +180,14 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         errors?: unknown[]
     ): void {
         if (typeof listeners === 'function') {
-            if (errors) {
-                collectError(errors, () => listeners(event));
-            } else {
+            if (!errors) {
                 listeners(event);
+            } else {
+                try {
+                    listeners(event);
+                } catch (error) {
+                    errors.push(error);
+                }
             }
         } else if (listeners !== undefined) {
             // a listener added by this dispatch is not in the snapshot, so it waits for the next one
@@ -192,10 +196,14 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
                 const listener = snapshot[i];
                 if (listeners.has(listener)) {
                     // else removed by a listener called before it
-                    if (errors) {
-                        collectError(errors, () => listener(event));
-                    } else {
+                    if (!errors) {
                         listener(event);
+                    } else {
+                        try {
+                            listener(event);
+                        } catch (error) {
+                            errors.push(error);
+                        }
                     }
                 }
             }
@@ -207,10 +215,14 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             for (let i = 0, len = globalListeners.length; i < len; ++i) {
                 const entry = globalListeners[i];
                 if (receivesEventType(entry, eventType)) {
-                    if (errors) {
-                        collectError(errors, () => entry.listener(eventType, event));
-                    } else {
+                    if (!errors) {
                         entry.listener(eventType, event);
+                    } else {
+                        try {
+                            entry.listener(eventType, event);
+                        } catch (error) {
+                            errors.push(error);
+                        }
                     }
                 }
             }
@@ -275,14 +287,6 @@ function callQueuedListeners<TEventType extends string>(queue: AsyncQueue<TEvent
         } else {
             listener.listener(event.type, event);
         }
-    }
-}
-
-function collectError(errors: unknown[], call: () => void): void {
-    try {
-        call();
-    } catch (error) {
-        errors.push(error);
     }
 }
 
