@@ -37,6 +37,21 @@ export type InputStyleParams = {
     inputDisabledTextColor: ColorValue;
 
     /**
+     * Background color for read-only floating filter inputs, which show a filter that can't be edited in place
+     */
+    inputReadOnlyBackgroundColor: ColorValue;
+
+    /**
+     * Border around read-only floating filter inputs (or underneath, if using the underlined input style)
+     */
+    inputReadOnlyBorder: BorderValue;
+
+    /**
+     * Color of text within read-only floating filter inputs
+     */
+    inputReadOnlyTextColor: ColorValue;
+
+    /**
      * Background color for focussed text inputs
      */
     inputFocusBackgroundColor: ColorValue;
@@ -191,6 +206,13 @@ const baseParams: InputStyleParams = {
     inputDisabledTextColor: {
         ref: 'inputTextColor',
     },
+    inputReadOnlyBackgroundColor: 'transparent',
+    inputReadOnlyBorder: {
+        ref: 'inputBorder',
+    },
+    inputReadOnlyTextColor: {
+        ref: 'inputTextColor',
+    },
     inputInvalidBackgroundColor: {
         ref: 'inputBackgroundColor',
     },
@@ -250,6 +272,9 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 ref: 'textColor',
                 mix: 0.5,
             },
+            inputReadOnlyBorder: {
+                color: 'transparent',
+            },
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
             },
@@ -280,6 +305,10 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
                 mix: 0.5,
             },
             inputDisabledBorder: 'solid 1px var(--ag-border-color)',
+            inputReadOnlyBorder: {
+                width: 2,
+                color: 'transparent',
+            },
             inputInvalidBorder: {
                 width: 2,
                 color: {

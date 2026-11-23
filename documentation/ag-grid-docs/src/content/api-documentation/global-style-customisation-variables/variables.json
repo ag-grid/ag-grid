@@ -329,6 +329,18 @@
             "description": "The background colour of disabled text inputs",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
+        "--ag-input-read-only-text-color": {
+            "description": "The colour of text in read-only floating filter inputs",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-input-read-only-background-color": {
+            "description": "The background colour of read-only floating filter inputs",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-input-read-only-border-color": {
+            "description": "The colour of the border around read-only floating filter inputs",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-checkbox-background-color": {
             "description": "Background of a checkbox",
             "type": "CSS color (e.g. `red` or `#fff`)"
