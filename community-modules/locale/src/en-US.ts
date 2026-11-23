@@ -890,6 +890,8 @@ export const AG_GRID_LOCALE_EN_US = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
+    ariaToolPanelWiden: 'Widen Panel',
+    ariaToolPanelNarrow: 'Narrow Panel',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',

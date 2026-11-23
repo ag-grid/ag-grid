@@ -901,6 +901,8 @@ export const AG_GRID_LOCALE_BN_IN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'কলাম তালিকা',
     ariaFilterPanelList: 'ফিল্টার তালিকা',
+    ariaToolPanelWiden: 'প্যানেল প্রশস্ত করুন',
+    ariaToolPanelNarrow: 'প্যানেল সংকীর্ণ করুন',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',

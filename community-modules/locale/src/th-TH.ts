@@ -900,6 +900,8 @@ export const AG_GRID_LOCALE_TH_TH = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'รายการคอลัมน์',
     ariaFilterPanelList: 'รายการตัวกรอง',
+    ariaToolPanelWiden: 'เพิ่มความกว้างของแผง',
+    ariaToolPanelNarrow: 'ลดความกว้างของแผง',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'ฟิลด์เพิ่มตัวกรอง',

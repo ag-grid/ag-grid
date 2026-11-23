@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-/** Clicks an input placed after the grid and presses Shift+Tab. */
+/** Clicks an input placed after the grid and presses Shift+Tab past the open panel's side bar button, its last stop. */
 async function shiftTabFromInputAfterGrid(page: Page): Promise<void> {
     await page.evaluate(() => {
         const input = document.createElement('input');
@@ -11,6 +11,8 @@ async function shiftTabFromInputAfterGrid(page: Page): Promise<void> {
         document.body.append(input);
     });
     await page.locator('#after-grid').click();
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.locator('.ag-side-button.ag-selected button')).toBeFocused();
     await page.keyboard.press('Shift+Tab');
 }
 

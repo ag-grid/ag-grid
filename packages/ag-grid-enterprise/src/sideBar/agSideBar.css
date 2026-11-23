@@ -45,33 +45,139 @@
     white-space: nowrap;
 }
 
+.ag-tool-panel-resizer {
+    display: contents;
+}
+
+/* a panel in an external parent fills it, so there is nothing to resize */
+:where(.ag-tool-panel-external) .ag-tool-panel-resizer {
+    display: none;
+}
+
+/* the click and tap area: 45px wide, so 22px either side of the 1px border line it is centred on, and above the
+   grid and panel content it overlaps so a press anywhere in it reaches the border */
 .ag-tool-panel-horizontal-resize {
     cursor: ew-resize;
     height: 100%;
     position: absolute;
     top: 0;
-    width: 5px;
-    z-index: 1;
+    width: 45px;
+    z-index: 3;
+}
+
+/* shown only after a click or tap on the border; keyboard users resize with the arrow keys instead */
+.ag-tool-panel-resize-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-spacing);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    visibility: hidden;
+    z-index: 4;
+}
+
+:where(.ag-tool-panel-resizer-active) .ag-tool-panel-resize-buttons {
+    visibility: visible;
+}
+
+.ag-tool-panel-resize-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--ag-foreground-color);
+    background-color: var(--ag-background-color);
+    border: solid 1px var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    cursor: pointer;
+}
+
+/* the disabled background can be semi-transparent, so it goes over the opaque one: nothing under the button shows
+   through. The icon colours itself from --ag-icon-color, so an inherited color alone would not reach the arrow. The
+   fallbacks cover themes without the button style part */
+.ag-tool-panel-resize-button:where([aria-disabled='true']) {
+    --ag-icon-color: var(
+        --ag-button-disabled-text-color,
+        color-mix(in srgb, transparent, var(--ag-foreground-color) 50%)
+    );
+
+    cursor: default;
+    color: var(--ag-icon-color);
+    background-image: linear-gradient(
+        var(--ag-button-disabled-background-color, transparent),
+        var(--ag-button-disabled-background-color, transparent)
+    );
+
+    /* forced colours replace the disabled colours, so it would look enabled */
+    @media (forced-colors: active) {
+        --ag-icon-color: GrayText;
+
+        color: GrayText;
+        border-color: GrayText;
+    }
+}
+
+.ag-tool-panel-resize-button:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
 }
 
 .ag-side-bar {
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
     background-color: var(--ag-side-bar-background-color);
 }
 
+/* in a right-to-left grid, the DOM runs in the order the side bar is drawn, from left to right, as does the Tab order */
+:where(.ag-rtl) .ag-side-bar {
+    flex-direction: row-reverse;
+}
+
 :where(.ag-side-bar-left) .ag-tool-panel-horizontal-resize {
-    right: -3px;
+    right: -23px;
 }
 
 :where(.ag-side-bar-right) .ag-tool-panel-horizontal-resize {
-    left: -3px;
+    left: -23px;
+}
+
+/* next to the click area, over the grid, so they never cover the border or its highlight */
+:where(.ag-side-bar-left) .ag-tool-panel-resize-buttons {
+    right: calc(-23px - var(--ag-spacing) - 44px);
+}
+
+:where(.ag-side-bar-right) .ag-tool-panel-resize-buttons {
+    left: calc(-23px - var(--ag-spacing) - 44px);
+}
+
+.ag-tool-panel-horizontal-resize:focus {
+    outline: var(--ag-internal-accessible-no-outline, revert);
+    box-shadow: none;
+}
+
+/* the highlight: a 7px band centred on the border line */
+.ag-tool-panel-horizontal-resize::after {
+    content: '';
+    position: absolute;
+    inset: 0 19px;
+}
+
+/* the whole border highlights while it is hovered, focused or in use. Mixing in the foreground colour keeps
+   the accent's hue but holds 3:1 contrast against the backgrounds either side, in dark themes too */
+.ag-tool-panel-horizontal-resize:where(:hover, :focus-visible)::after,
+:where(.ag-tool-panel-resizer-active, .ag-tool-panel-resizer-dragging) .ag-tool-panel-horizontal-resize::after {
+    background-color: color-mix(in srgb, var(--ag-range-selection-border-color) 60%, var(--ag-foreground-color));
+
+    @media (forced-colors: active) {
+        forced-color-adjust: none;
+        background-color: Highlight;
+    }
 }
 
 .ag-side-bar-left {
     order: -1;
-    flex-direction: row;
 }
 
 .ag-side-buttons {

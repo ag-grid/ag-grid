@@ -12,7 +12,7 @@ import {
 import { BeanStub } from '../context/beanStub';
 import { isHeaderPosition } from '../headerRendering/headerUtils';
 import type { GridContainerName, TabToNextGridContainerTarget } from '../interfaces/iCallbackParams';
-import type { FocusableContainer } from '../interfaces/iFocusableContainer';
+import type { FocusableContainer, FocusableContainerName } from '../interfaces/iFocusableContainer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _isCellFocusSuppressed, _isHeaderFocusSuppressed, _runWithContainerFocusAllowed } from '../utils/gridFocus';
@@ -41,6 +41,9 @@ export interface OptionalGridComponents {
 const focusContainer = (comp: FocusableContainer, up?: boolean): boolean => {
     return _runWithContainerFocusAllowed(comp, () => _focusIntoTabbableFirst(comp.getGui(), up, true));
 };
+
+const getContainerIndex = (containers: FocusableContainer[], name: FocusableContainerName): number =>
+    containers.findIndex((container) => container.getFocusableContainerName() === name);
 
 const getGridContainerName = (container?: FocusableContainer): GridContainerName => {
     return container?.getFocusableContainerName() ?? 'external';
@@ -262,6 +265,16 @@ export class GridCtrl extends BeanStub {
             return focusSvc.focusGridView({ column: _last(visibleCols.allCols), backwards: true });
         }
 
+        // a side bar drawn on the left of the grid body is where Tab enters the grid
+        const sideBarIndex = getContainerIndex(focusableContainers, 'sideBar');
+        if (
+            sideBarIndex !== -1 &&
+            sideBarIndex < getContainerIndex(focusableContainers, 'gridBody') &&
+            focusContainer(focusableContainers[sideBarIndex])
+        ) {
+            return true;
+        }
+
         const allColumns = visibleCols.allCols;
 
         if (gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(beans)) {
@@ -304,7 +317,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public allowFocusForNextCoreContainer(up?: boolean): void {
-        const coreContainers = this.view.getFocusableContainers();
+        const coreContainers = this.inTabOrder(this.view.getFocusableContainers());
         const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(coreContainers, up);
 
         // browser default tabbing can focus unmanaged scrollable elements and lose focus context.
@@ -396,7 +409,20 @@ export class GridCtrl extends BeanStub {
     }
 
     private getFocusableContainers(): FocusableContainer[] {
-        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
+        return this.inTabOrder([...this.view.getFocusableContainers(), ...this.additionalFocusableContainers]);
+    }
+
+    /** Moves a side bar drawn on the left of the grid body before it, so Tab follows the drawn order. */
+    private inTabOrder(containers: FocusableContainer[]): FocusableContainer[] {
+        const sideBarIndex = getContainerIndex(containers, 'sideBar');
+        const gridBodyIndex = getContainerIndex(containers, 'gridBody');
+        if (gridBodyIndex === -1 || sideBarIndex < gridBodyIndex || !this.beans.sideBar?.comp?.isDrawnOnLeft()) {
+            return containers;
+        }
+
+        const ordered = [...containers];
+        ordered.splice(gridBodyIndex, 0, ...ordered.splice(sideBarIndex, 1));
+        return ordered;
     }
 
     public override destroy(): void {
