@@ -455,6 +455,14 @@ detach() {
     fi
 }
 
+# Keeps the log under 1 MiB. Never fails: a parallel hook may rotate it first, and logging must not fail creation.
+rotate_log() {
+    local size
+    size=$(wc -c <"$1" 2>/dev/null) || return 0
+    ((size > 1048576)) && mv -f "$1" "$1.1" 2>/dev/null
+    return 0
+}
+
 log "Creating worktree '${NAME}' for ${REPO_NAME}..."
 
 log "Fetching from origin..."
@@ -493,7 +501,7 @@ fi
 # Stale cleanup walks every candidate's files, so it runs detached once the new worktree is ready; the cleanup lock
 # keeps runs apart.
 CLEANUP_LOG="${WORKTREE_ROOT}/${REPO_NAME}/.cleanup.log"
-if [[ -f "$CLEANUP_LOG" && $(wc -c <"$CLEANUP_LOG") -gt 1048576 ]]; then mv -f "$CLEANUP_LOG" "$CLEANUP_LOG.1"; fi
+rotate_log "$CLEANUP_LOG"
 printf '%s' "$INPUT" | CLAUDE_WT_CLEANUP_ONLY=1 detach bash "$0" >>"$CLEANUP_LOG" 2>&1 &
 log "Cleaning up stale agent worktrees in the background; see ${CLEANUP_LOG}"
 

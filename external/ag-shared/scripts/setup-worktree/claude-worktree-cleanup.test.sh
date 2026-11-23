@@ -173,6 +173,13 @@ eval "$(sed -n '/^detach() {/,/^}/p' "$CREATE")"
 detach bash -c 'ps -o pgid= -p $$' >"$T/detached-pgid"
 expect "detach starts a new process group" test "$(tr -d ' ' <"$T/detached-pgid")" != "$(ps -o pgid= -p $$ | tr -d ' ')"
 
+# Log rotation never fails, even when a parallel hook rotated the log first.
+eval "$(sed -n '/^rotate_log() {/,/^}/p' "$CREATE")"
+expect "rotating a missing log succeeds" rotate_log "$T/no-such.log"
+head -c 1048577 /dev/zero >"$T/big.log"
+rotate_log "$T/big.log"
+expect "a log over 1 MiB is rotated" test ! -e "$T/big.log" -a -e "$T/big.log.1"
+
 # move_worktree refuses an occupied destination and leaves the worktree registered where it was.
 mkdir "$WTS/.occupied"
 if move_worktree "$WTS/agent-legacy" "$WTS/.occupied"; then fail "move to an occupied destination is refused"; else pass "move to an occupied destination is refused"; fi
