@@ -5,6 +5,7 @@ import { onTestFinished, vi } from 'vitest';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     getExpressionInput,
@@ -41,7 +42,7 @@ describe('calculated column dialog APIs', () => {
         if (applyMode === 'deferred') {
             clickDialogButton('Apply');
         } else {
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
         }
 
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
@@ -212,7 +213,7 @@ describe('calculated column dialog APIs', () => {
             ],
         });
         api.openCalculatedColumnDialog('profit');
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         expect(document.querySelector('.ag-header-cell[col-id="profit"]')).toHaveFocus();
     });
 
@@ -229,7 +230,7 @@ describe('calculated column dialog APIs', () => {
                 setExpression('[Revenue]');
                 clickDialogButton('Apply');
             } else {
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
             }
             expect(document.querySelector('.ag-header-cell[col-id="calculated_1"]')).toHaveFocus();
         }

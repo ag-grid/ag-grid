@@ -8,8 +8,9 @@ import { enableDevValidations } from 'ag-grid-community';
 import {
     cellValue,
     clickDialogButton,
+    closeDialog,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     setExpression,
     setTitle,
     setupCalculatedColumnsStateSuite,
@@ -27,14 +28,10 @@ async function openDialog(
     });
     api.showColumnMenu('calc');
     await clickMenuOption('Edit Calculated Column');
-    await waitFor(() => getDialog());
+    await waitFor(() => getCalculatedColumnDialog());
     await asyncSetTimeout(0);
     vi.useFakeTimers();
     return api;
-}
-
-function closeDialog(): void {
-    document.querySelector<HTMLButtonElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
 }
 
 describe('calculated columns - applyDebounce', () => {
@@ -133,7 +130,9 @@ describe('calculated columns - applyDebounce', () => {
             await vi.advanceTimersByTimeAsync(action === 'refresh' ? 200 : 400);
             expect(api.getColumn('calc')!.getColDef().headerName).toBe('Calc');
             expect(cellValue(api, 'calc')).toBe(20);
-            expect(getDialog().querySelector('input')!.value).toBe(action === 'refresh' ? 'Pending' : 'Forbidden');
+            expect(getCalculatedColumnDialog().querySelector('input')!.value).toBe(
+                action === 'refresh' ? 'Pending' : 'Forbidden'
+            );
             closeDialog();
             expect(api.getColumn('calc')!.getColDef().headerName).toBe('Calc');
         }
@@ -226,7 +225,7 @@ describe('calculated columns - applyDebounce', () => {
             getValidationErrors: () => ({ calculatedExpression: ['Not allowed'] }),
         });
         setExpression('[A] +');
-        const input = getDialog().querySelector('textarea')!;
+        const input = getCalculatedColumnDialog().querySelector('textarea')!;
         expect(input.validationMessage).toBe('Not allowed');
         expect(input.getAttribute('aria-invalid')).toBe('true');
         expect(cellValue(api, 'calc')).toBe(10);

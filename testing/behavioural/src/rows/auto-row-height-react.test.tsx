@@ -1,7 +1,7 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 import React from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
@@ -21,12 +21,7 @@ describe('Auto row height (React)', () => {
 
     const cellHeights = new Map<string, number>();
 
-    let uninstallResizeObserver: () => void;
-
     beforeAll(() => {
-        // happy-dom drops resize callbacks, so without this a cell is only ever measured as it is built.
-        uninstallResizeObserver = installMockResizeObserver();
-
         // No TestGridsManager here, so the layout mock has to be installed by hand.
         mockGridLayout.init();
         mockGridLayout.useRealOffsetDimensions = true;
@@ -40,7 +35,6 @@ describe('Auto row height (React)', () => {
     });
 
     afterAll(() => {
-        uninstallResizeObserver();
         mockGridLayout.useRealOffsetDimensions = false;
         mockGridLayout.elementHeightOverride = undefined;
     });

@@ -1,11 +1,5 @@
 import { getByRole, waitFor } from '@testing-library/dom';
-import {
-    TestGridsManager,
-    clickMenuOption,
-    fireGridPointerDown,
-    openMenuOption,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, fireGridPointerDown, openMenuOption } from 'ag-test-utils';
 
 import type { IMenuConfigParams, IMenuItemComp, IMenuItemParams, MenuItemDef } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -57,16 +51,9 @@ async function menuContaining(optionName: string): Promise<HTMLElement> {
 
 describe('MenuItemDef ariaLabel', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
-    let restoreOffsetParent: (() => void) | undefined;
-
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     /** Asserts the accessible names of the top-level items and the sub menu items of an open menu. */

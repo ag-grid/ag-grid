@@ -52,7 +52,10 @@ describe('flashCells during React async cell mount', () => {
             </div>
         );
 
-        await waitFor(() => expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0));
+        await waitFor(() => {
+            expect(gridApi?.isDestroyed()).toBe(false);
+            expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0);
+        });
 
         const additions = Array.from({ length: 20 }, (_, i) => ({ id: `ADDED_${i}`, make: `Make ${i}` }));
 

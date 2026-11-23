@@ -6,7 +6,6 @@ import {
     TestGridsManager,
     getVisibleTooltips,
     installFilterLayoutMock,
-    installMockResizeObserver,
     selectRichSelectRow,
     triggerResizeObservers,
     uninstallFilterLayoutMock,
@@ -47,7 +46,6 @@ describe('Tooltip positioning callbacks', () => {
         ],
     });
     let componentParams: ITooltipParams | undefined;
-    let uninstallResizeObserver: (() => void) | undefined;
     class RecordingTooltip implements ITooltipComp {
         private readonly gui = document.createElement('div');
 
@@ -67,8 +65,6 @@ describe('Tooltip positioning callbacks', () => {
 
     afterEach(() => {
         gridMgr.reset();
-        uninstallResizeObserver?.();
-        uninstallResizeObserver = undefined;
         uninstallFilterLayoutMock();
         vi.clearAllTimers();
         vi.useRealTimers();
@@ -627,7 +623,6 @@ describe('Tooltip positioning callbacks', () => {
     );
 
     test('positions an asynchronously initialised custom tooltip before post-processing and preserves customer styles', async () => {
-        uninstallResizeObserver = installMockResizeObserver();
         let finishInit: (() => void) | undefined;
         const popups: Array<{ position: string | undefined; hasClass: boolean; arrowOffset: string }> = [];
         class DelayedTooltip implements ITooltipComp {
@@ -693,7 +688,6 @@ describe('Tooltip positioning callbacks', () => {
     });
 
     test('repositions a tooltip resized by its initial postProcessPopup callback', async () => {
-        uninstallResizeObserver = installMockResizeObserver();
         const postProcessPopup = vi.fn(({ ePopup }) => {
             Object.defineProperty(ePopup, 'offsetHeight', { value: 100, configurable: true });
             Object.defineProperty(ePopup, 'clientHeight', { value: 100, configurable: true });
@@ -742,7 +736,6 @@ describe('Tooltip positioning callbacks', () => {
     test.each(['hide', 'destroy'] as const)(
         'repositions late content changes and stops observing on %s',
         async (close) => {
-            uninstallResizeObserver = installMockResizeObserver();
             const postProcessPopup = vi.fn();
             const api = await gridMgr.createGridAndWait('tooltip-position-late-resize', {
                 columnDefs: [{ field: 'value', tooltip: true, tooltipComponent: RecordingTooltip }],

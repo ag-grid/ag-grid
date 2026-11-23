@@ -10,7 +10,7 @@ import {
 } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions, IHeaderComp } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererComp, ICellRendererParams, IHeaderComp } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     KeyCode,
@@ -455,6 +455,94 @@ describe('Row Numbers Cell Selection', () => {
 
         api.setGridOption('cellSelection', { enableHeaderHighlight: true });
         await waitFor(() => expect(highlighted()).toBe('1,2'));
+    });
+
+    // A row number renderer recording, per row index, how often it was created and refreshed.
+    function countingRowNumberRenderer() {
+        const inits: number[] = [];
+        const refreshes: number[] = [];
+        class CountingRowNumberRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                inits[params.node.rowIndex!] = (inits[params.node.rowIndex!] ?? 0) + 1;
+                this.eGui.textContent = params.valueFormatted ?? String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: ICellRendererParams): boolean {
+                refreshes[params.node.rowIndex!] = (refreshes[params.node.rowIndex!] ?? 0) + 1;
+                this.eGui.textContent = params.valueFormatted ?? String(params.value);
+                return true;
+            }
+        }
+        return { CountingRowNumberRenderer, inits, refreshes };
+    }
+
+    const rowNumberCells = (api: GridApi) =>
+        Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`));
+
+    test('a rowNumbers update redefining the column keeps each custom renderer, whether it adds a valueFormatter or changes the width', async () => {
+        const { CountingRowNumberRenderer, inits, refreshes } = countingRowNumberRenderer();
+        const [api] = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 3),
+            cellSelection: true,
+            rowNumbers: { cellRenderer: CountingRowNumberRenderer },
+        });
+        const cellsBefore = rowNumberCells(api);
+        expect(cellsBefore.map((cell) => cell.textContent)).toEqual(['1', '2', '3']);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(refreshes).toEqual([]);
+
+        api.setGridOption('rowNumbers', {
+            cellRenderer: CountingRowNumberRenderer,
+            valueFormatter: (params) => `#${params.value}`,
+        });
+        await waitFor(() => expect(rowNumberCells(api).map((cell) => cell.textContent)).toEqual(['#1', '#2', '#3']));
+        // keeping the renderer is a negative: nothing positive lands after a late re-creation to poll for
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        await asyncSetTimeout(20);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(rowNumberCells(api).map((cell, i) => cell === cellsBefore[i])).toEqual([true, true, true]);
+
+        api.setGridOption('rowNumbers', {
+            cellRenderer: CountingRowNumberRenderer,
+            valueFormatter: (params) => `#${params.value}`,
+            width: 90,
+        });
+        await waitFor(() => expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)!.getActualWidth()).toBe(90));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        await asyncSetTimeout(20);
+        expect(inits).toEqual([1, 1, 1]);
+    });
+
+    test('cellSelection gaining enableHeaderHighlight highlights the row numbers of the ranged rows, refreshing their cells in place', async () => {
+        const { CountingRowNumberRenderer, inits, refreshes } = countingRowNumberRenderer();
+        const [api] = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 3),
+            cellSelection: true,
+            rowNumbers: { cellRenderer: CountingRowNumberRenderer },
+        });
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['sport', 'year', 'amount', 'day'] });
+        const cellsBefore = rowNumberCells(api);
+        const highlighted = () =>
+            rowNumberCells(api).map((cell) => cell.classList.contains('ag-row-number-range-highlight'));
+        expect(highlighted()).toEqual([false, false, false]);
+        // adding the range itself refreshes the row number cells; the option change is read as a delta on top
+        await waitFor(() => expect([refreshes[0], refreshes[1]]).toEqual([1, 1]));
+        // eslint-disable-next-line no-restricted-syntax -- settling window so the range's own refreshes are all in the baseline
+        await asyncSetTimeout(20);
+        const refreshesBefore = [...refreshes];
+
+        api.setGridOption('cellSelection', { enableHeaderHighlight: true });
+        await waitFor(() => expect(highlighted()).toEqual([true, true, false]));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) refresh
+        await asyncSetTimeout(20);
+        expect([0, 1].map((i) => refreshes[i] - refreshesBefore[i])).toEqual([1, 1]);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(rowNumberCells(api).map((cell, i) => cell === cellsBefore[i])).toEqual([true, true, true]);
     });
 });
 
@@ -1360,13 +1448,13 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
-    test('rowNumbers options mutated at runtime propagate via updateColumns', async () => {
+    test('rowNumbers options mutated at runtime update the row numbers column', async () => {
         const api = await createGrid({
             columnDefs,
             rowData,
             rowNumbers: { width: 80 },
         });
-        await new GridColumns(api, `rowNumbers options mutated at runtime propagate via updateColumns setup`)
+        await new GridColumns(api, `rowNumbers options mutated at runtime update the row numbers column setup`)
             .checkColumns(`
                 LEFT
                 └── ag-Grid-RowNumbersColumn width:80 !resizable !sortable suppressMovable lockPosition:left
@@ -1383,7 +1471,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         api.setGridOption('rowNumbers', { width: 120, headerTooltip: 'New' });
         await new GridColumns(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).checkColumns(`
             LEFT
             └── ag-Grid-RowNumbersColumn width:120 !resizable !sortable suppressMovable lockPosition:left
@@ -1395,7 +1483,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
         await new GridRows(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"

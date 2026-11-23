@@ -816,6 +816,47 @@ describe('ag-grid calculated columns', () => {
         expect(getRowsCalls).toBe(callsAfterLoad);
     });
 
+    test('a server-side calculated column shows the new results when a columnDefs update redefines a column it reads', async () => {
+        const rowData = [
+            { id: 'r1', revenue: 10, cost: 3 },
+            { id: 'r2', revenue: 20, cost: 8 },
+        ];
+        const api = createGrid('calculated-ssrm-input-redefined', {
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    params.success({
+                        rowData: rowData.slice(params.request.startRow, params.request.endRow),
+                        rowCount: rowData.length,
+                    });
+                },
+            },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+        });
+        await waitForFirstRow(api);
+        const profits = () => ({
+            values: [0, 1].map((i) =>
+                api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(i)!, colKey: 'profit', useFormatter: false })
+            ),
+            rendered: [0, 1].map(
+                (i) => getGridElement(api)!.querySelector(`.ag-row[row-index="${i}"] [col-id="profit"]`)!.textContent
+            ),
+        });
+        expect(profits()).toEqual({ values: [7, 12], rendered: ['7', '12'] });
+
+        api.setGridOption('columnDefs', [
+            { field: 'revenue', valueGetter: (params) => params.data.revenue * 10 },
+            { field: 'cost' },
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+        ]);
+
+        expect(profits()).toEqual({ values: [97, 192], rendered: ['97', '192'] });
+    });
+
     test('server-side store updates invalidate calculated column caches', async () => {
         let rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
         const api = createGrid('calculated-server-side-cache', {
@@ -908,5 +949,46 @@ describe('ag-grid calculated columns', () => {
         await waitFor(() =>
             expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7)
         );
+    });
+
+    test('a columnDefs update in the same order re-renders the cells, and one in a new order reorders the columns', async () => {
+        let formatterCalls = 0;
+        const valueFormatter = () => {
+            ++formatterCalls;
+            return 'x';
+        };
+        const makeDefs = (order: string[]): ColDef[] => {
+            const defs: Record<string, ColDef> = {
+                a: { field: 'a', valueFormatter },
+                b: { field: 'b', valueFormatter },
+                g: { field: 'g', valueFormatter },
+                calc: { colId: 'calc', calculatedExpression: '[a] + [b]', valueFormatter },
+            };
+            return order.map((id) => defs[id]);
+        };
+        const api = createGrid('calculated-reorder-refresh-count', {
+            columnDefs: makeDefs(['a', 'b', 'g', 'calc']),
+            rowData: [
+                { id: 'r1', a: 1, b: 2, g: 'x' },
+                { id: 'r2', a: 3, b: 4, g: 'y' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        const columnIds = () => api.getColumns()!.map((column) => column.getColId());
+        expect(columnIds()).toEqual(['a', 'b', 'g', 'calc']);
+
+        formatterCalls = 0;
+        api.updateGridOptions({ columnDefs: makeDefs(['a', 'b', 'g', 'calc']) });
+        await asyncSetTimeout(0);
+        const sameOrder = formatterCalls;
+        expect(columnIds()).toEqual(['a', 'b', 'g', 'calc']);
+
+        formatterCalls = 0;
+        api.updateGridOptions({ columnDefs: makeDefs(['b', 'a', 'g', 'calc']) });
+        await asyncSetTimeout(0);
+        expect(columnIds()).toEqual(['b', 'a', 'g', 'calc']);
+
+        // positive control: the same-order update does re-render the visible cells
+        expect(sameOrder).toBeGreaterThan(0);
     });
 });
