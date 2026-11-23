@@ -138,6 +138,11 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
     private refresh(previousOptions?: ViewSubscriptionOptions): void {
         const options = this.getOptions();
         const lastOptions = options ?? previousOptions ?? this.lastOptions;
+        if (this.preDestroyed) {
+            // `preDestroy` unsubscribes the rows once every `gridPreDestroyed` listener has run, as the handler can throw.
+            this.lastOptions = lastOptions;
+            return;
+        }
         this.lastOptions = options;
         const wanted =
             !!options && this.gos.get('viewSubscriptionActive') !== false && !this.preDestroyed && this.canSubscribe();
@@ -205,7 +210,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean, IVie
 
     public preDestroy(): void {
         this.preDestroyed = true;
-        this.stop();
+        this.stop(this.getOptions() ?? this.lastOptions);
     }
 
     public override destroy(): void {

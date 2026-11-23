@@ -15,7 +15,7 @@ import type {
     IServerSideGetRowsParams,
     ViewSubscriptionOptions,
 } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
+import { ColumnApiModule, GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -32,6 +32,7 @@ describe('SSRM viewSubscription', () => {
             ServerSideRowModelApiModule,
             ViewSubscriptionModule,
             ScrollApiModule,
+            ColumnApiModule,
             RowGroupingModule,
             PinnedRowModule,
         ],
@@ -576,6 +577,45 @@ describe('SSRM viewSubscription', () => {
         expect(preDestroyed.sort()).toEqual(['addEventListener', 'onGridPreDestroyed']);
         expect(apiDestroyedInHandler).toBe(false);
         expect(api.isDestroyed()).toBe(true);
+    });
+
+    test('a gridPreDestroyed listener that removes the option does not skip onGridPreDestroyed', async () => {
+        const preDestroyed: string[] = [];
+        const api = await createFlatGrid({ onGridPreDestroyed: () => preDestroyed.push('onGridPreDestroyed') });
+        const unsubscribed: string[] = [];
+        api.setGridOption('viewSubscription', {
+            subscribeRows: () => {},
+            unsubscribeRows: (rows) => {
+                unsubscribed.push(...rows.map((row) => row.id));
+                throw new Error('unsubscribe failed');
+            },
+        });
+        api.addEventListener('gridPreDestroyed', () => api.setGridOption('viewSubscription', undefined));
+
+        expect(() => api.destroy()).toThrow('unsubscribe failed');
+
+        expect(preDestroyed).toEqual(['onGridPreDestroyed']);
+        expect(unsubscribed.sort()).toEqual(range(0, 5).sort());
+        expect(api.isDestroyed()).toBe(true);
+    });
+
+    test('updateGridOptions applies the other options when unsubscribeRows throws', async () => {
+        const api = await createFlatGrid();
+        api.setGridOption('viewSubscription', {
+            subscribeRows: () => {},
+            unsubscribeRows: () => {
+                throw new Error('unsubscribe failed');
+            },
+        });
+
+        expect(() =>
+            api.updateGridOptions({
+                viewSubscriptionActive: false,
+                columnDefs: [{ field: 'value', headerName: 'Price' }, { field: 'id' }],
+            })
+        ).toThrow('unsubscribe failed');
+
+        expect(api.getColumns()?.map((col) => col.getColId())).toEqual(['value', 'id']);
     });
 
     test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
