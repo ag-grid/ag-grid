@@ -1,3 +1,5 @@
+import { withoutQuery } from '@ag-website-shared/components/website-monitoring/cspViolationReporter';
+
 type InteractionAttributes = Record<string, string | number | boolean>;
 
 // Search Console's boundary between a good INP and one that needs improvement
@@ -11,10 +13,11 @@ const SAME_PAINT_MS = 8;
 const MAX_TARGET_DEPTH = 3;
 const MAX_SCRIPTS = 3;
 const MAX_SCRIPT_LABEL_LENGTH = 120;
-// Long animation frames older than this cannot overlap an interaction that is still being collected
-const ANIMATION_FRAME_RETENTION_MS = 30_000;
-// URL schemes whose remainder can be the script itself
+// Long animation frames and iframe entries older than this cannot match an interaction still being collected
+const RETENTION_MS = 30_000;
+// Script URLs whose remainder can be the script itself, or identify the visitor, e.g. an extension's id
 const OPAQUE_SCRIPT_URL = /^(data|blob|javascript):/i;
+const OTHER_SCRIPT_URL = /^([a-z][a-z\d+.-]*):\/\//i;
 
 // Not in TypeScript's DOM lib yet: https://w3c.github.io/event-timing/#dom-performanceeventtiming-interactionid
 interface InteractionTiming extends PerformanceEventTiming {
@@ -55,6 +58,14 @@ interface ObservedDocument {
     id: number;
     frame: 'top' | 'iframe';
     framePath?: string;
+}
+
+interface DocumentObservers {
+    // Holds the document, if it is an iframe's, so its observers can be let go of once it is removed
+    iframe?: HTMLIFrameElement;
+    // Collects the entries that have been queued but not yet delivered
+    takeRecords: () => void;
+    disconnect: () => void;
 }
 
 interface PendingInteraction {
@@ -109,40 +120,19 @@ function describeTarget(node: Node | null | undefined): string {
     return parts.join(' > ');
 }
 
-/**
- * A script's source URL or invoker, in a form safe to send: origin and path for an http(s) URL, only
- * the scheme for a URL that can hold the script itself, such as data:, and otherwise the label without
- * any query, e.g. 'BUTTON#sort.onclick' or 'TimerHandler:setTimeout'.
- */
+// A script's source or invoker without its query: only the scheme of a URL other than http(s), and
+// labels such as 'TimerHandler:setTimeout' as they are
 function describeScript(value: string): string {
-    const opaque = OPAQUE_SCRIPT_URL.exec(value);
-    if (opaque) {
-        return `${opaque[1].toLowerCase()}:`;
-    }
-    let described = value.split('?')[0];
     if (/^https?:/i.test(value)) {
-        try {
-            const url = new URL(value);
-            described = url.origin + url.pathname;
-        } catch {
-            // Keep the label without its query
-        }
+        return withoutQuery(value).split('?')[0].slice(0, MAX_SCRIPT_LABEL_LENGTH);
     }
-    return described.slice(0, MAX_SCRIPT_LABEL_LENGTH);
+    const scheme = (OPAQUE_SCRIPT_URL.exec(value) ?? OTHER_SCRIPT_URL.exec(value))?.[1];
+    return scheme ? `${scheme.toLowerCase()}:` : value.split('?')[0].slice(0, MAX_SCRIPT_LABEL_LENGTH);
 }
 
 /**
- * Reports each interaction that takes `SLOW_INTERACTION_MS` or longer to paint, with what was
- * interacted with, where the time went, how far the page had loaded, and the scripts running in the
- * long animation frames it overlapped.
- *
- * The SDK reports INP as a number, from the top-level page's Event Timing. Search Console's INP also
- * counts interactions inside iframes, of which the top page sees part at most: a tap's pointer events
- * but not its click, and none of its processing time. So this also observes the page's own
- * same-origin iframes directly, such as the docs examples, though not iframes nested inside them.
- *
- * Observers are buffered, so interactions from before monitoring started are still reported. Stops
- * observing once `MAX_REPORTS` have been sent.
+ * Reports each interaction that takes `SLOW_INTERACTION_MS` or longer to paint, with its target,
+ * timing, load state and the scripts in the long animation frames it overlapped, up to `MAX_REPORTS`.
  *
  * @returns a function that stops reporting
  */
@@ -153,18 +143,15 @@ export function startSlowInteractionReporting(
     const topDocument = topWindow.document;
     const now = () => topWindow.performance.timeOrigin + topWindow.performance.now();
 
-    // From every observed document. They share one main thread, so a long frame in one example delays
-    // a tap in another, and Chromium reports a same-origin iframe's long animation frames to the top
-    // page rather than to the iframe.
+    // From the top page, which Chromium also reports same-origin iframes' long animation frames to
     const animationFrames: AnimationFrame[] = [];
     const navigations: Navigation[] = [{ isInitial: true, start: topWindow.performance.timeOrigin }];
     const pending = new Map<string, PendingInteraction>();
     const reported = new Set<string>();
-    // Absolute start times of the slow entries collected from iframes
-    const iframeEntryStarts: number[] = [];
+    // The slow entries collected from iframes, by absolute start time
+    const iframeEntries: Array<{ start: number; collectedAt: number }> = [];
     const observedDocuments = new WeakSet<Document>();
-    // The iframe that holds each observed document, if any, so it can be let go of once removed
-    const observers = new Map<() => void, HTMLIFrameElement | undefined>();
+    const observers = new Set<DocumentObservers>();
     let nextDocumentId = 0;
     let reportCount = 0;
     let flushTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -186,9 +173,8 @@ export function startSlowInteractionReporting(
         loadState,
         entries,
     }: PendingInteraction): InteractionAttributes => {
-        // The interaction's duration is its longest event's, so the breakdown and long animation frames
-        // come from that event's paint and the events painted with it. A press and a release can be
-        // painted separately, with the pointer held in between.
+        // Broken down from the paint of the longest event, which sets the duration. A press and a release
+        // can be painted separately.
         const longest = entries.reduce((a, b) => (b.duration > a.duration ? b : a));
         const startTime = longest.startTime;
         const endTime = longest.startTime + longest.duration;
@@ -250,13 +236,12 @@ export function startSlowInteractionReporting(
         return attributes;
     };
 
-    // Chromium reports a tap inside a same-origin iframe to the top page as well. The iframe's own
-    // report can tell its processing apart from the time to paint, so the top page's is only a fallback.
+    // Chromium also reports an iframe tap to the top page, whose copy is only a fallback
     const isReportedByIframe = ({ targetsObservedIframe, timeOrigin, entries }: PendingInteraction) =>
         targetsObservedIframe &&
         entries.some((entry) =>
-            iframeEntryStarts.some(
-                (iframeStart) => Math.abs(iframeStart - (timeOrigin + entry.startTime)) <= SAME_PAINT_MS
+            iframeEntries.some(
+                (iframeEntry) => Math.abs(iframeEntry.start - (timeOrigin + entry.startTime)) <= SAME_PAINT_MS
             )
         );
 
@@ -306,10 +291,18 @@ export function startSlowInteractionReporting(
                 })),
             });
         }
-        const cutoff = now() - ANIMATION_FRAME_RETENTION_MS;
+        const cutoff = now() - RETENTION_MS;
         while (animationFrames.length && animationFrames[0].end < cutoff) {
             animationFrames.shift();
         }
+    };
+
+    const recordIframeEntry = (start: number) => {
+        const collectedAt = now();
+        while (iframeEntries.length && iframeEntries[0].collectedAt < collectedAt - RETENTION_MS) {
+            iframeEntries.shift();
+        }
+        iframeEntries.push({ start, collectedAt });
     };
 
     const recordInteractions = (observed: ObservedDocument, entries: InteractionTiming[]) => {
@@ -336,12 +329,14 @@ export function startSlowInteractionReporting(
             }
             interaction.entries.push(entry);
             if (frame === 'iframe') {
-                iframeEntryStarts.push(win.performance.timeOrigin + entry.startTime);
+                recordIframeEntry(win.performance.timeOrigin + entry.startTime);
             }
         }
         scheduleFlush();
     };
 
+    // The top page sees only part of a tap inside an iframe, and none of its processing, so the page's
+    // own same-origin iframes are observed too, such as the docs examples
     const observeWindow = (win: typeof window, iframe?: HTMLIFrameElement) => {
         let doc: Document;
         try {
@@ -375,27 +370,39 @@ export function startSlowInteractionReporting(
             durationThreshold: SLOW_INTERACTION_MS,
         } as PerformanceObserverInit);
 
-        const animationFrameObserver = supportsAnimationFrames(win)
-            ? new win.PerformanceObserver((list) =>
-                  recordAnimationFrames(timeOrigin, list.getEntries() as LongAnimationFrameTiming[])
-              )
-            : undefined;
+        const animationFrameObserver =
+            !iframe && supportsAnimationFrames(win)
+                ? new win.PerformanceObserver((list) =>
+                      recordAnimationFrames(timeOrigin, list.getEntries() as LongAnimationFrameTiming[])
+                  )
+                : undefined;
         animationFrameObserver?.observe({ type: 'long-animation-frame', buffered: true });
 
+        const documentObservers: DocumentObservers = {
+            iframe,
+            takeRecords: () => {
+                recordAnimationFrames(
+                    timeOrigin,
+                    (animationFrameObserver?.takeRecords() ?? []) as LongAnimationFrameTiming[]
+                );
+                recordInteractions(observed, interactionObserver.takeRecords() as InteractionTiming[]);
+            },
+            disconnect: () => {
+                interactionObserver.disconnect();
+                animationFrameObserver?.disconnect();
+                win.removeEventListener('pagehide', onPageHide);
+                observers.delete(documentObservers);
+            },
+        };
         // Its observers go with the document, so let go of them when the frame navigates away. A
         // document kept in the back/forward cache comes back with its observers still running.
         const onPageHide = (event: PageTransitionEvent) => {
             if (!event.persisted) {
-                disconnect();
+                documentObservers.takeRecords();
+                documentObservers.disconnect();
             }
         };
-        const disconnect = () => {
-            interactionObserver.disconnect();
-            animationFrameObserver?.disconnect();
-            win.removeEventListener('pagehide', onPageHide);
-            observers.delete(disconnect);
-        };
-        observers.set(disconnect, iframe);
+        observers.add(documentObservers);
         if (iframe) {
             win.addEventListener('pagehide', onPageHide);
         }
@@ -410,7 +417,7 @@ export function startSlowInteractionReporting(
     // An iframe removed from the page, such as an example on the page navigated away from, does not
     // always fire pagehide
     const disconnectRemovedIframes = () => {
-        observers.forEach((iframe, disconnect) => {
+        observers.forEach(({ iframe, disconnect }) => {
             if (iframe && !iframe.isConnected) {
                 disconnect();
             }
@@ -433,20 +440,27 @@ export function startSlowInteractionReporting(
             navigation.end = now();
         }
     };
+    // The page may not run again once hidden, so send everything, including entries not yet delivered
+    const sendAll = () => {
+        observers.forEach(({ takeRecords }) => takeRecords());
+        flush(true);
+    };
     const onVisibilityChange = () => {
         if (topDocument.visibilityState === 'hidden') {
-            flush(true);
+            sendAll();
         }
     };
 
+    // Discards anything not yet sent
     const dispose = () => {
         clearTimeout(flushTimeout);
         flushTimeout = undefined;
-        observers.forEach((_iframe, disconnect) => disconnect());
+        observers.forEach(({ disconnect }) => disconnect());
         topDocument.removeEventListener('load', onLoad, true);
         topDocument.removeEventListener('astro:before-preparation', onBeforePreparation);
         topDocument.removeEventListener('astro:page-load', onPageLoad);
         topDocument.removeEventListener('visibilitychange', onVisibilityChange);
+        topWindow.removeEventListener('pagehide', sendAll);
     };
 
     if (!supportsInteractions(topWindow)) {
@@ -457,6 +471,8 @@ export function startSlowInteractionReporting(
     topDocument.addEventListener('astro:before-preparation', onBeforePreparation);
     topDocument.addEventListener('astro:page-load', onPageLoad);
     topDocument.addEventListener('visibilitychange', onVisibilityChange);
+    // A tab can be closed without a visibility change
+    topWindow.addEventListener('pagehide', sendAll);
 
     observeWindow(topWindow);
     topDocument.querySelectorAll('iframe').forEach(observeIframe);

@@ -9,9 +9,14 @@ const TOP_TIME_ORIGIN = 90_000;
 // Loaded at 300ms, DOMContentLoaded at 400ms, complete at 900ms
 const NAVIGATION_TIMING = { domInteractive: 300, domContentLoadedEventStart: 400, domComplete: 900 };
 
+type EntryType = 'event' | 'long-animation-frame';
+
 interface FakeFrame {
     win: typeof window;
-    emit: (type: 'event' | 'long-animation-frame', entries: object[]) => void;
+    // Delivers entries to the observer's callback
+    emit: (type: EntryType, entries: object[]) => void;
+    // Queues entries that the observer has not delivered yet
+    queue: (type: EntryType, entries: object[]) => void;
     dispatch: (type: string, properties?: object) => void;
 }
 
@@ -29,21 +34,30 @@ function createFakeFrame({
     supportsInteractions?: boolean;
     navigationTiming?: typeof NAVIGATION_TIMING;
 } = {}): FakeFrame {
-    const callbacks = new Map<string, (entries: object[]) => void>();
+    const observers = new Map<string, FakePerformanceObserver>();
 
     class FakePerformanceObserver {
         static supportedEntryTypes = ['event', 'long-animation-frame'];
+        queued: object[] = [];
         private type = '';
 
         constructor(private readonly callback: (list: { getEntries: () => object[] }) => void) {}
 
         observe({ type }: PerformanceObserverInit) {
             this.type = type!;
-            callbacks.set(this.type, (entries) => this.callback({ getEntries: () => entries }));
+            observers.set(this.type, this);
+        }
+
+        deliver(entries: object[]) {
+            this.callback({ getEntries: () => entries });
+        }
+
+        takeRecords() {
+            return this.queued.splice(0);
         }
 
         disconnect() {
-            callbacks.delete(this.type);
+            observers.delete(this.type);
         }
     }
 
@@ -70,7 +84,8 @@ function createFakeFrame({
 
     return {
         win: win as unknown as typeof window,
-        emit: (type, entries) => callbacks.get(type)?.(entries),
+        emit: (type, entries) => observers.get(type)?.deliver(entries),
+        queue: (type, entries) => observers.get(type)?.queued.push(...entries),
         dispatch: (type, properties) => events.dispatchEvent(Object.assign(new Event(type), properties)),
     };
 }
@@ -291,7 +306,7 @@ describe('startSlowInteractionReporting', () => {
         expect(attributes).not.toHaveProperty('script3Source');
     });
 
-    test('sends only the scheme of a script URL that can hold the script, and no query or long label', () => {
+    test('sends only the scheme of a script URL other than http(s), and no query or long label', () => {
         start();
 
         const script = (sourceURL: string, invoker: string, duration: number) => ({
@@ -307,7 +322,7 @@ describe('startSlowInteractionReporting', () => {
                 styleAndLayoutStart: 0,
                 scripts: [
                     script('data:text/javascript,alert(document.cookie)', 'blob:https://www.ag-grid.com/0b1d', 60),
-                    script('', 'TimerHandler:setTimeout?token=secret', 50),
+                    script('chrome-extension://abcdefgh/content.js', 'TimerHandler:setTimeout?token=secret', 50),
                     script('https://www.ag-grid.com/_astro/a.js?v=1#top', 'A'.repeat(200), 40),
                 ],
             },
@@ -319,7 +334,7 @@ describe('startSlowInteractionReporting', () => {
             expect.objectContaining({
                 script1Source: 'data:',
                 script1Invoker: 'blob:',
-                script2Source: '',
+                script2Source: 'chrome-extension:',
                 script2Invoker: 'TimerHandler:setTimeout',
                 script3Source: 'https://www.ag-grid.com/_astro/a.js',
                 script3Invoker: 'A'.repeat(120),
@@ -448,6 +463,52 @@ describe('startSlowInteractionReporting', () => {
             expect(send).toHaveBeenCalledWith(expect.objectContaining({ frame: 'iframe' }));
         });
 
+        test("collects an iframe's undelivered interactions before letting it go", () => {
+            const example = createFakeFrame({ path: EXAMPLE_PATH });
+            addIframe(example.win);
+            start();
+
+            example.queue('event', [interaction()]);
+            example.dispatch('pagehide');
+            vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+            expect(send).toHaveBeenCalledWith(expect.objectContaining({ frame: 'iframe' }));
+        });
+
+        test('attributes an iframe interaction to the long animation frames the top page saw', () => {
+            const example = createFakeFrame({ path: EXAMPLE_PATH, timeOrigin: TOP_TIME_ORIGIN + 2_000 });
+            addIframe(example.win);
+            start();
+
+            const animationFrame = (startTime: number) => ({
+                startTime,
+                duration: 200,
+                styleAndLayoutStart: 0,
+                scripts: [
+                    {
+                        sourceURL: 'https://www.ag-grid.com/files/ag-grid-community.js',
+                        invoker: 'DIV.onclick',
+                        invokerType: 'event-listener',
+                        duration: 120,
+                    },
+                ],
+            });
+            // The same frame, in each document's own time. Chromium reports it to the top page only.
+            top.emit('long-animation-frame', [animationFrame(2_450)]);
+            example.emit('long-animation-frame', [animationFrame(450)]);
+            example.emit('event', [interaction()]);
+            vi.advanceTimersByTime(FLUSH_DELAY_MS);
+
+            expect(send).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    frame: 'iframe',
+                    animationFrameCount: 1,
+                    scriptDuration: 120,
+                    script1Source: 'https://www.ag-grid.com/files/ag-grid-community.js',
+                })
+            );
+        });
+
         test('skips cross-origin iframes', () => {
             const crossOrigin = {
                 get document(): Document {
@@ -491,6 +552,27 @@ describe('startSlowInteractionReporting', () => {
 
         vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
         document.dispatchEvent(new Event('visibilitychange'));
+
+        expect(send).toHaveBeenCalledTimes(1);
+    });
+
+    test('collects entries its observers have not delivered yet when the page is hidden', () => {
+        start();
+        top.queue('long-animation-frame', [{ startTime: 450, duration: 200, styleAndLayoutStart: 0, scripts: [] }]);
+        top.queue('event', [interaction()]);
+
+        vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
+        document.dispatchEvent(new Event('visibilitychange'));
+
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(send).toHaveBeenCalledWith(expect.objectContaining({ animationFrameCount: 1 }));
+    });
+
+    test('sends what it has collected when the page is closed without being hidden first', () => {
+        start();
+        top.emit('event', [interaction()]);
+
+        top.dispatch('pagehide');
 
         expect(send).toHaveBeenCalledTimes(1);
     });

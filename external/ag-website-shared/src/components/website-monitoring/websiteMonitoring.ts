@@ -63,9 +63,7 @@ let loadedOnErrorPage = false;
  * while it is still loading cancels the start. Once initialised it has no way to stop, so `stop`
  * then ends the session and reloads the page, which leaves it uninitialised.
  *
- * Also reports the page's CSP violations, which the SDK does not, and its slow interactions with
- * what made them slow, including those inside same-origin iframes such as the docs examples, of
- * which the SDK's INP sees only part (see ./slowInteractionReporter).
+ * Also reports the page's CSP violations, which the SDK does not, and its slow interactions.
  *
  * Does not start in a document that loaded on an error page, see `loadedOnErrorPage`.
  *
@@ -168,8 +166,7 @@ function stopMonitoring() {
         state = 'stopped';
         cspViolations?.discard();
     } else if (state === 'running') {
-        // Drops any slow interactions still waiting to be sent, which would otherwise go out as the
-        // page reloads
+        // Drops slow interactions still waiting to be sent, which would otherwise go out as the page reloads
         stopReportingSlowInteractions?.();
         sdk?.terminateSession();
         window.location.reload();
