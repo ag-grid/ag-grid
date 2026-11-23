@@ -319,8 +319,7 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     suppressBuiltInTooltips?: boolean,
-    /** Custom component for built-in control hints and automatic truncated-text tooltips,
-         * separate from a column's `tooltipComponent`.
+    /** Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
          * Receives `IBuiltInTooltipParams`.
          * @agModule `TooltipModule`
          */

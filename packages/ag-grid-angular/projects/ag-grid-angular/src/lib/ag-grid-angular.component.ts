@@ -482,8 +482,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public suppressBuiltInTooltips: boolean | undefined = undefined;
-    /** Custom component for built-in control hints and automatic truncated-text tooltips,
-     * separate from a column's `tooltipComponent`.
+    /** Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
      * Receives `IBuiltInTooltipParams`.
      * @agModule `TooltipModule`
      */

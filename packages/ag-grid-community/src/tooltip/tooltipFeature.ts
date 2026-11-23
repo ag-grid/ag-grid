@@ -31,7 +31,6 @@ export function _resolveTextTooltip(gos: GridOptionsService, tooltip: ResolvedTo
     const whenTruncated = _isShowTooltipWhenTruncated(gos);
     if (tooltip.automatic) {
         tooltip.value = whenTruncated ? (tooltip.params?.valueFormatted ?? tooltip.params?.value) : undefined;
-        tooltip.componentDefinition = undefined;
     }
     const value = tooltip.value;
     const { value: rawValue, valueFormatted } = tooltip.params ?? {};
@@ -53,6 +52,14 @@ export function shouldDisplayTextTooltip(tooltip: ResolvedTooltip, getElement: (
     }
     const element = getElement();
     return !!element && (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight);
+}
+
+export function getGroupTooltipTextElement(element: HTMLElement | undefined, scope = ''): HTMLElement | undefined {
+    return (
+        element?.querySelector<HTMLElement>(
+            `${scope}.ag-cell-wrapper.ag-group-default-inner-renderer > .ag-group-value`
+        ) ?? undefined
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

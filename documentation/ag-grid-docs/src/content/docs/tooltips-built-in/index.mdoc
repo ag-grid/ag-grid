@@ -39,8 +39,6 @@ const gridOptions = {
 
 Use `builtInTooltipComponent` to customise rendering; it does not inherit `colDef.tooltipComponent` or its parameters. The component receives the localised `text`, `location`, `control` and available column or row metadata. Render `text`, not the ordinary tooltip component's `value`.
 
-This component also renders automatic [truncated-text tooltips](./tooltips-columns/#tooltips-for-truncated-text). For these, `control` is undefined; use `location` to identify the source. Their trigger and delays follow the ordinary tooltip settings.
-
 The grid supplies the background, border, padding and arrow; your component renders the content.
 
 ```{% frameworkTransform=true %}

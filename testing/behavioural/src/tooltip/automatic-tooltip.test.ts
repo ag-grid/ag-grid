@@ -13,11 +13,24 @@ import type {
     IBuiltInTooltipParams,
     ICellRendererParams,
     IHeaderParams,
+    ITooltipParams,
     SetFilterHandler,
     ValueFormatterFunc,
 } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+class CustomTooltip {
+    private readonly eGui = document.createElement('div');
+
+    public init({ value, prefix }: ITooltipParams & { prefix: string }): void {
+        this.eGui.textContent = `${prefix}: ${value}`;
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+}
 
 describe('Automatic truncated-text tooltips', () => {
     const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -148,53 +161,59 @@ describe('Automatic truncated-text tooltips', () => {
         }
     });
 
-    test('uses the built-in component for automatic text without applying control-hint suppression', async () => {
-        const received: IBuiltInTooltipParams[] = [];
-        class BuiltInTooltip {
-            private eGui = document.createElement('div');
-            public init(params: IBuiltInTooltipParams): void {
-                received.push(params);
-                this.eGui.textContent = params.text;
+    test.each([false, true])(
+        'uses the source component or default for text tooltips (configured=%s)',
+        async (configured) => {
+            const received: IBuiltInTooltipParams[] = [];
+            class BuiltInTooltip {
+                private eGui = document.createElement('div');
+                public init(params: IBuiltInTooltipParams): void {
+                    received.push(params);
+                    this.eGui.textContent = params.text;
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
             }
-            public getGui(): HTMLElement {
-                return this.eGui;
+            const { api, grid } = await createGrid({
+                defaultColDef: { tooltip: configured || undefined, headerTooltip: configured || undefined },
+                columnDefs: [
+                    {
+                        headerName: 'Group',
+                        headerTooltip: configured || undefined,
+                        tooltipComponentSelector: () => ({ component: CustomTooltip, params: { prefix: 'Group' } }),
+                        children: [
+                            {
+                                field: 'value',
+                                tooltipComponent: CustomTooltip,
+                                tooltipComponentParams: { prefix: 'Column' },
+                            },
+                        ],
+                    },
+                    { colId: 'fallback', field: 'value' },
+                ],
+                builtInTooltipComponent: BuiltInTooltip,
+            });
+            for (const [selector, labelSelector, expected] of [
+                ['.ag-cell[col-id="value"]', '', 'Column: Displayed value'],
+                ['.ag-header-cell[col-id="value"]', '.ag-header-cell-text', 'Column: Value'],
+                ['.ag-header-group-cell:not(.ag-header-span-height)', '.ag-header-group-text', 'Group: Group'],
+                ['.ag-cell[col-id="fallback"]', '', 'Displayed value'],
+            ]) {
+                const source = grid.querySelector<HTMLElement>(selector)!;
+                setTruncated(labelSelector ? source.querySelector<HTMLElement>(labelSelector)! : source, true);
+                await hover(source);
+                expect(getVisibleTooltips()[0]).toHaveTextContent(expected);
+                const tooltip = getVisibleTooltips()[0];
+                api.setGridOption('suppressBuiltInTooltips', true);
+                await vi.advanceTimersByTimeAsync(1);
+                expect(getVisibleTooltips()).toEqual([tooltip]);
+                fireEvent.mouseLeave(source);
+                await vi.advanceTimersByTimeAsync(1000);
             }
+            expect(received).toHaveLength(0);
         }
-        class ColumnTooltip {
-            private eGui = document.createElement('div');
-            public init({ value }: { value: string }): void {
-                this.eGui.textContent = `Custom: ${value}`;
-            }
-            public getGui(): HTMLElement {
-                return this.eGui;
-            }
-        }
-        const { api, grid } = await createGrid({
-            defaultColDef: { tooltipComponent: ColumnTooltip },
-            columnDefs: [{ field: 'value' }, { colId: 'configured', field: 'value', tooltip: true }],
-            builtInTooltipComponent: BuiltInTooltip,
-        });
-        const cell = grid.querySelector<HTMLElement>('.ag-cell[col-id="value"]')!;
-        const configured = grid.querySelector<HTMLElement>('.ag-cell[col-id="configured"]')!;
-        setTruncated(cell, true);
-        setTruncated(configured, true);
-        await hover(cell);
-        expect(received).toHaveLength(1);
-        expect(received[0]).toMatchObject({ text: 'Displayed value', location: 'cell', control: undefined });
-        const tooltip = getVisibleTooltips()[0];
-        api.setGridOption('suppressBuiltInTooltips', true);
-        await vi.advanceTimersByTimeAsync(1);
-        expect(getVisibleTooltips()).toEqual([tooltip]);
-        fireEvent.mouseLeave(cell);
-        await hover(configured);
-        await vi.advanceTimersByTimeAsync(100);
-        expect(getVisibleTooltips()[0]).toHaveTextContent('Custom: Displayed value');
-        fireEvent.mouseLeave(configured);
-        await hover(cell);
-        await vi.advanceTimersByTimeAsync(100);
-        expect(getVisibleTooltips()).toHaveLength(1);
-        expect(received).toHaveLength(2);
-    });
+    );
 
     test.each([undefined, true, 'Additional information'])(
         'does not infer truncation in a custom renderer (%s)',
@@ -347,7 +366,15 @@ describe('Automatic truncated-text tooltips', () => {
 
     test.each([undefined, false, true])('Set Filter items follow showTooltips=%s', async (showTooltips) => {
         const { api } = await createGrid({
-            columnDefs: [{ field: 'value', filter: 'agSetColumnFilter', filterParams: { showTooltips } }],
+            columnDefs: [
+                {
+                    field: 'value',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { showTooltips },
+                    tooltipComponent: CustomTooltip,
+                    tooltipComponentParams: { prefix: 'Item' },
+                },
+            ],
         });
         vi.useRealTimers();
         api.showColumnFilter('value');
@@ -361,7 +388,7 @@ describe('Automatic truncated-text tooltips', () => {
         setTruncated(label, true);
         await hover(label.closest<HTMLElement>('.ag-virtual-list-item')!);
         expect(getVisibleTooltips().map((element) => element.textContent)).toEqual(
-            showTooltips === false ? [] : ['Displayed value']
+            showTooltips === false ? [] : ['Item: Displayed value']
         );
     });
 
@@ -862,25 +889,40 @@ describe('Automatic truncated-text tooltips', () => {
         expect(source.getAttribute('title') || undefined).toBe(custom ? undefined : 'Displayed value');
     });
 
-    test('provides column and group label previews in the Columns Tool Panel', async () => {
-        const { grid } = await createGrid({
-            columnDefs: [
-                { headerName: 'Long column group', children: [{ field: 'value', headerName: 'Long column name' }] },
-            ],
-            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
-            enableBrowserTooltips: true,
-        });
-        for (const selector of [
-            '.ag-column-select-column .ag-column-select-column-label',
-            '.ag-column-select-column-group .ag-column-select-column-label',
-        ]) {
-            const label = grid.querySelector<HTMLElement>(selector)!;
-            setTruncated(label, true);
-            const source = label.closest<HTMLElement>('.ag-virtual-list-item')!;
-            await hover(source);
-            expect(source).toHaveAttribute('title', label.textContent);
+    test.each([false, true])(
+        'provides column and group label previews in the Columns Tool Panel (native=%s)',
+        async (native) => {
+            const { grid } = await createGrid({
+                columnDefs: [
+                    {
+                        headerName: 'Long column group',
+                        tooltipComponent: CustomTooltip,
+                        tooltipComponentParams: { prefix: 'Custom' },
+                        children: [{ field: 'value', headerName: 'Long column name' }],
+                    },
+                ],
+                defaultColDef: { tooltipComponent: CustomTooltip, tooltipComponentParams: { prefix: 'Custom' } },
+                sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+                enableBrowserTooltips: native,
+            });
+            for (const selector of [
+                '.ag-column-select-column .ag-column-select-column-label',
+                '.ag-column-select-column-group .ag-column-select-column-label',
+            ]) {
+                const label = grid.querySelector<HTMLElement>(selector)!;
+                setTruncated(label, true);
+                const source = label.closest<HTMLElement>('.ag-virtual-list-item')!;
+                await hover(source);
+                if (native) {
+                    expect(source).toHaveAttribute('title', label.textContent);
+                } else {
+                    expect(getVisibleTooltips()[0]).toHaveTextContent(`Custom: ${label.textContent}`);
+                }
+                fireEvent.mouseLeave(source);
+                await vi.advanceTimersByTimeAsync(1000);
+            }
         }
-    });
+    );
 
     test.each(['columns', 'chooser'])('previews built-in label renderer fallbacks in %s', async (panel) => {
         const columnLabelRendererSelector = () => undefined;
@@ -919,7 +961,14 @@ describe('Automatic truncated-text tooltips', () => {
         }
     });
 
-    test.each(['rowGroup', 'pivot', 'aggregation'] as const)('previews the actual %s pill label', async (purpose) => {
+    test.each([
+        { purpose: 'rowGroup', native: false },
+        { purpose: 'rowGroup', native: true },
+        { purpose: 'pivot', native: false },
+        { purpose: 'pivot', native: true },
+        { purpose: 'aggregation', native: false },
+        { purpose: 'aggregation', native: true },
+    ])('previews the actual $purpose pill label (native=$native)', async ({ purpose, native }) => {
         const { grid } = await createGrid({
             columnDefs: [
                 {
@@ -928,6 +977,8 @@ describe('Automatic truncated-text tooltips', () => {
                     rowGroup: purpose === 'rowGroup',
                     pivot: purpose === 'pivot',
                     aggFunc: purpose === 'aggregation' ? 'sum' : undefined,
+                    tooltipComponent: CustomTooltip,
+                    tooltipComponentParams: { prefix: 'Pill' },
                 },
                 { field: 'group', rowGroup: true },
                 { field: 'amount', aggFunc: 'sum' },
@@ -935,7 +986,7 @@ describe('Automatic truncated-text tooltips', () => {
             rowData: [{ group: 'Group', value: 1, amount: 1 }],
             pivotMode: purpose === 'pivot',
             sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
-            enableBrowserTooltips: true,
+            enableBrowserTooltips: native,
         });
         const label = grid.querySelector<HTMLElement>(
             `.ag-column-drop-${purpose.toLowerCase()} .ag-column-drop-cell-text`
@@ -943,7 +994,11 @@ describe('Automatic truncated-text tooltips', () => {
         setTruncated(label, true);
         const source = label.closest<HTMLElement>('.ag-column-drop-cell')!;
         await hover(source);
-        expect(source).toHaveAttribute('title', label.textContent);
+        if (native) {
+            expect(source).toHaveAttribute('title', label.textContent);
+        } else {
+            expect(getVisibleTooltips()[0]).toHaveTextContent(`Pill: ${label.textContent}`);
+        }
     });
 
     test.each([false, true])(

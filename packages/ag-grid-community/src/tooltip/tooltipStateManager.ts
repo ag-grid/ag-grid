@@ -122,7 +122,7 @@ export class TooltipStateManager extends BaseTooltipStateManager<
         callback: (comp: IComponent<ITooltipParams<any, any, any>>) => void
     ): void {
         const control = this.tooltipCtrl.control as BuiltInTooltipControl | undefined;
-        if (control || tooltip.automatic) {
+        if (control) {
             const { value, ...common } = params;
             const userDetails = _getBuiltInTooltipCompDetails(this.beans.userCompFactory, {
                 ...common,

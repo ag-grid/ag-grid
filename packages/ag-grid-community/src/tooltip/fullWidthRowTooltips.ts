@@ -8,7 +8,12 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { TooltipCallbackParams } from './tooltipComponent';
 import type { ResolvedTooltip, TooltipFeature, TooltipSource } from './tooltipFeature';
-import { _getCellTooltipComponentDefinition, _isShowTooltipWhenTruncated, _resolveTextTooltip } from './tooltipFeature';
+import {
+    _getCellTooltipComponentDefinition,
+    _isShowTooltipWhenTruncated,
+    _resolveTextTooltip,
+    getGroupTooltipTextElement,
+} from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveGroupTooltipValue } from './tooltipValueUtils';
 
 interface RowTooltip {
@@ -233,11 +238,7 @@ export class FullWidthRowTooltips extends BeanStub {
                 ) {
                     return undefined;
                 }
-                return (
-                    eGui.querySelector<HTMLElement>(
-                        '.ag-cell-wrapper.ag-group-default-inner-renderer > .ag-group-value'
-                    ) ?? undefined
-                );
+                return getGroupTooltipTextElement(eGui);
             },
         };
         const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);

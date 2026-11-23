@@ -10,7 +10,7 @@ import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { TooltipCallbackParams, TooltipLocation } from './tooltipComponent';
 import type { ResolvedTooltip, TooltipSource, TooltipSourceParams } from './tooltipFeature';
-import { _getCellTooltipComponentDefinition, _resolveTextTooltip } from './tooltipFeature';
+import { _getCellTooltipComponentDefinition, _resolveTextTooltip, getGroupTooltipTextElement } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveCellTooltipValue } from './tooltipValueUtils';
 import type { LegacyTooltipFieldResolution } from './tooltipValueUtils';
 
@@ -46,11 +46,7 @@ const getTextElement = (ctrl: CellCtrl): HTMLElement | undefined => {
         return getOverflowTarget(ctrl);
     }
 
-    return (
-        getOverflowTarget(ctrl)?.querySelector<HTMLElement>(
-            ':scope > .ag-cell-wrapper.ag-group-default-inner-renderer > .ag-group-value'
-        ) ?? undefined
-    );
+    return getGroupTooltipTextElement(getOverflowTarget(ctrl), ':scope > ');
 };
 
 const resolveLegacyFieldValue = (

@@ -72,7 +72,7 @@ const gridOptions = {
 
 Set `tooltipShowMode: 'standard'` to disable automatic text tooltips and show configured tooltips without requiring truncation. Use `tooltip: false`, `headerTooltip: false` or Set Filter `filterParams.showTooltips: false` to disable individual sources.
 
-Automatic text tooltips use the default tooltip or `builtInTooltipComponent`, not the column's `tooltipComponent`. `suppressBuiltInTooltips` only hides control hints, not automatic text tooltips. Existing control hints and floating-filter previews retain their own display rules.
+Automatic and configured tooltips use the same component selection: the column/group's custom component where supported, otherwise the default tooltip. `builtInTooltipComponent` and `suppressBuiltInTooltips` only apply to control hints. Existing control hints and floating-filter previews retain their own display rules.
 
 ## Tooltips for Custom Components
 
