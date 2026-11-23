@@ -46,7 +46,6 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'clipboardDelimiter',
     'rowGroupPanelShow',
     'multiSortKey',
-    'multiSortIndexStyle',
     'pivotColumnGroupTotals',
     'pivotRowTotals',
     'pivotPanelShow',

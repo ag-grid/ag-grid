@@ -96,8 +96,8 @@ describe('Sorting', () => {
         expect(sortOrderEl('c')?.classList.contains('ag-hidden')).toBe(true);
     });
 
-    test('the sort-order index follows the sort icon and is styled by multiSortIndexStyle', async () => {
-        const api = await gridMgr.createGridAndWait('sort-order-style', {
+    test('the sort-order index follows the sort icon', async () => {
+        const api = await gridMgr.createGridAndWait('sort-order-position', {
             columnDefs: [
                 { field: 'a', sort: 'asc', sortIndex: 0 },
                 { field: 'b', sort: 'desc', sortIndex: 1 },
@@ -112,15 +112,6 @@ describe('Sorting', () => {
         });
 
         expect(sortOrderEl.parentElement!.lastElementChild).toBe(sortOrderEl);
-        expect(sortOrderEl.classList.contains('ag-sort-order-inline')).toBe(true);
-
-        api.setGridOption('multiSortIndexStyle', 'superscript');
-        expect(sortOrderEl.classList.contains('ag-sort-order-superscript')).toBe(true);
-        expect(sortOrderEl.classList.contains('ag-sort-order-inline')).toBe(false);
-
-        api.setGridOption('multiSortIndexStyle', 'subscript');
-        expect(sortOrderEl.classList.contains('ag-sort-order-subscript')).toBe(true);
-        expect(sortOrderEl.classList.contains('ag-sort-order-superscript')).toBe(false);
     });
 
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];

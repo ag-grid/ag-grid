@@ -365,32 +365,8 @@
 }
 
 .ag-sort-order {
-    --ag-internal-sort-order-gap: calc(var(--ag-spacing) * 0.5);
-
-    padding-left: var(--ag-internal-sort-order-gap);
-    color: var(--ag-subtle-text-color);
-}
-
-/* centred like the header text with the same line height, so the two share a baseline */
-.ag-sort-order-inline {
-    align-self: center;
-    font-size: var(--ag-header-sort-index-inline-font-size);
-}
-
-.ag-sort-order-superscript {
-    --ag-internal-sort-order-gap: calc(var(--ag-spacing) * 0.125);
-
-    align-self: flex-start;
-    font-size: var(--ag-header-sort-index-superscript-font-size);
-    line-height: 1;
-}
-
-.ag-sort-order-subscript {
-    --ag-internal-sort-order-gap: calc(var(--ag-spacing) * 0.125);
-
-    align-self: flex-end;
-    font-size: var(--ag-header-sort-index-subscript-font-size);
-    line-height: 1;
+    padding-left: calc(var(--ag-spacing) * 0.5);
+    color: var(--ag-header-sort-index-text-color);
 }
 
 /* the number stays on the far side of the arrow from the text, so spacing is mirrored */
@@ -405,6 +381,6 @@
     }
 
     .ag-sort-order {
-        padding-right: var(--ag-internal-sort-order-gap);
+        padding-right: calc(var(--ag-spacing) * 0.5);
     }
 }

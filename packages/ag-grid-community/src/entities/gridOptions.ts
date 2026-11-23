@@ -2068,16 +2068,6 @@ export interface GridOptions<TData = any> {
      */
     multiSortKey?: 'ctrl';
     /**
-     * How the sort index is displayed beside the sort icon when more than one column is sorted.
-     *  - `'inline'`: The same size as the header text, on the same line.
-     *  - `'superscript'`: Smaller text, raised to the top of the sort icon.
-     *  - `'subscript'`: Smaller text, lowered to the bottom of the sort icon.
-     *
-     * Font sizes are set with the `headerSortIndexInlineFontSize`, `headerSortIndexSuperscriptFontSize` and `headerSortIndexSubscriptFontSize` theme parameters.
-     * @default 'inline'
-     */
-    multiSortIndexStyle?: 'inline' | 'superscript' | 'subscript';
-    /**
      * Set to `true` to suppress sorting of un-sorted data to match original row data.
      * @default false
      */
