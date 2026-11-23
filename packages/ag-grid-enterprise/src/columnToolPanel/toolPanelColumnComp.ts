@@ -2,6 +2,7 @@ import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
@@ -172,9 +173,11 @@ export class ToolPanelColumnComp extends Component {
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();
+        this.refreshAriaChecked();
 
         this.setupTooltip();
 
@@ -235,7 +238,14 @@ export class ToolPanelColumnComp extends Component {
         this.onChangeCommon(nextState);
     }
 
+    private onCheckboxMouseDown(e: MouseEvent): void {
+        // Keeps focus on the tree item, as a label click does, so both expose the same selected state.
+        e.preventDefault();
+        this.focusWrapper.focus();
+    }
+
     private onCheckboxChanged(event: any): void {
+        this.refreshAriaChecked();
         this.onChangeCommon(event.selected);
     }
 
@@ -275,6 +285,10 @@ export class ToolPanelColumnComp extends Component {
         _setAriaLabel(focusWrapper, `${displayName} ${columnLabel}`);
         this.cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
+    }
+
+    private refreshAriaChecked(): void {
+        _setAriaChecked(this.focusWrapper, this.cbSelect.getValue());
     }
 
     private setupDragging(): void {
