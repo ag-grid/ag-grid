@@ -97,6 +97,7 @@ describe('buildComparisonPageMarkdown', () => {
             '### Try AG Grid with your own data',
             '## Related pages',
             '### Compare',
+            '## Sources',
         ]);
     });
 
@@ -151,6 +152,21 @@ describe('buildComparisonPageMarkdown', () => {
         );
         expect(markdown).toContain(
             '- You want a grid UI.\n\n[Get started free](https://www.ag-grid.com/react-data-grid/getting-started/)\n\n### Choose TanStack Table if'
+        );
+    });
+
+    test('lists each claim source once, in page order, with the oldest date it was checked', () => {
+        const proseClaims = [
+            {
+                claim: 'Has an MIT licence.',
+                sourceUrl: 'https://tanstack.com/license',
+                checkedOn: new Date('2026-11-05'),
+            },
+            { claim: 'Is headless.', ...SOURCE, checkedOn: new Date('2026-10-20') },
+        ];
+
+        expect(build({ content: { ...CONTENT, proseClaims } })).toMatch(
+            /## Sources\n\nCompetitor claims on this page were checked against these sources:\n\n- <https:\/\/tanstack\.com\/table\/latest> \(checked 20 October 2026\)\n- <https:\/\/tanstack\.com\/license> \(checked 5 November 2026\)\n$/
         );
     });
 

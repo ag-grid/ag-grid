@@ -1,3 +1,4 @@
+import { listClaims } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import {
     COMPARISON_SECTIONS,
     FEATURE_STATUS,
@@ -40,6 +41,27 @@ const featureCell = (value: FeatureCell): string =>
 
 const pricingCost = (cost: PricingCost): string =>
     [PRICING_COST[cost].symbol, PRICING_COST[cost].label].filter(Boolean).join(' ');
+
+/**
+ * Each distinct source, in the order the page first cites it, with its oldest `checkedOn`: the date
+ * every claim citing it has been checked since.
+ */
+const sourcesMarkdown = (content: ComparisonPageContent): string[] => {
+    const oldestCheck = new Map<string, Date>();
+    for (const { sourceUrl, checkedOn } of listClaims(content)) {
+        const seen = oldestCheck.get(sourceUrl);
+        if (!seen || checkedOn < seen) {
+            oldestCheck.set(sourceUrl, checkedOn);
+        }
+    }
+    return [
+        `## ${COMPARISON_SECTIONS.sources}`,
+        'Competitor claims on this page were checked against these sources:',
+        [...oldestCheck]
+            .map(([sourceUrl, checkedOn]) => `- <${sourceUrl}> (checked ${formatLastUpdated(checkedOn)})`)
+            .join('\n'),
+    ];
+};
 
 const table = (header: string[], rows: string[][]): string[] => [
     `| ${header.map(cell).join(' | ')} |`,
@@ -149,6 +171,7 @@ export function buildComparisonPageMarkdown({
                   ]),
               ]
             : [],
+        sourcesMarkdown(content),
     ];
 
     return `${blocks

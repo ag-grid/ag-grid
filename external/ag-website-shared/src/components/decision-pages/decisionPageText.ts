@@ -14,6 +14,7 @@ export const COMPARISON_SECTIONS = {
     faq: 'Frequently asked questions',
     getStarted: 'Get started',
     related: 'Related pages',
+    sources: 'Sources',
 } as const;
 
 export const chooseIfHeading = (name: string): string => `Choose ${name} if`;

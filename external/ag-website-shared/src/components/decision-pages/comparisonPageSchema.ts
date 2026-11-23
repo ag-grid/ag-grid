@@ -115,20 +115,16 @@ export function createComparisonPageSchema({ reviewerKeys, now = new Date() }: C
     });
 }
 
-export interface StaleClaim {
+export interface PageClaim {
     /** Where the claim is in the page content, e.g. `pricing.competitor.0`. */
     path: string;
     sourceUrl: string;
     checkedOn: Date;
 }
 
-/** The competitor claims last checked more than `maxClaimAgeDays` before `now`, for a build warning. */
-export function findStaleClaims(
-    content: ComparisonPageContent,
-    { now = new Date(), maxClaimAgeDays = DEFAULT_MAX_CLAIM_AGE_DAYS }: { now?: Date; maxClaimAgeDays?: number } = {}
-): StaleClaim[] {
-    const oldestAllowed = now.getTime() - maxClaimAgeDays * DAY_MS;
-    const claims = [
+/** Every competitor claim on a page, in page order: feature cells, pricing rows, then prose. */
+export function listClaims(content: ComparisonPageContent): PageClaim[] {
+    return [
         ...content.features.groups.flatMap((group, groupIndex) =>
             group.rows.map((row, rowIndex) => ({
                 path: `features.groups.${groupIndex}.rows.${rowIndex}.competitor`,
@@ -137,9 +133,14 @@ export function findStaleClaims(
         ),
         ...content.pricing.competitor.map((row, index) => ({ path: `pricing.competitor.${index}`, ...row })),
         ...content.proseClaims.map((claim, index) => ({ path: `proseClaims.${index}`, ...claim })),
-    ];
+    ].map(({ path, sourceUrl, checkedOn }) => ({ path, sourceUrl, checkedOn }));
+}
 
-    return claims
-        .filter(({ checkedOn }) => checkedOn.getTime() < oldestAllowed)
-        .map(({ path, sourceUrl, checkedOn }) => ({ path, sourceUrl, checkedOn }));
+/** The competitor claims last checked more than `maxClaimAgeDays` before `now`, for a build warning. */
+export function findStaleClaims(
+    content: ComparisonPageContent,
+    { now = new Date(), maxClaimAgeDays = DEFAULT_MAX_CLAIM_AGE_DAYS }: { now?: Date; maxClaimAgeDays?: number } = {}
+): PageClaim[] {
+    const oldestAllowed = now.getTime() - maxClaimAgeDays * DAY_MS;
+    return listClaims(content).filter(({ checkedOn }) => checkedOn.getTime() < oldestAllowed);
 }
