@@ -174,7 +174,7 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 
 ## Deprecations
 
-Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38. See [Migrating to Filter Handlers](./component-filter/#migrating-to-filter-handlers) for the features filter handlers enable.
+Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38. See [Migrating to Filter Handlers](./enable-filter-handlers-migration/), and [Filter Component](./component-filter/#migrating-to-filter-handlers) for the features filter handlers enable.
 
 When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development. Setting `enableFilterHandlers: false` logs a deprecation in development only.
 
@@ -215,6 +215,6 @@ Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filte
 
 {% /if %}
 
-See [Migrating to Filter Handlers](./component-filter/#migrating-to-filter-handlers).
+See [Migrating to Filter Handlers](./enable-filter-handlers-migration/).
 
 {% changelogSection version=$migrationVersion /%}

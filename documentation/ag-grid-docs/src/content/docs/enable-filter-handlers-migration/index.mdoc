@@ -4,7 +4,7 @@ description: "A step-by-step reference for migrating a grid from legacy filter m
 ---
 
 {% note %}
-This page is written primarily for AI agents and automated tooling that migrate whole codebases, so it is deliberately exhaustive and repeats some of the [Filter Component](./component-filter/#migrating-to-filter-handlers) page. If you are migrating by hand, start with the [Overview](#overview) below, and use the rest of the page as a checklist.
+This page is written primarily for AI agents and automated tooling that migrate whole codebases, so it is deliberately exhaustive. If you are migrating by hand, start with the [Overview](#overview) below, and use the rest of the page as a checklist.
 {% /note %}
 
 ## Overview
@@ -103,6 +103,8 @@ const gridOptions = {
 `doesFilterPass` is only called while the model is not `null`. With the Server-Side Row Model the logic is not used, so `doesFilterPass` can be omitted, but the component must still be migrated. If the filter needs `getModelAsString` or to process the model before applying it, provide a `handler` instead. See [Filter Logic](./component-filter/#filter-logic).
 
 `doesFilterPass` receives `model`, the filter model, which is not `null` while the filter is active. It also receives `node` and `data` for the row, and `handlerParams`, where `handlerParams.getValue(node)` returns the column's value for the row.
+
+A component used with [Filter Buttons](./filter-applying/), including apply, reads `state.model` and reports changes through `onStateChange({ model })` instead of `model` and `onModelChange(model)`. See [Using Buttons](./component-filter/#using-buttons).
 
 A component registered by name migrates the same way. Keep the registration and give its name as `component`:
 

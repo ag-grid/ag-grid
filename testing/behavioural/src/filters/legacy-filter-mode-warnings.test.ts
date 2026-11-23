@@ -209,7 +209,7 @@ describe('legacy filter mode warnings', () => {
             createGrid({ columnDefs: [{ field: 'name', filter: LegacyFilter }] });
 
             const { message } = raised.find((event) => event.id === 343)!;
-            const linkIndex = message.indexOf('/component-filter/#migrating-to-filter-handlers');
+            const linkIndex = message.indexOf('/enable-filter-handlers-migration/');
             expect(linkIndex).toBeGreaterThan(-1);
             expect(linkIndex).toBeLessThan(message.indexOf('enableFilterHandlers: false'));
         });

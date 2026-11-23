@@ -12,12 +12,12 @@ export interface IFloatingFilterParent {
      * @param type operation type selected.
      * @param value model-typed value entered.
      *
-     * @deprecated v37 Use `enableFilterHandlers` and call `onModelChange` from a `FloatingFilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+     * @deprecated v37 Use `enableFilterHandlers` and call `onModelChange` from a `FloatingFilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     onFloatingFilterChanged(type: string | null, value: any): void;
 }
 type InbuiltParentType = IFloatingFilterParent & IFilter;
-/** @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` and `onModelChange` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
+/** @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` and `onModelChange` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
 interface SharedFloatingFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -52,7 +52,7 @@ export interface IFloatingFilterParams<
      * If the parent filter doesn't exist (filters are lazily created as needed)
      * then it returns null rather than calling getModel() on the parent filter.
      *
-     * @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+     * @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     currentParentModel: () => any;
 
@@ -69,7 +69,7 @@ export interface IFloatingFilterParams<
      * it should have a method your floating A can call to set the state
      * when the user updates via the floating filter.
      *
-     * @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` and `onModelChange` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers).
+     * @deprecated v37 Use `enableFilterHandlers` and the `FloatingFilterDisplayParams` `model` and `onModelChange` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     parentFilterInstance: (callback: IFloatingFilterParentCallback<P>) => void;
 }
@@ -120,7 +120,7 @@ export interface BaseFloatingFilter {
     afterGuiAttached?(): void;
 }
 
-/** @deprecated v37 Use `enableFilterHandlers` with a `FloatingFilterDisplay` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
+/** @deprecated v37 Use `enableFilterHandlers` with a `FloatingFilterDisplay` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     /**
      * Gets called every time the parent filter changes.
@@ -144,7 +144,7 @@ export interface FloatingFilterDisplay<
     refresh(params: FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>): void;
 }
 
-/** @deprecated v37 Use `enableFilterHandlers` with a `FloatingFilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/component-filter/#migrating-to-filter-handlers). */
+/** @deprecated v37 Use `enableFilterHandlers` with a `FloatingFilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
 
 export interface FloatingFilterDisplayComp<TData = any, TContext = any, TModel = any, TCustomParams = object>

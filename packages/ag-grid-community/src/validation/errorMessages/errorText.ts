@@ -75,7 +75,7 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 For more info see: ${getValidationDocLink()}/modules/`;
 };
 
-const legacyFilterMigrationLink = () => `${getValidationDocLink()}/component-filter/#migrating-to-filter-handlers`;
+const legacyFilterMigrationLink = () => `${getValidationDocLink()}/enable-filter-handlers-migration/`;
 
 const legacyFilterModeAdvice = () =>
     `Legacy filter mode stops being the default in v38, when \`enableFilterHandlers\` defaults to \`true\`. Migrate to filter handlers: ${legacyFilterMigrationLink()} . Or, to keep legacy filter mode for now, set \`enableFilterHandlers: false\`.`;

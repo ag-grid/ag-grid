@@ -481,7 +481,7 @@
     {
         "errorIds": [343, 344, 345, 346, 347, 348],
         "text": "Migrating to Filter Handlers",
-        "url": "./component-filter/#migrating-to-filter-handlers",
+        "url": "./enable-filter-handlers-migration/",
         "description": "Moving from legacy filter mode to filter handlers, and opting out with `enableFilterHandlers: false`."
     }
 ]
