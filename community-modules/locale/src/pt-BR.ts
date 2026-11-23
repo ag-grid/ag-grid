@@ -425,7 +425,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     of: 'de',
     page: 'Página',
     paginationRowSummary: '${first} até ${last} de ${count}',
-    paginationRowSummaryUnknownTotal: '${first} até ${last} de ${count}',
+    paginationRowSummaryUnknownTotal: '${first} até ${last}, total desconhecido',
     pageLastRowUnknown: '?',
     nextPage: 'Próxima Página',
     lastPage: 'Última Página',

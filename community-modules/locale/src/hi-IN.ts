@@ -801,7 +801,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaPaginationRowSummaryLoading: '${first} से रिकॉर्ड लोड हो रहे हैं',
     ariaPaginationPageSummary: '${total} में से पेज ${page}',
     ariaPaginationPageSummaryUnknownTotal: 'पेज ${page}',
-    ariaAnnouncementSeparator: '. ',
+    ariaAnnouncementSeparator: '। ',
     ariaPaginationPanelLabel: 'ग्रिड पेजिनेशन',
     ariaChartMenuClose: 'चार्ट संपादन मेनू बंद करें',
     ariaChartSelected: 'चयनित',

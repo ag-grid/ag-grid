@@ -425,7 +425,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     of: 'od',
     page: 'Strana',
     paginationRowSummary: '${first} do ${last} od ${count}',
-    paginationRowSummaryUnknownTotal: '${first} do ${last} od ${count}',
+    paginationRowSummaryUnknownTotal: '${first} do ${last}, ukupan broj nije poznat',
     pageLastRowUnknown: '?',
     nextPage: 'Sledeća strana',
     lastPage: 'Poslednja strana',

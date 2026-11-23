@@ -421,7 +421,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     of: 'z',
     page: 'Strana',
     paginationRowSummary: '${first} do ${last} z ${count}',
-    paginationRowSummaryUnknownTotal: '${first} do ${last} z ${count}',
+    paginationRowSummaryUnknownTotal: '${first} do ${last}, celkový počet neznámy',
     pageLastRowUnknown: '?',
     nextPage: 'Ďalšia strana',
     lastPage: 'Posledná strana',

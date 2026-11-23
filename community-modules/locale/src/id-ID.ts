@@ -428,7 +428,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     of: 'dari',
     page: 'Halaman',
     paginationRowSummary: '${first} sampai ${last} dari ${count}',
-    paginationRowSummaryUnknownTotal: '${first} sampai ${last} dari ${count}',
+    paginationRowSummaryUnknownTotal: '${first} sampai ${last}, total tidak diketahui',
     pageLastRowUnknown: '?',
     nextPage: 'Halaman Berikutnya',
     lastPage: 'Halaman Terakhir',

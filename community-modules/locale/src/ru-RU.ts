@@ -427,7 +427,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     of: 'из',
     page: 'Страница',
     paginationRowSummary: '${first} по ${last} из ${count}',
-    paginationRowSummaryUnknownTotal: '${first} по ${last} из ${count}',
+    paginationRowSummaryUnknownTotal: '${first} по ${last}, общее количество неизвестно',
     pageLastRowUnknown: '?',
     nextPage: 'Следующая страница',
     lastPage: 'Последняя страница',

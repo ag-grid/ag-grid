@@ -423,7 +423,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     of: 'af',
     page: 'Side',
     paginationRowSummary: '${first} til ${last} af ${count}',
-    paginationRowSummaryUnknownTotal: '${first} til ${last} af ${count}',
+    paginationRowSummaryUnknownTotal: '${first} til ${last}, samlet antal ukendt',
     pageLastRowUnknown: '?',
     nextPage: 'Næste Side',
     lastPage: 'Sidste Side',

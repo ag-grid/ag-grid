@@ -426,7 +426,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     of: 'no',
     page: 'Lappuse',
     paginationRowSummary: '${first} līdz ${last} no ${count}',
-    paginationRowSummaryUnknownTotal: '${first} līdz ${last} no ${count}',
+    paginationRowSummaryUnknownTotal: '${first} līdz ${last}, kopējais skaits nav zināms',
     pageLastRowUnknown: '?',
     nextPage: 'Nākamā lappuse',
     lastPage: 'Pēdējā lappuse',

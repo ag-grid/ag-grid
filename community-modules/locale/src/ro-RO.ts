@@ -424,7 +424,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     of: 'din',
     page: 'Pagină',
     paginationRowSummary: '${first} la ${last} din ${count}',
-    paginationRowSummaryUnknownTotal: '${first} la ${last} din ${count}',
+    paginationRowSummaryUnknownTotal: '${first} la ${last}, total necunoscut',
     pageLastRowUnknown: '?',
     nextPage: 'Pagina Următoare',
     lastPage: 'Ultima Pagină',

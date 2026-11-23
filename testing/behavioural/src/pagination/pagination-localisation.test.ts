@@ -170,10 +170,7 @@ describe('pagination localisation', () => {
             const api = createGrid({ localeText: AG_GRID_LOCALE_JA_JP });
 
             await waitForAnnouncement(api, '5ページ中1ページ目');
-            const text = getLiveRegionText(api);
-            expect(text).toContain('1～10件目のレコードを表示中（全50件）');
-            expect(text).toContain('。 ');
-            expect(text).not.toContain('. ');
+            expect(getLiveRegionText(api)).toContain('1～10件目のレコードを表示中（全50件）。5ページ中1ページ目');
         });
 
         test('en-US keeps ". " between announcements', async () => {

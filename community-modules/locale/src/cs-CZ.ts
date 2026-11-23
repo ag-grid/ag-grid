@@ -422,7 +422,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     of: 'z',
     page: 'Stránka',
     paginationRowSummary: '${first} do ${last} z ${count}',
-    paginationRowSummaryUnknownTotal: '${first} do ${last} z ${count}',
+    paginationRowSummaryUnknownTotal: '${first} do ${last}, celkový počet neznámý',
     pageLastRowUnknown: '?',
     nextPage: 'Další stránka',
     lastPage: 'Poslední stránka',

@@ -420,7 +420,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     of: 'של',
     page: 'דף',
     paginationRowSummary: '${first} עד ${last} מתוך ${count}',
-    paginationRowSummaryUnknownTotal: '${first} עד ${last} מתוך ${count}',
+    paginationRowSummaryUnknownTotal: '${first} עד ${last}, הסך הכולל אינו ידוע',
     pageLastRowUnknown: '?',
     nextPage: 'עמוד הבא',
     lastPage: 'עמוד אחרון',

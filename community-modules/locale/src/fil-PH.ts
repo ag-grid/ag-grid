@@ -430,7 +430,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     of: 'ng',
     page: 'Pahina',
     paginationRowSummary: '${first} hanggang ${last} ng ${count}',
-    paginationRowSummaryUnknownTotal: '${first} hanggang ${last} ng ${count}',
+    paginationRowSummaryUnknownTotal: '${first} hanggang ${last}, hindi alam ang kabuuan',
     pageLastRowUnknown: '?',
     nextPage: 'Susunod na Pahina',
     lastPage: 'Huling Pahina',

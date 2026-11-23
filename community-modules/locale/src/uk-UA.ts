@@ -423,7 +423,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     of: 'з',
     page: 'Сторінка',
     paginationRowSummary: '${first} до ${last} з ${count}',
-    paginationRowSummaryUnknownTotal: '${first} до ${last} з ${count}',
+    paginationRowSummaryUnknownTotal: '${first} до ${last}, загальна кількість невідома',
     pageLastRowUnknown: '?',
     nextPage: 'Наступна сторінка',
     lastPage: 'Остання сторінка',

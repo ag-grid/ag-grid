@@ -426,7 +426,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     of: 'από',
     page: 'Σελίδα',
     paginationRowSummary: '${first} έως ${last} από ${count}',
-    paginationRowSummaryUnknownTotal: '${first} έως ${last} από ${count}',
+    paginationRowSummaryUnknownTotal: '${first} έως ${last}, άγνωστο σύνολο',
     pageLastRowUnknown: '?',
     nextPage: 'Επόμενη Σελίδα',
     lastPage: 'Τελευταία Σελίδα',

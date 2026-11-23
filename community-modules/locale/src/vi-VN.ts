@@ -422,7 +422,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     of: 'trong',
     page: 'Trang',
     paginationRowSummary: '${first} đến ${last} trong ${count}',
-    paginationRowSummaryUnknownTotal: '${first} đến ${last} trong ${count}',
+    paginationRowSummaryUnknownTotal: '${first} đến ${last}, không rõ tổng số',
     pageLastRowUnknown: '?',
     nextPage: 'Trang kế',
     lastPage: 'Trang cuối',

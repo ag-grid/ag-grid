@@ -783,7 +783,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaPaginationRowSummaryLoading: 'ریکارڈ ${first} سے لوڈ ہو رہے ہیں',
     ariaPaginationPageSummary: '${total} میں سے صفحہ ${page}',
     ariaPaginationPageSummaryUnknownTotal: 'صفحہ ${page}',
-    ariaAnnouncementSeparator: '. ',
+    ariaAnnouncementSeparator: '۔ ',
     ariaPaginationPanelLabel: 'گرڈ صفحہ بندی',
     ariaChartMenuClose: 'چارٹ ایڈیٹ مینو بند کریں',
     ariaChartSelected: 'منتخب شدہ',

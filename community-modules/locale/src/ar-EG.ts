@@ -420,7 +420,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     of: 'من',
     page: 'الصفحة',
     paginationRowSummary: '${first} إلى ${last} من ${count}',
-    paginationRowSummaryUnknownTotal: '${first} إلى ${last} من ${count}',
+    paginationRowSummaryUnknownTotal: '${first} إلى ${last}، الإجمالي غير معروف',
     pageLastRowUnknown: '?',
     nextPage: 'الصفحة التالية',
     lastPage: 'الصفحة الأخيرة',

@@ -428,7 +428,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     of: 'daripada',
     page: 'Halaman',
     paginationRowSummary: '${first} hingga ${last} daripada ${count}',
-    paginationRowSummaryUnknownTotal: '${first} hingga ${last} daripada ${count}',
+    paginationRowSummaryUnknownTotal: '${first} hingga ${last}, jumlah tidak diketahui',
     pageLastRowUnknown: '?',
     nextPage: 'Halaman Seterusnya',
     lastPage: 'Halaman Terakhir',

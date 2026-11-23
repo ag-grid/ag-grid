@@ -424,7 +424,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     of: 'av',
     page: 'Sida',
     paginationRowSummary: '${first} till ${last} av ${count}',
-    paginationRowSummaryUnknownTotal: '${first} till ${last} av ${count}',
+    paginationRowSummaryUnknownTotal: '${first} till ${last}, totalt antal okänt',
     pageLastRowUnknown: '?',
     nextPage: 'Nästa Sida',
     lastPage: 'Sista Sida',

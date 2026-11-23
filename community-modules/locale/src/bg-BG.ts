@@ -424,7 +424,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     of: 'от',
     page: 'Страница',
     paginationRowSummary: '${first} до ${last} от ${count}',
-    paginationRowSummaryUnknownTotal: '${first} до ${last} от ${count}',
+    paginationRowSummaryUnknownTotal: '${first} до ${last}, общият брой е неизвестен',
     pageLastRowUnknown: '?',
     nextPage: 'Следваща Страница',
     lastPage: 'Последна Страница',

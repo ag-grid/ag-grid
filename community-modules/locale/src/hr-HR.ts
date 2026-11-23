@@ -423,7 +423,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     of: 'od',
     page: 'Stranica',
     paginationRowSummary: '${first} do ${last} od ${count}',
-    paginationRowSummaryUnknownTotal: '${first} do ${last} od ${count}',
+    paginationRowSummaryUnknownTotal: '${first} do ${last}, ukupan broj nepoznat',
     pageLastRowUnknown: '?',
     nextPage: 'Sljedeća stranica',
     lastPage: 'Zadnja stranica',

@@ -428,7 +428,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     of: 'iš',
     page: 'Puslapis',
     paginationRowSummary: '${first} iki ${last} iš ${count}',
-    paginationRowSummaryUnknownTotal: '${first} iki ${last} iš ${count}',
+    paginationRowSummaryUnknownTotal: '${first} iki ${last}, bendras skaičius nežinomas',
     pageLastRowUnknown: '?',
     nextPage: 'Kitas puslapis',
     lastPage: 'Paskutinis puslapis',

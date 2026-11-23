@@ -425,7 +425,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     of: '/',
     page: 'Leht',
     paginationRowSummary: '${first} kuni ${last} / ${count}',
-    paginationRowSummaryUnknownTotal: '${first} kuni ${last} / ${count}',
+    paginationRowSummaryUnknownTotal: '${first} kuni ${last}, koguarv teadmata',
     pageLastRowUnknown: '?',
     nextPage: 'Järgmine leht',
     lastPage: 'Viimane leht',

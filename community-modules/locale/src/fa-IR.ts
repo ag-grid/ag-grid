@@ -421,7 +421,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     of: 'از',
     page: 'صفحه',
     paginationRowSummary: '${first} تا ${last} از ${count}',
-    paginationRowSummaryUnknownTotal: '${first} تا ${last} از ${count}',
+    paginationRowSummaryUnknownTotal: '${first} تا ${last}، تعداد کل نامشخص',
     pageLastRowUnknown: '?',
     nextPage: 'صفحه بعد',
     lastPage: 'آخرین صفحه',

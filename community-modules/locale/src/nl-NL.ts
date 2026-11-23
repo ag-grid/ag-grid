@@ -422,7 +422,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     of: 'van',
     page: 'Pagina',
     paginationRowSummary: '${first} tot ${last} van ${count}',
-    paginationRowSummaryUnknownTotal: '${first} tot ${last} van ${count}',
+    paginationRowSummaryUnknownTotal: '${first} tot ${last}, totaal onbekend',
     pageLastRowUnknown: '?',
     nextPage: 'Volgende Pagina',
     lastPage: 'Laatste Pagina',

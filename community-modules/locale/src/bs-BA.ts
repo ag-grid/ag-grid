@@ -426,7 +426,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     of: 'od',
     page: 'Stranica',
     paginationRowSummary: '${first} do ${last} od ${count}',
-    paginationRowSummaryUnknownTotal: '${first} do ${last} od ${count}',
+    paginationRowSummaryUnknownTotal: '${first} do ${last}, ukupan broj nepoznat',
     pageLastRowUnknown: '?',
     nextPage: 'Naredna stranica',
     lastPage: 'Zadnja stranica',

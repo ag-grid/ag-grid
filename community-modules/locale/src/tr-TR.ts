@@ -424,7 +424,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     of: 'üzerinden',
     page: 'Sayfa',
     paginationRowSummary: '${first} - ${last} / ${count}',
-    paginationRowSummaryUnknownTotal: '${first} - ${last} / ${count}',
+    paginationRowSummaryUnknownTotal: '${first} - ${last}, toplam bilinmiyor',
     pageLastRowUnknown: '?',
     nextPage: 'Sonraki Sayfa',
     lastPage: 'Son Sayfa',

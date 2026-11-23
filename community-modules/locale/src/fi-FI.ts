@@ -426,7 +426,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     of: ' / ',
     page: 'Sivu',
     paginationRowSummary: '${first} - ${last} / ${count}',
-    paginationRowSummaryUnknownTotal: '${first} - ${last} / ${count}',
+    paginationRowSummaryUnknownTotal: '${first} - ${last}, kokonaismäärä tuntematon',
     pageLastRowUnknown: '?',
     nextPage: 'Seuraava sivu',
     lastPage: 'Viimeinen sivu',

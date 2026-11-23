@@ -783,7 +783,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaPaginationRowSummaryLoading: '${first}件目からレコードを読み込み中',
     ariaPaginationPageSummary: '${total}ページ中${page}ページ目',
     ariaPaginationPageSummaryUnknownTotal: '${page}ページ目',
-    ariaAnnouncementSeparator: '。 ',
+    ariaAnnouncementSeparator: '。',
     ariaPaginationPanelLabel: 'グリッドのページネーション',
     ariaChartMenuClose: 'チャート編集メニューを閉じる',
     ariaChartSelected: '選択済み',
