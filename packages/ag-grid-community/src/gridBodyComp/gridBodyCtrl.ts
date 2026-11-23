@@ -1,5 +1,4 @@
 import {
-    FAST_TEST_TIMINGS,
     _addManagedElementListeners,
     _debounce,
     _getInnerWidth,
@@ -31,7 +30,7 @@ const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 const CSS_CLASS_COLUMN_WIDTH_ANIMATION = 'ag-animate-autosize';
 /** The 0.2s width transition plus a few frames, as a transition starts at the first style recalc after the writes. */
-const COLUMN_WIDTH_ANIMATION_MS = FAST_TEST_TIMINGS ? 60 : 250;
+const COLUMN_WIDTH_ANIMATION_MS = 250;
 
 export interface PinnedSectionState {
     height: number;

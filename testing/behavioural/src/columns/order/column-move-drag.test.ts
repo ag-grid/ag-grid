@@ -104,6 +104,7 @@ describe('column header drag reorder', () => {
             await dispatcher.startDrag(source, 50, 15);
             await dispatcher.movePointer(viewport, 50, 100);
             await dispatcher.movePointer(ownerDocument.body, 5000, 5000);
+            await waitFor(() => expect(ownerDocument.querySelector('.ag-dnd-ghost-icon')).not.toBeNull());
             const ghost = ownerDocument.querySelector('.ag-dnd-ghost')!;
             const ghostIcon = {
                 hideIcon: ghost.querySelector('.ag-dnd-ghost-icon .ag-icon-eye-slash') != null,
@@ -293,13 +294,14 @@ describe('column header drag reorder', () => {
         });
         expect(colOrder(api)).toEqual(['a', 'b', 'd']);
 
+        // nothing to poll for a move that must not happen: every timer the drag queues runs out first
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
         // calculateValidMoves short-circuits to [] for a non-movable col, so no valid move exists.
         await dragHeader(api, 'a', 5, 400);
-
-        // Negative assertion (the move must not be applied), so there is nothing to poll for: hold
-        // open the window in which a wrongly-permitted move would land.
-        // eslint-disable-next-line no-restricted-syntax -- waits out the post-drop settle window in which an (incorrect) column move would be applied
-        await asyncSetTimeout(50);
+        await vi.runAllTimersAsync();
         expect(colOrder(api)).toEqual(['a', 'b', 'd']);
     });
 
@@ -479,7 +481,26 @@ describe('column header drag reorder', () => {
             return { before, after: colOrder(api), dragStarted };
         };
 
-        test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot, though only a fresh one refuses the drag', async () => {
+        // TODO: disabled due to AG-19353 - re-enable once fixed
+        test.skip('hovering the header highlights the body cells of the leaves it now has, as a fresh one does', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                { columnHoverHighlight: true },
+                [leaf('a'), group(leaf('c'), leaf('d')), leaf('z')],
+                [leaf('a'), group(leaf('c'), leaf('e')), leaf('z')],
+                async (api) => {
+                    el(api, groupHeader).dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+                    return Array.from(
+                        el(api, '.ag-root-wrapper').querySelectorAll('.ag-cell.ag-column-hover'),
+                        (cell) => cell.getAttribute('col-id')
+                    ).sort();
+                }
+            );
+
+            expect(kept).toEqual(['c', 'e']);
+            expect(fresh).toEqual(['c', 'e']);
+        });
+
+        test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot', async () => {
             const { kept, fresh } = await onKeptAndFresh(
                 {},
                 [group(leaf('c'), leaf('d')), leaf('a'), leaf('z')],
@@ -499,8 +520,17 @@ describe('column header drag reorder', () => {
             expect(kept.before).toEqual(['e', 'c', 'a', 'z']);
             expect(fresh.before).toEqual(['e', 'c', 'a', 'z']);
             expect({ kept: kept.after, fresh: fresh.after }).toEqual({ kept: kept.before, fresh: fresh.before });
-            // a kept header starting the drag only the drop refuses is a known defect: its fix flips kept to false
-            expect({ kept: kept.dragStarted, fresh: fresh.dragStarted }).toEqual({ kept: true, fresh: false });
+            expect(fresh.dragStarted).toBe(false);
+        });
+
+        test('a fresh header with no position-locked leaf moves when dragged to the start', async () => {
+            const { fresh } = await onKeptAndFresh(
+                {},
+                [leaf('a'), group(leaf('c'), leaf('d', { lockPosition: true })), leaf('z')],
+                [leaf('a'), group(leaf('c'), leaf('e')), leaf('z')],
+                dragGroup(200, 5)
+            );
+            expect(fresh.after).toEqual(['c', 'e', 'a', 'z']);
         });
     });
 });

@@ -26,22 +26,20 @@ import {
 import {
     clickDialogButton,
     getCalculatedColumnDialog,
-    newestCalculatedColumnDialog,
     selectDataType,
     setExpression,
     setTitle,
-    waitForNewCalculatedColumnDialog,
 } from './calculatedColumnDialog';
 
 export {
     clickDialogButton,
+    closeDialog,
     getCalculatedColumnDialog,
+    getDialogButton,
     getExpressionInput,
-    newestCalculatedColumnDialog,
     selectDataType,
     setExpression,
     setTitle,
-    waitForNewCalculatedColumnDialog,
 } from './calculatedColumnDialog';
 
 // Behavioural spec for PERSISTING runtime-added (dynamic) calculated columns in grid state.
@@ -96,7 +94,7 @@ export function entryOf(state: GridState, colId: string): NonNullable<GridState[
 
 // --- dialog plumbing (the only public surface that sets an anchor) ---------------------------
 /** The expression as the grid stores it, references by column id: plain `[Header]` references only. */
-function storedExpression(api: GridApi, expression: string): string {
+export function storedExpression(api: GridApi, expression: string): string {
     return expression.replace(/\[([^\]]+)\]/g, (reference, name: string) => {
         const column = api
             .getColumns()
@@ -105,14 +103,18 @@ function storedExpression(api: GridApi, expression: string): string {
     });
 }
 
-/** Adds a calc col from {@link anchorColId}'s header menu and returns its new colId. */
-export async function addViaDialog(api: GridApi, anchorColId: string, expression: string): Promise<string> {
-    const stored = storedExpression(api, expression);
+/** Adds a calc col from {@link anchorColId}'s header menu and returns its new colId; `stored` is the expression as
+ *  the grid keeps it, for one `storedExpression` cannot derive (a bracket inside a string). */
+export async function addViaDialog(
+    api: GridApi,
+    anchorColId: string,
+    expression: string,
+    stored: string = storedExpression(api, expression)
+): Promise<string> {
     const before = new Set(order(api));
-    const previousDialog = newestCalculatedColumnDialog();
     api.showColumnMenu(anchorColId);
     await clickMenuOption('Add Calculated Column');
-    await waitForNewCalculatedColumnDialog(previousDialog);
+    await waitFor(() => getCalculatedColumnDialog());
     setExpression(expression);
     clickDialogButton('Apply');
     // Under the default 'live' mode, "Add" creates the column up front (with an empty expression)
@@ -136,7 +138,6 @@ export async function editViaDialog(
 ): Promise<void> {
     api.showColumnMenu(colId);
     await clickMenuOption('Edit Calculated Column');
-    // An Edit brings the column's open dialog forward rather than opening another, so the newest dialog is its own.
     await waitFor(() => getCalculatedColumnDialog());
     // Only an actual edit schedules a live-apply flush (a no-op Apply, as used to merely open the
     // dialog, never fires the draft-change listener), so only then is there a flush to wait for.

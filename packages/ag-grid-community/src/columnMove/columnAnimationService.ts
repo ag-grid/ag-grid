@@ -1,11 +1,6 @@
-import { FAST_TEST_TIMINGS } from 'ag-stack';
-
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-
-/** How long a column move slides: the 0.2s transition of the ag-column-moving class. */
-const COLUMN_MOVE_ANIMATION_MS = FAST_TEST_TIMINGS ? 50 : 200;
 
 export class ColumnAnimationService extends BeanStub implements NamedBean {
     beanName = 'colAnimation' as const;
@@ -115,7 +110,7 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
                 // Clear `active` before the later funcs run — some of them check it.
                 this.active = false;
                 runFuncs(executeLaterFuncs);
-            }, COLUMN_MOVE_ANIMATION_MS);
+            }, 200);
         });
     }
 }

@@ -1,5 +1,5 @@
 import { findByRole, fireEvent, getByText } from '@testing-library/dom';
-import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { LocaleModule, getGridElement } from 'ag-grid-community';
@@ -14,17 +14,12 @@ export function setupDropZoneMoveMenuSuite() {
         modules: [ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule],
     });
     const headerGrids = new TestGridsManager({ modules: [RowGroupingModule, RowGroupingPanelModule, LocaleModule] });
-    let restoreOffsetParent: () => void;
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
     afterEach(() => {
         // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
         document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         grids.reset();
         headerGrids.reset();
-        restoreOffsetParent();
     });
 
     const create = (zone: Zone, options: GridOptions = {}, manager = grids) =>

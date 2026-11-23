@@ -18,7 +18,7 @@
  * 2026) searched "context menu close when clicking outside popupParent column menu".
  */
 import { getByRole, queryByRole, waitFor } from '@testing-library/dom';
-import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
@@ -26,12 +26,9 @@ import { ColumnMenuModule } from 'ag-grid-enterprise';
 // TODO: disabled due to AG-19217 - re-enable once fixed
 describe.skip('modal popup closes on mousedown on the html element', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     // positive control: the same setup closes the menu when the body is pressed, so a failure below is
@@ -43,7 +40,6 @@ describe.skip('modal popup closes on mousedown on the html element', () => {
             columnMenu: 'new',
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('a');
         await waitFor(() => expect(getByRole(document.body, 'menu')).toBeTruthy());
 
@@ -61,7 +57,6 @@ describe.skip('modal popup closes on mousedown on the html element', () => {
             columnMenu: 'new',
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('a');
         await waitFor(() => expect(getByRole(document.body, 'menu')).toBeTruthy());
 

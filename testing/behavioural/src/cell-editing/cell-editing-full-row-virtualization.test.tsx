@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/dom';
+import { getByTestId, waitFor } from '@testing-library/dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import {
@@ -353,7 +353,7 @@ describe('Cell Editing: full-row virtualization', () => {
         await asyncSetTimeout(0);
 
         // Start editing row 0 by double-clicking field1
-        const firstCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field1'));
+        const firstCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field1')));
         await user.dblClick(firstCell);
         const input = await waitForInput(gridDiv, firstCell);
 
@@ -667,7 +667,7 @@ describe('Cell Editing: full-row virtualization (React)', () => {
         const user = userEvent.setup({ skipHover: true });
         await asyncSetTimeout(0);
 
-        const firstCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field1'));
+        const firstCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field1')));
         await user.dblClick(firstCell);
         await waitForInput(gridDiv, firstCell);
         expect(hasCell(gridDiv, 0, `field${COL_COUNT}`)).toBe(false);
@@ -713,7 +713,7 @@ describe('Cell Editing: full-row virtualization (React)', () => {
         await asyncSetTimeout(0);
 
         // Start editing row 0 by double-clicking field1
-        const firstCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field1'));
+        const firstCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'field1')));
         await user.dblClick(firstCell);
         await waitForInput(gridDiv, firstCell);
 

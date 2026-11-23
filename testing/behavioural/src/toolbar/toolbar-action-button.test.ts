@@ -6,25 +6,6 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-// Column chooser dialog focus management checks visibility via `offsetParent`. happy-dom does not
-// compute layout, so expose attached elements as visible for these behavioural tests.
-const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.parentElement;
-        },
-    });
-});
-afterAll(() => {
-    if (originalOffsetParent) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-    } else {
-        delete (HTMLElement.prototype as any).offsetParent;
-    }
-});
-
 describe('Toolbar action button item', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, ToolbarModule],

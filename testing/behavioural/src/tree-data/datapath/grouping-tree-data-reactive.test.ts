@@ -250,4 +250,54 @@ describe('ag-grid grouping treeData is reactive', () => {
             └── v "V" width:200
         `);
     });
+
+    describe('sorted by the auto group column values', () => {
+        const rowData = [
+            { id: 'a', path: ['B'], v: 1 },
+            { id: 'b', path: ['B', 'x'], v: 5 },
+            { id: 'c', path: ['A'], v: 9 },
+            { id: 'd', path: ['A', 'y'], v: 2 },
+        ];
+
+        const createOptions = (treeData: boolean): GridOptions => ({
+            columnDefs: [{ field: 'v', aggFunc: 'sum' }],
+            autoGroupColumnDef: { sort: 'desc', valueGetter: (p) => p.data?.v },
+            treeData,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (p) => p.data.id,
+            getDataPath: (d) => d.path,
+        });
+
+        const displayedIds = (api: ReturnType<TestGridsManager['createGrid']>) => {
+            const ids: (string | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                ids.push(api.getDisplayedRowAtIndex(i)?.id);
+            }
+            return ids;
+        };
+
+        test('turning tree data on sorts by the auto group column as a grid created with tree data', () => {
+            const api = gridsManager.createGrid('treeOn', createOptions(false));
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+
+            api.setGridOption('treeData', true);
+
+            const ids = displayedIds(api);
+            expect(ids).toEqual(['c', 'd', 'a', 'b']);
+            expect(
+                ids.map((id) => api.getCellValue({ rowNode: api.getRowNode(id!)!, colKey: 'ag-Grid-AutoColumn' }))
+            ).toEqual([9, 2, 1, 5]);
+        });
+
+        test('turning tree data off shows the rows in data order, as a grid created without tree data', () => {
+            const api = gridsManager.createGrid('treeOff', createOptions(true));
+            expect(displayedIds(api)).toEqual(['c', 'd', 'a', 'b']);
+
+            api.setGridOption('treeData', false);
+
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+        });
+    });
 });

@@ -155,9 +155,11 @@ describe('Horizontal scrollbar while columns slide', () => {
         vi.useRealTimers();
     });
 
-    // The suite's fast timings: a frame is 16ms and the scrollbar shows 25ms after the layout overflows.
-    const NEXT_FRAME_MS = 16;
-    const SETTLED_MS = 200;
+    // A slide ends at 200ms and the backup scrollbar refresh runs at 500ms: 150ms is mid-slide, 300ms between them.
+    const MID_SLIDE_MS = 150;
+    const AFTER_SLIDE_MS = 300;
+    // Long enough for the scrollbar to show (100ms) on the initial overflowing layout.
+    const SETTLED_MS = 400;
 
     const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
 
@@ -174,14 +176,14 @@ describe('Horizontal scrollbar while columns slide', () => {
             suppressColumnMoveAnimation,
         });
 
-    test('goes on the next frame when columns leave an overflowing layout without a slide', async () => {
+    test('goes at once when columns leave an overflowing layout without a slide', async () => {
         vi.useFakeTimers();
         const api = createOverflowingGrid(true);
         await vi.advanceTimersByTimeAsync(SETTLED_MS);
         expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
 
         api.setColumnsVisible(['a', 'b'], false);
-        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
+        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
 
         expect({
             displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
@@ -194,25 +196,146 @@ describe('Horizontal scrollbar while columns slide', () => {
         const api = createOverflowingGrid(false);
         await vi.advanceTimersByTimeAsync(SETTLED_MS);
         expect(horizontalScrollbarHeight()).toBe(`${scrollbarWidth}px`);
-        const sliding = () => document.querySelector('.ag-column-moving') !== null;
 
         api.setColumnsVisible(['a', 'b'], false);
-        // Read at every timer while the slide runs, the last one just before the timer that ends it.
-        const heightsWhileSliding: string[] = [];
-        for (let timers = 0; sliding() && timers < 10; ++timers) {
-            heightsWhileSliding.push(horizontalScrollbarHeight());
-            await vi.advanceTimersToNextTimerAsync();
-        }
-        const slideEnded = !sliding();
-        await vi.advanceTimersByTimeAsync(NEXT_FRAME_MS);
+        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
 
         // The two columns left (400px) fit the 600px viewport: the scrollbar is kept for the slide.
         expect({
             displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
-            slideEnded,
-            whileSliding:
-                heightsWhileSliding.length > 0 && heightsWhileSliding.every((h) => h === `${scrollbarWidth}px`),
-            afterSlide: horizontalScrollbarHeight(),
-        }).toEqual({ displayed: ['c', 'd'], slideEnded: true, whileSliding: true, afterSlide: '0px' });
+            height: horizontalScrollbarHeight(),
+        }).toEqual({ displayed: ['c', 'd'], height: `${scrollbarWidth}px` });
+
+        await vi.advanceTimersByTimeAsync(AFTER_SLIDE_MS - MID_SLIDE_MS);
+        expect(horizontalScrollbarHeight()).toBe('0px');
+    });
+});
+
+describe('Vertical scrollbar and scroll gap while columns slide', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const rowCount = 11;
+    const rows = Array.from({ length: rowCount }, (_, index) => ({ a: index, b: index, c: index, d: index, e: index }));
+    let originalGridWidth: number;
+    let originalGridHeight: number;
+    let originalNativeScrollbarWidth: number;
+
+    beforeAll(() => {
+        originalGridWidth = mockGridLayout.gridWidth;
+        originalGridHeight = mockGridLayout.gridHeight;
+        originalNativeScrollbarWidth = mockGridLayout.nativeScrollbarWidth;
+        mockGridLayout.gridWidth = 600;
+        // Eleven rows have half a scrollbar of spare height: they overflow once a horizontal scrollbar takes layout space.
+        mockGridLayout.gridHeight =
+            mockGridLayout.headerHeight * 2 + mockGridLayout.rowHeight * rowCount + scrollbarWidth / 2;
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.nativeScrollbarWidth = scrollbarWidth;
+    });
+
+    afterAll(() => {
+        mockGridLayout.gridWidth = originalGridWidth;
+        mockGridLayout.gridHeight = originalGridHeight;
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.nativeScrollbarWidth = originalNativeScrollbarWidth;
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.useRealTimers();
+    });
+
+    // A scrollbar applies after 100ms and a slide ends at 200ms: 150ms is between them.
+    const SCROLLBAR_APPLIED_MS = 150;
+    const SLIDE_ENDED_MS = 400;
+    const VERTICAL_APPLIED_MS = 50;
+
+    const verticalScrollbarWidth = () => query<HTMLElement>('.ag-body-vertical-scroll').style.width;
+    const gridBody = () => query<HTMLElement>('.ag-grid-viewport').parentElement!;
+    const hasHorizontalGap = () => !gridBody().classList.contains('ag-body-horizontal-content-no-gap');
+
+    test('keeps both scrollbars while columns slide out, and hides them when the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'x', hide: true, width: 200 },
+                { field: 'y', hide: true, width: 200 },
+                { field: 'z', hide: true, width: 200 },
+                { field: 'a', width: 200 },
+                { field: 'b', width: 200 },
+            ],
+            rowData: rows,
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            scrollbarWidth,
+        });
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        const horizontalScrollbar = query<HTMLElement>('.ag-body-horizontal-scroll');
+        Object.defineProperty(viewport, 'clientHeight', {
+            configurable: true,
+            get: () =>
+                mockGridLayout.gridHeight -
+                mockGridLayout.headerHeight -
+                (Number.parseFloat(horizontalScrollbar.style.height) || 0),
+        });
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        // Two columns (400px) fit the 600px viewport and the rows fit the height: neither scrollbar shows.
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            horizontal: horizontalScrollbar.style.height,
+            vertical: verticalScrollbarWidth(),
+        }).toEqual({ displayed: ['a', 'b'], horizontal: '0px', vertical: '0px' });
+
+        api.setColumnsVisible(['x', 'y', 'z'], true);
+        await vi.advanceTimersByTimeAsync(VERTICAL_APPLIED_MS);
+        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        api.setColumnsVisible(['x', 'y', 'z'], false);
+        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        // The columns sliding out keep both scrollbars until the slide ends.
+        expect({ horizontal: horizontalScrollbar.style.height, vertical: verticalScrollbarWidth() }).toEqual({
+            horizontal: `${scrollbarWidth}px`,
+            vertical: `${scrollbarWidth}px`,
+        });
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        expect({ horizontal: horizontalScrollbar.style.height, vertical: verticalScrollbarWidth() }).toEqual({
+            horizontal: '0px',
+            vertical: '0px',
+        });
+    });
+
+    test('keeps the gap right of the columns closed while columns slide out, and opens it when the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'x', hide: true, width: 200 },
+                { field: 'y', hide: true, width: 200 },
+                { field: 'a', width: 200 },
+                { field: 'b', width: 200 },
+            ],
+            rowData: rows,
+            scrollbarWidth,
+        });
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        // Two columns (400px) leave a gap in the 600px viewport.
+        expect({ displayed: api.getAllDisplayedColumns().length, gap: hasHorizontalGap() }).toEqual({
+            displayed: 2,
+            gap: true,
+        });
+
+        api.setColumnsVisible(['x', 'y'], true);
+        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+
+        api.setColumnsVisible(['x', 'y'], false);
+        await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        // Two columns are left (400px) but the gap they open waits for the slide to end.
+        expect({ displayed: api.getAllDisplayedColumns().length, gap: hasHorizontalGap() }).toEqual({
+            displayed: 2,
+            gap: false,
+        });
+        await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
+        expect(hasHorizontalGap()).toBe(true);
     });
 });

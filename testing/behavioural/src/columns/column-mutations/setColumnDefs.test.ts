@@ -1,7 +1,3 @@
-/**
- * Split from column-mutations.test.ts — see sibling files for related coverage.
- * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
- */
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -1458,6 +1454,49 @@ describe('Column Mutations', () => {
             expect(api.getColumn('a')).toBe(colABefore);
         });
 
+        test('a group without groupId keeps its open state by position when it is renamed and other groups repeat one groupId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            // warning 273: expected groupId collision
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const defs = (headerName: string) => [
+                { groupId: 'x', children: [{ field: 'a' }] },
+                { groupId: 'x', children: [{ field: 'b' }] },
+                { headerName, children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+            ];
+            const api = gridsManager.createGrid('expandRenamedBesideDuplicates', { columnDefs: defs('G') });
+            api.setColumnGroupOpened(api.getColumn('c')!.getOriginalParent()!.getGroupId(), true);
+
+            api.setGridOption('columnDefs', defs('H'));
+
+            const parent = api.getColumn('c')!.getOriginalParent()!;
+            expect([parent.getColGroupDef()!.headerName, parent.isExpanded()]).toEqual(['H', true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('a group without groupId keeps its open state by position when it is renamed and a column colId equals another group groupId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            // warning 273: expected id collision between the colId and the groupId
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('expandRenamedBesideColIdEqualGroupId', {
+                columnDefs: [
+                    { groupId: 'x', children: [{ field: 'a' }] },
+                    { headerName: 'G', children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+                ],
+            });
+            api.setColumnGroupOpened(api.getColumn('c')!.getOriginalParent()!.getGroupId(), true);
+            expect(api.getColumn('c')!.getOriginalParent()!.isExpanded()).toBe(true);
+
+            api.setGridOption('columnDefs', [
+                { colId: 'x', field: 'z' },
+                { groupId: 'x', children: [{ field: 'a' }] },
+                { headerName: 'H', children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' as const }] },
+            ]);
+
+            const parent = api.getColumn('c')!.getOriginalParent()!;
+            expect([parent.getColGroupDef()!.headerName, parent.isExpanded()]).toEqual(['H', true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
         test('groups without groupId keep their open states when every header is renamed and a group with a groupId is added', () => {
             const group = (headerName: string, field: string, groupId?: string) => ({
                 headerName,
@@ -1633,24 +1672,6 @@ describe('Column Mutations', () => {
             api.setColumnGroupOpened('g_1', true);
             api.setGridOption('columnDefs', [group('a'), group('b')]);
             expect(openStates()).toEqual([false, true]);
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
-        });
-
-        test('a group whose groupId an earlier def now takes keeps its open state at its suffixed id', () => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected id collision
-            const group = {
-                groupId: 'g',
-                headerName: 'G',
-                children: [{ field: 'a' }, { field: 'a2', columnGroupShow: 'open' as const }],
-            };
-            const api = gridsManager.createGrid('expandGroupIdTaken', { columnDefs: [group] });
-            api.setColumnGroupOpened('g', true);
-
-            api.setGridOption('columnDefs', [{ colId: 'g' }, group]);
-
-            const parent = api.getColumn('a')!.getOriginalParent()!;
-            expect([parent.getGroupId(), parent.isExpanded()]).toEqual(['g_1', true]);
             expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
         });
 
@@ -2522,6 +2543,32 @@ describe('Column Mutations', () => {
             api.setGridOption('columnDefs', [{ field: 'a', sort: 'asc' }, { field: 'b' }]);
 
             expect(seenInListener).toBe('a,c');
+        });
+
+        test('a callback setting column definitions and throwing in every build makes the update throw its error', () => {
+            let calls = 0;
+            let api: GridApi | undefined = undefined;
+            api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 'x', b: 'y' }],
+                columnDefs: [{ field: 'a' }],
+                dataTypeDefinitions: {
+                    mine: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        dataTypeMatcher: (value) => {
+                            // gives up after 10 calls, so a grid that keeps rebuilding ends the test
+                            if (calls !== 0 && ++calls <= 10) {
+                                api!.setGridOption('columnDefs', [{ field: 'a' }, { field: `c${calls}` }]);
+                                throw new Error('callback failed');
+                            }
+                            return value === 'never';
+                        },
+                    },
+                },
+            });
+            calls = 1;
+
+            expect(() => api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }])).toThrow('callback failed');
         });
     });
 });

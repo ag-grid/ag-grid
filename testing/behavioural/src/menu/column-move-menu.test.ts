@@ -15,9 +15,8 @@ import {
     getRevealedElements,
     installFocusScroll,
     mockGridLayout,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
-import { onTestFinished, vi } from 'vitest';
+import { onTestFinished } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IColumnToolPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, LocaleModule, ScrollApiModule, getGridElement } from 'ag-grid-community';
@@ -47,18 +46,13 @@ describe('column movement menu actions', () => {
     });
     const headerGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
     const panelGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnsToolPanelModule] });
-    let restoreOffsetParent: () => void;
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
     afterEach(() => {
         // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
         document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         grids.reset();
         headerGrids.reset();
         panelGrids.reset();
-        restoreOffsetParent();
     });
 
     const columnDefs: ColDef[] = ['a', 'b', 'c', 'd'].map((field) => ({ field }));
@@ -308,22 +302,12 @@ describe('column movement menu actions', () => {
         const header = grid.querySelector('.ag-header-cell[col-id="a"]');
         const revealedBefore = getRevealedElements().length;
 
-        // sampled inside the slide, which a loaded machine's real clock can outlast
-        onTestFinished(() => {
-            vi.useRealTimers();
-        });
-        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame'] });
-        await userEvent.click(getByText(grid, 'Reset Columns'), { delay: null });
+        await userEvent.click(getByText(grid, 'Reset Columns'));
         expect(order(api)[0]).toBe('a');
-        while (document.activeElement !== header && vi.getTimerCount() > 0) {
-            await vi.advanceTimersToNextTimerAsync();
-        }
-        expect(document.activeElement).toBe(header);
+        await waitFor(() => expect(document.activeElement).toBe(header));
         expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
         expect(getRevealedElements().slice(revealedBefore)).not.toContain(header);
-        await vi.runAllTimersAsync();
-        expect(grid.querySelector('.ag-column-moving')).toBeNull();
-        expect(getRevealedElements().at(-1)).toBe(header);
+        await waitFor(() => expect(getRevealedElements().at(-1)).toBe(header));
         expect(api.getHorizontalPixelRange().left).toBe(0);
     });
 

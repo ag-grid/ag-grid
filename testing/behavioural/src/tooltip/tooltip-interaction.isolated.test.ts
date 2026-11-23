@@ -2,7 +2,7 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { _isIOSUserAgent } from 'ag-stack';
-import { TestGridsManager, asyncSetTimeout, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, getVisibleTooltips } from 'ag-test-utils';
 
 import {
     AllCommunityModule,
@@ -67,24 +67,33 @@ describe('Tooltip interaction', () => {
         const athleteCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete')));
         const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
 
-        // show the AGE tooltip
-        await userEvent.hover(ageCell);
-        await waitFor(() => expect(visibleTooltip()?.textContent).toContain('Age tooltip'));
+        vi.useFakeTimers();
+        try {
+            const user = userEvent.setup({ delay: null });
+            // show the AGE tooltip
+            await user.hover(ageCell);
+            await vi.advanceTimersByTimeAsync(200);
+            expect(visibleTooltip()?.textContent).toContain('Age tooltip');
 
-        // leave AGE: after the 100ms interactive lock, the tooltip starts fading out (1s fade window)
-        await userEvent.unhover(ageCell);
-        await waitFor(() => expect(getTooltips().some((t) => t.classList.contains('ag-tooltip-hiding'))).toBe(true));
-        expect(visibleTooltip()).toBeUndefined();
+            // leave AGE: after the 100ms interactive lock, the tooltip starts fading out (1s fade window)
+            await user.unhover(ageCell);
+            await vi.advanceTimersByTimeAsync(100);
+            expect(getTooltips().some((t) => t.classList.contains('ag-tooltip-hiding'))).toBe(true);
+            expect(visibleTooltip()).toBeUndefined();
 
-        // quick detour onto the empty ATHLETE cell, dwelling just under the 100ms interactive lock window
-        await userEvent.hover(athleteCell);
-        // eslint-disable-next-line no-restricted-syntax -- deliberate dwell just under the 100ms INTERACTIVE_HIDE_DELAY lock window
-        await asyncSetTimeout(99);
-        await userEvent.unhover(athleteCell);
+            // quick detour onto the empty ATHLETE cell, dwelling just under the 100ms interactive lock window
+            await user.hover(athleteCell);
+            await vi.advanceTimersByTimeAsync(99);
+            await user.unhover(athleteCell);
 
-        // move straight back to AGE while its tooltip is still fading — the tooltip must re-open
-        await userEvent.hover(ageCell);
-        await waitFor(() => expect(visibleTooltip()?.textContent).toContain('Age tooltip'), { timeout: 2000 });
+            // move straight back to AGE while its tooltip is still fading: it re-opens within the show delay
+            await user.hover(ageCell);
+            await vi.advanceTimersByTimeAsync(200);
+            expect(visibleTooltip()?.textContent).toContain('Age tooltip');
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
     });
 
     test('AG-17885 moving cursor cell -> tooltip -> cell keeps the interactive tooltip open', async () => {
@@ -101,23 +110,28 @@ describe('Tooltip interaction', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
 
-        // show the AGE tooltip
-        await userEvent.hover(ageCell);
-        const tooltip = await waitFor(() => {
-            const t = visibleTooltip();
-            expect(t?.textContent).toContain('Age tooltip');
-            return t!;
-        });
+        vi.useFakeTimers();
+        try {
+            const user = userEvent.setup({ delay: null });
+            // show the AGE tooltip
+            await user.hover(ageCell);
+            await vi.advanceTimersByTimeAsync(200);
+            const tooltip = visibleTooltip()!;
+            expect(tooltip?.textContent).toContain('Age tooltip');
 
-        // travel cell -> tooltip -> cell within the interactive lock window; the tooltip must stay open
-        await userEvent.unhover(ageCell);
-        await userEvent.hover(tooltip);
-        await userEvent.unhover(tooltip);
-        await userEvent.hover(ageCell);
+            // travel cell -> tooltip -> cell within the interactive lock window; the tooltip must stay open
+            await user.unhover(ageCell);
+            await user.hover(tooltip);
+            await user.unhover(tooltip);
+            await user.hover(ageCell);
 
-        // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 100ms INTERACTIVE_HIDE_DELAY so a spurious hide would already have landed
-        await asyncSetTimeout(150);
-        expect(visibleTooltip()?.textContent).toContain('Age tooltip');
+            // past the 100ms INTERACTIVE_HIDE_DELAY, where a spurious hide would already have landed
+            await vi.advanceTimersByTimeAsync(150);
+            expect(visibleTooltip()?.textContent).toContain('Age tooltip');
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
     });
 
     test('AG-17885 leaving a cell with no tooltip showing does not lock the next tooltip', async () => {
@@ -125,7 +139,6 @@ describe('Tooltip interaction', () => {
         // cell onto its own tooltip. Leaving a cell that has nothing showing must NOT take that lock —
         // otherwise the next cell's tooltip is needlessly delayed by 100ms while it waits it out.
         const SHOW_DELAY = 200;
-        const INTERACTIVE_HIDE_DELAY = 100;
 
         const gridOptions: GridOptions = {
             columnDefs: [
@@ -143,19 +156,21 @@ describe('Tooltip interaction', () => {
         const athleteCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'athlete')));
         const ageCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'age')));
 
-        // hover then leave the empty ATHLETE cell — nothing was showing, so no lock should be taken
-        await userEvent.hover(athleteCell);
-        await userEvent.unhover(athleteCell);
+        vi.useFakeTimers();
+        try {
+            const user = userEvent.setup({ delay: null });
+            // hover then leave the empty ATHLETE cell — nothing was showing, so no lock should be taken
+            await user.hover(athleteCell);
+            await user.unhover(athleteCell);
 
-        // move straight to AGE and time how long its tooltip takes to appear
-        const start = performance.now();
-        await userEvent.hover(ageCell);
-        await waitFor(() => expect(visibleTooltip()?.textContent).toContain('Age tooltip'), { interval: 10 });
-        const elapsed = performance.now() - start;
-
-        // without the spurious lock the tooltip shows after ~SHOW_DELAY; a lock would add
-        // INTERACTIVE_HIDE_DELAY on top. Assert we land below the midpoint of those two timings.
-        expect(elapsed).toBeLessThan(SHOW_DELAY + INTERACTIVE_HIDE_DELAY / 2);
+            // move straight to AGE: shown after SHOW_DELAY, where a spurious lock would add INTERACTIVE_HIDE_DELAY
+            await user.hover(ageCell);
+            await vi.advanceTimersByTimeAsync(SHOW_DELAY);
+            expect(visibleTooltip()?.textContent).toContain('Age tooltip');
+        } finally {
+            gridMgr.reset();
+            vi.useRealTimers();
+        }
     });
 
     test.each([true, () => true])(
@@ -353,16 +368,13 @@ describe('Tooltip interaction', () => {
 
 describe('Tooltip interaction on iOS', () => {
     const gridMgr = new TestGridsManager({ modules: [AllCommunityModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeEach(() => {
         vi.mocked(_isIOSUserAgent).mockReturnValue(true);
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
         vi.useRealTimers();
         vi.restoreAllMocks();
         vi.mocked(_isIOSUserAgent).mockReset();

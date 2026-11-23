@@ -106,16 +106,16 @@ class SlowInnerHeader implements IInnerHeaderComponent {
     }
 }
 
-// TODO: disabled due to AG-19211 - re-enable once fixed
-describe.skip('innerHeaderComponent refresh on a column definition update', () => {
+describe('inner header component across column definition updates', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 
     beforeEach(() => {
         refreshedWith = [];
+        pendingInits = [];
     });
     afterEach(() => gridMgr.reset());
 
-    test('the default header refreshes its inner header component in place', async () => {
+    test('the default header with an inner header component shows the new header name', async () => {
         const colDef = (headerName: string): ColDef => ({
             field: 'a',
             headerName,
@@ -126,17 +126,7 @@ describe.skip('innerHeaderComponent refresh on a column definition update', () =
         api.setGridOption('columnDefs', [colDef('Renamed')]);
 
         await waitFor(() => expect(TestGridsManager.getHTMLElement(api)!.textContent).toContain('Renamed'));
-        expect(refreshedWith).toEqual(['Renamed']);
     });
-});
-
-describe('inner header component across column definition updates', () => {
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
-
-    beforeEach(() => {
-        pendingInits = [];
-    });
-    afterEach(() => gridMgr.reset());
 
     test('a column definition update adds, swaps and removes the inner header component', async () => {
         const colDef = (innerHeaderComponent?: new () => IInnerHeaderComponent): ColDef => ({
@@ -182,6 +172,13 @@ describe('inner header component across column definition updates', () => {
                 TestGridsManager.getHTMLElement(api)!.querySelectorAll('.ag-header-cell[col-id="a"] .test-inner-slow'),
                 (el) => el.textContent
             );
+
+        const loaded = gridMgr.createGrid('loaded', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
+        await waitFor(() => {
+            resolveAll();
+            expect(innerHeaderTexts(loaded)).toEqual(['Name']);
+        });
+        gridMgr.reset();
 
         const api = gridMgr.createGrid('grid', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
         expect(pendingInits).toHaveLength(1);

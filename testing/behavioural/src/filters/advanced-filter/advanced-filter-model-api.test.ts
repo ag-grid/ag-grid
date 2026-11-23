@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     AdvancedFilterBuilderHarness,
@@ -1276,6 +1277,45 @@ describe('Advanced Filter', () => {
         expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
         expect(sources).toEqual(['api']);
     });
+
+    test.each([
+        {
+            action: 'new columnDefs without the column',
+            run: (api: GridApi<TestRow>) =>
+                api.setGridOption('columnDefs', [
+                    { field: 'athlete', filter: true },
+                    { field: 'date', filter: true },
+                    { field: 'hasGold', filter: true },
+                    { field: 'country', filter: true },
+                ]),
+        },
+        { action: 'setColumnsVisible(false)', run: (api: GridApi<TestRow>) => api.setColumnsVisible(['age'], false) },
+        {
+            action: 'applyColumnState hide',
+            run: (api: GridApi<TestRow>) => api.applyColumnState({ state: [{ colId: 'age', hide: true }] }),
+        },
+    ])(
+        'a model on a column that $action stops applying, showing every row and telling filterChanged once',
+        async (row) => {
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('grid1', {
+                ...DEFAULT_OPTIONS,
+                onFilterChanged: (event) => sources.push(event.source),
+            });
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'greaterThan', filter: 24 });
+            await waitFor(() => expect(sources).toEqual(['api']));
+            expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+            sources.length = 0;
+
+            row.run(api);
+            await waitFor(() => expect(sources).toEqual(['advancedFilter']));
+            await asyncSetTimeout(0);
+            expect(sources).toEqual(['advancedFilter']);
+            expect(getDisplayedAthletes(api)).toEqual(ROW_DATA.map((row) => row.athlete));
+        }
+    );
 
     test.each([
         {

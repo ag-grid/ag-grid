@@ -2,7 +2,7 @@
 // them drives, and the layout polyfills the popup needs. Siblings rather than one file because vitest
 // parallelises across files but not within one, so ~100 grid-building tests serialise in a single worker.
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, clickMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
@@ -35,6 +35,7 @@ import { getExpressionInput } from './calculatedColumnDialog';
 
 export {
     clickDialogButton,
+    closeDialog,
     getCalculatedColumnDialog,
     getDialogButton,
     getExpressionInput,
@@ -45,7 +46,6 @@ export {
 
 export const flashCssClass = 'ag-cell-data-changed';
 export const gridRowsOpts = { useFormatter: false } as const;
-let restoreOffsetParent: (() => void) | undefined;
 let restoreVirtualListSize: (() => void) | undefined;
 const gridsManager = new TestGridsManager({
     modules: [
@@ -124,10 +124,6 @@ function removeColumnDefFromDefs(columnDefs: (ColDef | ColGroupDef)[], colId: st
     return nextColumnDefs;
 }
 
-function enableOffsetParentPolyfill(): void {
-    restoreOffsetParent ??= polyfillOffsetParent();
-}
-
 /** Wraps whatever owns these descriptors now — `mockGridLayout`'s own getters, installed when this file's
  *  grid manager was constructed — so the captured pair must be put back in `afterEach`, not dropped. */
 function enableVirtualListSizePolyfill(): void {
@@ -177,7 +173,6 @@ function enableVirtualListSizePolyfill(): void {
 }
 
 export function showColumnMenu(api: { showColumnMenu(colKey: string): void }, colKey: string): void {
-    enableOffsetParentPolyfill();
     api.showColumnMenu(colKey);
 }
 
@@ -269,8 +264,6 @@ export function setupCalculatedColumnsSuite(): void {
     afterEach(() => {
         vi.restoreAllMocks();
         gridsManager.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         restoreVirtualListSize?.();
         restoreVirtualListSize = undefined;
     });

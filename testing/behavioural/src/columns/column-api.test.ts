@@ -819,6 +819,22 @@ describe('Column API', () => {
             expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
         });
 
+        test('a move after suppressColumnMoveAnimation is turned on and off again while columns slide slides', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await asyncSetTimeout(0);
+            api.moveColumns(['a'], 2);
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+
+            api.setGridOption('suppressColumnMoveAnimation', true);
+            api.moveColumns(['b'], 2);
+
+            api.setGridOption('suppressColumnMoveAnimation', false);
+            api.moveColumns(['c'], 2);
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+        });
+
         describe('moveColumns toIndex bound: the columns left after removal', () => {
             const createAbcd = (gridId: string) =>
                 gridsManager.createGrid(gridId, {

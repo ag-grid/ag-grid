@@ -8,6 +8,7 @@ import { GridStateModule, ModuleRegistry } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     getDialogButton,
@@ -170,7 +171,7 @@ describe('calculated column expression editor', () => {
             }
             if (applyMode === 'live') {
                 setExpression('SUM(A1:C1)');
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
                 await openEditDialogViaMenu(api, 'profit');
                 expect(getUnderlinedText().join('')).toBe('A1:C1');
             }
@@ -214,7 +215,7 @@ describe('calculated column expression editor', () => {
                 expect(getDialogButton('Apply')).toBeEnabled();
                 clickDialogButton('Apply');
             } else {
-                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+                closeDialog();
             }
             expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue] + Z1');
         }
@@ -264,7 +265,7 @@ describe('calculated column expression editor', () => {
         await openEditDialogViaMenu(api, 'profit');
         setExpression('[Cots]');
         await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[Cots]'));
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         await openEditDialogViaMenu(api, 'profit');
         expect(getUnderlinedText()).toEqual(['[Cots]']);
         expect(getExpressionInput().validationMessage).toContain('Unknown column reference "Cots"');
@@ -295,7 +296,7 @@ describe('calculated column expression editor', () => {
                     expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue] +')
                 );
             }
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
             expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue] +');
             expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#PARSE!');
             expect(api.getState().userColumns?.find(({ colId }) => colId === 'profit')).not.toHaveProperty(
@@ -322,7 +323,7 @@ describe('calculated column expression editor', () => {
         expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'false');
         expect(getExpressionInput().validationMessage).toBe('');
         expect(getExpressionInput()).not.toHaveAttribute('aria-describedby');
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('');
         expect(api.getState().userColumns?.find(({ colId }) => colId === 'profit')).not.toHaveProperty(
             'calculatedExpressionError'

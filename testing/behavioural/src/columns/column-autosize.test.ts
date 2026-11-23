@@ -1044,23 +1044,11 @@ describe('Column Autosize', () => {
             `);
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `pinned cols are excluded; suppressAutoSize cols are excluded after autoSizeAllColumns`
-            ).checkColumns(`
-                LEFT
-                └── left1 width:100
-                CENTER
-                ├── suppressed width:100
-                └── center1 width:60
-                RIGHT
-                └── right1 width:100
-            `);
             await asyncSetTimeout(0);
 
-            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes).
-            // center1's exact width depends on the zero-layout scale-up math (which short-circuits
-            // when grid width = 0); the assertion that matters here is the filter exclusion.
+            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes); center1, the
+            // only column scaled, takes the rest of the 1000px viewport
+            expect(api.getColumn('center1')!.getActualWidth()).toBe(700);
             expect(api.getColumn('left1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('right1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('suppressed')!.getActualWidth()).toBe(100);
@@ -1100,14 +1088,6 @@ describe('Column Autosize', () => {
 
             // Pass the hidden col explicitly so it reaches the scale-up filter.
             api.autoSizeColumns({ colIds: ['hiddenLeft', 'center1', 'center2'], scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `hidden pinned col is treated as not-pinned by the filter (matches latest display after autoSizeColumns`
-            ).checkColumns(`
-                CENTER
-                ├── center1 width:60
-                └── center2 width:60
-            `);
             await asyncSetTimeout(0);
 
             // Non-displayed → never resized by content or scale-up pass; original width preserved.
@@ -1134,13 +1114,6 @@ describe('Column Autosize', () => {
             const rowNumberWidthBefore = rowNumberCol!.getActualWidth();
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(api, `row-number col is excluded from both passes after autoSizeAllColumns`)
-                .checkColumns(`
-                    LEFT
-                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                    CENTER
-                    └── a width:80
-                `);
             await asyncSetTimeout(0);
 
             expect(rowNumberCol!.getActualWidth()).toBe(rowNumberWidthBefore);

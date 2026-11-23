@@ -8,6 +8,7 @@ import { enableDevValidations } from 'ag-grid-community';
 import {
     cellValue,
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     setExpression,
@@ -31,10 +32,6 @@ async function openDialog(
     await asyncSetTimeout(0);
     vi.useFakeTimers();
     return api;
-}
-
-function closeDialog(): void {
-    document.querySelector<HTMLButtonElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
 }
 
 describe('calculated columns - applyDebounce', () => {

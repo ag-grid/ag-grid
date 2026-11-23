@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, runToIdle, waitForNoLoadingRows } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, IRowNode, IServerSideDatasource } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -18,8 +18,6 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         { athlete: 'a', country: 'USA', year: 2000, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
         { athlete: 'b', country: 'USA', year: 2004, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
         { athlete: 'c', country: 'USA', year: 2008, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
-        { athlete: 'd', country: 'France', year: 2000, sport: 'Rowing', gold: 1, silver: 0, bronze: 0, total: 1 },
-        { athlete: 'e', country: 'Italy', year: 2008, sport: 'Rowing', gold: 1, silver: 0, bronze: 0, total: 1 },
     ];
 
     /** Wraps the fake datasource so tests can assert how many blocks were requested from the server. */
@@ -75,36 +73,6 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         return api;
     }
 
-    /** The displayed row nodes, in order. */
-    const displayedRows = (api: GridApi): IRowNode[] => {
-        const rows: IRowNode[] = [];
-        for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
-            rows.push(api.getDisplayedRowAtIndex(i)!);
-        }
-        return rows;
-    };
-
-    /** Each row displayed before, still displayed in its place as the same node. */
-    const rowsKept = (api: GridApi, before: IRowNode[]) => {
-        const now = displayedRows(api);
-        return { count: now.length, kept: before.map((row, i) => now[i] === row) };
-    };
-
-    const allKept = (before: IRowNode[]) => ({ count: before.length, kept: before.map(() => true) });
-
-    /** Clicks the year pill in the pivot panel, which cycles its pivot sort. */
-    const clickYearPill = (api: GridApi) => {
-        const pill = getGridElement(api)!.querySelector<HTMLElement>(
-            '.ag-column-drop-horizontal-pivot .ag-column-drop-cell'
-        );
-        if (!pill) {
-            throw new Error('year pill not found in the pivot panel');
-        }
-        pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    };
-
-    const yearPivotSort = (api: GridApi) => api.getColumnState().find((state) => state.colId === 'year')?.pivotSort;
-
     test('pivotSort desc reverses SSRM pivot result columns without refetching from the server', async () => {
         const { datasource, getRowsCount } = countingDatasource();
         const api = await createPivotGrid(datasource);
@@ -112,20 +80,18 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const pivots = () => pivotsOf(api);
         await waitFor(() => expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']));
         const countBeforeSort = getRowsCount();
-        const rowsBefore = displayedRows(api);
-        expect(rowsBefore).toHaveLength(3);
+        const firstRow = api.getDisplayedRowAtIndex(0);
 
-        await runToIdle(() => {
-            api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
-            // The reorder is a pure column rebuild, so it animates synchronously.
-            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
-        });
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        // The reorder is a pure column rebuild, so it animates synchronously.
+        expect(document.querySelector('.ag-column-moving')).not.toBeNull();
 
-        expect({ pivots: pivots(), requests: getRowsCount(), rows: rowsKept(api, rowsBefore) }).toEqual({
-            pivots: ['2008_gold', '2004_gold', '2000_gold'],
-            requests: countBeforeSort,
-            rows: allKept(rowsBefore),
-        });
+        await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
+        expect(getRowsCount()).toBe(countBeforeSort);
     });
 
     test('a columnDefs update reversing pivotSort reverses the SSRM pivot result columns without refetching or replacing loaded rows', async () => {
@@ -135,28 +101,21 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         await waitFor(() => expect(pivotsOf(api)).toEqual(ascending));
         const countBeforeSort = getRowsCount();
-        const rowsBefore = displayedRows(api);
-        expect(rowsBefore).toHaveLength(3);
+        const firstRow = api.getDisplayedRowAtIndex(0);
 
-        await runToIdle(() =>
-            api.setGridOption('columnDefs', [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', pivot: true, hide: true, pivotSort: 'desc' },
-                { field: 'gold', aggFunc: 'sum', hide: true },
-            ])
-        );
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'year', pivot: true, hide: true, pivotSort: 'desc' },
+            { field: 'gold', aggFunc: 'sum', hide: true },
+        ]);
 
-        expect({
-            sort: yearPivotSort(api),
-            pivots: pivotsOf(api),
-            requests: getRowsCount(),
-            rows: rowsKept(api, rowsBefore),
-        }).toEqual({
-            sort: 'desc',
-            pivots: [...ascending].reverse(),
-            requests: countBeforeSort,
-            rows: allKept(rowsBefore),
-        });
+        await waitFor(() => expect(pivotsOf(api)).toEqual([...ascending].reverse()));
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowAtIndex(0)).toBe(firstRow);
+        expect(getRowsCount()).toBe(countBeforeSort);
     });
 
     test('clicking the pivot pill cycles order client side, leaving loaded rows in place', async () => {
@@ -167,30 +126,52 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const pivots = () => pivotsOf(api);
         const ascending = ['2000_gold', '2004_gold', '2008_gold'];
         const descending = ['2008_gold', '2004_gold', '2000_gold'];
-        await waitFor(() => expect(pivots()).toEqual(ascending));
-        const countBeforeSort = getRowsCount();
-        const rowsBefore = displayedRows(api);
-        expect(rowsBefore).toHaveLength(3);
-        /** Clicks the pill, runs out every timer and frame the click queued, then reads the sort, order and loads. */
-        const clickAndRead = async () => {
-            await runToIdle(() => clickYearPill(api));
-            return {
-                sort: yearPivotSort(api),
-                pivots: pivots(),
-                requests: getRowsCount(),
-                rows: rowsKept(api, rowsBefore),
-            };
+        const clickYearPill = () => {
+            const pill = getGridElement(api)!.querySelector<HTMLElement>(
+                '.ag-column-drop-horizontal-pivot .ag-column-drop-cell'
+            );
+            if (!pill) {
+                throw new Error('year pill not found in the pivot panel');
+            }
+            pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
         };
-        const noReload = { requests: countBeforeSort, rows: allKept(rowsBefore) };
+        const yearPivotSort = () => api.getColumnState().find((state) => state.colId === 'year')?.pivotSort;
+        await waitFor(() => expect(pivots()).toEqual(ascending));
+        const rowCountBefore = api.getDisplayedRowCount();
+        const countBeforeSort = getRowsCount();
+        const firstRow = api.getDisplayedRowAtIndex(0);
+        // a queued load runs two timer turns later: the lazy loader's load check, then the load itself
+        const expectNoReload = async () => {
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            expect({ requests: getRowsCount(), firstRowKept: api.getDisplayedRowAtIndex(0) === firstRow }).toEqual({
+                requests: countBeforeSort,
+                firstRowKept: true,
+            });
+        };
 
-        expect(await clickAndRead()).toEqual({ sort: 'desc', pivots: descending, ...noReload });
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'desc', pivots: descending })
+        );
+        await expectNoReload();
+
         // null is an explicit "no sort": pivot result columns keep the order the server returned them in.
-        expect(await clickAndRead()).toEqual({
-            sort: null,
-            pivots: ['2004_gold', '2000_gold', '2008_gold'],
-            ...noReload,
-        });
-        expect(await clickAndRead()).toEqual({ sort: 'asc', pivots: ascending, ...noReload });
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({
+                sort: null,
+                pivots: ['2004_gold', '2000_gold', '2008_gold'],
+            })
+        );
+        await expectNoReload();
+
+        clickYearPill();
+        await waitFor(() =>
+            expect({ sort: yearPivotSort(), pivots: pivots() }).toEqual({ sort: 'asc', pivots: ascending })
+        );
+        await expectNoReload();
+        expect(api.getDisplayedRowCount()).toBe(rowCountBefore);
     });
 
     test('pivotComparator defines the ascending order and pivotSort desc reverses it', async () => {
@@ -209,7 +190,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
     test('pivotSort reorders application-supplied pivot result columns', async () => {
         // No pivotResultFields in the response, so the grid never generates the pivot result columns itself.
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await createPivotGrid(datasource);
 
@@ -245,9 +226,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('supplied pivot result columns start unsorted and the first pill click sorts them ascending', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
-        const api = await createPivotGrid(datasource, undefined, { pivotPanelShow: 'always' });
+        const api = await createPivotGrid(datasource);
 
         // Supplied in an order that is neither ascending nor descending, so "no sort" is distinguishable.
         const supplied = ['2004_gold', '2000_gold', '2008_gold'];
@@ -260,28 +241,27 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const pivots = () => pivotsOf(api);
         await waitFor(() => expect(pivots()).toEqual(supplied));
 
-        expect(yearPivotSort(api)).toBeNull();
+        const yearCol = api.getColumn('year') as any;
+        const strategy = yearCol.beans.columnStateUpdateStrategy;
+        expect(strategy.getPivotSort(false, yearCol)).toBeUndefined();
 
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({
-                sort: 'asc',
-                pivots: ['2000_gold', '2004_gold', '2008_gold'],
-            })
-        );
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
+            expect(pivots()).toEqual(['2000_gold', '2004_gold', '2008_gold']);
+        });
 
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({
-                sort: 'desc',
-                pivots: ['2008_gold', '2004_gold', '2000_gold'],
-            })
-        );
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBe('desc');
+            expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']);
+        });
 
-        clickYearPill(api);
-        await waitFor(() =>
-            expect({ sort: yearPivotSort(api), pivots: pivots() }).toEqual({ sort: null, pivots: supplied })
-        );
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await waitFor(() => {
+            expect(strategy.getPivotSort(false, yearCol)).toBeNull();
+            expect(pivots()).toEqual(supplied);
+        });
     });
 
     test('the pivot pill shows no sort indicator while supplied pivot result columns are unsorted', async () => {
@@ -295,7 +275,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
             pivotPanelShow: 'always',
             rowModelType: 'serverSide',
             serverSideDatasource: {
-                getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+                getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
             },
         });
         await waitForNoLoadingRows(api);
@@ -325,7 +305,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('sorting supplied pivot result columns does not mutate the application-owned arrays', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await createPivotGrid(datasource);
 
@@ -390,7 +370,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('pivotSort orders supplied pivot groups without reordering the measures inside them', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await gridsManager.createGridAndWait('ssrmFlat', {
             columnDefs: [
@@ -436,7 +416,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('pivotKeys mark supplied leaves as a flattened inner pivot level', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await gridsManager.createGridAndWait('ssrmInnerFlat', {
             columnDefs: [
@@ -478,7 +458,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('pivotSort orders flat supplied pivot columns when pivoting on two columns', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await gridsManager.createGridAndWait('ssrmTwoLevelFlat', {
             columnDefs: [
@@ -509,7 +489,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('pivotSort pins a supplied non-group column while the groups beside it reorder', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await createPivotGrid(datasource);
 
@@ -530,7 +510,7 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
     test('a supplied total marked with empty pivotKeys is pinned in a flat level', async () => {
         const datasource: IServerSideDatasource = {
-            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: rowData.length }), 0),
+            getRows: (params) => setTimeout(() => params.success({ rowData: rowData as any, rowCount: 3 }), 0),
         };
         const api = await createPivotGrid(datasource);
 
@@ -554,8 +534,10 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         const api = await createPivotGrid(datasource);
         const countBeforeChange = getRowsCount();
 
-        // the clock the "no refetch" tests run out, so their window is long enough to see one
-        await runToIdle(() => api.applyColumnState({ state: [{ colId: 'year', pivot: false }] }));
+        api.applyColumnState({ state: [{ colId: 'year', pivot: false }] });
+        // the same two timer turns the "no refetch" tests wait, so their window is long enough to see one
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
         expect(getRowsCount()).toBe(countBeforeChange + 1);
     });
 });

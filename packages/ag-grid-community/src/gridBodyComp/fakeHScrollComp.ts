@@ -1,19 +1,10 @@
-import {
-    FAST_TEST_TIMINGS,
-    RefPlaceholder,
-    _getScrollLeft,
-    _setFixedHeight,
-    _setFixedWidth,
-    _setScrollLeft,
-} from 'ag-stack';
+import { RefPlaceholder, _getScrollLeft, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp, INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import type { ScrollVisibleService } from './scrollVisibleService';
-
-const SCROLL_VISIBLE_DEBOUNCE_MS = FAST_TEST_TIMINGS ? 25 : 100;
 
 const FakeHScrollElement: ElementParams = {
     tag: 'div',
@@ -134,7 +125,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         if (!hScrollShowing) {
             apply();
         } else {
-            this.setScrollVisibleDebounce = window.setTimeout(apply, SCROLL_VISIBLE_DEBOUNCE_MS);
+            this.setScrollVisibleDebounce = window.setTimeout(apply, 100);
         }
     }
 

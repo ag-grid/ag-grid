@@ -11,6 +11,7 @@ import type {
 import { enableDevValidations } from 'ag-grid-community';
 
 import {
+    closeDialog,
     createGrid,
     getDialogButton,
     getExpressionInput,
@@ -182,7 +183,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
         ]);
         expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[pay] * 2');
         expect(value(api)).toBe(200);
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
         expect(value(api)).toBe('#ERROR!');
     });
@@ -214,7 +215,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
             expect(getDialogButton('Apply').disabled).toBe(false);
             getDialogButton('Apply').click();
         } else {
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
         }
         expect(value(api)).toBe(200);
         expect(
@@ -350,7 +351,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
             setExpression('[Salary] * 3');
             allowed = false;
             api.refreshCalculatedColumns({ columns: ['profit'] });
-            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            closeDialog();
             expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[pay] * 3');
             expect(value(api)).toBe('#ERROR!');
         }
@@ -373,7 +374,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
         api.refreshCalculatedColumns({ columns: ['profit'] });
         expect(getExpressionInput().getAttribute('aria-invalid')).toBe('false');
         expect(value(api)).toBe(200);
-        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        closeDialog();
         await asyncSetTimeout(0);
         expect(changed.mock.calls.every(([event]) => event.source === 'api')).toBe(true);
     });

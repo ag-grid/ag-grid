@@ -1,5 +1,3 @@
-import { FAST_TEST_TIMINGS } from 'ag-stack';
-
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -9,9 +7,6 @@ import type { StylesChangedEvent } from '../events';
 import { _canScrollVertically } from '../gridOptionsUtils';
 import { _createElement } from '../utils/element';
 import type { GridBodyCtrl } from './gridBodyCtrl';
-
-/** A second refresh after a change, for layouts measured only once the browser has rendered it. */
-const REFRESH_BACKUP_MS = FAST_TEST_TIMINGS ? 125 : 500;
 
 interface ScrollVisibilityState {
     horizontalScrollShowing: boolean;
@@ -73,7 +68,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     public refresh(): void {
         this.refreshImpl();
         window.clearTimeout(this.refreshTimer);
-        this.refreshTimer = window.setTimeout(() => this.refreshImpl(), REFRESH_BACKUP_MS);
+        this.refreshTimer = window.setTimeout(() => this.refreshImpl(), 500);
     }
 
     public isHorizontalScrollShowing(): boolean {

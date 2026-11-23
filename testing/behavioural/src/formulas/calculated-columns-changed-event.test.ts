@@ -2,11 +2,17 @@ import { waitFor } from '@testing-library/dom';
 import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { CalculatedColumnChangedEvent, CalculatedColumnValidationParams, ColDef } from 'ag-grid-community';
+import type {
+    CalculatedColumnChangedEvent,
+    CalculatedColumnValidationParams,
+    ColDef,
+    GridApi,
+} from 'ag-grid-community';
 import { _processOnChange } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     openEditDialogViaMenu,
     selectDataType,
@@ -24,10 +30,6 @@ const profit: ColDef = {
 };
 const columnDefs: ColDef[] = [{ field: 'revenue' }, { field: 'cost' }, profit];
 const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
-
-function closeDialog(): void {
-    document.querySelector<HTMLButtonElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
-}
 
 describe('calculatedColumnChanged', () => {
     setupCalculatedColumnsSuite();
@@ -414,6 +416,66 @@ describe('calculatedColumnChanged', () => {
         setTitle('Final');
         await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
         expect(changed.mock.calls[0][0].changes).toEqual({ headerName: { oldValue: 'Saved', newValue: 'Final' } });
+    });
+
+    describe('validation state across a state restore and a later column rebuild', () => {
+        const eventTypes = [
+            'calculatedColumnCreated',
+            'calculatedColumnRemoved',
+            'calculatedColumnChanged',
+            'calculatedColumnExpressionChanged',
+            'calculatedColumnValidationStateChanged',
+        ] as const;
+
+        /** Records every calculatedColumn* event; `flush` returns those raised since the last flush, in order. */
+        function recordCalculatedColumnEvents(api: GridApi) {
+            const events: { type: string; colId: string; source: string; valid?: boolean }[] = [];
+            for (const type of eventTypes) {
+                api.addEventListener(type, (event: any) => {
+                    const entry: (typeof events)[number] = {
+                        type,
+                        colId: event.column.getColId(),
+                        source: event.source,
+                    };
+                    if (type === 'calculatedColumnValidationStateChanged') {
+                        entry.valid = event.valid;
+                    }
+                    events.push(entry);
+                });
+            }
+            return async () => {
+                await asyncSetTimeout(0);
+                return events.splice(0);
+            };
+        }
+
+        const abc = [{ field: 'a' }, { field: 'b' }];
+        const data = [{ id: 'r1', a: 5, b: 2 }];
+
+        test('a column turned invalid by a columnDefs update after a state restore raises its validation event once, and the next column rebuild none', async () => {
+            const declared = { colId: 'c', calculatedExpression: '[b] * 2' };
+            const api = createGrid('validation-columnDefs-flip', { columnDefs: [...abc, declared], rowData: data });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(await flush()).toEqual([]);
+
+            api.setState({
+                userColumns: [{ colId: 'c', type: 'calculated', properties: [{ property: 'headerName', value: 'X' }] }],
+            });
+            expect(api.getColumn('c')!.getColDef().headerName).toBe('X');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, declared]);
+            expect(await flush()).toEqual([
+                { type: 'calculatedColumnChanged', colId: 'c', source: 'api' },
+                { type: 'calculatedColumnValidationStateChanged', colId: 'c', source: 'api', valid: false },
+            ]);
+
+            api.setGridOption('columnTypes', { foo: {} });
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('defaultColDef', { width: 150 });
+            expect(await flush()).toEqual([]);
+        });
     });
 
     test('an ordinary rebuild keeps user overrides without reporting changes', async () => {

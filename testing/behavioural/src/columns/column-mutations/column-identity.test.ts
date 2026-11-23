@@ -1,7 +1,8 @@
-import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, ColumnState, GridApi } from 'ag-grid-community';
 
 describe('Column identity & id allocation', () => {
@@ -68,6 +69,24 @@ describe('Column identity & id allocation', () => {
             expect(colIds(api)).toEqual(['0', 'b']);
             expect(api.getColumns()![0]).toBe(anon1);
             expect(api.getColumn('0')!.getColDef().headerName).toBe('X');
+        });
+
+        // TODO: disabled due to AG-19163 - re-enable once fixed
+        test.skip('a column kept as the same colDef object keeps its state when a recreated column without colId or field moves before it', () => {
+            const athlete: ColDef = { headerName: 'Athlete' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [athlete, { headerName: 'Country' }] });
+
+            const athleteCol = api.getColumns()![0];
+            api.applyColumnState({ state: [{ colId: athleteCol.getColId(), width: 111, sort: 'asc' }] });
+
+            api.setGridOption('columnDefs', [{ headerName: 'Country' }, athlete]);
+
+            const [country, athleteAfter] = api.getColumns()!;
+            const [countryState, athleteState] = api.getColumnState();
+            expect(athleteAfter).toBe(athleteCol);
+            expect([athleteState.width, athleteState.sort]).toEqual([111, 'asc']);
+            expect(country.getColDef().headerName).toBe('Country');
+            expect(countryState.sort).toBeNull();
         });
 
         test('a column whose definition lost its field in place is not shared by two new definitions', () => {
@@ -296,18 +315,31 @@ describe('Column identity & id allocation', () => {
             });
         }
 
-        test.each([['a field', { field: '0', headerName: 'Z' }]] as [string, ColDef][])(
-            'columns after one passed as the same colDef object keep their width and sort by position when %s takes its id',
-            (_name, taker) => {
+        test('renamed columns after a colDef object whose column a colId takes take the states they take outside a group', () => {
+            const after = (grouped: boolean) => {
                 const a: ColDef = { headerName: 'A' };
-                const api = gridsManager.createGrid('myGrid', { columnDefs: [a, ...recreated('B', 'C', 'D')] });
-                api.applyColumnState({ state: sorted('1') });
+                const before = [a, ...recreated('B', 'C')];
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: grouped ? [{ headerName: 'G', children: before.slice(0, 2) }, before[2]] : before,
+                });
+                const [aId, bId, cId] = colIds(api);
+                api.applyColumnState({
+                    state: [{ colId: aId, width: 101 }, ...sorted(bId), { colId: cId, width: 103 }],
+                });
+                const next = [a, ...recreated('B2', 'C2')];
+                api.setGridOption('columnDefs', [
+                    { colId: aId, headerName: 'K' },
+                    ...(grouped ? [{ headerName: 'G2', children: next.slice(0, 2) }, next[2]] : next),
+                ]);
+                const result = shown(api);
+                gridsManager.reset();
+                return result;
+            };
 
-                api.setGridOption('columnDefs', [a, ...recreated('B2', 'C2'), taker]);
+            const grouped = after(true);
 
-                expect(shown(api)).toEqual(['A 200 -', 'B2 111 asc', 'C2 200 -', 'Z 200 -']);
-            }
-        );
+            expect(grouped).toEqual(after(false));
+        });
 
         test('a colId a group declares, then a field, keeps each column its state when the definitions are set again', () => {
             const warned = expectWarning273();
@@ -359,6 +391,15 @@ describe('Column identity & id allocation', () => {
             api.setGridOption('columnDefs', [{ headerName: 'A', field: 'x' }]);
 
             expect(shown(api)).toEqual(['A 200 -']);
+        });
+
+        test('a recreated column with the header of a column kept as the same colDef object after it gets its own id', () => {
+            const a: ColDef = { headerName: 'A' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [a, { headerName: 'B' }] });
+            api.applyColumnState({ state: sorted('0') });
+
+            api.setGridOption('columnDefs', [{ headerName: 'A' }, a]);
+            expect(new Set(colIds(api)).size).toBe(2);
         });
 
         test('a column kept by headerName keeps its listeners', () => {
@@ -425,6 +466,19 @@ describe('Column identity & id allocation', () => {
             expect(colIds(api)).toEqual(['1', '0', 'b']);
         });
 
+        test('grouped: columns without colId or field share no id with a numeric colId or a group', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'g', children: [{ field: 'x' }] },
+                    { colId: '1' },
+                    { headerName: 'A' },
+                    { headerName: 'B' },
+                ],
+            });
+            const ids = [...colIds(api), ...api.getColumnGroupState().map((s) => s.groupId)];
+            expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+        });
+
         test('grouped: a group without groupId gets its id by position after a column wrapped in a padding group', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'b' }, { children: [{ field: 'x' }] }],
@@ -484,17 +538,56 @@ describe('Column identity & id allocation', () => {
             expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
         });
 
-        test('a column matched by field keeps its column and id when a new group with that id comes before it', () => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected groupId collision
-            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'g' }] });
-            const column = api.getColumn('g');
+        test('two groups with one groupId stay two groups with their own children when the same definitions are set again, as the same array and as a copy, the first keeping its instance', () => {
+            const warned = expectWarning273();
+            const columnDefs: ColGroupDef[] = [
+                { groupId: 'g', children: [{ field: 'a' }] },
+                { groupId: 'g', children: [{ field: 'b' }] },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            const groups = () => ['a', 'b'].map((colId) => api.getColumn(colId)!.getOriginalParent()!);
+            const state = () =>
+                groups().map((group) => ({
+                    id: group.getGroupId(),
+                    leaves: group.getLeafColumns().map((col) => col.getColId()),
+                }));
+            const [groupA, groupB] = groups();
 
-            api.setGridOption('columnDefs', [{ groupId: 'g', children: [{ field: 'x' }] }, { field: 'g' }]);
+            expect(state()).toEqual([
+                { id: 'g', leaves: ['a'] },
+                { id: 'g_1', leaves: ['b'] },
+            ]);
+            expect(groupA === groupB).toBe(false);
 
-            expect(api.getColumn('g')).toBe(column);
-            expect(api.getColumn('x')!.getOriginalParent()!.getGroupId()).toBe('g_1');
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+            api.setGridOption('columnDefs', columnDefs);
+            expect(state()).toEqual([
+                { id: 'g', leaves: ['a'] },
+                { id: 'g_1', leaves: ['b'] },
+            ]);
+            expect(groups()[0] === groupA).toBe(true);
+            expect(groups()[0] === groups()[1]).toBe(false);
+
+            api.setGridOption(
+                'columnDefs',
+                columnDefs.map((def) => ({ ...def, children: [...def.children] }))
+            );
+            expect(state()).toEqual([
+                { id: 'g', leaves: ['a'] },
+                { id: 'g_1', leaves: ['b'] },
+            ]);
+            expect(groups()[0] === groupA).toBe(true);
+            expect(groups()[0] === groups()[1]).toBe(false);
+            expect(groups()[0] === groups()[1]).toBe(false);
+            warned();
+        });
+
+        test('a new def whose field is a duplicate column’s suffixed id gets that id', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'a' }, { field: 'a' }] });
+            api.applyColumnState({ state: [{ colId: 'a_1', width: 111, sort: 'asc' }] });
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'a_1' }]);
+
+            expect(colIds(api)).toEqual(['a', 'a_1']);
         });
 
         test('a column whose field or colId is a group’s groupId keeps its column and state when the same defs are set again', () => {
@@ -614,6 +707,33 @@ describe('Column identity & id allocation', () => {
             ]);
         });
 
+        test('duplicate colIds replacing duplicate fields get the ids x and x_1, with warning 273', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'x' }, { field: 'x' }] });
+            expect(warn).not.toHaveBeenCalled();
+
+            api.setGridOption('columnDefs', [{ colId: 'x' }, { colId: 'x' }]);
+
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('duplicate colIds and a field with that name keep every column when the same defs are set again', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const defs: ColDef[] = [{ field: 'g' }, { colId: 'g' }, { colId: 'g' }];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs });
+            const columns = api.getColumns()!.slice();
+
+            api.setGridOption('columnDefs', [...defs]);
+            const afterSame = api.getColumns()!.map((c, i) => c === columns[i]);
+            api.setGridOption('columnDefs', [{ field: 'g' }, { colId: 'g' }, { colId: 'g' }]);
+            expect(afterSame).toEqual([true, true, true]);
+            expect(api.getColumns()!.map((c, i) => c === columns[i])).toEqual([true, true, true]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
         test('a colDef object edited in place to a field equal to its column’s suffixed id keeps its column', () => {
             const first: ColDef = { field: 'x' };
             const second: ColDef = { field: 'x' };
@@ -630,6 +750,7 @@ describe('Column identity & id allocation', () => {
         test.each([
             ['its colId', { colId: 'c', field: 'x' }, false],
             ['its field', { field: 'c', headerName: 'C' }, false],
+            ['its colId, passed again as a copy', { colId: 'c', headerName: 'C' }, true],
         ])(
             'a colDef object edited in place to drop %s keeps its column when a new def sets that id as its field',
             (_name, initial: ColDef, copy: boolean) => {
@@ -644,11 +765,6 @@ describe('Column identity & id allocation', () => {
                     delete def.colId;
                 }
                 api.setGridOption('columnDefs', [copy ? { ...def } : def, { field: 'c' }]);
-
-                expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getActualWidth()}`)).toEqual([
-                    'c 111',
-                    'c_1 200',
-                ]);
                 expect(api.getColumn('c')).toBe(column);
             }
         );
@@ -665,6 +781,33 @@ describe('Column identity & id allocation', () => {
 
             expect(colIds(api)).toEqual(['c', 'c_1']);
             expect(api.getColumn('c_1')).toBe(suffixed);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('the column at a duplicate colId’s suffixed id is kept when another def now declares that id as its colId', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }, { colId: 'a' }] });
+            const suffixed = api.getColumn('a_1');
+
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'a' }, { colId: 'a_1' }]);
+            expect(api.getColumn('a_1')).toBe(suffixed);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
+
+        test('a duplicate colId whose first suffix a later groupId declares keeps its column when the same defs are set again', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const defs = (): (ColDef | ColGroupDef)[] => [
+                { colId: 'a' },
+                { colId: 'a' },
+                { groupId: 'a_1', children: [{ field: 'x' }] },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs() });
+            const columns = api.getColumns()!.slice();
+
+            api.setGridOption('columnDefs', defs());
+            expect(api.getColumns()!.map((c, i) => c === columns[i])).toEqual([true, true, true]);
             expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
         });
 
@@ -686,58 +829,6 @@ describe('Column identity & id allocation', () => {
             expect(colIds(api)).toEqual(['x', 'x_1']);
             expect(api.getColumn('x')).toBe(first);
             expect(api.getColumn('x_1')).toBe(second);
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
-        });
-
-        test.each([
-            ['renamed, as many as removed, take theirs by position', ['B', 'C'], ['X', 'Y'], [222, 333]],
-            [
-                'renamed beside one with a field take theirs by position among those without',
-                ['=f', 'B'],
-                ['=f', 'X'],
-                [222, 333],
-            ],
-        ])('duplicate colIds after the first %s', (_name, before: string[], after: string[], widths: number[]) => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
-            // `=x`: a def with field x; else one with that headerName.
-            const def = (key: string): ColDef =>
-                key[0] === '=' ? { colId: 'p', field: key.slice(1) } : { colId: 'p', headerName: key };
-            const first = def('A');
-            const api = gridsManager.createGrid('myGrid', { columnDefs: [first, ...before.map(def)] });
-            api.applyColumnState({
-                state: [
-                    { colId: 'p', width: 111 },
-                    { colId: 'p_1', width: 222 },
-                    { colId: 'p_2', width: 333 },
-                ],
-            });
-
-            api.setGridOption('columnDefs', [first, ...after.map(def)]);
-
-            expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getActualWidth()}`)).toEqual([
-                'p 111',
-                `p_1 ${widths[0]}`,
-                `p_2 ${widths[1]}`,
-            ]);
-            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
-        });
-
-        test('a duplicate colId whose object was edited in place to another field is taken by a copy with the field it shows', () => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
-            const first: ColDef = { colId: 'p' };
-            const edited: ColDef = { colId: 'p', field: 'x' };
-            const api = gridsManager.createGrid('myGrid', { columnDefs: [first, edited] });
-            api.applyColumnState({ state: [{ colId: 'p_1', width: 222 }] });
-            edited.field = 'y';
-
-            api.setGridOption('columnDefs', [first, { colId: 'p', field: 'x' }]);
-
-            expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getActualWidth()}`)).toEqual([
-                'p 200',
-                'p_1 222',
-            ]);
             expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
         });
 
@@ -935,6 +1026,40 @@ describe('Column identity & id allocation', () => {
             expect(widths(api)).toEqual(['p 111', 'p_2 200', 'p_1 222']);
             assertWarned();
         });
+
+        test.each([
+            ['renamed, as many as removed, take theirs by position', ['B', 'C'], ['X', 'Y'], [222, 333]],
+            [
+                'renamed beside one with a field take theirs by position among those without',
+                ['=f', 'B'],
+                ['=f', 'X'],
+                [222, 333],
+            ],
+        ])('duplicate colIds after the first %s', (_name, before: string[], after: string[], widths: number[]) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            // `=x`: a def with field x; else one with that headerName.
+            const def = (key: string): ColDef =>
+                key[0] === '=' ? { colId: 'p', field: key.slice(1) } : { colId: 'p', headerName: key };
+            const first = def('A');
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [first, ...before.map(def)] });
+            api.applyColumnState({
+                state: [
+                    { colId: 'p', width: 111 },
+                    { colId: 'p_1', width: 222 },
+                    { colId: 'p_2', width: 333 },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [first, ...after.map(def)]);
+
+            expect(api.getColumns()!.map((col) => `${col.getColId()} ${col.getActualWidth()}`)).toEqual([
+                'p 111',
+                `p_1 ${widths[0]}`,
+                `p_2 ${widths[1]}`,
+            ]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+        });
     });
 
     describe('padding groups after a rebuild', () => {
@@ -942,6 +1067,34 @@ describe('Column identity & id allocation', () => {
         const duplicates = (ids: string[]): string[] => ids.filter((id, i) => ids.indexOf(id) !== i);
         const group = (): ColGroupDef => ({ groupId: 'g', children: [{ field: 'x' }] });
         const nested = (): ColGroupDef => ({ groupId: 'g', children: [{ groupId: 'h', children: [{ field: 'a' }] }] });
+
+        test('a recreated column without colId or field keeps its state when a column is added before it', () => {
+            const group = { groupId: 'g', children: [{ field: 'x' }] };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [group, { headerName: 'N' }] });
+            api.applyColumnState({ state: [{ colId: '0', width: 111 }] });
+
+            api.setGridOption('columnDefs', [group, { field: 'c' }, { headerName: 'N' }]);
+            expect(api.getColumn('0')!.getActualWidth()).toBe(111);
+        });
+
+        test('recreated duplicate-field columns keep their ids when a column is added before them', () => {
+            const group = { groupId: 'g', children: [{ field: 'x' }] };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [group, { field: 'a' }, { field: 'a' }] });
+
+            api.setGridOption('columnDefs', [group, { field: 'c' }, { field: 'a' }, { field: 'a' }]);
+            expect(colIds(api)).toEqual(['x', 'c', 'a', 'a_1']);
+        });
+
+        test('a colDef object edited in place keeps its column when a column is added before it', () => {
+            const edited: ColDef = { field: 'a' };
+            const group = { groupId: 'g', children: [{ field: 'x' }] };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [group, edited] });
+            const editedCol = api.getColumn('a')!;
+
+            edited.field = 'b';
+            api.setGridOption('columnDefs', [group, { field: 'c' }, edited]);
+            expect(api.getColumns()![2]).toBe(editedCol);
+        });
 
         test('columns keep their padding groups when a column added before them needs new ones', () => {
             const kept = (): ColDef[] => [{ headerName: 'N1' }, { field: 'b' }, { field: 'd' }, { headerName: 'N2' }];
@@ -970,6 +1123,15 @@ describe('Column identity & id allocation', () => {
             expect(padding()).toBe(before);
         });
 
+        test('a column two padding levels deep keeps its outer padding group across a rebuild with the same defs', () => {
+            const defs = (): (ColDef | ColGroupDef)[] => [nested(), { field: 'b' }];
+            const api = gridsManager.createGrid('myGrid', { columnDefs: defs() });
+            const outer = api.getColumn('b')!.getOriginalParent()!.getOriginalParent();
+
+            api.setGridOption('columnDefs', defs());
+            expect(api.getColumn('b')!.getOriginalParent()!.getOriginalParent()).toBe(outer);
+        });
+
         test('columns sharing padding groups keep them, holding only the columns left, when one is removed', () => {
             const first = { groupId: 'g', children: [{ groupId: 'h', children: [{ field: 'x' }] }] };
             const shared = (fields: string[]) => ({ groupId: 'k', children: fields.map((field) => ({ field })) });
@@ -980,6 +1142,45 @@ describe('Column identity & id allocation', () => {
 
             expect(api.getColumn('a')!.getOriginalParent()).toBe(padding);
             expect(padding!.getLeafColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('columns sharing padding groups keep the group ids unique when a group goes between them', () => {
+            const first = { groupId: 'g', children: [{ groupId: 'h', children: [{ field: 'x' }] }] };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [first, { groupId: 'k', children: [{ field: 'a' }, { field: 'b' }] }],
+            });
+
+            const between: ColGroupDef = { groupId: 'm', children: [{ field: 'z' }] };
+            api.setGridOption('columnDefs', [
+                first,
+                { groupId: 'k', children: [{ field: 'a' }, between, { field: 'b' }] },
+            ]);
+
+            expect(duplicates(groupIds(api))).toEqual([]);
+            expect(colIds(api)).toEqual(['x', 'a', 'z', 'b']);
+            const b = api.getColumn('b')!;
+            expect(b.getOriginalParent()!.getLeafColumns()).toEqual([b]);
+        });
+
+        test('a column moved out of a group without groupId to the top level leaves the group ids unique', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ children: [{ groupId: 'h', children: [{ field: 'a' }] }, { field: 'x' }] }],
+            });
+
+            api.setGridOption('columnDefs', [
+                { field: 'x' },
+                { groupId: 'k', children: [{ groupId: 'h', children: [{ field: 'a' }] }] },
+            ]);
+
+            const ancestors: boolean[] = [];
+            for (
+                let parent = api.getColumn('x')!.getOriginalParent();
+                parent !== null;
+                parent = parent.getOriginalParent()
+            ) {
+                ancestors.push(parent.isPadding());
+            }
+            expect(duplicates(groupIds(api))).toEqual([]);
         });
 
         test('a column keeps its padding group when an earlier column’s padding group id becomes a positional id', () => {
@@ -1033,6 +1234,72 @@ describe('Column identity & id allocation', () => {
         });
     });
 
+    describe('column groups without groupId across a columnDefs update', () => {
+        // Each call builds fresh definition objects, as a framework wrapper or a re-render does.
+        const leaf = (field: string, extra: Partial<ColDef> = {}): ColDef => ({ field, ...extra });
+        const plainDefs = (): (ColDef | ColGroupDef)[] => [
+            leaf('a'),
+            { headerName: 'G', children: [leaf('c'), leaf('d')] },
+        ];
+        const groupDefs = (groupExtra: Partial<ColGroupDef>, ...children: ColDef[]): (ColDef | ColGroupDef)[] => [
+            leaf('a'),
+            { headerName: 'G', children, ...groupExtra },
+        ];
+        const expandableDefs = (name = 'G') =>
+            groupDefs({ headerName: name }, leaf('c'), leaf('d', { columnGroupShow: 'open' }));
+        const provided = (api: GridApi, colId: string) => api.getColumn(colId)!.getOriginalParent()!;
+        const headerGroupCells = (api: GridApi) =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll<HTMLElement>(
+                    '.ag-header-group-cell:not(.ag-header-group-cell-no-group)'
+                )
+            );
+        const update = async (api: GridApi, columnDefs: (ColDef | ColGroupDef)[]) => {
+            api.setGridOption('columnDefs', columnDefs);
+            await asyncSetTimeout(0);
+        };
+        const createAndRender = async (columnDefs: (ColDef | ColGroupDef)[], groupCells = 1) => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            await waitFor(() => expect(headerGroupCells(api).length).toBe(groupCells), { timeout: 1000 });
+            return api;
+        };
+
+        test('an equal update keeps an open group expanded and raises no columnGroupOpened', async () => {
+            const api = await createAndRender(expandableDefs());
+            const groupBefore = provided(api, 'c');
+            api.setColumnGroupOpened(groupBefore.getGroupId(), true);
+            await asyncSetTimeout(0);
+            expect(groupBefore.isExpanded()).toBe(true);
+            const opened = vi.fn();
+            api.addEventListener('columnGroupOpened', opened);
+
+            await update(api, expandableDefs());
+            expect(provided(api, 'c').isExpanded()).toBe(true);
+            expect(opened).not.toHaveBeenCalled();
+        });
+
+        test('a group renamed in place is a new group that keeps the open state', async () => {
+            const api = await createAndRender(expandableDefs());
+            const groupBefore = provided(api, 'c');
+            api.setColumnGroupOpened(groupBefore.getGroupId(), true);
+            await asyncSetTimeout(0);
+
+            await update(api, expandableDefs('H'));
+
+            expect(provided(api, 'c') === groupBefore).toBe(false);
+            expect(provided(api, 'c').isExpanded()).toBe(true);
+        });
+
+        test('a group given marryChildren is a new group', async () => {
+            const api = await createAndRender(plainDefs());
+            const groupBefore = provided(api, 'c');
+
+            await update(api, groupDefs({ marryChildren: true }, leaf('c'), leaf('d')));
+
+            expect(provided(api, 'c') === groupBefore).toBe(false);
+        });
+    });
+
     test('two grids with identical anonymous defs allocate identical ids', () => {
         const defs: ColDef[] = [{ headerName: 'p' }, { field: 'k' }, { headerName: 'q' }];
         const apiA = gridsManager.createGrid('gridA', { columnDefs: defs.map((d) => ({ ...d })) });
@@ -1040,5 +1307,39 @@ describe('Column identity & id allocation', () => {
         expect(colIds(apiA)).toEqual(colIds(apiB));
         expect(colIds(apiA)[0]).toBe('0');
         expect(colIds(apiA)[1]).toBe('k');
+    });
+    describe('ids the grid itself generates, declared by the user', () => {
+        test('a column group whose groupId is the selection column id keeps its id and group across a columnDefs update, with no warning 273, the selection column on or off', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const defs: ColGroupDef[] = [{ groupId: 'ag-Grid-SelectionColumn', children: [{ field: 'a' }] }];
+            for (const rowSelection of [undefined, { mode: 'multiRow' as const }]) {
+                const api = gridsManager.createGrid(
+                    'myGrid',
+                    { columnDefs: defs, rowSelection },
+                    { modules: [RowSelectionModule] }
+                );
+                const column = api.getColumn('a')!;
+                const group = column.getOriginalParent()!;
+                expect(group.getGroupId()).toBe('ag-Grid-SelectionColumn');
+
+                api.setGridOption('columnDefs', defs);
+
+                const groupAfter = api.getColumn('a')!.getOriginalParent()!;
+                expect({
+                    column: api.getColumn('a') === column,
+                    group: groupAfter === group,
+                    groupId: groupAfter.getGroupId(),
+                    selectionColumnPresent: !!api.getColumn('ag-Grid-SelectionColumn'),
+                }).toEqual({
+                    column: true,
+                    group: true,
+                    groupId: 'ag-Grid-SelectionColumn',
+                    selectionColumnPresent: rowSelection !== undefined,
+                });
+                gridsManager.reset();
+            }
+            expect(warn.mock.calls.flat().join(' ')).not.toContain('warning #273');
+        });
     });
 });

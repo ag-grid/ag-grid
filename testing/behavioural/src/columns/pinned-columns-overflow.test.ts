@@ -5,10 +5,8 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     dispatchGridSizeChanged,
-    installMockResizeObserver,
     nextAnimationFrame,
     openMenuOption,
-    polyfillOffsetParent,
     triggerResizeObservers,
 } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
@@ -59,27 +57,75 @@ describe('Pinned columns wider than the viewport', () => {
     });
 
     test('unpins the pinned columns that do not fit, from the right and the left in turn, until the rest do', async () => {
-        const restoreOffsetParent = polyfillOffsetParent();
-        const uninstallResizeObserver = installMockResizeObserver();
-        try {
-            const api = gridsManager.createGrid('myGrid', { columnDefs: overflowingColumnDefs, rowData });
-            // the viewport reports its size, which the pinned columns are kept narrower than
-            triggerResizeObservers();
-            await nextAnimationFrame();
+        const api = gridsManager.createGrid('myGrid', { columnDefs: overflowingColumnDefs, rowData });
+        // the viewport reports its size, which the pinned columns are kept narrower than
+        triggerResizeObservers();
+        await nextAnimationFrame();
 
-            expect(api.getColumns()!.map((col) => `${col.getColId()}:${col.getPinned() ?? ''}`)).toEqual([
-                'a:',
-                'b:',
-                'c:',
-                'd:',
-                'e:',
-                'f:left',
-                'g:',
-            ]);
-        } finally {
-            uninstallResizeObserver();
-            restoreOffsetParent();
-        }
+        expect(api.getColumns()!.map((col) => `${col.getColId()}:${col.getPinned() ?? ''}`)).toEqual([
+            'a:',
+            'b:',
+            'c:',
+            'd:',
+            'e:',
+            'f:left',
+            'g:',
+        ]);
+    });
+
+    // 250px columns in the 600px grid: three pinned are 750px, wider than the viewport, and two are 500px, which fit
+    test('pinning columns wider than the viewport through setColumnsPinned or applyColumnState unpins the ones that do not fit, as their own viewportSizeFeature columnPinned after the call', async () => {
+        const columnDefs = ['a', 'b', 'c', 'd'].map((field) => ({ field, width: 250 }));
+        const run = async (pin: (api: GridApi) => void) => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
+            await asyncSetTimeout(0);
+            const events: { colIds: string[]; pinned: ColumnPinnedType | undefined; source: string }[] = [];
+            api.addEventListener('columnPinned', (event) => {
+                events.push({
+                    colIds: event.columns!.map((col) => col.getColId()),
+                    pinned: event.pinned,
+                    source: event.source,
+                });
+            });
+            expect(api.getColumnState().map((col) => col.pinned ?? null)).toEqual([null, null, null, null]);
+
+            pin(api);
+            await asyncSetTimeout(0);
+
+            const viewportEventsStart = events.findIndex((event) => event.source === 'viewportSizeFeature');
+            return {
+                pinned: api.getColumnState().map((col) => `${col.colId}:${col.pinned ?? ''}`),
+                ownEventsBeforeViewportEvents: viewportEventsStart > 0,
+                viewportEvents: events.slice(viewportEventsStart),
+            };
+        };
+
+        // only left is pinned, so the first left column is the one unpinned
+        const bySetColumnsPinned = await run((api) => api.setColumnsPinned(['a', 'b', 'c'], 'left'));
+        gridsManager.reset();
+        // the right-pinned column goes first, and the two left ones then fit
+        const byApplyColumnState = await run((api) =>
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', pinned: 'left' },
+                    { colId: 'b', pinned: 'right' },
+                    { colId: 'c', pinned: 'left' },
+                ],
+            })
+        );
+
+        expect({ bySetColumnsPinned, byApplyColumnState }).toEqual({
+            bySetColumnsPinned: {
+                pinned: ['a:', 'b:left', 'c:left', 'd:'],
+                ownEventsBeforeViewportEvents: true,
+                viewportEvents: [{ colIds: ['a'], pinned: null, source: 'viewportSizeFeature' }],
+            },
+            byApplyColumnState: {
+                pinned: ['a:left', 'b:', 'c:left', 'd:'],
+                ownEventsBeforeViewportEvents: true,
+                viewportEvents: [{ colIds: ['b'], pinned: null, source: 'viewportSizeFeature' }],
+            },
+        });
     });
 
     test('clips mixed pinned sections without creating a horizontal scroll range', async () => {
@@ -855,7 +901,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 const api = menuGridsManager.createGrid('myGrid', {
                     columnDefs: [
@@ -876,7 +921,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
                 expect([width(api, 'a'), width(api, 'b')]).toEqual([400, 550]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
@@ -885,7 +929,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 const api = menuGridsManager.createGrid('myGrid', {
                     columnDefs: [
@@ -905,7 +948,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
                 expect([width(api, 'a'), width(api, 'c')]).toEqual([950, 100]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
@@ -914,7 +956,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 const api = menuGridsManager.createGrid('myGrid', {
                     columnDefs: [
@@ -934,7 +975,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
                 expect([width(api, 'a'), width(api, 'b')]).toEqual([1000, 1000]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
@@ -943,7 +983,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 mockAutosizeContentWidth(530);
                 const api = menuGridsManager.createGrid('myGrid', {
@@ -963,7 +1002,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
                 expect([width(api, 'a'), width(api, 'b')]).toEqual([450, 550]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
@@ -972,7 +1010,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 mockAutosizeContentWidth(280);
                 const api = menuGridsManager.createGrid('myGrid', {
@@ -991,7 +1028,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
                 expect([width(api, 'a'), width(api, 'b')]).toEqual([450, 500]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
@@ -1008,7 +1044,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
                     SideBarModule,
                 ],
             });
-            const restoreOffsetParent = polyfillOffsetParent();
             try {
                 const api = menuGridsManager.createGrid('myGrid', {
                     columnDefs: ['a', 'b', 'c', 'd', 'e'].map((field) => ({ field, width: 200 })),
@@ -1064,7 +1099,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
                     [100, 100, 100, 100, 550],
                 ]);
             } finally {
-                restoreOffsetParent();
                 menuGridsManager.reset();
             }
         });
