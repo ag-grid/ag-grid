@@ -51,10 +51,10 @@ const GridExample = () => {
                 <div className="example-wrapper">
                     <div className="example-controls">
                         <div className="controls-row">
-                            <div>
+                            <label htmlFor="pinFirstColumnOnLoad">
                                 <input type="checkbox" id="pinFirstColumnOnLoad" />
-                                <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
-                            </div>
+                                Pin first column on load
+                            </label>
                             <button id="reloadGridButton" onClick={reloadGrid}>
                                 Reload Grid
                             </button>

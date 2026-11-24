@@ -7,6 +7,7 @@
 }
 
 #note-text {
+    width: 100%;
     min-height: 72px;
     resize: vertical;
 }

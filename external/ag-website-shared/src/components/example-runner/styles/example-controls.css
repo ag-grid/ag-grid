@@ -36,6 +36,8 @@
     --controls-gap: 8px;
     /* Below `--row-gap`, so a wrapped control reads as attached to its own label text */
     --label-gap: 4px;
+    /* Above `--row-gap`, so the space between sections reads as wider than any inside one */
+    --section-gap: 12px;
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
@@ -424,8 +426,29 @@ body > #highlighter {
     border: 0;
 }
 
+/* A titled, bordered set of rows, for controls that only make sense together, e.g. an export's
+   header settings beside its footer settings. Sections stack, or sit side by side in a `.controls-row`. */
+.example-controls fieldset.controls-section {
+    /* A fieldset is otherwise as wide as its content, so its rows could not wrap */
+    min-width: 0;
+    padding: 4px 12px 12px;
+    border: 1px solid var(--button-border);
+    border-radius: 8px;
+}
+
+.example-controls .controls-section > legend {
+    padding: 0 4px;
+    font-weight: 600;
+}
+
+.controls-row:has(> .controls-section) {
+    align-items: stretch;
+    gap: var(--section-gap);
+}
+
 /* Colour key; the example's own class colours the swatch, e.g. `legend-swatch locked-col` */
-.example-controls .legend-item {
+.example-controls .legend-item,
+.example-controls button:has(> .legend-swatch) {
     display: inline-flex;
     align-items: center;
     gap: var(--label-gap);
@@ -467,8 +490,13 @@ body > #highlighter {
     margin-right: calc(var(--row-gap) * 2);
 }
 
-.controls-row + .controls-row {
+:is(.controls-row, .controls-section) + :is(.controls-row, .controls-section) {
     margin-top: var(--row-gap);
+}
+
+/* Sections side by side are spaced by the row's gap instead */
+.controls-row > .controls-section {
+    margin-top: 0;
 }
 
 .controls-row.center {
