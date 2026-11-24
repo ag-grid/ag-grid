@@ -347,4 +347,33 @@ test.describe('community grid in a real browser', () => {
         await expect(headerCell('a')).toHaveCSS('left', '1200px');
         await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
     });
+
+    test('printing a print-layout grid prints every row', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'page.pdf() is only supported in Chromium');
+        await mountGrid(page, {
+            css: '#myGrid { width: auto; height: auto; }',
+            options: () => ({
+                columnDefs: [
+                    {
+                        field: 'id',
+                        // Chrome writes a link annotation into the PDF only for a link it prints, so the links in
+                        // the PDF are the rows that reached the printed pages.
+                        cellRenderer: (params: { value: number }) =>
+                            `<a href="https://print-row.test/${params.value}">${params.value}</a>`,
+                    },
+                    { field: 'model' },
+                ],
+                rowData: Array.from({ length: 200 }, (_, index) => ({ id: index + 1, model: `Model ${index + 1}` })),
+                domLayout: 'print',
+            }),
+        });
+        await expect(page.locator('.ag-row')).toHaveCount(200);
+
+        const pdf = (await page.pdf({ format: 'A4' })).toString('latin1');
+        const printedRowIds = new Set(
+            Array.from(pdf.matchAll(/https:\/\/print-row\.test\/(\d+)/g), ([, id]) => Number(id))
+        );
+
+        expect(printedRowIds.size).toBe(200);
+    });
 });
