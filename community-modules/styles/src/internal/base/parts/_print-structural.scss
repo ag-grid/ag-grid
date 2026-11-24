@@ -27,8 +27,8 @@
         }
 
         // the grid must shrink to its columns rather than the width measured from
-        // the container, otherwise the print engine scales the whole page down
-        .ag-grid-scrollable-area,
+        // the container, otherwise the print engine scales the whole page down.
+        // The scrollable area is left out: its inline width is the columns' width
         .ag-grid-scrolling-container,
         .ag-header-row,
         .ag-full-width-anchor {
