@@ -6,26 +6,100 @@ The grid's built-in controls, such as pagination, the column menu and the side b
 
 ## Controls
 
-With `TooltipModule` registered, these tooltips are enabled by default and use [Localisation](./localisation/) text.
+With `TooltipModule` registered, these tooltips are enabled by default. The tables list the default English text and the [Localisation](./localisation/) keys used to change it. Where a control toggles between two actions, the tooltip describes its current action.
 
-| Area                     | Controls                                                                                                         |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| Pagination               | First, previous, next and last page; page-number entry                                                           |
-| Headers and rows         | Column menu, filter, sort, group expand/collapse, resize, selection and row drag; floating-filter value previews |
-| Tool panels and grouping | Pivot Mode toggle, column/group drag handles and grouping, pivot and value pill removal                          |
-| Side Bar                 | Columns and Filters tabs, including the New Filters panel; configured custom tabs                                |
-| Dialogs and inputs       | Close, maximise/restore and input clear buttons                                                                  |
-| Quick Access Toolbar     | Find previous/next, action and menu buttons                                                                      |
+### Pagination
 
-For example, the Pivot Mode toggle shows "Turn on pivot mode" or "Turn off pivot mode". Hovering a control inside a header shows the control tooltip rather than the enclosing header tooltip.
+| Control       | Tooltip text        | Locale key            |
+| ------------- | ------------------- | --------------------- |
+| First page    | Go to first page    | `tooltipFirstPage`    |
+| Previous page | Go to previous page | `tooltipPreviousPage` |
+| Next page     | Go to next page     | `tooltipNextPage`     |
+| Last page     | Go to last page     | `tooltipLastPage`     |
+
+The page-number input has a visible label and does not show an action tooltip.
+
+### Headers and Rows
+
+| Control                               | Tooltip text                          | Locale key                                           |
+| ------------------------------------- | ------------------------------------- | ---------------------------------------------------- |
+| Column menu button                    | Open column menu                      | `tooltipColumnMenu`                                  |
+| Header and floating filter buttons    | Open filter                           | `tooltipFilter`                                      |
+| Ascending / descending sort indicator | Sorted ascending / Sorted descending  | `tooltipSortedAscending` / `tooltipSortedDescending` |
+| Column group chevron                  | Expand group / Collapse group         | `tooltipExpandGroup` / `tooltipCollapseGroup`        |
+| Row group chevron                     | Expand row group / Collapse row group | `tooltipExpandRowGroup` / `tooltipCollapseRowGroup`  |
+| Header selection checkbox             | Select all rows / Deselect all rows   | `tooltipSelectAllRows` / `tooltipDeselectAllRows`    |
+| Row selection checkbox                | Select row / Deselect row             | `tooltipSelectRow` / `tooltipDeselectRow`            |
+| Column or column group resize handle  | Resize column                         | `tooltipResizeColumn`                                |
+| Row drag handle                       | Drag to move                          | `tooltipDragToMove`                                  |
+
+Floating-filter value tooltips show the full value, including all selected Set Filter values, only when the displayed text is truncated. Their content comes from the filter value, rather than a tooltip locale key.
+
+### Tool Panels and Grouping
+
+| Control                                          | Tooltip text                             | Locale key                                           |
+| ------------------------------------------------ | ---------------------------------------- | ---------------------------------------------------- |
+| Columns Tool Panel Pivot Mode toggle             | Turn on pivot mode / Turn off pivot mode | `tooltipTurnOnPivotMode` / `tooltipTurnOffPivotMode` |
+| Columns Tool Panel expand / collapse all chevron | Expand all / Collapse all                | `tooltipExpandAll` / `tooltipCollapseAll`            |
+| Columns Tool Panel show / hide all checkbox      | Show all columns / Hide all columns      | `tooltipShowAllColumns` / `tooltipHideAllColumns`    |
+| Columns Tool Panel group chevron                 | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`        |
+| Columns Tool Panel column checkbox               | Show column / Hide column                | `tooltipShowColumn` / `tooltipHideColumn`            |
+| Columns Tool Panel column and group drag handles | Drag to move                             | `tooltipDragToMove`                                  |
+| Filters Tool Panel filter chevron                | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`      |
+| Filters Tool Panel column group chevron          | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`        |
+| New Filters Tool Panel filter card chevron       | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`      |
+| New Filters Tool Panel filter card remove button | Remove filter                            | `tooltipRemoveFilter`                                |
+| Row Groups, Values and Pivot pill drag handles   | Drag to move                             | `tooltipDragToMove`                                  |
+| Row Groups, Values and Pivot pill remove buttons | Remove                                   | `advancedFilterBuilderRemoveButtonTooltip`           |
+| Columns Side Bar tab                             | Configure columns                        | `columnsToolPanelTooltip`                            |
+| Filters and New Filters Side Bar tabs            | Configure filters                        | `filtersToolPanelTooltip`                            |
+
+Custom Side Bar tabs use their configured `tooltipKey` and `tooltipDefault`; they have no tooltip unless one is configured. Tool panel labels can also have [text tooltips](./tooltips-columns/), which are separate from these control hints.
+
+### Dialogs, Inputs and Toolbar
+
+| Control                                             | Tooltip text                                                 | Locale key                                          |
+| --------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
+| Dialog close button                                 | Close                                                        | `tooltipClose`                                      |
+| Dialog maximise / restore button                    | Maximise / Restore                                           | `tooltipMaximize` / `tooltipRestore`                |
+| Input clear button, including Find and Quick Filter | Clear                                                        | `tooltipClear`                                      |
+| Advanced Filter Builder drag handle                 | Drag to move                                                 | `tooltipDragToMove`                                 |
+| Quick Access Toolbar Find previous / next buttons   | Go to previous match / Go to next match                      | `tooltipFindPreviousMatch` / `tooltipFindNextMatch` |
+| Quick Access Toolbar menu button                    | Item's `tooltip`, otherwise its `label`, otherwise Open menu | `tooltipOpenMenu` for the fallback                  |
+| Quick Access Toolbar action button                  | Item's `tooltip`, otherwise its `label`                      | Supplied by the application                         |
+
+The Advanced Filter Builder also retains its existing Add Filter or Group, Remove, Move Up and Move Down tooltips, using `advancedFilterBuilderAddButtonTooltip`, `advancedFilterBuilderRemoveButtonTooltip`, `advancedFilterBuilderMoveUpButtonTooltip` and `advancedFilterBuilderMoveDownButtonTooltip`. These are separate from the built-in control hints configured by `builtInTooltipComponent`.
+
+### Changing Tooltip Text
+
+Set the corresponding key in `localeText`, or return the translated text from `getLocaleText`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    localeText: {
+        tooltipColumnMenu: 'Open column options',
+        tooltipNextPage: 'Go to the next page',
+    },
+};
+```
+
+Hovering a control inside a header shows the control tooltip rather than the enclosing header tooltip. Action hints are independent of text truncation and `tooltipShowMode`.
 
 Hover the pagination buttons, the Columns tab or the Athlete header's menu button below. Toggle the options to compare suppression, custom and default rendering.
 
 {% gridExampleRunner title="Built-in Control Tooltips" name="built-in-control-tooltips" exampleHeight=460 /%}
 
+## Hover, Focus and Placement
+
+Control tooltips use the configured hover delays and show immediately when a focusable control receives focus, independently of `tooltipTrigger`. Non-focusable icons, including header icons, resize handles and filter-panel chevrons, show their action hints on hover only. Focusing an enclosing header or filter title retains its text-tooltip behaviour. See [Tooltip Show and Hide](./tooltips-show-hide/) for dismissal and interaction behaviour.
+
+With `enableBrowserTooltips: true`, the browser's native tooltip replaces the grid tooltip. Native tooltips do not use the grid's focus, delay or placement settings.
+
+They are centred above their control when space allows and stay inside the grid unless `popupParent` is set. Side Bar tab tooltips instead appear beside the tab towards the grid, so adjacent tabs remain accessible. Header controls are usually at the top of this boundary, so their tooltips appear below the header. Use `tooltipPosition` with `location` and `control` to override placement for a particular control; see [Per-Source Placement](./tooltips-positioning/#per-source-placement).
+
 ## Suppression
 
-Set `suppressBuiltInTooltips: true` to hide control hints only. Automatic text previews, explicitly configured tooltips and validation tooltips are unaffected.
+Set `suppressBuiltInTooltips: true` to hide control hints and floating-filter value previews. Automatic text tooltips on cells, headers and list items, explicitly configured text tooltips and validation tooltips are unaffected.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

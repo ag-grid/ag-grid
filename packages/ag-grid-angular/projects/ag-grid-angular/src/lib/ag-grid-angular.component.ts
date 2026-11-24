@@ -502,7 +502,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public tooltipTrigger: 'hover' | 'focus' | 'hoverOrFocus' | undefined = undefined;
     /** Preferred tooltip placement. Flips or shifts to stay within the available space.
-     * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
+     * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
      * Does not apply to browser tooltips.
      * @agModule `TooltipModule`
      */

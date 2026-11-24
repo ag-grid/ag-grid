@@ -73,10 +73,16 @@ export class PageNumbersComp extends Component {
         this.btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.beans)!);
         this.btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.beans)!);
 
-        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'First Page');
-        this.initNavButton(this.btPrevious, () => this.onBtPrevious(), 'previousPage', 'Previous Page');
-        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'Next Page');
-        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'Last Page');
+        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'tooltipFirstPage', 'Go to first page');
+        this.initNavButton(
+            this.btPrevious,
+            () => this.onBtPrevious(),
+            'previousPage',
+            'tooltipPreviousPage',
+            'Go to previous page'
+        );
+        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'tooltipNextPage', 'Go to next page');
+        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'tooltipLastPage', 'Go to last page');
 
         this.addManagedListeners(this.eNumbers, {
             click: (e: MouseEvent) => this.onPageActivated(e.target as HTMLElement | null),
@@ -91,12 +97,18 @@ export class PageNumbersComp extends Component {
         this.refresh();
     }
 
-    private initNavButton(button: HTMLElement, action: () => void, control: string, defaultValue: string): void {
+    private initNavButton(
+        button: HTMLElement,
+        action: () => void,
+        control: string,
+        tooltipKey: string,
+        defaultValue: string
+    ): void {
         this.addTooltip({
             control,
             getGui: () => button,
             getLocation: () => 'pagination',
-            getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+            getTooltip: () => ({ value: this.getLocaleTextFunc()(tooltipKey, defaultValue) }),
         });
         this.activateTabIndex([button]);
         this.addManagedListeners(button, {

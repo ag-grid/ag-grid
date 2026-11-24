@@ -62,6 +62,7 @@ export class ToolPanelColumnComp extends Component {
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private dragTooltip?: ITooltipFeature;
+    private selectionTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -146,6 +147,17 @@ export class ToolPanelColumnComp extends Component {
         );
 
         this.setupDragging();
+        this.selectionTooltip = cbSelect.addTooltip({
+            control: 'columnSelect',
+            getLocation: () => 'columnToolPanelColumn',
+            getAriaElement: () => checkboxInput,
+            getTooltip: () => ({
+                value: cbSelect.getValue()
+                    ? this.getLocaleTextFunc()('tooltipHideColumn', 'Hide column')
+                    : this.getLocaleTextFunc()('tooltipShowColumn', 'Show column'),
+                params: { column },
+            }),
+        });
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
         this.addManagedEventListeners({ columnPivotModeChanged: onColStateChanged });
@@ -413,6 +425,7 @@ export class ToolPanelColumnComp extends Component {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.dragTooltip?.refreshTooltip();
+        this.selectionTooltip?.refreshTooltip();
         this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);

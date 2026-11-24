@@ -185,6 +185,31 @@ describe('Tooltip positioning callbacks', () => {
         }
     });
 
+    test('an empty nested picker tooltip does not replace the Advanced Filter add hint', async () => {
+        installFilterLayoutMock();
+        const api = await gridMgr.createGridAndWait('tooltip-builder-add', {
+            columnDefs: [{ field: 'value', filter: true }],
+            rowData: [{ value: 'UK' }],
+            enableAdvancedFilter: true,
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+        });
+        api.setAdvancedFilterModel({
+            filterType: 'join',
+            type: 'AND',
+            conditions: [{ filterType: 'text', colId: 'value', type: 'equals', filter: 'UK' }],
+        });
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        const button = condition.querySelector<HTMLElement>('[data-ref="eAddButton"]')!;
+        const picker = button.querySelector<HTMLElement>('.ag-picker-field')!;
+        expect(picker).not.toBeNull();
+        button.dispatchEvent(new MouseEvent('mouseenter', { clientX: 30, clientY: 80 }));
+        picker.dispatchEvent(new MouseEvent('mouseenter', { clientX: 31, clientY: 80 }));
+        await waitForTooltips(1);
+        expect(getVisibleTooltips()[0]).toHaveTextContent('Add Filter or Group');
+    });
+
     test('passes the validation message as the value for the filter Apply-button tooltip', async () => {
         installFilterLayoutMock();
         const position = vi.fn(() => 'bottom-start' as const);

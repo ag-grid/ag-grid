@@ -68,9 +68,9 @@ describe('Built-in control tooltips', () => {
 
             next.focus();
             await vi.advanceTimersByTimeAsync(0);
-            expect(tooltipTexts()).toEqual(['Next Page']);
+            expect(tooltipTexts()).toEqual(['Go to next page']);
             expect(next).toHaveAccessibleName('Next Page');
-            expect(next).not.toHaveAttribute('aria-describedby');
+            expect(next).toHaveAccessibleDescription('Go to next page');
 
             await user.keyboard('{Escape}');
             expect(tooltipTexts()).toEqual([]);
@@ -110,7 +110,7 @@ describe('Built-in control tooltips', () => {
         expect(tooltipTexts()).toEqual([]);
         next.focus();
         await vi.advanceTimersByTimeAsync(0);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
 
         await user.keyboard('{Escape}');
         await vi.advanceTimersByTimeAsync(800);
@@ -169,14 +169,14 @@ describe('Built-in control tooltips', () => {
         await vi.advanceTimersByTimeAsync(399);
         expect(tooltipTexts()).toEqual([]);
         await vi.advanceTimersByTimeAsync(1);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
         await user.unhover(next);
         await vi.advanceTimersByTimeAsync(100);
         await user.hover(last);
         await vi.advanceTimersByTimeAsync(119);
         expect(tooltipTexts()).toEqual([]);
         await vi.advanceTimersByTimeAsync(1);
-        expect(tooltipTexts()).toEqual(['Last Page']);
+        expect(tooltipTexts()).toEqual(['Go to last page']);
 
         api.setGridOption('suppressBuiltInTooltips', true);
         expect(tooltipTexts()).toEqual([]);
@@ -190,7 +190,7 @@ describe('Built-in control tooltips', () => {
         api.setGridOption('suppressBuiltInTooltips', false);
         next.focus();
         await vi.advanceTimersByTimeAsync(0);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
     });
 
     test('native titles follow suppression without suppressing an ordinary cell title', async () => {
@@ -209,7 +209,7 @@ describe('Built-in control tooltips', () => {
         const grid = getGridElement(api)! as HTMLElement;
         const next = getByRole(grid, 'button', { name: 'Next Page' });
         const cell = grid.querySelector('.ag-cell')!;
-        expect(next).toHaveAttribute('title', 'Next Page');
+        expect(next).toHaveAttribute('title', 'Go to next page');
         expect(cell).toHaveAttribute('title', 'Cell detail');
 
         vi.useFakeTimers();
@@ -221,7 +221,7 @@ describe('Built-in control tooltips', () => {
         expect(next).not.toHaveAttribute('title');
         expect(cell).toHaveAttribute('title', 'Cell detail');
         api.setGridOption('suppressBuiltInTooltips', false);
-        expect(next).toHaveAttribute('title', 'Next Page');
+        expect(next).toHaveAttribute('title', 'Go to next page');
     });
 
     test('header, filter, sort, resize, selection and drag sources carry their own context and current state', async () => {
@@ -242,8 +242,8 @@ describe('Built-in control tooltips', () => {
         vi.useFakeTimers();
         const user = userEvent.setup({ delay: null });
         const sources = [
-            ['.ag-header-cell[col-id="value"] .ag-header-cell-menu-button', 'columnMenu', 'Column Menu', 'header'],
-            ['.ag-header-cell[col-id="value"] .ag-header-cell-filter-button', 'filter', 'Filter', 'header'],
+            ['.ag-header-cell[col-id="value"] .ag-header-cell-menu-button', 'columnMenu', 'Open column menu', 'header'],
+            ['.ag-header-cell[col-id="value"] .ag-header-cell-filter-button', 'filter', 'Open filter', 'header'],
             ['.ag-header-cell[col-id="value"] .ag-sort-ascending-icon', 'sort', 'Sorted ascending', 'header'],
             ['.ag-header-cell[col-id="value"] .ag-header-cell-resize', 'resizeColumn', 'Resize column', 'header'],
             ['.ag-header-select-all', 'selectAll', 'Select all rows', 'header'],
@@ -373,10 +373,10 @@ describe('Built-in control tooltips', () => {
         const user = userEvent.setup();
         await user.hover(menu.closest<HTMLElement>('.ag-header-cell')!);
         await user.hover(menu);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Hint: Column Menu']));
+        await waitFor(() => expect(tooltipTexts()).toEqual(['Hint: Open column menu']));
         const params = builtInInit.mock.lastCall![0] as IBuiltInTooltipParams;
         expect(params).toMatchObject({
-            text: 'Column Menu',
+            text: 'Open column menu',
             control: 'columnMenu',
             location: 'header',
             column: api.getColumn('value'),
@@ -594,7 +594,7 @@ describe('Built-in control tooltips', () => {
             [grid.querySelector<HTMLElement>('.ag-column-drop-cell-button')!, 'Remove'],
             [getByRole(grid, 'button', { name: 'Refresh' }), 'Refresh'],
             [getByRole(grid, 'button', { name: 'Actions' }), 'Actions'],
-            [getByRole(grid, 'button', { name: 'Next Match' }), 'Next Match'],
+            [getByRole(grid, 'button', { name: 'Next Match' }), 'Go to next match'],
             [getByRole(grid.querySelector<HTMLElement>('.ag-toolbar-find')!, 'button', { name: 'Clear' }), 'Clear'],
         ];
         for (const [source, text] of sources) {
@@ -728,8 +728,12 @@ describe('Built-in control tooltips', () => {
                 ['Restore', 'Maximize'],
             ]) {
                 toggle.focus();
-                await waitFor(() => expect(tooltipTexts()).toEqual([text]));
-                expect(toggle).not.toHaveAttribute('aria-describedby');
+                await waitFor(() => expect(tooltipTexts()).toEqual([text === 'Maximize' ? 'Maximise' : text]));
+                if (text === 'Maximize') {
+                    expect(toggle).toHaveAccessibleDescription('Maximise');
+                } else {
+                    expect(toggle).not.toHaveAttribute('aria-describedby');
+                }
                 toggle.click();
                 expect(toggle).toHaveAccessibleName(nextAction);
                 await waitFor(() => expect(tooltipTexts()).toEqual([]));

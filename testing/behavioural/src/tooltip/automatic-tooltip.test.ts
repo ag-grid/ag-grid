@@ -358,7 +358,7 @@ describe('Automatic truncated-text tooltips', () => {
         expect(menu).not.toHaveAttribute('title');
         api.setGridOption('suppressBuiltInTooltips', false);
         await hover(menu);
-        expect(menu).toHaveAttribute('title', 'Column Menu');
+        expect(menu).toHaveAttribute('title', 'Open column menu');
         api.setGridOption('suppressBuiltInTooltips', true);
         await hover(menu);
         expect(menu).not.toHaveAttribute('title');

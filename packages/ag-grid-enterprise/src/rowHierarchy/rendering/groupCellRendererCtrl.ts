@@ -208,9 +208,28 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         addIconToDom('groupExpanded', this.eExpanded);
         addIconToDom('groupContracted', this.eContracted);
+        const expandTooltips = [this.eExpanded, this.eContracted].map((element) =>
+            this.createOptionalManagedBean(
+                this.beans.tooltipSvc?.createTooltip({
+                    control: 'rowGroupExpand',
+                    shouldDisplayTooltip: () => !!this.displayedNode.group,
+                    getGui: () => element,
+                    getLocation: () => (this.params.column ? 'cell' : 'fullWidthRow'),
+                    getTooltip: () => ({
+                        value: this.displayedNode.expanded
+                            ? this.getLocaleTextFunc()('tooltipCollapseRowGroup', 'Collapse row group')
+                            : this.getLocaleTextFunc()('tooltipExpandRowGroup', 'Expand row group'),
+                        params: { node: this.displayedNode, column: this.params.column },
+                    }),
+                })
+            )
+        );
 
         const comp = this.comp;
         const onExpandedChanged = () => {
+            for (const tooltip of expandTooltips) {
+                tooltip?.refreshTooltip();
+            }
             const expandable = this.isExpandable();
             if (!expandable) {
                 return;

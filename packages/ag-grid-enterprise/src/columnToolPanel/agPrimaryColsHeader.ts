@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     FAST_TEST_TIMINGS,
     RefPlaceholder,
@@ -33,7 +34,7 @@ const AgPrimaryColsHeaderElement: ElementParams = {
     ],
 };
 export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
-    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eExpand: HTMLElement = RefPlaceholder;
     private readonly eSelect: GridCheckbox = RefPlaceholder;
     private readonly eFilterTextField: GridInputTextField = RefPlaceholder;
 
@@ -43,6 +44,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private expandState: ExpandState;
     private selectState?: boolean;
+    private expandTooltip?: ITooltipFeature;
+    private selectTooltip?: ITooltipFeature;
 
     private onFilterTextChangedDebounced: () => ReturnType<typeof setTimeout>;
     private filterTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -83,6 +86,27 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
 
         this.activateTabIndex([this.eExpand]);
+        this.expandTooltip = this.addTooltip({
+            control: 'expandAll',
+            getGui: () => this.eExpand,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getTooltip: () => ({
+                value:
+                    this.expandState === ExpandState.EXPANDED
+                        ? translate('tooltipCollapseAll', 'Collapse all')
+                        : translate('tooltipExpandAll', 'Expand all'),
+            }),
+        });
+        this.selectTooltip = this.eSelect.addTooltip({
+            control: 'columnSelectAll',
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getAriaElement: () => this.eSelect.getInputElement(),
+            getTooltip: () => ({
+                value: this.selectState
+                    ? translate('tooltipHideAllColumns', 'Hide all columns')
+                    : translate('tooltipShowAllColumns', 'Show all columns'),
+            }),
+        });
     }
 
     private onFunctionsReadOnlyPropChanged(): void {
@@ -165,6 +189,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
+        this.expandTooltip?.refreshTooltip();
         const expanded = state === ExpandState.EXPANDED;
         const translate = this.getLocaleTextFunc();
 
@@ -184,6 +209,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     public setSelectionState(state?: boolean): void {
         this.selectState = state;
         this.eSelect.setValue(this.selectState);
+        this.selectTooltip?.refreshTooltip();
     }
 }
 

@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
@@ -74,7 +75,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private readonly eGroupOpenedIcon: Element = RefPlaceholder;
     private readonly eGroupClosedIcon: Element = RefPlaceholder;
-    private readonly eColumnGroupIcons: Element = RefPlaceholder;
+    private readonly eColumnGroupIcons: HTMLElement = RefPlaceholder;
 
     private eDragHandle: Element;
 
@@ -83,6 +84,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private expandTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -144,6 +146,17 @@ export class ToolPanelColumnGroupComp extends Component {
             eLabel.textContent = this.displayName ?? '';
         }
         this.setupExpandContract();
+        this.expandTooltip = this.addTooltip({
+            control: 'groupExpand',
+            getGui: () => this.eColumnGroupIcons,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.modelItem.expanded
+                    ? this.getLocaleTextFunc()('tooltipCollapseGroup', 'Collapse group')
+                    : this.getLocaleTextFunc()('tooltipExpandGroup', 'Expand group'),
+                params: { column: this.gridColumnGroup },
+            }),
+        });
 
         this.addCss('ag-column-select-indent-' + columnDepth);
         this.getGui().style.setProperty('--ag-indentation-level', String(columnDepth));
@@ -539,6 +552,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onExpandChanged() {
+        this.expandTooltip?.refreshTooltip();
         this.setOpenClosedIcons();
         this.refreshAriaExpanded();
     }
