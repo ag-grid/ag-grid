@@ -107,7 +107,7 @@ describe('Automatic truncated-text tooltips', () => {
     });
 
     test.each([undefined, '42', '$42'])(
-        'compares raw and formatted text without losing formatting (%s)',
+        'compares against the default formatted value without losing formatting (%s)',
         async (tooltip) => {
             const { grid } = await createGrid({
                 columnDefs: [{ field: 'value', valueFormatter: ({ value }) => `$${value}`, tooltip }],
@@ -116,8 +116,9 @@ describe('Automatic truncated-text tooltips', () => {
             const cell = grid.querySelector<HTMLElement>('.ag-cell')!;
             setTruncated(cell, false);
             await hover(cell);
-            expect(getVisibleTooltips()).toHaveLength(0);
+            expect(getVisibleTooltips().map((element) => element.textContent)).toEqual(tooltip === '42' ? ['42'] : []);
             fireEvent.mouseLeave(cell);
+            await vi.advanceTimersByTimeAsync(1000);
             setTruncated(cell, true);
             await hover(cell);
             expect(getVisibleTooltips()[0]).toHaveTextContent(tooltip ?? '$42');
@@ -364,8 +365,13 @@ describe('Automatic truncated-text tooltips', () => {
         expect(menu).not.toHaveAttribute('title');
     });
 
-    test.each([undefined, false, true])('Set Filter items follow showTooltips=%s', async (showTooltips) => {
+    test.each(
+        (['auto', 'standard', 'whenTruncated', 'whenDifferent'] as const).flatMap((mode) =>
+            [undefined, false, true].map((showTooltips) => ({ mode, showTooltips }))
+        )
+    )('Set Filter items follow showTooltips=$showTooltips in $mode mode', async ({ mode, showTooltips }) => {
         const { api } = await createGrid({
+            tooltipShowMode: mode,
             columnDefs: [
                 {
                     field: 'value',
@@ -385,14 +391,62 @@ describe('Automatic truncated-text tooltips', () => {
             return label!;
         });
         vi.useFakeTimers();
-        setTruncated(label, true);
-        await hover(label.closest<HTMLElement>('.ag-virtual-list-item')!);
-        expect(getVisibleTooltips().map((element) => element.textContent)).toEqual(
-            showTooltips === false ? [] : ['Item: Displayed value']
-        );
+        const source = label.closest<HTMLElement>('.ag-virtual-list-item')!;
+        for (const truncated of [false, true]) {
+            setTruncated(label, truncated);
+            await hover(source);
+            const configured = showTooltips === true;
+            const visible =
+                (mode === 'auto' && showTooltips !== false && truncated) ||
+                (mode === 'standard' && configured) ||
+                (mode === 'whenTruncated' && configured && truncated);
+            expect(getVisibleTooltips().map((element) => element.textContent)).toEqual(
+                visible ? ['Item: Displayed value'] : []
+            );
+            fireEvent.mouseLeave(source);
+            await vi.advanceTimersByTimeAsync(1000);
+        }
+    });
+
+    test.each(
+        (['auto', 'standard', 'whenTruncated', 'whenDifferent'] as const).flatMap((mode) =>
+            [undefined, true, 'Group details'].map((tooltip) => ({ mode, tooltip }))
+        )
+    )('full-width groups follow $mode with tooltip=$tooltip', async ({ mode, tooltip }) => {
+        const { grid } = await createGrid({
+            tooltipShowMode: mode,
+            columnDefs: [{ field: 'value', rowGroup: true, hide: true, tooltip }, { field: 'other' }],
+            groupDisplayType: 'groupRows',
+            enableBrowserTooltips: true,
+        });
+        const label = grid.querySelector<HTMLElement>('.ag-group-value')!;
+        const source = label.closest<HTMLElement>('.ag-full-width-row')!;
+        for (const truncated of [false, true]) {
+            setTruncated(label, truncated);
+            await hover(source);
+            const different = tooltip === 'Group details';
+            const visible =
+                (mode === 'auto' && (truncated || different)) ||
+                (mode === 'standard' && tooltip !== undefined) ||
+                (mode === 'whenTruncated' && tooltip !== undefined && truncated) ||
+                (mode === 'whenDifferent' && different);
+            expect(source.getAttribute('title') || undefined).toBe(
+                visible ? (different ? 'Group details' : 'Displayed value') : undefined
+            );
+            fireEvent.mouseLeave(source);
+            await vi.advanceTimersByTimeAsync(1000);
+        }
     });
 
     test.each([
+        { kind: 'setFilter', native: false, mode: 'auto' },
+        { kind: 'setFilter', native: true, mode: 'auto' },
+        { kind: 'fullWidthGroup', native: false, mode: 'auto' },
+        { kind: 'fullWidthGroup', native: true, mode: 'auto' },
+        { kind: 'setFilter', native: false, mode: 'whenDifferent' },
+        { kind: 'setFilter', native: true, mode: 'whenDifferent' },
+        { kind: 'fullWidthGroup', native: false, mode: 'whenDifferent' },
+        { kind: 'fullWidthGroup', native: true, mode: 'whenDifferent' },
         { kind: 'setFilter', native: false, mode: 'whenTruncated' },
         { kind: 'setFilter', native: true, mode: 'whenTruncated' },
         { kind: 'fullWidthGroup', native: false, mode: 'whenTruncated' },
@@ -460,9 +514,9 @@ describe('Automatic truncated-text tooltips', () => {
             await vi.advanceTimersByTimeAsync(1000);
         };
 
-        await expectTooltip(mode === 'standard' ? 'Value' : '');
+        await expectTooltip('Value');
         rendererParams!.setTooltip(rendererParams!.valueFormatted!);
-        await expectTooltip(mode === 'standard' ? 'Formatted Value' : '');
+        await expectTooltip(mode === 'standard' || mode === 'whenTruncated' ? 'Formatted Value' : '');
         rendererParams!.setTooltip('Value', () => true);
         await expectTooltip('Value');
         rendererParams!.setTooltip('Value', () => false);

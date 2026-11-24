@@ -418,7 +418,7 @@ export {
 export {
     _getCellTooltipComponentDefinition,
     _getHeaderTooltipComponentDefinition,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
     _resolveTextTooltip,
     type TooltipFeature,
     type TooltipSource,

@@ -408,7 +408,7 @@ The following example demonstrates different default states. Note the following:
 
 ## Filter Value Tooltips
 
-With `TooltipModule`, truncated Set Filter items automatically show their full label. Set `showTooltips: false` to disable these previews, or `true` to configure them explicitly:
+With `TooltipModule` and the default `tooltipShowMode: 'auto'`, truncated Set Filter items automatically show their full label. Set `showTooltips: false` to disable these previews, or `true` to configure them explicitly:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -424,7 +424,7 @@ const gridOptions = {
 }
 ```
 
-Automatic previews and explicit `showTooltips: true` use the column's [Custom Tooltip Component](./component-tooltip/) when provided, otherwise the default tooltip. Both follow `tooltipShowMode`.
+Automatic previews and explicit `showTooltips: true` use the column's [Custom Tooltip Component](./component-tooltip/) when provided, otherwise the default tooltip. Both follow [`tooltipShowMode`](./tooltips-columns/#tooltips-for-truncated-text). Modes other than `'auto'` require explicit configuration. With `'whenDifferent'`, a tooltip repeating the item's displayed label is hidden.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 

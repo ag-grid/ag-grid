@@ -392,14 +392,16 @@ export interface Props<TData> {
          */
     tooltipMouseTrack?: boolean,
     /** Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
-         * - `whenTruncated` - Automatically shows displayed text when truncated. Configured tooltips that repeat
-         *   the raw or displayed value require truncation; different content does not.
+         * - `auto` - Automatically shows truncated text and configured tooltips with different content.
          * - `standard` - Shows only configured tooltips, without requiring truncation.
-         * Applies to browser tooltips too. Custom components must supply their own truncation check.
-         * @default 'whenTruncated'
+         * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+         * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+         *   the formatted value when available, otherwise the raw value.
+         * Applies to browser tooltips too. Custom components can supply their own display predicate.
+         * @default 'auto'
          * @agModule `TooltipModule`
          */
-    tooltipShowMode?: 'standard' | 'whenTruncated',
+    tooltipShowMode?: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent',
     /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
          * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
          * A callback receives the source parameters and decides separately each time a tooltip opens.
