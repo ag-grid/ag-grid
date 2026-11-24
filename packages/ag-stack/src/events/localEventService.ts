@@ -122,8 +122,8 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         this.dispatch(event);
     }
 
-    /** Calls every sync listener even when one throws, for teardown, and returns the errors thrown. */
-    public dispatchEventToAll<TEvent extends AgEvent<TEventType>>(event: TEvent): unknown[] {
+    /** Like `dispatchEvent`, but a sync listener that throws does not stop later ones; returns the errors thrown, in order. */
+    public dispatchEventCollectingErrors<TEvent extends AgEvent<TEventType>>(event: TEvent): unknown[] {
         const errors: unknown[] = [];
         this.dispatch(event, errors);
         return errors;

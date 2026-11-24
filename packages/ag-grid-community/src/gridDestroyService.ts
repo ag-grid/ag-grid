@@ -16,7 +16,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
 
         const { stateSvc, ctrlsSvc, context } = this.beans;
 
-        const errors = this.eventSvc.dispatchEventToAll({
+        const errors = this.eventSvc.dispatchEventCollectingErrors({
             type: 'gridPreDestroyed',
             state: stateSvc?.getState() ?? {},
         });
@@ -31,7 +31,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         try {
             context.destroy();
         } catch (error) {
-            // The context throws an AggregateError of the bean errors; add them without nesting.
+            // The context throws an AggregateError when several beans fail; add its errors without nesting.
             errors.push(...(error instanceof AggregateError ? error.errors : [error]));
         }
         super.destroy();

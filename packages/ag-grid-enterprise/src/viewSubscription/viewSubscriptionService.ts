@@ -260,10 +260,14 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             }
         });
 
-        if (removed.length) {
-            this.getOptions()?.unsubscribeRows(removed, this.createParams());
+        try {
+            if (removed.length) {
+                this.getOptions()?.unsubscribeRows(removed, this.createParams());
+            }
+        } finally {
+            // the rows now in view are subscribed even when unsubscribeRows throws
+            this.subscribeNodes(sub, added);
         }
-        this.subscribeNodes(sub, added);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */

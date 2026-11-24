@@ -530,7 +530,7 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
-    test('destroy() throws the unsubscribeRows error in an AggregateError after every gridPreDestroyed listener has run', async () => {
+    test('destroy() throws the unsubscribeRows error after every gridPreDestroyed listener has run', async () => {
         const preDestroyed: string[] = [];
         const api = await createFlatGrid({ onGridPreDestroyed: () => preDestroyed.push('onGridPreDestroyed') });
         api.addEventListener('gridPreDestroyed', () => preDestroyed.push('addEventListener'));
@@ -544,7 +544,7 @@ describe('SSRM viewSubscription', () => {
             },
         });
 
-        expect(() => api.destroy()).toThrow(expect.objectContaining({ errors: [error] }));
+        expect(() => api.destroy()).toThrow(error);
 
         expect(preDestroyed.sort()).toEqual(['addEventListener', 'onGridPreDestroyed']);
         expect(apiDestroyedInHandler).toBe(false);
@@ -590,6 +590,58 @@ describe('SSRM viewSubscription', () => {
 
         expect(api).toBeDefined();
         await waitFor(() => expect(subscribed).toEqual(['0']));
+    });
+
+    test('updateGridOptions applies every changed option when a viewSubscription handler throws', async () => {
+        const api = await createFlatGrid();
+        const error = new Error('subscribe failed');
+        try {
+            expect(() =>
+                api.updateGridOptions({
+                    viewSubscription: {
+                        subscribeRows: () => {
+                            throw error;
+                        },
+                        unsubscribeRows: () => {},
+                    },
+                    columnDefs: [{ field: 'value' }, { field: 'id' }],
+                })
+            ).toThrow(error);
+
+            expect(api.getColumns()!.map((column) => column.getColId())).toEqual(['value', 'id']);
+        } finally {
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
+    test('rows scrolled into view are subscribed even when unsubscribeRows throws', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        const error = new Error('unsubscribe failed');
+        let failing = true;
+        api.setGridOption('viewSubscription', {
+            ...recorder.handlers,
+            unsubscribeRows: (rows, params) => {
+                if (failing) {
+                    throw error;
+                }
+                recorder.handlers.unsubscribeRows(rows, params);
+            },
+        });
+        await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+
+        vi.useFakeTimers();
+        try {
+            // rows 50-55 are in the block already loaded, so the flush can subscribe them straight away
+            api.ensureIndexVisible(50, 'top');
+            expect(() => vi.runAllTimers()).toThrow(error);
+
+            expect(recorder.calls.at(-1)).toEqual({ type: 'subscribe', ids: range(50, 55) });
+        } finally {
+            failing = false;
+            vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
+        }
     });
 
     test('a subscribeRows call that throws is not retried', async () => {

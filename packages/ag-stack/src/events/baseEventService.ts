@@ -76,8 +76,10 @@ export class BaseEventService<
         this.globalSvc.dispatchEvent(this.addCommonToEvents ? this.gos.addCommon<any>(event) : event);
     }
 
-    /** Calls every sync listener even when one throws, for teardown, and returns the errors thrown. */
-    public dispatchEventToAll(event: AgRawEvents<TGlobalEvents, TCommon>): unknown[] {
-        return this.globalSvc.dispatchEventToAll(this.addCommonToEvents ? this.gos.addCommon<any>(event) : event);
+    /** Like `dispatchEvent`, but a sync listener that throws does not stop later ones; returns the errors thrown, in order. */
+    public dispatchEventCollectingErrors(event: AgRawEvents<TGlobalEvents, TCommon>): unknown[] {
+        return this.globalSvc.dispatchEventCollectingErrors(
+            this.addCommonToEvents ? this.gos.addCommon<any>(event) : event
+        );
     }
 }

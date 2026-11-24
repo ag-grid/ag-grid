@@ -61,6 +61,6 @@ export interface AgEventService<TGlobalEvents, TDispatch = TGlobalEvents[keyof T
 
     dispatchEvent(event: TDispatch): void;
 
-    /** Calls every sync listener even when one throws, for teardown, and returns the errors thrown. */
-    dispatchEventToAll(event: TDispatch): unknown[];
+    /** Like `dispatchEvent`, but a sync listener that throws does not stop later ones; returns the errors thrown, in order. */
+    dispatchEventCollectingErrors(event: TDispatch): unknown[];
 }
