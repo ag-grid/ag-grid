@@ -50,37 +50,37 @@
                 "title": "Pivot mode",
                 "docsUrl": "./pivoting/",
                 "plan": "Enterprise",
-                "body": "pivotMode=true with pivot: true on a column turns that column's values into column headers. At least one aggregation column is required, as only aggregated rows are shown when pivoting."
+                "body": "`pivotMode=true` with pivot: true on a column turns that column's values into column headers. At least one aggregation column is required, as only aggregated rows are shown when pivoting."
             },
             {
                 "title": "Side Bar and Columns Tool Panel",
                 "docsUrl": "./tool-panel-columns/",
                 "plan": "Enterprise",
-                "body": "sideBar='columns' adds a panel with a Pivot Mode toggle and Row Groups, Values and Column Labels sections that users fill by drag and drop. Columns need enableRowGroup, enableValue or enablePivot."
+                "body": "`sideBar='columns'` adds a panel with a Pivot Mode toggle and Row Groups, Values and Column Labels sections that users fill by drag and drop. Columns need `enableRowGroup`, `enableValue` or `enablePivot`."
             },
             {
                 "title": "Pivot Panel",
                 "docsUrl": "./pivoting/#enabling-the-pivot-panel",
                 "plan": "Enterprise",
-                "body": "pivotPanelShow ('always', 'onlyWhenPivoting' or 'never') shows a bar above the grid where users add, remove and reorder pivot columns by drag and drop."
+                "body": "`pivotPanelShow` (`'always'`, `'onlyWhenPivoting'` or `'never'`) shows a bar above the grid where users add, remove and reorder pivot columns by drag and drop."
             },
             {
                 "title": "Aggregation",
                 "docsUrl": "./aggregation/",
                 "plan": "Enterprise",
-                "body": "aggFunc on a column sets sum, min, max, count, avg, first, last or a custom function. Group and grand total rows can be added with groupTotalRow and grandTotalRow."
+                "body": "`aggFunc` on a column sets sum, min, max, count, avg, first, last or a custom function. Group and grand total rows can be added with `groupTotalRow` and `grandTotalRow`."
             },
             {
                 "title": "Pivot result columns",
                 "docsUrl": "./pivoting-result-columns/",
                 "plan": "Enterprise",
-                "body": "The grid generates a column for each unique combination of pivot values. They inherit the value column's definition, can be changed with processPivotResultColDef and capped with pivotMaxGeneratedColumns."
+                "body": "The grid generates a column for each unique combination of pivot values. They inherit the value column's definition, can be changed with `processPivotResultColDef` and capped with `pivotMaxGeneratedColumns`."
             },
             {
                 "title": "Pivot totals",
                 "docsUrl": "./pivoting-totals/",
                 "plan": "Enterprise",
-                "body": "Column group totals appear when a pivot column group is collapsed. pivotRowTotals set to 'before' or 'after' adds a total column for each aggregation."
+                "body": "Column group totals appear when a pivot column group is collapsed. `pivotRowTotals` set to `'before'` or `'after'` adds a total column for each aggregation."
             },
             {
                 "title": "Show Values As",
@@ -92,19 +92,19 @@
                 "title": "Server-side pivoting",
                 "docsUrl": "./server-side-model-pivoting/",
                 "plan": "Enterprise",
-                "body": "With the Server-Side Row Model the grid sends pivotCols and pivotMode in each getRows request and your server does the pivot. Return pivotResultFields, or call setPivotResultColumns, to define the result columns."
+                "body": "With the Server-Side Row Model the grid sends `pivotCols` and `pivotMode` in each `getRows` request and your server does the pivot. Return `pivotResultFields`, or call `setPivotResultColumns`, to define the result columns."
             },
             {
                 "title": "Pivot Chart",
                 "docsUrl": "./integrated-charts-pivot-chart/",
                 "plan": "Enterprise",
-                "body": "In pivot mode the context menu gains a Pivot Chart item that charts all grouped and pivoted data with AG Charts. gridApi.createPivotChart() does the same from code. Enterprise chart types need the Enterprise Bundle."
+                "body": "In pivot mode the context menu gains a Pivot Chart item that charts all grouped and pivoted data with AG Charts. `gridApi.createPivotChart()` does the same from code. Enterprise chart types need the Enterprise Bundle."
             },
             {
                 "title": "Excel export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports the grid as rendered to .xlsx, including grouping and column header groups. Collapsed pivot result columns are not exported, even with allColumns: true."
+                "body": "Exports the grid as rendered to .xlsx, including grouping and column header groups. Collapsed pivot result columns are not exported, even with `allColumns: true`."
             }
         ]
     },

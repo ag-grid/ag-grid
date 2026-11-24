@@ -41,7 +41,7 @@
                 "value": "10",
                 "valueSuffix": "steps",
                 "label": "Default undo / redo history",
-                "detail": "Set by undoRedoCellEditingLimit when undoRedoCellEditing is on. Community."
+                "detail": "Set by `undoRedoCellEditingLimit` when `undoRedoCellEditing` is on. Community."
             }
         ]
     },
@@ -52,13 +52,13 @@
                 "title": "Tree Data for tasks and subtasks",
                 "docsUrl": "./tree-data/",
                 "plan": "Enterprise",
-                "body": "Set treeData and point treeDataParentIdField at a parentId field, or use getDataPath or treeDataChildrenField, to nest subtasks under their parent task in an expandable group column."
+                "body": "Set `treeData` and point `treeDataParentIdField` at a `parentId` field, or use `getDataPath` or `treeDataChildrenField`, to nest subtasks under their parent task in an expandable group column."
             },
             {
                 "title": "Row Grouping",
                 "docsUrl": "./grouping/",
                 "plan": "Enterprise",
-                "body": "Set rowGroup on a column such as status or owner to group a flat task list under group rows the user can expand and collapse."
+                "body": "Set `rowGroup` on a column such as status or owner to group a flat task list under group rows the user can expand and collapse."
             },
             {
                 "title": "Cell editing",
@@ -70,31 +70,31 @@
                 "title": "Rich Select editor for owner and status",
                 "docsUrl": "./provided-cell-editors-rich-select/",
                 "plan": "Enterprise",
-                "body": "agRichSelectCellEditor shows a searchable list of values, supports multi-selection and async loading, and can render each option with a cell renderer."
+                "body": "`agRichSelectCellEditor` shows a searchable list of values, supports multi-selection and async loading, and can render each option with a cell renderer."
             },
             {
                 "title": "Date editors for due dates",
                 "docsUrl": "./provided-cell-editors-date/",
                 "plan": "Free",
-                "body": "agDateCellEditor edits Date values and agDateStringCellEditor edits date strings (YYYY-MM-DD by default) with the browser date input, with optional min, max and time."
+                "body": "`agDateCellEditor` edits Date values and `agDateStringCellEditor` edits date strings (YYYY-MM-DD by default) with the browser date input, with optional min, max and time."
             },
             {
                 "title": "Row dragging",
                 "docsUrl": "./row-dragging/",
                 "plan": "Free",
-                "body": "rowDrag on a column adds a drag handle. With rowDragManaged the grid moves rows itself; with Tree Data, managed dragging can also move a task under a new parent."
+                "body": "`rowDrag` on a column adds a drag handle. With `rowDragManaged` the grid moves rows itself; with Tree Data, managed dragging can also move a task under a new parent."
             },
             {
                 "title": "Status cell renderers",
                 "docsUrl": "./component-cell-renderer/",
                 "plan": "Free",
-                "body": "A cellRenderer is your own React component inside a cell, used for status pills, avatars, progress bars or action buttons."
+                "body": "A `cellRenderer` is your own React component inside a cell, used for status pills, avatars, progress bars or action buttons."
             },
             {
                 "title": "Aggregation",
                 "docsUrl": "./aggregation/",
                 "plan": "Enterprise",
-                "body": "aggFunc on a column (for example sum on estimated hours) fills parent task rows with the total of their children. In Tree Data, aggregated values replace any value supplied on the parent row."
+                "body": "`aggFunc` on a column (for example sum on estimated hours) fills parent task rows with the total of their children. In Tree Data, aggregated values replace any value supplied on the parent row."
             },
             {
                 "title": "Column filters",
@@ -106,7 +106,7 @@
                 "title": "Excel export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports the grid as displayed, after sorting and filtering, to .xlsx from the context menu or api.exportDataAsExcel(), with no third-party library. CSV export is in Community."
+                "body": "Exports the grid as displayed, after sorting and filtering, to .xlsx from the context menu or `api.exportDataAsExcel()`, with no third-party library. CSV export is in Community."
             }
         ]
     },
@@ -140,7 +140,7 @@
     "faq": [
         {
             "question": "Can I export a project management table to Excel?",
-            "answer": "Yes. AG Grid Enterprise exports the grid to .xlsx from the context menu or with api.exportDataAsExcel(), with no third-party library. The file follows the current column order, sort and filters, and uses value getters and, except on number cells, value formatters, but not cell renderers. CSV export is free in AG Grid Community."
+            "answer": "Yes. AG Grid Enterprise exports the grid to .xlsx from the context menu or with `api.exportDataAsExcel()`, with no third-party library. The file follows the current column order, sort and filters, and uses value getters and, except on number cells, value formatters, but not cell renderers. CSV export is free in AG Grid Community."
         },
         {
             "question": "Is there a free project management table template for React?",
@@ -148,11 +148,11 @@
         },
         {
             "question": "How do I show subtasks under a parent task?",
-            "answer": "Enable Tree Data. If your tasks have a parent id, set treeData and treeDataParentIdField and provide getRowId. If each task carries its full path, use getDataPath. If tasks already contain a children array, use treeDataChildrenField; that option does not support transaction updates."
+            "answer": "Enable Tree Data. If your tasks have a parent id, set `treeData` and `treeDataParentIdField` and provide `getRowId`. If each task carries its full path, use `getDataPath`. If tasks already contain a children array, use `treeDataChildrenField`; that option does not support transaction updates."
         },
         {
             "question": "Can users drag tasks to reorder them or move them under another task?",
-            "answer": "Yes. Set rowDrag on the group column and rowDragManaged on the grid. With Tree Data the grid handles reordering, moving a task under a new parent and turning a task into a parent, and blocks drops that would create a cycle. The docs recommend suppressMoveWhenRowDragging for tree data. Outside Tree Data, managed dragging does not work while a sort or filter is applied."
+            "answer": "Yes. Set `rowDrag` on the group column and `rowDragManaged` on the grid. With Tree Data the grid handles reordering, moving a task under a new parent and turning a task into a parent, and blocks drops that would create a cycle. The docs recommend `suppressMoveWhenRowDragging` for tree data. Outside Tree Data, managed dragging does not work while a sort or filter is applied."
         },
         {
             "question": "Can AG Grid show a Gantt chart?",
@@ -160,7 +160,7 @@
         },
         {
             "question": "Can users undo an edit?",
-            "answer": "Yes, in Community. Set undoRedoCellEditing to true. Ctrl+Z (Cmd+Z on Mac) undoes and Ctrl+Y (Cmd+Shift+Z on Mac) redoes, keeping 10 steps unless you change undoRedoCellEditingLimit. Sorting, filtering, grouping and data updates other than cell edits clear the history."
+            "answer": "Yes, in Community. Set `undoRedoCellEditing` to true. Ctrl+Z (Cmd+Z on Mac) undoes and Ctrl+Y (Cmd+Shift+Z on Mac) redoes, keeping 10 steps unless you change `undoRedoCellEditingLimit`. Sorting, filtering, grouping and data updates other than cell edits clear the history."
         }
     ],
     "proseClaims": [

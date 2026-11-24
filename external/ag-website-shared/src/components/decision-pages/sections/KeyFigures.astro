@@ -1,12 +1,16 @@
 ---
+import type { Framework } from '@ag-grid-types';
+import { renderMarkdocHtml } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
 import styles from '../DecisionPage.module.scss';
 import type { KeyFigure } from '../types';
 
 interface Props {
     figures: KeyFigure[];
+    framework: Framework;
 }
 
-const { figures } = Astro.props;
+const { figures, framework } = Astro.props;
 ---
 
 <ul class={styles.keyFigures}>
@@ -18,7 +22,7 @@ const { figures } = Astro.props;
             </span>
             <span class={styles.keyFigureText}>
                 <span class={styles.keyFigureLabel}>{label}</span>
-                <span class={styles.keyFigureDetail}>{detail}</span>
+                <span class={styles.keyFigureDetail} set:html={renderMarkdocHtml(detail, framework)} />
             </span>
         </li>
     ))}

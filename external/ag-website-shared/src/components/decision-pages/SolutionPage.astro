@@ -14,6 +14,7 @@ import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/Land
 import {
     renderFAQAnswers,
     renderMarkdocBlocksHtml,
+    renderMarkdocHtml,
 } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
 
 import styles from './DecisionPage.module.scss';
@@ -56,19 +57,19 @@ const { content, site, hub, related } = Astro.props;
 </DecisionSection>
 
 <DecisionSection id="live-example" heading={SOLUTION_SECTIONS.liveExample}>
-    <p>{content.example.intro}</p>
+    <p set:html={renderMarkdocHtml(content.example.intro, site.framework)} />
     <div class={styles.solutionExample}>
         <slot name="example" />
     </div>
-    <p class={styles.sectionNote}>{content.example.note}</p>
+    <p class={styles.sectionNote} set:html={renderMarkdocHtml(content.example.note, site.framework)} />
 </DecisionSection>
 
 <DecisionSection id="key-figures" heading={content.keyFigures.heading} tone="muted">
-    <KeyFigures figures={content.keyFigures.figures} />
+    <KeyFigures figures={content.keyFigures.figures} framework={site.framework} />
 </DecisionSection>
 
 <DecisionSection id="capabilities" heading={content.capabilities.heading}>
-    <CapabilityCards items={content.capabilities.items} resolveUrl={site.resolveUrl} />
+    <CapabilityCards items={content.capabilities.items} resolveUrl={site.resolveUrl} framework={site.framework} />
 </DecisionSection>
 
 <DecisionSection id="how-to" heading={content.howTo.heading} tone="muted">

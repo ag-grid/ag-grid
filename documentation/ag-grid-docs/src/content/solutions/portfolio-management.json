@@ -30,13 +30,13 @@
                 "value": "500",
                 "valueSuffix": "ms",
                 "label": "Default cell flash",
-                "detail": "Then 1,000ms of fade, set with cellFlashDuration and cellFadeDuration"
+                "detail": "Then 1,000ms of fade, set with `cellFlashDuration` and `cellFadeDuration`"
             },
             {
                 "value": "50",
                 "valueSuffix": "ms",
                 "label": "Async transaction batch",
-                "detail": "applyTransactionAsync() batches updates and applies them together after 50ms by default"
+                "detail": "`applyTransactionAsync()` batches updates and applies them together after 50ms by default"
             },
             {
                 "value": "4",
@@ -52,55 +52,55 @@
                 "title": "Row grouping",
                 "docsUrl": "./grouping/",
                 "plan": "Enterprise",
-                "body": "rowGroup: true on a column such as sector or asset class groups holdings under parent rows. groupDefaultExpanded=-1 opens every group."
+                "body": "`rowGroup: true` on a column such as sector or asset class groups holdings under parent rows. `groupDefaultExpanded=-1` opens every group."
             },
             {
                 "title": "Aggregation and total rows",
                 "docsUrl": "./aggregation/",
                 "plan": "Enterprise",
-                "body": "aggFunc: 'sum' on market value or P&L totals each group. grandTotalRow ('top', 'bottom', 'pinnedTop' or 'pinnedBottom') adds a portfolio total row."
+                "body": "`aggFunc: 'sum'` on market value or P&L totals each group. `grandTotalRow` (`'top'`, `'bottom'`, `'pinnedTop'` or `'pinnedBottom'`) adds a portfolio total row."
             },
             {
                 "title": "Show Values As",
                 "docsUrl": "./aggregation-show-values-as/",
                 "plan": "Enterprise",
-                "body": "showValuesAs: 'percentOfGrandTotal' displays each position as a share of the portfolio total without changing the data. Client-side row model only."
+                "body": "`showValuesAs: 'percentOfGrandTotal'` displays each position as a share of the portfolio total without changing the data. Client-side row model only."
             },
             {
                 "title": "Sparklines",
                 "docsUrl": "./sparklines-overview/",
                 "plan": "Enterprise",
-                "body": "agSparklineCellRenderer draws a line, area, bar or column chart in a cell from an array of numbers, such as recent prices. It needs SparklinesModule with AG Charts Community or Enterprise."
+                "body": "`agSparklineCellRenderer` draws a line, area, bar or column chart in a cell from an array of numbers, such as recent prices. It needs SparklinesModule with AG Charts Community or Enterprise."
             },
             {
                 "title": "Value formatters for currency",
                 "docsUrl": "./value-formatters/",
                 "plan": "Free",
-                "body": "valueFormatter returns display text, for example from Intl.NumberFormat. params.value can be null for group rows, so formatters must handle it. Formatted values are used for copy and CSV export by default."
+                "body": "`valueFormatter` returns display text, for example from Intl.NumberFormat. params.value can be null for group rows, so formatters must handle it. Formatted values are used for copy and CSV export by default."
             },
             {
                 "title": "Cell change flashing",
                 "docsUrl": "./change-cell-renderers/",
                 "plan": "Free",
-                "body": "enableCellChangeFlash=true flashes a cell when its value changes; api.flashCells() flashes chosen cells on demand. Timing is set by cellFlashDuration and cellFadeDuration."
+                "body": "`enableCellChangeFlash=true` flashes a cell when its value changes; `api.flashCells()` flashes chosen cells on demand. Timing is set by `cellFlashDuration` and `cellFadeDuration`."
             },
             {
                 "title": "Animated show-change renderer",
                 "docsUrl": "./change-cell-renderers/#animate-show-changed-cells",
                 "plan": "Free",
-                "body": "agAnimateShowChangeCellRenderer shows the difference from the previous value in green or red with a direction arrow for 2 seconds. The finance demo uses it on P&L and Total Value."
+                "body": "`agAnimateShowChangeCellRenderer` shows the difference from the previous value in green or red with a direction arrow for 2 seconds. The finance demo uses it on P&L and Total Value."
             },
             {
                 "title": "Async transactions and row IDs",
                 "docsUrl": "./data-update-high-frequency/",
                 "plan": "Free",
-                "body": "getRowId gives each holding a stable ID such as its ticker. applyTransactionAsync() queues price updates and applies them in one batch, so grouping, sorting and aggregation are not recalculated for every tick."
+                "body": "`getRowId` gives each holding a stable ID such as its ticker. `applyTransactionAsync()` queues price updates and applies them in one batch, so grouping, sorting and aggregation are not recalculated for every tick."
             },
             {
                 "title": "Integrated Charts",
                 "docsUrl": "./integrated-charts/",
                 "plan": "Enterprise",
-                "body": "enableCharts lets users chart a selected cell range from inside the grid, with AG Charts. Charts follow sorting and filtering. Enterprise chart types need the Enterprise Bundle."
+                "body": "`enableCharts` lets users chart a selected cell range from inside the grid, with AG Charts. Charts follow sorting and filtering. Enterprise chart types need the Enterprise Bundle."
             },
             {
                 "title": "Excel export",
@@ -156,7 +156,7 @@
         },
         {
             "question": "How do I update live prices without slowing the grid?",
-            "answer": "Give rows a stable ID with getRowId and send changes with applyTransactionAsync(). The grid batches updates that arrive within 50ms by default (asyncTransactionWaitMillis) and recalculates aggregations, sorts and filters once per batch."
+            "answer": "Give rows a stable ID with `getRowId` and send changes with `applyTransactionAsync()`. The grid batches updates that arrive within 50ms by default (`asyncTransactionWaitMillis`) and recalculates aggregations, sorts and filters once per batch."
         },
         {
             "question": "Do sparklines need AG Charts Enterprise?",

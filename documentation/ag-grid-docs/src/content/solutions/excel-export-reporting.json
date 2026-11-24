@@ -17,7 +17,7 @@
         "heading": "Export a React data grid to Excel and CSV",
         "subHeading": "AG Grid writes .xlsx files itself, with no third-party library, and exports CSV in the free Community edition."
     },
-    "shortAnswer": "AG Grid has export built in. CSV export is in Community (free): api.exportDataAsCsv() writes the rows as displayed, using value getters and value formatters. Excel export is an Enterprise feature: api.exportDataAsExcel() or the context menu produces an .xlsx file with no third-party library. On top of the default export you can add Excel styles, formulas, number and date types, images, multiple sheets, Excel tables, frozen rows and columns, and master/detail rows. Row groups and pivot result columns are exported as shown in the grid. PDF export (Enterprise) arrived in v36.2. For charts in reports, Integrated Charts builds charts from grid data and downloads them as PNG images.",
+    "shortAnswer": "AG Grid has export built in. CSV export is in Community (free): `api.exportDataAsCsv()` writes the rows as displayed, using value getters and value formatters. Excel export is an Enterprise feature: `api.exportDataAsExcel()` or the context menu produces an .xlsx file with no third-party library. On top of the default export you can add Excel styles, formulas, number and date types, images, multiple sheets, Excel tables, frozen rows and columns, and master/detail rows. Row groups and pivot result columns are exported as shown in the grid. PDF export (Enterprise) arrived in v36.2. For charts in reports, Integrated Charts builds charts from grid data and downloads them as PNG images.",
     "example": {
         "id": "excel-export",
         "intro": "Export the grid to Excel with currency formatting, or to CSV. Excel export is Enterprise; CSV export is Community.",
@@ -50,61 +50,61 @@
                 "title": "Excel Export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports .xlsx from the context menu or api.exportDataAsExcel(). By default the file matches the grid at the time of export: column order, visible columns, filters, sort and row grouping. Value getters and value formatters are used; cell renderers and cell styles are not."
+                "body": "Exports .xlsx from the context menu or `api.exportDataAsExcel()`. By default the file matches the grid at the time of export: column order, visible columns, filters, sort and row grouping. Value getters and value formatters are used; cell renderers and cell styles are not."
             },
             {
                 "title": "Excel Styles",
                 "docsUrl": "./excel-export-styles/",
                 "plan": "Enterprise",
-                "body": "The excelStyles grid option defines Excel formatting by id, matched to cells through cellClass, cellClassRules and headerClass. Styles with the ids 'cell', 'header' and 'headerGroup' apply automatically."
+                "body": "The `excelStyles` grid option defines Excel formatting by id, matched to cells through `cellClass`, `cellClassRules` and `headerClass`. Styles with the ids `'cell'`, `'header'` and `'headerGroup'` apply automatically."
             },
             {
                 "title": "Formulas",
                 "docsUrl": "./excel-export-formulas/",
                 "plan": "Enterprise",
-                "body": "Set dataType: 'Formula' in an Excel style, or autoConvertFormulas=true so any exported value starting with '=' becomes a formula. processCellCallback can turn a column's valueGetter logic into the matching Excel formula."
+                "body": "Set `dataType: 'Formula'` in an Excel style, or `autoConvertFormulas=true` so any exported value starting with '=' becomes a formula. `processCellCallback` can turn a column's `valueGetter` logic into the matching Excel formula."
             },
             {
                 "title": "Data types",
                 "docsUrl": "./excel-export-data-types/",
                 "plan": "Enterprise",
-                "body": "Excel styles set a dataType or numberFormat so values arrive as numbers, booleans, strings or dates. Dates need dataType 'DateTime', ISO values (yyyy-mm-ddThh:mm:ss) and a numberFormat, otherwise Excel shows a serial number."
+                "body": "Excel styles set a `dataType` or `numberFormat` so values arrive as numbers, booleans, strings or dates. Dates need `dataType: 'DateTime'`, ISO values (`yyyy-mm-ddThh:mm:ss`) and a `numberFormat`, otherwise Excel shows a serial number."
             },
             {
                 "title": "Multiple sheets",
                 "docsUrl": "./excel-export-multiple-sheets/",
                 "plan": "Enterprise",
-                "body": "Call getSheetDataForExcel() once per sheet, on one grid or several, then exportMultipleSheetsAsExcel() or getMultipleSheetsAsExcel() to build one workbook. The docs show sheets split by selection, by filter value and by grid."
+                "body": "Call `getSheetDataForExcel()` once per sheet, on one grid or several, then `exportMultipleSheetsAsExcel()` or `getMultipleSheetsAsExcel()` to build one workbook. The docs show sheets split by selection, by filter value and by grid."
             },
             {
                 "title": "Images",
                 "docsUrl": "./excel-export-images/",
                 "plan": "Enterprise",
-                "body": "addImageToCell exports images shown in cells, and prependContent or appendContent can add a logo above or below the data. Images must be base64 strings in PNG, GIF or JPG format."
+                "body": "`addImageToCell` exports images shown in cells, and `prependContent` or `appendContent` can add a logo above or below the data. Images must be base64 strings in PNG, GIF or JPG format."
             },
             {
                 "title": "Grouped and pivoted data",
                 "docsUrl": "./excel-export-customising-content/",
                 "plan": "Enterprise",
-                "body": "Row groups export as shown in the grid, with names like '-> Parent -> Child' by default; processRowGroupCallback changes them. With pivoting, only visible pivot result columns export, and collapsed ones are left out even with allColumns: true. Excel tables are not supported for pivot or master/detail grids."
+                "body": "Row groups export as shown in the grid, with names like '-> Parent -> Child' by default; `processRowGroupCallback` changes them. With pivoting, only visible pivot result columns export, and collapsed ones are left out even with `allColumns: true`. Excel tables are not supported for pivot or master/detail grids."
             },
             {
                 "title": "Value formatters in export",
                 "docsUrl": "./value-formatters/",
                 "plan": "Free",
-                "body": "Formatted values are used for CSV and Excel export, clipboard copy and fill handle by default. Set useValueFormatterForExport=false on a column to export raw values; providing processCellCallback or Excel data types also bypasses the formatter, and Excel export writes number values unformatted."
+                "body": "Formatted values are used for CSV and Excel export, clipboard copy and fill handle by default. Set `useValueFormatterForExport=false` on a column to export raw values; providing `processCellCallback` or Excel data types also bypasses the formatter, and Excel export writes number values unformatted."
             },
             {
                 "title": "CSV Export",
                 "docsUrl": "./csv-export/",
                 "plan": "Free",
-                "body": "api.exportDataAsCsv() exports the grid's data with value getters and formatters; the context menu item is Enterprise only. When rows are grouped, all data is exported whether or not groups are open. The docs warn that spreadsheet apps run cells starting with +, -, =, @, tab, carriage return or line feed as formulas, and recommend cleaning those values."
+                "body": "`api.exportDataAsCsv()` exports the grid's data with value getters and formatters; the context menu item is Enterprise only. When rows are grouped, all data is exported whether or not groups are open. The docs warn that spreadsheet apps run cells starting with +, -, =, @, tab, carriage return or line feed as formulas, and recommend cleaning those values."
             },
             {
                 "title": "Integrated Charts",
                 "docsUrl": "./integrated-charts/",
                 "plan": "Enterprise",
-                "body": "enableCharts=true lets users chart grid data, built on AG Charts; charts follow the grid's sorting and filtering. Charts download as PNG from the chart menu or with downloadChart(), and getChartImageDataURL() returns a base64 image. Integrated Enterprise chart types need the Enterprise Bundle."
+                "body": "`enableCharts=true` lets users chart grid data, built on AG Charts; charts follow the grid's sorting and filtering. Charts download as PNG from the chart menu or with `downloadChart()`, and `getChartImageDataURL()` returns a base64 image. Integrated Enterprise chart types need the Enterprise Bundle."
             }
         ]
     },
@@ -132,17 +132,17 @@
                 "body": "Collect sheets with `getSheetDataForExcel()` and pass them to `exportMultipleSheetsAsExcel({ data, fileName })`. For master/detail grids, use `getCustomContentBelowRow` to write order lines under each master row."
             }
         ],
-        "code": "// AG Grid v36. CSV export is Community; Excel export (ExcelExportModule) is Enterprise.\nimport { useMemo, useRef } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { ClientSideRowModelModule, CsvExportModule } from \"ag-grid-community\";\nimport type { ColDef, ExcelStyle } from \"ag-grid-community\";\nimport { ExcelExportModule } from \"ag-grid-enterprise\";\n\nconst modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];\n\ninterface Sale { region: string; product: string; orderDate: string; revenue: number }\n\nexport function SalesReport({ rows }: { rows: Sale[] }) {\n  const gridRef = useRef<AgGridReact<Sale>>(null);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(() => [\n    { field: \"region\" },\n    { field: \"product\" },\n    // ISO strings (yyyy-mm-ddThh:mm:ss) export as Excel dates via the DateTime data type\n    { field: \"orderDate\", cellClass: \"isoDate\" },\n    { field: \"revenue\", cellClass: \"currency\" },\n  ], []);\n\n  // Excel Styles are matched to columns by cellClass id\n  const excelStyles = useMemo<ExcelStyle[]>(() => [\n    { id: \"header\", font: { bold: true } },\n    { id: \"isoDate\", dataType: \"DateTime\", numberFormat: { format: \"dd/mm/yyyy\" } },\n    { id: \"currency\", numberFormat: { format: \"#,##0.00\" } },\n  ], []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"sales.xlsx\", sheetName: \"Sales\" })}>\n        Export to Excel\n      </button>\n      <button onClick={() => gridRef.current?.api.exportDataAsCsv({ fileName: \"sales.csv\" })}>\n        Export to CSV\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          ref={gridRef}\n          rowData={rows}\n          columnDefs={columnDefs}\n          excelStyles={excelStyles}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "code": "// AG Grid v36. CSV export is Community; Excel export (ExcelExportModule) is Enterprise.\nimport { useMemo, useRef } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { ClientSideRowModelModule, CsvExportModule } from \"ag-grid-community\";\nimport type { ColDef, ExcelStyle } from \"ag-grid-community\";\nimport { ExcelExportModule } from \"ag-grid-enterprise\";\n\nconst modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];\n\ninterface Sale { region: string; product: string; orderDate: string; revenue: number }\n\nexport function SalesReport({ rows }: { rows: Sale[] }) {\n  const gridRef = useRef<AgGridReact<Sale>>(null);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(() => [\n    { field: \"region\" },\n    { field: \"product\" },\n    // ISO strings (`yyyy-mm-ddThh:mm:ss`) export as Excel dates via the DateTime data type\n    { field: \"orderDate\", cellClass: \"isoDate\" },\n    { field: \"revenue\", cellClass: \"currency\" },\n  ], []);\n\n  // Excel Styles are matched to columns by cellClass id\n  const excelStyles = useMemo<ExcelStyle[]>(() => [\n    { id: \"header\", font: { bold: true } },\n    { id: \"isoDate\", dataType: \"DateTime\", numberFormat: { format: \"dd/mm/yyyy\" } },\n    { id: \"currency\", numberFormat: { format: \"#,##0.00\" } },\n  ], []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"sales.xlsx\", sheetName: \"Sales\" })}>\n        Export to Excel\n      </button>\n      <button onClick={() => gridRef.current?.api.exportDataAsCsv({ fileName: \"sales.csv\" })}>\n        Export to CSV\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          ref={gridRef}\n          rowData={rows}\n          columnDefs={columnDefs}\n          excelStyles={excelStyles}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
         "outro": "See the [default Excel export example](./excel-export/): reorder, filter and sort the columns, export, then compare the file with the grid."
     },
     "faq": [
         {
             "question": "How do I export an AG Grid grid to Excel?",
-            "answer": "Register ExcelExportModule (Enterprise) and call api.exportDataAsExcel() from your own button, or also register ContextMenuModule so users can right-click and choose Export, then Excel Export. No third-party library is needed. Pass params such as fileName, sheetName or onlySelected to control the output."
+            "answer": "Register ExcelExportModule (Enterprise) and call `api.exportDataAsExcel()` from your own button, or also register ContextMenuModule so users can right-click and choose Export, then Excel Export. No third-party library is needed. Pass params such as `fileName`, `sheetName` or `onlySelected` to control the output."
         },
         {
             "question": "Can I export AG Grid to Excel without Enterprise?",
-            "answer": "Excel (.xlsx) export is an Enterprise feature. Community includes CSV export through api.exportDataAsCsv(), which Excel can open. You can try Excel export locally without a licence key; the grid shows a watermark and console message until a licence is installed."
+            "answer": "Excel (.xlsx) export is an Enterprise feature. Community includes CSV export through `api.exportDataAsCsv()`, which Excel can open. You can try Excel export locally without a licence key; the grid shows a watermark and console message until a licence is installed."
         },
         {
             "question": "Should I export as CSV or XLSX?",
@@ -150,11 +150,11 @@
         },
         {
             "question": "How can I export an AG Grid data grid as a PDF?",
-            "answer": "From v36.2, AG Grid Enterprise includes PDF export. Register PdfExportModule and use the PDF Export context menu item or api.exportDataAsPdf(). The PDF follows the current columns, filters, sort and grouping, is paginated with repeating headers, and needs no third-party library."
+            "answer": "From v36.2, AG Grid Enterprise includes PDF export. Register PdfExportModule and use the PDF Export context menu item or `api.exportDataAsPdf()`. The PDF follows the current columns, filters, sort and grouping, is paginated with repeating headers, and needs no third-party library."
         },
         {
             "question": "Does Excel export include server-side or paged data?",
-            "answer": "With the Client-Side Row Model, all rows after filtering and sorting are exported by default, or every row with exportedRows: 'all'. With the Infinite, Server-Side and Viewport Row Models, the row models comparison says export covers only the data loaded on screen."
+            "answer": "With the Client-Side Row Model, all rows after filtering and sorting are exported by default, or every row with `exportedRows: 'all'`. With the Infinite, Server-Side and Viewport Row Models, the row models comparison says export covers only the data loaded on screen."
         },
         {
             "question": "Can AG Grid import Excel files?",
@@ -198,7 +198,7 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Excel dates need dataType 'DateTime', ISO values (yyyy-mm-ddThh:mm:ss) and a numberFormat, otherwise Excel shows a number.",
+            "claim": "Excel dates need dataType 'DateTime', ISO values (`yyyy-mm-ddThh:mm:ss`) and a numberFormat, otherwise Excel shows a number.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-data-types/",
             "checkedOn": "2026-11-24"
         },

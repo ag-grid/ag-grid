@@ -65,6 +65,7 @@ export interface KeyFigure {
     /** Smaller text after the value, e.g. `vs 1` after `4`. */
     valueSuffix?: string;
     label: string;
+    /** Markdoc, inline. */
     detail: string;
 }
 
@@ -237,6 +238,7 @@ export interface SolutionCapability {
     docsUrl?: string;
     /** The edition that includes it: `Free` for Community, otherwise the paid edition's name. */
     plan: string;
+    /** Markdoc, inline. */
     body: string;
 }
 
@@ -262,7 +264,9 @@ export interface SolutionPageContent extends DecisionPageCore {
     example: {
         /** The site's example to mount, keyed by this id. */
         id: string;
+        /** Markdoc, inline. */
         intro: string;
+        /** Markdoc, inline. */
         note: string;
     };
     keyFigures: {

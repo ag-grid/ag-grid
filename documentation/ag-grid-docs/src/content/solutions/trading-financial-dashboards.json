@@ -15,10 +15,10 @@
         "heading": "The data grid for trading and financial dashboards",
         "subHeading": "Stream live prices into a grid that updates rows in place, highlights changes and keeps totals current, in React, Angular, Vue or JavaScript."
     },
-    "shortAnswer": "AG Grid updates rows in place with transactions, batches high-frequency updates with applyTransactionAsync, flashes or animates cells when values change, and keeps grouping and aggregation current as data streams in. Transactions, async batching, row IDs and cell flashing are in the free AG Grid Community edition. Sparklines, aggregation, grouping, pivoting, cell range selection, clipboard, Excel export and the Server-Side Row Model are in AG Grid Enterprise.",
+    "shortAnswer": "AG Grid updates rows in place with transactions, batches high-frequency updates with `applyTransactionAsync`, flashes or animates cells when values change, and keeps grouping and aggregation current as data streams in. Transactions, async batching, row IDs and cell flashing are in the free AG Grid Community edition. Sparklines, aggregation, grouping, pivoting, cell range selection, clipboard, Excel export and the Server-Side Row Model are in AG Grid Enterprise.",
     "example": {
         "id": "trading",
-        "intro": "Prices update every 400 ms through applyTransactionAsync. Changed cells flash and the Change column shows each move.",
+        "intro": "Prices update every 400 ms through `applyTransactionAsync`. Changed cells flash and the Change column shows each move.",
         "note": "Sample data. Uses AG Grid Community features only."
     },
     "keyFigures": {
@@ -28,7 +28,7 @@
                 "value": "50",
                 "valueSuffix": "ms",
                 "label": "Default batch window",
-                "detail": "applyTransactionAsync applies queued updates together after 50ms; asyncTransactionWaitMillis changes it."
+                "detail": "`applyTransactionAsync` applies queued updates together after 50ms; `asyncTransactionWaitMillis` changes it."
             },
             {
                 "value": "100k+",
@@ -49,19 +49,19 @@
                 "title": "High-frequency updates",
                 "docsUrl": "./data-update-high-frequency/",
                 "plan": "Free",
-                "body": "applyTransactionAsync() queues transactions and applies them in one batch after a wait that defaults to 50ms; asyncTransactionWaitMillis changes the wait, flushAsyncTransactions() applies pending transactions immediately, and the asyncTransactionsFlushed event fires after each batch."
+                "body": "`applyTransactionAsync()` queues transactions and applies them in one batch after a wait that defaults to 50ms; `asyncTransactionWaitMillis` changes the wait, `flushAsyncTransactions()` applies pending transactions immediately, and the `asyncTransactionsFlushed` event fires after each batch."
             },
             {
                 "title": "Row IDs",
                 "docsUrl": "./row-ids/",
                 "plan": "Free",
-                "body": "The getRowId grid option returns a unique, stable string ID per row. Transactions use it to match update and remove items by key; without it the grid compares object references, which the docs describe as slower for large data sets."
+                "body": "The `getRowId` grid option returns a unique, stable string ID per row. Transactions use it to match update and remove items by key; without it the grid compares object references, which the docs describe as slower for large data sets."
             },
             {
                 "title": "Cell change flashing",
                 "docsUrl": "./change-cell-renderers/",
                 "plan": "Free",
-                "body": "Column property enableCellChangeFlash=true flashes a cell when its value changes; the flashCells(params) API flashes chosen rows, columns or cells on demand. cellFlashDuration and cellFadeDuration set timing (defaults 500ms and 1,000ms via CSS classes ag-cell-data-changed and ag-cell-data-changed-animation)."
+                "body": "Column property `enableCellChangeFlash=true` flashes a cell when its value changes; the `flashCells(params)` API flashes chosen rows, columns or cells on demand. `cellFlashDuration` and `cellFadeDuration` set timing (defaults 500ms and 1,000ms via CSS classes ag-cell-data-changed and ag-cell-data-changed-animation)."
             },
             {
                 "title": "Animated change renderers",
@@ -73,31 +73,31 @@
                 "title": "Sparklines",
                 "docsUrl": "./sparklines-overview/",
                 "plan": "Enterprise",
-                "body": "Mini line, area, bar and column charts rendered inside grid cells from array data, configured through sparklineOptions. Requires SparklinesModule from ag-grid-enterprise plus an AG Charts module (Community or Enterprise)."
+                "body": "Mini line, area, bar and column charts rendered inside grid cells from array data, configured through `sparklineOptions`. Requires SparklinesModule from ag-grid-enterprise plus an AG Charts module (Community or Enterprise)."
             },
             {
                 "title": "Server-Side Row Model",
                 "docsUrl": "./server-side-model/",
                 "plan": "Enterprise",
-                "body": "Lazy-loads rows and group children from the server in blocks, with grouping, pivoting and aggregation delegated to the server. Supports applyServerSideTransaction and applyServerSideTransactionAsync (batched by asyncTransactionWaitMillis); SSRM transactions require row IDs."
+                "body": "Lazy-loads rows and group children from the server in blocks, with grouping, pivoting and aggregation delegated to the server. Supports `applyServerSideTransaction` and `applyServerSideTransactionAsync` (batched by `asyncTransactionWaitMillis`); SSRM transactions require row IDs."
             },
             {
                 "title": "Aggregation",
                 "docsUrl": "./aggregation/",
                 "plan": "Enterprise",
-                "body": "aggFunc on a column (sum, min, max, count, avg, first, last, or a custom function) calculates group values; group and grand total rows are available. Transactions on grouped data recompute aggregations only for changed groups and their parents."
+                "body": "`aggFunc` on a column (sum, min, max, count, avg, first, last, or a custom function) calculates group values; group and grand total rows are available. Transactions on grouped data recompute aggregations only for changed groups and their parents."
             },
             {
                 "title": "Pivoting",
                 "docsUrl": "./pivoting/",
                 "plan": "Enterprise",
-                "body": "pivotMode with pivot columns generates pivot result columns from column values; at least one aggregation column is required. Configurable in column definitions, via the API, or by users through the Side Bar or Pivot Panel."
+                "body": "`pivotMode` with pivot columns generates pivot result columns from column values; at least one aggregation column is required. Configurable in column definitions, via the API, or by users through the Side Bar or Pivot Panel."
             },
             {
                 "title": "Cell range selection",
                 "docsUrl": "./cell-selection/",
                 "plan": "Enterprise",
-                "body": "cellSelection=true enables Excel-like selection of cell ranges by mouse drag, Shift+click and keyboard, used for highlighting, copying to the clipboard or showing aggregations in the Status Bar."
+                "body": "`cellSelection=true` enables Excel-like selection of cell ranges by mouse drag, Shift+click and keyboard, used for highlighting, copying to the clipboard or showing aggregations in the Status Bar."
             },
             {
                 "title": "Excel export",
@@ -133,15 +133,15 @@
     "faq": [
         {
             "question": "Can AG Grid handle real-time streaming updates?",
-            "answer": "Yes. AG Grid updates rows with transactions. applyTransactionAsync queues updates and applies them in one batch, by default every 50ms, which the AG Grid docs describe as more efficient for high-frequency data. It is included in AG Grid Community."
+            "answer": "Yes. AG Grid updates rows with transactions. `applyTransactionAsync` queues updates and applies them in one batch, by default every 50ms, which the AG Grid docs describe as more efficient for high-frequency data. It is included in AG Grid Community."
         },
         {
             "question": "How do I update row data in AG Grid?",
-            "answer": "Call api.applyTransaction or api.applyTransactionAsync with add, update and remove lists. Set getRowId so the grid matches updated rows by ID; without it the grid compares object references, which the docs describe as slower for large data sets."
+            "answer": "Call api.applyTransaction or api.applyTransactionAsync with add, update and remove lists. Set `getRowId` so the grid matches updated rows by ID; without it the grid compares object references, which the docs describe as slower for large data sets."
         },
         {
             "question": "What does applyTransactionAsync do?",
-            "answer": "It queues a transaction and applies it together with any other queued transactions after a short wait, 50ms by default. asyncTransactionWaitMillis changes the wait and flushAsyncTransactions applies pending transactions immediately."
+            "answer": "It queues a transaction and applies it together with any other queued transactions after a short wait, 50ms by default. `asyncTransactionWaitMillis` changes the wait and `flushAsyncTransactions` applies pending transactions immediately."
         },
         {
             "question": "How many rows can AG Grid handle?",

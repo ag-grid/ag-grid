@@ -51,55 +51,55 @@
                 "title": "Master / Detail",
                 "docsUrl": "./master-detail/",
                 "plan": "Enterprise",
-                "body": "Set masterDetail=true and use agGroupCellRenderer on the first column. Expanding an order opens a Detail Grid, a full grid instance, filled from getDetailRowData, which can return the lines straight away or after a server call."
+                "body": "Set `masterDetail=true` and use `agGroupCellRenderer` on the first column. Expanding an order opens a Detail Grid, a full grid instance, filled from `getDetailRowData`, which can return the lines straight away or after a server call."
             },
             {
                 "title": "Set Filter",
                 "docsUrl": "./filter-set/",
                 "plan": "Enterprise",
-                "body": "A checklist of the values in a column, modelled on Excel's AutoFilter, with a mini filter to search the list. Use filter='agSetColumnFilter' on the status column; in Enterprise it is also the default when filter=true."
+                "body": "A checklist of the values in a column, modelled on Excel's AutoFilter, with a mini filter to search the list. Use `filter='agSetColumnFilter'` on the status column; in Enterprise it is also the default when `filter=true`."
             },
             {
                 "title": "Row Grouping",
                 "docsUrl": "./grouping/",
                 "plan": "Enterprise",
-                "body": "rowGroup=true on a column groups rows under a parent row for each value, for example status and then customer. rowGroupPanelShow='always' shows a panel where users drag columns to change the grouping."
+                "body": "`rowGroup=true` on a column groups rows under a parent row for each value, for example status and then customer. `rowGroupPanelShow='always'` shows a panel where users drag columns to change the grouping."
             },
             {
                 "title": "Cell Editing",
                 "docsUrl": "./cell-editing/",
                 "plan": "Free",
-                "body": "editable on a column definition turns on editing, and the grid picks an editor from the cell data type. The Select Editor (agSelectCellEditor) limits input to a fixed list such as order statuses. editable can also be a callback, so some rows can be locked."
+                "body": "editable on a column definition turns on editing, and the grid picks an editor from the cell data type. The Select Editor (`agSelectCellEditor`) limits input to a fixed list such as order statuses. editable can also be a callback, so some rows can be locked."
             },
             {
                 "title": "Quick Filter",
                 "docsUrl": "./filter-quick/",
                 "plan": "Free",
-                "body": "quickFilterText filters rows against every column; each word typed must match. cacheQuickFilter=true caches the text per row for large data sets. It works with the Client-Side Row Model only."
+                "body": "`quickFilterText` filters rows against every column; each word typed must match. `cacheQuickFilter=true` caches the text per row for large data sets. It works with the Client-Side Row Model only."
             },
             {
                 "title": "Excel Export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports an .xlsx file from the context menu or api.exportDataAsExcel(), with no third-party library. The file follows the grid's current sorting, filtering, grouping and visible columns."
+                "body": "Exports an .xlsx file from the context menu or `api.exportDataAsExcel()`, with no third-party library. The file follows the grid's current sorting, filtering, grouping and visible columns."
             },
             {
                 "title": "Server-Side Row Model",
                 "docsUrl": "./server-side-model/",
                 "plan": "Enterprise",
-                "body": "rowModelType='serverSide' loads rows from your server in blocks as the user scrolls and loads group children when a group opens. Filtering, sorting and grouping are handed to the server. Master/detail is configured the same way as on the client side."
+                "body": "`rowModelType='serverSide'` loads rows from your server in blocks as the user scrolls and loads group children when a group opens. Filtering, sorting and grouping are handed to the server. Master/detail is configured the same way as on the client side."
             },
             {
                 "title": "Transaction updates",
                 "docsUrl": "./data-update-transactions/",
                 "plan": "Free",
-                "body": "api.applyTransaction() adds, removes and updates individual rows, for example when an order changes status, without reloading all row data. With getRowId the grid matches updates to rows by ID. Transactions on the Server-Side Row Model are Enterprise."
+                "body": "`api.applyTransaction()` adds, removes and updates individual rows, for example when an order changes status, without reloading all row data. With `getRowId` the grid matches updates to rows by ID. Transactions on the Server-Side Row Model are Enterprise."
             },
             {
                 "title": "CSV Export",
                 "docsUrl": "./csv-export/",
                 "plan": "Free",
-                "body": "api.exportDataAsCsv() downloads the displayed rows as CSV. The context menu item for CSV export is Enterprise only."
+                "body": "`api.exportDataAsCsv()` downloads the displayed rows as CSV. The context menu item for CSV export is Enterprise only."
             }
         ]
     },

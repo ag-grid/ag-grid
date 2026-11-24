@@ -34,12 +34,12 @@
             {
                 "value": "10",
                 "label": "Default row buffer",
-                "detail": "Rendered above and below the visible rows; change it with rowBuffer"
+                "detail": "Rendered above and below the visible rows; change it with `rowBuffer`"
             },
             {
                 "value": "500",
                 "label": "Maximum rendered rows",
-                "detail": "A safety limit against a grid with no set height; suppressMaxRenderedRowRestriction removes it"
+                "detail": "A safety limit against a grid with no set height; `suppressMaxRenderedRowRestriction` removes it"
             }
         ]
     },
@@ -50,7 +50,7 @@
                 "title": "Row and column virtualisation",
                 "docsUrl": "./dom-virtualisation/",
                 "plan": "Free",
-                "body": "The grid only renders the rows and columns in the visible viewport and adds or removes DOM as the user scrolls. It is on by default; suppressRowVirtualisation and suppressColumnVirtualisation turn it off."
+                "body": "The grid only renders the rows and columns in the visible viewport and adds or removes DOM as the user scrolls. It is on by default; `suppressRowVirtualisation` and `suppressColumnVirtualisation` turn it off."
             },
             {
                 "title": "Row buffer (rowBuffer)",
@@ -68,7 +68,7 @@
                 "title": "Infinite Row Model",
                 "docsUrl": "./infinite-scrolling/",
                 "plan": "Free",
-                "body": "rowModelType='infinite' with a datasource whose getRows() receives startRow, endRow, sortModel and filterModel. Rows are cached in blocks (cacheBlockSize, maxBlocksInCache, blockLoadDebounceMillis). The docs recommend it for large flat lists; it does not support row grouping."
+                "body": "`rowModelType='infinite'` with a datasource whose `getRows()` receives `startRow`, `endRow`, `sortModel` and `filterModel`. Rows are cached in blocks (`cacheBlockSize`, `maxBlocksInCache`, `blockLoadDebounceMillis`). The docs recommend it for large flat lists; it does not support row grouping."
             },
             {
                 "title": "Server-Side Row Model",
@@ -92,19 +92,19 @@
                 "title": "Pagination",
                 "docsUrl": "./row-pagination/",
                 "plan": "Free",
-                "body": "pagination=true replaces vertical scrolling with pages and works with all four row models. paginationAutoPageSize fits as many rows per page as the grid height allows."
+                "body": "`pagination=true` replaces vertical scrolling with pages and works with all four row models. `paginationAutoPageSize` fits as many rows per page as the grid height allows."
             },
             {
                 "title": "Transaction updates",
                 "docsUrl": "./data-update-transactions/",
                 "plan": "Free",
-                "body": "applyTransaction() adds, removes and updates specific rows instead of replacing all row data; with getRowId rows are matched by ID, which the docs describe as faster than object references for large data sets. applyTransactionAsync() batches updates, applied after 50ms by default. Available on the Client-Side and Server-Side Row Models (SSRM transactions are Enterprise)."
+                "body": "`applyTransaction()` adds, removes and updates specific rows instead of replacing all row data; with `getRowId` rows are matched by ID, which the docs describe as faster than object references for large data sets. `applyTransactionAsync()` batches updates, applied after 50ms by default. Available on the Client-Side and Server-Side Row Models (SSRM transactions are Enterprise)."
             },
             {
                 "title": "Scrolling performance options",
                 "docsUrl": "./scrolling-performance/",
                 "plan": "Free",
-                "body": "The docs suggest testing without custom cell renderers, using value getters or formatters instead where possible, deferring slow renderers with deferRender: true, avoiding auto row height, and setting suppressRowHoverHighlight=true."
+                "body": "The docs suggest testing without custom cell renderers, using value getters or formatters instead where possible, deferring slow renderers with `deferRender: true`, avoiding auto row height, and setting `suppressRowHoverHighlight=true`."
             }
         ]
     },

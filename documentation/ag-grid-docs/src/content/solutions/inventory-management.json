@@ -40,7 +40,7 @@
             {
                 "value": "100",
                 "label": "Default page size",
-                "detail": "The paginationPageSize default; the page size selector offers 20, 50 and 100 unless you set your own list"
+                "detail": "The `paginationPageSize` default; the page size selector offers 20, 50 and 100 unless you set your own list"
             }
         ]
     },
@@ -57,49 +57,49 @@
                 "title": "Number cell editor",
                 "docsUrl": "./provided-cell-editors-number/",
                 "plan": "Free",
-                "body": "agNumberCellEditor takes min, max, precision and step, and can show stepper buttons. The inventory demo uses it for the Incoming column."
+                "body": "`agNumberCellEditor` takes min, max, precision and step, and can show stepper buttons. The inventory demo uses it for the Incoming column."
             },
             {
                 "title": "Quick Filter",
                 "docsUrl": "./filter-quick/",
                 "plan": "Free",
-                "body": "The quickFilterText grid option matches every word of a search string against all column values, case-insensitive. Set cacheQuickFilter for large data sets."
+                "body": "The `quickFilterText` grid option matches every word of a search string against all column values, case-insensitive. Set `cacheQuickFilter` for large data sets."
             },
             {
                 "title": "Cell class rules",
                 "docsUrl": "./cell-styles/",
                 "plan": "Free",
-                "body": "cellClassRules applies a CSS class when a rule returns true, for example to mark rows where available stock falls below a reorder level."
+                "body": "`cellClassRules` applies a CSS class when a rule returns true, for example to mark rows where available stock falls below a reorder level."
             },
             {
                 "title": "Value formatters",
                 "docsUrl": "./value-formatters/",
                 "plan": "Free",
-                "body": "valueFormatter turns a raw number into display text such as a currency amount. Formatted values are also used for copy and CSV export by default; Excel export keeps numbers as numbers."
+                "body": "`valueFormatter` turns a raw number into display text such as a currency amount. Formatted values are also used for copy and CSV export by default; Excel export keeps numbers as numbers."
             },
             {
                 "title": "Custom cell components",
                 "docsUrl": "./component-cell-renderer/",
                 "plan": "Free",
-                "body": "cellRenderer puts your own React component in a cell. The inventory demo uses custom renderers for product images, status badges, stock counts and row actions."
+                "body": "`cellRenderer` puts your own React component in a cell. The inventory demo uses custom renderers for product images, status badges, stock counts and row actions."
             },
             {
                 "title": "Row pagination",
                 "docsUrl": "./row-pagination/",
                 "plan": "Free",
-                "body": "pagination=true splits rows into pages, with paginationPageSize and a page size selector. It works with every row model."
+                "body": "`pagination=true` splits rows into pages, with `paginationPageSize` and a page size selector. It works with every row model."
             },
             {
                 "title": "Set Filter",
                 "docsUrl": "./filter-set/",
                 "plan": "Enterprise",
-                "body": "An Excel-style filter with a checkbox list of column values. The demo's status tabs set its filter model through setColumnFilterModel."
+                "body": "An Excel-style filter with a checkbox list of column values. The demo's status tabs set its filter model through `setColumnFilterModel`."
             },
             {
                 "title": "Master Detail",
                 "docsUrl": "./master-detail/",
                 "plan": "Enterprise",
-                "body": "masterDetail=true lets a row expand to show a detail grid. The demo uses it to list each product's variants."
+                "body": "`masterDetail=true` lets a row expand to show a detail grid. The demo uses it to list each product's variants."
             },
             {
                 "title": "Excel export",
@@ -159,7 +159,7 @@
         },
         {
             "question": "How do I highlight low stock in the grid?",
-            "answer": "Use cellClassRules on the stock column. Each key is a CSS class name and each value a function that returns true when the class applies, for example (p) => p.value < 5."
+            "answer": "Use `cellClassRules` on the stock column. Each key is a CSS class name and each value a function that returns true when the class applies, for example (p) => p.value < 5."
         }
     ],
     "proseClaims": [

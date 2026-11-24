@@ -1,4 +1,7 @@
 ---
+import type { Framework } from '@ag-grid-types';
+import { renderMarkdocHtml } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
 import styles from '../DecisionPage.module.scss';
 import { FEATURE_STATUS, featureCellTone } from '../decisionPageText';
 import type { SolutionCapability } from '../types';
@@ -7,9 +10,10 @@ import TonePill from './TonePill.astro';
 interface Props {
     items: SolutionCapability[];
     resolveUrl: (url: string) => string;
+    framework: Framework;
 }
 
-const { items, resolveUrl } = Astro.props;
+const { items, resolveUrl, framework } = Astro.props;
 ---
 
 <ul class={styles.productReasons}>
@@ -29,7 +33,7 @@ const { items, resolveUrl } = Astro.props;
                     label={plan}
                 />
             </h3>
-            <p>{body}</p>
+            <p set:html={renderMarkdocHtml(body, framework)} />
         </li>
     ))}
 </ul>

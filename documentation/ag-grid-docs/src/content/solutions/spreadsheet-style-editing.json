@@ -35,7 +35,7 @@
                 "value": "10",
                 "valueSuffix": "steps",
                 "label": "Default undo / redo history",
-                "detail": "Change it with undoRedoCellEditingLimit. Community."
+                "detail": "Change it with `undoRedoCellEditingLimit`. Community."
             },
             {
                 "value": "8",
@@ -57,13 +57,13 @@
                 "title": "Full-row editing",
                 "docsUrl": "./cell-editing-full-row/",
                 "plan": "Free",
-                "body": "editType: 'fullRow' puts every cell in a row into edit mode at once. Tab moves between cells, and rowValueChanged fires once when the row stops editing."
+                "body": "`editType: 'fullRow'` puts every cell in a row into edit mode at once. Tab moves between cells, and `rowValueChanged` fires once when the row stops editing."
             },
             {
                 "title": "Undo and redo",
                 "docsUrl": "./undo-redo-edits/",
                 "plan": "Free",
-                "body": "undoRedoCellEditing records changes from cell editing, paste and the fill handle. Ctrl+Z undoes and Ctrl+Y redoes (Cmd+Z and Cmd+Shift+Z on Mac); the API offers undoCellEditing() and redoCellEditing()."
+                "body": "`undoRedoCellEditing` records changes from cell editing, paste and the fill handle. Ctrl+Z undoes and Ctrl+Y redoes (Cmd+Z and Cmd+Shift+Z on Mac); the API offers `undoCellEditing()` and `redoCellEditing()`."
             },
             {
                 "title": "Keyboard navigation",
@@ -75,13 +75,13 @@
                 "title": "Cell range selection",
                 "docsUrl": "./cell-selection/",
                 "plan": "Enterprise",
-                "body": "cellSelection: true allows Excel-like ranges by mouse drag, Shift+click and Shift+arrow keys, with Ctrl to add more ranges. Ranges feed the clipboard and the status bar totals."
+                "body": "`cellSelection: true` allows Excel-like ranges by mouse drag, Shift+click and Shift+arrow keys, with Ctrl to add more ranges. Ranges feed the clipboard and the status bar totals."
             },
             {
                 "title": "Fill handle",
                 "docsUrl": "./cell-selection-fill-handle/",
                 "plan": "Enterprise",
-                "body": "cellSelection.handle: { mode: 'fill' } adds a drag handle to the range. It copies a single value, continues a linear number series, and Alt increments numbers by one."
+                "body": "`cellSelection.handle: { mode: 'fill' }` adds a drag handle to the range. It copies a single value, continues a linear number series, and Alt increments numbers by one."
             },
             {
                 "title": "Clipboard copy, cut and paste",
@@ -93,19 +93,19 @@
                 "title": "Formulas",
                 "docsUrl": "./formulas/",
                 "plan": "Enterprise",
-                "body": "allowFormula: true on a column lets users type expressions such as =B1*C1 or =SUM(A1:A5), with relative and $ absolute references, ranges and a formula editor with autocomplete. Rows need IDs."
+                "body": "`allowFormula: true` on a column lets users type expressions such as =B1*C1 or =SUM(A1:A5), with relative and $ absolute references, ranges and a formula editor with autocomplete. Rows need IDs."
             },
             {
                 "title": "Batch editing",
                 "docsUrl": "./cell-editing-batch/",
                 "plan": "Enterprise",
-                "body": "api.startBatchEdit() queues edits across cells and rows; commitBatchEdit() writes them to the data and cancelBatchEdit() discards them. Client-Side Row Model only."
+                "body": "`api.startBatchEdit()` queues edits across cells and rows; `commitBatchEdit()` writes them to the data and `cancelBatchEdit()` discards them. Client-Side Row Model only."
             },
             {
                 "title": "Excel export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports to .xlsx with no third-party library, from the context menu or api.exportDataAsExcel(). Formula cells are exported as formulas so Excel evaluates them; CSV export (Community) writes the evaluated values."
+                "body": "Exports to .xlsx with no third-party library, from the context menu or `api.exportDataAsExcel()`. Formula cells are exported as formulas so Excel evaluates them; CSV export (Community) writes the evaluated values."
             }
         ]
     },
@@ -139,15 +139,15 @@
     "faq": [
         {
             "question": "How do I edit a whole row at once in a React table?",
-            "answer": "Set the grid option editType to 'fullRow'. All editable cells in the row open together, Tab and Shift+Tab move between them, and the grid fires cellValueChanged for each changed cell and rowValueChanged once for the row. Full-row editing cannot be combined with popup editors."
+            "answer": "Set the grid option `editType` to `'fullRow'`. All editable cells in the row open together, Tab and Shift+Tab move between them, and the grid fires `cellValueChanged` for each changed cell and `rowValueChanged` once for the row. Full-row editing cannot be combined with popup editors."
         },
         {
             "question": "Can users import an Excel file into the grid?",
-            "answer": "The AG Grid docs show Excel import using the third-party xlsx library to read the workbook, then passing the rows to the grid. The example uses processFileInput and the file input overlay so users can drop a .xlsx file onto the grid, with auto-generated columns. Excel export is built in, with no extra library, in AG Grid Enterprise."
+            "answer": "The AG Grid docs show Excel import using the third-party xlsx library to read the workbook, then passing the rows to the grid. The example uses `processFileInput` and the file input overlay so users can drop a .xlsx file onto the grid, with auto-generated columns. Excel export is built in, with no extra library, in AG Grid Enterprise."
         },
         {
             "question": "Does AG Grid support Excel formulas?",
-            "answer": "Yes, in AG Grid Enterprise. Set allowFormula on a column and give rows IDs. Users type formulas starting with =, using A1-style references, $ absolute references, ranges such as A1:B2 and 17 built-in functions, and you can register custom functions. Formulas do not work with Tree Data, Row Grouping, pivoting, aggregation, Master Detail, or the Server-Side, Infinite and Viewport row models."
+            "answer": "Yes, in AG Grid Enterprise. Set `allowFormula` on a column and give rows IDs. Users type formulas starting with =, using A1-style references, $ absolute references, ranges such as A1:B2 and 17 built-in functions, and you can register custom functions. Formulas do not work with Tree Data, Row Grouping, pivoting, aggregation, Master Detail, or the Server-Side, Infinite and Viewport row models."
         },
         {
             "question": "Is cell editing free in AG Grid?",
