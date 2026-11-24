@@ -644,6 +644,47 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
+    test('both errors are thrown when unsubscribeRows and subscribeRows throw in the same flush', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        const unsubscribeError = new Error('unsubscribe failed');
+        const subscribeError = new Error('subscribe failed');
+        let failing = false;
+        api.setGridOption('viewSubscription', {
+            subscribeRows: (rows, params) => {
+                recorder.handlers.subscribeRows(rows, params);
+                if (failing) {
+                    throw subscribeError;
+                }
+            },
+            unsubscribeRows: (rows, params) => {
+                if (failing) {
+                    throw unsubscribeError;
+                }
+                recorder.handlers.unsubscribeRows(rows, params);
+            },
+        });
+        await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+
+        vi.useFakeTimers();
+        failing = true;
+        try {
+            api.ensureIndexVisible(50, 'top');
+            let thrown: unknown;
+            try {
+                vi.runAllTimers();
+            } catch (error) {
+                thrown = error;
+            }
+            expect(thrown).toBeInstanceOf(AggregateError);
+            expect((thrown as AggregateError).errors).toEqual([unsubscribeError, subscribeError]);
+        } finally {
+            failing = false;
+            vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
     test('a subscribeRows call that throws is not retried', async () => {
         const api = await createFlatGrid();
         let calls = 0;

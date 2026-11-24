@@ -1,4 +1,4 @@
-import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
+import { _areEqual, _getDocument, _observeIntersection, _throwErrors } from 'ag-stack';
 
 import {
     BeanStub,
@@ -260,14 +260,21 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             }
         });
 
-        try {
-            if (removed.length) {
+        // The rows now in view are subscribed even when unsubscribeRows throws, then both errors are thrown.
+        const errors: unknown[] = [];
+        if (removed.length) {
+            try {
                 this.getOptions()?.unsubscribeRows(removed, this.createParams());
+            } catch (error) {
+                errors.push(error);
             }
-        } finally {
-            // the rows now in view are subscribed even when unsubscribeRows throws
-            this.subscribeNodes(sub, added);
         }
+        try {
+            this.subscribeNodes(sub, added);
+        } catch (error) {
+            errors.push(error);
+        }
+        _throwErrors(errors);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */
