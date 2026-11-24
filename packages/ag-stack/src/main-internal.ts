@@ -268,6 +268,7 @@ export {
     _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _debounce } from './utils/debounce';
+export { _throwErrors } from './utils/error';
 export { _batchCall, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

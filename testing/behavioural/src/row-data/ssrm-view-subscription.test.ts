@@ -1,6 +1,5 @@
 import { waitFor } from '@testing-library/dom';
 import {
-    ALL_SEVERITIES,
     TestGridsManager,
     mockGridLayout,
     nextAnimationFrame,
@@ -16,7 +15,7 @@ import type {
     IServerSideGetRowsParams,
     ViewSubscriptionOptions,
 } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PinnedRowModule, ScrollApiModule } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -54,24 +53,7 @@ describe('SSRM viewSubscription', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        vi.restoreAllMocks();
     });
-
-    let warnSpy: ReturnType<typeof vi.spyOn>;
-    beforeEach(() => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [333] });
-        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    });
-
-    /** Asserts that a handler error was reported as warning #333, and not thrown. */
-    function expectHandlerWarning(message: string): void {
-        const warned = warnSpy.mock.calls.flat().map(String).join(' ');
-        expect(warned).toContain('warning #333');
-        expect(warnSpy.mock.calls.flat().some((arg: unknown) => arg instanceof Error && arg.message === message)).toBe(
-            true
-        );
-        warnSpy.mockClear();
-    }
 
     function createFlatDatasource(rows: { id: string; value: number }[]): IServerSideDatasource {
         return {
@@ -548,128 +530,60 @@ describe('SSRM viewSubscription', () => {
         }
     });
 
-    test('rows that came into view are still subscribed when unsubscribeRows throws', async () => {
-        const api = await createFlatGrid();
-        const recorder = createRecorder();
-        let fail = true;
-        api.setGridOption('viewSubscription', {
-            subscribeRows: recorder.handlers.subscribeRows,
-            unsubscribeRows: (rows, params) => {
-                recorder.handlers.unsubscribeRows(rows, params);
-                if (fail) {
-                    fail = false;
-                    throw new Error('unsubscribe failed');
-                }
-            },
-            debounceMs: 10,
-        });
-        vi.useFakeTimers();
-        try {
-            api.ensureIndexVisible(50, 'top');
-            await vi.advanceTimersByTimeAsync(10);
-            expectHandlerWarning('unsubscribe failed');
-
-            await vi.advanceTimersByTimeAsync(10);
-            expect(recorder.ids()).toEqual(range(50, 55));
-            expect(recorder.violations).toEqual([]);
-        } finally {
-            vi.useRealTimers();
-        }
-    });
-
-    test('destroying the grid finishes when unsubscribeRows throws', async () => {
-        const api = await createFlatGrid();
+    test('destroy() throws the unsubscribeRows error after every gridPreDestroyed listener has run', async () => {
+        const preDestroyed: string[] = [];
+        const api = await createFlatGrid({ onGridPreDestroyed: () => preDestroyed.push('onGridPreDestroyed') });
+        api.addEventListener('gridPreDestroyed', () => preDestroyed.push('addEventListener'));
+        let apiDestroyedInHandler: boolean | undefined;
+        const error = new Error('unsubscribe failed');
         api.setGridOption('viewSubscription', {
             subscribeRows: () => {},
-            unsubscribeRows: () => {
-                throw new Error('unsubscribe failed');
+            unsubscribeRows: (_rows, params) => {
+                apiDestroyedInHandler = params.api.isDestroyed();
+                throw error;
             },
         });
 
-        api.destroy();
+        expect(() => api.destroy()).toThrow(error);
 
-        expectHandlerWarning('unsubscribe failed');
+        expect(preDestroyed.sort()).toEqual(['addEventListener', 'onGridPreDestroyed']);
+        expect(apiDestroyedInHandler).toBe(false);
         expect(api.isDestroyed()).toBe(true);
     });
 
-    test('a handler error does not escape when throwOn includes warnings', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES });
-        const api = await createFlatGrid();
-        const recorder = createRecorder();
-        api.setGridOption('viewSubscription', {
-            subscribeRows: recorder.handlers.subscribeRows,
-            unsubscribeRows: () => {
-                throw new Error('unsubscribe failed');
+    test('destroy() throws a bean destroy error in the same AggregateError as a gridPreDestroyed listener error', async () => {
+        const listenerError = new Error('listener failed');
+        const beanError = new Error('bean destroy failed');
+        // The row model bean destroys the datasource when the grid destroys its beans.
+        const api = await createFlatGrid({
+            serverSideDatasource: {
+                ...createFlatDatasource([{ id: '0', value: 0 }]),
+                destroy: () => {
+                    throw beanError;
+                },
             },
         });
+        api.addEventListener('gridPreDestroyed', () => {
+            throw listenerError;
+        });
 
-        expect(() => api.destroy()).not.toThrow();
-        expectHandlerWarning('unsubscribe failed');
+        expect(() => api.destroy()).toThrow(expect.objectContaining({ errors: [listenerError, beanError] }));
         expect(api.isDestroyed()).toBe(true);
     });
 
-    test('rows passed to a subscribeRows call that throws are not subscribed', async () => {
-        const api = await createFlatGrid();
-        const recorder = createRecorder();
-        let fail = false;
-        api.setGridOption('viewSubscription', {
-            subscribeRows: (rows, params) => {
-                if (fail) {
-                    fail = false;
-                    throw new Error('subscribe failed');
-                }
-                recorder.handlers.subscribeRows(rows, params);
+    test('destroy() throws an AggregateError from a bean destroy as it is', async () => {
+        const beanError = new AggregateError([], 'datasource destroy failed');
+        const api = await createFlatGrid({
+            serverSideDatasource: {
+                ...createFlatDatasource([{ id: '0', value: 0 }]),
+                destroy: () => {
+                    throw beanError;
+                },
             },
-            unsubscribeRows: recorder.handlers.unsubscribeRows,
-            debounceMs: 10,
         });
-        vi.useFakeTimers();
-        try {
-            fail = true;
-            api.ensureIndexVisible(50, 'top');
-            await vi.advanceTimersByTimeAsync(10);
-            expectHandlerWarning('subscribe failed');
 
-            // Rows 50-55 were never subscribed, so removing the option passes none of them to unsubscribeRows.
-            api.setGridOption('viewSubscription', undefined);
-            expect(recorder.calls).toEqual([
-                { type: 'subscribe', ids: range(0, 5) },
-                { type: 'unsubscribe', ids: range(0, 5) },
-            ]);
-            expect(recorder.violations).toEqual([]);
-        } finally {
-            vi.useRealTimers();
-        }
-    });
-
-    test('rows in view are subscribed again after a subscribeRows call that throws', async () => {
-        const api = await createFlatGrid();
-        const recorder = createRecorder();
-        let fail = false;
-        api.setGridOption('viewSubscription', {
-            subscribeRows: (rows, params) => {
-                if (fail) {
-                    fail = false;
-                    throw new Error('subscribe failed');
-                }
-                recorder.handlers.subscribeRows(rows, params);
-            },
-            unsubscribeRows: recorder.handlers.unsubscribeRows,
-            debounceMs: 10,
-        });
-        vi.useFakeTimers();
-        try {
-            fail = true;
-            api.ensureIndexVisible(50, 'top');
-            await vi.advanceTimersByTimeAsync(10);
-            expectHandlerWarning('subscribe failed');
-
-            await vi.advanceTimersByTimeAsync(10);
-            expect(recorder.ids()).toEqual(range(50, 55));
-            expect(recorder.violations).toEqual([]);
-        } finally {
-            vi.useRealTimers();
-        }
+        expect(() => api.destroy()).toThrow(beanError);
+        expect(api.isDestroyed()).toBe(true);
     });
 
     test('a subscribeRows handler that throws on an empty array does not stop createGrid returning the api', async () => {
@@ -695,61 +609,120 @@ describe('SSRM viewSubscription', () => {
         await waitFor(() => expect(subscribed).toEqual(['0']));
     });
 
-    test('a subscribeRows handler that keeps throwing is retried once', async () => {
+    test('updateGridOptions applies every changed option when a viewSubscription handler throws', async () => {
         const api = await createFlatGrid();
-        let calls = 0;
+        const error = new Error('subscribe failed');
+        try {
+            expect(() =>
+                api.updateGridOptions({
+                    viewSubscription: {
+                        subscribeRows: () => {
+                            throw error;
+                        },
+                        unsubscribeRows: () => {},
+                    },
+                    columnDefs: [{ field: 'value' }, { field: 'id' }],
+                })
+            ).toThrow(error);
+
+            expect(api.getColumns()!.map((column) => column.getColId())).toEqual(['value', 'id']);
+        } finally {
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
+    test('rows scrolled into view are subscribed even when unsubscribeRows throws', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        const error = new Error('unsubscribe failed');
+        let failing = true;
+        api.setGridOption('viewSubscription', {
+            ...recorder.handlers,
+            unsubscribeRows: (rows, params) => {
+                if (failing) {
+                    throw error;
+                }
+                recorder.handlers.unsubscribeRows(rows, params);
+            },
+        });
+        await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+
         vi.useFakeTimers();
         try {
-            // Turning the option on calls the handler synchronously, which throws and schedules the one retry.
-            api.setGridOption('viewSubscription', {
-                subscribeRows: () => {
-                    calls++;
-                    throw new Error('subscribe failed');
-                },
-                unsubscribeRows: () => {},
-                debounceMs: 10,
-            });
-            expectHandlerWarning('subscribe failed');
-            expect(calls).toBe(1);
-            await vi.advanceTimersByTimeAsync(10);
-            expect(calls).toBe(2);
+            // rows 50-55 are in the block already loaded, so the flush can subscribe them straight away
+            api.ensureIndexVisible(50, 'top');
+            expect(() => vi.runAllTimers()).toThrow(error);
 
-            await vi.advanceTimersByTimeAsync(100);
-            expect(calls).toBe(2);
+            expect(recorder.calls.at(-1)).toEqual({ type: 'subscribe', ids: range(50, 55) });
         } finally {
+            failing = false;
             vi.useRealTimers();
             api.setGridOption('viewSubscription', undefined);
         }
     });
 
-    test('rows a throwing subscribeRows handler removed from its array are retried', async () => {
+    test('both errors are thrown when unsubscribeRows and subscribeRows throw in the same flush', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        let fail = false;
+        const unsubscribeError = new Error('unsubscribe failed');
+        const subscribeError = new Error('subscribe failed');
+        let failing = false;
         api.setGridOption('viewSubscription', {
             subscribeRows: (rows, params) => {
-                if (fail) {
-                    fail = false;
-                    rows.splice(0);
-                    throw new Error('subscribe failed');
-                }
                 recorder.handlers.subscribeRows(rows, params);
+                if (failing) {
+                    throw subscribeError;
+                }
             },
-            unsubscribeRows: recorder.handlers.unsubscribeRows,
-            debounceMs: 10,
+            unsubscribeRows: (rows, params) => {
+                if (failing) {
+                    throw unsubscribeError;
+                }
+                recorder.handlers.unsubscribeRows(rows, params);
+            },
         });
+        await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+
+        vi.useFakeTimers();
+        failing = true;
+        try {
+            api.ensureIndexVisible(50, 'top');
+            let thrown: unknown;
+            try {
+                vi.runAllTimers();
+            } catch (error) {
+                thrown = error;
+            }
+            expect(thrown).toBeInstanceOf(AggregateError);
+            expect((thrown as AggregateError).errors).toEqual([unsubscribeError, subscribeError]);
+        } finally {
+            failing = false;
+            vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
+        }
+    });
+
+    test('a subscribeRows call that throws is not retried', async () => {
+        const api = await createFlatGrid();
+        let calls = 0;
         vi.useFakeTimers();
         try {
-            fail = true;
-            api.ensureIndexVisible(50, 'top');
-            await vi.advanceTimersByTimeAsync(10);
-            expectHandlerWarning('subscribe failed');
+            expect(() =>
+                api.setGridOption('viewSubscription', {
+                    subscribeRows: () => {
+                        calls++;
+                        throw new Error('subscribe failed');
+                    },
+                    unsubscribeRows: () => {},
+                    debounceMs: 10,
+                })
+            ).toThrow('subscribe failed');
 
-            await vi.advanceTimersByTimeAsync(10);
-            expect(recorder.ids()).toEqual(range(50, 55));
-            expect(recorder.violations).toEqual([]);
+            await vi.advanceTimersByTimeAsync(100);
+            expect(calls).toBe(1);
         } finally {
             vi.useRealTimers();
+            api.setGridOption('viewSubscription', undefined);
         }
     });
 
