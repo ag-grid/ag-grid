@@ -1,4 +1,5 @@
 import type { AgTooltipFeature, TooltipCtrl, TooltipDetails } from 'ag-stack';
+import { _isHorizontalScrollShowing, _isVerticalScrollShowing } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -51,7 +52,7 @@ export function shouldDisplayTextTooltip(tooltip: ResolvedTooltip, getElement: (
         return true;
     }
     const element = getElement();
-    return !!element && (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight);
+    return !!element && (_isHorizontalScrollShowing(element) || _isVerticalScrollShowing(element));
 }
 
 export function getGroupTooltipTextElement(element: HTMLElement | undefined, scope = ''): HTMLElement | undefined {
