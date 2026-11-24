@@ -552,17 +552,19 @@ describe('SSRM viewSubscription', () => {
     });
 
     test('destroy() throws a bean destroy error in the same AggregateError as a gridPreDestroyed listener error', async () => {
-        const api = await createFlatGrid();
         const listenerError = new Error('listener failed');
         const beanError = new Error('bean destroy failed');
+        // The row model bean destroys the datasource when the grid destroys its beans.
+        const api = await createFlatGrid({
+            serverSideDatasource: {
+                ...createFlatDatasource([{ id: '0', value: 0 }]),
+                destroy: () => {
+                    throw beanError;
+                },
+            },
+        });
         api.addEventListener('gridPreDestroyed', () => {
             throw listenerError;
-        });
-        const viewSubSvc = (api.getAllGridColumns()[0] as any).beans.viewSubSvc;
-        const destroy = viewSubSvc.destroy.bind(viewSubSvc);
-        vi.spyOn(viewSubSvc, 'destroy').mockImplementation(() => {
-            destroy();
-            throw beanError;
         });
 
         expect(() => api.destroy()).toThrow(expect.objectContaining({ errors: [listenerError, beanError] }));
