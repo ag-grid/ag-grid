@@ -1,0 +1,257 @@
+{
+    "meta": {
+        "title": "Excel-Like Editable Table for React | AG Grid",
+        "description": "Spreadsheet-style editing in AG Grid: cell and full-row editing, undo and redo, fill handle, range selection, copy and paste, formulas and Excel export.",
+        "targetTerm": "react editable table",
+        "monthlySearches": 20,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-spreadsheet-style-editing",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Spreadsheet editing",
+        "mark": "Excel-like editing"
+    },
+    "hero": {
+        "heading": "Spreadsheet-style editing in a React data grid",
+        "subHeading": "Let users edit cells, select ranges, drag the fill handle, paste from Excel and undo mistakes, inside a grid that also sorts, filters and exports."
+    },
+    "shortAnswer": "AG Grid turns a table into an editable, spreadsheet-like grid. AG Grid Community, free under the MIT licence, includes cell editing, full-row editing, text, number, date, checkbox and select editors, validation, undo and redo, keyboard navigation and CSV export. The features that make it behave most like Excel are in AG Grid Enterprise: cell range selection, the fill handle, clipboard copy, cut and paste, formulas with A1-style references, the Rich Select editor, batch editing, row numbers and Excel export. Excel import is shown in the docs using a third-party library to read the file. Enterprise is free to test locally with a watermark.",
+    "example": {
+        "id": "spreadsheet-editing",
+        "intro": "Select a range and drag the fill handle, edit cells, then use Undo and Redo. The status bar sums the selection.",
+        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "17",
+                "label": "Built-in formula functions",
+                "detail": "Including SUM, SUMIF, AVERAGE, IF, CONCAT and COUNTIF, plus custom functions. Formulas are Enterprise."
+            },
+            {
+                "value": "10",
+                "valueSuffix": "steps",
+                "label": "Default undo / redo history",
+                "detail": "Change it with undoRedoCellEditingLimit. Community."
+            },
+            {
+                "value": "8",
+                "label": "Provided cell editors",
+                "detail": "Text, large text, select, rich select, formula, number, date and checkbox. Rich select and formula are Enterprise."
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Cell editing and provided editors",
+                "docsUrl": "./cell-editing/",
+                "plan": "Free",
+                "body": "editable: true on a column turns on editing; the grid picks a text, number, date or checkbox editor from the column's data type. Text, large text and select editors are also provided, and you can supply your own editor component."
+            },
+            {
+                "title": "Full-row editing",
+                "docsUrl": "./cell-editing-full-row/",
+                "plan": "Free",
+                "body": "editType: 'fullRow' puts every cell in a row into edit mode at once. Tab moves between cells, and rowValueChanged fires once when the row stops editing."
+            },
+            {
+                "title": "Undo and redo",
+                "docsUrl": "./undo-redo-edits/",
+                "plan": "Free",
+                "body": "undoRedoCellEditing records changes from cell editing, paste and the fill handle. Ctrl+Z undoes and Ctrl+Y redoes (Cmd+Z and Cmd+Shift+Z on Mac); the API offers undoCellEditing() and redoCellEditing()."
+            },
+            {
+                "title": "Keyboard navigation",
+                "docsUrl": "./keyboard-navigation/",
+                "plan": "Free",
+                "body": "Arrow keys move between cells, F2 or Enter starts editing, and Ctrl+Enter while editing in a selected cell range (Enterprise) writes the new value to every editable cell in the range."
+            },
+            {
+                "title": "Cell range selection",
+                "docsUrl": "./cell-selection/",
+                "plan": "Enterprise",
+                "body": "cellSelection: true allows Excel-like ranges by mouse drag, Shift+click and Shift+arrow keys, with Ctrl to add more ranges. Ranges feed the clipboard and the status bar totals."
+            },
+            {
+                "title": "Fill handle",
+                "docsUrl": "./cell-selection-fill-handle/",
+                "plan": "Enterprise",
+                "body": "cellSelection.handle: { mode: 'fill' } adds a drag handle to the range. It copies a single value, continues a linear number series, and Alt increments numbers by one."
+            },
+            {
+                "title": "Clipboard copy, cut and paste",
+                "docsUrl": "./clipboard/",
+                "plan": "Enterprise",
+                "body": "Ctrl+C, Ctrl+X and Ctrl+V work with the system clipboard. Multiple cells are copied tab-separated so they paste into Excel, and paste only writes to editable cells."
+            },
+            {
+                "title": "Formulas",
+                "docsUrl": "./formulas/",
+                "plan": "Enterprise",
+                "body": "allowFormula: true on a column lets users type expressions such as =B1*C1 or =SUM(A1:A5), with relative and $ absolute references, ranges and a formula editor with autocomplete. Rows need IDs."
+            },
+            {
+                "title": "Batch editing",
+                "docsUrl": "./cell-editing-batch/",
+                "plan": "Enterprise",
+                "body": "api.startBatchEdit() queues edits across cells and rows; commitBatchEdit() writes them to the data and cancelBatchEdit() discards them. Client-Side Row Model only."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports to .xlsx with no third-party library, from the context menu or api.exportDataAsExcel(). Formula cells are exported as formulas so Excel evaluates them; CSV export (Community) writes the evaluated values."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build an Excel-like editable table in React",
+        "steps": [
+            {
+                "title": "Turn on editing",
+                "body": "Set `editable: true` in `defaultColDef`, or per column. Use a callback for `editable` if only some rows may change, and `editType: \"fullRow\"` if users should edit a whole record at once."
+            },
+            {
+                "title": "Choose editors",
+                "body": "Let cell data types pick the text, number, date or checkbox editor, or set `cellEditor` to `agSelectCellEditor`, `agLargeTextCellEditor` or, in Enterprise, `agRichSelectCellEditor`."
+            },
+            {
+                "title": "Add undo and redo",
+                "body": "Set `undoRedoCellEditing` and, if needed, `undoRedoCellEditingLimit`. Edits from typing, paste and the fill handle can then be reversed with Ctrl+Z."
+            },
+            {
+                "title": "Add ranges, fill handle and clipboard",
+                "body": "With `ag-grid-enterprise`, set `cellSelection={{ handle: { mode: \"fill\" } }}`. Copy, cut and paste are on by default in Enterprise."
+            },
+            {
+                "title": "Add formulas and export",
+                "body": "Set `allowFormula: true` on calculated columns and provide `getRowId`. Call `api.exportDataAsExcel()` to download the sheet with its formulas."
+            }
+        ],
+        "code": "import { useCallback, useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { CellSelectionOptions, ColDef, GetRowIdParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface Line {\n  id: number;\n  product: string;\n  price: number;\n  quantity: number;\n  total: string | number;\n}\n\nexport function SpreadsheetGrid() {\n  const [rowData] = useState<Line[]>([\n    { id: 1, product: \"Apples\", price: 1.25, quantity: 4,\n      total: '=REF(COLUMN(\"price\"),ROW(1))*REF(COLUMN(\"quantity\"),ROW(1))' },\n    { id: 2, product: \"Oranges\", price: 0.8, quantity: 6,\n      total: '=REF(COLUMN(\"price\"),ROW(2))*REF(COLUMN(\"quantity\"),ROW(2))' },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Line>[]>(() => [\n    { field: \"product\" },\n    { field: \"price\" },\n    { field: \"quantity\" },\n    { field: \"total\", allowFormula: true },\n  ], []);\n\n  const defaultColDef = useMemo<ColDef<Line>>(() => ({ editable: true, flex: 1 }), []);\n\n  // Excel-style ranges plus a fill handle on the selection\n  const cellSelection = useMemo<CellSelectionOptions>(() => ({ handle: { mode: \"fill\" } }), []);\n\n  // Formulas need stable row IDs\n  const getRowId = useCallback((p: GetRowIdParams<Line>) => String(p.data.id), []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 400 }}>\n        <AgGridReact<Line>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          defaultColDef={defaultColDef}\n          cellSelection={cellSelection}\n          getRowId={getRowId}\n          undoRedoCellEditing\n          undoRedoCellEditingLimit={20}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [Formulas docs](./formulas/): an order sheet where subtotal, tax and total are formulas, with the fill handle switched on. Edit price or quantity and the totals update."
+    },
+    "faq": [
+        {
+            "question": "How do I edit a whole row at once in a React table?",
+            "answer": "Set the grid option editType to 'fullRow'. All editable cells in the row open together, Tab and Shift+Tab move between them, and the grid fires cellValueChanged for each changed cell and rowValueChanged once for the row. Full-row editing cannot be combined with popup editors."
+        },
+        {
+            "question": "Can users import an Excel file into the grid?",
+            "answer": "The AG Grid docs show Excel import using the third-party xlsx library to read the workbook, then passing the rows to the grid. The example uses processFileInput and the file input overlay so users can drop a .xlsx file onto the grid, with auto-generated columns. Excel export is built in, with no extra library, in AG Grid Enterprise."
+        },
+        {
+            "question": "Does AG Grid support Excel formulas?",
+            "answer": "Yes, in AG Grid Enterprise. Set allowFormula on a column and give rows IDs. Users type formulas starting with =, using A1-style references, $ absolute references, ranges such as A1:B2 and 17 built-in functions, and you can register custom functions. Formulas do not work with Tree Data, Row Grouping, pivoting, aggregation, Master Detail, or the Server-Side, Infinite and Viewport row models."
+        },
+        {
+            "question": "Is cell editing free in AG Grid?",
+            "answer": "Yes. Cell editing, full-row editing, the text, large text, number, date, checkbox and select editors, validation and undo and redo are all in AG Grid Community under the MIT licence. Range selection, the fill handle, clipboard, formulas, batch editing, the Rich Select editor and Excel export need AG Grid Enterprise."
+        },
+        {
+            "question": "Can I paste data from Excel into the grid?",
+            "answer": "Yes, in AG Grid Enterprise. With focus on the grid, Ctrl+V pastes from the system clipboard, starting at the selected cell. If a selected range is larger than the copied block, the block repeats when it fits evenly. Non-editable cells are not changed by paste. Copying multiple cells produces tab-separated text that Excel reads as cells."
+        },
+        {
+            "question": "Where can I see an editable React table example?",
+            "answer": "The AG Grid docs have live React examples for simple and conditional cell editing, full-row editing, undo and redo, the fill handle and formulas. The full source of each example is shown on its docs page."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Setting editable: true on a column enables cell editing, and by default the grid uses cell data types to pick the editor for each column.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The provided cell editors are text, large text, select, rich select (Enterprise), formula (Enterprise), number, date and checkbox: eight in total.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "editType: 'fullRow' makes all cells in the row editable at once; cellValueChanged fires for each changed cell and rowValueChanged once for the row, and full-row editing is not compatible with popup editors.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing-full-row/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "undoRedoCellEditing enables undo and redo of changes made by cell editing, copy / paste and the fill handle; the default stack is 10 steps, changed with undoRedoCellEditingLimit.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/undo-redo-edits/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Ctrl+Z undoes and Ctrl+Y (Cmd+Shift+Z on Mac) redoes; api.undoCellEditing() and api.redoCellEditing() do the same from code.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/undo-redo-edits/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "F2 or Enter starts editing a cell, and Ctrl+Enter while editing in a selected cell range sets the value on every editable cell in the range.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/keyboard-navigation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell selection (Enterprise) is enabled with cellSelection: true and supports mouse drag, Ctrl+drag for additional ranges, Shift+click and Shift+arrow keys; ranges feed the clipboard and status bar aggregations.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-selection/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The fill handle (Enterprise) is enabled with cellSelection.handle: { mode: 'fill' }; it copies a single value, continues a linear progression of numbers, and with Alt increments a single number by one.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-selection-fill-handle/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Copy, cut and paste (Enterprise) are enabled by default and use the system clipboard; copied cells are tab-separated for Excel compatibility, non-editable cells are not changed by paste, and a larger target range repeats the copied block when it fits evenly.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/clipboard/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Formulas (Enterprise) are enabled with allowFormula: true on a column and require row IDs; they support A1-style relative references, $ absolute references and ranges such as A1:B2, and the Formula Cell Editor provides autocomplete.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/formulas/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Formulas are not supported with Tree Data, Row Grouping, pivoting, aggregation, Master Detail, or the Server-Side, Infinite and Viewport row models.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/formulas/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Formula Reference lists 17 provided functions, including SUM, SUMIF, AVERAGE, IF, CONCAT and COUNTIF, and custom functions can be registered.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/formula-reference/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export writes the evaluated values of formulas, while Excel export writes the formulas themselves so Excel evaluates them.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/formulas/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Batch editing (Enterprise) is driven by api.startBatchEdit(), commitBatchEdit() and cancelBatchEdit(), and is only compatible with the Client-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing-batch/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export (Enterprise) produces .xlsx files without third-party libraries, from the context menu or api.exportDataAsExcel().",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Excel import example reads the workbook with the third-party xlsx library, uses Auto-Generate Columns, and handles dropped .xlsx files through the processFileInput callback and file input overlay.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-import/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell selection, fill handle, clipboard, formulas, batch editing, row numbers, the rich select editor and Excel export are Enterprise; cell editing, the text, number, date, checkbox, large text and select editors, undo / redo and CSV export are Community.",
+            "sourceUrl": "https://www.ag-grid.com/license-pricing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark and console warnings.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

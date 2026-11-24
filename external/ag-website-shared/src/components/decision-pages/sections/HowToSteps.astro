@@ -1,0 +1,28 @@
+---
+import type { Framework } from '@ag-grid-types';
+import Code from '@ag-website-shared/components/code/Code';
+import { renderMarkdocBlocksHtml } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
+import styles from '../DecisionPage.module.scss';
+import type { SolutionStep } from '../types';
+
+interface Props {
+    steps: SolutionStep[];
+    code: string;
+    outro: string;
+    framework: Framework;
+}
+
+const { steps, code, outro, framework } = Astro.props;
+---
+
+<ol class={styles.howToSteps}>
+    {steps.map(({ title, body }) => (
+        <li>
+            <h3>{title}</h3>
+            <div set:html={renderMarkdocBlocksHtml(body, framework)} />
+        </li>
+    ))}
+</ol>
+<Code client:visible code={code} language="tsx" copyToClipboard />
+<div class={styles.sectionNote} set:html={renderMarkdocBlocksHtml(outro, framework)} />

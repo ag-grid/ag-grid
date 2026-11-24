@@ -46,6 +46,19 @@ export function createDecisionPageSchemaParts({ reviewerKeys, now = new Date() }
         licence: z.string(),
     });
 
+    const keyFigure = z.object({
+        value: z.string(),
+        valueSuffix: z.string().optional(),
+        label: z.string(),
+        detail: z.string(),
+    });
+
+    // A page that states facts in prose must source at least one; an empty list leaves that prose unchecked.
+    const proseClaims = (subject: string) =>
+        z
+            .array(z.object({ claim: z.string(), ...claimSource }))
+            .min(1, `Source the ${subject} claims made in prose: add at least one proseClaims entry`);
+
     /** The fields every decision page has. */
     const core = {
         meta: z.object({
@@ -74,6 +87,8 @@ export function createDecisionPageSchemaParts({ reviewerKeys, now = new Date() }
         core,
         featureCell,
         pricingRow,
+        keyFigure,
+        proseClaims,
         /** The fields every page about a competitor has. */
         base: {
             ...core,
@@ -84,11 +99,7 @@ export function createDecisionPageSchemaParts({ reviewerKeys, now = new Date() }
                 url: z.string().url(),
                 logo: z.string().startsWith('/').optional(),
             }),
-            // Every page makes competitor claims in its prose, so it must source at least one; an
-            // empty list would leave that prose unchecked.
-            proseClaims: z
-                .array(z.object({ claim: z.string(), ...claimSource }))
-                .min(1, 'Source the competitor claims made in prose: add at least one proseClaims entry'),
+            proseClaims: proseClaims('competitor'),
         },
         featureGroups: z.array(
             z.object({

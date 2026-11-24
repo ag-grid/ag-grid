@@ -7,19 +7,12 @@ import { type DecisionPageSchemaOptions, createDecisionPageSchemaParts } from '.
  * Every competitor claim must be sourced; see `createDecisionPageSchemaParts`.
  */
 export function createComparisonPageSchema(options: DecisionPageSchemaOptions) {
-    const { base, featureGroups, pricing } = createDecisionPageSchemaParts(options);
+    const { base, featureGroups, pricing, keyFigure } = createDecisionPageSchemaParts(options);
 
     return z.object({
         ...base,
         shortAnswer: z.string(),
-        keyFigures: z.array(
-            z.object({
-                value: z.string(),
-                valueSuffix: z.string().optional(),
-                label: z.string(),
-                detail: z.string(),
-            })
-        ),
+        keyFigures: z.array(keyFigure),
         features: z.object({
             subHeading: z.string(),
             groups: featureGroups,

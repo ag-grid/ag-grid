@@ -1,0 +1,283 @@
+{
+    "meta": {
+        "title": "Portfolio Management Dashboard Grid | AG Grid",
+        "description": "Build a portfolio holdings grid with AG Grid: grouping, totals, sparklines, currency formatting, flashing live prices, charts and Excel export.",
+        "targetTerm": "portfolio management dashboard",
+        "monthlySearches": 70,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-portfolio-management",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Portfolio management",
+        "mark": "Portfolio management"
+    },
+    "hero": {
+        "heading": "Build a portfolio management dashboard with AG Grid",
+        "subHeading": "AG Grid shows financial holdings with quantities, live prices, market value and P&L, grouped and totalled in one grid. The finance demo on ag-grid.com shows the pattern with live-updating prices and in-cell sparklines."
+    },
+    "shortAnswer": "A portfolio management dashboard in AG Grid is a grid of holdings where prices update live, values are formatted as currency and positions roll up into group and grand totals. AG Grid Community, which is free, covers value formatters, cell change flashing, the animated show-change cell renderer, row IDs and async transactions for streaming prices, and CSV export. AG Grid Enterprise, a paid licence, adds row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export. Integrated Charts, built on AG Charts, need Enterprise, and enterprise chart types need the Enterprise Bundle (AG Grid Enterprise with AG Charts Enterprise). The ag-grid.com finance demo combines most of these.",
+    "example": {
+        "id": "portfolio-management",
+        "intro": "Holdings grouped by asset class, with totals and a sparkline of the last 20 days drawn by AG Charts.",
+        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "500",
+                "valueSuffix": "ms",
+                "label": "Default cell flash",
+                "detail": "Then 1,000ms of fade, set with cellFlashDuration and cellFadeDuration"
+            },
+            {
+                "value": "50",
+                "valueSuffix": "ms",
+                "label": "Async transaction batch",
+                "detail": "applyTransactionAsync() batches updates and applies them together after 50ms by default"
+            },
+            {
+                "value": "4",
+                "label": "Sparkline types",
+                "detail": "Line (the default), area, bar and column, drawn in cells by AG Charts"
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Row grouping",
+                "docsUrl": "./grouping/",
+                "plan": "Enterprise",
+                "body": "rowGroup: true on a column such as sector or asset class groups holdings under parent rows. groupDefaultExpanded=-1 opens every group."
+            },
+            {
+                "title": "Aggregation and total rows",
+                "docsUrl": "./aggregation/",
+                "plan": "Enterprise",
+                "body": "aggFunc: 'sum' on market value or P&L totals each group. grandTotalRow ('top', 'bottom', 'pinnedTop' or 'pinnedBottom') adds a portfolio total row."
+            },
+            {
+                "title": "Show Values As",
+                "docsUrl": "./aggregation-show-values-as/",
+                "plan": "Enterprise",
+                "body": "showValuesAs: 'percentOfGrandTotal' displays each position as a share of the portfolio total without changing the data. Client-side row model only."
+            },
+            {
+                "title": "Sparklines",
+                "docsUrl": "./sparklines-overview/",
+                "plan": "Enterprise",
+                "body": "agSparklineCellRenderer draws a line, area, bar or column chart in a cell from an array of numbers, such as recent prices. It needs SparklinesModule with AG Charts Community or Enterprise."
+            },
+            {
+                "title": "Value formatters for currency",
+                "docsUrl": "./value-formatters/",
+                "plan": "Free",
+                "body": "valueFormatter returns display text, for example from Intl.NumberFormat. params.value can be null for group rows, so formatters must handle it. Formatted values are used for copy and CSV export by default."
+            },
+            {
+                "title": "Cell change flashing",
+                "docsUrl": "./change-cell-renderers/",
+                "plan": "Free",
+                "body": "enableCellChangeFlash=true flashes a cell when its value changes; api.flashCells() flashes chosen cells on demand. Timing is set by cellFlashDuration and cellFadeDuration."
+            },
+            {
+                "title": "Animated show-change renderer",
+                "docsUrl": "./change-cell-renderers/#animate-show-changed-cells",
+                "plan": "Free",
+                "body": "agAnimateShowChangeCellRenderer shows the difference from the previous value in green or red with a direction arrow for 2 seconds. The finance demo uses it on P&L and Total Value."
+            },
+            {
+                "title": "Async transactions and row IDs",
+                "docsUrl": "./data-update-high-frequency/",
+                "plan": "Free",
+                "body": "getRowId gives each holding a stable ID such as its ticker. applyTransactionAsync() queues price updates and applies them in one batch, so grouping, sorting and aggregation are not recalculated for every tick."
+            },
+            {
+                "title": "Integrated Charts",
+                "docsUrl": "./integrated-charts/",
+                "plan": "Enterprise",
+                "body": "enableCharts lets users chart a selected cell range from inside the grid, with AG Charts. Charts follow sorting and filtering. Enterprise chart types need the Enterprise Bundle."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports the grid as rendered to .xlsx, including grouping, with value getters applied. Number cells are exported as numbers, so currency formats come from Excel styles, not value formatters. Cell renderers such as sparklines are not exported."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build a portfolio management dashboard with AG Grid",
+        "steps": [
+            {
+                "title": "Provide Enterprise and chart modules",
+                "body": "Install `ag-grid-react`, `ag-grid-enterprise` and `ag-charts-community` (or `ag-charts-enterprise`), then pass `[AllEnterpriseModule.with(AgChartsCommunityModule)]` to `AgGridProvider`. Sparklines and Integrated Charts need the AG Charts module."
+            },
+            {
+                "title": "Define holdings columns",
+                "body": "Add ticker, quantity and price fields, and a market value column with a `valueGetter` of quantity times price. Format money with a `valueFormatter` that returns an empty string for null values."
+            },
+            {
+                "title": "Group and total positions",
+                "body": "Set `rowGroup: true` on sector, `aggFunc: 'sum'` on quantity, market value and P&L, and `grandTotalRow=\"bottom\"` for the portfolio total."
+            },
+            {
+                "title": "Stream prices",
+                "body": "Set `getRowId` to the ticker, send price changes with `api.applyTransactionAsync({ update })`, and add `enableCellChangeFlash` or `agAnimateShowChangeCellRenderer` to show what moved."
+            },
+            {
+                "title": "Add sparklines, charts and export",
+                "body": "Use `cellRenderer: 'agSparklineCellRenderer'` on an array-of-prices column, set `cellSelection` and `enableCharts` so users can chart a range, and export with `api.exportDataAsExcel()`."
+            }
+        ],
+        "code": "import { useCallback, useEffect, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetRowIdParams, ValueFormatterParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\nimport { AgChartsCommunityModule } from \"ag-charts-community\";\n\n// Sparklines and Integrated Charts need an AG Charts module\nconst modules = [AllEnterpriseModule.with(AgChartsCommunityModule)];\n\ninterface Holding {\n  ticker: string;\n  sector: string;\n  quantity: number;\n  price: number;\n  history: number[];\n}\n\nconst usd = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" });\n// Value formatters must handle null and undefined (group rows, unloaded rows)\nconst currency = (p: ValueFormatterParams) => (p.value == null ? \"\" : usd.format(p.value));\n\nexport function PortfolioGrid() {\n  const gridRef = useRef<AgGridReact<Holding>>(null);\n  const [rowData] = useState<Holding[]>([\n    { ticker: \"AAPL\", sector: \"Technology\", quantity: 120, price: 190.12, history: [182, 185, 188, 190] },\n    { ticker: \"MSFT\", sector: \"Technology\", quantity: 80, price: 410.55, history: [400, 405, 408, 410] },\n    { ticker: \"JPM\", sector: \"Financials\", quantity: 150, price: 198.4, history: [190, 194, 196, 198] },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Holding>[]>(\n    () => [\n      { field: \"sector\", rowGroup: true, hide: true },\n      { field: \"ticker\" },\n      { field: \"quantity\", aggFunc: \"sum\" },\n      { field: \"price\", valueFormatter: currency, enableCellChangeFlash: true },\n      {\n        colId: \"marketValue\",\n        headerName: \"Market value\",\n        valueGetter: (p) => (p.data ? p.data.quantity * p.data.price : null),\n        valueFormatter: currency,\n        aggFunc: \"sum\",\n        cellRenderer: \"agAnimateShowChangeCellRenderer\",\n      },\n      { field: \"history\", headerName: \"Trend\", cellRenderer: \"agSparklineCellRenderer\", sortable: false },\n    ],\n    [],\n  );\n\n  const getRowId = useCallback((p: GetRowIdParams<Holding>) => p.data.ticker, []);\n\n  // Hypothetical price feed: replace with your WebSocket handler\n  useEffect(() => {\n    const timer = setInterval(() => {\n      const api = gridRef.current?.api;\n      if (!api) return;\n      const update: Holding[] = [];\n      api.forEachLeafNode((node) => {\n        if (node.data) update.push({ ...node.data, price: +(node.data.price * (1 + (Math.random() - 0.5) / 100)).toFixed(2) });\n      });\n      api.applyTransactionAsync({ update });\n    }, 1000);\n    return () => clearInterval(timer);\n  }, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Holding>\n          ref={gridRef}\n          rowData={rowData}\n          columnDefs={columnDefs}\n          getRowId={getRowId}\n          groupDefaultExpanded={-1}\n          grandTotalRow=\"bottom\"\n          cellSelection\n          enableCharts\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [finance demo](/example-finance/): live-updating prices, in-cell sparklines and high-frequency data in a single AG Grid, with source on GitHub in React, JavaScript, Angular and Vue."
+    },
+    "faq": [
+        {
+            "question": "What is a portfolio dashboard?",
+            "answer": "Search results use the term for two things: project portfolio dashboards and investment portfolio dashboards. This page covers the second, a grid of financial holdings with quantity, price, market value and P&L, grouped and totalled, with prices that update live."
+        },
+        {
+            "question": "Where can I find portfolio dashboard examples?",
+            "answer": "The AG Grid finance demo at ag-grid.com/example-finance shows a holdings grid with a sparkline timeline, P&L and total value columns with sum aggregation, live price updates, cell range selection, Integrated Charts and a status bar. The source is on GitHub in React, JavaScript, Angular and Vue."
+        },
+        {
+            "question": "Can I export an investment portfolio dashboard to Excel?",
+            "answer": "Yes, with AG Grid Enterprise. Excel export writes the grid as rendered to .xlsx, including grouping. Number cells are exported as numbers, not as value formatter text, so use Excel styles for currency formats. Cell renderers are not exported, so sparkline cells do not appear as charts. CSV export is in Community."
+        },
+        {
+            "question": "Which portfolio dashboard features are free in AG Grid Community?",
+            "answer": "Value formatters, cell change flashing, the animated show-change renderer, row IDs, transactions and async transactions, sorting, filtering and CSV export. Row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export are Enterprise."
+        },
+        {
+            "question": "How do I update live prices without slowing the grid?",
+            "answer": "Give rows a stable ID with getRowId and send changes with applyTransactionAsync(). The grid batches updates that arrive within 50ms by default (asyncTransactionWaitMillis) and recalculates aggregations, sorts and filters once per batch."
+        },
+        {
+            "question": "Do sparklines need AG Charts Enterprise?",
+            "answer": "No. Sparklines are an AG Grid Enterprise feature, but SparklinesModule can be provided with either AG Charts Community or AG Charts Enterprise."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "AG Grid Community is free for everyone, including production use; AG Grid Enterprise requires a licence for production.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Row grouping is an AG Grid Enterprise feature, enabled with rowGroup: true on a column.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/grouping/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "groupDefaultExpanded set to -1 expands all groups.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/grouping-opening-groups/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Aggregation is an AG Grid Enterprise feature; aggFunc: 'sum' totals values for each group.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "grandTotalRow accepts 'top', 'bottom', 'pinnedTop' or 'pinnedBottom' to add a grand total row.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation-total-rows/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Show Values As (for example showValuesAs: 'percentOfGrandTotal') transforms values for display only, is Enterprise, and is supported only with the Client-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation-show-values-as/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Sparklines are an Enterprise feature enabled with agSparklineCellRenderer, which draws a line sparkline by default from an array of numbers.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/sparklines-overview/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Sparklines come in four types: area, bar, column and line.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/sparklines-overview/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "SparklinesModule can be provided with either AG Charts Community or AG Charts Enterprise.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/sparklines-installation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Value formatter params.value may be null or undefined, for example for group rows, and formatters must handle it.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Value formatters are used by default for copy and CSV export; Excel export ignores them for number values.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/#formatting-for-export",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "enableCellChangeFlash flashes a cell when its value changes, and the flashCells() API flashes chosen cells on demand.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell flashing lasts 500ms by default followed by a 1,000ms fade, controlled by cellFlashDuration and cellFadeDuration.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "agAnimateShowChangeCellRenderer shows the difference from the previous value for 2 seconds, in green or red with an arrow indicating direction.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/#animate-show-changed-cells",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "applyTransactionAsync() batches transactions and applies them after 50ms by default, configurable with asyncTransactionWaitMillis.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-high-frequency/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "getRowId returns a stable, unique string ID for each row.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-ids/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Integrated Charts are an Enterprise feature: enableCharts lets users chart a selected cell range, and charts reflect grid sorting and filtering.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Without an Enterprise Bundle licence (AG Grid Enterprise with AG Charts Enterprise), only Integrated Community charts are available.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell range selection is an AG Grid Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-selection/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The status bar is an AG Grid Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/status-bar/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export is Enterprise and by default exports the grid as rendered, including row grouping, using value getters but not cell renderers.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export is available in AG Grid Community.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The finance demo shows live-updating prices, in-cell sparklines and high-frequency data, with source published in React, JavaScript, Angular and Vue.",
+            "sourceUrl": "https://www.ag-grid.com/example-finance/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

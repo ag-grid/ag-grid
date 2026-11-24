@@ -21,9 +21,11 @@ interface Props {
      * comparison page). Shown only when both are known.
      */
     logos?: { first?: string; second?: string; separator: string };
+    /** A topic shown after the product logo, e.g. `for Trading dashboards` on a solution page. */
+    mark?: { separator: string; label: string };
 }
 
-const { site, hub, pageName, heading, subHeading, lastUpdated, analyticsPrefix, logos } = Astro.props;
+const { site, hub, pageName, heading, subHeading, lastUpdated, analyticsPrefix, logos, mark } = Astro.props;
 const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started', placement: 'hero' });
 const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: 'hero' });
 ---
@@ -42,6 +44,14 @@ const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: '
             <img src={logos.first} alt="" width="48" height="48" />
             <span class={styles.heroLogosSeparator}>{logos.separator}</span>
             <img src={logos.second} alt="" width="48" height="48" />
+        </div>
+    )}
+    {/* Decorative: the heading names the topic */}
+    {mark && (
+        <div slot="media" class={styles.heroLogos} aria-hidden="true">
+            <img src={site.productLogo} alt="" width="48" height="48" />
+            <span class={styles.heroLogosSeparator}>{mark.separator}</span>
+            <span class={styles.heroMarkLabel}>{mark.label}</span>
         </div>
     )}
     <div class={styles.heroCtas}>

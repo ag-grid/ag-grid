@@ -1,0 +1,288 @@
+{
+    "meta": {
+        "title": "Project Management Table in React | AG Grid",
+        "description": "Build a project and task tracking table with AG Grid: task hierarchies, dropdown and date editors, drag to reorder, status cells, filters and Excel export.",
+        "targetTerm": "project management table",
+        "monthlySearches": 70,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-project-management",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Project management",
+        "mark": "Project tables"
+    },
+    "hero": {
+        "heading": "Build a project management table with AG Grid",
+        "subHeading": "Show tasks and subtasks in one grid, let people edit owner, status and due date in place, and export the plan to Excel."
+    },
+    "shortAnswer": "A project management table in AG Grid is a grid of tasks with columns for owner, status, due date and estimate. Cell editing, the date and select editors, undo and redo, custom status cell renderers, row dragging, text, number and date filters, and CSV export are all in AG Grid Community, which is free under the MIT licence. Showing subtasks under parent tasks needs Tree Data or Row Grouping, and summing estimates up the tree needs Aggregation. Those are Enterprise features, as are the Rich Select dropdown editor, the Set Filter and Excel export. Enterprise is free to try locally with a watermark and needs a licence in production.",
+    "example": {
+        "id": "project-management",
+        "intro": "Tasks and subtasks as tree data. Double-click an owner, status or due date to edit it.",
+        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "3",
+                "valueSuffix": "ways",
+                "label": "To supply task hierarchies",
+                "detail": "Data paths, nested children arrays, or a parent ID field (Tree Data, Enterprise)."
+            },
+            {
+                "value": "8",
+                "label": "Provided cell editors",
+                "detail": "Text, large text, select, rich select, formula, number, date and checkbox. Rich select and formula are Enterprise."
+            },
+            {
+                "value": "10",
+                "valueSuffix": "steps",
+                "label": "Default undo / redo history",
+                "detail": "Set by undoRedoCellEditingLimit when undoRedoCellEditing is on. Community."
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Tree Data for tasks and subtasks",
+                "docsUrl": "./tree-data/",
+                "plan": "Enterprise",
+                "body": "Set treeData and point treeDataParentIdField at a parentId field, or use getDataPath or treeDataChildrenField, to nest subtasks under their parent task in an expandable group column."
+            },
+            {
+                "title": "Row Grouping",
+                "docsUrl": "./grouping/",
+                "plan": "Enterprise",
+                "body": "Set rowGroup on a column such as status or owner to group a flat task list under group rows the user can expand and collapse."
+            },
+            {
+                "title": "Cell editing",
+                "docsUrl": "./cell-editing/",
+                "plan": "Free",
+                "body": "Set editable on a column, or use a callback to decide per row. The grid picks a text, number, date or checkbox editor from each column's cell data type."
+            },
+            {
+                "title": "Rich Select editor for owner and status",
+                "docsUrl": "./provided-cell-editors-rich-select/",
+                "plan": "Enterprise",
+                "body": "agRichSelectCellEditor shows a searchable list of values, supports multi-selection and async loading, and can render each option with a cell renderer."
+            },
+            {
+                "title": "Date editors for due dates",
+                "docsUrl": "./provided-cell-editors-date/",
+                "plan": "Free",
+                "body": "agDateCellEditor edits Date values and agDateStringCellEditor edits date strings (YYYY-MM-DD by default) with the browser date input, with optional min, max and time."
+            },
+            {
+                "title": "Row dragging",
+                "docsUrl": "./row-dragging/",
+                "plan": "Free",
+                "body": "rowDrag on a column adds a drag handle. With rowDragManaged the grid moves rows itself; with Tree Data, managed dragging can also move a task under a new parent."
+            },
+            {
+                "title": "Status cell renderers",
+                "docsUrl": "./component-cell-renderer/",
+                "plan": "Free",
+                "body": "A cellRenderer is your own React component inside a cell, used for status pills, avatars, progress bars or action buttons."
+            },
+            {
+                "title": "Aggregation",
+                "docsUrl": "./aggregation/",
+                "plan": "Enterprise",
+                "body": "aggFunc on a column (for example sum on estimated hours) fills parent task rows with the total of their children. In Tree Data, aggregated values replace any value supplied on the parent row."
+            },
+            {
+                "title": "Column filters",
+                "docsUrl": "./filtering/",
+                "plan": "Free",
+                "body": "Text, number and date filters ship with Community. The Set Filter, which lists each distinct owner or status as a checkbox, is Enterprise."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports the grid as displayed, after sorting and filtering, to .xlsx from the context menu or api.exportDataAsExcel(), with no third-party library. CSV export is in Community."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build a project management table in React",
+        "steps": [
+            {
+                "title": "Model tasks as rows",
+                "body": "Give each task an `id`, the fields you want as columns (owner, status, due date, estimate) and, for subtasks, a `parentId`. Return the id from `getRowId` so edits and drags keep their row."
+            },
+            {
+                "title": "Turn on the task hierarchy",
+                "body": "Set `treeData` and `treeDataParentIdField=\"parentId\"`. Use `autoGroupColumnDef` to name the group column and `groupDefaultExpanded={-1}` to open every level."
+            },
+            {
+                "title": "Make columns editable",
+                "body": "Set `editable: true` on owner, status, due date and estimate. Use `agRichSelectCellEditor` with a `values` list for owner and status, and `cellDataType: \"dateString\"` on the due date column for the date editor."
+            },
+            {
+                "title": "Add status cells, drag and totals",
+                "body": "Render status with your own `cellRenderer` component. Put `rowDrag: true` on the group column with `rowDragManaged`, and add `aggFunc: \"sum\"` to the estimate column so parent tasks show totals."
+            },
+            {
+                "title": "Filter and export",
+                "body": "Add `filter` to the columns people search on and call `api.exportDataAsExcel()` from a button. Excel export, Tree Data, Rich Select, Set Filter and aggregation need `ag-grid-enterprise`."
+            }
+        ],
+        "code": "import { useCallback, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetRowIdParams, ICellRendererParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface Task {\n  id: string;\n  parentId?: string;\n  name: string;\n  owner: string;\n  status: \"Not started\" | \"In progress\" | \"Blocked\" | \"Done\";\n  due: string; // YYYY-MM-DD\n  estimateHours: number;\n}\n\nconst StatusPill = (p: ICellRendererParams<Task, Task[\"status\"]>) =>\n  p.value ? <span className={`status status-${p.value.replace(\" \", \"-\").toLowerCase()}`}>{p.value}</span> : null;\n\nexport function ProjectGrid() {\n  const gridRef = useRef<AgGridReact<Task>>(null);\n  const [rowData] = useState<Task[]>([\n    { id: \"1\", name: \"Website relaunch\", owner: \"Sam\", status: \"In progress\", due: \"2026-11-30\", estimateHours: 0 },\n    { id: \"2\", parentId: \"1\", name: \"Wireframes\", owner: \"Alex\", status: \"Done\", due: \"2026-10-10\", estimateHours: 16 },\n    { id: \"3\", parentId: \"1\", name: \"Build pages\", owner: \"Taylor\", status: \"Not started\", due: \"2026-11-15\", estimateHours: 40 },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Task>[]>(() => [\n    { field: \"owner\", editable: true, filter: \"agSetColumnFilter\",\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Alex\", \"Sam\", \"Taylor\"] } },\n    { field: \"status\", editable: true, cellRenderer: StatusPill,\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Not started\", \"In progress\", \"Blocked\", \"Done\"] } },\n    { field: \"due\", editable: true, cellDataType: \"dateString\", filter: \"agDateColumnFilter\" },\n    { field: \"estimateHours\", editable: true, aggFunc: \"sum\" },\n  ], []);\n\n  const autoGroupColumnDef = useMemo<ColDef<Task>>(() => ({\n    headerName: \"Task\", field: \"name\", rowDrag: true, minWidth: 260,\n  }), []);\n\n  const getRowId = useCallback((p: GetRowIdParams<Task>) => p.data.id, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel()}>Export to Excel</button>\n      <div style={{ height: 480 }}>\n        <AgGridReact<Task>\n          ref={gridRef}\n          rowData={rowData}\n          columnDefs={columnDefs}\n          autoGroupColumnDef={autoGroupColumnDef}\n          treeData\n          treeDataParentIdField=\"parentId\"\n          getRowId={getRowId}\n          groupDefaultExpanded={-1}\n          rowDragManaged\n          suppressMoveWhenRowDragging\n          undoRedoCellEditing\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [HR demo](/example-hr/), which uses the same building blocks: a tree of rows from `getDataPath`, editable columns with the Rich Select editor and a custom status cell renderer, with source on GitHub in React, JavaScript, Angular and Vue."
+    },
+    "faq": [
+        {
+            "question": "Can I export a project management table to Excel?",
+            "answer": "Yes. AG Grid Enterprise exports the grid to .xlsx from the context menu or with api.exportDataAsExcel(), with no third-party library. The file follows the current column order, sort and filters, and uses value getters and, except on number cells, value formatters, but not cell renderers. CSV export is free in AG Grid Community."
+        },
+        {
+            "question": "Is there a free project management table template for React?",
+            "answer": "AG Grid Community is free under the MIT licence and covers editable columns, date and select editors, status cell renderers, row dragging, filters and CSV export. A flat task list can be built on Community alone. Nesting subtasks with Tree Data, grouping, totals and Excel export need AG Grid Enterprise."
+        },
+        {
+            "question": "How do I show subtasks under a parent task?",
+            "answer": "Enable Tree Data. If your tasks have a parent id, set treeData and treeDataParentIdField and provide getRowId. If each task carries its full path, use getDataPath. If tasks already contain a children array, use treeDataChildrenField; that option does not support transaction updates."
+        },
+        {
+            "question": "Can users drag tasks to reorder them or move them under another task?",
+            "answer": "Yes. Set rowDrag on the group column and rowDragManaged on the grid. With Tree Data the grid handles reordering, moving a task under a new parent and turning a task into a parent, and blocks drops that would create a cycle. The docs recommend suppressMoveWhenRowDragging for tree data. Outside Tree Data, managed dragging does not work while a sort or filter is applied."
+        },
+        {
+            "question": "Can AG Grid show a Gantt chart?",
+            "answer": "AG Grid is a data grid and does not draw task bars on a timeline. For Gantt charts with dependencies and scheduling, ag-grid.com points to Bryntum Gantt, which comes from AG Grid's partner Bryntum."
+        },
+        {
+            "question": "Can users undo an edit?",
+            "answer": "Yes, in Community. Set undoRedoCellEditing to true. Ctrl+Z (Cmd+Z on Mac) undoes and Ctrl+Y (Cmd+Shift+Z on Mac) redoes, keeping 10 steps unless you change undoRedoCellEditingLimit. Sorting, filtering, grouping and data updates other than cell edits clear the history."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "AG Grid Community is available under the MIT licence and is free, including in production.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark, and requires a licence in production.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Tree Data is Enterprise and can be supplied three ways: data paths (getDataPath), nested records (treeDataChildrenField) or self-referential records with a parent id (treeDataParentIdField).",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-data/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "treeDataParentIdField requires a getRowId callback.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-self-referential/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The grid does not support transactions when using treeDataChildrenField.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-nesting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With Tree Data, columns with an aggFunc always aggregate group rows, and supplied group data is ignored in favour of the aggregated values.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-self-referential/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Row grouping is an AG Grid Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/grouping/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Aggregation is an AG Grid Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell editing is enabled with editable, which can be a callback, and the grid uses cell data types to pick each column's editor.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The grid provides eight cell editors: text, large text, select, rich select, formula, number, date and checkbox; rich select and formula are Enterprise.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Rich Select editor lets users pick a value by searching or filtering a list and can load values asynchronously.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-rich-select/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Rich Select editor supports cell renderers and multi-selection.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-rich-select-customisation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "agDateCellEditor edits Date values and agDateStringCellEditor edits date strings, YYYY-MM-DD by default, using the HTML date input with min, max and includeTime params.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-date/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "rowDrag on a column adds a drag handle, and rowDragManaged lets the grid move rows itself.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-dragging/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Managed row dragging does not work when sorting, filtering or pagination is applied.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-dragging-managed/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Managed row dragging with Tree Data supports reordering, moving rows to a new parent and converting a leaf into a group, prevents cycles, and suppressMoveWhenRowDragging is recommended.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-row-dragging/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Custom cell components render your own markup, such as buttons, inside cells.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/component-cell-renderer/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Text, number and date filters are provided in Community; the Set Filter is Enterprise.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filtering/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export is Enterprise, available from the context menu or api.exportDataAsExcel() with no third-party library, and exports the current column order, sort and filters, using value getters but not cell renderers.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export is available in AG Grid Community.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "undoRedoCellEditing enables undo and redo, with 10 steps by default set by undoRedoCellEditingLimit; Ctrl+Z undoes and Ctrl+Y (Cmd+Shift+Z on Mac) redoes.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/undo-redo-edits/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Sorting, filtering, grouping and data updates other than cell edits clear the undo / redo stacks.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/undo-redo-edits/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid partners with Bryntum, whose Bryntum Gantt is a Gantt chart component.",
+            "sourceUrl": "https://www.ag-grid.com/campaigns/bryntum-gantt/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The HR demo uses tree data with getDataPath, Rich Select editors and a custom status cell renderer, with source in React, JavaScript, Angular and Vue.",
+            "sourceUrl": "https://www.ag-grid.com/example-hr/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

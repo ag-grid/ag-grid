@@ -1,0 +1,257 @@
+{
+    "meta": {
+        "title": "Inventory Management Dashboard Grid | AG Grid",
+        "description": "Build an inventory management dashboard with AG Grid: inline stock edits, product search, status filters and Excel export. Live demo and React code.",
+        "targetTerm": "inventory management dashboard",
+        "monthlySearches": 140,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-inventory-management",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Inventory management",
+        "mark": "Inventory management"
+    },
+    "hero": {
+        "heading": "Build an inventory management dashboard with AG Grid",
+        "subHeading": "AG Grid shows stock levels, prices and product status in one sortable, editable table. The inventory demo on ag-grid.com runs in React, JavaScript, Angular and Vue, with the source on GitHub."
+    },
+    "shortAnswer": "An inventory management dashboard in AG Grid is a data grid of products where users search, filter by status, edit stock figures in place and page through results. AG Grid Community, which is free under the MIT licence, covers cell editing, the number editor, the Quick Filter, value formatters, conditional cell styles, custom cell components, pagination and CSV export. AG Grid Enterprise, a paid licence, adds the Set Filter, Master Detail for showing product variants under each row, and Excel (.xlsx) export. The ag-grid.com inventory demo combines these: status tabs drive a column filter, a search box drives the Quick Filter, and each album row expands to a detail grid of its variants.",
+    "example": {
+        "id": "inventory",
+        "intro": "Edit a stock figure to see low-stock highlighting update. Search with the Quick Filter, filter columns and page through results.",
+        "note": "Sample data. Uses AG Grid Community features only."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "4",
+                "label": "Frameworks for the inventory demo",
+                "detail": "React, with JavaScript, Angular and Vue versions on GitHub"
+            },
+            {
+                "value": "10,000",
+                "valueSuffix": "+",
+                "label": "Rows",
+                "detail": "The Quick Filter docs suggest turning on the cache above this size"
+            },
+            {
+                "value": "100",
+                "label": "Default page size",
+                "detail": "The paginationPageSize default; the page size selector offers 20, 50 and 100 unless you set your own list"
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Cell editing",
+                "docsUrl": "./cell-editing/",
+                "plan": "Free",
+                "body": "Set editable on a column to let users change values in place. By default the grid picks an editor from the cell data type, so number columns get a numeric input."
+            },
+            {
+                "title": "Number cell editor",
+                "docsUrl": "./provided-cell-editors-number/",
+                "plan": "Free",
+                "body": "agNumberCellEditor takes min, max, precision and step, and can show stepper buttons. The inventory demo uses it for the Incoming column."
+            },
+            {
+                "title": "Quick Filter",
+                "docsUrl": "./filter-quick/",
+                "plan": "Free",
+                "body": "The quickFilterText grid option matches every word of a search string against all column values, case-insensitive. Set cacheQuickFilter for large data sets."
+            },
+            {
+                "title": "Cell class rules",
+                "docsUrl": "./cell-styles/",
+                "plan": "Free",
+                "body": "cellClassRules applies a CSS class when a rule returns true, for example to mark rows where available stock falls below a reorder level."
+            },
+            {
+                "title": "Value formatters",
+                "docsUrl": "./value-formatters/",
+                "plan": "Free",
+                "body": "valueFormatter turns a raw number into display text such as a currency amount. Formatted values are also used for copy and CSV export by default; Excel export keeps numbers as numbers."
+            },
+            {
+                "title": "Custom cell components",
+                "docsUrl": "./component-cell-renderer/",
+                "plan": "Free",
+                "body": "cellRenderer puts your own React component in a cell. The inventory demo uses custom renderers for product images, status badges, stock counts and row actions."
+            },
+            {
+                "title": "Row pagination",
+                "docsUrl": "./row-pagination/",
+                "plan": "Free",
+                "body": "pagination=true splits rows into pages, with paginationPageSize and a page size selector. It works with every row model."
+            },
+            {
+                "title": "Set Filter",
+                "docsUrl": "./filter-set/",
+                "plan": "Enterprise",
+                "body": "An Excel-style filter with a checkbox list of column values. The demo's status tabs set its filter model through setColumnFilterModel."
+            },
+            {
+                "title": "Master Detail",
+                "docsUrl": "./master-detail/",
+                "plan": "Enterprise",
+                "body": "masterDetail=true lets a row expand to show a detail grid. The demo uses it to list each product's variants."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports the grid as rendered to .xlsx from the context menu or the API, with no third-party library. CSV export is in Community."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build an inventory management dashboard with AG Grid",
+        "steps": [
+            {
+                "title": "Install AG Grid and provide modules",
+                "body": "Install `ag-grid-react`, then wrap the grid in `AgGridProvider` with `modules={[AllCommunityModule]}`. Add `ag-grid-enterprise` modules such as `SetFilterModule`, `MasterDetailModule` and `ExcelExportModule` only if you need them."
+            },
+            {
+                "title": "Define product columns",
+                "body": "Add a column per field: SKU, product, status, available, incoming and price. Use `valueFormatter` for prices and `cellClassRules` to highlight low stock."
+            },
+            {
+                "title": "Make stock figures editable",
+                "body": "Set `editable: true` on columns users update, and use `cellEditor: 'agNumberCellEditor'` with `precision: 0` for whole-unit quantities."
+            },
+            {
+                "title": "Add search and status filters",
+                "body": "Bind a text input to the `quickFilterText` grid option. For status tabs, call `api.setColumnFilterModel('status', ...)` then `api.onFilterChanged()`, as the demo does."
+            },
+            {
+                "title": "Page and export the data",
+                "body": "Set `pagination` and `paginationPageSize`. Call `api.exportDataAsCsv()` in Community or `api.exportDataAsExcel()` with Enterprise."
+            }
+        ],
+        "code": "import { useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { AllCommunityModule, type ColDef } from \"ag-grid-community\";\n\nconst modules = [AllCommunityModule];\n\ninterface Item {\n  sku: string;\n  product: string;\n  status: \"active\" | \"paused\" | \"outOfStock\";\n  available: number;\n  incoming: number;\n  price: number;\n}\n\nconst gbp = new Intl.NumberFormat(\"en-GB\", { style: \"currency\", currency: \"GBP\" });\n\nexport function InventoryGrid() {\n  const [search, setSearch] = useState(\"\");\n  const [rowData] = useState<Item[]>([\n    { sku: \"A-100\", product: \"Desk lamp\", status: \"active\", available: 42, incoming: 0, price: 24.5 },\n    { sku: \"A-101\", product: \"Office chair\", status: \"active\", available: 3, incoming: 20, price: 149 },\n    { sku: \"A-102\", product: \"Monitor arm\", status: \"outOfStock\", available: 0, incoming: 15, price: 59.99 },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Item>[]>(\n    () => [\n      { field: \"sku\" },\n      { field: \"product\", filter: true },\n      { field: \"status\", filter: true },\n      {\n        field: \"available\",\n        // Highlight low stock with a CSS class\n        cellClassRules: { \"low-stock\": (p) => (p.value ?? 0) < 5 },\n      },\n      // Number editor with stepper buttons for incoming stock\n      {\n        field: \"incoming\",\n        editable: true,\n        cellEditor: \"agNumberCellEditor\",\n        cellEditorParams: { min: 0, precision: 0, step: 1, showStepperButtons: true },\n      },\n      {\n        field: \"price\",\n        valueFormatter: (p) => (p.value == null ? \"\" : gbp.format(p.value)),\n      },\n    ],\n    [],\n  );\n\n  return (\n    <AgGridProvider modules={modules}>\n      <input placeholder=\"Search products\" value={search} onChange={(e) => setSearch(e.target.value)} />\n      <div style={{ height: 500 }}>\n        <AgGridReact<Item>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          quickFilterText={search}\n          pagination\n          paginationPageSize={20}\n          paginationPageSizeSelector={[20, 50, 100]}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [inventory demo](/example-inventory/): track stock levels, edit cells inline and filter products by status, with React, JavaScript, Angular and Vue source on GitHub."
+    },
+    "faq": [
+        {
+            "question": "Can I use Excel to track my inventory?",
+            "answer": "Excel can hold a stock list. If the list lives in a web application, AG Grid shows it in the browser and can hand it back as a file: CSV export is in AG Grid Community, and .xlsx export with styles and formulas is in AG Grid Enterprise."
+        },
+        {
+            "question": "Is there a free inventory management system?",
+            "answer": "AG Grid is not an inventory system. It is a data grid component for building the screens of one. AG Grid Community is free under the MIT licence, including in production, and covers editing, sorting, filtering, the Quick Filter, pagination and CSV export."
+        },
+        {
+            "question": "Is there a free inventory management dashboard template?",
+            "answer": "The AG Grid inventory demo is published on GitHub in the ag-grid/ag-grid-demos repository, with React, JavaScript (TypeScript), Angular and Vue versions. It registers Enterprise modules for the Set Filter, Multi Filter, Master Detail and Excel export, which show a watermark without a licence key."
+        },
+        {
+            "question": "What does the inventory management dashboard UI in the demo include?",
+            "answer": "Status tabs (All, Active, On Hold, Out of Stock), a product search box, product rows with images, a stock and variants column, an editable Incoming column, price, units sold, an estimated profit column and row action buttons. Rows expand to a detail grid of variants, and the grid pages ten rows at a time."
+        },
+        {
+            "question": "Which inventory dashboard features need AG Grid Enterprise?",
+            "answer": "In this use case: the Set Filter, Master Detail, Excel export, row grouping and aggregation. Cell editing, the Quick Filter, value formatters, cell styles, custom cell components, pagination and CSV export are in Community."
+        },
+        {
+            "question": "How do I highlight low stock in the grid?",
+            "answer": "Use cellClassRules on the stock column. Each key is a CSS class name and each value a function that returns true when the class applies, for example (p) => p.value < 5."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "AG Grid Community is free under the MIT licence, including production use, while AG Grid Enterprise requires a commercial licence.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Without a licence key, AG Grid Enterprise features show a watermark and a console error.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Quick Filter, CSV export and pagination are Community features; the Set Filter, Excel export, row grouping and aggregation are Enterprise features.",
+            "sourceUrl": "https://www.ag-grid.com/license-pricing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With editable set, the grid picks an editor from the column's cell data type, so number columns use a numeric input.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "agNumberCellEditor accepts min, max, precision, step and showStepperButtons in cellEditorParams.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-number/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Quick Filter splits the text into words and requires every word to match a column value, case-insensitively.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filter-quick/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Quick Filter docs suggest enabling cacheQuickFilter for large data sets, for example over 10,000 rows.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filter-quick/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "cellClassRules maps CSS class names to rules, and a class is applied when its rule returns true.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-styles/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Value formatters are used for copy, CSV export and Excel export by default (useValueFormatterForExport).",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "cellRenderer sets a custom component to render a cell.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/component-cell-renderer/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pagination is supported in all row models.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-pagination/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "paginationPageSize defaults to 100 and the default page size selector offers 20, 50 and 100.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-pagination/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Set Filter is an Enterprise filter modelled on Excel's AutoFilter, with a checkbox list of values.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filter-set/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Master Detail is an Enterprise feature enabled with the masterDetail grid option, letting rows expand to show a detail grid.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/master-detail/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export is an Enterprise feature that exports the grid as rendered to .xlsx from the context menu or exportDataAsExcel(), with no third-party libraries.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export can include cell styles and formulas.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-formulas/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export is a Community feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The inventory demo has status tabs (All, Active, On Hold, Out of Stock), a product search box, expandable variant detail rows and pages of 10 rows, with source for JavaScript, React, Angular and Vue on GitHub.",
+            "sourceUrl": "https://www.ag-grid.com/example-inventory/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

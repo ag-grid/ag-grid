@@ -1,6 +1,7 @@
 import { createAlternativePageSchema } from '@ag-website-shared/components/decision-pages/alternativePageSchema';
 import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import { createProductAlternativePageSchema } from '@ag-website-shared/components/decision-pages/productAlternativePageSchema';
+import { createSolutionPageSchema } from '@ag-website-shared/components/decision-pages/solutionPageSchema';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
 import { TECHNICAL_REVIEWER_KEYS } from '@utils/technicalReviewers';
@@ -621,6 +622,15 @@ const productAlternativePages = defineCollection({
     schema: createProductAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
 });
 
+/**
+ * Solution pages at /solutions/{topic}/, one per job a buyer searches for. Each product fact is
+ * sourced the same way as the comparison pages' competitor claims.
+ */
+const solutionPages = defineCollection({
+    loader: glob({ base: './src/content/solutions', pattern: '*.json' }),
+    schema: createSolutionPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
 export const collections = {
     docs,
     homepage,
@@ -645,4 +655,5 @@ export const collections = {
     comparePages,
     alternativePages,
     productAlternativePages,
+    solutionPages,
 };

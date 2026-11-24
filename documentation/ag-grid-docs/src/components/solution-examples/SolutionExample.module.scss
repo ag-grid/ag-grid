@@ -1,0 +1,38 @@
+@use 'design-system' as *;
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-3;
+    margin-bottom: $spacing-size-3;
+}
+
+.search {
+    min-width: 240px;
+}
+
+.grid {
+    height: 460px;
+
+    // Cell classes set by the examples' cellClass and cellClassRules
+    :global(.solution-example-low),
+    :global(.solution-example-down),
+    :global(.solution-example-blocked) {
+        color: var(--color-input-error);
+    }
+
+    :global(.solution-example-low),
+    :global(.solution-example-status) {
+        font-weight: var(--text-semibold);
+    }
+
+    :global(.solution-example-up),
+    :global(.solution-example-done) {
+        color: var(--color-success);
+    }
+
+    :global(.solution-example-in-progress) {
+        color: var(--color-link);
+    }
+}

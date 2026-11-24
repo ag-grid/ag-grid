@@ -1,0 +1,243 @@
+{
+    "meta": {
+        "title": "Tree Grid for JavaScript, React and Angular | AG Grid",
+        "description": "Show hierarchical data in AG Grid with Tree Data: data paths, nested children or parent IDs, server-side loading, tree filters, totals and drag and drop.",
+        "targetTerm": "javascript tree grid",
+        "monthlySearches": 10,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-tree-grid",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Tree data",
+        "mark": "Tree grid"
+    },
+    "hero": {
+        "heading": "Tree grid for hierarchical data",
+        "subHeading": "Display files, org charts, bills of materials or task trees as expandable rows, with every column still sortable, filterable and editable."
+    },
+    "shortAnswer": "AG Grid's tree grid is called Tree Data. Set treeData to true and describe the hierarchy in one of three ways: getDataPath for a path array per row, treeDataChildrenField for nested children arrays, or treeDataParentIdField for a parent ID on flat records. The grid adds an expandable group column. Tree Data is an AG Grid Enterprise feature, as are aggregation up the tree, the Tree Filter and server-side lazy loading of children. Row dragging and the text, number and date filters are in AG Grid Community, which is free, though using them on a tree needs Tree Data. The same API is documented for JavaScript, React, Angular and Vue.",
+    "example": {
+        "id": "tree-data",
+        "intro": "An organisation chart as tree data, with a filter on each column.",
+        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "3",
+                "valueSuffix": "ways",
+                "label": "To supply the hierarchy",
+                "detail": "getDataPath, treeDataChildrenField or treeDataParentIdField."
+            },
+            {
+                "value": "500",
+                "valueSuffix": "ms",
+                "label": "Default drag-to-parent delay",
+                "detail": "rowDragInsertDelay before a dragged row drops into a new parent."
+            },
+            {
+                "value": "3",
+                "valueSuffix": "modes",
+                "label": "For selecting in a tree",
+                "detail": "rowSelection.groupSelects: 'self', 'descendants' or 'filteredDescendants'."
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Data paths (getDataPath)",
+                "docsUrl": "./tree-data-paths/",
+                "plan": "Enterprise",
+                "body": "Return an array of keys per row, such as ['Documents', 'Contracts', 'nda.pdf']. Missing levels are created as filler groups, and transaction updates are supported."
+            },
+            {
+                "title": "Nested records (treeDataChildrenField)",
+                "docsUrl": "./tree-data-nesting/",
+                "plan": "Enterprise",
+                "body": "Name the field that holds each row's array of children, for data that is already nested. This mode does not support transaction updates."
+            },
+            {
+                "title": "Self-referential records (treeDataParentIdField)",
+                "docsUrl": "./tree-data-self-referential/",
+                "plan": "Enterprise",
+                "body": "Name the field holding each row's parent ID, with getRowId set. The docs call this the most performant way to supply and update tree data, as rowData is processed in one pass."
+            },
+            {
+                "title": "Server-side tree data",
+                "docsUrl": "./server-side-model-tree-data/",
+                "plan": "Enterprise",
+                "body": "With the Server-Side Row Model, treeData plus isServerSideGroup and getServerSideGroupKey load children from your server only when a parent is expanded. Supports refresh and transactions."
+            },
+            {
+                "title": "Filtering trees",
+                "docsUrl": "./tree-data-filtering/",
+                "plan": "Enterprise",
+                "body": "When a parent passes a filter its children are shown too, unless excludeChildrenWhenTreeDataFiltering is set. The Tree Filter shows set-filter values as a tree matching the data."
+            },
+            {
+                "title": "Aggregation in trees",
+                "docsUrl": "./aggregation/",
+                "plan": "Enterprise",
+                "body": "aggFunc on a column fills parent rows with totals of their children, replacing any supplied parent value. Totals use only rows that pass the filter unless suppressAggFilteredOnly is set."
+            },
+            {
+                "title": "Row dragging in trees",
+                "docsUrl": "./tree-data-row-dragging/",
+                "plan": "Enterprise",
+                "body": "rowDragManaged with rowDrag on the group column lets users reorder rows, move them under a new parent or turn a leaf into a parent; cycles are blocked. isRowValidDropPosition restricts drops."
+            },
+            {
+                "title": "Tree selection",
+                "docsUrl": "./tree-data-selection/",
+                "plan": "Enterprise",
+                "body": "rowSelection.groupSelects: 'descendants' selects a row's children with it and shows parents as indeterminate. checkboxLocation: 'autoGroupColumn' puts checkboxes in the tree column."
+            },
+            {
+                "title": "Expanding groups",
+                "docsUrl": "./tree-data-opening-groups/",
+                "plan": "Enterprise",
+                "body": "groupDefaultExpanded sets how many levels open on load (-1 for all), isGroupOpenByDefault decides per row, and expandAll(), collapseAll() and setRowNodeExpanded() work from code."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build a tree grid",
+        "steps": [
+            {
+                "title": "Install Enterprise and register modules",
+                "body": "Tree Data is in `ag-grid-enterprise`. Pass `AllEnterpriseModule`, or `TreeDataModule` with the modules you need, to `AgGridProvider`."
+            },
+            {
+                "title": "Pick how you describe the hierarchy",
+                "body": "Use `getDataPath` for path arrays, `treeDataChildrenField` for nested children, or `treeDataParentIdField` with `getRowId` for flat rows with a parent ID. Then set `treeData`."
+            },
+            {
+                "title": "Configure the tree column",
+                "body": "Use `autoGroupColumnDef` to set the header, width and a `field` or `valueGetter` for the label. Set `groupDefaultExpanded` to choose how many levels open."
+            },
+            {
+                "title": "Add totals, filters and dragging",
+                "body": "Add `aggFunc: \"sum\"` to numeric columns, filters to the columns users search, and `rowDrag: true` on the group column with `rowDragManaged` to let users re-parent rows."
+            },
+            {
+                "title": "Move large trees to the server",
+                "body": "For trees too large to send at once, switch to `rowModelType=\"serverSide\"` and implement `isServerSideGroup` and `getServerSideGroupKey` so children load on expand."
+            }
+        ],
+        "code": "import { useCallback, useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetDataPath } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface FileRow {\n  path: string[];\n  size?: number;\n  modified?: string;\n}\n\nexport function FileTree() {\n  const [rowData] = useState<FileRow[]>([\n    { path: [\"Documents\"] },\n    { path: [\"Documents\", \"Contracts\"] },\n    { path: [\"Documents\", \"Contracts\", \"nda.pdf\"], size: 120, modified: \"2026-09-12\" },\n    { path: [\"Documents\", \"Contracts\", \"msa.pdf\"], size: 340, modified: \"2026-08-03\" },\n    { path: [\"Documents\", \"budget.xlsx\"], size: 88, modified: \"2026-09-30\" },\n  ]);\n\n  const columnDefs = useMemo<ColDef<FileRow>[]>(() => [\n    { field: \"size\", headerName: \"Size (KB)\", aggFunc: \"sum\" }, // group rows show the sum of their children\n    { field: \"modified\", filter: \"agDateColumnFilter\", cellDataType: \"dateString\" },\n  ], []);\n\n  const autoGroupColumnDef = useMemo<ColDef<FileRow>>(() => ({\n    headerName: \"Name\", minWidth: 280, filter: \"agTextColumnFilter\",\n  }), []);\n\n  // Each row's position in the tree, as an array of keys\n  const getDataPath = useCallback<GetDataPath<FileRow>>((data) => data.path, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 400 }}>\n        <AgGridReact<FileRow>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          autoGroupColumnDef={autoGroupColumnDef}\n          treeData\n          getDataPath={getDataPath}\n          groupDefaultExpanded={-1}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [HR demo](/example-hr/): an organisation shown as Tree Data built with getDataPath, with every level expanded, editable columns and custom cell renderers. Its source code is on GitHub in React, JavaScript, Angular and Vue."
+    },
+    "faq": [
+        {
+            "question": "How do I filter tree data in AG Grid?",
+            "answer": "Add filters to columns as usual. When a parent row passes a filter its children are also shown; set excludeChildrenWhenTreeDataFiltering to hide them. The Tree Filter, a version of the Set Filter, lists the group column's values as a tree and needs a keyCreator to turn each path into a string."
+        },
+        {
+            "question": "How do I add checkboxes to a tree grid?",
+            "answer": "Use multi-row selection and set rowSelection.checkboxLocation to 'autoGroupColumn' to put checkboxes next to the expand chevron. Set rowSelection.groupSelects to 'descendants' so ticking a parent ticks its children, or 'filteredDescendants' to tick only children that pass the filter."
+        },
+        {
+            "question": "Is tree data free in AG Grid?",
+            "answer": "No. Tree Data is an AG Grid Enterprise feature, both client-side and with the Server-Side Row Model. You can try it locally without a licence key; the grid shows a watermark and a console message until a licence is installed."
+        },
+        {
+            "question": "What is the difference between tree data and row grouping?",
+            "answer": "In Tree Data the parent and child relationships come from the data itself, through paths, children arrays or parent IDs. In Row Grouping the grid creates parent rows by grouping on column values, such as country or status. Both are Enterprise features."
+        },
+        {
+            "question": "Can a tree grid load children from the server?",
+            "answer": "Yes. With the Server-Side Row Model and treeData set, the grid asks your datasource for a parent's children when the parent is expanded. isServerSideGroup tells the grid which rows have children and getServerSideGroupKey returns the key used to request them."
+        },
+        {
+            "question": "Is there an AG Grid tree data example?",
+            "answer": "Yes. The Tree Data docs open with a file-explorer example built with getDataPath and a summed size column, and every Tree Data page has live examples for JavaScript, React, Angular and Vue. The HR Dashboard demo on ag-grid.com shows an organisation tree."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Tree Data is enabled with treeData: true and is an Enterprise feature; the grid displays the hierarchy in a group column.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Tree data can be supplied as data paths (getDataPath), nested records (treeDataChildrenField) or self-referential records (treeDataParentIdField); data paths and self-referential records support transaction updates, nested records do not.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-data/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With getDataPath the grid creates filler groups for any omitted levels of the hierarchy.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-paths/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "treeDataParentIdField requires getRowId and is the most performant way to provide and update hierarchical data, as rowData is processed in a single pass.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-self-referential/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With the Server-Side Row Model, treeData: true plus isServerSideGroup and getServerSideGroupKey lazy-load children as parents are expanded, and SSRM tree data supports refresh and transactions.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model-tree-data/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "By default, when a group row passes a filter its children are also shown; excludeChildrenWhenTreeDataFiltering: true omits them.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-filtering/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Aggregates in tree data are calculated only from rows that pass the filter unless suppressAggFilteredOnly is enabled.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-filtering/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Tree Filter is a Set Filter with treeList: true that shows values in a tree matching the data, and needs a keyCreator to convert each path into a string.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-filtering/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Columns with an aggregation function always aggregate on tree group nodes, so supplied group values are ignored in favour of the aggregated values.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-self-referential/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Managed row dragging with Tree Data (rowDragManaged with rowDrag on the group column) supports reordering, moving parents and children and turning a leaf into a group, prevents cycles, and isRowValidDropPosition can restrict drops.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-row-dragging/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "rowDragInsertDelay defaults to 500 milliseconds before a dragged row is inserted into a new parent.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-row-dragging/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "rowSelection.groupSelects accepts 'self' (default), 'descendants' or 'filteredDescendants', and rowSelection.checkboxLocation: 'autoGroupColumn' renders checkboxes in the group cell.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-selection/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "groupDefaultExpanded sets how many levels are expanded (-1 for all), isGroupOpenByDefault decides per group, and expandAll(), collapseAll() and setRowNodeExpanded() control expansion from the API.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data-opening-groups/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Tree Data, Server-Side Tree Data, Row Grouping, Aggregation and the Set Filter are Enterprise; Row Dragging, Row Selection and the text, number and date filters are Community.",
+            "sourceUrl": "https://www.ag-grid.com/license-pricing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark and console warnings.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Tree Data overview example is a file explorer built with getDataPath and a size column aggregated with sum.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tree-data/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}
