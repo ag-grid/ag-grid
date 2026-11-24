@@ -126,10 +126,13 @@ interface DecisionPageContentBase extends DecisionPageCore {
     proseClaims: ProseClaim[];
 }
 
-/** The parts of a decision page that carry competitor claims, each with its source. */
+/**
+ * The parts of a decision page that carry competitor claims, each with its source. An alternative
+ * page as authored has only its prose claims: its feature rows and pricing are the comparison page's.
+ */
 export interface ClaimBearingContent {
-    features: { groups: FeatureGroup[] };
-    pricing: { competitor: CompetitorPricingRow[] };
+    features?: { groups: FeatureGroup[] };
+    pricing?: { competitor: CompetitorPricingRow[] };
     proseClaims: ProseClaim[];
 }
 
@@ -161,7 +164,8 @@ export interface ProductReason {
 /**
  * An alternative page (`/alternatives/{competitor}-alternative/`): for people already looking to
  * replace the competitor. Shorter than a comparison page, it leads with why teams switch, and links
- * to the full comparison when there is one.
+ * to the full comparison. This is the page as rendered; see `AlternativePageSource` for the page
+ * as authored.
  */
 export interface AlternativePageContent extends DecisionPageContentBase {
     whySwitch: {
@@ -176,11 +180,17 @@ export interface AlternativePageContent extends DecisionPageContentBase {
     features: {
         groups: FeatureGroup[];
     };
-    pricing: {
-        subHeading: string;
-        product: PricingRow[];
-        competitor: CompetitorPricingRow[];
-    };
+    pricing: ComparisonPageContent['pricing'];
+}
+
+/**
+ * An alternative page as authored. The comparison page for the same competitor is the source of
+ * truth for features and pricing, so the page names the features it shows and takes their rows,
+ * and the pricing, from that page (`resolveAlternativePage`).
+ */
+export interface AlternativePageSource extends Omit<AlternativePageContent, 'features' | 'pricing'> {
+    /** Feature names, as the comparison page's rows name them. They show in the comparison page's order. */
+    features: string[];
 }
 
 /** A feature row comparing the product's free Community edition with its Enterprise edition. */

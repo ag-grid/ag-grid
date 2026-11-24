@@ -2,7 +2,7 @@ import { createAlternativePageSchema } from '@ag-website-shared/components/decis
 import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import { createProductAlternativePageSchema } from '@ag-website-shared/components/decision-pages/productAlternativePageSchema';
 import type {
-    AlternativePageContent,
+    AlternativePageSource,
     ComparisonPageContent,
     ProductAlternativePageContent,
 } from '@ag-website-shared/components/decision-pages/types';
@@ -92,7 +92,7 @@ describe('alternative page content', () => {
         // The intro is about AG Grid rather than the competitor, so the term is checked where the
         // page names what it replaces.
         test('targets its search term in the title and the H1', () => {
-            const content = result.data as AlternativePageContent;
+            const content = result.data as AlternativePageSource;
             const term = content.meta.targetTerm.toLowerCase();
 
             expect(content.meta.title.toLowerCase()).toContain(term);
@@ -102,6 +102,19 @@ describe('alternative page content', () => {
         test('is named after the competitor it replaces', () => {
             expect(slug).toBe(`${json.competitor.slug}-alternative`);
         });
+    });
+
+    test('each takes its features and pricing from its comparison page', () => {
+        const paths = alternativePagePaths({
+            comparePages: COMPARE_PAGES.map(({ slug, json }) => ({ id: slug, data: compareSchema.parse(json) })),
+            alternativePages: ALTERNATIVE_PAGES.map(({ slug, json }) => ({
+                id: slug,
+                data: alternativeSchema.parse(json),
+            })),
+            productAlternativePages: [],
+        });
+
+        expect(paths.map(({ params }) => params.alternativePage)).toEqual(ALTERNATIVE_PAGES.map(({ slug }) => slug));
     });
 });
 
@@ -163,7 +176,7 @@ describe('decisionRelatedPages', () => {
     });
     const alternative = (slug: string, name: string, shortName?: string) => ({
         slug,
-        content: { competitor: { name, shortName } } as AlternativePageContent,
+        content: { competitor: { name, shortName } } as AlternativePageSource,
     });
 
     const clusters = {
@@ -215,29 +228,53 @@ describe('decisionRelatedPages', () => {
 
 describe('alternativePagePaths', () => {
     const entry = <T>(id: string, data: unknown) => ({ id, data: data as T });
-
-    test('links each alternative page to the comparison with the same competitor, when there is one', () => {
-        const paths = alternativePagePaths({
-            comparePages: [
-                entry<ComparisonPageContent>('ag-grid-vs-syncfusion', {
-                    competitor: { slug: 'syncfusion' },
-                    hero: { heading: 'AG Grid vs Syncfusion' },
-                }),
+    const comparePage = entry<ComparisonPageContent>('ag-grid-vs-syncfusion', {
+        competitor: { slug: 'syncfusion' },
+        hero: { heading: 'AG Grid vs Syncfusion' },
+        features: {
+            groups: [
+                { name: 'Platform', rows: [{ feature: 'Frameworks' }] },
+                { name: 'Grouping and analysis', rows: [{ feature: 'Row grouping' }, { feature: 'Pivoting' }] },
             ],
+        },
+        pricing: { subHeading: 'The plans each library offers.' },
+    });
+
+    test('takes the named features and the pricing from the comparison with the same competitor, and links to it', () => {
+        const [path] = alternativePagePaths({
+            comparePages: [comparePage],
             productAlternativePages: [],
             alternativePages: [
-                entry<AlternativePageContent>('syncfusion-alternative', {
+                entry<AlternativePageSource>('syncfusion-alternative', {
                     competitor: { name: 'Syncfusion Data Grid', slug: 'syncfusion' },
-                }),
-                entry<AlternativePageContent>('handsontable-alternative', {
-                    competitor: { name: 'Handsontable', slug: 'handsontable' },
+                    features: ['Pivoting'],
                 }),
             ],
         });
 
-        expect(paths.map(({ params, props }) => [params.alternativePage, props.comparison])).toEqual([
-            ['syncfusion-alternative', { title: 'AG Grid vs Syncfusion', url: '/compare/ag-grid-vs-syncfusion/' }],
-            ['handsontable-alternative', undefined],
+        expect(path.params.alternativePage).toBe('syncfusion-alternative');
+        expect(path.props.content.features.groups).toEqual([
+            { name: 'Grouping and analysis', rows: [{ feature: 'Pivoting' }] },
         ]);
+        expect(path.props.content.pricing).toBe(comparePage.data.pricing);
+        expect(path.props.comparison).toEqual({
+            title: 'AG Grid vs Syncfusion',
+            url: '/compare/ag-grid-vs-syncfusion/',
+        });
+    });
+
+    test('fails the build for an alternative page with no comparison page', () => {
+        expect(() =>
+            alternativePagePaths({
+                comparePages: [comparePage],
+                productAlternativePages: [],
+                alternativePages: [
+                    entry<AlternativePageSource>('handsontable-alternative', {
+                        competitor: { name: 'Handsontable', slug: 'handsontable' },
+                        features: ['Pivoting'],
+                    }),
+                ],
+            })
+        ).toThrow('alternatives/handsontable-alternative has no comparison page');
     });
 });

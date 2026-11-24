@@ -14,7 +14,11 @@ import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
     const collections = await getDecisionPageCollections();
-    warnStaleClaims('alternatives', collections.alternativePages);
+    // Feature and pricing claims are the comparison page's, which warns about them itself.
+    warnStaleClaims(
+        'alternatives',
+        collections.alternativePages.map(({ id, data }) => ({ id, data: { proseClaims: data.proseClaims } }))
+    );
     return alternativePagePaths(collections);
 }
 

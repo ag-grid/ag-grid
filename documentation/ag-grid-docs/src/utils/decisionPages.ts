@@ -5,8 +5,9 @@ import {
 } from '@ag-website-shared/components/decision-pages/decisionHub';
 import { findStaleClaims } from '@ag-website-shared/components/decision-pages/decisionPageSchema';
 import { alternativePageName, toIsoDate } from '@ag-website-shared/components/decision-pages/decisionPageText';
+import { resolveAlternativePage } from '@ag-website-shared/components/decision-pages/resolveAlternativePage';
 import type {
-    AlternativePageContent,
+    AlternativePageSource,
     ClaimBearingContent,
     ComparisonPageContent,
     DecisionHubLink,
@@ -87,7 +88,7 @@ export const compareHubCard = (slug: string, content: ComparisonPageContent): De
     url: comparePageUrl(slug),
 });
 
-const alternativeHubCard = (slug: string, content: AlternativePageContent): DecisionHubCard => ({
+const alternativeHubCard = (slug: string, content: AlternativePageSource): DecisionHubCard => ({
     title: alternativePageName(content.competitor),
     description: content.meta.description,
     url: alternativePageUrl(slug),
@@ -107,7 +108,7 @@ interface DecisionPageEntry<Content> {
 /** Every page in the two clusters, so each page can link to the others. */
 export interface DecisionPageClusters {
     comparisons: Array<DecisionPageEntry<ComparisonPageContent>>;
-    alternatives: Array<DecisionPageEntry<AlternativePageContent>>;
+    alternatives: Array<DecisionPageEntry<AlternativePageSource>>;
     /** AG Grid's own alternative page, listed with the other alternatives. */
     productAlternatives: Array<DecisionPageEntry<ProductAlternativePageContent>>;
 }
@@ -115,7 +116,7 @@ export interface DecisionPageClusters {
 /** The decision page content collections, as `getDecisionPageCollections` loads them. */
 export interface DecisionPageCollections {
     comparePages: Array<{ id: string; data: ComparisonPageContent }>;
-    alternativePages: Array<{ id: string; data: AlternativePageContent }>;
+    alternativePages: Array<{ id: string; data: AlternativePageSource }>;
     productAlternativePages: Array<{ id: string; data: ProductAlternativePageContent }>;
 }
 
@@ -124,7 +125,7 @@ const comparisonLink = ({ slug, content }: DecisionPageEntry<ComparisonPageConte
     url: comparePageUrl(slug),
 });
 
-const alternativeLink = ({ slug, content }: DecisionPageEntry<AlternativePageContent>): RelatedPageLink => ({
+const alternativeLink = ({ slug, content }: DecisionPageEntry<AlternativePageSource>): RelatedPageLink => ({
     title: alternativePageName(content.competitor),
     url: alternativePageUrl(slug),
 });
@@ -205,8 +206,9 @@ export function comparePagePaths(collections: DecisionPageCollections) {
 }
 
 /**
- * `getStaticPaths` for an alternative page and its `.md` twin. Each page links to the comparison
- * with the same competitor, when there is one.
+ * `getStaticPaths` for an alternative page and its `.md` twin. Each page takes its feature rows and
+ * pricing from the comparison with the same competitor, and links to it; an alternative page with
+ * no comparison fails the build.
  */
 export function alternativePagePaths(collections: DecisionPageCollections) {
     const clusters = toClusters(collections);
@@ -214,11 +216,16 @@ export function alternativePagePaths(collections: DecisionPageCollections) {
         const comparison = clusters.comparisons.find(
             (page) => page.content.competitor.slug === content.competitor.slug
         );
+        if (!comparison) {
+            throw new Error(
+                `alternatives/${slug} has no comparison page: add compare/ag-grid-vs-${content.competitor.slug}, which it takes its features and pricing from`
+            );
+        }
         return {
             params: { alternativePage: slug },
             props: {
-                content,
-                comparison: comparison && comparisonLink(comparison),
+                content: resolveAlternativePage(content, comparison.content),
+                comparison: comparisonLink(comparison),
                 related: decisionRelatedPages({ current: alternativePageUrl(slug), clusters }),
             },
         };

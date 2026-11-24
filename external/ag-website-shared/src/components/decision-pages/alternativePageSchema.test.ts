@@ -1,6 +1,4 @@
 import { createAlternativePageSchema } from './alternativePageSchema';
-import { listClaims } from './decisionPageSchema';
-import type { AlternativePageContent } from './types';
 
 const NOW = new Date('2026-11-23T00:00:00Z');
 const SOURCE = 'https://www.syncfusion.com/products/communitylicense';
@@ -28,33 +26,7 @@ function validPage() {
             reasons: ['The Community License has revenue limits.'],
         },
         whyProduct: [{ title: 'Clear licensing', body: 'AG Grid Community is MIT licensed.' }],
-        features: {
-            groups: [
-                {
-                    name: 'Grouping and analysis',
-                    rows: [
-                        {
-                            feature: 'Pivoting',
-                            product: { status: 'yes', plan: 'Enterprise' },
-                            competitor: { status: 'yes', plan: 'Grid SDK', sourceUrl: SOURCE, checkedOn },
-                        },
-                    ],
-                },
-            ],
-        },
-        pricing: {
-            subHeading: 'The plans each library offers.',
-            product: [{ plan: 'Community', cost: 'free', licence: 'MIT' }],
-            competitor: [
-                {
-                    plan: 'Community License',
-                    cost: 'conditional',
-                    licence: 'Eligible organisations',
-                    sourceUrl: SOURCE,
-                    checkedOn,
-                },
-            ],
-        },
+        features: ['Row grouping', 'Pivoting'],
         faq: [{ question: 'Is there a free alternative to Syncfusion?', answer: 'Yes.' }],
         proseClaims: [{ claim: 'The Community License has revenue limits.', sourceUrl: SOURCE, checkedOn }],
     };
@@ -85,24 +57,24 @@ describe('createAlternativePageSchema', () => {
         expect(result.error?.issues[0].path).toEqual(['proseClaims']);
     });
 
-    test('rejects a pricing row with a price in place of a cost tier', () => {
-        const page = validPage();
-        const result = schema.safeParse({
-            ...page,
-            pricing: { ...page.pricing, product: [{ plan: 'Enterprise', cost: '$999', licence: 'Perpetual' }] },
-        });
+    test('rejects a page that names no features', () => {
+        const result = schema.safeParse({ ...validPage(), features: [] });
 
         expect(result.success).toBe(false);
-        expect(result.error?.issues[0].path.join('.')).toBe('pricing.product.0.cost');
+        expect(result.error?.issues[0].path).toEqual(['features']);
     });
 
-    test('lists its feature, pricing and prose claims for the stale-claim check', () => {
-        const content = schema.parse(validPage()) as AlternativePageContent;
+    test('rejects a page that names a feature twice', () => {
+        const result = schema.safeParse({ ...validPage(), features: ['Pivoting', 'Pivoting'] });
 
-        expect(listClaims(content).map(({ path }) => path)).toEqual([
-            'features.groups.0.rows.0.competitor',
-            'pricing.competitor.0',
-            'proseClaims.0',
-        ]);
+        expect(result.success).toBe(false);
+        expect(result.error?.issues[0].message).toBe('Name each feature once');
+    });
+
+    test('rejects pricing of its own, which comes from the comparison page', () => {
+        const result = schema.safeParse({ ...validPage(), pricing: { subHeading: 'Plans' } });
+
+        expect(result.success).toBe(false);
+        expect(result.error?.issues[0].code).toBe('unrecognized_keys');
     });
 });

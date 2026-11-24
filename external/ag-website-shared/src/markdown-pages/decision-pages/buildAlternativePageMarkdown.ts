@@ -26,11 +26,11 @@ import {
 import { getStartedMarkdown } from './getStartedMarkdown';
 
 export interface BuildAlternativePageMarkdownOptions {
-    /** The same collection entry the alternative page renders. */
+    /** The same content the alternative page renders. */
     content: AlternativePageContent;
     site: DecisionPageSite;
-    /** The comparison page for the same competitor, when there is one. */
-    comparison?: RelatedPageLink;
+    /** The comparison page for the same competitor. */
+    comparison: RelatedPageLink;
     related: RelatedPageGroup[];
     /** Canonical origin, so links survive being read out of context. */
     siteRoot?: string;
@@ -38,7 +38,7 @@ export interface BuildAlternativePageMarkdownOptions {
 }
 
 /**
- * The markdown twin of an alternative page. Walks the same content entry in the same order as
+ * The markdown twin of an alternative page. Walks the same content in the same order as
  * `AlternativePage.astro`, with the same section labels, so agents read what visitors see.
  * Product-agnostic: the site supplies its name, URLs and link resolver.
  */
@@ -80,11 +80,7 @@ export function buildAlternativePageMarkdown({
                 columns: [productName, competitorName],
                 absolute,
             }),
-            ...(comparison
-                ? [
-                      `See the [${fullComparisonLinkText(comparison.title)}](${absolute(comparison.url)}) for every feature, pricing and licensing.`,
-                  ]
-                : []),
+            `See the [${fullComparisonLinkText(comparison.title)}](${absolute(comparison.url)}) for every feature, pricing and licensing.`,
         ],
         [
             `## ${ALTERNATIVE_SECTIONS.pricing}`,

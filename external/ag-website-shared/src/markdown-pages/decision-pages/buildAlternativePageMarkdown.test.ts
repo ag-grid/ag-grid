@@ -118,10 +118,6 @@ describe('buildAlternativePageMarkdown', () => {
         );
     });
 
-    test('omits the comparison link when there is no comparison page', () => {
-        expect(build({ comparison: undefined })).not.toContain('full AG Grid vs TanStack Table comparison');
-    });
-
     test('renders pricing as cost tiers and lists the claim sources', () => {
         const markdown = build();
 

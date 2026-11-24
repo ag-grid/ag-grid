@@ -121,13 +121,13 @@ export interface PageClaim {
 /** Every competitor claim on a page, in page order: feature cells, pricing rows, then prose. */
 export function listClaims(content: ClaimBearingContent): PageClaim[] {
     return [
-        ...content.features.groups.flatMap((group, groupIndex) =>
+        ...(content.features?.groups ?? []).flatMap((group, groupIndex) =>
             group.rows.map((row, rowIndex) => ({
                 path: `features.groups.${groupIndex}.rows.${rowIndex}.competitor`,
                 ...row.competitor,
             }))
         ),
-        ...content.pricing.competitor.map((row, index) => ({ path: `pricing.competitor.${index}`, ...row })),
+        ...(content.pricing?.competitor ?? []).map((row, index) => ({ path: `pricing.competitor.${index}`, ...row })),
         ...content.proseClaims.map((claim, index) => ({ path: `proseClaims.${index}`, ...claim })),
     ].map(({ path, sourceUrl, checkedOn }) => ({ path, sourceUrl, checkedOn }));
 }
