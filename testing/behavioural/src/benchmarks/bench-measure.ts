@@ -50,6 +50,8 @@ const AsyncFunction = (async () => {}).constructor;
 const now = performance.now.bind(performance);
 
 type BenchFn = () => unknown;
+/** Untimed, run before every call; async to let real frames and timers land, such as to release a large grid. */
+export type BenchPrepare = () => void | Promise<void>;
 
 /** A bench's untimed setup and teardown, each run once around its turn, and its window and warmup (ms) when not the default. */
 export interface BenchOptions {
@@ -57,6 +59,10 @@ export interface BenchOptions {
     teardown?: () => Promise<void> | void;
     time?: number;
     warmupTime?: number;
+    /** Minimum warmup calls (default 10). Lower it for a call that takes seconds, so warmup does not dominate the run. */
+    warmupCalls?: number;
+    /** The bench's test timeout (ms), when a call is slow enough that the default cap cannot hold its warmup and window. */
+    timeout?: number;
 }
 
 /** Measures `fn` in this side's turn: warmup, then the sliced window, every call's time sent to bench-compare. */
@@ -70,7 +76,7 @@ export async function measureBench(name: string, fn: BenchFn, options: BenchOpti
     (globalThis as { agBenchPaired?: boolean }).agBenchPaired = turn.paired;
 
     const clock = new VirtualClock();
-    const prepare = (fn as { agBenchPrepare?: () => void }).agBenchPrepare;
+    const prepare = (fn as { agBenchPrepare?: BenchPrepare }).agBenchPrepare;
     const call: BenchFn = fn.constructor === AsyncFunction ? fn : () => clock.run(fn);
     const slices: number[][] = [];
     let failure: unknown;
@@ -79,7 +85,8 @@ export async function measureBench(name: string, fn: BenchFn, options: BenchOpti
         let warmCalls = 0;
         let warmTime = 0;
         const warmupMs = options.warmupTime ?? WARMUP_MS;
-        while (warmCalls < WARMUP_CALLS || warmTime < warmupMs) {
+        const minWarmCalls = options.warmupCalls ?? WARMUP_CALLS;
+        while (warmCalls < minWarmCalls || warmTime < warmupMs) {
             warmTime += await timeCall(call, prepare, clock);
             ++warmCalls;
         }
@@ -129,7 +136,7 @@ async function runSlices(
     sliceCount: number,
     sliceCap: number,
     call: BenchFn,
-    prepare: (() => void) | undefined,
+    prepare: BenchPrepare | undefined,
     clock: VirtualClock
 ): Promise<void> {
     for (let s = 0; s < sliceCount; ++s) {
@@ -144,10 +151,14 @@ async function runSlices(
     }
 }
 
-/** One call's time; its `prepare` runs first, untimed, on the same virtual clock. */
-async function timeCall(call: BenchFn, prepare: (() => void) | undefined, clock: VirtualClock): Promise<number> {
+/** One call's time; its `prepare` runs first, untimed: on the same virtual clock, or on real timers if it is async. */
+async function timeCall(call: BenchFn, prepare: BenchPrepare | undefined, clock: VirtualClock): Promise<number> {
     if (prepare) {
-        clock.run(prepare);
+        if (prepare.constructor === AsyncFunction) {
+            await prepare();
+        } else {
+            clock.run(prepare);
+        }
     }
     const start = now();
     const result = call();
