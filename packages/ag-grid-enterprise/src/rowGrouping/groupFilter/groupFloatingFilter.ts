@@ -16,6 +16,7 @@ import {
     AgPromise,
     Component,
     _addFloatingFilterValueTooltip,
+    _clearFloatingFilterModel,
     _getDisplayHandler,
     _getFloatingFilterAriaLabel,
     _isGroupMultiAutoColumn,
@@ -121,8 +122,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
 
             this.eFloatingFilterText
-                .setDisabled(true)
-                .addGuiEventListener('click', () => this.params.showParentFilter());
+                .setReadOnly(true)
+                .setClearButtonEnabled(true)
+                .onValueClear(() => this.clearSelectedColumnFilter());
 
             this.setParams();
             this.refreshValueTooltip = _addFloatingFilterValueTooltip(
@@ -137,6 +139,14 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.updateDisplayedValue();
 
         this.eFloatingFilter.appendChild(this.eFloatingFilterText.getGui());
+    }
+
+    private clearSelectedColumnFilter(): void {
+        const column = this.getSelectedColumn();
+        if (!column) {
+            return;
+        }
+        _clearFloatingFilterModel(this.beans, column);
     }
 
     private setupUnderlyingFloatingFilterElement(): AgPromise<void> {

@@ -127,6 +127,15 @@ export class AgInputTextField<
         return this;
     }
 
+    public setReadOnly(readOnly: boolean): this {
+        this.eInput.readOnly = readOnly;
+        return this;
+    }
+
+    public isReadOnly(): boolean {
+        return this.eInput.readOnly;
+    }
+
     /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
     public setStartValue(value?: string | null): void {
         this.setValue(value, true);

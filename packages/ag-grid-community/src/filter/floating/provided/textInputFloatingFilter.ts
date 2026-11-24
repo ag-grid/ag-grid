@@ -13,6 +13,7 @@ import type {
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
+import { _clearFloatingFilterModel } from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
@@ -35,6 +36,7 @@ export abstract class TextInputFloatingFilter<
 
     private applyActive: boolean;
     private pendingEdit = false;
+    private editable = false;
     private refreshValueTooltip?: () => void;
 
     protected abstract createFloatingFilterInputService(params: TParams): FloatingFilterInputService;
@@ -95,20 +97,27 @@ export abstract class TextInputFloatingFilter<
 
         this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
-        if (!readOnly) {
-            const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
-            const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
-            let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
-            inputSvc.setValueChangedListener((e) => {
-                this.pendingEdit = true;
-                debounceTimeout = debouncedSync(e);
-            });
-            inputSvc.setValueClearedListener(() => {
-                this.refreshValueTooltip?.();
-                clearTimeout(debounceTimeout);
-                this.syncUpWithParentFilter();
-            });
+        if (readOnly) {
+            inputSvc.setValueClearedListener(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+            return;
         }
+
+        const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
+        const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
+        let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
+        inputSvc.setValueChangedListener((e) => {
+            this.pendingEdit = true;
+            debounceTimeout = debouncedSync(e);
+        });
+        inputSvc.setValueClearedListener(() => {
+            this.refreshValueTooltip?.();
+            clearTimeout(debounceTimeout);
+            if (this.editable) {
+                this.syncUpWithParentFilter();
+            } else {
+                _clearFloatingFilterModel(this.beans, this.params.column as AgColumn);
+            }
+        });
     }
 
     protected override updateParams(params: TParams): void {
@@ -182,6 +191,7 @@ export abstract class TextInputFloatingFilter<
     }
 
     protected setEditable(editable: boolean): void {
+        this.editable = editable;
         this.inputSvc.setEditable(editable);
         this.refreshValueTooltip?.();
     }

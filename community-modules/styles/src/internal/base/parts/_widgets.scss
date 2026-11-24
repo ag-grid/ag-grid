@@ -66,12 +66,6 @@
             border-color: var(--ag-input-disabled-border-color);
         }
 
-        :where(.ag-floating-filter-input) &:is(:disabled, [readonly]) {
-            color: var(--ag-input-read-only-text-color);
-            background-color: var(--ag-input-read-only-background-color);
-            border-color: var(--ag-input-read-only-border-color);
-        }
-
         &:focus {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
@@ -85,6 +79,15 @@
 
         &:invalid {
             border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+        }
+
+        // focus keeps the read-only look, and the browser's own outline shows it
+        :where(.ag-floating-filter-input) &[readonly] {
+            color: var(--ag-input-read-only-text-color);
+            background-color: var(--ag-input-read-only-background-color);
+            border-color: var(--ag-input-read-only-border-color);
+            box-shadow: none;
+            outline: revert;
         }
     }
 

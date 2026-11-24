@@ -14,6 +14,7 @@ import {
     AgInputTextFieldSelector,
     Component,
     _addFloatingFilterValueTooltip,
+    _clearFloatingFilterModel,
     _getFloatingFilterAriaLabel,
 } from 'ag-grid-community';
 
@@ -45,7 +46,10 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     public init(params: IFloatingFilterParams): void {
         this.params = params;
 
-        this.eFloatingFilterText.setDisabled(true).addGuiEventListener('click', () => this.params.showParentFilter());
+        this.eFloatingFilterText
+            .setReadOnly(true)
+            .setClearButtonEnabled(true)
+            .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
 
         this.setParams(params);
         this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });

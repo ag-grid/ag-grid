@@ -156,8 +156,8 @@ export function serializeFloatingFilter(root: ParentNode, colId: string | undefi
     if (input) {
         // The type says which value type the floating filter rendered, which an option can declare per input.
         const typeSuffix = input.type === 'text' ? '' : ` [${input.type}]`;
-        const disabled = input.disabled ? ' ⊘' : '';
-        lines.push(`input${typeSuffix}: "${input.value}"${placeholderSuffix(input)}${disabled}`);
+        const readOnly = input.disabled || input.readOnly ? ' ⊘' : '';
+        lines.push(`input${typeSuffix}: "${input.value}"${placeholderSuffix(input)}${readOnly}`);
     } else {
         lines.push('input: (none)');
     }

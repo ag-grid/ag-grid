@@ -1,4 +1,6 @@
-import { fireEvent } from '@testing-library/dom';
+import { fireEvent, waitFor } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
+import { userEvent } from '@testing-library/user-event';
 import {
     ColumnFilterHarness,
     FilterDom,
@@ -11,7 +13,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, SuppressHeaderKeyboardEventParams } from 'ag-grid-community';
+import type { ColDef, GridApi, SuppressHeaderKeyboardEventParams } from 'ag-grid-community';
 import {
     BigIntFilterModule,
     ClientSideRowModelModule,
@@ -21,7 +23,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import { GroupFilterModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 /**
  * Black-box coverage for editing/displaying floating filters (floatingFilter:true) across text,
@@ -146,9 +148,9 @@ describe('Floating filter editing', () => {
         await api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // A combined model is never editable in the floating filter: input is disabled and shows a summary.
+        // A combined model is never editable in the floating filter: input is read-only and shows a summary.
         const input = floatingInput(api, 'country');
-        expect(input.disabled).toBe(true);
+        expect(input.readOnly).toBe(true);
         expect(input.value).toBe('ita OR ice');
         expect(api.getDisplayedRowCount()).toBe(2);
         await new GridRows(api, 'text combined rows').check(`
@@ -235,10 +237,10 @@ describe('Floating filter editing', () => {
         await api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // A 2-input option is not editable in the floating filter: the single input is disabled and
+        // A 2-input option is not editable in the floating filter: the single input is read-only and
         // shows the range summary rather than an editable value.
         const input = floatingInput(api, 'age');
-        expect(input.disabled).toBe(true);
+        expect(input.readOnly).toBe(true);
         expect(input.value).toContain('20');
         expect(input.value).toContain('35');
         expect(api.getDisplayedRowCount()).toBe(1);
@@ -371,10 +373,10 @@ describe('Floating filter editing', () => {
         await api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // Read-only: the visible input is the disabled summary text, not the editable date input.
+        // Read-only: the visible input is the read-only summary text, not the editable date input.
         const input = floatingInput(api, 'date');
         expect(input.type).toBe('text');
-        expect(input.disabled).toBe(true);
+        expect(input.readOnly).toBe(true);
         expect(input.value).toContain('2024-03-15');
         expect(input.value).toContain('2024-06-30');
 
@@ -430,7 +432,7 @@ describe('Floating filter editing', () => {
         // does move: a two-value option has no single editor, so the summary takes the slot.
         expect(floating.allInputs()).toHaveLength(expectedInputs);
         expect(floating.inputs()).toHaveLength(1);
-        expect(floating.input().disabled).toBe(readOnlyWhenApplied);
+        expect(floating.input().readOnly).toBe(readOnlyWhenApplied);
         expect(floating.input().value).not.toBe('');
     });
 
@@ -519,9 +521,9 @@ describe('Floating filter editing', () => {
             });
             await asyncSetTimeout(0);
 
-            // No model → the read-only input is empty and disabled.
+            // No model → the read-only input is empty.
             const input = floatingInput(api, 'country');
-            expect(input.disabled).toBe(true);
+            expect(input.readOnly).toBe(true);
             expect(input.value).toBe('');
 
             // Single value selected via API → `(1) Australia`.
@@ -608,6 +610,154 @@ describe('Floating filter editing', () => {
                 ├── LEAF id:0 country:"Italy"
                 └── LEAF id:3 country:"Italy"
             `);
+        });
+    });
+
+    describe('read-only inputs', () => {
+        const rowData = [
+            { country: 'Italy', age: 25, date: '2024-05-01' },
+            { country: 'France', age: 40, date: '2024-09-01' },
+        ];
+        const setFilter: ColDef = { field: 'country', filter: 'agSetColumnFilter' };
+        const readOnlyText: ColDef = { field: 'country', filter: 'agTextColumnFilter', filterParams: { readOnly: true } };
+
+        const createWithSetFilterApplied = async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...setFilter, floatingFilter: true }],
+                rowData,
+            });
+            await api.setColumnFilterModel('country', { filterType: 'set', values: ['Italy'] });
+            await api.onFilterChanged();
+            await asyncSetTimeout(0);
+            return api;
+        };
+
+        test.each<[string, ColDef, object]>([
+            ['a Set Filter', setFilter, { filterType: 'set', values: ['Italy'] }],
+            [
+                'two conditions',
+                { field: 'country', filter: 'agTextColumnFilter' },
+                {
+                    filterType: 'text',
+                    operator: 'OR',
+                    conditions: [
+                        { filterType: 'text', type: 'contains', filter: 'ita' },
+                        { filterType: 'text', type: 'contains', filter: 'spa' },
+                    ],
+                },
+            ],
+            [
+                'a number range',
+                { field: 'age', filter: 'agNumberColumnFilter' },
+                { filterType: 'number', type: 'inRange', filter: 20, filterTo: 30 },
+            ],
+            [
+                'a date range',
+                { field: 'date', filter: 'agDateColumnFilter' },
+                { filterType: 'date', type: 'inRange', dateFrom: '2024-03-15', dateTo: '2024-06-30' },
+            ],
+            ['readOnly: true', readOnlyText, { filterType: 'text', type: 'contains', filter: 'ita' }],
+        ])('%s: the input can be focused and its clear button removes the filter', async (_, colDef, model) => {
+            const colId = colDef.field!;
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...colDef, floatingFilter: true }],
+                rowData,
+            });
+            await api.setColumnFilterModel(colId, model);
+            await api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            const floating = FloatingFilterHarness.get(api, colId);
+            const input = floating.input();
+            expect({ readOnly: input.readOnly, disabled: input.disabled }).toEqual({ readOnly: true, disabled: false });
+            input.focus();
+            expect(input).toHaveFocus();
+
+            floating.clearButton()!.click();
+            await waitFor(() => expect(api.getColumnFilterModel(colId)).toBeNull());
+            expect(floating.input().value).toBe('');
+            expect(floating.clearButton()).toBeNull();
+            expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
+        test.each([
+            ['a Set Filter', setFilter],
+            ['readOnly: true', readOnlyText],
+        ])('%s with no filter applied shows no clear button', async (_, colDef) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...colDef, floatingFilter: true }],
+                rowData,
+            });
+            await asyncSetTimeout(0);
+
+            const floating = FloatingFilterHarness.get(api, 'country');
+            expect({ readOnly: floating.input().readOnly, value: floating.input().value }).toEqual({
+                readOnly: true,
+                value: '',
+            });
+            expect(floating.clearButton()).toBeNull();
+        });
+
+        test('clicking a read-only input focuses it and leaves the filter popup to the filter button', async () => {
+            const api = await createWithSetFilterApplied();
+            const input = FloatingFilterHarness.get(api, 'country').input();
+
+            await userEvent.setup().click(input);
+            expect(input).toHaveFocus();
+            expect(document.querySelector('.ag-filter-menu')).toBeNull();
+
+            await ColumnFilterHarness.open(api, 'country', 'floatingFilter');
+            expect(document.querySelector('.ag-filter-menu')).not.toBeNull();
+        });
+
+        test('Tab moves from a read-only input to its clear button, then the filter button', async () => {
+            const api = await createWithSetFilterApplied();
+            const floating = FloatingFilterHarness.get(api, 'country');
+            const filterButton = floating.body
+                .closest('.ag-floating-filter')!
+                .querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
+            const user = userEvent.setup();
+
+            floating.input().focus();
+            await user.tab();
+            expect(floating.clearButton()).toHaveFocus();
+            await user.tab();
+            expect(filterButton).toHaveFocus();
+        });
+
+        test('Enter on a floating filter cell focuses its read-only input', async () => {
+            const api = await createWithSetFilterApplied();
+            const floating = FloatingFilterHarness.get(api, 'country');
+
+            floating.body.closest<HTMLElement>('.ag-floating-filter')!.focus();
+            await userEvent.setup().keyboard('{Enter}');
+            expect(floating.input()).toHaveFocus();
+        });
+
+        test('the group column read-only input clears the filter of the column it shows', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'grid1',
+                {
+                    columnDefs: [{ field: 'country', rowGroup: true, hide: true, filter: 'agSetColumnFilter' }],
+                    autoGroupColumnDef: { filter: 'agGroupColumnFilter', floatingFilter: true },
+                    rowData,
+                },
+                { modules: [RowGroupingModule, GroupFilterModule] }
+            );
+            await api.setColumnFilterModel('country', { filterType: 'set', values: ['Italy'] });
+            await api.onFilterChanged();
+
+            const input = () =>
+                getGridElement(api)!.querySelector<HTMLInputElement>('.ag-group-floating-filter input')!;
+            await waitFor(() => expect(input().value).toBe('(1) Italy'));
+            expect(input().readOnly).toBe(true);
+            const clearButton = input().parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            expect(clearButton.closest('.ag-hidden')).toBeNull();
+
+            clearButton.click();
+            await waitFor(() => expect(api.getColumnFilterModel('country')).toBeNull());
+            await waitFor(() => expect(input().value).toBe(''));
         });
     });
 });

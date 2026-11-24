@@ -48,22 +48,25 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         );
         this.eTextInput = textField;
         // Never typed into: it stands in for the number input while the filter is not editable.
-        textField.setDisabled(true);
+        textField.setReadOnly(true);
 
         const eNumberInput = numberField.getGui();
-        const eTextInput = textField.getGui();
 
         parentElement.appendChild(eNumberInput);
-        parentElement.appendChild(eTextInput);
+        parentElement.appendChild(textField.getGui());
 
         this.setupListeners(eNumberInput, (e) => this.onValueChanged(e));
-        this.setupListeners(eTextInput, (e) => this.onValueChanged(e));
     }
 
     public setEditable(editable: boolean): void {
+        const hadFocus = this.isFocused();
         this.numberInputActive = editable;
         this.eNumberInput.setDisplayed(this.numberInputActive);
         this.eTextInput.setDisplayed(!this.numberInputActive);
+        if (!hadFocus) {
+            return;
+        }
+        this.getInputElement().focus();
     }
 
     public setAutoComplete(autoComplete?: boolean | string): void {

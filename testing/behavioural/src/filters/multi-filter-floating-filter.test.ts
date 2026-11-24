@@ -329,10 +329,10 @@ describe("Multi Filter floating filter — a child's params", () => {
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
         // The first child's floating filter is the one shown, before any child is active.
-        const disabled = (colId: string) =>
+        const readOnly = (colId: string) =>
             gridDiv.querySelector<HTMLInputElement>(`.ag-header-cell.ag-floating-filter[col-id="${colId}"] input`)!
-                .disabled;
+                .readOnly;
 
-        expect([disabled('object'), disabled('function'), disabled('sibling')]).toEqual([true, true, false]);
+        expect([readOnly('object'), readOnly('function'), readOnly('sibling')]).toEqual([true, true, false]);
     });
 });
