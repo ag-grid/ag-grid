@@ -26,6 +26,7 @@ interface TooltipOwner {
     hideTooltip(forceHide?: boolean): void;
     isTooltipFocused(): boolean;
     hasFocusedSourceWithin(element: HTMLElement): boolean;
+    containsSource(element: HTMLElement): boolean;
     isTooltipTriggeredByFocus(): boolean;
     isTooltipHoveredOrLeaving(): boolean;
 }
@@ -363,13 +364,16 @@ export abstract class BaseTooltipStateManager<
         window.clearTimeout(this.hoverGraceTimeout);
         this.hoverGraceTimeout = undefined;
         const owner = this.sharedState.owner;
+        const source = this.tooltipCtrl.getGui();
         // Empty built-in hints must not displace their parent's tooltip; ordinary sources may still be mounting.
+        // A nested source that has declined to show, such as an editor with no validation errors, must not either.
         if (
             owner &&
             owner !== this &&
             (owner.isTooltipFocused() ||
-                owner.hasFocusedSourceWithin(this.tooltipCtrl.getGui()) ||
-                (this.tooltipCtrl.control && !this.canShowTooltip()))
+                owner.hasFocusedSourceWithin(source) ||
+                (this.tooltipCtrl.control && !this.canShowTooltip()) ||
+                (owner.containsSource(source) && this.tooltipCtrl.shouldDisplayTooltip?.(this.getTooltip()) === false))
         ) {
             return;
         }
@@ -633,6 +637,11 @@ export abstract class BaseTooltipStateManager<
     public hasFocusedSourceWithin(element: HTMLElement): boolean {
         const source = this.getFocusElement();
         return this.sourceFocused && source !== element && element.contains(source) && this.canShowTooltip();
+    }
+
+    public containsSource(element: HTMLElement): boolean {
+        const source = this.tooltipCtrl.getGui();
+        return source !== element && source.contains(element);
     }
 
     public isTooltipHoveredOrLeaving(): boolean {
