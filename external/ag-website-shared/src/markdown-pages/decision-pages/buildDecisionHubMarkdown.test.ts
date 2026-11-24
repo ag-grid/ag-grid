@@ -21,7 +21,6 @@ describe('buildDecisionHubMarkdown', () => {
                 resolveUrl: (url) => url.replace(/^\.\//, '/react-data-grid/'),
                 urls: {
                     home: '/',
-                    hub: '/compare/',
                     pricing: '/license-pricing/',
                     getStarted: './getting-started/',
                     demo: '/example/',

@@ -1,0 +1,408 @@
+{
+    "meta": {
+        "title": "AG Grid alternative: when a lighter library is enough | AG Grid",
+        "description": "Looking for an AG Grid alternative? See when a lighter table library is enough, what the free, MIT-licensed AG Grid Community includes, and when AG Grid Enterprise is worth it.",
+        "targetTerm": "ag grid alternative",
+        "monthlySearches": 140,
+        "demandSource": "US monthly Google search volume from the SE-150 keyword research, July 2026"
+    },
+    "analyticsPrefix": "alternative-ag-grid",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "hero": {
+        "heading": "Looking for an AG Grid alternative?",
+        "subHeading": "Before you choose an AG Grid alternative, check what your table needs. A lighter library can be enough for a simple table, and AG Grid Community is free under the MIT licence, with Enterprise only for advanced features."
+    },
+    "lighterOption": {
+        "heading": "When a lighter library is enough",
+        "reasons": [
+            "Your table shows a small set of rows that users only read, so a plain HTML table styled to match your app does the job.",
+            "Sorting and pagination are all users need, with no editing, filtering or export.",
+            "You want to own every element of the markup, and are happy to build the table's interface yourself on a headless table library.",
+            "You are adding one simple table to a page where a small JavaScript bundle matters more than grid features."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Filtering, editing and export built in",
+            "body": "AG Grid Community includes text, number and date filters, a quick filter, cell editors, row selection and CSV export, so you do not build them yourself."
+        },
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Room to grow",
+            "body": "When you need row grouping, pivoting, set filters or Excel export, add AG Grid Enterprise to the grid you already have: install the ag-grid-enterprise package and register the modules you need."
+        }
+    ],
+    "editions": {
+        "subHeading": "AG Grid Community is free under the MIT licence, including commercial use. AG Grid Enterprise adds advanced features under a commercial licence.",
+        "groups": [
+            {
+                "name": "Filtering and editing",
+                "rows": [
+                    {
+                        "feature": "Text, number and date filters",
+                        "docsUrl": "./filter-text/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Quick filter",
+                        "docsUrl": "./filter-quick/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Set filter",
+                        "docsUrl": "./filter-set/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Advanced filter",
+                        "docsUrl": "./filter-advanced/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Built-in cell editors",
+                        "docsUrl": "./provided-cell-editors-text/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Undo and redo",
+                        "docsUrl": "./undo-redo-edits/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Batch editing",
+                        "docsUrl": "./cell-editing-batch/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Aggregation",
+                        "docsUrl": "./aggregation/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Import and export",
+                "rows": [
+                    {
+                        "feature": "CSV export",
+                        "docsUrl": "./csv-export/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Excel export",
+                        "docsUrl": "./excel-export/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Clipboard operations",
+                        "docsUrl": "./clipboard/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Drag and drop",
+                        "docsUrl": "./drag-and-drop/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Interface",
+                "rows": [
+                    {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Cell range selection",
+                        "docsUrl": "./cell-selection/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Columns tool panel",
+                        "docsUrl": "./tool-panel-columns/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Accessibility",
+                        "docsUrl": "./accessibility/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Localisation",
+                        "docsUrl": "./localisation/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Charts and AI",
+                "rows": [
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Integrated charts",
+                        "docsUrl": "./integrated-charts/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise Bundle"
+                        }
+                    },
+                    {
+                        "feature": "AI Toolkit",
+                        "docsUrl": "./ai-toolkit/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "MCP server",
+                        "docsUrl": "./mcp-server/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Support",
+                "rows": [
+                    {
+                        "feature": "Support",
+                        "community": {
+                            "status": "no",
+                            "detail": "Community support through GitHub"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Support from the AG Grid developers through Zendesk"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "AG Grid Community is free. AG Grid Enterprise is licensed per developer and per deployment: each licence is perpetual, with one year of updates and support.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ]
+    },
+    "faq": [
+        {
+            "question": "Is AG Grid free?",
+            "answer": "Yes. AG Grid Community is free for everyone under the MIT licence, including commercial and production use, and needs no licence key. AG Grid Enterprise needs a commercial licence in production. You can try Enterprise features locally without a licence key, with a watermark, or request a free 30-day trial licence. See [Community vs Enterprise](./community-vs-enterprise/) and [AG Grid pricing](/license-pricing/)."
+        },
+        {
+            "question": "Is there a free alternative to AG Grid?",
+            "answer": "If you are looking for a free alternative to AG Grid Enterprise, start with AG Grid Community. It is free under the MIT licence, and includes filtering, cell editing, row selection, CSV export and row and column virtualisation. You only need Enterprise for features such as row grouping, pivoting and Excel export. If your table is simple, a lighter free table library may be all you need. Our [comparisons](/compare/) show how AG Grid compares with other grids on features and licensing."
+        },
+        {
+            "question": "What is the difference between AG Grid Community and Enterprise?",
+            "answer": "AG Grid Community has the core features of a data grid: sorting, filtering, cell editing, row selection, CSV export and virtualisation. AG Grid Enterprise adds advanced features such as row grouping, aggregation, pivoting, tree data, set filters, Excel export and the AI Toolkit, with support through Zendesk. [Community vs Enterprise](./community-vs-enterprise/) lists every feature in each edition."
+        },
+        {
+            "question": "Can I start with AG Grid Community and upgrade later?",
+            "answer": "Yes. AG Grid Enterprise builds on AG Grid Community, so you keep the grid you have built. To upgrade, install the ag-grid-enterprise package, register the Enterprise modules you need and add your licence key. See [Install AG Grid Enterprise](./license-install/)."
+        },
+        {
+            "question": "How is AG Grid Enterprise licensed?",
+            "answer": "AG Grid Enterprise is licensed per developer and per deployment. Each licence is perpetual and includes one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        }
+    ]
+}

@@ -1,0 +1,91 @@
+{
+    "meta": {
+        "title": "The Handsontable alternative that is free for commercial use | AG Grid",
+        "description": "Looking for a Handsontable alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and JavaScript with a free MIT-licensed core. Compare features, pricing and licensing.",
+        "targetTerm": "handsontable alternative"
+    },
+    "analyticsPrefix": "alternative-handsontable",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "competitor": {
+        "name": "Handsontable",
+        "slug": "handsontable",
+        "url": "https://handsontable.com/",
+        "logo": "/images/compare/logos/handsontable.png"
+    },
+    "hero": {
+        "heading": "A Handsontable alternative",
+        "subHeading": "Looking for a Handsontable alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and plain JavaScript. AG Grid Community is free under the MIT licence, including for commercial use."
+    },
+    "whySwitch": {
+        "heading": "Why teams look for a Handsontable alternative",
+        "reasons": [
+            "Handsontable's free licence key covers non-commercial use and evaluation only.",
+            "Commercial production use needs a paid licence, priced by Handsontable's sales team.",
+            "Handsontable's documentation does not list pivoting or built-in charts."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Analysis built into the grid",
+            "body": "AG Grid Enterprise adds row grouping, aggregation, pivoting, master/detail, Excel export and integrated charts to the same component."
+        },
+        {
+            "title": "Clear licensing",
+            "body": "AG Grid Community is MIT licensed. AG Grid Enterprise is a perpetual licence with one year of updates and support."
+        }
+    ],
+    "features": [
+        "Frameworks",
+        "Row virtualisation",
+        "Server-side data",
+        "Row grouping",
+        "Pivoting",
+        "Master / detail",
+        "Integrated charts",
+        "Excel (.xlsx) export"
+    ],
+    "faq": [
+        {
+            "question": "Is there a free alternative to Handsontable for commercial use?",
+            "answer": "Yes. AG Grid Community is free under the MIT licence, which allows commercial use."
+        },
+        {
+            "question": "Is Handsontable free to use?",
+            "answer": "Handsontable has a free licence key for non-commercial use and evaluation. Commercial production use needs a paid licence, priced by Handsontable's sales team."
+        },
+        {
+            "question": "How much does an AG Grid licence cost?",
+            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are paid perpetual licences that include one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        },
+        {
+            "question": "What is AG Grid used for?",
+            "answer": "AG Grid is a JavaScript data grid for displaying, editing and analysing tabular data in web applications built with React, Angular, Vue or plain JavaScript. Its features include sorting, filtering, cell editing, virtualisation for large datasets and, in Enterprise, row grouping, pivoting, Excel export and integrated charts."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Handsontable's free licence covers non-commercial use, such as research, private study and evaluation; production use connected with commercial activity needs a commercial licence.",
+            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/software-license/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable's commercial licence is priced by the number of end users, with no published price, and is sold through its sales team.",
+            "sourceUrl": "https://handsontable.com/faq",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Handsontable's documentation does not list pivoting or built-in charts.",
+            "sourceUrl": "https://handsontable.com/docs/llms-full.txt",
+            "checkedOn": "2026-11-11"
+        }
+    ]
+}

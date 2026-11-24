@@ -1,0 +1,117 @@
+{
+    "meta": {
+        "title": "The MUI X Data Grid alternative for any framework | AG Grid",
+        "description": "Looking for a MUI X Data Grid alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and JavaScript with a free MIT-licensed core. Compare features, pricing and licensing.",
+        "targetTerm": "mui x data grid alternative"
+    },
+    "analyticsPrefix": "alternative-mui-x",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "competitor": {
+        "name": "MUI X Data Grid",
+        "shortName": "MUI X",
+        "slug": "mui-x",
+        "url": "https://mui.com/x/react-data-grid/",
+        "logo": "/images/compare/logos/mui-x.svg"
+    },
+    "hero": {
+        "heading": "A MUI X Data Grid alternative",
+        "subHeading": "Looking for an MUI X Data Grid alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and plain JavaScript, with unlimited row virtualisation in its free MIT-licensed Community edition."
+    },
+    "whySwitch": {
+        "heading": "Why teams look for a MUI X Data Grid alternative",
+        "reasons": [
+            "MUI X Data Grid is built for React only and depends on Material UI.",
+            "Row virtualisation in the free MUI X Data Grid is limited to 100 rows.",
+            "Column pinning and lazy loading need the Pro plan; row grouping, pivoting and Excel export need Premium."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Analysis built into the grid",
+            "body": "AG Grid Enterprise adds row grouping, aggregation, pivoting, master/detail, Excel export and integrated charts to the same component."
+        },
+        {
+            "title": "Clear licensing",
+            "body": "AG Grid Community is MIT licensed. AG Grid Enterprise is a perpetual licence with one year of updates and support."
+        }
+    ],
+    "features": [
+        "Frameworks",
+        "Row virtualisation",
+        "Server-side data",
+        "Column pinning",
+        "Row grouping",
+        "Pivoting",
+        "Integrated charts",
+        "Excel (.xlsx) export"
+    ],
+    "faq": [
+        {
+            "question": "What is a free alternative to MUI X Data Grid Pro?",
+            "answer": "AG Grid Community is free under the MIT licence and includes unlimited row virtualisation, column pinning and lazy loading from the server, which MUI X puts in its paid Pro plan."
+        },
+        {
+            "question": "Is MUI Data Grid Pro free?",
+            "answer": "No. MUI X Pro is a paid plan, sold per developer as an annual licence or as a perpetual licence with 12 months of updates and support."
+        },
+        {
+            "question": "Does AG Grid work with Material UI?",
+            "answer": "AG Grid is not built on Material UI. It has its own Theming API and Theme Builder for styling the grid to match an application's design."
+        },
+        {
+            "question": "How much does an AG Grid licence cost?",
+            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are paid perpetual licences that include one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "MUI X Data Grid is built exclusively for React.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid has a peer dependency on Material UI (@mui/material).",
+            "sourceUrl": "https://mui.com/x/react-data-grid/quickstart/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "In the free MUI X Data Grid, row virtualisation is limited to 100 rows; row virtualisation is a Pro plan feature.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid column pinning needs the Pro plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/column-pinning/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid server-side lazy loading needs the Pro plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/server-side-data/lazy-loading/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid row grouping and Excel export need the Premium plan.",
+            "sourceUrl": "https://mui.com/x/introduction/licensing/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid pivoting needs the Premium plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Pro and Premium are sold per developer as an annual licence or a perpetual licence with 12 months of updates and support.",
+            "sourceUrl": "https://mui.com/pricing/",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}
