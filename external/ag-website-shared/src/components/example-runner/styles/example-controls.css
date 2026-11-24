@@ -145,9 +145,10 @@ body > #highlighter {
     appearance: none;
     display: inline-block;
     height: 36px;
-    /* Even padding centres the text in the 36px box, so it lines up with the text of a boxless
-       neighbour, such as a checkbox label, that `.controls-row` centres beside it. */
-    padding: 6px 14px;
+    /* A pixel more below than above: the line box keeps room for descenders, so text padded evenly
+       looks low in the 36px box. The cost is that text beside a boxless neighbour, such as a
+       checkbox label that `.controls-row` centres on the same line, sits a pixel above it. */
+    padding: 5px 14px 7px;
     white-space: nowrap;
     border-radius: 6px;
     color: var(--button-fg);
