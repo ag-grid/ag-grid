@@ -39,6 +39,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 
     tooltipInteraction: true,
+    tooltipShowMode: 'standard',
     tooltipShowDelay: 500,
     // set rowData to null or undefined to show loading panel by default
     rowData: null,
