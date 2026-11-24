@@ -8,7 +8,7 @@
 # WHAT IT DOES - per archive, via scripts/migrate-archive-htaccess.mjs (its header has the detail):
 #   - every site: inserts a marked block straight after the file's first `RewriteEngine On` that
 #     301s the alias hosts (ag-grid.com, blog., angulargrid./angular-grid./javascript-grid./
-#     react-grid.ag-grid.com, angulargrid.com, www.angulargrid.com) to the SAME archive URL on
+#     react-grid.ag-grid.com) to the SAME archive URL on
 #     www in one hop, query string kept. Today they serve the archive with a 200, or (grid 36.x)
 #     redirect to the CURRENT docs because the rule drops the /archive/<v>/ prefix. An archive with
 #     no rewrite block of its own (charts 14.0.x, studio 2.0.x) gets one. A slash-less directory
