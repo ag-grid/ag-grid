@@ -20,6 +20,11 @@ async function dragRow(
     targetFraction: number,
     whileDragging?: () => Promise<void>
 ) {
+    // A clicked selection checkbox keeps its built-in tooltip open above it, over the previous row's
+    // drag handle, while it has focus: blur it and move the pointer away so the tooltip closes.
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.mouse.move(0, 0);
+    await expect(page.locator('.ag-tooltip')).toHaveCount(0);
     const handleBox = (await handle.boundingBox())!;
     const targetBox = (await target.boundingBox())!;
     const startX = handleBox.x + handleBox.width / 2;
