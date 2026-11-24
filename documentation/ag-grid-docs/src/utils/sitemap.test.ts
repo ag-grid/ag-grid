@@ -61,7 +61,7 @@ describe('sitemap filter — non-public page classes (SE-186)', () => {
 });
 
 describe('sitemap index children (SE-85, SE-186)', () => {
-    test('lists the charts, studio and blog child sitemaps, in that order', () => {
+    test('lists the charts, studio, blog and blog tag child sitemaps, in that order', () => {
         const { customSitemaps } = getSitemapConfig({
             chartsSitemap: 'https://www.ag-grid.com/charts/sitemap-0.xml',
             studioSitemap: 'https://www.ag-grid.com/studio/sitemap-0.xml',
@@ -69,6 +69,7 @@ describe('sitemap index children (SE-85, SE-186)', () => {
                 'https://www.ag-grid.com/blog/sitemap-posts.xml',
                 'https://www.ag-grid.com/blog/sitemap-pages.xml',
             ],
+            blogTagSitemap: 'https://www.ag-grid.com/sitemap-blog-tags.xml',
         });
 
         expect(customSitemaps).toEqual([
@@ -76,6 +77,7 @@ describe('sitemap index children (SE-85, SE-186)', () => {
             'https://www.ag-grid.com/studio/sitemap-0.xml',
             'https://www.ag-grid.com/blog/sitemap-posts.xml',
             'https://www.ag-grid.com/blog/sitemap-pages.xml',
+            'https://www.ag-grid.com/sitemap-blog-tags.xml',
         ]);
     });
 
